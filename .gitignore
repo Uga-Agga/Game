@@ -1,0 +1,12 @@
+src/config/*.xml
+src/config/*.tmp
+src/game/include/config.inc.php
+src/game/include/effect_list.php
+src/game/include/game_rules.php
+src/game/include/wonder.rules.php
+src/ticker/ticker.conf
+src/ticker/*.o
+src/www/config.inc.php
+config.log
+config.status
+ugaagga.conf
