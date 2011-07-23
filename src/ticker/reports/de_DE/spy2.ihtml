@@ -1,0 +1,75 @@
+<tmpl:TITLE>Spionageabwehr bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+{if dead}
+Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten
+aufgestöbert, die sich auffällig für deine Höhle interessiert haben.
+{else}
+Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten gesichtet,
+die sich an deine Höhle heranschleichen wollten. Sie hatten zwar
+noch keine Gelegenheit, etwas in Erfahrung zu bringen, konnten aber
+bedauerlicherweise den Wachen entkommen.
+{/if}
+</p>
+
+<tmpl:UNITS>
+<p>Einheiten:</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>
+{if     num <     5}ein kümmerlicher Haufen
+{elseif num <     9}eine Handvoll
+{elseif num <    17}ein Dutzend
+{elseif num <    33}ein Trupp
+{elseif num <    65}eine Schar
+{elseif num <   129}eine Menge
+{elseif num <   257}ein Haufen
+{elseif num <   513}viele
+{elseif num <  1025}etliche
+{elseif num <  2049}verdammt viele
+{elseif num <  4097}Unmengen
+{elseif num <  6145}eine Legion
+{elseif num <  8193}eine Streitmacht
+{elseif num < 12289}eine Armee
+{elseif num < 16385}Heerscharen
+{elseif num < 20481}eine haltlose Horde
+{else}eine endlose wogende Masse
+{/if}
+</td></tr>
+</tmpl:UNIT>
+</table>
+</tmpl:UNITS>
+
+<tmpl:DEAD>
+<tmpl:UNITS>
+<p>
+Es ist Deinen aufmerksamen Wachen gelungen, einen Teil der Eindringlinge
+zu stellen:
+</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:UNIT>
+</table>
+<p>
+Da die Wachen es aber gewohnt sind, erst zuzuschlagen und dann Fragen zu
+stellen, ist niemand davon mehr am Leben, der dir berichten könnte, woher
+sie kamen.
+</p>
+</tmpl:UNITS>
+</tmpl:DEAD>
+
+{if dead}
+<tmpl:RESOURCES>
+<p>Zu deiner Überraschung hatten sie einige Rohstoffe bei sich, die nun
+deine Lager füllen:</p>
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+
+<tmpl:ARTEFACT>
+<p>Du konntest den Spionen des Feindes das Artefakt "{artefact}" abnehmen!</p>
+</tmpl:ARTEFACT>
+{/if}
+</tmpl:MSG>

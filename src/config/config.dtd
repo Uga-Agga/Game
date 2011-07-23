@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitTypes?, DefenseSystemTypes?, EffectTypes?, wonders?, trades?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
+<!ELEMENT Header (TakeoverMaxPopularityPoints, TakeoverMinResourceValue, WatchTowerVisionRange, ExposeInvisible, WonderResistance, FuelResourceID, MovementCost, MovementSpeed)>
+<!--Languages-->
+<!ELEMENT Languages (Language*)>
+<!ELEMENT Language (#PCDATA)>
+<!ATTLIST Language locale ID #REQUIRED>
+<!--Types-->
+<!ELEMENT ResourceTypes (Resource*)>
+<!ELEMENT BuildingTypes (Building*)>
+<!ELEMENT ScienceTypes (Science*)>
+<!ELEMENT UnitTypes (Unit*)>
+<!ELEMENT DefenseSystemTypes (DefenseSystem*)>
+<!ELEMENT Resource (Name+, Remark+, RatingValue, TakeoverValue, StealRatio, DestroyRatio, SafeStorage, MaxStorage, Production)>
+<!ATTLIST Resource id ID #REQUIRED hidden (0 | 1) "0">
+<!ELEMENT Building (Name+, Description+, Remark+, Position?, RatingValue, Cost*, ProductionTime, MaxDevelopmentLevel, (Requirement | EffectReq)*)>
+<!ATTLIST Building id ID #REQUIRED hidden (0 | 1) "0">
+<!ELEMENT Science (Name+, Description+, Position?, Cost*, ProductionTime, MaxDevelopmentLevel, (Requirement | EffectReq)*)>
+<!ATTLIST Science id ID #REQUIRED hidden (0 | 1) "0">
+<!ELEMENT Unit (Name+, Description+, Position?, Cost*, ProductionTime, MeleeDamage, RangedDamage, StructuralDamage, MeleeDamageResistance, RangedDamageResistance, HeavyDamageProbability?, CriticalDamageProbability?, Size, Encumbrance*, Visible, Velocity?, FuelUsage?, SpyValue?, SpyChance?, SpyQuality?, AntiSpyChance?, (Requirement | EffectReq)*, WarPoints?)>
+<!ATTLIST Unit id ID #REQUIRED hidden (0 | 1) "0">
+<!ELEMENT DefenseSystem (Name+, Description+, Remark+, Position?, Cost*, ProductionTime, MaxDevelopmentLevel, MeleeDamage, RangedDamage, StructuralDamageResistance, HeavyDamageProbability?, CriticalDamageProbability?, Size, AntiSpyChance?, (Requirement | EffectReq)*, WarPoints?)>
+<!ATTLIST DefenseSystem id ID #REQUIRED hidden (0 | 1) "0">
+<!--Terrains-->
+<!ELEMENT Terrains (Terrain+)>
+<!ELEMENT Terrain (Name+, Description+, Color, Effect*)>
+<!ATTLIST Terrain
+          id CDATA #REQUIRED
+          takeoverByCombat (0 | 1) "0"
+          barren (0 | 1) "0">
+<!ELEMENT Color EMPTY>
+<!ATTLIST Color r CDATA #REQUIRED g CDATA #REQUIRED b CDATA #REQUIRED>
+<!--Regions-->
+<!ELEMENT Regions (Region+)>
+<!ELEMENT Region (Name+, Description+, Effect*)>
+<!ATTLIST Region
+          id CDATA #REQUIRED
+          startRegion (0 | 1) "0"
+          takeoverActivatable (0 | 1) "0"
+          barren (0 | 1) "0">
+<!--Movements-->
+<!ELEMENT Movements (Movement+)>
+<!ELEMENT Movement (Name+, Description+, (Requirement | EffectReq)*)>
+<!ATTLIST Movement
+          id CDATA #REQUIRED
+          action (attack|conquer|move|send|spy) #REQUIRED
+          speed CDATA #REQUIRED
+          provisions CDATA #REQUIRED
+          conquering (0 | 1) "0"
+          invisible (0 | 1) "0">
+<!--Webinterface: Production-->
+<!ELEMENT Cost (#PCDATA | object)*>
+<!ATTLIST Cost id IDREF #REQUIRED>
+<!ELEMENT object EMPTY>
+<!ATTLIST object id IDREF #REQUIRED>
+<!--Requirement-->
+<!ELEMENT Requirement EMPTY>
+<!ATTLIST Requirement id IDREF #REQUIRED min CDATA "0" max CDATA #IMPLIED>
+<!ELEMENT EffectReq EMPTY>
+<!ATTLIST EffectReq id IDREF #REQUIRED min CDATA #IMPLIED max CDATA #IMPLIED>
+<!--Encumbrance-->
+<!ELEMENT Encumbrance EMPTY>
+<!ATTLIST Encumbrance id IDREF #REQUIRED value CDATA #REQUIRED>
+<!--Combat-->
+<!ELEMENT MeleeDamage (#PCDATA)>
+<!ELEMENT RangedDamage (#PCDATA)>
+<!ELEMENT StructuralDamage (#PCDATA)>
+<!ELEMENT RangedDamageResistance (#PCDATA)>
+<!ELEMENT MeleeDamageResistance (#PCDATA)>
+<!ELEMENT StructuralDamageResistance (#PCDATA)>
+<!ELEMENT HeavyDamageProbability (#PCDATA)>
+<!ELEMENT CriticalDamageProbability (#PCDATA)>
+<!ELEMENT Size (#PCDATA)>
+<!--Effects-->
+<!ELEMENT EffectTypes (EffectType*)>
+<!ELEMENT EffectType (Name+, Description*)>
+<!ATTLIST EffectType id ID #REQUIRED hidden (0 | 1) "0">
+<!--wonders-->
+<!ELEMENT wonders (wonder+)>
+<!ELEMENT wonder (Name+, Description+, Remark+, chance, impacts+, Cost*, (Requirement | EffectReq)*)>
+<!ATTLIST wonder
+  offensive (0 | 1) "0"
+  target (same | own | other | all) #REQUIRED
+  hidden (0 | 1) "0"
+  groupID CDATA "0"
+>
+<!-- trades -->
+<!ELEMENT trades (tradecategories,trade+)>
+<!ELEMENT tradecategories (tradecategory+)>
+<!ELEMENT tradecategory EMPTY>
+<!ATTLIST tradecategory
+  id CDATA #REQUIRED
+  name CDATA #REQUIRED
+  secondsbetween CDATA "180"
+>
+<!ELEMENT trade (Name+, Description+, tradeimpacts+, Cost*)>
+<!ATTLIST trade
+  categoryId CDATA #REQUIRED
+  hidden (0 | 1) "0"
+>
+
+<!--Wetter-->
+<!ELEMENT Weathers (Weather+)>
+<!ELEMENT Weather (Name+, we_impacts+)>
+
+<!-- Zufallsereignisse -->
+<!ELEMENT incidentals (incidental+)>
+<!ELEMENT incidental (Name+, Description+, chance, impacts+)>
+<!ATTLIST incidental
+  target (same | own | other | all) #REQUIRED
+>
+<!--Regierungen-->
+<!ELEMENT regimes (regime+)>
+<!ELEMENT regime (Name+, Description+, impacts+)>
+<!ATTLIST regime 
+  target (same | own | other | all) #REQUIRED
+>
+<!--
+ target:  (specify allowed target caves)
+   same:  the cave, where the spell was casted
+   own:   caves, owned by the person, who casted the spell
+   other: only caves, that are not owned by the spell caster
+   all:   any cave on the map
+-->
+<!--chance-->
+<!ELEMENT chance (#PCDATA | object)*>
+<!--impacts-->
+<!ELEMENT impacts (impact+)>
+<!--impact-->
+<!ELEMENT impact (sourceMessage, targetMessage, effects?, resources?, units?, buildings?, sciences?, defenseSystems?)>
+<!ATTLIST impact
+  delay CDATA #REQUIRED
+  duration CDATA #REQUIRED
+  steal CDATA "0"
+  deactivateTearDown (0 | 1) "0"
+>
+<!ELEMENT tradeimpacts (tradeimpact+)>
+<!--impact-->
+<!ELEMENT tradeimpact (targetMessage, effects?, resources?, units?, buildings?, sciences?, defenseSystems?)>
+<!ATTLIST tradeimpact
+  delay CDATA #REQUIRED
+  duration CDATA #REQUIRED
+  deactivateTearDown (0 | 1) "0"
+>
+
+
+<!--weather impacts-->
+<!ELEMENT we_impacts (we_impact+)>
+<!--weather impact-->
+<!ELEMENT we_impact (effects?)>
+<!ATTLIST we_impact
+  delay CDATA #REQUIRED
+  duration CDATA #REQUIRED
+  steal CDATA "0"
+>
+<!--
+  delay:    time in minutes (delay * base_time_seconds),
+            after which the impact takes effect
+  duration: time in minutes (duration * base_time_seconds) this impact lasts
+-->
+<!--messages-->
+<!ELEMENT sourceMessage (p*)>
+<!ATTLIST sourceMessage
+  messageType (none | note | detailed) #REQUIRED
+>
+<!ELEMENT targetMessage (p*)>
+<!ATTLIST targetMessage
+  messageType (none | note | detailed) #REQUIRED
+>
+<!--effects-->
+<!ELEMENT effects (effect+)>
+<!ATTLIST effects
+  all (0 | 1) "0"
+>
+<!ELEMENT effect EMPTY>
+<!ATTLIST effect
+  id IDREF #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--
+  absolute: absolute value that is added to the actual value
+  relative: positive or negative percentage that has to be added
+  type:
+    default: the values are added exactly as specified
+    gauss:   use a gaussian probability distribution around the specified
+             values to choose a random number.
+             The standard deviation is 1.0 for relative values and
+             (0.5 * value) for absolute values
+             The resulting random number is cut at 0, so that the return value
+             has the same sign as the specified value.
+-->
+<!--resources-->
+<!ELEMENT resources (resource+)>
+<!ATTLIST resources
+  all (0 | 1) "0"
+>
+<!ELEMENT resource EMPTY>
+<!ATTLIST resource
+  id IDREF #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--buildings-->
+<!ELEMENT buildings (building+)>
+<!ATTLIST buildings
+  all (0 | 1) "0"
+>
+<!ELEMENT building EMPTY>
+<!ATTLIST building
+  id IDREF #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--units-->
+<!ELEMENT units (unit+)>
+<!ATTLIST units
+  all (0 | 1) "0"
+>
+<!ELEMENT unit EMPTY>
+<!ATTLIST unit
+  id IDREF #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--sciences-->
+<!ELEMENT sciences (science+)>
+<!ATTLIST sciences
+  all (0 | 1) "0"
+>
+<!ELEMENT science EMPTY>
+<!ATTLIST science
+  id IDREF #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--defenseSystems-->
+<!ELEMENT defenseSystems (defenseSystem+)>
+<!ATTLIST defenseSystems
+  all (0 | 1) "0"
+>
+<!ELEMENT defenseSystem EMPTY>
+<!ATTLIST defenseSystem
+  id IDREF #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--Misc-->
+<!ELEMENT AntiSpyChance (#PCDATA)>
+<!ELEMENT DBFieldName (#PCDATA)>
+<!ELEMENT Description (p*)>
+<!ATTLIST Description lang IDREF "de_DE">
+<!ELEMENT Remark (#PCDATA)>
+<!ATTLIST Remark lang IDREF "de_DE">
+<!ELEMENT DestroyRatio (#PCDATA)>
+<!ELEMENT Effect (#PCDATA)>
+<!ATTLIST Effect id IDREF #REQUIRED>
+<!ELEMENT ExposeInvisible (#PCDATA | object)*>
+<!ELEMENT FuelResourceID (#PCDATA)>
+<!ELEMENT FuelUsage (#PCDATA)>
+<!ELEMENT MaxDevelopmentLevel (#PCDATA | object)*>
+<!ELEMENT SafeStorage (#PCDATA | object)*>
+<!ELEMENT MaxStorage (#PCDATA | object)*>
+<!ELEMENT MaxValue (#PCDATA)>
+<!ELEMENT MovementCost (#PCDATA | object)*>
+<!ELEMENT MovementSpeed (#PCDATA | object)*>
+<!ELEMENT Name (#PCDATA)>
+<!ATTLIST Name lang IDREF "de_DE">
+<!ELEMENT p (#PCDATA)>
+<!ELEMENT Position (#PCDATA)>
+<!ELEMENT ProductionTime (#PCDATA | object)*>
+<!ELEMENT RatingValue (#PCDATA)>
+<!ELEMENT WarPoints (#PCDATA)>
+<!ELEMENT Production (#PCDATA | object)*>
+<!ELEMENT SpyQuality (#PCDATA)>
+<!ELEMENT SpyChance (#PCDATA)>
+<!ELEMENT SpyValue (#PCDATA)>
+<!ELEMENT StealRatio (#PCDATA)>
+<!ELEMENT TakeoverMaxPopularityPoints (#PCDATA)>
+<!ELEMENT TakeoverMinResourceValue (#PCDATA)>
+<!ELEMENT TakeoverValue (#PCDATA)>
+<!ELEMENT Value (#PCDATA)>
+<!ELEMENT Velocity (#PCDATA)>
+<!ELEMENT Visible (#PCDATA)>
+<!ELEMENT WatchTowerVisionRange (#PCDATA | object)*>
+<!ELEMENT WonderResistance (#PCDATA | object)*>
+<!--entities-->
+<!ENTITY apst "&amp;#39;">
+<!ENTITY auml "&amp;auml;">
+<!ENTITY ouml "&amp;ouml;">
+<!ENTITY uuml "&amp;uuml;">
+<!ENTITY Auml "&amp;Auml;">
+<!ENTITY Ouml "&amp;Ouml;">
+<!ENTITY Uuml "&amp;Uuml;">
+<!ENTITY szlig "&amp;szlig;">

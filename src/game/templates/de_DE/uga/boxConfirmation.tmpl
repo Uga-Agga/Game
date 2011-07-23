@@ -1,0 +1,10 @@
+<div class="error">
+  <span>{{ confirm_msg|raw }}</span>
+  <br />
+    <form style="display: inline;" method="post" action="main.php?modus={{ confirm_mode }}&amp;action={{ confirm_action }}&amp;id={{ confirm_id }}&amp;caveID={{ cave_id }}">
+      <input type="hidden" name="cancelOrderConfirm" value="1" /><input type="submit" value="Ok" />
+    </form>
+    <form style="display: inline;" method="post" action="main.php?modus={{ confirm_mode }}&amp;caveID={{ cave_id }}">
+      <input type="submit" value="Abbrechen" />
+    </form>
+</div>

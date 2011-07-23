@@ -1,0 +1,1 @@
+The vendor directory holds code used by the application but which does not exclusively belongs to it. This will probably be third party libraries.

@@ -1,0 +1,48 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+
+<div class="info">
+  Das Uga Agga Tal wird von zahlreichen Handelsrouten durchzogen. Die Handelskarawanen werden von Skalis jüngeren Halbbruder geführt. Sein Name ist Skon-Tho.
+  Skon-Tho kommt in regelmäßigen Abständen auch an deinen Höhlen vorbei und bietet dir einen Rohstofftausch an. Auch einige Einheiten kann Skon-Tho dir gegen einen vernünftigen Preis zum Handel anbieten.
+  Skon-Tho ist bekannt für seine harte Verhandlungsführung, aber auch für sein freundliches Gemüt. Nicht selten gibt er am Lagerfeuer Geschichten weit entfernten Höhlen, wilden Monstern und großen Häuptlingen zum Besten.
+  <br /><br />
+  Eine weitere Möglichkeit Handel zu treiben sind die festen Marktstände in den Handelszentren.
+  Handel im <a href="http://forum.uga-agga.de/handel-f174/">Uga Agga Forum</a>. <br />
+  Hier werden sowohl diverse Handel zu Festpreisen, aber auch Versteigerungen und zum Teil unglaubliche Angebote bereitet.
+  <br /><br />
+  Vorbeischauen lohnt auf jeden Fall!
+</div>
+
+{% for cat in trades %}
+<div class="box">
+  <div class="box-header">{{ cat.name }}</div>
+  <div class="box-content success inner">
+    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      {% for item in cat.data %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{{ bgID }}">
+          <td>
+            <dl class="nodistance">
+              <dt><span class="bold">{{ item.name }}</span></dt>
+              <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
+             {% if item.description %}<dd>{{ item.description|raw }}</dd>{% endif %}
+            </dl>
+          </td>
+          <td class="text-right">
+            {% if item.build_link %}
+              <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Kaufen" title="Kaufen" /></a>
+            {% else %}
+              <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endfor %}
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

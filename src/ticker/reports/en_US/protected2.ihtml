@@ -1,0 +1,9 @@
+<tmpl:TITLE>Load laughter in cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+"Err....well..." your battle master stutters. "The hostile crowd from
+the cave {orig} of player {sender} that was about to plunder our cave
+burst out into load laughter and turned back just before it reached us."
+</p>
+</tmpl:MSG>

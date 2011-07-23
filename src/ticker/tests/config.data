@@ -1,0 +1,5 @@
+# config test data
+
+string_value	"foobar"
+long_value	+42
+double_value	-17.2

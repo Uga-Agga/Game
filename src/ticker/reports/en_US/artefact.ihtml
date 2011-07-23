@@ -1,0 +1,5 @@
+<tmpl:TITLE>Artifact consecration in cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>The artifact "{artefact}" has been consecrated in your cave {cave}.</p>
+</tmpl:MSG>

@@ -1,0 +1,48 @@
+{% if item.resource_cost %}
+  {% for resource in item.resource_cost %}
+    <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" />
+    {% if resource.enough %}
+      <span class="enough small">{{ resource.value }}</span>
+    {% else %}
+      <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}_{{ resource.dbFieldName }}')" onmouseout="hideWMTT()">{{ resource.value }}</span>
+      <div id="missing_{{ item.dbFieldName }}_{{ resource.dbFieldName }}" class="tooltip" >Es fehlen noch: {{ resource.missing }} {{ resource.name }}</div>
+    {% endif %}
+    &nbsp;
+  {% endfor %}
+{% endif %}
+
+{% if item.unit_cost %}
+  {% for unit in item.unit_cost %}
+  <br />
+    <span class="small">{{ unit.name }}:&nbsp;</span>
+    {% if unit.enough %}
+      <span class="enough small">{{ unit.value }}</span>
+    {% else %}
+      <span class="less-small">{{ unit.value }}</span>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if item.building_cost %}
+  {% for building in item.building_cost %}
+  <br />
+    <span class="small">{{ building.name }}:&nbsp;</span>
+    {% if building.enough %}
+      <span class="enough small">{{ building.value }}</span>
+    {% else %}
+      <span class="less-small">{{ building.value }}</span>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+
+{% if item.defense_cost %}
+  {% for defense in item.defense_cost %}
+  <br />
+  <span class="small">{{ defense.name }}:&nbsp;</span>
+    {% if defense.enough %}
+      <span class="enough small">{{ defense.value }}</span>
+    {% else %}
+      <span class="less-small">{{ defense.value }}</span>
+    {% endif %}
+  {% endfor %}
+{% endif %}

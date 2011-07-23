@@ -1,0 +1,28 @@
+<tmpl:TITLE>Ein Wunder in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+In der Höhle {cave}:
+{wonder_message}
+
+<p>
+{if note}
+Einer deiner Schamanen berichtet dir von folgenden Wirkungen, da eine
+göttliche Eingebung ausbleibt. Nun ja, an der Vollständigkeit und Korrektheit
+seines Berichts hegst du, aus Erfahrung schlau geworden, Zweifel.
+{else}
+Es zeigten sich folgende Wirkungen:
+{/if}
+</p>
+
+<table><col><col align="right">
+<tmpl:VALUE><tr><td>{name}:</td><td>{amount}</td></tr>
+</tmpl:VALUE>
+</table>
+
+<tmpl:STOLEN>
+<p>
+Es wurden ca. {steal}% der Veränderungen auf die Höhle desjenigen, der
+dieses Wunder erbeten hatte, übertragen.
+</p>
+</tmpl:STOLEN>
+</tmpl:MSG>

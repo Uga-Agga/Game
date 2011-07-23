@@ -1,0 +1,28 @@
+<tmpl:TITLE>A wonder in cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+In the cave {cave}:
+{wonder_message}
+
+<p>
+{if note}
+The wise shaman of your tribe tells some funny stories about its effects.
+You can tell that he is missing some devine inspiration here. In any case,
+you have your doubts about his report.
+{else}
+You notice these effects:
+{/if}
+</p>
+
+<table><col><col align="right">
+<tmpl:VALUE><tr><td>{name}:</td><td>{amount}</td></tr>
+</tmpl:VALUE>
+</table>
+
+<tmpl:STOLEN>
+<p>
+About {steal}% of the effects of this wonder have been transferred
+to the cave of its originator.
+</p>
+</tmpl:STOLEN>
+</tmpl:MSG>

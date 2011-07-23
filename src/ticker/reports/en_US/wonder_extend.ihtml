@@ -1,0 +1,9 @@
+<tmpl:TITLE>Wonder has an effect on cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+A scout reports that a wonder "{wonder}" has an effect on the cave {cave}.
+However, as this particular cave is currently already influenced by the
+same wonder, the duration of its effect has now been extended.
+</p>
+</tmpl:MSG>

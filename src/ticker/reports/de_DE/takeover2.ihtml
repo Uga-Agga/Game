@@ -1,0 +1,166 @@
+<tmpl:TITLE_WIN>Übernahmeversuch abgewehrt bei Höhle {cave} ({xpos}/{ypos})
+</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Übernahmekampf verloren bei Höhle {cave} ({xpos}/{ypos})
+</tmpl:TITLE_LOSE>
+
+<tmpl:MSG>
+<p>
+{if att_won}
+Du siehst mit deinen blutunterlaufenen Augen zu, wie ein fremder Stamm aus
+{else}
+Du siehst vergnügt zu, wie ein fremder Stamm aus
+{/if}
+{if self}deiner Höhle {orig}{else}
+der Höhle {orig} {if sender}des Spielers {sender}{/if}
+{/if}
+{if att_won}
+den Übernahmekampf um deine Höhle {cave} gewinnt!
+Du hast den Kampf um deine Höhle verloren!
+{else}
+vor der überlegenen Streitmacht deiner Höhle {cave} flieht, nachdem sie versucht
+hatten, deine Höhle zu übernehmen! Du hast den Kampf um deine Höhle gewonnen!
+{/if}
+</p>
+{if att_won}
+<p>
+{if takeover}
+Du hast damit die Kontrolle über die Höhle an {sender} verloren.
+{else}
+Trotz der Niederlage konntest du im Besitz dieser Höhle
+bleiben!
+{/if}
+</p>
+{/if}
+
+<tmpl:ATTACK>
+<p>Deine Höhlenbewohner haben mit {factor}-facher Kampfstärke gekämpft!</p>
+<table frame="border" rules="all">
+<tr valign="top">
+<td><table frame="void" rules="groups" width="100%">
+<col><col align="right">
+<thead>
+<tr><th colspan="2">Angreifende Armee</th></tr>
+</thead>
+<tbody>
+<tmpl:BEFORE>
+<tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:BEFORE>
+</tbody>
+</table></td>
+<td><table frame="void" rules="groups" width="100%">
+<col><col align="right" span="2">
+<thead>
+<tr><th colspan="3">nach dem Kampf</th></tr>
+</thead>
+<tbody>
+<tmpl:AFTER>
+<tr><td>{name}:</td><td>{num}</td><td><tmpl:DELTA>({num})</tmpl:DELTA></td></tr>
+</tmpl:AFTER>
+</tbody>
+</table></td>
+<td><table frame="void" rules="groups" width="100%">
+<col><col align="right">
+<thead>
+<tr><th colspan="2">Kampfwerte</th></tr>
+</thead>
+<tbody>
+<tr><td>Fernschaden:</td><td>{range}</td></tr>
+<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+<tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
+<tr><td>Größe:</td><td>{size}</td></tr>
+<tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
+<tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
+</tbody>
+</table></td>
+</tr>
+</tmpl:ATTACK>
+<tmpl:DEFEND>
+<tr><td colspan="3"></td></tr>
+<tr valign="top">
+<td><table frame="void" rules="groups" width="100%">
+<col><col align="right">
+<thead>
+<tr><th colspan="2">Verteidigende Armee</th></tr>
+</thead>
+<tbody>
+<tmpl:BEFORE>
+<tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:BEFORE>
+</tbody>
+</table></td>
+<td><table frame="void" rules="groups" width="100%">
+<col><col align="right" span="2">
+<thead>
+<tr><th colspan="3">nach dem Kampf</th></tr>
+</thead>
+<tbody>
+<tmpl:AFTER>
+<tr><td>{name}:</td><td>{num}</td><td><tmpl:DELTA>({num})</tmpl:DELTA></td></tr>
+</tmpl:AFTER>
+</tbody>
+</table></td>
+<td><table frame="void" rules="groups" width="100%">
+<col><col align="right">
+<thead>
+<tr><th colspan="2">Kampfwerte</th></tr>
+</thead>
+<tbody>
+<tr><td>Fernschaden:</td><td>{range}</td></tr>
+<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+<tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
+<tr><td>Größe:</td><td>{size}</td></tr>
+<tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
+<tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
+</tbody>
+</table></td>
+</tr>
+</table>
+</tmpl:DEFEND>
+
+<tmpl:RESOURCES>
+<p>Du hattest folgende Ressourcen:</p>
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+
+<tmpl:PLUNDER>
+<tmpl:RESOURCES>
+{if att_won}
+<p>
+Der fremde Stamm hat deine Höhle geplündert. Einiges konntest du ja noch
+verstecken, trotzdem hat er folgende Ressourcen erbeutet:
+</p>
+{else}
+<p>Der fremde Stamm verliert auf seiner Flucht folgende Ressourcen:</p>
+{/if}
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+</tmpl:PLUNDER>
+
+
+<tmpl:WARPOINTS>
+<br><br>
+Der Kampf brachte dir {PointsOwn} und dem Gegner {PointsOther} Kriegspunkte.
+</tmpl:WARPOINTS>
+
+
+<tmpl:ARTEFACT>
+{if att_won}
+Der Angreifer hat aus deiner Höhle das Artefakt "{artefact}" gestohlen!
+{else}
+Zwischen den Überresten der getöteten Feinde hast du ein Artefakt
+"{artefact}" gefunden!
+{/if}
+</tmpl:ARTEFACT>
+
+<tmpl:ARTEFACT_LOST>
+<p>
+Bei dem Kampf ist das Artefakt "{artefact}" verloren gegangen! Es muß
+irgendwo in der Nachbarschaft der Höhle liegen.
+</p>
+</tmpl:ARTEFACT_LOST>
+</tmpl:MSG>

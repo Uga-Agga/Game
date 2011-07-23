@@ -1,0 +1,16 @@
+# Uga-Agga ticker configuration file
+
+db_host		@GAME_DB_HOST@
+db_name		@GAME_DB_NAME@
+db_user		@GAME_DB_USER@
+db_passwd	@GAME_DB_PASSWD@
+
+ticker_home	@TICKER_HOME@
+pid_file	@TICKER_HOME@/ticker.pid
+ticker_state	@TICKER_HOME@/ticker_state
+debug_logfile	@LOGDIR@/ticker_debug.log
+error_logfile	@LOGDIR@/ticker_error.log
+msg_logfile	@LOGDIR@/ticker_message.log
+
+tick_interval	1200
+sleep_time	1000000

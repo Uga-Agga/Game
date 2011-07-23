@@ -1,0 +1,138 @@
+<tmpl:TITLE>Espionage report from cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+{if report}
+<p>
+Your spies report from
+{if self}your cave {cave}:{else}
+the cave {cave} {if player}of player {player}{/if}:
+{/if}
+</p>
+{elseif dead}
+<p>
+Unfortunately, your scouts acted rather clumsily and some of them were
+discovered by the enemy guards. Rest assured, their death was quick and
+thorough. It crosses your mind that you should have put more emphasis on
+the training of your spies.
+</p>
+<tmpl:DEAD>
+<tmpl:UNITS>
+<p>You lose the following units:</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:UNIT>
+</table>
+</tmpl:UNITS>
+</tmpl:DEAD>
+
+<tmpl:ARTEFACT>
+<p>The artifact they were carrying has been lost!</p>
+</tmpl:ARTEFACT>
+{else}
+<p>
+Unfortunately, your scouts acted rather clumsily and were discovered by
+the enemy guards before they were able to gather information about the
+enemy&#39;s cave. Luckily they all escaped capture.
+</p>
+{/if}
+
+<tmpl:RESOURCES>
+<p>Resources:</p>
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>
+{if     num <    17}fast gar nichts
+{elseif num <    65}ein winziger Haufen
+{elseif num <   257}ein kleiner Haufen
+{elseif num <  1025}ein beachtlicher Haufen
+{elseif num <  4097}eine Menge
+{elseif num < 16385}eine große Menge
+{elseif num < 32769}ein Berg
+{elseif num < 65537}ein großer Berg
+{else}ein riesiger Berg
+{/if}
+</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+
+<tmpl:DEFENSES>
+<p>Defensive structures:</p>
+<table><col><col align="right">
+<tmpl:DEFENSE><tr><td>{name}:</td><td>
+{if     num <     5}ein kümmerlicher Haufen
+{elseif num <     9}eine Handvoll
+{elseif num <    17}ein Dutzend
+{elseif num <    33}ein Trupp
+{elseif num <    65}eine Schar
+{else}eine Menge
+{/if}
+</td></tr>
+</tmpl:DEFENSE>
+</table>
+</tmpl:DEFENSES>
+
+<tmpl:UNITS>
+<p>Units:</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>
+{if     num <     5}ein kümmerlicher Haufen
+{elseif num <     9}eine Handvoll
+{elseif num <    17}ein Dutzend
+{elseif num <    33}ein Trupp
+{elseif num <    65}eine Schar
+{elseif num <   129}eine Menge
+{elseif num <   257}ein Haufen
+{elseif num <   513}viele
+{elseif num <  1025}etliche
+{elseif num <  2049}verdammt viele
+{elseif num <  4097}Unmengen
+{elseif num <  6145}eine Legion
+{elseif num <  8193}eine Streitmacht
+{elseif num < 12289}eine Armee
+{elseif num < 16385}Heerscharen
+{elseif num < 20481}eine haltlose Horde
+{else}eine endlose wogende Masse
+{/if}
+</td></tr>
+</tmpl:UNIT>
+</table>
+</tmpl:UNITS>
+
+<tmpl:BUILDINGS>
+<p>Developments:</p>
+<table><col><col align="right">
+<tmpl:BUILDING><tr><td>{name}:</td><td>
+{if     num <     5}ein kümmerlicher Haufen
+{elseif num <     9}eine Handvoll
+{elseif num <    17}ein Dutzend
+{elseif num <    33}ein Trupp
+{elseif num <    65}eine Schar
+{else}eine Menge
+{/if}
+</td></tr>
+</tmpl:BUILDING>
+</table>
+</tmpl:BUILDINGS>
+
+<tmpl:SCIENCES>
+<p>Research:</p>
+<table><col><col align="right">
+<tmpl:SCIENCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:SCIENCE>
+</table>
+</tmpl:SCIENCES>
+
+<tmpl:MONSTER>
+<p>
+There is a horrible monster hanging around at the cave entrance:
+</p>
+<p>
+{name} {attack}A {defense}V {mental}M {strength}K {exp} Exp<br/>
+{attributes}
+</p>
+</tmpl:MONSTER>
+
+<tmpl:SPY>
+<p>spy chance: {chance}, spy quality: {quality}, spy weight: {weight}</p>
+</tmpl:SPY>
+</tmpl:MSG>

@@ -1,0 +1,76 @@
+<tmpl:TITLE>Counter-espionage at cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+{if dead}
+Your guards have stumbled upon a bunch of shady characters who apparently
+showed some interest in your cave.
+{else}
+Your guards have stumbled upon a bunch of shady characters who apparently
+showed some interest in your cave. Unfortunately, they could escape your
+guards, but they were unable to gather any information about your cave.
+{/if}
+</p>
+
+<tmpl:UNITS>
+<p>Units:</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>
+{if     num <     5}ein kümmerlicher Haufen
+{elseif num <     9}eine Handvoll
+{elseif num <    17}ein Dutzend
+{elseif num <    33}ein Trupp
+{elseif num <    65}eine Schar
+{elseif num <   129}eine Menge
+{elseif num <   257}ein Haufen
+{elseif num <   513}viele
+{elseif num <  1025}etliche
+{elseif num <  2049}verdammt viele
+{elseif num <  4097}Unmengen
+{elseif num <  6145}eine Legion
+{elseif num <  8193}eine Streitmacht
+{elseif num < 12289}eine Armee
+{elseif num < 16385}Heerscharen
+{elseif num < 20481}eine haltlose Horde
+{else}eine endlose wogende Masse
+{/if}
+</td></tr>
+</tmpl:UNIT>
+</table>
+</tmpl:UNITS>
+
+<tmpl:DEAD>
+<tmpl:UNITS>
+<p>
+Your alerted guards managed to capture some of the intruders:
+</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:UNIT>
+</table>
+<p>
+As your guards are used to strike first and ask questions afterwards,
+these poor creatures - being dead already - are sadly not longer able to
+tell you who sent them.
+</p>
+</tmpl:UNITS>
+</tmpl:DEAD>
+
+{if dead}
+<tmpl:RESOURCES>
+<p>
+By chance, they carried some resources with them, which now fill your cave:
+</p>
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+
+<tmpl:ARTEFACT>
+<p>
+You were able to capture the artifact "{artefact}" from the enemy&#39;s spies!
+</p>
+</tmpl:ARTEFACT>
+{/if}
+</tmpl:MSG>

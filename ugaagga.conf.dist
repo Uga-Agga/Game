@@ -1,0 +1,55 @@
+# Uga-Agga installation configuration file
+
+# database access
+root_db_passwd		foobar
+
+game_db_host		localhost
+game_db_name		game
+game_db_user		game
+game_db_passwd		foobar
+
+login_db_host		localhost
+login_db_name		login
+login_db_user		login
+login_db_passwd		foobar
+
+# white space separated list of game hosts (web interface)
+game_hosts		www.uga-agga.de
+
+# support links
+forum_url		http://www.uga-agga.com/index.php
+gfx_url			http://www.uga-agga.de/gfx
+help_url		http://faq.uga-agga.com/
+login_url		http://www.uga-agga.de/
+rules_url		http://www.uga-agga.de/rules/
+
+# various game settings
+
+# value in seconds, default: 45min
+session_timeout		2700
+
+# values in seconds, default: 60s
+building_time_base	40
+defsystem_time_base	40
+movement_time_base	40
+science_time_base	40
+unit_time_base		40
+wonder_time_base	40
+
+# value in hours, default: 24h
+government_change	24
+
+# value in minutes, default: 2h
+tear_down_timeout	120
+
+# value in seconds, default: 24h
+tribe_block_period	86400
+
+unit_build_batch	10
+
+god_tribe		Walhalla
+cave_size_db_field	soybean
+
+tribe_leave_cost	0
+fame_decrease		1
+fame_min_points         500

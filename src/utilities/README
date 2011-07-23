@@ -1,0 +1,24 @@
+Alle Dateien muessen im Verzeichnis /home/ticker/ liegen.
+
+install_/remove_ticker...
++ ticker.cron
+
+install_ticker_ ...
+installs a cron job, that looks for a running ticker, and starts one,
+if no ticker was found.
+
+remove_ticker_...
+removes the ticker control script from the crontab
+
+
+
+install_/remove_activated...
+
+installs and removes the activated.cron script to and from the 
+crontab.
+The activated.cron script is called every six hours and looks for not
+activated accounts. If these accounts are older than a certain
+time span, they are deleted with the script deletePlayer.script.php
+
+
+

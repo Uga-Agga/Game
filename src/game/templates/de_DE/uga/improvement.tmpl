@@ -1,0 +1,153 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<a href="export.php?modus=buildings&amp;caveID={{ cave_id }}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a>
+<a href="export.php?modus=buildings&amp;caveID={{ cave_id }}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="30" height="30" alt="Export als Text" title="Export als Text" /></a><br />
+
+{% if quene_show %}
+  <div class="notice">
+    <ul>
+      <li> Momentan im Gange: Ausbau {{ quene_name }} auf Stufe {{ quene_nextlevel }} (fertig: {{ quene_finish }})</li>
+      <li><a href="main.php?modus={{ improvement_link }}&amp;action=cancelOrder&amp;id={{ quene_event_id }}&amp;caveID={{ cave_id }}">Abbrechen</a></li>
+    </ul>
+  </div>
+{% endif %}
+
+{% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+
+<div class="box">
+  <div class="box-header">Erweiterungen</div>
+  <div class="box-content success inner">
+    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      {% if improvement %}
+        {% for item in improvement %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('improvement_{{ item.building_id }}', this)" /></td>
+            <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+            <td class="td-imp-2">
+              <dl class="nodistance">
+                <dt><a href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dd class="">{% include "boxCost.tmpl" %}</dd>
+              </dl>
+            </td>
+            <td class="td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
+            <td class="td-size">Stufe: {{ item.currentlevel }}</td>
+            <td class="td-button-double text-right">
+              {% if item.build_link %}
+                <a href="main.php?modus={{ improvement_link }}&amp;action=build&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
+              {% else %}
+                <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
+              {% endif %}
+              {% if item.breakdown_link %}
+                <a href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a>
+              {% endif %}
+            </td>
+          </tr>
+          <tr class="bg{{ bgID }}" id="improvement_{{ item.building_id }}" style="display:none"><td>&nbsp;</td>
+            <td colspan="6">
+              <div style="float: left; width: 39%; max-width: 256px;">
+                <img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
+              </div>
+              <div style="float: left; width: 61%;">
+                <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
+                <br /><br />
+                <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
+                <br /><br />
+                <span class="bold">Maximale Stufe:</span> {{ item.maxlevel }} (derzeit: {{ item.currentlevel }})
+              </div>
+              <div style="clear: both;"></div>
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr class="bg1"><td>Zur Zeit kannst du leider keine Erweiterungen bauen.</td></tr>
+      {% endif %}
+      {% set bgID = 0 %}
+    </table>
+  </div>
+</div>
+
+<div class="success"><a href="{{ rules_path }}?modus=misc&amp;miscID=5" onclick="window.open(this.href); return false;">Übersicht zu allen Erweiterungen</a></div>
+
+{% if improvement_unqualified %}
+<div class="box">
+  <div class="box-header">Erweiterungen, die noch nicht gebaut werden können</div>
+  <div class="box-content success inner">
+    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      {% for item in improvement_unqualified %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{{ bgID }}">
+          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('improvement_{{ item.building_id }}', this)" /></td>
+          <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+          <td class="">
+            <dl class="nodistance">
+              <dt><a href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dd class="">{{ item.dependencies }}</dd>
+            </dl>
+          </td>
+        </tr>
+        <tr class="bg{{ bgID }}" id="improvement_{{ item.building_id }}" style="display:none"><td>&nbsp;</td>
+          <td colspan="7">
+            <div style="float: left; width: 39%; max-width: 256px;">
+              <img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
+            </div>
+            <div style="float: left; width: 61%;">
+              <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
+              <br /><br />
+              <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
+            </div>
+            <div style="clear: both;"></div>
+          </td>
+        </tr>
+      {% endfor %}
+      {% set bgID = 0 %}
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if improvement_relict %}
+<div class="box">
+  <div class="box-header">Relikte</div>
+  <div class="box-content success inner">
+    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      {% for item in improvement_relict %}
+      {% set bgID = (bgID+1)%2 %}
+      <tr class="bg{{ bgID }}">
+        <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('improvement_{{ item.building_id }}', this)" /></td>
+        <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+        <td class="">
+          <dl class="nodistance">
+            <dt><a href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+            <dd class="">{{ item.dependencies }}</dd>
+          </dl>
+        </td>
+        <td class="td-size">Stufe: {{ item.currentlevel }}</td>
+        <td class="td-button-single text-right"><a href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abrei&szlig;en" title="Abrei&szlig;en" /></a></td>
+      </tr>
+      <tr class="bg{{ bgID }}" id="improvement_{{ item.building_id }}" style="display:none"><td>&nbsp;</td>
+        <td colspan="6">
+          <div style="float: left; width: 39%; max-width: 256px;">
+            <img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
+          </div>
+          <div style="float: left; width: 61%;">
+            <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
+            <br /><br />
+            <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
+            <br /><br />
+            <span class="bold">Derzeitige Stufe:</span> {{ item.currentlevel }} 
+          </div>
+          <div style="clear: both;"></div>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

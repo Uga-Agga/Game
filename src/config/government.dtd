@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--tribeSystem-->
+<!ELEMENT tribeSystem (leaderDeterminations, governments)>
+<!--leaderDetermination-->
+<!ELEMENT leaderDeterminations (leaderDetermination+)>
+<!ELEMENT leaderDetermination (name, description)>
+<!ATTLIST leaderDetermination
+  leaderDeterminationID CDATA #REQUIRED
+>
+<!--governments-->
+<!ELEMENT governments (government+)>
+<!ELEMENT government (name, resref, leaderDeterminationID, description, effects?)>
+<!ATTLIST government
+  governmentID CDATA #REQUIRED
+>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT resref (#PCDATA)>
+<!ELEMENT leaderDeterminationID (#PCDATA)>
+<!ELEMENT description (p+)>
+<!ELEMENT p (#PCDATA)>
+<!--effects-->
+<!ELEMENT effects (effect+)*>
+<!ELEMENT effect (#PCDATA)>
+<!ATTLIST effect
+  effectID CDATA #REQUIRED
+  value CDATA #REQUIRED
+>
+<!--entities-->
+<!ENTITY apst "&amp;#39;">
+<!ENTITY auml "&amp;auml;">
+<!ENTITY ouml "&amp;ouml;">
+<!ENTITY uuml "&amp;uuml;">
+<!ENTITY Auml "&amp;Auml;">
+<!ENTITY Ouml "&amp;Ouml;">
+<!ENTITY Uuml "&amp;Uuml;">
+<!ENTITY szlig "&amp;szlig;">

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -e
+cd `dirname "$0"`
+
+install()
+{
+    {
+	echo 'CREATE DATABASE IF NOT EXISTS @GAME_DB_NAME@;'
+	for host in localhost @GAME_HOSTS@; do
+	    echo "GRANT SELECT,INSERT,UPDATE,DELETE ON @GAME_DB_NAME@.* TO
+		  '@GAME_DB_USER@'@'$host' IDENTIFIED BY '@GAME_DB_PASSWD@';"
+	done
+
+	echo 'USE @GAME_DB_NAME@;'
+	cat game.sql game_rules.sql
+    } | mysql -u root -p'@ROOT_DB_PASSWD@'
+}
+
+uninstall()
+{
+    {
+	for host in localhost @GAME_HOSTS@; do
+	    echo "REVOKE ALL ON @GAME_DB_NAME@.* FROM '@GAME_DB_USER@'@'$host';"
+	done
+	echo 'DROP DATABASE IF EXISTS @GAME_DB_NAME@;'
+    } | mysql -u root -p'@ROOT_DB_PASSWD@'
+}
+
+case $1
+in install)	install
+;; uninstall)	uninstall
+;; *)		echo "usage: $0 install|uninstall"
+esac

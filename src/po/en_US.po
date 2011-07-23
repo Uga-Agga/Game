@@ -1,0 +1,1350 @@
+# English translations for uga-agga package.
+# Copyright (C) 2006 THE uga-agga'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the uga-agga package.
+#  <team@uga-agga.de>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: uga-agga 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-04-14 19:32+0200\n"
+"PO-Revision-Date: 2006-02-11 18:42+0100\n"
+"Last-Translator: Johannes Roessel <joey@uga-agga.de>\n"
+"Language-Team: English <en@translate.freefriends.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: game/include/questionnaire.html.php:324
+msgid "\"Dieses Geschenk kann ich euch nicht anbieten, Häuptling!\""
+msgstr "\"I can't give you this present, chieftain!\""
+
+#: game/include/questionnaire.html.php:335
+msgid ""
+"\"Ich bin mit dem Schnecken abzählen durcheinander gekommen, Häuptling! "
+"Versucht es noch einmal!\""
+msgstr ""
+"\"I got interrupted while counting the snails, please try it again, "
+"chieftain!\""
+
+#: game/include/questionnaire.html.php:331
+msgid "\"Ihr habt nicht die passenden Schnecken, Häuptling!\""
+msgstr "\"You don't have the snails I want, chieftain!\""
+
+#: game/include/message.html.php:46
+#, php-format
+msgid "%d Nachricht(en) erfolgreich gelöscht."
+msgstr "Successfully deleted %d messages."
+
+#: game/include/tribeAdmin.html.php:414
+#, php-format
+msgid "%s auflösen"
+msgstr "Disband %s"
+
+#: game/include/message.html.php:239
+msgid "&lt;leer&gt;"
+msgstr "&lt;empty&gt;"
+
+#: game/include/message.inc.php:35
+msgid "<b>ANKÜNDIGUNG</b>"
+msgstr "<b>ANNOUNCEMENT</b>"
+
+#: game/include/tribeDelete.html.php:57 game/include/delete.html.php:63
+#: game/include/cave.html.php:299 game/include/cave.html.php:331
+#: game/include/improvementDeleteConfirm.html.php:44
+msgid "Abbrechen"
+msgstr "Cancel"
+
+#: game/include/improvementDeleteConfirm.html.php:27
+msgid "Abreißen"
+msgstr "Raze"
+
+#: game/include/message.html.php:57 game/include/message.inc.php:510
+msgid "Absender"
+msgstr "Sender"
+
+#: www/main.php:386 game/include/delete.html.php:54
+msgid "Account löschen"
+msgstr "Delete account"
+
+#: www/menu.php:131
+msgid "Adressbuch"
+msgstr "Contacts"
+
+#: www/main.php:376 www/menu.php:128
+msgid "Aktive Effekte und Wunder"
+msgstr "Active effects"
+
+#: www/menu.php:140
+msgid "Alle Höhlen"
+msgstr "All caves"
+
+#: game/include/map.html.php:254 game/include/map.html.php:299
+#: game/include/cave.html.php:53
+msgid "Anfängerschutz aktiv"
+msgstr "Beginner protection active"
+
+#: www/main.php:113 game/include/cave.html.php:319
+msgid "Anfängerschutz beenden"
+msgstr "End beginner protection"
+
+#: game/lib/Movement.php:43
+msgid "Angreifen"
+msgstr "Attack"
+
+#: game/include/message.inc.php:31
+msgid "Artefakt"
+msgstr "Artifact"
+
+#: www/main.php:131
+msgid "Artefaktdetail"
+msgstr "Artifact detail"
+
+#: www/main.php:135
+msgid "Artefakte"
+msgstr "Artifacts"
+
+#: game/include/map.html.php:161
+#, php-format
+msgid "Artefakte: %d"
+msgstr "Artifacts: %d"
+
+#: www/menu.php:126
+msgid "Artefaktliste"
+msgstr "Artifact list"
+
+#: game/include/cave.html.php:287
+msgid "Aufgeben"
+msgstr "Really disband"
+
+#: game/include/improvement.html.php:169 game/include/externals.html.php:162
+msgid "Ausbau im Gange"
+msgstr "Building"
+
+#: game/include/unitbuild.html.php:152
+msgid "Ausbildung im Gange"
+msgstr "Training"
+
+#: www/main.php:367
+msgid "Auszeichnung"
+msgstr "Award"
+
+#: game/include/profile.html.php:146
+msgid "Avatar URL"
+msgstr "Avatar URL"
+
+#: game/include/tribe.html.php:43
+msgid "Bei der Aktion ist ein unerwarteter Datenbankfehler aufgetreten!"
+msgstr "An unexpected database error has occured."
+
+#: game/include/tribe.html.php:126
+msgid "Beitreten"
+msgstr "Join"
+
+#: game/include/profile.html.php:139
+msgid "Benutzerdaten"
+msgstr "User data"
+
+#: game/include/message.inc.php:29
+msgid "Benutzernachricht"
+msgstr "User message"
+
+#: game/include/profile.html.php:147 game/include/tribeAdmin.html.php:191
+msgid "Beschreibung"
+msgstr "Description"
+
+#: game/include/message.inc.php:513
+msgid "Betreff"
+msgstr "Subject"
+
+#: www/menu.php:143
+msgid "Bewegung"
+msgstr "Movement"
+
+#: www/main.php:316
+msgid "Beziehungen"
+msgstr "Relations"
+
+#: game/include/unitaction.html.php:168
+msgid "Bitte Bewegungsart auswählen!"
+msgstr "Please select a movement"
+
+#: game/include/unitbuild.html.php:31
+#, php-format
+msgid "Bitte korrekte Anzahl der Einheiten Angeben (1 ... %d)"
+msgstr "Please enter a valid number of units (1–%d)"
+
+#: game/include/tribe.html.php:115
+msgid "Buchstaben, Zahlen, Bindestriche"
+msgstr "Letters, numbers, dashes"
+
+#: game/include/questionnaire.html.php:387
+msgid "Danke für die Schnecken!"
+msgstr "Thank you for the snails!"
+
+#: game/include/improvement.html.php:31
+msgid "Das Gebäude konnte nicht abgerissen werden"
+msgstr "The building could not be razed"
+
+#: game/include/externals.html.php:521
+msgid "Das Gebäude konnte nicht abgerissen werden."
+msgstr "The building could not be razed"
+
+#: game/include/improvement.html.php:30
+msgid "Das Gebäude wurde erfolgreich abgerissen"
+msgstr "The building has been razed."
+
+#: game/include/externals.html.php:523
+msgid "Das Gebäude wurde erfolgreich abgerissen."
+msgstr "The building has been razed."
+
+#: game/include/tribe.html.php:37
+msgid "Das Passwort konnte nicht gesetzt werden!"
+msgstr "The password could not be set."
+
+#: game/include/profile.html.php:230
+msgid "Das Passwort muss mindestens 6 Zeichen lang sein!"
+msgstr "The password has to be at least 6 characters long!"
+
+#: game/include/profile.html.php:226
+msgid "Das Paßwort stimmt nicht mit der Wiederholung überein."
+msgstr "The password does not match its repeated instance"
+
+#: game/include/delete.html.php:40
+msgid ""
+"Das löschen Ihres Accounts ist fehlgeschlagen. Bitte wenden Sie sich an das "
+"Support Team."
+msgstr "Your account could not be deleted. Please contact support."
+
+#: game/include/tribeDelete.html.php:35
+msgid ""
+"Das löschen des Stammes ist fehlgeschlagen. Bitte wenden Sie sich an das "
+"Support Team."
+msgstr "Your tribe could not be deleted. Please contact support."
+
+#: game/include/message.inc.php:512
+msgid "Datum"
+msgstr "Date"
+
+#: game/include/unitaction.html.php:180
+msgid "Deine Krieger können die Menge an Ressourcen nicht tragen!!"
+msgstr "Your warriors are unable to carry this load"
+
+#: game/include/message.inc.php:559
+msgid "Deine Uga-Agga InGame Nachrichten"
+msgstr "Your ingame messages"
+
+#: game/include/tribeAdmin.html.php:75
+msgid "Den Stamm gibt es nicht!"
+msgstr "This tribe does not exist."
+
+#: game/include/tribeAdmin.html.php:413
+msgid "Den gesamten Stamm auflösen. Alle Mitglieder sind danach stammeslos."
+msgstr "Disband this tribe. All members have no trive after this."
+
+#: game/include/unitbuild.html.php:27 game/include/improvement.html.php:26
+#: game/include/externals.html.php:441
+msgid "Der Arbeitsauftrag wurde erfolgreich gestoppt."
+msgstr "The work has been stopped."
+
+#: game/include/unitbuild.html.php:29 game/include/improvement.html.php:28
+#: game/include/externals.html.php:637 game/include/externals.html.php:658
+#: game/include/science.html.php:29
+msgid ""
+"Der Auftrag konnte nicht erteilt werden. Es fehlen die notwendigen "
+"Voraussetzungen."
+msgstr "This order could not be started. Certain prerequisites are missing."
+
+#: game/include/unitbuild.html.php:30 game/include/improvement.html.php:29
+#: game/include/science.html.php:30
+msgid "Der Auftrag wurde erteilt"
+msgstr "The order has been started."
+
+#: game/include/externals.html.php:660
+msgid "Der Auftrag wurde erteilt."
+msgstr "The order has been started"
+
+#: game/include/science.html.php:27
+msgid "Der Forschungsauftrag wurde erfolgreich gestoppt."
+msgstr "Research has been halted successfully."
+
+#: game/include/tribeAdmin.html.php:79
+msgid ""
+"Der Spieler ist ebenfalls Stammesanführer und kann nicht gekickt werden. Er "
+"kann nur freiwillig gehen."
+msgstr ""
+"This player is tribe leader and therefore can't be kicked. He can only leave "
+"voluntarily."
+
+#: game/include/tribeAdmin.html.php:80
+msgid "Der Spieler konnte nicht gekickt werden!"
+msgstr "The player could not be kicked."
+
+#: game/include/tribeAdmin.html.php:82
+msgid "Der Spieler wurde erfolgreich gekickt."
+msgstr "The player has been kicked."
+
+#: game/include/tribe.html.php:32
+msgid ""
+"Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen "
+"Mitglieder aufnehmen."
+msgstr "This tribe is at war and is unable to accept new menbers."
+
+#: game/include/tribeAdmin.html.php:63
+msgid ""
+"Der Stamm hat noch nicht genug Mitglieder um Beziehungen eingehen zu dürfen"
+msgstr ""
+"This tribe does not have enough members to build up relations to other "
+"tribes."
+
+#: game/include/tribe.html.php:38
+msgid "Der Stamm konnte nicht angelegt werden."
+msgstr "The tribe could not be created."
+
+#: game/include/tribeDelete.html.php:32
+msgid ""
+"Der Stamm wurde aufgelöst. Alle Mitglieder sind jetzt wieder stammeslos. Das "
+"Stammesmenü funktioniert bei allen erst nach dem nächsten einloggen wieder."
+msgstr ""
+"The tribe has been disbanded. All members are without a tribe now. The tribe "
+"menu will only work after logging in again."
+
+#: game/include/tribe.html.php:46
+msgid "Der Stamm wurde erfolgreich angelegt."
+msgstr "The tribe has been created."
+
+#: game/include/questionnaire.html.php:47
+msgid "Derzeit liegen keine weiteren Fragen vor."
+msgstr "No more questions at the moment."
+
+#: game/include/tribeAdmin.html.php:61
+msgid "Die Beziehung des anderen Stammes erlauben kein Kriegsbündniss."
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:78
+msgid "Die Beziehung konnte aufgrund eines Fehlers nicht aktualisiert werden."
+msgstr "The relation could not be updated due to an error."
+
+#: game/include/tribeAdmin.html.php:66
+msgid ""
+"Die Beziehung wurde nicht geändert, weil der ausgewählte Beziehungstyp "
+"bereits eingestellt ist."
+msgstr ""
+"The relation has not been changed because the chosen relation type is "
+"already selected."
+
+#: game/include/tribeAdmin.html.php:84
+msgid "Die Beziehung wurde umgestellt."
+msgstr "The relation has been changed"
+
+#: game/include/profile.html.php:218 game/include/profile.html.php:235
+#: game/include/tribeAdmin.html.php:83
+msgid ""
+"Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert "
+"werden."
+msgstr "Some data could not be updated completely."
+
+#: game/include/profile.html.php:238 game/include/tribeAdmin.html.php:81
+msgid "Die Daten wurden erfolgreich aktualisiert."
+msgstr "Successfully updated."
+
+#: game/include/unitaction.html.php:260
+msgid "Die Einheiten kehren zurück!"
+msgstr "Your warriors are on their way back."
+
+#: game/include/map.html.php:51
+#, php-format
+msgid "Die Höhle mit dem Namen: \"%s\" befindet sich in (%d|%d)."
+msgstr "The cave \"%s\" is in (%d|%d)."
+
+#: game/include/map.html.php:47
+#, php-format
+msgid "Die Höhle mit dem Namen: \"%s\" konnte nicht gefunden werden!"
+msgstr "A cave \"%s\" could not be found!"
+
+#: game/include/map.html.php:63
+#, php-format
+msgid "Die Höhle mit der ID: \"%d\" befindet sich in (%d|%d)."
+msgstr "The cave with ID \"%d\" is in (%d|%d)."
+
+#: game/include/map.html.php:59
+#, php-format
+msgid "Die Höhle mit der ID: \"%d\" konnte nicht gefunden werden!"
+msgstr "The cave with ID \"%d\" could not be found!"
+
+#: game/include/unitaction.html.php:246
+#, php-format
+msgid "Die Krieger wurden losgeschickt und haben %d Nahrung mitgenommen!"
+msgstr "The warriors are on their way and took %d food with them!"
+
+#: game/include/tribeAdmin.html.php:77
+msgid "Die Mindestlaufzeit läuft noch!"
+msgstr "The minimum runtime is still active."
+
+#: game/include/tribeAdmin.html.php:69
+#, php-format
+msgid ""
+"Die Moral des Gegners ist noch nicht schlecht genug. Sie muss unter %d "
+"sinken. Eine weitere Chance besteht, wenn die Mitgliederzahl des "
+"gegnerischen Stammes um 30 Prozent gesunken ist. Das Verhältnis Eurer "
+"Rankingpunkte zu denen des Gegners muss sich seit Kriegsbeginn verdoppelt "
+"haben."
+msgstr ""
+"The enemy tribe's moral is not bad enough yet. It has to drop below %d. "
+"Another chance would be to reduce the enemy tribe's members by 30 percent. "
+"The ratio of the two tribe's ranking points has to be doubled since the "
+"beginning of the war."
+
+#: game/include/tribe.html.php:35
+msgid "Die Nachricht konnte nicht eingetragen werden."
+msgstr "The message could not be submitted."
+
+#: game/include/tribe.html.php:48
+msgid "Die Nachricht wurde eingetragen"
+msgstr "The message has been submitted."
+
+#: game/include/tribeAdmin.html.php:73
+msgid "Die Regierung konnte aufgrund eines Fehlers nicht aktualisiert werden"
+msgstr "The governmeng could not be changed due to an error."
+
+#: game/include/tribeAdmin.html.php:72
+msgid ""
+"Die Regierung konnte nicht geändert werden, weil sie erst vor kurzem "
+"geändert wurde."
+msgstr "The government could not be changed because it changed recently."
+
+#: game/include/tribeAdmin.html.php:85
+msgid "Die Regierung wurde geändert."
+msgstr "The government has changed."
+
+#: game/include/tribe.html.php:33 game/include/tribeAdmin.html.php:64
+msgid ""
+"Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis "
+"die Stammeszugehörigkeit geändert werden darf."
+msgstr ""
+"Your tribe affiliation has changed recently. Please wait until it can change "
+"again."
+
+#: game/include/tribeLeaderDetermination.html.php:75
+msgid "Die Stimme konnte wegen eines Fehlers nicht abgegeben werden."
+msgstr "You vote could not be registered due to an error."
+
+#: game/include/tribeLeaderDetermination.html.php:76
+msgid "Die Stimme wurde erfolgreich gezählt."
+msgstr "Your vote has been registered."
+
+#: game/include/unitaction.html.php:183
+msgid "Die Zielhöhle steht unter Anfängerschutz."
+msgstr "The target cave is under beginner protection."
+
+#: game/include/tribeAdmin.html.php:71
+msgid "Die zu ändernde Beziehung wurde nicht gefunden!"
+msgstr "The relation could not be found."
+
+#: game/include/tribeAdmin.html.php:59
+msgid "Dies darf nur der Stammesanführer tun."
+msgstr ""
+
+#: www/menu.php:125
+msgid "Diese Höhle"
+msgstr "This cave"
+
+#: www/main.php:94
+msgid "Diese Höhle gehört nicht ihnen."
+msgstr "This cave does not belong to your tribe."
+
+#: game/include/cave.html.php:25
+msgid "Diese Höhle kann nicht aufgegeben werden."
+msgstr "This cave can't be abandoned."
+
+#: game/include/award.html.php:35
+#, php-format
+msgid "Dieser Orden existiert nicht: \"%s\"."
+msgstr "This award does not exist: \"%s\"."
+
+#: game/include/tribeAdmin.html.php:58
+#, fuzzy
+msgid "Dieser Spieler ist nicht im Stamm."
+msgstr "This tribe name is not allowed!"
+
+#: game/include/tribe.html.php:49
+msgid "Dieser Stammesname ist nicht erlaubt!"
+msgstr "This tribe name is not allowed!"
+
+#: game/include/artefact.inc.php:251
+msgid "Dieses Artefakt kann nicht noch einmal eingeweiht werden."
+msgstr "This artifact can't be initiated again."
+
+#: game/include/science.html.php:31
+msgid "Dieses Wissen wird schon in einer anderen Höhle erforscht."
+msgstr "This knowledge is already being researched in another cave."
+
+#: game/include/takeover.html.php:146
+msgid "Du bietest bereits für diese Höhle."
+msgstr "You are already proselytizing this cave."
+
+#: game/include/tribe.html.php:108
+msgid "Einem Stamm beitreten"
+msgstr "Join a tribe"
+
+#: game/include/tribe.html.php:137
+msgid "Einen neuen Stamm gründen"
+msgstr "Found a tribe"
+
+#: game/include/message.inc.php:24
+msgid "Einheit ausgebildet"
+msgstr "Unit trained."
+
+#: www/menu.php:144 game/include/unit_properties.html.php:135
+#: game/include/science_detail.html.php:176
+#: game/include/improvement_building_detail.html.php:175
+#: game/include/externals.html.php:379 game/include/wonderDetail.html.php:141
+msgid "Einheiten"
+msgstr "Units"
+
+#: www/main.php:261
+msgid "Einheiten bauen"
+msgstr "Build units"
+
+#: www/main.php:272
+msgid "Einheiten bewegen"
+msgstr "Move units"
+
+#: game/lib/Movement.php:42
+msgid "Einheiten/Rohstoffe verschieben"
+msgstr "Move units/resources"
+
+#: www/main.php:267
+msgid "Einheitsattribute"
+msgstr "Unit attributes"
+
+#: www/main.php:381
+msgid "Einstellungen"
+msgstr "Settings"
+
+#: game/include/map.html.php:114
+msgid "Einöde"
+msgstr "Wasteland"
+
+#: game/include/profile.html.php:142
+msgid "Email"
+msgstr "E-Mail"
+
+#: game/include/profile.html.php:143
+msgid "Email 2"
+msgstr "E-Mail 2"
+
+#: game/include/message.html.php:58 game/include/message.inc.php:511
+msgid "Empfänger"
+msgstr "Recipient"
+
+#: www/menu.php:147
+msgid "Entdeckungen"
+msgstr "Discoveries"
+
+#: game/include/science.html.php:154
+msgid "Erforschung im Gange"
+msgstr "Research in progress"
+
+#: www/menu.php:146 game/include/unit_properties.html.php:119
+#: game/include/science_detail.html.php:160
+#: game/include/improvement_building_detail.html.php:159
+#: game/include/externals.html.php:363 game/include/wonderDetail.html.php:125
+msgid "Erweiterungen"
+msgstr "Structures"
+
+#: www/main.php:199
+msgid "Erweiterungen einreissen"
+msgstr "Raze structures"
+
+#: www/main.php:194
+msgid "Erweiterungen errichten"
+msgstr "Build structures"
+
+#: game/include/artefact.inc.php:291
+msgid "Es fehlen die notwendigen Voraussetzungen."
+msgstr "Prerequisites are missing."
+
+#: game/include/unitaction.html.php:174
+msgid "Es fehlt eine Zielkoordinate oder ein Zielhöhlenname!"
+msgstr "A target coordinate or cave name is missing!"
+
+#: game/include/unitaction.html.php:177
+#, php-format
+msgid "Es gibt keine Höhle mit dem Namen \"%s\"!"
+msgstr "There is no cave named \"%s\"!"
+
+#: game/include/tribe.html.php:39
+msgid "Es gibt schon einen Stamm mit diesem Kürzel;"
+msgstr "There is already a tribe with this tag;"
+
+#: game/include/tribeAdmin.html.php:60
+msgid "Es ist kein gleicher Vorkriegsgegner vorhanden."
+msgstr ""
+
+#: game/include/unitbuild.html.php:28 game/include/improvement.html.php:27
+#: game/include/externals.html.php:443
+msgid "Es konnte kein Arbeitsauftrag gestoppt werden."
+msgstr "The work could not be stopped."
+
+#: game/include/science.html.php:28
+msgid "Es konnte kein Forschungsauftrag gestoppt werden."
+msgstr "Research could not be stopped."
+
+#: game/include/unitaction.html.php:171
+msgid "Es sind keine Einheiten ausgewählt!"
+msgstr "No units selected!"
+
+#: game/include/science.html.php:32
+msgid ""
+"Es wird gerade in einer anderen Höhle Wissen erforscht, dass dieses Wissen "
+"ausschließt."
+msgstr ""
+"You are researching knowledge in another cave that is mutually exclusive "
+"with this one."
+
+#: game/include/questionnaire.html.php:384
+msgid "Eure Geschenke sind nun in eurer Höhle!"
+msgstr "The presents are in your cave now!"
+
+#: game/include/tribeAdmin.html.php:67
+msgid ""
+"Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so großen "
+"Stamm einzugehen."
+msgstr "Your subjects refuse this relationship to a tribe that large."
+
+#: game/include/tribeAdmin.html.php:68
+msgid ""
+"Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so kleinen "
+"Stamm einzugehen."
+msgstr "Your subjects refuse this relationship to a tribe that small."
+
+#: www/main.php:93 game/include/artefact.html.php:143
+#: game/include/tribe.html.php:151 game/include/questionnaire.html.php:120
+#: game/include/questionnaire.html.php:149
+#: game/include/questionnaire.html.php:162
+#: game/include/questionnaire.html.php:208
+#: game/include/questionnaire.html.php:319
+#: game/include/questionnaire.html.php:368
+#: game/include/questionnaire.html.php:375
+msgid "Fehler"
+msgstr "Error"
+
+#: game/include/unitaction.html.php:261
+msgid "Fehler bei der Rückkehr!"
+msgstr "Error while returning!"
+
+#: game/include/message.html.php:246
+msgid ""
+"Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass "
+"es den angegebenen Empfänger gibt."
+msgstr ""
+"Error! The message could not be sent. Are you sure, this recipient exists?"
+
+#: game/include/artefact.inc.php:313
+msgid "Fehler: Artefakt konnte nicht auf ARTEFACT_INITIATING gestellt werden."
+msgstr "Error: Atrifact could not be set to ARTEFACT_INITIATING."
+
+#: game/include/artefact.inc.php:257
+msgid "Fehler: Ritual nicht gefunden."
+msgstr "Error: Ritual not found."
+
+#: www/main.php:252 game/include/unit_properties.html.php:131
+#: game/include/science_detail.html.php:172
+#: game/include/improvement_building_detail.html.php:171
+#: game/include/externals.html.php:375 game/include/wonderDetail.html.php:137
+msgid "Forschungen"
+msgstr "Research"
+
+#: www/main.php:340 www/menu.php:130
+msgid "Fragebogen"
+msgstr "Questionnaire"
+
+#: www/main.php:345
+msgid "Fragebogen Treuebonus"
+msgstr "Questionnaire constancy bonus"
+
+#: game/include/map.html.php:110
+msgid "Frei!"
+msgstr "Free!"
+
+#: game/include/unitaction.html.php:250
+msgid "Für diese Bewegung sind nicht genügend Einheiten/Rohstoffe verfügbar!"
+msgstr "You have not enought units/resources for this movement!"
+
+#: www/main.php:204
+msgid "Gebäudeerweiterungen"
+msgstr "Structure extensions"
+
+#: game/include/profile.html.php:141
+msgid "Geschlecht"
+msgstr "Sex"
+
+#: game/include/profile.html.php:176
+msgid "Grafikpack"
+msgstr "GFX pack"
+
+#: game/include/message.inc.php:546
+msgid ""
+"Hallo,\n"
+"\n"
+"du hast im Nachrichten Fenster auf den Knopf 'Mailen&löschen' gedrückt. Die "
+"dabei markierten Nachrichten werden dir nun mit dieser Email zugesandt. Um "
+"den Datenverkehr gering zu halten, wurden dabei deine Nachrichten "
+"komprimiert. Mit einschlägigen Programmen wie WinZip lässt sich diese Datei "
+"entpacken.\n"
+"\n"
+"Gruß, dein UA-Team"
+msgstr ""
+"Hallo,\n"
+"\n"
+"you clicked the button 'Mail & delete' in the message box. The selected "
+"messages are hereby sent to you by mail. To minimize traffic load the "
+"messages has been compressed.\n"
+"\n"
+"your UA Team"
+
+#: game/include/message.inc.php:25
+msgid "Handelsbericht"
+msgstr "Trade report"
+
+#: game/include/cave.html.php:57
+msgid "Haupthöhle"
+msgstr "Main cave"
+
+#: game/include/profile.html.php:144
+msgid "Herkunft"
+msgstr "Origin"
+
+#: www/menu.php:134
+msgid "Hilfe"
+msgstr "Help"
+
+#: www/main.php:108
+msgid "Höhle aufgeben"
+msgstr "Give up cave"
+
+#: www/main.php:103
+msgid "Höhlen-Übersicht"
+msgstr "Cave summary"
+
+#: www/main.php:185
+msgid "Höhlenbericht"
+msgstr "Cave report"
+
+#: www/main.php:98
+msgid "Höhlendetails"
+msgstr "Cave details"
+
+#: www/main.php:180
+msgid "Höhlenkarte"
+msgstr "Cave map"
+
+#: www/menu.php:132
+msgid "Höhlenliste"
+msgstr "Cave list"
+
+#: game/include/profile.html.php:145
+msgid "ICQ#"
+msgstr "ICQ UIN"
+
+#: game/include/delete.html.php:36
+msgid ""
+"Ihr Account wurde zur Löschung vorgemerkt. Sie sind jetzt ausgeloggt und "
+"können das Fenster schließen."
+msgstr ""
+"Your account has been marked as deleted. You are logged out and can close "
+"the window."
+
+#: game/include/tribeAdmin.html.php:55
+msgid ""
+"Ihr Kriegsanteil ist nicht hoch genug, um den Gegner zur Aufgabe zu zwingen."
+msgstr ""
+
+#: game/include/tribe.html.php:34 game/include/tribeAdmin.html.php:65
+msgid "Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten."
+msgstr "Your tribe is at war. You are not allowed to leave your tribe."
+
+#: game/include/tribe.html.php:203
+msgid "Ihr Stamm hat zur Zeit keinen Anführer."
+msgstr "Your tribe has no leader at the moment."
+
+#: game/include/unitaction.html.php:186
+msgid ""
+"Ihre Höhle steht unter Anfängerschutz. Sie können den Schutz sofort unter "
+"dem Punkt <a href=\"?modus=cave_detail\">Bericht über diese Höhle</a> beenden"
+msgstr ""
+
+#: game/include/message.html.php:244
+msgid "Ihre Nachricht wurde verschickt!"
+msgstr ""
+
+#: game/include/unitaction.html.php:248
+msgid "In diesen Koordinaten liegt keine Höhle!"
+msgstr ""
+
+#: game/include/message.inc.php:21
+msgid "Information"
+msgstr ""
+
+#: www/menu.php:142
+msgid "Karte"
+msgstr ""
+
+#: www/main.php:88
+msgid "Keine Höhle mehr"
+msgstr ""
+
+#: game/include/questionnaire.html.php:121
+#: game/include/questionnaire.html.php:150
+msgid "Keine derartigen Fragen!"
+msgstr ""
+
+#: game/include/tribeLeaderDetermination.html.php:98
+msgid "Keiner"
+msgstr ""
+
+#: www/main.php:89
+msgid ""
+"Leider besitzen sie keine Höhle mehr. Löschen sie diesen Account, und legen "
+"sie sich einen neuen an."
+msgstr ""
+
+#: www/menu.php:151
+msgid "Logout"
+msgstr ""
+
+#: game/include/profile.html.php:155
+msgid "Lokalisierung"
+msgstr ""
+
+#: game/include/improvement.html.php:177 game/include/externals.html.php:172
+#: game/include/science.html.php:162
+msgid "Max. Stufe"
+msgstr ""
+
+#: game/include/externals.html.php:70
+msgid "Max. Stufe: 0"
+msgstr ""
+
+#: www/main.php:358
+msgid "Mein Held"
+msgstr ""
+
+#: www/menu.php:127
+msgid "Mein Stamm"
+msgstr ""
+
+#: www/main.php:281 www/menu.php:149
+msgid "Missionieren"
+msgstr ""
+
+#: www/main.php:415
+msgid "Modus nicht bekannt"
+msgstr ""
+
+#: game/include/improvementDeleteConfirm.html.php:24
+#, php-format
+msgid "Möchten Sie 1 %s abreissen?"
+msgstr ""
+
+#: game/include/delete.html.php:51
+msgid ""
+"Möchten Sie Ihren Account unwiderruflich löschen? Ihre gesamten Spieldaten "
+"gehen verloren, ein neuerliches einloggen als dieser Spieler ist nicht "
+"möglich. <br /> Allerdings steht Ihnen die Emailadresse anschließend für "
+"eine Neuanmeldung zur Verfügung. <br /> Beachten Sie, daß Ihre Höhle noch "
+"für einige Zeit nach der Löschung für andere Spieler sichtbar ist, da die "
+"Löschungen aus der Datenbank nur einmal am Tag vorgenommen werden."
+msgstr ""
+
+#: game/include/cave.html.php:313
+#, php-format
+msgid ""
+"Möchten Sie den Anfängerschutz in Höhle %s wirklich unwiderruflich aufgeben? "
+"Sie können dann ab sofort angreifen, aber auch angegriffen werden!"
+msgstr ""
+
+#: game/include/cave.html.php:281
+#, php-format
+msgid ""
+"Möchten Sie die Höhle %s wirklich aufgeben? Sie verlieren die Kontrolle über "
+"alle Rohstoffe und alle Einheiten, die sich hier befinden!"
+msgstr ""
+
+#: game/include/tribeDelete.html.php:44
+msgid ""
+"Möchten Sie diesen Stamm unwiderruflich löschen? Ihre gesamten Stammesdaten "
+"gehen verloren."
+msgstr ""
+
+#: www/main.php:149
+msgid "Nachricht lesen"
+msgstr ""
+
+#: www/main.php:154
+msgid "Nachricht schreiben"
+msgstr ""
+
+#: www/main.php:144 www/menu.php:141
+msgid "Nachrichten"
+msgstr ""
+
+#: game/include/profile.html.php:140 game/include/tribeAdmin.html.php:176
+msgid "Name"
+msgstr ""
+
+#: game/include/tribe.html.php:139
+msgid "Neu gründen"
+msgstr ""
+
+#: game/include/profile.html.php:184
+msgid "Neues Passwort"
+msgstr ""
+
+#: game/include/profile.html.php:185
+msgid "Neues Passwort - Wiederholung"
+msgstr ""
+
+#: game/include/unitaction.html.php:234
+msgid ""
+"Nicht genug Nahrung zum Ernähren der Krieger auf ihrem langen Marsch "
+"vorhanden!"
+msgstr ""
+
+#: game/include/message.inc.php:32
+msgid "Niederlage!"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:56
+msgid "Nur in der Demokratie sind solche Wahlen m&ouml;glich."
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:184
+msgid "Password"
+msgstr ""
+
+#: game/include/tribe.html.php:42
+msgid "Passwort und Stammeskürzel stimmen nicht überein."
+msgstr ""
+
+#: game/include/profile.html.php:183
+msgid "Passwort-Änderung"
+msgstr ""
+
+#: game/include/profile.html.php:177
+#, php-format
+msgid "Pfad zum Grafikpack<br />(default:%s)"
+msgstr ""
+
+#: game/include/message.html.php:58
+msgid "Postausgang"
+msgstr ""
+
+#: game/include/message.html.php:57
+msgid "Posteingang"
+msgstr ""
+
+#: game/include/questionnaire.html.php:169
+msgid "Probleme beim Eintragen der Bonuspunkte."
+msgstr ""
+
+#: game/include/questionnaire.html.php:377
+msgid "Probleme beim UPDATE des Geschenks"
+msgstr ""
+
+#: www/menu.php:129
+msgid "Profil"
+msgstr ""
+
+#: www/menu.php:150
+msgid "Punktzahl"
+msgstr ""
+
+#: game/include/message.inc.php:22
+msgid "Quest"
+msgstr ""
+
+#: game/include/unit_properties.html.php:127
+#: game/include/science_detail.html.php:168
+#: game/include/improvement_building_detail.html.php:167
+#: game/include/externals.html.php:371 game/include/wonderDetail.html.php:133
+msgid "Rohstoffe"
+msgstr ""
+
+#: game/lib/Movement.php:41
+msgid "Rohstoffe bringen"
+msgstr ""
+
+#: game/include/message.inc.php:26 game/lib/Movement.php:45
+msgid "Rückkehr"
+msgstr ""
+
+#: game/include/unitaction.html.php:252
+msgid "Schwerer Fehler: Bitte Admin kontaktieren!"
+msgstr ""
+
+#: game/include/takeover.html.php:190
+#, php-format
+msgid "Sie bieten nun für die Höhle in (%d|%d)."
+msgstr ""
+
+#: game/include/takeover.html.php:90
+#, php-format
+msgid "Sie haben bereits die maximale Anzahl von %d Höhlen erreicht."
+msgstr ""
+
+#: game/include/cave.html.php:31
+msgid "Sie haben den Anfängerschutz abgeschaltet."
+msgstr ""
+
+#: game/include/tribe.html.php:45
+msgid "Sie haben den Stamm verlassen."
+msgstr ""
+
+#: game/include/takeover.html.php:245
+msgid "Sie haben ihr Angebot zurückgezogen."
+msgstr ""
+
+#: game/include/tribeLeaderDetermination.html.php:58
+msgid "Sie haben keinen Einfluß auf die Bestimmung des Stammesanführers."
+msgstr ""
+
+#: game/include/cave.html.php:23
+msgid "Sie haben sich aus dieser Höhle zurückgezogen."
+msgstr ""
+
+#: game/include/improvement.html.php:32 game/include/externals.html.php:488
+msgid "Sie haben von der Sorte gar keine Gebäude"
+msgstr ""
+
+#: game/include/tribe.html.php:41
+msgid ""
+"Sie konnten dem Stamm nicht beitreten. Vermutlich sind Sie schon bei einem "
+"anderen Stamm Mitglied."
+msgstr ""
+
+#: game/include/cave.html.php:34
+msgid "Sie konnten den Anfängerschutz nicht abschalten."
+msgstr ""
+
+#: game/include/takeover.html.php:232 game/include/takeover.html.php:243
+msgid "Sie konnten ihr Angebot nicht zurückziehen."
+msgstr ""
+
+#: game/include/tribe.html.php:40
+msgid ""
+"Sie konnten nicht austreten. Vermutlich gehören Sie gar keinem Stamm an."
+msgstr ""
+
+#: game/include/improvement.html.php:33 game/include/externals.html.php:484
+#, php-format
+msgid ""
+"Sie können derzeit kein Gebäude oder Verteidigungen abreissen, weil erst vor "
+"Kurzem etwas in dieser Höhle abgerissen wurde. Generell muss zwischen zwei "
+"Abrissen eine Zeitspanne von %d Minuten liegen."
+msgstr ""
+
+#: game/include/unitaction.html.php:189
+msgid ""
+"Sie können diese Höhle nicht übernehmen. Sie ist gegen Übernahmen geschützt."
+msgstr ""
+
+#: game/include/unitaction.html.php:192
+msgid ""
+"Sie können im Krieg keine Einheiten zu unbeteiligten Parteien verschieben!"
+msgstr ""
+
+#: game/include/unitaction.html.php:195
+msgid ""
+"Sie können keine Einheiten zu kriegführenden Stämmen verschieben, wenn Sie "
+"unbeteiligt sind."
+msgstr ""
+
+#: game/include/takeover.html.php:181 game/include/takeover.html.php:185
+#: game/include/takeover.html.php:192
+msgid "Sie können nicht für diese Höhle bieten. Wählen sie eine freie Höhle."
+msgstr ""
+
+#: game/include/tribe.html.php:44
+msgid "Sie sind dem Stamm beigetreten."
+msgstr ""
+
+#: game/include/tribe.html.php:36
+msgid "Sie sind der Stammesanführer und konnten nicht entfernt werden."
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:57
+msgid "Sie sind schon Stammesanführer."
+msgstr ""
+
+#: game/include/tribe.html.php:47
+msgid "Sie waren das letzte Mitglied, der Stamm wurde aufgelöst"
+msgstr ""
+
+#: game/include/artefact.inc.php:306
+msgid "Sie weihen bereits ein anderes Artefakt ein."
+msgstr ""
+
+#: game/include/message.inc.php:23
+msgid "Sieg!"
+msgstr ""
+
+#: www/menu.php:133
+msgid "Spenden"
+msgstr ""
+
+#: www/main.php:391
+msgid "Spielerbeschreibung"
+msgstr ""
+
+#: www/main.php:290
+msgid "Spielerranking"
+msgstr ""
+
+#: game/include/message.inc.php:30
+msgid "Spionage"
+msgstr ""
+
+#: game/lib/Movement.php:44
+msgid "Spionieren"
+msgstr ""
+
+#: game/include/profile.html.php:156
+msgid "Sprache"
+msgstr ""
+
+#: game/include/tribeDelete.html.php:48 game/include/tribeAdmin.html.php:412
+msgid "Stamm auflösen"
+msgstr ""
+
+#: www/main.php:311 www/main.php:326
+msgid "Stamm verwalten"
+msgstr ""
+
+#: www/main.php:331
+msgid "Stammesanführer bestimmen"
+msgstr ""
+
+#: www/main.php:396
+msgid "Stammesbeschreibung"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:170
+msgid "Stammesdaten"
+msgstr ""
+
+#: www/main.php:321
+msgid "Stammesgeschichte"
+msgstr ""
+
+#: www/main.php:401
+msgid "Stammesmitglieder..."
+msgstr ""
+
+#: game/include/message.inc.php:27
+msgid "Stammesnachricht"
+msgstr ""
+
+#: www/main.php:296
+msgid "Stammesranking"
+msgstr ""
+
+#: www/main.php:306
+msgid "Stämme"
+msgstr ""
+
+#: game/include/message.inc.php:102 game/include/message.inc.php:130
+#: game/include/message.inc.php:162
+msgid "System"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:172
+msgid "Tag"
+msgstr ""
+
+#: game/include/profile.html.php:166 game/include/profile.html.php:167
+msgid "Template auswählen"
+msgstr ""
+
+#: www/main.php:118
+msgid "Termin-Übersicht"
+msgstr ""
+
+#: www/menu.php:139
+msgid "Terminkalender"
+msgstr ""
+
+#: game/include/message.inc.php:33
+msgid "Uga-Agga Team"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:62
+msgid "Unsere aktuelle Beziehung erlaubt kein Kriegsbündniss."
+msgstr ""
+
+#: www/main.php:159
+msgid "Verschicken einer Nachricht"
+msgstr ""
+
+#: www/menu.php:145
+msgid "Verteidigung"
+msgstr ""
+
+#: game/include/unit_properties.html.php:123
+#: game/include/science_detail.html.php:164
+#: game/include/improvement_building_detail.html.php:163
+#: game/include/externals.html.php:367 game/include/wonderDetail.html.php:129
+msgid "Verteidigungsanlagen"
+msgstr ""
+
+#: www/main.php:238
+msgid "Verteidigungsanlagen und externe Gebäude"
+msgstr ""
+
+#: www/main.php:233
+msgid "Verteidigungsanlagen und externe Gebäude einreissen"
+msgstr ""
+
+#: www/main.php:228
+msgid "Verteidigungsanlagen und externe Gebäude errichten"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:76
+msgid ""
+"Von der derzeitigen Beziehung kann nicht direkt auf die ausgewählte "
+"Beziehungsart gewechselt werden."
+msgstr ""
+
+#: www/menu.php:153
+msgid "Vorschläge"
+msgstr ""
+
+#: game/include/wonder.inc.php:21
+msgid "Wirkungshöhle"
+msgstr ""
+
+#: www/main.php:247
+msgid "Wissen erforschen"
+msgstr ""
+
+#: www/main.php:218 www/menu.php:148 game/include/message.inc.php:28
+msgid "Wunder"
+msgstr ""
+
+#: www/main.php:213
+msgid "Wunder erwirken"
+msgstr ""
+
+#: game/include/tribeLeaderDetermination.html.php:114
+#: game/include/tribeAdmin.html.php:204
+msgid "Wählen"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:74
+msgid "Zu sich selber kann man keine Beziehungen aufnehmen!"
+msgstr ""
+
+#: www/menu.php:152
+msgid "Zum Forum"
+msgstr ""
+
+#: game/include/takeover.html.php:142
+msgid "Zum Wechseln mußt du sowohl die x- als auch die y-Koordinate angeben."
+msgstr ""
+
+#: game/include/wonder.inc.php:22
+msgid "eigene Höhlen"
+msgstr ""
+
+#: game/include/artefact.html.php:142
+msgid "eingeweiht"
+msgstr ""
+
+#: game/include/artefact.inc.php:314
+msgid "erfolgreich eingeweiht"
+msgstr ""
+
+#: game/include/wonder.inc.php:23
+msgid "fremde Höhlen"
+msgstr ""
+
+#: game/include/tribes.inc.php:1715
+#, php-format
+msgid "gründet den Stamm '%s'"
+msgstr ""
+
+#: game/include/wonder.inc.php:24
+msgid "jede Höhle"
+msgstr ""
+
+#: game/include/playerDetail.html.php:45
+msgid "k.A."
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:221
+msgid "keinen Stellvertreter wählen"
+msgstr ""
+
+#: game/include/artefact.inc.php:77 game/include/artefact.inc.php:91
+msgid "leere Höhle"
+msgstr ""
+
+#: game/include/tribes.inc.php:1290
+#, php-format
+msgid "löst den Stamm '%s' auf"
+msgstr ""
+
+#: game/include/tribe.html.php:121
+msgid "mind. 6 Buchstaben oder Zahlen"
+msgstr ""
+
+#: game/include/tribes.inc.php:1489
+#, php-format
+msgid "tritt dem Stamm '%s' bei"
+msgstr ""
+
+#: game/include/message.inc.php:165
+msgid "unbekannte Nachrichtenart"
+msgstr ""
+
+#: game/include/artefact.html.php:139
+msgid "uneingeweiht"
+msgstr ""
+
+#: game/include/unit_properties.html.php:139
+msgid "unsichtbar"
+msgstr ""
+
+#: game/include/tribes.inc.php:1237 game/include/tribes.inc.php:1552
+#, php-format
+msgid "verläßt den Stamm '%s'"
+msgstr ""
+
+#: game/include/tribes.inc.php:1596
+#, php-format
+msgid "wird aus dem Stamm '%s' geworfen"
+msgstr ""
+
+#: game/include/artefact.html.php:141
+msgid "wird gerade eingeweiht"
+msgstr ""
+
+#: game/include/tribeAdmin.html.php:232 game/include/tribeAdmin.html.php:263
+#: game/include/tribeAdmin.html.php:326
+msgid "Ändern"
+msgstr ""
+
+#: game/include/artefact.html.php:109
+msgid "Über dieses Artefakt weiss man nichts."
+msgstr ""
+
+#: game/lib/Movement.php:46
+msgid "Übernahme"
+msgstr ""
+
+#: game/include/map.html.php:258 game/include/map.html.php:301
+#: game/include/cave.html.php:55
+msgid "übernehmbar"
+msgstr ""

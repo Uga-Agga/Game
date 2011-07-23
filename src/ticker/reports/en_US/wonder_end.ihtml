@@ -1,0 +1,13 @@
+<tmpl:TITLE>Expiry of wonder in cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+A wonder aimed at the cave {cave} loses its effect.
+
+{if !note}
+<p>You notice these effects:</p>
+<table><col><col align="right">
+<tmpl:VALUE><tr><td>{name}:</td><td>{amount}</td></tr>
+</tmpl:VALUE>
+</table>
+{/if}
+</tmpl:MSG>

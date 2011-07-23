@@ -1,0 +1,196 @@
+<?php
+/*
+ * config.inc.php.in -
+ * Copyright (c) 2004  OGP Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
+
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
+
+require_once("modus.inc.php");
+
+/* ***** GENERAL  ***** **************************************************** */
+//define('UA_GAME_DIR', '@GAMEDIR@');
+define('DEBUG', false);
+define('SQL_DEBUG', false);
+
+/* ***** I18N  ***** ******************************************************* */
+define("LANGUAGE_DOMAIN", "ugaagga");
+
+/* ***** DB FIELDS  ***** ************************************************** */
+define("DB_UGA_FIELDNAME", "uga");
+define("DB_AGGA_FIELDNAME", "agga");
+define("DB_ENZIO_FIELDNAME", "enzio");
+define("DB_DEATH_FIELDNAME", "death");
+define("DB_LIFE_FIELDNAME", "life");
+
+/* ***** TEMPLATE  ***** *************************************************** */
+define("TEMPLATE_CACHE", true);
+define("TEMPLATE_RELOAD", false);
+
+/* ***** TIME CONSTANTS ***** ********************************************** */
+define("BUILDING_TIME_BASE_FACTOR",      @BUILDING_TIME_BASE@);
+define("DEFENSESYSTEM_TIME_BASE_FACTOR", @DEFSYSTEM_TIME_BASE@);
+define("SCIENCE_TIME_BASE_FACTOR",       @SCIENCE_TIME_BASE@);
+define("WONDER_TIME_BASE_FACTOR",        @WONDER_TIME_BASE@);
+define("WEATHER_TIME_BASE_FACTOR",       @WEATHER_TIME_BASE@);
+define("MOVEMENT_TIME_BASE_FACTOR",      @MOVEMENT_TIME_BASE@);
+define("GOVERNMENT_CHANGE_TIME_HOURS",   @GOVERNMENT_CHANGE@);
+define("TRIBE_BLOCKING_PERIOD_PLAYER",   @TRIBE_BLOCK_PERIOD@);
+define("TORE_DOWN_TIMEOUT",              @TEAR_DOWN_TIMEOUT@);   // minutes !
+
+define("SESSION_MAX_LIFETIME",           @SESSION_TIMEOUT@); // seconds !
+
+/* ***** MISC. ***** ******************************************************* */
+define("RELATION_FORCE_FROM_ID"    ,            2);
+define("RELATION_FORCE_TO_ID"      ,            3);
+define("RELATION_FORCE_MORAL_THRESHOLD",      -2);
+define("RELATION_FORCE_MEMBERS_LOST_ABSOLUT",   3);
+define("RELATION_FORCE_MEMBERS_LOST_RELATIVE",  0.30);
+define("RELATION_FAME_MIN_POINTS", @FAME_MIN_POINTS@); // 0 it is inactive
+
+define("MAX_SIMULTAN_BUILDED_UNITS", @UNIT_BUILD_BATCH@);
+
+define("LOSE_CAVE_AFTER_COULD_JOIN_TRIBE_HOURS",    24);
+define("TRIBE_LEAVE_FAME_COST",     @TRIBE_LEAVE_COST@);
+define("FAME_DECREASE_FACTOR",        @FAME_DECREASE@);
+
+define("GOD_ALLY",           "@GOD_TRIBE@");
+define("QUEST_ALLY",         "Haendler");
+define("CAVE_SIZE_DB_FIELD", "@CAVE_SIZE_DB_FIELD@");
+
+define("BOX_INCOMING", 0x01);
+define("BOX_OUTGOING", 0x02);
+define("MSG_PAGE_COUNT", 30);
+
+define("DEFAULT_GFX_PATH", "@GFX_URL@");
+define("FORUM_PATH", "@FORUM_URL@");
+define("HELP_PATH",  "@HELP_URL@");
+define("RULES_PATH", "@RULES_URL@");
+define("LOGIN_PATH", "@LOGIN_URL@");
+define("RSS_PATH", "@RSS_URL@");
+define("TOOLS_PATH", "@TOOLS_URL@");
+
+/* ***** MAP ***** ********************************************************* */
+define("MAP_WIDTH",       9);
+define("MAP_HEIGHT",      9);
+define("MINIMAP_SCALING", 150);
+
+/* ***** GOVERNOR ***** **************************************************** */
+define("GOVERNOR_ACTIVATED", 0);
+define("SHOW_MESSAGES",      0);
+define("SECONDS_FOR_CREDIT", 1800);
+
+/* ***** CONTACTS ***** **************************************************** */
+define("CONTACTS_MAX", 25);
+define("CAVESBOOKMARKS_MAX", 25);
+
+/* ***** SUGGESTIONS ***** ************************************************* */
+define("SUGGESTIONS_MAX", 3);
+
+/* ************************************************************************* */
+
+/* ***** TRIBES  ***** ***************************************************** */
+// tribes smaller than this will be invalid
+define("TRIBE_MINIMUM_SIZE",     5);
+define("TRIBE_MAXIMUM_SIZE",     50); // 0 for infinite
+// time, not delete a invalid tribe
+define("TRIBE_MINIMUM_LIVESPAN", 3 * 24 * 3600);
+
+/* ************************************************************************* */
+define("NONSECURE_CAVE_VAlUE", 200);
+define("NONSECURE_CAVE_GIVEUP_FAKTOR", 1.0);
+
+/* ***** FARMING  ***** ***************************************************** */
+define("FREE_FARM_POINTS", 4);
+
+/* ***** STATS ***** ******************************************************** */
+define("LAST_RUN",      0);
+define("GOD_STATS",     1);
+define("HALFGOD_STATS", 2);
+define("UNIT_STATS",    3);
+define("STORAGE_STATS", 4);
+
+define("STATS_HOUR", '1');
+define("STATS_HOUR_COUNT", 24);
+define("STATS_DAY",  '2');
+define("STATS_DAY_COUNT", 21);
+define("STATS_WEEK", '3');
+define("STATS_WEEK_COUNT", 24);
+
+/* ***** PROFILE *****  ***************************************************** */
+define("MAX_AVATAR_WIDTH", 600);
+define("MAX_AVATAR_HEIGHT", 200);
+
+class Config {
+
+  var $RUN_TIMER = 0;
+
+  var $LOG_ALL = 1;
+
+  // DB Zugriff
+  var $DB_HOST              = "@GAME_DB_HOST@";
+  var $DB_USER              = "@GAME_DB_USER@";
+  var $DB_PWD               = "@GAME_DB_PASSWD@";
+  var $DB_NAME              = "@GAME_DB_NAME@";
+
+  var $DB_SELECT_HOST              = "@GAME_DB_SELECT_HOST@";
+  var $DB_SELECT_USER              = "@GAME_DB_SELECT_USER@";
+  var $DB_SELECT_PWD               = "@GAME_DB_SELECT_PASSWD@";
+
+  var $DB_LOGIN_HOST        = "@LOGIN_DB_HOST@";
+  var $DB_LOGIN_USER        = "@LOGIN_DB_USER@";
+  var $DB_LOGIN_PWD         = "@LOGIN_DB_PASSWD@";
+  var $DB_LOGIN_NAME        = "@LOGIN_DB_NAME@";
+
+  var $DBERROR_URL          = "dberror.html.php";
+
+  var $GAME_START_URL       = "main.php";
+
+  var $ERROR403_URL         = "error403.html.php";
+
+  var $WWW_REQUEST_TIMEOUT            = .100;
+  var $IMPROVEMENT_PAY_BACK_DIVISOR   = 2;
+  var $DEFENSESYSTEM_PAY_BACK_DIVISOR = 2;
+
+  var $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,
+    UNIT_BUILDER, DEFENSE_BUILDER, IMPROVEMENT_DETAIL, SCIENCE_BUILDER, WONDER);
+
+  // if one does not own any cave, one can only switch to the following modi
+  var $noCaveModusInclude = array(ARTEFACT_DETAIL,      ARTEFACT_LIST,
+                                   NO_CAVE_LEFT,         DELETE_ACCOUNT,
+                                   LOGOUT,               MAP,
+                                   MAP_DETAIL,           MESSAGES_LIST,
+                                   MESSAGE_READ,         MESSAGE_NEW,
+                                   NEW_MESSAGE_RESPONSE, PLAYER_DETAIL,
+                                   RANKING_PLAYER,       RANKING_TRIBE,
+                                   TRIBE_DETAIL,         TRIBE_HISTORY,
+                                   TRIBE_PLAYER_LIST,    TRIBE_RELATION_LIST,
+                                   USER_PROFILE,         WEATHER_REPORT);
+
+  // only this modi will be logged
+  var $logModusInclude = array(UNIT_MOVEMENT, DELETE_ACCOUNT, CAVE_GIVE_UP_CONFIRM,
+                               ARTEFACT_DETAIL, TRIBE_DELETE, TRIBE_ADMIN,
+                               DEFENSE_BUILDER, TAKEOVER, USER_PROFILE);
+
+  var $template_paths  = array(1 => 'uga',
+                               2 => 'agga');
+
+  var $messageImage = array( 2 => "battle_won.gif",
+                             6 => "trade_report.gif",
+                            20 => "battle_lost.gif");
+
+  var $hiddenUser = array('Agga', 'Uga', 'Multihunter');
+
+  var $gods = array('agga', 'uga', 'enzio');
+
+  var $halfGods = array('carmi', 'feeble', 'firak', 'kirkalot', 'nebrot',
+                        'shadow_dragon', 'slavomir', 'trubatsch');
+}
+
+?>

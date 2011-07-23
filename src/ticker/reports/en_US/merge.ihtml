@@ -1,0 +1,61 @@
+<tmpl:TITLE>Artifact transformation in cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>News from your cave {cave}:</p>
+<p>
+The old wise woman of your tribe has just finished her consecration poppycock,
+as you observe the following:<br>
+Looking first at the artifact and then at the cave paintings, her face
+suddenly convulses and she bursts out into some mad laughter.<br>
+You begin to wonder if she is still in her right mind. Out of the blue, the
+old woman then runs towards the holy ground, apparently forgetting about her
+age and the attack of gout she was complaining about only yesterday.<br>
+Just as you are wondering what is actually going on here, she is already back
+with a bag of skulls. She takes one, carves some strange symbols into it and
+- with all her strength - smashes it against the next tree trunk.<br>
+"That&#39;s enough of mumbo-jumbo" you think by yourself, "something is going
+wrong here." You carefully approach the woman who, meanwhile, started to
+crawl over the ground.<br>
+"What are you doing there, dear?" you mutter. She turns towards you and
+presents the skull to you, bearing now a few holes and cracks along the
+symbols.
+</p>
+<p>
+She then explains to you that the artifact she just consecrated miraculously
+{if lock_artefact}
+fits in with one of your other artifacts.
+{else}
+seems to be more valuable than you first thought.
+{/if}
+</p>
+<p>
+Being really curious now, you decide to let her perform the final ritual.<br>
+Carefully, she heats up various disgusting ingredients in her small oven. She
+then spills the nascent fuming extract all over the artifact. For a few
+moments, there is nothing but magical lightning and unearthly silence...
+</p>
+{if res_artefact}
+<p>
+After you have rubbed your eyes, you discover that a new artifact has emerged.
+</p>
+{else}
+<p>
+{if lock_artefact}
+After you have rubbed your eyes, you discover that all that is left from the
+artifacts are two piles of ash.
+{else}
+After you have rubbed your eyes, you discover that all that is left from the
+artifact is a pile of ash.
+{/if}
+</p>
+<p>Is this meant to be like this?</p>
+{/if}
+
+<p>Your artifact "{artefact}" is lost.</p>
+{if lock_artefact}
+<p>Even worse, your artifact "{lock_artefact}" is also lost!</p>
+{/if}
+{if res_artefact}
+<p>You have found a new artifact "{res_artefact}"!</p>
+{/if}
+</tmpl:MSG>

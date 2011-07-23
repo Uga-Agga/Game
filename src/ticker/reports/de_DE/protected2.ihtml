@@ -1,0 +1,11 @@
+<tmpl:TITLE>Großes Gelächter bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+"Wie soll ich sagen?", berichtet dir stotternd dein Oberkeulenschwinger,
+"die wilde Meute aus der Höhle {orig} des Spielers {sender}, die unsere
+Höhle überfallen wollte, brach kurz vor dem Eintreffen in schallendes
+Gelächter aus, bevor sie sich unverrichteter Dinge wieder auf den Rückweg
+machte."
+</p>
+</tmpl:MSG>

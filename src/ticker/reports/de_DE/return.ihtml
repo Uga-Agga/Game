@@ -1,0 +1,31 @@
+<tmpl:TITLE>Rückkehr in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+Deine Einheiten sind von
+{if self}deiner Höhle {orig}{else}
+der Höhle {orig} {if sender}des Spielers {sender}{/if}
+{/if}
+wieder zurückgekehrt.
+</p>
+
+<tmpl:UNITS>
+<p>Einheiten:</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:UNIT>
+</table>
+</tmpl:UNITS>
+
+<tmpl:RESOURCES>
+<p>Rohstoffe:</p>
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+
+<tmpl:ARTEFACT>
+<p>Du hast ein neues Artefakt "{artefact}" bekommen!</p>
+</tmpl:ARTEFACT>
+</tmpl:MSG>

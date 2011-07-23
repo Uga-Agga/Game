@@ -1,0 +1,64 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<script type="text/javascript">
+// <![CDATA[
+  function disable_to(){
+    var r = document.newMessage.contactID;
+    var flag = false;
+    for (var i = 0; i < r.length; i++) if (r[i].selected && r[i].value != -1){ flag = true; break; }
+    document.newMessage.empfaenger.disabled = flag;
+  }
+// ]]>
+</script>
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+
+<div class="box">
+  <div class="box-header">&nbsp;</div>
+  <div class="box-content inner success">
+
+    <div style="width: 33%; float: left; text-align: left; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a></div>
+    <div style="width: 34%; float: left; text-align: center; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a></div>
+    <div style="width: 33%; float: right; text-align: right; margin: 5px 0;"><a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a></div>
+    <div style="clear: both;"></div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="box-header">Nachricht schreiben</div>
+  <div class="box-content inner success nohover">
+
+    <form id="newMessage" method="post" action="main.php">
+    <div id="msg-header">
+      <div style="float: left; width: 60%;">
+        <dl>
+          <dt class="dt-msg2"><span class="bold"><a href="?modus=Contacts">Adressbuch:</a></span></dt>
+            <dd class="dd-msg2">
+              <select name="contactID" onchange="disable_to(); return true;">
+                <option value="-1">Bitte w&auml;hlen</option>
+                {% if contacts %}{% for item in contacts %}<option value="{{ item.contactID }}">{{ item.contactname }}</option>{% endfor %}{% endif %}
+              </select>
+            </dd>
+          <dt class="dt-msg2">An:</dt>
+            <dd class="dd-msg2"><input name="empfaenger" type="text" style="width:450px;" value="{{ empfaenger }}" size="35" maxlength="255" tabindex="1" /></dd>
+          <dt class="dt-msg2">Betreff:</dt>
+            <dd class="dd-msg2"><input name="betreff" type="text" style="width:450px;" value="{{ betreff }}" size="35" maxlength="255" tabindex="2" /></dd>
+          <dt class="dt-msg2"><input type="submit" name="senden" value="senden" tabindex="4" /></dt>
+        </dl>
+      </div>
+      <div style="clear: both;"></div>
+    </div>
+
+    <div id="msg-body">
+      <textarea class="td_msg_col_12" name="nachricht" rows="20" cols="61" tabindex="3">{{ nachricht }}</textarea><br />
+        {% for item in hidden %}<input type="hidden" name="{{ item.arg }}" value="{{ item.value }}" />{% endfor %}
+    </div>
+    </form>
+  </div>
+</div>
+
+<div class="text-right"><a href="main.php?modus={{ messages_list_link }}&amp;box={{ box }}">zurück zu den Nachrichten</a></div>
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

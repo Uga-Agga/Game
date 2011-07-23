@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--relations-->
+<!ELEMENT relations (relation+)>
+<!ELEMENT relation (name, description, historyMessage?, transitions,
+otherSideTo?, onDeletionSwitchTo?, attackerMultiplicator,
+defenderMultiplicator)>
+<!ATTLIST relation
+  relationID CDATA #REQUIRED
+  dontLeaveTribe CDATA "0"
+  storeTargetMembers CDATA "0"
+  fameUpdate CDATA "0"
+  attackerReceivesFame CDATA "0"
+  defenderReceivesFame CDATA "0"
+  targetSizeDiffDown CDATA "-1"
+  targetSizeDiffUp CDATA "-1"
+  minTimeForForceSurrenderHours CDATA "0"
+  maxTimeForForceSurrenderHours CDATA "0"
+  startRelativeWarPointsForForceSurrender CDATA "0"
+  isNoRelation CDATA "0"
+  isUltimatum CDATA "0"
+  isWar CDATA "0"
+  isWarLost CDATA "0"
+  isWarWon CDATA "0"
+  isNonaggressionPact CDATA "0"
+  isAlly CDATA "0"
+  isPrepareForWar CDATA "0"
+  isWarAlly CDATA "0"
+>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT historyMessage (#PCDATA)>
+<!ELEMENT description (p+)>
+<!ELEMENT p (#PCDATA)>
+<!ELEMENT attackerMultiplicator (#PCDATA)>
+<!ELEMENT defenderMultiplicator (#PCDATA)>
+<!ELEMENT otherSideTo (#PCDATA)>
+<!ELEMENT onDeletionSwitchTo (#PCDATA)>
+<!--transitions-->
+<!ELEMENT transitions (transition+)*>
+<!ELEMENT transition EMPTY>
+<!ATTLIST transition
+  relationID CDATA #REQUIRED
+  time CDATA #REQUIRED
+>
+<!--entities-->
+<!ENTITY apst "&amp;#39;">
+<!ENTITY auml "&amp;auml;">
+<!ENTITY ouml "&amp;ouml;">
+<!ENTITY uuml "&amp;uuml;">
+<!ENTITY Auml "&amp;Auml;">
+<!ENTITY Ouml "&amp;Ouml;">
+<!ENTITY Uuml "&amp;Uuml;">
+<!ENTITY szlig "&amp;szlig;">

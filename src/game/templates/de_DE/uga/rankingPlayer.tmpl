@@ -1,0 +1,98 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<script type="text/javascript">
+// <![CDATA[
+function swapImgRestore() {
+  var i, x, a = document.sr;
+  for(i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++)
+    x.src = x.oSrc;
+}
+
+function findObj(n, d) {
+  var p,i,x;
+  if(!d)
+    d = document;
+  if((p = n.indexOf("?")) > 0 && parent.frames.length){
+    d = parent.frames[n.substring(p + 1)].document;
+    n = n.substring(0, p);
+  }
+  if(!(x = d[n]) && d.all)
+    x = d.all[n];
+  for(i = 0; !x && i < d.forms.length; i++)
+    x = d.forms[i][n];
+  for(i = 0; !x && d.layers && i < d.layers.length; i++)
+    x = findObj(n, d.layers[i].document);
+  if(!x && d.getElementById)
+    x = d.getElementById(n);
+  return x;
+}
+
+function swapImage(){
+  var i, j = 0, x, a = swapImage.arguments;
+  document.sr = new Array;
+  for(i = 0; i < (a.length - 2); i += 3)
+    if((x = findObj(a[i]))!=null){
+      document.sr[j++] = x;
+      if(!x.oSrc)
+        x.oSrc = x.src;
+      x.src = a[i + 2];
+    }
+}
+// ]]>
+</script>
+
+<p><a href="main.php?modus={{ ranking_tribe_link }}&amp;caveID={{ cave_id }}">Zum Stammesranking</a></p>
+
+<div id="ranking" class="box">
+  <div class="box-header">Spielerranking</div>
+  <div class="box-content inner success">
+    <table class="table text-left" cellpadding="3" cellspacing="0" rules="rows">
+      <tr class="bg2 nohover">
+        <th class="bg2 nohover">Rank</th>
+        <th class="bg2 nohover">Name</th>
+        <th class="bg2 nohover">&nbsp;</th>
+        <th class="bg2 nohover">Punktzahl</th>
+        <th class="bg2 nohover">Knüppelpunkte</th>
+        <th class="bg2 nohover">&nbsp;</th>
+        <th class="bg2 nohover">Stamm</th>
+        <th class="bg2 nohover">Höhlen</th>
+        <th class="bg2 nohover">&nbsp;</th>
+      </tr>
+      {% for item in row %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{{ bgID }}">
+          <td>{{ item.rank }}</td>
+          <td><a href="main.php{{ item.link|raw }}">{{ item.name }}</a></td>
+          <td><img src="{{ gfx }}/de_DE/t_slimfast/ranking/{{ item.religion }}.gif" class="noborder" alt="" width="15" height="15" title="{{ item.religion }}" /></td>
+          <td>{{ item.points }}</td>
+          <td>{{ item.kp }}</td>
+          <td><img src="{{ gfx }}/de_DE/t_slimfast/ranking/leader{{ item.is_leader }}.gif" class="noborder" width="15" height="15" alt="" title=""/></td>
+          <td><a href="main.php{tribelink}">{{ item.tribe }}</a></td>
+          <td>{{ item.caves }}</td>
+          <td>&nbsp;{% for award in item.award %}<a href="main.php?modus={{ award_info_link }}&amp;award={{ award.tag }}"><img src="images/awards/{{ award.tag }}.png" class="noborder" width="15" height="15" hspace="1" /></a>{% endfor %}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<div style="text-align: center;">
+  <a href="main.php{{ up_link|raw }}" onmouseover="swapImage('up','','{{ gfx }}/de_DE/t_uga/map/N.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/map/N.png" alt="up" width="20" height="20" class="noborder" id="up" title="up" /></a>&nbsp;
+  <a href="main.php{{ down_link|raw }}" onmouseover="swapImage('down','','{{ gfx }}/de_DE/t_uga/map/S.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/map/S.png" alt="down" width="20" height="20" class="noborder" id="down" title="down" /></a>&nbsp;
+</div>
+
+<form method="post" action="main.php?modus={{ ranking_player_link }}">
+  <div style="align: center;">Springe zu:
+    <input name="offset" type="text" id="offset" size="15" maxlength="30" />
+    &nbsp;
+    <input name="submit" type="submit" id="submit" value="uggh!" />
+  </div>
+</form>
+
+<p><img src="images/religious_distribution/religious_distribution.php?ugapercent={{ religious.ugapercent }}&amp;aggapercent={{ religious.aggapercent }}" alt="Uga: {{ religious.ugapercent }}% Agga: {{ religious.aggapercent }}%" title="Uga: {{ religious.ugapercent }}% Agga: {{ religious.aggapercent }}%" /></p>
+
+<div style="height: 10px;">&nbsp;</div>
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

@@ -1,0 +1,30 @@
+<?php
+/*
+ * config.php - TODO
+ * Copyright (c) 2005  Marcus Lunzenauer
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
+
+// An absolute filesystem path to the uawebapp package. This directory contains
+// all the includes, libs, modules...
+define('UA_GAME_DIR', '@prefix@/ugaagga');
+
+// An absolute filesystem path to the directory where cache files will be
+// stored.
+define('UA_CACHE_DIR', UA_GAME_DIR . '/cache');
+
+// An absolute filesystem path to a file to which errors and warnings are logged
+define('UA_LOG_FILE', '@LOGDIR@/uagame.log');
+
+$includes   = array();
+$includes[] = UA_GAME_DIR;
+$includes[] = ini_get('include_path');
+
+// don't forget to add current include_path
+ini_set('include_path', implode(PATH_SEPARATOR, $includes));
+
+?>

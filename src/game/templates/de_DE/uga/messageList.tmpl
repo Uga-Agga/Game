@@ -1,0 +1,103 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<script type="text/javascript">
+// <![CDATA[
+function checkall(){
+  if(document.getElementById("deletemessages").all) 
+  var c = document.getElementById("deletemessages").all.checked;
+  for (var i=0;i<document.getElementById("deletemessages").elements.length;i++){
+    var e = document.getElementById("deletemessages").elements[i];
+    if(e.name != 'all') e.checked = c;
+  }
+}
+
+// ]]>
+</script>
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+
+<form id="deletemessages" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}&amp;box={{ message_box }}">
+<div class="box">
+  <div class="box-header">&nbsp;</div>
+  <div class="box-content inner success">
+
+    <div style="width: 33%; float: left; text-align: left; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a></div>
+    <div style="width: 34%; float: left; text-align: center; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a></div>
+    <div style="width: 33%; float: right; text-align: right; margin: 5px 0;"><a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a></div>
+    <div style="clear: both;"></div>
+
+    <div style="width: 40%; float: left; text-align: left; margin: 5px;">
+      Markierte:
+      <select name="mark_action_value">
+        <option value="0">Bitte auswählen</option>
+        <option value="mail_and_delete">E-mail &amp; löschen</option>
+        <option value="delete">löschen</option>
+        <option value="mark_as_read">Als gelesen markieren</option>
+      </select>
+      <input type="submit" name="mark_action" value="Go" />
+    </div>
+    <div style="width: 40%; float: right; text-align: right; margin: 5px;">
+      <select name="messageClass">
+        <option value="-1">Alle</option>
+        {% for item in message_classes %}
+          <option value="{{ item.id }}" {{ item.selected }}>{{ item.text }}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" name="filter" value="Filtern" />
+      <input type="submit" name="delete_all" value="Löschen" onclick="return confirm('Wollen Sie die Nachrichten wirklich löschen?');" />
+    </div>
+    <div style="clear: both;"></div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="box-header">Nachrichten</div>
+  <div class="box-content inner success">
+  
+    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      <tr class="bg2 nohover">
+        <th class="bg2 nohover">&nbsp;</th>
+        <th class="bg2 nohover">{{ from_to }}</th>
+        <th class="bg2 nohover">Nachrichtenart</th>
+        <th class="bg2 nohover">Betreff</th>
+        <th class="bg2 nohover">Datum</th>
+      </tr>
+      <tr>
+        <td><input name="all" type="checkbox" value="check all" onclick="checkall();" /></td>
+        <td colspan="2"><span class="bold">alle auswählen</span></td>  
+        <td colspan="2" class="text-right">
+          Nachrichten {{ message_min }} - {{ message_max }} von {{ message_count }} &nbsp; 
+          {% if message_prev %}
+            <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}">&lt;&lt;&lt; zurück</a>
+          {% else %}
+            &lt;&lt;&lt; zurück
+          {% endif %}
+          &nbsp;|&nbsp;
+          {% if message_next %}
+           <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}">weiter &gt;&gt;&gt;</a></tmpl:NEXT>
+          {% else %}
+            weiter &gt;&gt;&gt;
+          {% endif %}
+        </td>
+      </tr>
+      {% if messages %}
+        {% for item in messages %}
+          <tr class="msg_{{ item.messageClass }} msg_read{{ item.read }}">
+            <td><input type="checkbox" name="deletebox[{{ item.messageID }}]" value="{{ item.messageID }}" /></td>
+            <td>{{ item.absender_empfaenger }}</td>
+            <td>{{ item.nachrichtenart }}</td>
+            <td><a href="main.php{{ item.linkparams|raw }}">{{ item.betreff }}</a></td>
+            <td class="text-right">{{ item.datum }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="5">In diesem Postfach befinden sich zur Zeit keine Nachrichten.</td></tr>
+      {% endif %}
+    </table>
+  </div>
+</div>
+</form>
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

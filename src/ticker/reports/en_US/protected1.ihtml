@@ -1,0 +1,9 @@
+<tmpl:TITLE>Attack on cave {cave} ({xpos}/{ypos}) failed</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+Upon arrival of your troops your battle master realizes that there
+is nothing to capture there. The target cave {cave} of player {player}
+is protected by the beginner&#39;s protection treaty.
+</p>
+</tmpl:MSG>

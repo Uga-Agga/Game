@@ -1,0 +1,13 @@
+<tmpl:TITLE>Ende des Wunders in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+Ein auf die Höhle {cave} erwirktes Wunder verliert seine Wirkung.
+
+{if !note}
+<p>Es zeigten sich folgende Wirkungen:</p>
+<table><col><col align="right">
+<tmpl:VALUE><tr><td>{name}:</td><td>{amount}</td></tr>
+</tmpl:VALUE>
+</table>
+{/if}
+</tmpl:MSG>

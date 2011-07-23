@@ -1,0 +1,31 @@
+<tmpl:TITLE>Trade report from cave {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+A shipment from
+{if self}your cave {orig}{else}
+the cave {orig} {if sender}of player {sender}{/if}
+{/if}
+has arrived.
+</p>
+
+<tmpl:UNITS>
+<p>Units:</p>
+<table><col><col align="right">
+<tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:UNIT>
+</table>
+</tmpl:UNITS>
+
+<tmpl:RESOURCES>
+<p>Resources:</p>
+<table><col><col align="right">
+<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
+</tmpl:RESOURCE>
+</table>
+</tmpl:RESOURCES>
+
+<tmpl:ARTEFACT>
+<p>You have received the artifact "{artefact}"!</p>
+</tmpl:ARTEFACT>
+</tmpl:MSG>

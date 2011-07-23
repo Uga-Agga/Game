@@ -1,0 +1,103 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<div id="export_button"><a href="export.php?modus=allCaves&amp;format=xml" onclick="return exportPopup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a></div>
+
+<div class="box" style="float: left;">
+  <div class="box-header">Rohstoffe</div>
+  <div class="box-content success inner">
+    <table cellpadding="3" cellspacing="0" rules="rows">
+      <tr>
+        <th>&nbsp;</th>
+        {% for item in caves %}<th colspan="2" style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        <th style="text-align: left;" colspan="2">&sum;</th>
+        <th>&nbsp;</th>
+      </tr>
+      {% for item in resource %}
+        <tr class="bg{alternate}">
+          <td><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" width="20" height="20" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.sum_max }})" /></td>
+          {% for cave_data in item.cave %}
+            <td>{{ cave_data.amount }}</td>
+            <td>({{ cave_data.delta }})</td>
+          {% endfor %}
+          <td>{{ item.sum }}</td>
+          <td>({{ item.sum_delta }})</td>
+          <td>&nbsp;</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+<div class="box" style="float: left;">
+  <div class="box-header">Einheiten</div>
+  <div class="box-content success inner">
+    <table cellpadding="3" cellspacing="0" rules="rows">
+      <tr>
+        <th>&nbsp;</th>
+        {% for item in caves %}<th style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        <th style="text-align: left;">&sum;</th>
+        <th>&nbsp;</th>
+      </tr>
+      {% for item in unit %}
+        <tr class="bg{alternate}">
+          <td><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+          {% for cave_data in item.cave %}<td>{{ cave_data.amount }}</td>{% endfor %}
+          <td>{{ item.sum }}</td>
+          <td>&nbsp;</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+<div class="box" style="float: left;">
+  <div class="box-header">Erweiterungen</div>
+  <div class="box-content success inner">
+    <table cellpadding="3" cellspacing="0" rules="rows">
+      <tr>
+        <th>&nbsp;</th>
+        {% for item in caves %}<th style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        <th style="text-align: left;">&sum;</th>
+        <th>&nbsp;</th>
+      </tr>
+      {% for item in building %}
+        <tr class="bg{alternate}">
+          <td><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+          {% for cave_data in item.cave %}<td>{{ cave_data.amount }}</td>{% endfor %}
+          <td>{{ item.sum }}</td>
+          <td>&nbsp;</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+<div class="box" style="float: left;">
+  <div class="box-header">Verteidigung</div>
+  <div class="box-content success inner">
+    <table cellpadding="3" cellspacing="0" rules="rows">
+      <tr>
+        <th>&nbsp;</th>
+        {% for item in caves %}<th style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        <th style="text-align: left;">&sum;</th>
+        <th>&nbsp;</th>
+      </tr>
+      {% for item in defense %}
+        <tr class="bg{alternate}">
+          <td><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+          {% for cave_data in item.cave %}<td>{{ cave_data.amount }}</td>{% endfor %}
+          <td>{{ item.sum }}</td>
+          <td>&nbsp;</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

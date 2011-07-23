@@ -1,0 +1,66 @@
+<tmpl:TITLE>Artefakt-Verwandlung in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>Neuigkeiten in deiner Höhle {cave}:</p>
+<p>
+Kaum ist die Alte Weise Frau deines Stammes mit dem Einweihungstamtam
+fertig, spielt sich plötzlich eine seltsame Szene ab:<br>
+Die Alte schaut auf das Artefakt, schaut in Richtung der Höhlenmalereien,
+dann verzerrt sich ihr Gesicht zur Fratze und fängt plötzlich an, wie
+irrsinnig zu lachen.<br>
+Langsam frast du dich, ob die gute noch ganz bei Sinnen ist. Da dreht sie
+sich ungeachtet ihres hohen Alters auf der Ferse um und sprintet - ja
+wirklich! - in Richtung der heiligen Stätten. Irgendwie kommt dir das
+ganze geradezu *ähem* spanisch vor.<br>
+Doch da taucht die Gute auch schon wieder auf beladen mit ihrem Sack voller
+Menschenschädel. Sie ritzt einige Zeichen hinein und wirft danach mit einer
+ungeahnten Wucht den Schädel an einen naheliegenden Baumstamm.<br>
+"Nun reichts langsam", denkst du dir, "irgendwas kann hier nicht stimmen
+... " und gehst zu der inzwischen auf dem Boden kriechenden Frau.<br>
+"Was machst du da, Ehrwürdige?", entkriecht völlig verstörrt deinen Lippen.
+Sie zeigt dir den Schädel auf dem nun ein paar Löcher und Risse entlang
+der Zeichen verlaufen.
+</p>
+<p>
+Dann erklärt sie dir, daß das von ihr gerade eingeweihte Artefakt auf
+wunderbare Weise
+{if lock_artefact}
+mit einem deiner anderen Artefakte zusammenpaßt.
+{else}
+wertwoller scheint, als du zunächst annahmst.
+{/if}
+</p>
+<p>
+Von Neugier getrieben entscheidest du dich kurzerhand, die alte Weise
+Frau das finale Ritual durchführen zu lassen.<br>
+Sorgfältig erhitzt sie in ihrem kleinen Ofen verschiedene Zutaten und
+gießt den dabei entstehenden neblig dampfenden Sud auf das Artefakt.
+Blitze zucken über den Schauplatz und alles ist für einige Sekunden in
+unirdische Stille gehüllt...
+</p>
+{if res_artefact}
+<p>
+Nachdem du dir die Augen gewischt hast, siehst du, daß ein neues
+Artefakt entstanden ist.
+</p>
+{else}
+<p>
+{if lock_artefact}
+Nachdem du dir die Augen gewischt hast, siehst du, daß dort, wo eben
+noch die Artefakte lagen, jetzt nur noch zwei Häufchen Asche liegen.
+{else}
+Nachdem du dir die Augen gewischt hast, siehst du, daß dort, wo eben
+noch das Artefakt lag, jetzt nur noch ein Häufchen Asche liegt.
+{/if}
+</p>
+<p>Ob das alles so richtig war?</p>
+{/if}
+
+<p>Dein Artefakt "{artefact}" ist verloren.</p>
+{if lock_artefact}
+<p>Auch dein Artefakt "{lock_artefact}" ist verloren!</p>
+{/if}
+{if res_artefact}
+<p>Du hast ein neues Artefakt "{res_artefact}" gefunden!</p>
+{/if}
+</tmpl:MSG>

@@ -1,0 +1,400 @@
+# makefile for ugaagga/src
+
+# programs
+CC =	      @CC@
+CFLAGS =      @CFLAGS@# @MYSQL_CFLAGS@
+CPPFLAGS =    -Iticker @CPPFLAGS@
+INSTALL =     @INSTALL@
+INSTALL_DATA= @INSTALL_DATA@
+LDFLAGS =     @LDFLAGS@
+LIBS =	      @LIBS@
+MYSQL_LIBS =  @MYSQL_LIBS@
+PHP_CFLAGS =  @PHP_CFLAGS@
+PHP_LIBS   =  @PHP_LIBS@
+
+TICKER_INSTALL = @INSTALL@ @TICKER_INSTALL_FLAGS@
+TICKER_INSTALL_DATA = @INSTALL_DATA@ @TICKER_INSTALL_FLAGS@
+
+XMLLINT =     xmllint --noout --valid
+XSLTPROC =    @XSLTPROC@
+
+GAMEDIR =     @GAMEDIR@
+UA_WEBAPP_DIR = @prefix@/ugaagga
+LOGDIR =      @LOGDIR@
+PHP_EXT_DIR = @PHP_EXT_DIR@
+TICKER_HOME = @TICKER_HOME@
+WWWRUN =      @WWWRUN@
+
+# file names
+CONFIG =      dbs/game_rules.sql \
+	      game/include/effect_list.php game/include/game_rules.php \
+	      game/include/government.rules.php game/include/relation_list.php \
+	      game/include/startvalues.php game/include/wonder.rules.php \
+	      game/include/trade.rules.php
+
+LANGUAGES =   de_DE
+MODULES =     CaveBookmarks Contacts Donations EventReports Messages Suggestions
+TEMPLATES =   uga
+
+TICKER =      ticker/ticker
+TICKER_SRC =  ticker/artefact.c ticker/artefact_handler.c \
+	      ticker/building_handler.c ticker/calc_battle.c ticker/cave.c \
+	      ticker/config.c ticker/database.c ticker/defense_handler.c \
+	      ticker/event_handler.c ticker/except.c ticker/expression.c \
+	      ticker/function.c ticker/game_rules.c ticker/hashtable.c \
+	      ticker/logging.c ticker/memory.c ticker/message.c \
+	      ticker/movement_handler.c ticker/object.c \
+	      ticker/resource_ticker.c ticker/scanner.c \
+	      ticker/science_handler.c ticker/template.c \
+	      ticker/ticker.c ticker/ugatime.c ticker/unit_handler.c \
+	      ticker/wonderEnd_handler.c ticker/wonder_handler.c \
+	      ticker/trade_handler.c \
+	      ticker/weatherEnd_handler.c ticker/weather_handler.c
+TICKER_OBJ =  $(TICKER_SRC:.c=.o)
+
+CALC =	      www/simulator/simul
+CALC_SRC =    ticker/calc_battle.c ticker/expression.c ticker/function.c \
+	      ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
+	      ticker/memory.c ticker/object.c ticker/scanner.c \
+	      ticker/test_calc.c
+CALC_OBJ =    $(CALC_SRC:.c=.o)
+
+CHECK =	      ticker/tests/check
+CHECK_SRC =   ticker/tests/check.c ticker/tests/config.c \
+	      ticker/tests/except.c ticker/tests/hashtable.c \
+	      ticker/tests/memory.c ticker/tests/scanner.c \
+	      ticker/tests/template.c \
+	      ticker/config.c ticker/except.c ticker/expression.c \
+	      ticker/hashtable.c ticker/logging.c ticker/memory.c \
+	      ticker/object.c ticker/scanner.c ticker/template.c
+CHECK_OBJ =   $(CHECK_SRC:.c=.o)
+
+PHPEXT =      phpext/uaconfig.so
+PHPEXT_SRC =  phpext/game_rules.c phpext/uaconfig.c
+PHPEXT_OBJ =  $(PHPEXT_SRC:.c=.o)
+
+TERRAIN =     utilities/terrain
+TERRAIN_SRC = utilities/terrain.c
+TERRAIN_OBJ = $(TERRAIN_SRC:.c=.o)
+
+TEST =	      ticker/check_config
+TEST_SRC =    ticker/check_config.c ticker/expression.c ticker/function.c \
+	      ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
+	      ticker/memory.c ticker/object.c ticker/scanner.c
+TEST_OBJ =    $(TEST_SRC:.c=.o)
+
+CLEAN =	      $(CONFIG) $(TICKER_OBJ) $(TICKER) $(CALC_OBJ) $(CALC) \
+	      $(CHECK_OBJ) $(CHECK) $(PHPEXT_OBJ) $(PHPEXT) \
+	      $(TERRAIN_OBJ) $(TERRAIN) $(TEST_OBJ) $(TEST)
+CLEAN_TMP =   config/*.tmp ticker/game_rules.[ch]
+
+SHELL =	      /bin/sh
+
+# wildcard rules
+phpext/%.o: phpext/%.c
+	$(CC) -fPIC -c $(CPPFLAGS) $(PHP_CFLAGS) $(CFLAGS) $< -o $@
+
+phpext/%.o: ticker/%.c
+	$(CC) -fPIC -c $(CPPFLAGS) $(PHP_CFLAGS) $(CFLAGS) $< -o $@
+
+%.o: %.c
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+
+%.tmp: %.xml
+	sed -e 's/\[\([A-Za-z][0-9A-Za-z_]*\)\]/<object id="\1"\/>/g' \
+	    -e '/"[/?]*>/!s/"/\\&/g' -e "s/'/\\&apst;/g" $< >$@
+	$(XMLLINT) $@
+
+# default target
+all: $(CONFIG) $(TICKER) $(CALC) $(PHPEXT) $(TERRAIN)
+
+# build and run tests
+check: $(CHECK)
+	$(CHECK)
+
+# test config syntax
+configtest: $(TEST)
+	$(TEST)
+
+# install files
+install-db: $(CONFIG)
+	sh dbs/db-util install
+
+install-game: configtest $(CONFIG)
+	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/images $(GAMEDIR)/images/artefacts \
+	    $(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/
+	chown -R $(WWWRUN):$(WWWRUN) $(GAMEDIR)
+	chmod 777 $(GAMEDIR)/images
+	chmod 777 $(GAMEDIR)/images/temp
+	$(INSTALL_DATA) www/*.php $(GAMEDIR)
+	$(INSTALL_DATA) www/js/*.js $(GAMEDIR)/js
+	$(INSTALL_DATA) www/images/*.ico www/images/*.php www/images/round_name.png $(GAMEDIR)/images
+	$(INSTALL_DATA) www/images/religious_distribution/*.png \
+	    www/images/religious_distribution/*.php \
+	    $(GAMEDIR)/images/religious_distribution
+	$(INSTALL) -d $(UA_WEBAPP_DIR) $(UA_WEBAPP_DIR)/cache \
+	    $(UA_WEBAPP_DIR)/include $(UA_WEBAPP_DIR)/include/languages \
+	    $(UA_WEBAPP_DIR)/lib $(UA_WEBAPP_DIR)/modules
+	chown $(WWWRUN) $(UA_WEBAPP_DIR)/cache
+	$(INSTALL_DATA) game/include/*.php $(UA_WEBAPP_DIR)/include
+	$(INSTALL_DATA) game/include/languages/*.php \
+	    $(UA_WEBAPP_DIR)/include/languages
+	$(INSTALL_DATA) game/lib/*.php $(UA_WEBAPP_DIR)/lib
+	for module in $(MODULES); do \
+	    $(INSTALL) -d $(UA_WEBAPP_DIR)/modules/$$module; \
+	    $(INSTALL_DATA) game/modules/$$module/*.php \
+		$(UA_WEBAPP_DIR)/modules/$$module; \
+	    for dir in controller model view; do \
+		$(INSTALL) -d $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
+		$(INSTALL_DATA) game/modules/$$module/$$dir/*.php \
+		    $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
+	    done; \
+	done
+	for lang in $(LANGUAGES); do \
+	    $(INSTALL) -d $(UA_WEBAPP_DIR)/include/languages/$$lang \
+	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES; \
+	    $(INSTALL_DATA) game/include/languages/$$lang/LC_MESSAGES/ugaagga.mo \
+	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES/; \
+	    for tmpl in $(TEMPLATES); do \
+		$(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
+		$(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl \
+		    game/templates/$$lang/$$tmpl/*.js \
+		    $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
+	    done; \
+	done
+	chown -R $(WWWRUN):$(WWWRUN) $(UA_WEBAPP_DIR)
+
+install-phpext: configtest $(PHPEXT)
+	$(INSTALL) $(PHPEXT) $(PHP_EXT_DIR)
+
+install-ticker: configtest $(TICKER) $(TERRAIN)
+	$(TICKER_INSTALL) -d $(TICKER_HOME) $(LOGDIR) $(TICKER_HOME)/takeover
+	$(TICKER_INSTALL) $(TICKER) $(TERRAIN) $(TICKER_HOME)
+	$(TICKER_INSTALL) utilities/ticker.cron $(TICKER_HOME)
+	$(TICKER_INSTALL_DATA) utilities/*.php $(TICKER_HOME)
+	$(TICKER_INSTALL_DATA) utilities/namen.txt $(TICKER_HOME)
+	$(TICKER_INSTALL_DATA) utilities/crontab $(TICKER_HOME)
+	test -f $(TICKER_HOME)/ticker.conf || \
+	    $(TICKER_INSTALL_DATA) ticker/ticker.conf $(TICKER_HOME)
+	for lang in $(LANGUAGES); do \
+	    $(TICKER_INSTALL) -d $(TICKER_HOME)/reports/$$lang; \
+	    $(TICKER_INSTALL_DATA) ticker/reports/$$lang/*.ihtml \
+		$(TICKER_HOME)/reports/$$lang; \
+	done
+
+# uninstall files
+uninstall-db:
+	sh dbs/db-util uninstall
+
+uninstall-game:
+	rm -rf $(GAMEDIR) $(UA_WEBAPP_DIR)
+
+uninstall-phpext:
+	rm -f $(PHP_EXT_DIR)/`basename $(PHPEXT)`
+
+uninstall-ticker:
+	rm -rf $(TICKER_HOME)/reports $(LOGDIR) $(TICKER_HOME)/takeover
+	for file in $(TICKER) $(TERRAIN) ticker/*.php ticker/*.conf \
+		utilities/ticker.cron utilities/*.php utilities/namen.txt \
+		utilities/crontab; do \
+	    rm -f $(TICKER_HOME)/`basename $$file`; \
+	done
+
+# clean up
+clean:
+	rm -f $(CLEAN) $(CLEAN_TMP)
+
+# rebuild dependencies
+depend: $(TICKER_SRC) ticker/game_rules.h
+	sed -n '1,/^# include/wMakefile.in~' Makefile.in
+	mfg -I ticker -o - all ticker/* phpext/* | \
+	    sed 1,/^Force_Update/d | sed 1d >>Makefile.in~
+	mv Makefile.in~ Makefile.in
+
+# file targets
+$(TICKER): $(TICKER_OBJ)
+	$(CC) $(LDFLAGS) $(TICKER_OBJ) $(MYSQL_LIBS) $(LIBS) -o $@
+
+$(CALC): $(CALC_OBJ)
+	$(CC) $(LDFLAGS) $(CALC_OBJ) $(LIBS) -o $@
+
+$(CHECK): $(CHECK_OBJ)
+	$(CC) $(LDFLAGS) $(CHECK_OBJ) $(LIBS) -o $@
+
+$(TERRAIN): $(TERRAIN_OBJ)
+	$(CC) $(LDFLAGS) $(TERRAIN_OBJ) $(LIBS) -o $@
+
+$(TEST): $(TEST_OBJ)
+	$(CC) $(LDFLAGS) $(TEST_OBJ) $(LIBS) -o $@
+
+# PHP extension module
+$(PHPEXT): $(PHPEXT_OBJ)
+	$(CC) -fPIC -shared $(LDFLAGS) $(PHPEXT_OBJ) $(LIBS) -o $@
+
+# generated C files
+ticker/game_rules.c: config/config.tmp config/config.c.xsl
+	$(XSLTPROC) config/config.c.xsl $< >$@
+
+ticker/game_rules.h: config/config.tmp config/config.h.xsl
+	$(XSLTPROC) config/config.h.xsl $< >$@
+
+# generated SQL files
+dbs/game_rules.sql: config/config.tmp config/config.sql.xsl
+	$(XSLTPROC) config/config.sql.xsl $< >$@
+
+# generated PHP files
+game/include/effect_list.php: config/config.tmp config/effects.php.xsl
+	$(XSLTPROC) config/effects.php.xsl $< >$@
+
+game/include/game_rules.php: config/config.tmp config/config.php.xsl
+	$(XSLTPROC) config/config.php.xsl $< >$@
+
+game/include/government.rules.php: config/government.xml config/government.php.xsl
+	$(XMLLINT) $<
+	$(XSLTPROC) config/government.php.xsl $< >$@
+
+game/include/relation_list.php: config/relations.xml config/relations.php.xsl
+	$(XMLLINT) $<
+	$(XSLTPROC) config/relations.php.xsl $< >$@
+
+game/include/startvalues.php: config/start.xml config/start.php.xsl
+	$(XMLLINT) $<
+	$(XSLTPROC) config/start.php.xsl $< >$@
+
+game/include/wonder.rules.php: config/config.tmp config/wonder.php.xsl
+	$(XSLTPROC) config/wonder.php.xsl $< >$@
+
+game/include/trade.rules.php: config/config.tmp config/trade.php.xsl
+	$(XSLTPROC) config/trade.php.xsl $< >$@
+
+# include files
+phpext/uaconfig.o: phpext/uaconfig.c phpext/uaconfig.h ticker/game_rules.h \
+	ticker/object.h
+
+ticker/artefact.o: ticker/artefact.c ticker/artefact.h ticker/cave.h \
+	ticker/database.h ticker/except.h ticker/game_rules.h \
+	ticker/logging.h ticker/memory.h ticker/object.h ticker/ticker.h
+
+ticker/artefact_handler.o: ticker/artefact_handler.c ticker/artefact.h \
+	ticker/calc_battle.h ticker/cave.h ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/game_rules.h \
+	ticker/logging.h ticker/memory.h ticker/message.h ticker/object.h \
+	ticker/ticker.h ticker/wonder_rules.h
+
+ticker/building_handler.o: ticker/building_handler.c ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/game_rules.h \
+	ticker/logging.h ticker/memory.h ticker/object.h ticker/ticker.h
+
+ticker/calc_battle.o: ticker/calc_battle.c ticker/calc_battle.h \
+	ticker/cave.h ticker/database.h ticker/expression.h \
+	ticker/function.h ticker/game_rules.h ticker/logging.h \
+	ticker/memory.h ticker/object.h ticker/ticker.h
+
+ticker/cave.o: ticker/cave.c ticker/cave.h ticker/database.h ticker/except.h \
+	ticker/game_rules.h ticker/logging.h ticker/memory.h ticker/object.h \
+	ticker/ticker.h ticker/ugatime.h
+
+ticker/check_config.o: ticker/check_config.c ticker/cave.h ticker/database.h \
+	ticker/expression.h ticker/function.h ticker/game_rules.h \
+	ticker/memory.h ticker/object.h ticker/wonder_rules.h
+
+ticker/config.o: ticker/config.c ticker/config.h ticker/hashtable.h \
+	ticker/logging.h ticker/memory.h
+
+ticker/database.o: ticker/database.c ticker/database.h ticker/except.h \
+	ticker/hashtable.h ticker/logging.h ticker/memory.h
+
+ticker/defense_handler.o: ticker/defense_handler.c ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/game_rules.h \
+	ticker/logging.h ticker/memory.h ticker/object.h ticker/ticker.h
+
+ticker/event_handler.o: ticker/event_handler.c ticker/database.h \
+	ticker/event_handler.h ticker/memory.h
+
+ticker/except.o: ticker/except.c ticker/except.h
+
+ticker/expression.o: ticker/expression.c ticker/expression.h \
+	ticker/logging.h ticker/memory.h ticker/object.h ticker/scanner.h
+
+ticker/function.o: ticker/function.c ticker/cave.h ticker/database.h \
+	ticker/expression.h ticker/function.h ticker/game_rules.h \
+	ticker/hashtable.h ticker/logging.h ticker/memory.h ticker/object.h \
+	ticker/scanner.h
+
+ticker/game_rules.o: ticker/game_rules.c ticker/game_rules.h ticker/object.h \
+	ticker/wonder_rules.h
+
+ticker/hashtable.o: ticker/hashtable.c ticker/hashtable.h ticker/memory.h
+
+ticker/logging.o: ticker/logging.c ticker/logging.h
+
+ticker/memory.o: ticker/memory.c ticker/logging.h ticker/memory.h
+
+ticker/message.o: ticker/message.c ticker/artefact.h ticker/calc_battle.h \
+	ticker/cave.h ticker/database.h ticker/game_rules.h \
+	ticker/hashtable.h ticker/logging.h ticker/memory.h ticker/message.h \
+	ticker/object.h ticker/template.h ticker/wonder_rules.h
+
+ticker/movement_handler.o: ticker/movement_handler.c ticker/artefact.h \
+	ticker/calc_battle.h ticker/cave.h ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/expression.h \
+	ticker/function.h ticker/game_rules.h ticker/logging.h \
+	ticker/memory.h ticker/message.h ticker/object.h ticker/ticker.h \
+	ticker/ugatime.h ticker/wonder_rules.h
+
+ticker/object.o: ticker/object.c ticker/object.h
+
+ticker/resource_ticker.o: ticker/resource_ticker.c ticker/cave.h \
+	ticker/database.h ticker/expression.h ticker/function.h \
+	ticker/game_rules.h ticker/logging.h ticker/memory.h ticker/object.h \
+	ticker/resource_ticker.h ticker/ticker.h ticker/ugatime.h
+
+ticker/scanner.o: ticker/scanner.c ticker/memory.h ticker/scanner.h
+
+ticker/science_handler.o: ticker/science_handler.c ticker/cave.h \
+	ticker/database.h ticker/event_handler.h ticker/except.h \
+	ticker/game_rules.h ticker/logging.h ticker/memory.h ticker/object.h \
+	ticker/ticker.h
+
+ticker/template.o: ticker/template.c ticker/expression.h ticker/hashtable.h \
+	ticker/logging.h ticker/memory.h ticker/object.h ticker/scanner.h \
+	ticker/template.h
+
+ticker/test_calc.o: ticker/test_calc.c ticker/calc_battle.h ticker/cave.h \
+	ticker/database.h ticker/game_rules.h ticker/memory.h \
+	ticker/object.h
+
+ticker/ticker.o: ticker/ticker.c ticker/artefact.h ticker/calc_battle.h \
+	ticker/cave.h ticker/config.h ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/expression.h \
+	ticker/function.h ticker/game_rules.h ticker/logging.h \
+	ticker/memory.h ticker/message.h ticker/object.h \
+	ticker/resource_ticker.h ticker/ticker.h ticker/wonder_rules.h
+
+ticker/ugatime.o: ticker/ugatime.c ticker/logging.h ticker/memory.h \
+	ticker/ticker.h ticker/ugatime.h
+
+ticker/unit_handler.o: ticker/unit_handler.c ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/game_rules.h \
+	ticker/logging.h ticker/memory.h ticker/object.h ticker/ticker.h
+
+ticker/wonderEnd_handler.o: ticker/wonderEnd_handler.c ticker/artefact.h \
+	ticker/calc_battle.h ticker/cave.h ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/expression.h \
+	ticker/function.h ticker/game_rules.h ticker/logging.h \
+	ticker/memory.h ticker/message.h ticker/object.h ticker/ticker.h \
+	ticker/wonder_rules.h
+
+ticker/wonder_handler.o: ticker/wonder_handler.c ticker/artefact.h \
+	ticker/calc_battle.h ticker/cave.h ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/expression.h \
+	ticker/function.h ticker/game_rules.h ticker/logging.h \
+	ticker/memory.h ticker/message.h ticker/object.h ticker/ticker.h \
+	ticker/wonder_rules.h
+
+ticker/trade_handler.o: ticker/wonder_handler.c ticker/artefact.h \
+	ticker/calc_battle.h ticker/cave.h ticker/database.h \
+	ticker/event_handler.h ticker/except.h ticker/expression.h \
+	ticker/function.h ticker/game_rules.h ticker/logging.h \
+	ticker/memory.h ticker/message.h ticker/object.h ticker/ticker.h \
+	ticker/wonder_rules.h

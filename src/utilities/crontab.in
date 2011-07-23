@@ -1,0 +1,19 @@
+# example crontab for Uga-Agga
+PATH=/usr/local/bin:/bin:/usr/ucb:/usr/bin
+PHP=@PHP@
+LOGDIR=@LOGDIR@
+
+15 9,21      * * * $PHP deleteNotActivated.script.php >>$LOGDIR/activated.log
+20 9,21      * * * $PHP deleteInactives.script.php >>$LOGDIR/inactives.log
+35 9,21      * * * $PHP ranking.php >>$LOGDIR/ranking.log
+55 23        * * * $PHP moral.script.php >>$LOGDIR/moral.log
+25 9,21      * * * $PHP takeover.php >>$LOGDIR/takeover.log
+30 9,21      * * * $PHP takeover_cave_supply.php >>$LOGDIR/takeover.log
+15 2,14      * * * $PHP tribes.php >>$LOGDIR/tribes.log
+ 5 7         * * * $PHP deleteOutdatedMessages.php >>$LOGDIR/messages.log
+ 0 *         * * * $PHP generategamestats.script.php
+ 0 *         * * * $PHP generateunitstats.script.php hour
+ 1 0         * * * $PHP generateunitstats.script.php day
+ 5 0         * * * $PHP weather.script.php >>$LOGDIR/weather.log
+ 
+* * * * * ./ticker.cron

@@ -1,0 +1,3 @@
+{% for item in vote_button %}
+<a href='main.php?modus=vote&amp;task=vote&amp;id={{ item.id }}' onclick="open_page(this.href, 1); return false;"><img src='{{ item.imgSrc }}' class="noborder" alt="" title="" /></a>
+{% endfor %}

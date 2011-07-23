@@ -1,0 +1,102 @@
+<html>
+<head>
+  <title>Uga-Agga Kampfulator</title>
+  <LINK REL="StyleSheet" HREF="style000.css" TYPE="text/css">
+</head>
+<body>
+
+<center>
+<img src="kampfulator.gif" border="0">
+
+<form method="POST" action="{target}">
+
+<table border="0" cellpadding="15" cellspacing="0">
+<tr valign="top">
+<td>
+<table border="0" cellpadding="5" cellspacing="0">
+<tr>
+  <th align="LEFT">Einheit</th><th>VERT</th><th>AN</th>
+</tr>
+
+  <tmpl:UNIT>
+  <tr class="{alternate}">
+    <td>
+      {name}<br>
+    </td>
+    <td align="right">
+        <input type="text" name="unitDefender[{unitID}]" size="4" maxlength="8">
+    </td>
+    <td align="right">
+        <input type="text" name="unitAttacker[{unitID}]" size="4" maxlength="8">
+    </td>
+  </tr>
+  </tmpl:UNIT>
+</table>
+</td>
+<td>
+
+<table border="0" cellpadding="0" cellspacing="0">
+<tr valign="top"><td>
+<table border="0" cellpadding="5" cellspacing="0">
+<tr>
+  <th align="LEFT">Anlage</th><th>VERT</th>
+</tr>
+
+  <tmpl:DEFENSESYSTEM>
+  <tr class="{alternate}">
+    <td>
+      {name}<br>
+    </td>
+    <td align="right">
+        <input type="text" name="defenseSystemDefender[{defenseSystemID}]" size="4" maxlength="8">
+    </td>
+  </tr>
+  </tmpl:DEFENSESYSTEM>
+
+</table>
+</td>
+<td>&nbsp;&nbsp;</td>
+<td>
+
+  <table border="0" cellpadding="5" cellspacing="0">
+<tr>
+  <th align="LEFT">Bonus</th><th>VERT</th><th>AN</th>
+</tr>
+  <tmpl:EFFECT>
+  <tr class="{alternate}">
+    <td>
+      {text}<br>
+    </td>
+    <td align="right">
+        <input type="text" name="effectDefender[{name}]" size="4" maxlength="8">
+    </td>
+    <td align="right">
+        <input type="text" name="effectAttacker[{name}]" size="4" maxlength="8">
+    </td>
+  </tr>
+  </tmpl:EFFECT>
+  </table>
+
+</td>
+
+</tr>
+<tr><td height="120" colspan="3" align="center" valign="center">
+<input type="submit" value="Simulieren">
+<input type="reset" value="L&ouml;schen">
+</td></tr>
+<tr><td colspan="3" align="center">
+<a href="http://www.uga-agga.org/portal.php"><img src="logo-gra.gif" border="0" width="440"></a>
+</td></tr>
+</table>
+
+</td>
+</tr>
+</table>
+
+
+
+</form>
+
+</center>
+</body>
+</html>

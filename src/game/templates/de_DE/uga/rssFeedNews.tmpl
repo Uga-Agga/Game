@@ -1,0 +1,14 @@
+{% include 'pageHeader.tmpl' %}
+
+{% if rssFeeds %}
+  {% for item in rssFeeds %}
+    <div class="info text-left">
+      <h3 class="loud"><a href="{{ item.link }}">{{ item.title }}</a></h3>
+      {{ item.description|raw }}
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="error">Zur Zeit gibt es leider keine News.</div>
+{% endif %}
+
+{% include 'pageFooter.tmpl' %}

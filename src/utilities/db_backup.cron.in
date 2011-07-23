@@ -1,0 +1,37 @@
+#!/bin/sh -e
+#
+#	Make backup of database tables to remote server
+#	Copyright (c) 2004  Elmar Ludwig
+
+PATH=/usr/local/bin:/usr/ucb:/usr/bin:/bin; export PATH
+LC_ALL=C; export LC_ALL
+
+HOSTNAME=`hostname`
+DATEEXT=`date +%Y%m%d`
+BACKUP_HOST=dosuni.informatik.uni-osnabrueck.de
+BACKUP_USER=ogp
+BACKUP_FILE=ogp_db/db-XXX-$HOSTNAME-$DATEEXT.gz
+
+MYSQL_USER='root'
+MYSQL_PASSWD='@ROOT_DB_PASSWD@'
+MYSQL_DBNAMES='@GAME_DB_NAME@ @LOGIN_DB_NAME@'
+MYSQL_EXCLUDE='Log_|Log$|_[Bb]ac?k(up)?$'
+
+tmp=/tmp/db-$$-backup
+trap "rm -rf $tmp" 0 1 2 3 15
+
+for db in $MYSQL_DBNAMES; do
+    if mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWD" -se '' $db 2>/dev/null; then
+	BACKUP_DB_FILE=`echo "$BACKUP_FILE" | sed "s/XXX/$db/"`
+    else
+	continue
+    fi
+
+    tables=`mysql -u "$MYSQL_USER" -p"$MYSQL_PASSWD" -se 'show tables' $db |
+	    egrep -v "$MYSQL_EXCLUDE"`
+
+    mysqldump -u "$MYSQL_USER" -p"$MYSQL_PASSWD" -ql --add-drop-table $db \
+	$tables >$tmp
+    gzip -9 < $tmp |
+	ssh -l "$BACKUP_USER" "$BACKUP_HOST" "umask 022; cat >'$BACKUP_DB_FILE'"
+done
