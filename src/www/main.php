@@ -279,7 +279,7 @@ switch ($modus) {
 
   case UNIT_MOVEMENT:
     $pagetitle = _("Einheiten bewegen");
-    $content = unitAction($caveID, $ownCaves);
+    $content = unit_Movement($caveID, $ownCaves);
     break;
 
   /////////////////////////////////////////////////////////////////////////////

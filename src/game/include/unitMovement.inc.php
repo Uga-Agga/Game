@@ -110,13 +110,16 @@ function setMovementEvent($caveID, $caveData,
   $where = "WHERE caveID = $caveID ";
   $whereRollback = "WHERE caveID = $caveID ";
 
-  foreach ($unit as $unitID => $value)
+  $set = $setRollback = array();
+
+  foreach ($unit as $unitID => $value) {
     if( !empty( $value )) {
-      $set .= ", ".$unitTypeList[$unitID]->dbFieldName." = ".$unitTypeList[$unitID]->dbFieldName." - $value ";
+      $set[] = $unitTypeList[$unitID]->dbFieldName." = ".$unitTypeList[$unitID]->dbFieldName." - $value ";
+      $setRollback[] = $unitTypeList[$unitID]->dbFieldName." = ".$unitTypeList[$unitID]->dbFieldName." + $value ";
       $where .= "AND ".$unitTypeList[$unitID]->dbFieldName." >= $value ";
       $where .= "AND $value >= 0 "; // check for values bigger 0!
-      $setRollback .= ", ".$unitTypeList[$unitID]->dbFieldName." = ".$unitTypeList[$unitID]->dbFieldName." + $value ";
     }
+  }
 
   foreach ($resource as $resourceID => $value) {
     $value_to_check = $value;
@@ -124,18 +127,17 @@ function setMovementEvent($caveID, $caveData,
       $value += $reqFood;
 
     if (!empty($value) || !empty($value_to_check)) {
-      $set .= ", ".$resourceTypeList[$resourceID]->dbFieldName." = ".$resourceTypeList[$resourceID]->dbFieldName." - $value ";
+      $set[] = $resourceTypeList[$resourceID]->dbFieldName." = ".$resourceTypeList[$resourceID]->dbFieldName." - $value ";
+      $setRollback[] = $resourceTypeList[$resourceID]->dbFieldName." = ".$resourceTypeList[$resourceID]->dbFieldName." + $value ";
       $where .= "AND ".$resourceTypeList[$resourceID]->dbFieldName." >= $value ";
       if (!empty($value_to_check)) {
         $where .= "AND $value_to_check >= 0 ";
       }
-
-      $setRollback .= ", ".$resourceTypeList[$resourceID]->dbFieldName." = ".$resourceTypeList[$resourceID]->dbFieldName." + $value ";
     }
   }
 
-  $update = $update.$set.$where;
-  $updateRollback = $updateRollback.$setRollback.$whereRollback;
+  $update = $update."SET ".implode(", ", $set).$where;
+  $updateRollback = $updateRollback."SET ".implode(", ", $setRollback).$whereRollback;
 
   if (!$db->exec($update)) {
     return 2;
@@ -163,21 +165,20 @@ function setMovementEvent($caveID, $caveData,
 
   // insert fuer movement_event basteln
   $now = time();
-  $insert = "INSERT INTO ". EVENT_MOVEMENT_TABLE ." (caveID, source_caveID, ".
-            "target_caveID, movementID, `start`, `end`, ".
-            "artefactID, speedFactor, exposeChance, ";
-
+  $insert = "INSERT INTO ". EVENT_MOVEMENT_TABLE ." (caveID, source_caveID, target_caveID, movementID, `start`, `end`, artefactID, speedFactor, exposeChance, ";
   $i = 0;
-  foreach ($unit as $uID => $val)
+  foreach ($unit as $uID => $val) {
     if (!empty($val)){
       if ($i++ != 0) $insert .= " , ";
       $insert .= $unitTypeList[$uID]->dbFieldName;
     }
+  }
 
-  foreach ($resource as $rID => $val)
-    if (!empty($val))
+  foreach ($resource as $rID => $val) {
+    if (!empty($val)) {
       $insert .= " , ".$resourceTypeList[$rID]->dbFieldName;
-
+    }
+  }
   $speedFactor = getMaxSpeedFactor($unit) * $caveSpeedFactor;
 
   // determine expose chance
@@ -191,14 +192,16 @@ function setMovementEvent($caveID, $caveData,
                      $artefactID, $speedFactor, $exposeChance);
 
   $i = 0;
-  foreach($unit as $val)
-    if (!empty($val)){
+  foreach($unit as $val) {
+    if (!empty($val)) {
       if ($i++ != 0) $insert .= " , ";
       $insert .= $val;
     }
+  }
 
-  foreach ($resource as $val)
+  foreach ($resource as $val) {
     if (!empty($val)) $insert .= " , ".$val;
+  }
 
   $insert .= " )";
 

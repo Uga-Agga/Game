@@ -44,8 +44,8 @@ class Movement {
       $ua_movements[2] = new Movement(2, 1, 1,  5, false, false, false, true,  _('Einheiten/Rohstoffe verschieben'));
       $ua_movements[3] = new Movement(3, 1, 2,  5, false, true, true, true,  _('Angreifen'));
       $ua_movements[4] = new Movement(4, 0.5, 2,  5, true, true, true, true,  _('Spionieren'));
-      $ua_movements[5] = new Movement(5, 1, 1, -1, false, false, false, false, _('Rückkehr'));
-      $ua_movements[6] = new Movement(6, 5, 2,  5, false, false, false, true,  _('Übernahme'));
+      $ua_movements[5] = new Movement(5, 1, 1, -1, false, false, false, false, _('RÃ¼ckkehr'));
+      $ua_movements[6] = new Movement(6, 5, 2,  5, false, false, false, true,  _('Ãœbernahme'));
     }
 
     return $ua_movements;

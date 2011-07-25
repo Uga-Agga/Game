@@ -27,15 +27,15 @@ function defense_builder($caveID, &$details) {
 
   //messages
   $messageText = array (
-    0 => array('type' => 'error', 'message' =>_('Es konnte kein Arbeitsauftrag gestoppt werden.')),
-    1 => array('type' => 'success', 'message' =>_('Der Arbeitsauftrag wurde erfolgreich gestoppt.')),
+    0 => array('type' => 'error', 'message' => _('Es konnte kein Arbeitsauftrag gestoppt werden.')),
+    1 => array('type' => 'success', 'message' => _('Der Arbeitsauftrag wurde erfolgreich gestoppt.')),
     2 => array('type' => 'info', 'message' => sprintf(_('Du kannst derzeit kein Gebäude oder Verteidigungen abreissen, weil erst vor Kurzem etwas in dieser Höhle abgerissen wurde. Generell muss zwischen zwei Abrissen eine Zeitspanne von %d Minuten liegen.'), TORE_DOWN_TIMEOUT)),
-    3 => array('type' => 'error', 'message' =>_('Du hast von der Sorte gar keine Gebäude')),
-    4 => array('type' => 'error', 'message' =>_('Das Gebäude konnte nicht abgerissen werden.')),
-    5 => array('type' => 'success', 'message' =>_('Das Gebäude wurde erfolgreich abgerissen.')),
-    6 => array('type' => 'error', 'message' =>_('Der Auftrag konnte nicht erteilt werden. Es fehlen die notwendigen Voraussetzungen.')),
-    7 => array('type' => 'success', 'message' =>_('Der Arbeitsauftrag wurde erteilt.')),
-    8 => array('type' => 'error', 'message' =>_('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im gange.')),
+    3 => array('type' => 'error', 'message' => _('Du hast von der Sorte gar keine Gebäude')),
+    4 => array('type' => 'error', 'message' => _('Das Gebäude konnte nicht abgerissen werden.')),
+    5 => array('type' => 'success', 'message' => _('Das Gebäude wurde erfolgreich abgerissen.')),
+    6 => array('type' => 'error', 'message' => _('Der Auftrag konnte nicht erteilt werden. Es fehlen die notwendigen Voraussetzungen.')),
+    7 => array('type' => 'success', 'message' => _('Der Arbeitsauftrag wurde erteilt.')),
+    8 => array('type' => 'error', 'message' => _('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im gange.')),
   );
 
   // get this cave's queue

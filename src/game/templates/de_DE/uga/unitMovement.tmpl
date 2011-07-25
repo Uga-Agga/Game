@@ -5,7 +5,7 @@
 // <![CDATA[
 var uamoves = new Array();
 var units = new Array();
-<tmpl:UNITPROPS>units[{unitID}] = {maxWarriorAnzahl:{maxWarriorAnzahl}, foodCost:{foodCost}, speedFactor:{speedFactor}, resourceLoad:[{resourceLoad}]};</tmpl:UNITPROPS>
+{% for item in unit_list %}units[{{ item.unit_id }}] = {maxWarriorAnzahl:{{ item.max_warrior_count }}, foodCost:{{ item.food_cost }}, speedFactor:{{ item.speed_factor }}, resourceLoad:[{{ item.resource_load }}]};{% endfor %}
 var domcomp = document.childNodes ? true : false;
 function getMovementID(){
   var r = document.getElementById("unitMoving").movementID;
@@ -28,16 +28,16 @@ function TimeString(duration)
 
 function dur() {
 
-  var MINUTESPERCAVE = {speed};
-  var FOODPERCAVE    = {movementcostconstant};
+  var MINUTESPERCAVE = {{ speed }};
+  var FOODPERCAVE    = {{ movement_cost_constant }};
   
   /* Using torus edge condition */
-  var xCoord = {dim_x} -
+  var xCoord = {{ dim_x }} -
                Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetXCoord.value ) -
-               {currentX}) - {dim_x});
-  var yCoord = {dim_y} -
+               {{ currentX }}) - {{ dim_x }});
+  var yCoord = {{ dim_y }} -
                Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetYCoord.value ) -
-               {currentY}) - {dim_y});
+               {{ currentY }}) - {{ dim_y }});
 
   var movementID = parseInt(getMovementID());
   if (isNaN(movementID) || typeof(uamoves[movementID]) == 'undefined') return;
@@ -53,7 +53,7 @@ function dur() {
       maxSpeedFactor = Math.max(maxSpeedFactor, units[i]['speedFactor']);
   }
   var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));  
-  // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor
+  // Entfernung x Dauer pro HÃ¶hle x grÃ¶ÃŸter Geschwindigkeitsfaktor x Bewegungsfaktor
   var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) *
                  MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']);
   
@@ -97,7 +97,7 @@ function dur() {
       tmpdist = distance;
   }
 
-  // Dauer x Rationen x Größe einer Ration x Bewegungsfaktor
+  // Dauer x Rationen x GrÃ¶ÃŸe einer Ration x Bewegungsfaktor
 //  var food = Math.ceil(duration * unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
   var food = Math.ceil(MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']* tmpdist *
                        unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
@@ -115,7 +115,7 @@ function dur() {
 function getMaxLoad(){
   var i, j, amount;
   var maxLoad;
-  for (i = 0; i < {resourceTypes}; ++i){
+  for (i = 0; i < {{ resource_types }}; ++i){
     maxLoad = 0;
     for (j = 0; j < units.length; ++j){
       if (typeof(units[j]) == "undefined") continue;
@@ -224,7 +224,7 @@ function hideWMTT() {
       <table class="table">
       <tr>
         <td colspan="4">&nbsp;</td>
-        <td colspan="10" align="center" style="width:305px;"><strong>Transportkapazit&auml;t</strong></td>
+        <td colspan="10" align="center" style="width:305px;"><strong>TransportkapazitÃ¤t</strong></td>
         <td>&nbsp;</td>
       </tr>
       <tr>
@@ -232,25 +232,26 @@ function hideWMTT() {
         <td class="bg2 nohover" style="width:200px;"><strong>Einheit</strong></td>
         <td class="bg2 nohover" style="width:75px;"><strong>Menge</strong></td>
         <td class="bg2 nohover" style="width:50px;"><strong>Max</strong></td>
-        <tmpl:RESOURCE><td  class="bg2 nohover" style="width:30px;" align="center"><img width="20" height="20" src="%gfx%/resources/{dbFieldName}_icon.gif" alt="{name}" title="{name}" /></td></tmpl:RESOURCE>
+        {% for item in resource %}<td  class="bg2 nohover" style="width:30px;" align="center"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></td>{% endfor %}
         <td colspan="3">&nbsp;</td>
       </tr>
-      <tmpl:SELECTWARRIOR>
-      <tr class="bg{bgID}">
-        <td>&nbsp;</td>
-        <td><a href="main.php?modus={modus}&amp;unitID={unitID}">{name}</a></td>
-        <td><input id="unit_{warriorID}" name="unit[{warriorID}]" type="text" size="6" maxlength="6" ondblclick="markAll({warriorID})" onfocus="dur();getMaxLoad();" onclick="dur();getMaxLoad();" onchange="dur();getMaxLoad();" onkeyup="dur();getMaxLoad();" /></td>
-        <td>{maxWarriorAnzahl}</td>
-        <tmpl:ENCUMBRANCE><td style="width:30px;" align="center">{load}</td></tmpl:ENCUMBRANCE>
-        <td>&nbsp;</td>
-      </tr>
-      </tmpl:SELECTWARRIOR>
+      {% for item in unit_list %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{{ bgID }}">
+          <td>&nbsp;</td>
+          <td><a href="main.php?modus={{ unit_details }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
+          <td><input id="unit_{{ item.warrior_id }}" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();" onclick="dur();getMaxLoad();" onchange="dur();getMaxLoad();" onkeyup="dur();getMaxLoad();" /></td>
+          <td>{{ item.max_warrior_count }}</td>
+          {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
+          <td>&nbsp;</td>
+        </tr>
+      {% endfor %}
       <tr>
         <td>&nbsp;</td>
-        <td><label for="all">Alle Ausw&auml;hlen</label></td>
+        <td><label for="all">Alle AuswÃ¤hlen</label></td>
         <td><input name="all" id="all" type="checkbox" value="check all" onclick="checkall();" /></td>
         <td>&nbsp;</td>
-        <tmpl:TOTAL><td style="width:30px;" align="center"><div id="resource{resourceID}">0</div></td></tmpl:TOTAL>
+        {% for item in resource %}<td style="width:30px;" align="center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
         <td>&nbsp;</td>
       </tr>
       </table>
@@ -262,43 +263,43 @@ function hideWMTT() {
       <table class="table">
       <tr>
       <td>&nbsp;</td>
-      <td style="width:190px;" valign="top">
+      <td style="width:190px;">
         <ul class="clean_list" style="padding-left: 3px;">
-          <li class="bold"><a href="{rules_path}?modus=misc&amp;miscID=3" onclick="window.open(this.href); return false;"><strong>Ressourcen mitnehmen:</strong></a></li>
-          <tmpl:RESOURCE_LUGGAGE>
+          <li class="bold"><a href="{{ rules_path }}?modus=misc&amp;miscID=3" onclick="window.open(this.href); return false;"><strong>Ressourcen mitnehmen:</strong></a></li>
+          {% for item in resource %}
           <li>
-            <div style="width: 22px; float: left;"><label for="rohstoff_{resourceID}"><img width="20" height="20" src="%gfx%/resources/{dbFieldName}_icon.gif" alt="{name}" title="{name}" /></label></div>
-            <div style="width: 75px; float: left;"><input id="rohstoff_{resourceID}" name="rohstoff[{resourceID}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({resourceID}, {currentAmount});" /></div>
-            <div style="width: 86px; float: left;"><label for="rohstoff_{resourceID}">({currentAmount})</label></div>
+            <div style="width: 22px; float: left;"><label for="rohstoff_{{ item.resource_id }}"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></label></div>
+            <div style="width: 75px; float: left;"><input id="rohstoff_{{ item.resource_id }}" name="rohstoff[{{ item.resource_id }}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
+            <div style="width: 86px; float: left;"><label for="rohstoff_{{ item.resource_id }}">({{ item.current_amount }})</label></div>
             <div style="clear: both;"></div>
           </li>
-          </tmpl:RESOURCE_LUGGAGE>
-          <tmpl:ARTEFACTS>
+          {% endfor %}
+          <!--
             <li class="bold">Ein Artefakt mitnehmen:</li>
             <li>
               <tmpl:ARTEFACT><input type="radio" name="myartefacts" id="myartefacts{artefactID}" value="{artefactID}"><label>{name}</label><br></tmpl:ARTEFACT>
               <input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked><label for="myartefactsnone">keines</label>
             </li>
-          </tmpl:ARTEFACTS>
+          -->
         </ul>
       </td>
-      <td style="width:300px;" valign="top">
+      <td style="width:300px;">
         <ul class="clean_list">
           <li>
             <ul class="clean_list" style="padding-left: 3px;">
               <li><strong>Bewegungsart:</strong></li>
               <li>
                 <div style="width: 25px; height: 22px; float: left;"><input type="radio" name="movementID" id="movementID0" value="0" checked="checked" /></div>
-                <div style="width: 227px; height: 22px; float: left;"><label for="movementID0"><em>W&auml;hle eine Bewegung</em></label></div>
+                <div style="width: 227px; height: 22px; float: left;"><label for="movementID0"><em>WÃ¤hle eine Bewegung</em></label></div>
                 <div style="clear: both;"></div>
               </li>
-              <tmpl:SELECTACTION>
+              {% for item in selectable_movements %}
               <li>
-                <div style="width: 25px; height: 22px; float: left;"><input type="radio" name="movementID" id="movementID{id}" value="{id}" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
-                <div style="width: 227px; height: 22px; float: left;"><label for="movementID{id}">{description}<script type="text/javascript">uamoves[{id}] = {speedfactor:{speedfactor}, foodfactor:{foodfactor}};</script></label></div>
+                <div style="width: 25px; height: 22px; float: left;"><input type="radio" name="movementID" id="movementID{{ item.id }}" value="{{ item.id }}" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
+                <div style="width: 227px; height: 22px; float: left;"><label for="movementID{{ item.id }}">{{ item.description }}<script type="text/javascript">uamoves[{{ item.id }}] = {speedfactor:{{ item.speedfactor }}, foodfactor:{{ item.foodfactor }}};</script></label></div>
                 <div style="clear: both;"></div>
               </li>
-              </tmpl:SELECTACTION>
+              {% endfor %}
             </ul>
           </li>
           
@@ -320,33 +321,33 @@ function hideWMTT() {
           </li>
         </ul>
       </td>
-      <td valign="top" style="width:250px;">
+      <td style="width:250px;">
         <ul class="clean_list">
           <li>
             <ul class="clean_list" style="padding-left: 3px;">
               <li><strong>Ziel:</strong></li>
               <li>
                 <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">x:</label></div>
-                <div style="width: 167px; height: 25px; float: left;"><input name="targetXCoord" id="targetXCoord" value="{targetXCoord}" type="text" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
+                <div style="width: 167px; height: 25px; float: left;"><input name="targetXCoord" id="targetXCoord" value="{{ target_x_coord }}" type="text" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
                 <div style="clear: both;"></div>
               </li>
               <li>
                 <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">y:</label></div>
-                <div style="width: 167px; height: 25px; float: left;"><input name="targetYCoord" id="targetYCoord" value="{targetYCoord}" type="text" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
+                <div style="width: 167px; height: 25px; float: left;"><input name="targetYCoord" id="targetYCoord" value="{{ target_y_coord }}" type="text" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
                 <div style="clear: both;"></div>
               </li>
               <li>
-                <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">Höhlenname:</label></div>
-                <div style="width: 167px; height: 25px; float: left;"><input name="targetCaveName" id="targetCaveName" value="{targetCaveName}" type="text" size="20" maxlength="50" /></div>
+                <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">HÃ¶hlenname:</label></div>
+                <div style="width: 167px; height: 25px; float: left;"><input name="targetCaveName" id="targetCaveName" value="{{ target_cave_name }}" type="text" size="20" maxlength="50" /></div>
                 <div style="clear: both;"></div>
               </li>
-              <tmpl:CAVEBOOKMARKS>{iterate}
+              {% if bookmarks_cave %}
               <li>
-                <div style="width: 80px; height: 25px; float: left;"><a href="?modus=CaveBookmarks&amp;task=Show">Höhlenliste:</a></div>
+                <div style="width: 80px; height: 25px; float: left;"><a href="?modus=CaveBookmarks&amp;task=Show">HÃ¶hlenliste:</a></div>
                 <div style="width: 167px; height: 25px; float: left;">
                   <select name="targetCaveID" id="targetCaveID" onchange="disable_to(); return true;" style="width: 170px;">
-                    <option value="-1">Bitte wählen</option>
-                    <tmpl:CAVEBOOKMARK><option value="{caveID}">{name} ({xCoord}|{yCoord}) {playerName}</option></tmpl:CAVEBOOKMARK>
+                    <option value="-1">Bitte wÃ¤hlen</option>
+                    {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.player_name }}</option>{% endfor %}
                   </select>
                 </div>
                 <div style="clear: both;"></div>
@@ -354,17 +355,17 @@ function hideWMTT() {
               <li>
                 <script type="text/javascript">
                   // <![CDATA[
-                  <tmpl:CAVEBOOKMARKJS>caveBookmarks[{caveID}] = [{xCoord},{yCoord},"{raw_name}"];</tmpl:CAVEBOOKMARKJS>
+                  {% for item in bookmarks_cave %}caveBookmarks[{{ item.caveID }}] = [{{ item.xCoord }},{{ item.yCoord }},"{{ item.raw_name }}"];{% endfor %}
                   // ]]>
                 </script>
               </li>
-              </tmpl:CAVEBOOKMARKS>
+              {% endif %}
             </ul>
           </li>
         </ul>
       
       <div style="float: left;">
-        <tmpl:PARAMS><input type="hidden" name="{name}" value="{value}" /></tmpl:PARAMS>
+        {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
         <input type="submit" value="und los geht's. UGH?" />
       </div>
       </td>
@@ -379,31 +380,31 @@ function hideWMTT() {
   </div>
 </form>
 <br />
-
+<!--
 <tmpl:MOVEMENT>
 <div class="box">
-<div class="box-header">laufende Bewegungen eigener Verb&auml;nde</div>
+<div class="box-header">laufende Bewegungen eigener VerbÃ¤nde</div>
 <div class="box-content success inner nohover">
  <table class="table" rules="rows">
   <tr class="bg2 nohover">
     <td class="bg2 nohover">&nbsp;</td>
     <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
     <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
-    <td class="bg2 nohover" style="min-width:200px"><strong>Zielh&ouml;hle</strong></td>
+    <td class="bg2 nohover" style="min-width:200px"><strong>ZielhÃ¶hle</strong></td>
     <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
     <td class="bg2 nohover">&nbsp;</td>    
   </tr>
   <tmpl:MOVE>
-  <tr valign="top" class="bg{bgID}">
+  <tr class="bg{bgID}">
     <td>&nbsp;</td>
     <td>
       <ul class="clean_list">
         <li>{movementID_description}</li>
         <li>&nbsp;</li>
         <li>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="%gfx%/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="%gfx%/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export f&uuml;r IRC" /></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="%gfx%/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export fÃ¼r IRC" /></a>
+          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
         </li>
       </ul>
     </td>
@@ -424,26 +425,26 @@ function hideWMTT() {
           <tmpl:UNITS>
           <li>
             <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{name}:</strong>{value}&nbsp;<br /></div>
-          </li>		  
-          </tmpl:UNITS>          
+          </li>
+          </tmpl:UNITS>
           <li>
             <br />
-          </li>           
+          </li>
           <tmpl:RESOURCES>
           <li>
             <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{name}:</strong>{value}&nbsp;<br /></div>
-          </li>		   
-          </tmpl:RESOURCES>          
+          </li>
+          </tmpl:RESOURCES>
                      
-          <tmpl:ARTEFACT>		  
-                      
+          <tmpl:ARTEFACT>
+
           <li>
             <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{name}" src="images/artefacts/{resref}.gif" width="30" height="30" alt="{name}">&nbsp;{name}</div>
           </li>
           </tmpl:ARTEFACT>
         </ul>
     </td>
-    <td style="text-align:right; vertical-align:middle;"><tmpl:CANCEL><a href="main.php?modus={modus}&amp;eventID={eventID}"><img src="%gfx%/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>&nbsp;</tmpl:CANCEL></td>
+    <td style="text-align:right; vertical-align:middle;"><tmpl:CANCEL><a href="main.php?modus={modus}&amp;eventID={eventID}"><img src="{{ gfx }}/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>&nbsp;</tmpl:CANCEL></td>
   </tr>
   </tmpl:MOVE>
 </table>
@@ -456,7 +457,7 @@ function hideWMTT() {
 
 <tmpl:OPPMOVEMENT>
 <div class="box">
-<div class="box-header">ankommende Verb&auml;nde</div>
+<div class="box-header">ankommende VerbÃ¤nde</div>
 <div class="box-content success inner nohover">
  <table class="table" rules="rows">
   <tr class="bg2 nohover">
@@ -468,16 +469,16 @@ function hideWMTT() {
     <td class="bg2 nohover">&nbsp;</td>    
   </tr>
   <tmpl:MOVE>
-  <tr valign="top" class="bg{bgID}">
+  <tr class="bg{bgID}">
     <td>&nbsp;</td> 
     <td>
       <ul class="clean_list">
         <li>{movementID_description}</li>
         <li>&nbsp;</li>
         <li>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="%gfx%/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML" title="Export als XML" /></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="%gfx%/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export als IRC" /></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="%gfx%/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML" title="Export als XML" /></a>
+          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export als IRC" /></a>
+          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
         </li>
       </ul>
     </td>
@@ -525,6 +526,6 @@ function hideWMTT() {
 </div>
 </div>
 </tmpl:OPPMOVEMENT>
-
+-->
 {% include 'pageFooter.tmpl' %}
 {% endspaceless %}
