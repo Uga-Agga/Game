@@ -84,6 +84,26 @@ ALTER TABLE `Event_weatherEnd`
 <xsl:apply-templates select="//EffectType"/>;
 
 
+#Hero_new
+#effects
+
+ALTER TABLE `Hero_new`
+<xsl:apply-templates select="//EffectType"/>;
+
+
+#Hero_rituals
+#resources
+#buildings
+#units
+#defenses
+
+ALTER TABLE `Hero_rituals`
+<xsl:apply-templates select="//Building|//DefenseSystem|//Resource|//Unit">
+<xsl:sort select="name()"/>
+<xsl:sort select="@id"/>
+</xsl:apply-templates>;
+
+
 #Player
 #sciences
 

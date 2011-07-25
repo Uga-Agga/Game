@@ -98,7 +98,7 @@ static char* transform_spy_values (int num, int type) {
 
   //defenseSystems
   if (type == 0) {
-    if (    num <      5) value = "ein kümmerlicher Haufen";
+    if (    num <      5) value = "ein kï¿½mmerlicher Haufen";
     else if (num <     9) value = "eine Handvoll";
     else if (num <    17) value = "ein Dutzend";
     else if (num <    33) value = "ein Trupp";
@@ -118,14 +118,14 @@ static char* transform_spy_values (int num, int type) {
     else if (num <  4097) value = "eine Menge";
     else if (num <  6145) value = "eine Legion";
     else if (num <  8193) value = "ein Haufen";
-    else if (num < 12289) value = "ein großer Haufen";
+    else if (num < 12289) value = "ein groï¿½er Haufen";
     else if (num < 16385) value = "verdammt viele";
     else if (num < 20481) value = "Unmengen";
     else if (num < 32769) value = "eine Streitmacht";
     else if (num < 49153) value = "eine Armee";
     else if (num < 65537) value = "Heerscharen";
     else if (num < 98305) value = "eine haltlose Horde";
-    else  value = "darüber eine endlose wogende Masse";
+    else  value = "darï¿½ber eine endlose wogende Masse";
   }
 
   //resources
@@ -135,16 +135,16 @@ static char* transform_spy_values (int num, int type) {
     else if (num < 4097) value = "ein kleiner Haufen";
     else if (num < 16385) value = "ein beachtlicher Haufen";
     else if (num < 32769) value = "eine Menge";
-    else if (num < 65537) value = "eine große Menge";
+    else if (num < 65537) value = "eine groï¿½e Menge";
     else if (num < 131074) value = "ein Berg";
-    else if (num < 262148) value = "ein großer Berg";
+    else if (num < 262148) value = "ein groï¿½er Berg";
     else if (num < 524296) value = "ein riesiger Berg";
-    else value = "unglaublicher Überfluss";
+    else value = "unglaublicher ï¿½berfluss";
   }
 
   //buildings
   if (type == 3) {
-    if      (num <     5) value = "ein kümmerlicher Haufen";
+    if      (num <     5) value = "ein kï¿½mmerlicher Haufen";
     else if (num <     9) value = "eine Handvoll";
     else if (num <    17) value = "ein Dutzend";
     else if (num <    33) value = "ein Trupp";
@@ -522,16 +522,16 @@ static struct Cave report_spy_info (template_t *template, int locale_id,
 #endif
 
     /* TODO wonder effects, messages */
-    /*  Bei dieser Höhle scheinen wertvolle Rohstoffe zu lagern: */
+    /*  Bei dieser Hï¿½hle scheinen wertvolle Rohstoffe zu lagern: */
     /*  Aus sicherer Entfernung sind vage die Umrisse einiger Bauten zu
-  erahnen, die anscheinend zur Verteidigung der Höhle gegen Angriffe
+  erahnen, die anscheinend zur Verteidigung der Hï¿½hle gegen Angriffe
   errichtet worden sind: */
-    /*  Beim Versuch, sich näher an die Höhle heranzuschleichen, entdeckt
-  ein Kundschafter einige gefährlich aussehende Gestalten: */
-    /*  Eine Reihe von Gebäuden erregt eure besondere Aufmerksamkeit: */
-    /*  Als eure Spione einen Gefangenen verhören, berichtet dieser von
+    /*  Beim Versuch, sich nï¿½her an die Hï¿½hle heranzuschleichen, entdeckt
+  ein Kundschafter einige gefï¿½hrlich aussehende Gestalten: */
+    /*  Eine Reihe von Gebï¿½uden erregt eure besondere Aufmerksamkeit: */
+    /*  Als eure Spione einen Gefangenen verhï¿½ren, berichtet dieser von
   aktuellen Forschungen seines Stammes: */
-    /*  Beim Stöbern in den Privatgemächern des gegnerischen Stammesführers
+    /*  Beim Stï¿½bern in den Privatgemï¿½chern des gegnerischen Stammesfï¿½hrers
   entdeckt Euer Spion einige Nachrichten: */
 
     return cave;
@@ -1381,6 +1381,21 @@ void artefact_merging_report (db_t *database,
 
   message_new(database, MSG_CLASS_ARTEFACT,
       cave->player_id, subject, template_eval(tmpl_merge), xml);
+}
+
+void hero_report (db_t *database,
+          const struct Cave *cave, const struct Player *player)
+{
+  template_t *tmpl_hero = message_template(player, "hero");
+  const char *subject = message_subject(tmpl_hero, "TITLE", cave);
+  char *xml = "";
+
+  template_context(tmpl_hero, "MSG");
+  template_set(tmpl_hero, "cave", cave->name);
+  template_set(tmpl_hero, "heroName", player->name);
+
+  message_new(database, MSG_CLASS_HERO,
+      cave->player_id, subject, template_eval(tmpl_hero), xml);
 }
 
 static void wonder_prepare_message (template_t *template,

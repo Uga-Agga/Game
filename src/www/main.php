@@ -27,13 +27,13 @@ page_start();
 
 // session expired?
 if (page_sessionExpired())
-  page_error403("Sie waren f�r " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv. Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction'] . " Uhr."));
+  page_error403("Sie waren f�r " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv. Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction'] . " Uhr."));
 else
   $_SESSION['lastAction'] = time();
 
 // session valid?
 if (!page_sessionValidate())
-  page_error403("Deine Session ist ung&uuml;ltig.");
+  page_error403("Deine Session ist ungültig.");
 
 // refresh user data
 page_refreshUserData();
@@ -95,41 +95,41 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case NO_CAVE_LEFT:
-    $pagetitle = _("Keine H&ouml;hle mehr");
-    $content = _("Leider besitzen sie keine H&ouml;hle mehr.");
+    $pagetitle = _("Keine Höhle mehr");
+    $content = _("Leider besitzen sie keine Höhle mehr.");
     break;
 
   case NOT_MY_CAVE:
     $pagetitle = _("Fehler");
-    $content = _("Diese H&ouml;hle geh&ouml;rt nicht ihnen.");
+    $content = _("Diese Höhle gehört nicht ihnen.");
     break;
 
   case CAVE_DETAIL:
-    $pagetitle = _("H&ouml;hlendetails");
+    $pagetitle = _("Höhlendetails");
     $content = getCaveDetailsContent($ownCaves[$caveID]);
     break;
 
   case ALL_CAVE_DETAIL:
-    $pagetitle = _("H&ouml;hlen-&Uuml;bersicht");
+    $pagetitle = _("Höhlen-Übersicht");
     $content = getAllCavesDetailsContent($ownCaves);
     break;
 
   case CAVE_GIVE_UP_CONFIRM:
-    $pagetitle = _("H&ouml;hle aufgeben");
+    $pagetitle = _("Höhle aufgeben");
     $giveUpCaveID = request_var('giveUpCaveID', 0);
     if (isset($ownCaves[$giveUpCaveID]))
       $content = cave_giveUpConfirm($ownCaves[$giveUpCaveID]);
     else
-      $content = "Die H&ouml;le befindet sch nicht in deinem Besitz.";
+      $content = "Die Höle befindet sch nicht in deinem Besitz.";
     break;
 
   case END_PROTECTION_CONFIRM:
-    $pagetitle = _("Anf&auml;ngerschutz beenden");
+    $pagetitle = _("Anfängerschutz beenden");
     $content = beginner_endProtectionConfirm($ownCaves[$caveID]);
     break;
 
   case EASY_DIGEST:
-    $pagetitle = _("Termin-&Uuml;bersicht | Runde Tetraktys");
+    $pagetitle = _("Termin-Übersicht | Runde Tetraktys");
     $content = digest_getDigest($ownCaves);
     break;
 
@@ -197,12 +197,12 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case MAP:
-    $pagetitle = _("H&ouml;hlenkarte");
+    $pagetitle = _("Höhlenkarte");
     $content = getCaveMapContent($caveID, $ownCaves);
     break;
 
   case MAP_DETAIL:
-    $pagetitle = _("H&ouml;hlenbericht");
+    $pagetitle = _("Höhlenbericht");
     $content = getCaveReport($caveID, $ownCaves, request_var('targetCaveID', 0));
     break;
 
@@ -216,7 +216,7 @@ switch ($modus) {
     break;
 
   case IMPROVEMENT_DETAIL:
-    $pagetitle = _("Geb&auml;udeerweiterungen");
+    $pagetitle = _("Gebäudeerweiterungen");
     $content = improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID]);
     break;
 
@@ -239,12 +239,12 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case DEFENSE_BUILDER:
-    $pagetitle = _("Verteidigungsanlagen und externe Geb&auml;ude errichten");
+    $pagetitle = _("Verteidigungsanlagen und externe Gebäude errichten");
     $content = defense_builder($caveID, $ownCaves[$caveID]);
     break;
 
   case DEFENSE_DETAIL:
-    $pagetitle = _("Verteidigungsanlagen und externe Geb&auml;ude");
+    $pagetitle = _("Verteidigungsanlagen und externe Gebäude");
     $content = defense_showProperties($ownCaves[$caveID]);
     break;
 
@@ -312,7 +312,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case TRIBE:
-    $pagetitle = _("St&auml;mme");
+    $pagetitle = _("Stämme");
     $content = tribe_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
     break;
 
@@ -338,12 +338,12 @@ switch ($modus) {
     break;
 
   case TRIBE_LEADER_DETERMINATION:
-    $pagetitle = _("Stammesanf&uuml;hrer bestimmen");
+    $pagetitle = _("Stammesanführer bestimmen");
     $content = tribeLeaderDetermination_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
     break;
 
   /////////////////////////////////////////////////////////////////////////////
-  // FRAGEB�GEN                                                              //
+  // FRAGEB�GEN                                                              //
   /////////////////////////////////////////////////////////////////////////////
 
   case QUESTIONNAIRE:
@@ -363,12 +363,12 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
   // HELDEN                                                                  //
   /////////////////////////////////////////////////////////////////////////////
-/*
+
   case HERO_DETAIL:
     $pagetitle = _("Mein Held");
     $content = hero_getHeroDetail($caveID, $ownCaves);
     break;
-*/
+
   /////////////////////////////////////////////////////////////////////////////
   // AWARDS                                                                  //
   /////////////////////////////////////////////////////////////////////////////
@@ -408,7 +408,7 @@ switch ($modus) {
     break;
 
   case DELETE_ACCOUNT:
-    $pagetitle = _("Account l&ouml;schen");
+    $pagetitle = _("Account löschen");
     $content = profile_deleteAccount($_SESSION['player']->playerID);
     break;
 
@@ -433,7 +433,7 @@ switch ($modus) {
   break;
 
   case MERCHANT:
-    $pagetitle = _("Der H&auml;ndler");
+    $pagetitle = _("Der Händler");
     $content = merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
   break;
 
@@ -453,7 +453,7 @@ switch ($modus) {
 
   default:
     $pagetitle = _("Modus nicht bekannt");
-    $content = "Modus " . $modus . "ist nicht verf&uuml;gbar. CaveID :" . $caveID;
+    $content = "Modus " . $modus . "ist nicht verfügbar. CaveID :" . $caveID;
 }
 
 // prepare resource bar
@@ -500,6 +500,7 @@ $region = $regions[$ownCaves[$caveID]['regionID']];
 // init vote
 vote_main();
 
+
 // fill it
 $template->addVars(array(
   'pagetitle'     => $pagetitle,
@@ -511,7 +512,9 @@ $template->addVars(array(
   'cave_y_coord'  => $ownCaves[$caveID]['yCoord'],
   'cave_terrain'  => $ownCaves[$caveID]['terrain'],
   'time'          => date("d.m.Y H:i:s"),
-  'new_mail_link' => ($newMessageCount > 0) ? '_new' : '',
+  'bottom'        => vote_main(),
+  'new_mail'      => $nm_content,
+  'new_mail_link' => (!empty($nm_content)) ? '_new' : '',
   'rules_path'    => RULES_PATH,
   'help_path'     => HELP_PATH,
   'player_fame'   => $_SESSION['player']->fame,

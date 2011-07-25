@@ -1,5 +1,5 @@
-<tmpl:TITLE>Artefakt-Einweihung in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Artefakt-Einweihung in HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
-<p>In deiner Höhle {cave} wurde soeben das Artefakt "{artefact}" eingeweiht.</p>
+<p>In deiner HÃ¶hle {cave} wurde soeben das Artefakt "{artefact}" eingeweiht.</p>
 </tmpl:MSG>

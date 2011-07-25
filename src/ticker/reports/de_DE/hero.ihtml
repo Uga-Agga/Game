@@ -1,0 +1,5 @@
+<tmpl:TITLE>Held-Wiedererweckung in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>In deiner Höhle {cave} wurde soeben der Held "{heroName}" wiedererweckt.</p>
+</tmpl:MSG>

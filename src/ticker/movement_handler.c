@@ -25,6 +25,7 @@
 #include "ticker.h"
 #include "ugatime.h"
 #include "game_rules.h"
+#include "hero.h"
 
 /* movement constants */
 #define ROHSTOFFE_BRINGEN	1
@@ -47,7 +48,7 @@
 #define NO_FARMING		0
 #define FARMING			1
 
-/* Mit diesen Flag kann man das Resi klauen nur während des Krieges erlauben*/
+/* Mit diesen Flag kann man das Resi klauen nur wï¿½hrend des Krieges erlauben*/
 /* 0 bedeutet es geht immer*/
 #define STEALOUTSIDEWAR		1
 
@@ -71,17 +72,17 @@ static int isMovingAllowed(db_t *database,
                         struct Player *sender,
                         struct Player *reciever,
                         struct Relation *attToDef){
-    //einfache Fälle zuerst
+    //einfache FÃ¤lle zuerst
     //beide spieler im selben stamm
     if(strcasecmp(sender->tribe, reciever->tribe) == 0)
         return 1;
-    //wenn beide im vorkrieg sind dann müsste das in der relation ja schon stehen
+    //wenn beide im vorkrieg sind dann mÃ¼sste das in der relation ja schon stehen
     if(attToDef->relationType == RELATION_TYPE_PRE_WAR)
         return 1;
-    //wenn beide im krieg sind dann müsste das in der relation ja schon stehen
+    //wenn beide im krieg sind dann mï¿½sste das in der relation ja schon stehen
     if(attToDef->relationType == RELATION_TYPE_WAR)
         return 1;
-    //Im Kriegsbuendniss ist es auch möglich
+    //Im Kriegsbuendniss ist es auch mï¿½glich
     if(attToDef->relationType == RELATION_TYPE_WAR_TREATMENT)
         return 1;
 
@@ -691,6 +692,8 @@ void movement_handler (db_t *database, db_result_t *result)
   int artefact_id = 0;
   int lostTo = 0;
 
+  int heroID = 0;
+
   int body_count = 0;
   int attacker_lose = 0;
   int defender_lose = 0;
@@ -716,10 +719,11 @@ void movement_handler (db_t *database, db_result_t *result)
   event_end    = make_time_gm(return_start);
   make_timestamp_gm(return_end, event_end + (event_end - event_start));
 
-  /* get resources, units and artefact id */
+  /* get resources, units, hero and artefact id */
   get_resource_list(result, resources);
   get_unit_list(result, units);
   artefact = db_result_get_int(result, "artefactID");
+  heroID = db_result_get_int(result, "heroID");
 
   /* TODO reduce number of queries */
   get_cave_info(database, source_caveID, &cave1);
@@ -783,19 +787,19 @@ void movement_handler (db_t *database, db_result_t *result)
 	db_query_dstring(database, ds);
 
       if (artefact > 0)
-	put_artefact_into_cave(database, artefact, target_caveID);
+        put_artefact_into_cave(database, artefact, target_caveID);
 
       /* send all units back */
       dstring_set(ds, "INSERT INTO Event_movement"
 		      " (caveID, target_caveID, source_caveID, movementID,"
-		      " speedFactor, start, end");
+		      " speedFactor, start, end, heroID");
 
       for (i = 0; i < MAX_UNIT; ++i)
 	dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s'",
+      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d",
 	      source_caveID, source_caveID, target_caveID, RUECKKEHR,
-	      speed_factor, return_start, return_end);
+	      speed_factor, return_start, return_end, heroID);
 
       for (i = 0; i < MAX_UNIT; ++i)
 	dstring_append(ds, ",%d", units[i]);
@@ -814,7 +818,7 @@ void movement_handler (db_t *database, db_result_t *result)
     /**********************************************************************/
     case VERSCHIEBEN:
       get_relation_info(database, player1.tribe, player2.tribe, &relation1);
-      /*überprüfen ob sender und versender eine kriegsbeziehung haben */
+      /*Ã¼berprÃ¼fen ob sender und versender eine kriegsbeziehung haben */
       if(!(isMovingAllowed(database, &player1, &player2, &relation1) ||
 	      isTakeoverableCave(database, target_caveID))){
         //bewegung umdrehen//
@@ -881,7 +885,10 @@ void movement_handler (db_t *database, db_result_t *result)
 	    db_query_dstring(database, ds);
 
       if (artefact > 0)
-	put_artefact_into_cave(database, artefact, target_caveID);
+        put_artefact_into_cave(database, artefact, target_caveID);
+
+      if (heroID > 0)
+        kill_hero(database, heroID);
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
@@ -912,7 +919,10 @@ void movement_handler (db_t *database, db_result_t *result)
       db_query_dstring(database, ds);
 
       if (artefact > 0)
-	put_artefact_into_cave(database, artefact, target_caveID);
+        put_artefact_into_cave(database, artefact, target_caveID);
+
+      if (heroID > 0)
+        put_hero_into_cave(database, heroID, target_caveID);
 
       /* generate return report */
       return_report(database, &cave1, &player1, &cave2, &player2,
@@ -1075,16 +1085,16 @@ void movement_handler (db_t *database, db_result_t *result)
 	/* send all units back */
 	ds = dstring_new("INSERT INTO Event_movement"
 			 " (caveID, target_caveID, source_caveID, movementID,"
-			 " speedFactor, start, end, artefactID");
+			 " speedFactor, start, end, artefactID, heroID");
 
 	for (i = 0; i < MAX_RESOURCE; ++i)
 	  dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
 	for (i = 0; i < MAX_UNIT; ++i)
 	  dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-	dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d",
+	dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
 		source_caveID, source_caveID, target_caveID, RUECKKEHR,
-		speed_factor, return_start, return_end, artefact);
+		speed_factor, return_start, return_end, artefact, heroID);
 
 	for (i = 0; i < MAX_RESOURCE; ++i)
 	  dstring_append(ds, ",%d", resources[i]);
@@ -1102,14 +1112,14 @@ void movement_handler (db_t *database, db_result_t *result)
 
 	ds = dstring_new("INSERT INTO Event_movement"
 			 " (caveID, target_caveID, source_caveID, movementID,"
-			 " speedFactor, start, end, artefactID");
+			 " speedFactor, start, end, artefactID, heroID");
 
 	for (i = 0; i < MAX_UNIT; ++i)
 	  dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-	dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d",
+	dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
 		source_caveID, source_caveID, target_caveID, RUECKKEHR,
-		speed_factor, return_start, return_end, artefact);
+		speed_factor, return_start, return_end, artefact, heroID);
 
 	for (i = 0; i < MAX_UNIT; ++i)
 	{
@@ -1141,6 +1151,10 @@ void movement_handler (db_t *database, db_result_t *result)
 	if (artefact > 0)
 	  put_artefact_into_cave(database, artefact, target_caveID);
       }
+
+  if (heroID > 0)
+    put_hero_into_cave(database, heroID, target_caveID);
+
       get_relation_info(database, player1.tribe, player2.tribe, &relation1);
       if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){   
         bodycount_update(database, player2.player_id, body_count);
@@ -1203,7 +1217,7 @@ void movement_handler (db_t *database, db_result_t *result)
 		     &relation1, &relation2);
 
       /* calculate battle result */
-      /*bei ner übernahme kein resi klau möglich*/
+      /*bei ner ï¿½bernahme kein resi klau mï¿½glich*/
       calcBattleResult(battle, &cave2, 1);
 
       /* change artefact ownership */
@@ -1268,6 +1282,10 @@ void movement_handler (db_t *database, db_result_t *result)
       if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
         war_points_update(database, &player1, &player2, war_points_attacker, war_points_defender);
       }
+
+      /*kill hero: hero can't leave own caves*/
+      if (heroID > 0)
+        kill_hero(database, heroID);
 
       /* create and send reports */
       battle_report(database, &cave1, &player1, &cave2, &player2, battle,

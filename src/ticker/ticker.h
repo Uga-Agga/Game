@@ -17,13 +17,14 @@
 #define DEBUG_UGA_TIME		(1 << 3)
 #define DEBUG_TAKEOVER		(1 << 4)
 #define DEBUG_FAME		(1 << 5)
-#define DEBUG_SQL		(1 << 6)
+#define DEBUG_SQL		1//(1 << 6)
 
 #define DB_TABLE_ARTEFACT	"Artefact"
 #define DB_TABLE_CAVE		"Cave"
 #define DB_TABLE_CAVE_TAKEOVER	"Cave_takeover"
 #define DB_TABLE_PLAYER		"Player"
 #define DB_TABLE_RELATION	"Relation"
+#define DB_TABLE_HERO "Hero_new"
 
 #define ID_SCIENCE_UGA		22
 #define ID_SCIENCE_AGGA		23

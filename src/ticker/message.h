@@ -32,6 +32,7 @@
 #define MSG_CLASS_WEATHER	25
 #define MSG_CLASS_TRIBEWONDER	26
 #define MSG_CLASS_RANDOMEVENT	27
+#define MSG_CLASS_HERO 28
 #define MSG_CLASS_UGA_AGGA	99
 #define MSG_CLASS_ANNOUNCE	1001
 
@@ -74,6 +75,9 @@ extern double spy_report (db_t *database,
 extern void artefact_report (db_t *database,
 	const struct Cave *cave, const struct Player *player,
 	const char *artefact_name);
+
+extern void hero_report (db_t *database,
+    const struct Cave *cave, const struct Player *player);
 
 extern void artefact_merging_report (db_t *database,
 	const struct Cave *cave, const struct Player *player,

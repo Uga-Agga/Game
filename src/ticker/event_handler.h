@@ -39,5 +39,6 @@ extern void wonder_handler (db_t *database, db_result_t *result);
 extern void weatherEnd_handler (db_t *database, db_result_t *result);
 extern void weather_handler (db_t *database, db_result_t *result);
 extern void trade_handler (db_t *database, db_result_t *result);
+extern void hero_handler (db_t *database, db_result_t *result);
 
 #endif /* _EVENT_HANDLER_H_ */

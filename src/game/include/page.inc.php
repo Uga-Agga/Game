@@ -143,7 +143,7 @@ function page_sessionValidate() {
   $sql->bindValue('sessionID', $_SESSION['session']['sessionID'], PDO::PARAM_INT);
   $sql->bindValue('whereMicrotime', $microtime, PDO::PARAM_INT);
   $sql->bindValue('requestTimeout', $config->WWW_REQUEST_TIMEOUT, PDO::PARAM_INT);
-
+  
   if (!$sql->execute() || $sql->rowCount() == 0)
     return FALSE;
 

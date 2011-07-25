@@ -1,0 +1,172 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+{% if status_msg %}<div class="{{ status_msg.type }}" style="width:800px;margin:15px auto;">{{ status_msg.message }}</div>{% endif %}
+{% if hero %}
+<div class="box" style="width:800px;margin:15px auto;">
+<div class="box-header">Held von {{ hero.name }}</div>
+<div class="box-content success inner">
+<table class="table nohover">
+ <tr>
+ <td>&nbsp;</td>
+  <td style="width:300px"><img src="{{ gfx }}/heroes/{{ hero.path }}" style="width:250px; hight:250px; border:none" alt="Held" /></td>
+  <td style="width:220px;"><br />
+   <div class="notice" style="width:200px;"><p style="text-align:left; margin-left:10px;font-weight: bold;">Statuswerte</p><br />
+    <table class="table">
+     <tr>
+      <td><strong>Name: </strong></td><td class="text-right">{{ hero.name }}</td>
+     </tr>
+     <tr>
+      <td><strong>Level: </strong></td><td class="text-right">{{ hero.lvl }}</td>
+     </tr>
+   <tr>
+      <td style="vertical-align:top;"><strong>Exp: </strong></td><td class="text-right">{{ hero.exp }}<div style="font-size: x-small;">({{ hero.expLeft }} Exp bis Lvlup)</div></td>
+     </tr>
+   <tr></tr>     
+     <tr><td><strong>Ort: </strong></td><td class="text-right">{{ hero.location }}</tr>
+     <tr>
+      <td><strong>HP: </strong></td><td style="text-align:center;"><div class="{{ hero.HPbar }} inner">{{ hero.HP }} / {{ hero.maxHP }}</div></td>
+   </tr>     
+     <tr><td>&nbsp;</td></tr>
+     <tr>
+      <td><strong>&nbsp;TP frei: </strong></td><td class="text-right" style="padding-right:7px">{{ hero.tpFree }}</td>
+     </tr>
+     <tr>
+    <td colspan="2">
+     <table class="table">
+        <tr>
+         <td><strong>Kraft: </strong></td><td class="text-right">{{ hero.force }}</td>
+     <td class="text-right">Lvl <strong>{{ hero.forceLvl }}</strong></td>
+     <td class="text-right"><a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=1"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png" style="width:16px; hight:16px; vertical-align:middle; border:none" alt="Plus" /></a></td>
+        </tr>
+        <tr>
+         <td><strong>Max-HP: </strong></td><td class="text-right">{{ hero.maxHP }}</td>
+     <td class="text-right">Lvl <strong>{{ hero.maxHpLvl }}</strong></td>
+     <td class="text-right"><a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=2"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png" style="width:16px; hight:16px; vertical-align:middle; border:none" alt="Plus" /></a></td>
+        </tr>
+        <tr>
+         <td><strong>HP-Reg: </strong></td><td class="text-right">+{{ hero.regHP }}</td>
+     <td class="text-right">Lvl <strong>{{ hero.regHpLvl }}</strong></td>
+     <td class="text-right"><a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=3"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png" style="width:16px; hight:16px; vertical-align:middle; border:none" alt="Plus" /></a></td>
+        </tr>
+       </table>
+    </td>
+   </tr>
+    </table>
+   </div>
+  </td>
+  <td>&nbsp;</td>
+ </tr>
+</table>
+<br />
+{% for cat in skills %}
+   <div class="notice small" style="width:660px;"><p style="text-align:left; margin-left:10px;font-weight: bold;">Spezielle Fähigkeiten</p><br />
+    <table class="table" cellspacing="0" cellpadding="2" style="text-align:center">
+   <tr class="bg2 nohover" >
+    <th class="bg2 nohover" style="text-align:left;">Name</th>
+    <th class="bg2 nohover">Ab</th>
+    <th class="bg2 nohover">Kosten</th>
+    <th class="bg2 nohover">&nbsp;</th>
+   </tr>
+   {% for skill in cat.data %}
+   {% set bgID = (bgID+1)%2 %}
+   <tr class="bg{{ bgID }}">
+    <td style="text-align:left;"><a href="" class="bold">{{ skill.name }}</a><div style="font-size: x-small;">{{ skill.description }}</div></td>
+    <td >{{ skill.requirement }}</td>
+      <td >{{ skill.cost }}</td>    
+    <td style="text-align:right;"><img src="{{gfx }}/de_DE/t_uga/{{ skill.path }}" width="20" hight="20" style=" vertical-align:middle;" /></td> 
+   </tr>
+   {% endfor %}
+  </table>
+   </div>
+{% endfor %} 
+<br /> 
+<div class="box small">
+<div class="box-header">Tränke</div>
+<div class="box content smallinner success inner">
+<table class="table" rules="rows">
+<tr style="background-color: #c6d880;">
+<th>&nbsp;</th><th>Name</th><th style="text-align:center;">Bestand</th><th>&nbsp;</th><th>&nbsp;</th>
+</tr>
+{% for cat in potions %}
+   {% for skill in cat.data %}
+   {% set bgID = (bgID+1)%2 %}
+    <tr class="bg{{ bgID }}">
+    <td><img src="{{ gfx }}/potions/{{ potion.path }}" class="td-mini-icon" alt="{{ potion.name }}" /></td>
+    <td><a href="#" class="bold">{{ potion.name }}</a><br /><div style="font-size: x-small;">{{ potion.description }}</div></td>
+    <td style=\"text-align: center;\">{{ potion.value }}</td>
+    <td><form action="main.php?modus=hero_detail" id="{{ potion.name }}1" method="post"><input name="{{ potion.name }}" value="1x" type="submit"></form></td>
+    <td><form action="main.php?modus=hero_detail" id="{{ potion.name }}5" method="post"><input name="{{ potion.name }}" value="5x" type="submit"></form></td>
+    </tr>;
+   {% endfor %} 
+{% endfor %} 
+</table>
+</div>
+</div>
+<br />
+<div class="info" style="width:660px; margin: 0 auto;">
+{% if quene_show %}
+  <div class="notice" style="width:600px; margin: 5px auto;text-align:center">
+    <ul>
+      <li> Momentan im Gange: Wiederbelebung von {{ hero.name }} auf Level {{ hero.lvl }} (fertig: {{ quene_finish }})</li>
+      <li><a href="main.php?modus=hero_detail&amp;action=cancelOrder&amp;caveID={{ cave_id }}">Abbrechen</a></li>
+    </ul>
+  </div>
+  <br />
+{% endif %}
+<p style="text-align:left; margin-left:10px;font-weight: bold;"><a name="tot"></a>{{ ritual.name }}</p><br />
+<table class="table nohover">
+<tr>
+<td><img src="{{ gfx }}/heroes/altar_large.gif" style="width:225px; hight:140px;" alt="Altar der Auferstehung" />
+</td>
+<td>
+<p style="text-align:justify; margin-left:5px; margin-bottom:15px;">{{ ritual.description }}
+</p>
+<p style="text-align:justify; margin-left:5px; margin-bottom:15px;">
+<strong>Kosten für Held auf Lvl {{ ritual.ritualID }}:</strong><br />&nbsp;&nbsp;
+<table><tr><td>
+{% for item in resource %}
+{% if item.value %}
+<img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" />
+{% if item.enough %}
+      <span class="enough small">{{ item.value }}</span>
+    {% else %}
+      <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}')" onmouseout="hideWMTT()">{{ item.value }}</span>
+      <div id="missing_{{ item.dbFieldName }}" class="tooltip" >Es fehlen noch: {{ item.missing }} {{ item.name }}</div>
+    {% endif %}
+  &nbsp;
+{% endif %}
+{% endfor %}
+</td><td>
+<img src="{{ gfx }}/de_DE/t_uga/clock.gif" style="width:16px; hight:16px;vertical-align:bottom" />{{ delay }}
+</td></tr></table><br /><br />
+<form action="main.php?modus=hero_detail" id="newhero" method="post">
+<input type="submit" name="action" value="Wiederbeleben" {{ disabled }} />
+</form>
+</p>
+</td>
+</tr>
+</table>
+</div>
+<br />
+</div>
+</div>
+{% endif %}
+{% if newhero %}
+<div class="box small">
+  <div class="box-header">Art des Helden wählen: </div>
+  <div class="box-content success small inner">
+<table class="table" rules="rows">
+{% for item in newhero %}
+{% set bgID = (bgID+1)%2 %}
+<tr class="bg{{ bgID }}">
+<td><strong>{{ item.heroTypName }}</strong><br />
+<div style="font-size: x-small;">{{ item.heroTypDescription }}</div></td><td style="text-align:right;"><a href="main.php?modus=hero_detail&amp;ID={{ item.heroTypID }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" /></a></td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</div>
+{% endif %}
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

@@ -114,6 +114,7 @@ CREATE TABLE IF NOT EXISTS `Cave` (
   `artefacts` int(11) unsigned NOT NULL DEFAULT '0',
   `monsterID` int(11) unsigned NOT NULL DEFAULT '0',
   `regionID` int(11) NOT NULL DEFAULT '0',
+  `hero` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`caveID`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `Coords` (`xCoord`,`yCoord`),
@@ -284,6 +285,7 @@ CREATE TABLE IF NOT EXISTS `Event_movement` (
   `end` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `blocked` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `artefactID` int(11) unsigned NOT NULL DEFAULT '0',
+  `heroID` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`event_movementID`),
   KEY `caveID` (`caveID`),
   KEY `source_caveID` (`source_caveID`),
@@ -444,6 +446,60 @@ CREATE TABLE IF NOT EXISTS `Event_wonderEnd` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `Event_hero`
+--
+
+CREATE TABLE IF NOT EXISTS `Event_heroRitual` (
+  `event_heroID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `caveID` int(11) unsigned NOT NULL DEFAULT '0',
+  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
+  `heroID` int(11) unsigned NOT NULL DEFAULT '0',
+  `start` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `end` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `blocked` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`event_heroID`),
+  KEY `end` (`end`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `Hero_new`
+--
+
+CREATE TABLE IF NOT EXISTS `Hero_new` (
+  `heroID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `heroTypID` int(11) unsigned NOT NULL DEFAULT '0',
+  `exp` int(11) unsigned NOT NULL DEFAULT '0',
+  `lvl` int(11) unsigned NOT NULL DEFAULT '0',
+  `healPoints` int(11) unsigned NOT NULL DEFAULT '0',
+  `maxHealPoints` int(11) unsigned NOT NULL DEFAULT '0',
+  `caveID` int(11) unsigned NOT NULL DEFAULT '0',
+  `isAlive` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `tpFree` int(11) unsigned NOT NULL DEFAULT '0',
+  `maxHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
+  `forceLvl` int(11) unsigned NOT NULL DEFAULT '0',
+  `regHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`heroID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `Hero_rituals`
+--
+
+CREATE TABLE IF NOT EXISTS `Hero_rituals` (
+  `ritualID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `duration` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '43200',
+  PRIMARY KEY (`ritualID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 --
 -- Tabellenstruktur für Tabelle `Hero`
@@ -732,6 +788,7 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `referer_count` int(11) NOT NULL DEFAULT '0',
   `noStatistic` tinyint(1) NOT NULL DEFAULT '0',
   `notInactive` tinyint(1) NOT NULL DEFAULT '0',
+  `heroID` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
   UNIQUE KEY `name` (`name`),
   KEY `tribe` (`tribe`),
