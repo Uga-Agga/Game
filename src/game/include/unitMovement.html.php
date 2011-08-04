@@ -236,7 +236,7 @@ function unit_Movement($caveID, &$ownCave) {
           $minutesPerCave * $ua_movements[$movementID]->speedfactor);
 
         switch ($msgID) {
-          case 0: $msg = array('type' => 'error', 'message' => sprintf(_('Die Krieger wurden losgeschickt und haben %d Nahrung mitgenommen!'), $reqFood));
+          case 0: $msg = array('type' => 'success', 'message' => sprintf(_('Die Krieger wurden losgeschickt und haben %d Nahrung mitgenommen!'), $reqFood));
                   break;
           case 1: $msg = array('type' => 'error', 'message' => _('In diesen Koordinaten liegt keine Höhle!'));
                   break;
@@ -357,15 +357,19 @@ function unit_Movement($caveID, &$ownCave) {
 
   $movements = digest_getMovements(array($caveID => $details), array(), true);
 
+  $ownMovement = $oppMovement = array();
   foreach($movements AS $move) {
     if ($move['isOwnMovement']) {
-      //tmpl_iterate($template, 'MOVEMENT/MOVE');
-      //tmpl_set($template, 'MOVEMENT/MOVE', $move);
+      $ownMovement[] = $move;
     } else {
-      //tmpl_iterate($template, 'OPPMOVEMENT/MOVE');
-      //tmpl_set($template, 'OPPMOVEMENT/MOVE', $move);
+      $oppMovement[] = $move;
     }
   }
+
+    $template->addVars(array(
+      'ownMovement' => $ownMovement,
+      'oppMovement' => $oppMovement,
+    ));
 
   // artefakte
   if (sizeof($myartefacts) != 0) {

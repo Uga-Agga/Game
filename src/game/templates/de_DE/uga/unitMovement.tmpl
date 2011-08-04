@@ -380,152 +380,156 @@ function hideWMTT() {
   </div>
 </form>
 <br />
-<!--
-<tmpl:MOVEMENT>
-<div class="box">
-<div class="box-header">laufende Bewegungen eigener Verbände</div>
-<div class="box-content success inner nohover">
- <table class="table" rules="rows">
-  <tr class="bg2 nohover">
-    <td class="bg2 nohover">&nbsp;</td>
-    <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
-    <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
-    <td class="bg2 nohover" style="min-width:200px"><strong>Zielhöhle</strong></td>
-    <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
-    <td class="bg2 nohover">&nbsp;</td>    
-  </tr>
-  <tmpl:MOVE>
-  <tr class="bg{bgID}">
-    <td>&nbsp;</td>
-    <td>
-      <ul class="clean_list">
-        <li>{movementID_description}</li>
-        <li>&nbsp;</li>
-        <li>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
-        </li>
-      </ul>
-    </td>
-    <td>
-      <ul class="clean_list">
-        <li>Startzeitpunkt: {event_start_date}</li>
-        <li>Endzeitpunkt: {event_end_date}</li>
-      </ul>
-    </td>
-    <td>
-      <ul class="clean_list">
-        <li>{target_player_name} - {target_player_tribe}</li>
-        <li>aus {target_cave_name} ({target_xCoord}|{target_yCoord})</li>
-      </ul>
-    </td>
-    <td>
-        <ul class="clean_list">
-          <tmpl:UNITS>
-          <li>
-            <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{name}:</strong>{value}&nbsp;<br /></div>
-          </li>
-          </tmpl:UNITS>
-          <li>
-            <br />
-          </li>
-          <tmpl:RESOURCES>
-          <li>
-            <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{name}:</strong>{value}&nbsp;<br /></div>
-          </li>
-          </tmpl:RESOURCES>
-                     
-          <tmpl:ARTEFACT>
 
-          <li>
-            <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{name}" src="images/artefacts/{resref}.gif" width="30" height="30" alt="{name}">&nbsp;{name}</div>
-          </li>
-          </tmpl:ARTEFACT>
-        </ul>
-    </td>
-    <td style="text-align:right; vertical-align:middle;"><tmpl:CANCEL><a href="main.php?modus={modus}&amp;eventID={eventID}"><img src="{{ gfx }}/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>&nbsp;</tmpl:CANCEL></td>
-  </tr>
-  </tmpl:MOVE>
-</table>
-  <br />
+{% if ownMovement %}
+<div class="box">
+  <div class="box-header">laufende Bewegungen eigener Verbände</div>
+  <div class="box-content success inner nohover">
+    <table class="table" rules="rows">
+      <tr class="bg2 nohover">
+        <td class="bg2 nohover">&nbsp;</td>
+        <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
+        <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
+        <td class="bg2 nohover" style="min-width:200px"><strong>Zielhöhle</strong></td>
+        <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
+        <td class="bg2 nohover">&nbsp;</td>    
+      </tr>
+      {% for item in ownMovement %}
+      {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{bgID}">
+          <td>&nbsp;</td>
+          <td>
+            <ul class="clean_list">
+              <li>{{ item.movementID_description }}</li>
+              <li>&nbsp;</li>
+              <li>
+                <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+                <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
+                <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+              </li>
+            </ul>
+          </td>
+          <td>
+            <ul class="clean_list">
+              <li>Startzeitpunkt: {{ item.event_start_date }}</li>
+              <li>Endzeitpunkt: {{ item.event_end_date }}</li>
+            </ul>
+          </td>
+          <td>
+            <ul class="clean_list">
+              <li>{{ item.target_player_name }} - {{ item.target_player_tribe }}</li>
+              <li>aus {{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</li>
+            </ul>
+          </td>
+          <td>
+            <ul class="clean_list">
+              {% if item.units %}
+                {% for item_unit in item.units %}
+                <li>
+                  <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_unit.name }}:</strong>&nbsp;{{ item_unit.value }}&nbsp;<br /></div>
+                </li>
+                {% endfor %}
+              {% endif %}
+              <li><br /></li>
+              {% if item.resources %}
+                {% for item_resource in item.resources %}
+                  <li>
+                    <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_resource.name }}:</strong>&nbsp;{{ item_resource.value }}&nbsp;<br /></div>
+                  </li>
+                {% endfor %}
+              {% endif %}
+              {% if item.artefact %}
+                {% for item_artefact in item.artefact %}
+                  <li>
+                    <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</div>
+                  </li>
+                {% endfor %}
+              {% endif %}
+            </ul>
+          </td>
+          <td style="text-align:right; vertical-align:middle;"><!--<tmpl:CANCEL><a href="main.php?modus={modus}&amp;eventID={eventID}"><img src="{{ gfx }}/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>&nbsp;</tmpl:CANCEL>--></td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
 </div>
-</div>
-</tmpl:MOVEMENT>
+{% endif %}
 
 <br />
 
-<tmpl:OPPMOVEMENT>
+{% if oppMovement %}
 <div class="box">
-<div class="box-header">ankommende Verbände</div>
-<div class="box-content success inner nohover">
- <table class="table" rules="rows">
-  <tr class="bg2 nohover">
-    <td class="bg2 nohover">&nbsp;</td>
-    <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
-    <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
-    <td class="bg2 nohover" style="min-width:200px"><strong>Herkunft</strong></td>
-    <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
-    <td class="bg2 nohover">&nbsp;</td>    
-  </tr>
-  <tmpl:MOVE>
-  <tr class="bg{bgID}">
-    <td>&nbsp;</td> 
-    <td>
-      <ul class="clean_list">
-        <li>{movementID_description}</li>
-        <li>&nbsp;</li>
-        <li>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML" title="Export als XML" /></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export als IRC" /></a>
-          <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
-        </li>
-      </ul>
-    </td>
-    <td>
-      <ul class="clean_list">
-        <li>Startzeitpunkt: {event_start_date}</li>
-        <li>Endzeitpunkt: {event_end_date}</li>
-      </ul>
-    </td>
-    <td>
-      <ul class="clean_list">
-        <li>{source_player_name} - {source_player_tribe}</li>
-        <li>aus {source_cave_name} ({source_xCoord}|{source_yCoord})</li>
-      </ul>
-    </td>
-    <td>
-        <ul class="clean_list">
-          <tmpl:UNITS>
-          <li>
-            <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{name}:</strong>{value}&nbsp;<br /></div>
-          </li>		  
-          </tmpl:UNITS>          
-          <li>
-            <br />
-          </li>           
-          <tmpl:RESOURCES>
-          <li>
-            <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{name}:</strong>{value}&nbsp;<br /></div>
-          </li>		   
-          </tmpl:RESOURCES>          
-                     
-          <tmpl:ARTEFACT>		  
-                      
-          <li>
-            <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{name}" src="images/artefacts/{resref}.gif" width="30" height="30" alt="{name}">&nbsp;{name}</div>
-          </li>
-          </tmpl:ARTEFACT>
-        </ul>
-    </td>
-    <td>&nbsp;</td> 
-  </tr>
-  </tmpl:MOVE>
-  </table>
-  <br />
+  <div class="box-header">ankommende Verbände</div>
+  <div class="box-content success inner nohover">
+   <table class="table" rules="rows">
+    <tr class="bg2 nohover">
+      <td class="bg2 nohover">&nbsp;</td>
+      <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
+      <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
+      <td class="bg2 nohover" style="min-width:200px"><strong>Herkunft</strong></td>
+      <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
+      <td class="bg2 nohover">&nbsp;</td>    
+    </tr>
+    {% for item in oppMovement %}
+      {% set bgID = (bgID+1)%2 %}
+      <tr class="bg{bgID}">
+        <td>&nbsp;</td> 
+        <td>
+          <ul class="clean_list">
+            <li>{{ item.movementID_description }}</li>
+            <li>&nbsp;</li>
+            <li>
+              <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML" title="Export als XML" /></a>
+              <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export als IRC" /></a>
+              <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <ul class="clean_list">
+            <li>Startzeitpunkt: {{ item.event_start_date }}</li>
+            <li>Endzeitpunkt: {{ item.event_end_date }}</li>
+          </ul>
+        </td>
+        <td>
+          <ul class="clean_list">
+            <li>{{ item.source_player_name }} - {{ item.source_player_tribe }}</li>
+            <li>aus {{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</li>
+          </ul>
+        </td>
+        <td>
+          <ul class="clean_list">
+          {% if item.units %}
+            {% for item_unit in item.units %}
+              <li>
+                <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_unit.name }}:</strong>&nbsp;{{ item_unit.value }}&nbsp;<br /></div>
+              </li>
+            {% endfor %}
+          {% endif %}
+          <li><br /></li>
+          {% if item.resources %}
+            {% for item_resource in item.resources %}
+              <li>
+                <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_resource.name }}:</strong>&nbsp;{{ item_resource.value }}&nbsp;<br /></div>
+              </li>
+            {% endfor %}
+          {% endif %}
+          {% if item.artefact %}
+            {% for item_artefact in item.artefact %}
+              <li>
+                <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</div>
+              </li>
+            {% endfor %}
+          {% endif %}
+          </ul>
+        </td>
+        <td>&nbsp;</td> 
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
 </div>
-</div>
-</tmpl:OPPMOVEMENT>
--->
+{% endif %}
+
 {% include 'pageFooter.tmpl' %}
 {% endspaceless %}

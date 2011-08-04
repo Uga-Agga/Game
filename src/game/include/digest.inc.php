@@ -136,7 +136,7 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
     if ($showDetails) {
       // show artefact
       if ($row['artefactID']) {
-        $tmp['ARTEFACT'] = artefact_getArtefactByID($row['artefactID']);
+        $tmp['artefact'] = artefact_getArtefactByID($row['artefactID']);
       }
 
       // eval(ExposeInvisible)
@@ -177,7 +177,7 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
       }
 
       if (sizeof($units)) {
-        $tmp['UNITS'] = $units;
+        $tmp['units'] = $units;
       }
 
       $resources = array();
@@ -190,7 +190,7 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
           'value'       => ($ua_movements[$row['movementID']]->fogResource && !$row['isOwnMovement']) ? calcFogResource($row[$resource->dbFieldName]) : $row[$resource->dbFieldName]
         );
       }
-      if (sizeof($resources)) $tmp['RESOURCES'] = $resources;
+      if (sizeof($resources)) $tmp['resources'] = $resources;
 
       if ($row['isOwnMovement'] && 
           $ua_movements[$row['movementID']]->returnID != -1 && 
@@ -359,7 +359,7 @@ function digest_getAppointments($ownCave){
       'cave_name'          => $ownCave[$row['caveID']]['name'],
       'caveID'             => $row['caveID'],
       'category'           => 'science',
-      'modus'              => SCIENCE,
+      'modus'              => SCIENCE_BUILDER,
       'eventID'            => $row['event_scienceID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),

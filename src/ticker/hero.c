@@ -32,6 +32,7 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
   hero->heroID      = heroID;
   hero->caveID      = db_result_get_int(result, "caveID");
   hero->isAlive     = db_result_get_int(result, "isAlive");
+  hero->playerID    = db_result_get_int(result, "playerID");
   get_effect_list(result, hero->effect);
 }
 
@@ -44,15 +45,15 @@ void put_hero_into_cave (db_t *database, int heroID, int caveID)
   db_query(database, "UPDATE " DB_TABLE_HERO " SET caveID = %d "
          "WHERE heroID = %d", caveID, heroID);
 
-  if (db_affected_rows(database) != 1)
-    throw(BAD_ARGUMENT_EXCEPTION, "put_hero_into_cave: hero could not be placed in cave.");
+  //if (db_affected_rows(database) != 1)
+  //  throw(BAD_ARGUMENT_EXCEPTION, "put_hero_into_cave: hero could not be placed in cave.");
 
   db_query(database, "UPDATE Cave SET hero = 1 "
          "WHERE caveID = %d", caveID);
 
   /* Bedingung: Höhle muss vorhanden sein */
-  if (db_affected_rows(database) != 1)
-    throw(SQL_EXCEPTION, "put_hero_into_cave: no such caveID");
+  //if (db_affected_rows(database) != 1)
+  //  throw(SQL_EXCEPTION, "put_hero_into_cave: no such caveID");
 }
 
 /*
@@ -182,6 +183,5 @@ void remove_hero_effects_from_cave (db_t *database, int heroID)
                   hero.effect[i]);
 
   dstring_append(ds, " WHERE caveID = %d", hero.caveID);
-
   db_query_dstring(database, ds);
 }

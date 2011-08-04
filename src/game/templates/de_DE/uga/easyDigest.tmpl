@@ -40,10 +40,10 @@
         </tr>
         <tr id="movement_{{ item.event_id }}" style="display:none">
           <td colspan="5" >
-            {% if item.UNITS %}
+            {% if item.units %}
             <div style="padding-bottom: 10px;">
               <ul>
-                {% for key, item_unit in item.UNITS %}
+                {% for key, item_unit in item.units %}
                   <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
                 {% endfor %}
               </ul>
@@ -51,10 +51,10 @@
             </div>
             {% endif %}
 
-            {% if item.RESOURCES %}
+            {% if item.resources %}
             <div style="padding-bottom: 10px;">
               <ul>
-                {% for item_resource in item.RESOURCES %}
+                {% for item_resource in item.resources %}
                   <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
                 {% endfor %}
               </ul>
@@ -62,10 +62,10 @@
             </div>
             {% endif %}
 
-            {% if item.ARTEFACTS %}
+            {% if item.artefact %}
             <div style="padding-bottom: 10px;">
               <ul>
-                {% for item_artefact in item.ARTEFACTS %}
+                {% for item_artefact in item.artefact %}
                   <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
                 {% endfor %}
               </ul>
@@ -112,14 +112,13 @@
             </script>
             <div id="timer_movement_date_{{ item.event_id }}"></div>
           </td>
-
         </tr>
         <tr id="movement_{{ item.event_id }}" style="display:none">
           <td colspan="5" >
-            {% if item.UNITS %}
+            {% if item.units %}
             <div style="padding-bottom: 10px;">
               <ul>
-                {% for key, item_unit in item.UNITS %}
+                {% for item_unit in item.units %}
                   <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
                 {% endfor %}
               </ul>
@@ -127,10 +126,10 @@
             </div>
             {% endif %}
 
-            {% if item.RESOURCES %}
+            {% if item.resources %}
             <div style="padding-bottom: 10px;">
               <ul>
-                {% for item_resource in item.RESOURCES %}
+                {% for item_resource in item.resources %}
                   <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
                 {% endfor %}
               </ul>
@@ -138,17 +137,18 @@
             </div>
             {% endif %}
 
-            {% if item.ARTEFACTS %}
+            {% if item.artefact %}
             <div style="padding-bottom: 10px;">
               <ul>
-                {% for item_artefact in item.ARTEFACTS %}
+                {% for item_artefact in item.artefact %}
                   <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
                 {% endfor %}
               </ul>
               <br style="clear: both;" />
             </div>
             {% endif %}
-          </td>        </tr>
+          </td>
+        </tr>
         {% endfor %}
       </table>
     </div>

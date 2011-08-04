@@ -303,7 +303,7 @@ db_result_t *db_query (db_t *database, const char *fmt, ...)
     va_start(ap, fmt);
     dstring_vappend(query, fmt, ap);
     va_end(ap);
-
+    
     return db_query_dstring(database, query);
 }
 
@@ -320,7 +320,7 @@ db_result_t *db_query_dstring (db_t *database, dstring_t *query)
     }
 
     if (!result) return NULL;
-
+    
     retval = db_result_new(result);
     return memory_pool_add(retval, (void (*)(void *)) db_result_free);
 }

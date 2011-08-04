@@ -69,16 +69,21 @@ class Twig_Node_Module extends Twig_Node
         $compiler
             ->write("public function getParent(array \$context)\n", "{\n")
             ->indent()
-            ->write("if (null === \$this->parent) {\n")
-            ->indent();
-        ;
-
-        $this->compileLoadTemplate($compiler, $this->getNode('parent'), '$this->parent');
-
-        $compiler
+            ->write("\$parent = ")
+            ->subcompile($this->getNode('parent'))
+            ->raw(";\n")
+            ->write("if (\$parent instanceof Twig_Template) {\n")
+            ->indent()
+            ->write("\$name = \$parent->getTemplateName();\n")
+            ->write("\$this->parent[\$name] = \$parent;\n")
+            ->write("\$parent = \$name;\n")
+            ->outdent()
+            ->write("} elseif (!isset(\$this->parent[\$parent])) {\n")
+            ->indent()
+            ->write("\$this->parent[\$parent] = \$this->env->loadTemplate(\$parent);\n")
             ->outdent()
             ->write("}\n\n")
-            ->write("return \$this->parent;\n")
+            ->write("return \$this->parent[\$parent];\n")
             ->outdent()
             ->write("}\n\n")
         ;
@@ -87,20 +92,10 @@ class Twig_Node_Module extends Twig_Node
     protected function compileDisplayBody(Twig_Compiler $compiler)
     {
         $compiler->write("\$context = array_merge(\$this->env->getGlobals(), \$context);\n\n");
+        $compiler->subcompile($this->getNode('body'));
 
         if (null !== $this->getNode('parent')) {
-            // remove all output nodes
-            foreach ($this->getNode('body') as $node) {
-                if (!$node instanceof Twig_NodeOutputInterface) {
-                    $compiler->subcompile($node);
-                }
-            }
-
-            $compiler
-                ->write("\$this->getParent(\$context)->display(\$context, array_merge(\$this->blocks, \$blocks));\n")
-            ;
-        } else {
-            $compiler->subcompile($this->getNode('body'));
+            $compiler->write("\$this->getParent(\$context)->display(\$context, array_merge(\$this->blocks, \$blocks));\n");
         }
     }
 
@@ -127,6 +122,7 @@ class Twig_Node_Module extends Twig_Node
             ->write("public function __construct(Twig_Environment \$env)\n", "{\n")
             ->indent()
             ->write("parent::__construct(\$env);\n\n")
+            ->write("\$this->parent = array();\n")
         ;
 
         $countTraits = count($this->getNode('traits'));

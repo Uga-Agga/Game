@@ -37,10 +37,12 @@ void hero_handler (db_t *database, db_result_t *result)
   /* get Hero */
   get_hero_by_id(database, heroID, &hero);
   /* XXX hero.caveID != 0 here? */
-  get_cave_info(database, hero.caveID, &cave);
+  if (hero.caveID == 0)
+	  get_cave_info(database, hero.caveID, &cave);
+  else 
 
   if (cave.player_id)
-    get_player_info(database, cave.player_id, &player);
+    get_player_info(database, hero.playerID, &player);
   else	/* System */
     memset(&player, 0, sizeof player);
 
@@ -50,7 +52,7 @@ void hero_handler (db_t *database, db_result_t *result)
   apply_hero_effects_to_cave(database, heroID);
   debug(DEBUG_TICKER, "applied hero effects");
 
-  hero_report(database, &cave, &player);
+  //hero_report(database, &cave, &player);
 
 
   debug(DEBUG_TICKER, "leaving function hero_handler()");

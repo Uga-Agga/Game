@@ -78,11 +78,11 @@ function digest_getDigest($ownCaves) {
         unset($buildings[$value['caveID']]);
         break;
 
-      case EXTERNAL_BUILDER:
+      case DEFENSE_BUILDER:
         unset($defenses[$value['caveID']]);
         break;
 
-      case SCIENCE:
+      case SCIENCE_BUILDER:
         unset($sciences[$value['caveID']]);
         break;
     }

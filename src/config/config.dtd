@@ -98,6 +98,11 @@
   categoryId CDATA #REQUIRED
   hidden (0 | 1) "0"
 >
+<!-- Hero -->
+<!ELEMENT HeroTypes (HeroType*)>
+<!ELEMENT HeroType (Name+, Description+, lvl+, lvlUp+, maxHP+, Force+, regHP+)>
+<!ELEMENT HeroSkills (HeroSkill*)>
+<!ELEMENT HeroSkill (Name+, Description+, lvl+, lvlUp+, maxHP+, Force+, regHP+)>
 
 <!--Wetter-->
 <!ELEMENT Weathers (Weather+)>

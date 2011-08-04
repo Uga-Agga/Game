@@ -38,9 +38,11 @@ function hero_getHeroDetail($caveID,  $ownCaves){
 
   // get current playerID by user
   $playerID = $_SESSION['player']->playerID;
-
+  
+  $newhero = false;
+  
   $messageText = array(
-  -7 => array('type' => 'error', 'message' => _('Fehler beim schreiben in die Datenbank.')),
+  -7 => array('type' => 'error', 'message' => _('Fehler beim Schreiben in die Datenbank.')),
   -6 => array('type' => 'error', 'message' => _('Der Held existiert bereits.')),
   -5 => array('type' => 'error', 'message' => _('Maximallevel des Skills erreicht.')),
   -4 => array('type' => 'notice', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.')),
@@ -51,7 +53,7 @@ function hero_getHeroDetail($caveID,  $ownCaves){
     1 => array('type' => 'success', 'message' => _('Euer Held hat eine neue Fähigkeit erlernt.')),
     2 => array('type' => 'notice', 'message' => _('Die Wiederbelebung eures Helden hat begonnen.')),
   3 => array('type' => 'success', 'message' => _('Euer Held wurde erstellt.')),
-  4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nichtmehr rückgängig machen.'))
+  4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.'))
   );
   $action = request_var('ID', '');
       switch ($action) {
@@ -89,18 +91,19 @@ function hero_getHeroDetail($caveID,  $ownCaves){
     }
     
     $ritual = getRitualByLvl($hero['lvl']);
+    $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
         foreach ($resourceTypeList as $key){
         $dbFieldName = $key->dbFieldName;
-        $enough = ($ritual["$dbFieldName"]<=$cave["$dbFieldName"]);   
+        $enough = ($ritual[$dbFieldName]<=$cave[$dbFieldName]);   
     $tmp = array(
-    'enough'      => $enough,
-    'value'       => $ritual["$dbFieldName"],
-    'missing'     => $ritual["$dbFieldName"]-$cave["$dbFieldName"],
-    'dbFieldName' => $dbFieldName,
-    'name'        => $key->name,
+      'enough'      => $enough,
+      'value'       => $ritual["$dbFieldName"],
+      'missing'     => $ritual["$dbFieldName"]-$cave["$dbFieldName"],
+      'dbFieldName' => $dbFieldName,
+      'name'        => $key->name,
     );
-    $resource[]= $tmp;
+    $resource[$key->dbFieldName]= $tmp;
     }
     
     if($hero['HP']<=0.2*$hero['maxHP']){
@@ -218,6 +221,7 @@ function hero_getHeroDetail($caveID,  $ownCaves){
       'quene_finish'    => time_formatDatetime($queue['end']),
     ));
   }
+  
   if ($hero) {
   $template->addVars(array(
         'hero'               => $hero,
@@ -247,17 +251,22 @@ function getHeroByPlayer($playerID) {
     $sql->bindValue('playerID', $playerID);
 
   // if not successful
-  if (!$sql->execute() || !($result = $sql->fetch(PDO::FETCH_ASSOC))){
+  if (!$sql->execute() || !($result = $sql->fetch(PDO::FETCH_ASSOC))) {
   $sql->closeCursor();
     return null;
   }
+  //otherwise
+  
+  if (empty($result))
+    return null;
+    
   // otherwise
   $sql->closeCursor();
   $hero = array(
       'heroID'       => $result['heroID'],
       'playerID'     => $result['playerID'],
       'name'         => $result['name'],
-      'heroTypID'    => $result['heroTypID'],
+      'heroTypeID'    => $result['heroTypeID'],
       'lvl'          => $result['lvl'],
       'exp'          => $result['exp'],
       'caveID'       => $result['caveID'],
@@ -268,14 +277,13 @@ function getHeroByPlayer($playerID) {
       'forceLvl'     => $result['forceLvl'],
       'maxHpLvl'     => $result['maxHpLvl'],
       'regHpLvl'     => $result['regHpLvl'],
-      'heroTypID'    => $result['heroTypID'],
       'path'         => _('hero_imperator.gif'),
       'location'     => _('tot')
       );
-      if($hero['heroTypID']==2){
+      if($hero['heroTypeID']==2){
        $hero['path']=_('hero_defender.gif');
       }
-      if($hero['heroTypID']==3){
+      if($hero['heroTypeID']==3){
        $hero['path']=_('hero_constructor.gif');
       }
     return $hero;
@@ -366,7 +374,7 @@ function getRitualByLvl($lvl) {
 
   // if not successful
   if (!$sql->execute() || !($ritual=$sql->fetch(PDO::FETCH_ASSOC))){
-  $sql->closeCursor();
+    $sql->closeCursor();
     return null;
   }
   // otherwise
@@ -379,7 +387,15 @@ function createRitual($caveID,$playerID,$ritual,$hero){
     global $db;
   
   $cave = getCaveSecure($caveID, $playerID);
-    if ($ritual['population']<= $cave['population'] && $ritual['food']<= $cave['food'] && $ritual['wood']<= $cave['wood'] && $ritual['stone']<= $cave['stone'] && $ritual['metal']<= $cave['metal'] && $ritual['sulfur']<= $cave['sulfur']){
+
+    if ($ritual['population']['value']<= $cave['population'] && 
+        $ritual['food']['value']<= $cave['food'] && 
+        $ritual['wood']['value']<= $cave['wood'] && 
+        $ritual['stone']['value']<= $cave['stone'] && 
+        $ritual['metal']['value']<= $cave['metal'] && 
+        $ritual['sulfur']['value']<= $cave['sulfur']) 
+        {
+        
       $sql = $db->prepare("UPDATE ". CAVE_TABLE ." 
                        SET population = population - :pop,
              food = food - :food,
@@ -388,15 +404,15 @@ function createRitual($caveID,$playerID,$ritual,$hero){
              metal = metal - :metal,
              sulfur = sulfur - :sulfur
                          WHERE (playerID = :playerID) AND (caveID = :caveID)");
-      $sql->bindValue('pop', $ritual['population'], PDO::PARAM_INT);
-      $sql->bindValue('food', $ritual['food'], PDO::PARAM_INT);
-      $sql->bindValue('wood', $ritual['wood'], PDO::PARAM_INT);
-      $sql->bindValue('stone', $ritual['stone'], PDO::PARAM_INT);
-      $sql->bindValue('metal', $ritual['metal'], PDO::PARAM_INT);
-      $sql->bindValue('sulfur', $ritual['sulfur'], PDO::PARAM_INT);
+      $sql->bindValue('pop', $ritual['population']['value'], PDO::PARAM_INT);
+      $sql->bindValue('food', $ritual['food']['value'], PDO::PARAM_INT);
+      $sql->bindValue('wood', $ritual['wood']['value'], PDO::PARAM_INT);
+      $sql->bindValue('stone', $ritual['stone']['value'], PDO::PARAM_INT);
+      $sql->bindValue('metal', $ritual['metal']['value'], PDO::PARAM_INT);
+      $sql->bindValue('sulfur', $ritual['sulfur']['value'], PDO::PARAM_INT);
       $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
       $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-      print_r($sql);
+      
       if (!$sql->execute()) {
         $sql->closeCursor();
         return -7;      
@@ -415,8 +431,9 @@ function createRitual($caveID,$playerID,$ritual,$hero){
         $sql->closeCursor();
         
         $sql =  $db->prepare("UPDATE " . HERO_TABLE . " SET 
-                isAlive = -1 WHERE heroID = :heroID");
+                isAlive = -1, caveID = :caveID WHERE heroID = :heroID");
       $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
+      $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
       
       if (!$sql->execute()) {
         return -3;
@@ -427,14 +444,16 @@ function createRitual($caveID,$playerID,$ritual,$hero){
     }
     return -3;
 }
-function createNewHero($typ,$playerID,$caveID){
+function createNewHero($typ, $playerID, $caveID) {
     global $db;
 
     $hero = getHeroByPlayer($playerID);
-  if($hero === null){
+    
+  if($hero == null) {
   $player = getPlayerByID($playerID);
+  
   $sql = $db->prepare("INSERT INTO ". HERO_TABLE ." 
-                    (caveID, playerID, heroTypID, name, exp,
+                    (caveID, playerID, heroTypeID, name, exp,
              healPoints, maxHealPoints, isAlive,
              melee_damage_factor, melee_hp_factor, food_factor) 
                      VALUES (
@@ -445,29 +464,31 @@ function createNewHero($typ,$playerID,$caveID){
       $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
       $sql->bindValue('typ', $typ, PDO::PARAM_INT);
       $sql->bindValue('name', $player['name'], PDO::PARAM_INT);
-      $sql->bindValue('exp', _('100'), PDO::PARAM_INT);
-      $sql->bindValue('healPoints', _('100'), PDO::PARAM_INT);
-      $sql->bindValue('maxHealPoints', _('100'), PDO::PARAM_INT);
-      $sql->bindValue('isAlive', _('1'), PDO::PARAM_INT);
-      if ($typ == 1){
-      $sql->bindValue('melee_damage_factor', _('0.05'), PDO::PARAM_STR);
-      $sql->bindValue('melee_hp_factor', _('0.0'), PDO::PARAM_STR);
-      $sql->bindValue('food_factor', _('0.0'), PDO::PARAM_STR);
+      $sql->bindValue('exp', 100, PDO::PARAM_INT);
+      $sql->bindValue('healPoints', 100, PDO::PARAM_INT);
+      $sql->bindValue('maxHealPoints', 100, PDO::PARAM_INT);
+      $sql->bindValue('isAlive', 1, PDO::PARAM_INT);
+      if ($typ == '1'){
+      $sql->bindValue('melee_damage_factor', strval(0.05), PDO::PARAM_STR);
+      $sql->bindValue('melee_hp_factor', strval(0.0), PDO::PARAM_STR);
+      $sql->bindValue('food_factor', strval(0.0), PDO::PARAM_STR);
       }
-      if ($typ == 2){
-      $sql->bindValue('melee_damage_factor', _('0.0'), PDO::PARAM_STR);
-      $sql->bindValue('melee_hp_factor', _('0.05'), PDO::PARAM_STR);
-      $sql->bindValue('food_factor', _('0.0'), PDO::PARAM_STR);
+      if ($typ == '2'){
+      $sql->bindValue('melee_damage_factor', strval(0.0), PDO::PARAM_STR);
+      $sql->bindValue('melee_hp_factor', strval(0.05), PDO::PARAM_STR);
+      $sql->bindValue('food_factor', strval(0.0), PDO::PARAM_STR);
       }
-      if ($typ == 3){
-      $sql->bindValue('melee_damage_factor', _('0.0'), PDO::PARAM_STR);
-      $sql->bindValue('melee_hp_factor', _('0.0'), PDO::PARAM_STR);
-      $sql->bindValue('food_factor', _('0.05'), PDO::PARAM_STR);
+      if ($typ == '3'){
+      $sql->bindValue('melee_damage_factor', strval(0.0), PDO::PARAM_STR);
+      $sql->bindValue('melee_hp_factor', strval(0.0), PDO::PARAM_STR);
+      $sql->bindValue('food_factor', strval(0.05), PDO::PARAM_STR);
       }
-        if ($sql->execute()) {
+      
+      if ($sql->execute()) {
+        
         $sql->closeCursor();
         return 3;     
-        }
+      }
   }
   return -6;
 }

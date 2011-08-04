@@ -20,7 +20,7 @@ require_once("include/page.inc.php");
 
 page_start();
 
-$stylesheet = "./images/temp/tribe_".$params->SESSION->player->tribe.".css";
+$stylesheet = "./images/temp/tribe_".$_SESSION['player']->tribe.".css";
 
 if (!file_exists($stylesheet))
   tribe_generateMapStylesheet();

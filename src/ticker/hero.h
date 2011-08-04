@@ -23,6 +23,7 @@ typedef struct Hero
     int heroID;
     int caveID;
     int isAlive; // 3 status: dead, alive, reincarnating
+    int playerID;
     float effect[MAX_EFFECT];
 } Hero;
 

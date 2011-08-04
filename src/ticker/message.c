@@ -98,7 +98,7 @@ static char* transform_spy_values (int num, int type) {
 
   //defenseSystems
   if (type == 0) {
-    if (    num <      5) value = "ein k�mmerlicher Haufen";
+    if (    num <      5) value = "ein kümmerlicher Haufen";
     else if (num <     9) value = "eine Handvoll";
     else if (num <    17) value = "ein Dutzend";
     else if (num <    33) value = "ein Trupp";
@@ -118,14 +118,14 @@ static char* transform_spy_values (int num, int type) {
     else if (num <  4097) value = "eine Menge";
     else if (num <  6145) value = "eine Legion";
     else if (num <  8193) value = "ein Haufen";
-    else if (num < 12289) value = "ein gro�er Haufen";
+    else if (num < 12289) value = "ein großer Haufen";
     else if (num < 16385) value = "verdammt viele";
     else if (num < 20481) value = "Unmengen";
     else if (num < 32769) value = "eine Streitmacht";
     else if (num < 49153) value = "eine Armee";
     else if (num < 65537) value = "Heerscharen";
     else if (num < 98305) value = "eine haltlose Horde";
-    else  value = "dar�ber eine endlose wogende Masse";
+    else  value = "darüber eine endlose wogende Masse";
   }
 
   //resources
@@ -135,16 +135,16 @@ static char* transform_spy_values (int num, int type) {
     else if (num < 4097) value = "ein kleiner Haufen";
     else if (num < 16385) value = "ein beachtlicher Haufen";
     else if (num < 32769) value = "eine Menge";
-    else if (num < 65537) value = "eine gro�e Menge";
+    else if (num < 65537) value = "eine große Menge";
     else if (num < 131074) value = "ein Berg";
-    else if (num < 262148) value = "ein gro�er Berg";
+    else if (num < 262148) value = "ein großer Berg";
     else if (num < 524296) value = "ein riesiger Berg";
-    else value = "unglaublicher �berfluss";
+    else value = "unglaublicher Überfluss";
   }
 
   //buildings
   if (type == 3) {
-    if      (num <     5) value = "ein k�mmerlicher Haufen";
+    if      (num <     5) value = "ein kümmerlicher Haufen";
     else if (num <     9) value = "eine Handvoll";
     else if (num <    17) value = "ein Dutzend";
     else if (num <    33) value = "ein Trupp";
@@ -1392,9 +1392,8 @@ void hero_report (db_t *database,
 
   template_context(tmpl_hero, "MSG");
   template_set(tmpl_hero, "cave", cave->name);
-  template_set(tmpl_hero, "heroName", player->name);
 
-  message_new(database, MSG_CLASS_HERO,
+  message_new(database, MSG_CLASS_ARTEFACT,
       cave->player_id, subject, template_eval(tmpl_hero), xml);
 }
 

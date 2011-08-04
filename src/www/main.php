@@ -513,7 +513,6 @@ $template->addVars(array(
   'cave_terrain'  => $ownCaves[$caveID]['terrain'],
   'time'          => date("d.m.Y H:i:s"),
   'bottom'        => vote_main(),
-  'new_mail'      => $nm_content,
   'new_mail_link' => (!empty($nm_content)) ? '_new' : '',
   'rules_path'    => RULES_PATH,
   'help_path'     => HELP_PATH,
