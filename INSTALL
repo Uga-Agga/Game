@@ -1,3 +1,16 @@
+Generic installation instructions at end of file.
+
+Mac Installation notes
+======================
+
+Macports usually puts your headers and libs at a non-standard place.
+To tell autoconf where to search for these libraries (e.g. a local mxml)
+you need to tell the configure-script where to look:
+
+CPPFLAGS="-I/opt/local/include" LDFLAGS="-L/opt/local/lib" ./configure
+
+
+
 Basic Installation
 ==================
 
