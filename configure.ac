@@ -44,7 +44,7 @@ AC_CHECK_PROG(MYSQL_CONFIG, mysql_config, mysql_config)
 test -z "$PHP" && AC_MSG_ERROR(installation problem: PHP not found)
 test -z "$PHP_CONFIG" && AC_MSG_ERROR(installation problem: PHP not found)
 test -z "$XSLTPROC" && AC_MSG_ERROR(installation problem: xsltproc not found)
-test -z "$MYSQL_CONFIG" && AC_MSG_ERROR(installation problem: MySQL not found)
+test -z "$MYSQL_CONFIG" && AC_MSG_ERROR(installation problem: MySQL client library development files not found. install libmysqld-dev and libmysqlclient-dev)
 
 test "$GCC" && CFLAGS="$CFLAGS -Wall"
 
