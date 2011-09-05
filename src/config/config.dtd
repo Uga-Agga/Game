@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitTypes?, DefenseSystemTypes?, EffectTypes?, wonders?, trades?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
+<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitTypes?, DefenseSystemTypes?, EffectTypes?, wonders?, trades?, Potions?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
 <!ELEMENT Header (TakeoverMaxPopularityPoints, TakeoverMinResourceValue, WatchTowerVisionRange, ExposeInvisible, WonderResistance, FuelResourceID, MovementCost, MovementSpeed)>
 <!--Languages-->
 <!ELEMENT Languages (Language*)>
@@ -98,12 +98,11 @@
   categoryId CDATA #REQUIRED
   hidden (0 | 1) "0"
 >
-<!-- Hero -->
-<!ELEMENT HeroTypes (HeroType*)>
-<!ELEMENT HeroType (Name+, Description+, lvl+, lvlUp+, maxHP+, Force+, regHP+)>
-<!ELEMENT HeroSkills (HeroSkill*)>
-<!ELEMENT HeroSkill (Name+, Description+, lvl+, lvlUp+, maxHP+, Force+, regHP+)>
-
+<!ELEMENT Potions (Potion+)>
+<!ELEMENT Potion (Name+, Description+, HP_increase, HP_prozentual_increase, TP_setback, Cost*)>
+<!ATTLIST Potion
+  id CDATA #REQUIRED
+>
 <!--Wetter-->
 <!ELEMENT Weathers (Weather+)>
 <!ELEMENT Weather (Name+, we_impacts+)>

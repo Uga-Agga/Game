@@ -38,6 +38,7 @@ $MOVEMENTSPEEDCONSTANT = "<xsl:apply-templates select="MovementSpeed"/>";
 <xsl:template match="incidentals"></xsl:template>
 <xsl:template match="regimes"></xsl:template>
 
+
 <!-- object -->
 <xsl:template match="object">[<xsl:choose>
 <xsl:when test="name(id(@id))='Resource'">R</xsl:when>
@@ -583,6 +584,13 @@ function init_defenseSystems(){
 <xsl:template match="Encumbrance"><xsl:value-of select="count(id(@id)/preceding-sibling::*)"/> => '<xsl:value-of select="@value"/>'<xsl:if test="position()!=last()">, </xsl:if>
 </xsl:template>
 
+<!-- Hero -->
+<xsl:template match="HeroType">/****hallo***/</xsl:template>
+<xsl:template match="HeroSkills"></xsl:template>
+<xsl:template match="Potions"></xsl:template>
+
+
+<!-- Terrains -->
 <xsl:template match="Terrains">
 /********************** Terrains *********************/
   define("MAX_TERRAINS", <xsl:value-of select="count(Terrain)"/>);

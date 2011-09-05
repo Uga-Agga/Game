@@ -27,7 +27,7 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   // Gott oder nicht?
   if ($_SESSION['player']->tribe != GOD_ALLY) {
-    // gibts nicht oder nicht in einer Höhle
+    // gibts nicht oder nicht in einer Hï¿½hle
     if (!$artefact['caveID']) {
       $show_artefact = FALSE;
 
@@ -35,7 +35,7 @@ function artefact_getDetail($caveID, &$myCaves) {
 
       $cave = getCaveByID($artefact['caveID']);
 
-      // leere Höhle
+      // leere HÃ¶hle
       if (!$cave['playerID']) {
         $show_artefact = FALSE;
 
@@ -52,10 +52,10 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   if ($show_artefact) {
 
-    // eigene Höhle ...
+    // eigene Hï¿½hle ...
     if (array_key_exists($artefact['caveID'], $myCaves)) {
 
-      // Ritual ausführen?
+      // Ritual ausfï¿½hren?
       if (isset($_POST['initiate'])) {
         $message = artefact_beginInitiation($artefact);
         tmpl_set($template, 'message', $message);
@@ -96,7 +96,7 @@ function artefact_getDetail($caveID, &$myCaves) {
                                                                  array('name' => "initiate",   'value' => 1)));
         }
 
-        // es wird bereits in dieser Höhle eingeweiht...
+        // es wird bereits in dieser Hï¿½hle eingeweiht...
         else {
           tmpl_iterate($template, 'ARTEFACT/NO_INITIATION');
         }
@@ -152,22 +152,22 @@ function artefact_getList($caveID, $myCaves) {
     // fremdes Artefakt
     } else {
 
-      // Berechtigung prüfen
+      // Berechtigung prï¿½fen
 
       // ***** kein Gott! *****************************************************
       if ($_SESSION['player']->tribe != GOD_ALLY){
 
-        // Artefakt liegt in einer Höhle
+        // Artefakt liegt in einer Hï¿½hle
         if ($value['caveID'] != 0) {
 
-          // A. in Einöden und von Göttern sind Tabu
+          // A. in Einï¿½den und von Gï¿½ttern sind Tabu
           if ($value['playerID'] == 0 || $value['tribe'] == GOD_ALLY) continue;
 
           $context = 'ARTEFACT_OTHER';
           $value['alternate'] = ++$alternate_other % 2 ? "alternate" : "";
         }
 
-        // Artefakt liegt nicht in einer Höhle
+        // Artefakt liegt nicht in einer Hï¿½hle
         else {
 
           // A. wird bewegt?
@@ -187,11 +187,11 @@ function artefact_getList($caveID, $myCaves) {
       // ***** Gott! *****************************************************+++++
       else {
 
-        // Artefakt liegt in einer Höhle
+        // Artefakt liegt in einer Hï¿½hle
         if ($value['caveID'] != 0){
 
 
-          // A. liegt in Einöde.
+          // A. liegt in Einï¿½de.
           if ($value['playerID'] == 0){
             $context = 'ARTEFACT_HIDDEN';
             $value['alternate'] = ++$alternate_hidden % 2 ? "alternate" : "";
@@ -204,7 +204,7 @@ function artefact_getList($caveID, $myCaves) {
           }
         }
 
-        // Artefakt liegt nicht in einer Höhle
+        // Artefakt liegt nicht in einer Hï¿½hle
         else {
 
           // A. wird bewegt?

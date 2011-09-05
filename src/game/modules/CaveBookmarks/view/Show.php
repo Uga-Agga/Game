@@ -25,7 +25,7 @@ class CaveBookmarks_View_Show extends View {
     $this->cavebookmarks = array();
 
     // open template
-    $this->openTemplate($language, $skin, 'CaveBookmarks_Show.ihtml');
+    $this->openTemplate($language, $skin, 'caveBookmarks.tmpl');
   }
 
   function setCaveBookmarks($cavebookmarks) {
@@ -37,7 +37,7 @@ class CaveBookmarks_View_Show extends View {
   }
 
   function getContent(){
-  	
+
     if (sizeof($this->cavebookmarks))
       tmpl_set($this->template, '/CONTENT/CAVEBOOKMARKS/CAVEBOOKMARK', $this->cavebookmarks);
     else

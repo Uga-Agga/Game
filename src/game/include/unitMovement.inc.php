@@ -86,7 +86,7 @@ function setMovementEvent($caveID, $caveData,
                           $targetX, $targetY,
                           $unit, $resource,
                           $movementID, $reqFood, $absDuration,
-                          $artefactID, $caveSpeedFactor) {
+                          $artefactID, $heroID, $caveSpeedFactor) {
                             
   global $db, $unitTypeList, $resourceTypeList, $FUELRESOURCEID;
 
@@ -162,10 +162,16 @@ function setMovementEvent($caveID, $caveData,
       return 3;
     }
   }
+  
+  // remove hero if any
+  if ($heroID > 0){
+    if (!hero_removeHeroFromCave($heroID))
+      return 3;
+  }
 
   // insert fuer movement_event basteln
   $now = time();
-  $insert = "INSERT INTO ". EVENT_MOVEMENT_TABLE ." (caveID, source_caveID, target_caveID, movementID, `start`, `end`, artefactID, speedFactor, exposeChance, ";
+  $insert = "INSERT INTO ". EVENT_MOVEMENT_TABLE ." (caveID, source_caveID, target_caveID, movementID, `start`, `end`, artefactID, heroID, speedFactor, exposeChance, ";
   $i = 0;
   foreach ($unit as $uID => $val) {
     if (!empty($val)){
@@ -185,11 +191,11 @@ function setMovementEvent($caveID, $caveData,
   $exposeChance = (double)rand() / (double)getRandMax();
 
   $insert .= sprintf(" ) VALUES (%d, %d, %d, %d, ".
-                     "'%s', '%s', %d, %f, %f, ",
+                     "'%s', '%s', %d, %d, %f, %f, ",
                      $caveID, $caveID, $targetCaveID, $movementID,
                      time_toDatetime($now),
                      time_toDatetime($now + $absDuration * 60),
-                     $artefactID, $speedFactor, $exposeChance);
+                     $artefactID, $heroID, $speedFactor, $exposeChance);
 
   $i = 0;
   foreach($unit as $val) {

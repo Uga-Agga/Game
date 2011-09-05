@@ -22,138 +22,121 @@ require_once('formula_parser.inc.php');
  */
 
 function takeover_main($caveID, $ownCaves) {
+  global $resourceTypeList, $TAKEOVERMAXPOPULARITYPOINTS, $TAKEOVERMINRESOURCEVALUE, $template;
 
-  // initialize return value
-  $result = '';
+  // open template
+  $template->setFile('takeover.tmpl');
 
-  // get current task
-  $task = request_var('task', "");
-
-  switch ($task) {
-
-    // show main page
-    default:
-      $result = takeover_show($caveID, $ownCaves);
-      break;
-
-    // show change confirmation page
-    case 'confirm_change':
-      $result = takeover_confirmChange($caveID, $ownCaves);
-      break;
-
-    // change cave page
-    case 'change':
-      $result = takeover_change($caveID, $ownCaves);
-      break;
-
-    // show withdrawal confirmation page
-    case 'confirm_withdrawal':
-      $result = takeover_confirmWithdrawal($caveID, $ownCaves);
-      break;
-
-    // withdrawal page
+  $feedback = '';
+  $action = request_var('action', '');
+  switch ($action) {
     case 'withdrawal':
-      $result = takeover_withdrawal($caveID, $ownCaves);
-      break;
+      if (isset($_POST['abort_withdrawal'])) {
+        break;
+      }
+
+      if (isset($_POST['confirm_withdrawal'])) {
+        $feedback = takeover_withdrawal();
+        break;
+      }
+
+      // generate check value
+      $_SESSION['withdrawal_check'] = uniqid('withdrawal');
+      $template->addVar('withdrawal_check',  $_SESSION['withdrawal_check']);
+    break;
+
+    case 'change':
+      if (isset($_POST['abort_change'])) {
+        break;
+      }
+
+      $bidding = takeover_getBidding();
+      $xCoord        = request_var('xCoord', 0);
+      $yCoord        = request_var('yCoord', 0);
+      $currentYCoord = (isset($bidding['yCoord'])) ? $bidding['yCoord'] : 0;
+      $currentXCoord = (isset($bidding['xCoord'])) ? $bidding['xCoord'] : 0;
+
+      // only one ordinate
+      if ($xCoord == 0 || $yCoord == 0) {
+        $feedback =  array('type' => 'error', 'message' => _('Zum Wechseln mußt du sowohl die x- als auch die y-Koordinate angeben.'));
+        break;
+      // already bidding on this cave
+      } else if ($currentXCoord == $xCoord && $currentYCoord == $yCoord) {
+        $feedback =  array('type' => 'error', 'message' => _('Du bietest bereits für diese Höhle.'));
+        break;
+      }
+
+      if (isset($_POST['confirm_change'])) {
+        $feedback = takeover_change($xCoord, $yCoord);
+        break;
+      }
+
+      // generate check value
+      $_SESSION['change_check'] = uniqid('change_check');
+      $template->addVar('change_check', $_SESSION['change_check']);
+      $template->addVar('xCoord', $xCoord);
+      $template->addVar('yCoord', $yCoord);
+    break;
   }
-
-  return $result;
-}
-
-
-################################################################################
-
-
-/**
- * This function shows the general information page
- */
-
-function takeover_show($caveID, $ownCaves, $feedback = NULL) {
-  global $resourceTypeList,
-         $TAKEOVERMAXPOPULARITYPOINTS, $TAKEOVERMINRESOURCEVALUE;
 
   // get params
   $playerID = $_SESSION['player']->playerID;
   $maxcaves = $_SESSION['player']->takeover_max_caves;
 
-  // open template
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'takeover.ihtml');
-
   // show feedback
-  if ($feedback !== NULL)
-    tmpl_set($template, '/MESSAGE/message', $feedback);
+  if (!empty($feedback)) {
+    $template->addVar('status_msg', $feedback);
+  }
 
   // don't show page, if maxcaves reached
   if (sizeof($ownCaves) >= $maxcaves) {
-    tmpl_set($template, '/MESSAGE/message', sprintf(_('Sie haben bereits die maximale Anzahl von %d H&ouml;hlen erreicht.'), $maxcaves));
+    $template->addVars(array(
+      'status_msg'  => array('type' => 'info', $message => sprintf(_('Sie haben bereits die maximale Anzahl von %d Höhlen erreicht.'), $maxcaves)),
+      'show_page' => false,
+    ));
 
   // prepare page
   } else {
+    $template->addVar('show_page', true);
 
     // collect resource ratings
     $ratings = array();
-    foreach ($resourceTypeList AS $resource)
-      if ($resource->takeoverValue)
-        $ratings[] = array('dbFieldName' => $resource->dbFieldName,
-                           'name'        => $resource->name,
-                           'value'       => $resource->takeoverValue);
+    foreach ($resourceTypeList AS $resource) {
+      if ($resource->takeoverValue) {
+        $ratings[] = array(
+          'dbFieldName' => $resource->dbFieldName,
+          'name'        => $resource->name,
+          'value'       => $resource->takeoverValue
+        );
+      }
+    }
 
-    // fill page
-    tmpl_set($template, '/TAKEOVER',
-             array('beliebtheit'   => $TAKEOVERMAXPOPULARITYPOINTS,
-                   'mindestgebot'  => $TAKEOVERMINRESOURCEVALUE,
-                   'maxcaves'      => $maxcaves,
-                   'targetXCoord'  => request_var('targetXCoord', 0),
-                   'targetYCoord'  => request_var('targetYCoord', 0),
-                   'RESOURCEVALUE' => $ratings));
+/****************************************************************************************************
+*
+* Übergeben ans Template
+*
+****************************************************************************************************/
+    $template->addVars(array(
+      'popularity'       => $TAKEOVERMAXPOPULARITYPOINTS,
+      'maxcaves'         => $maxcaves,
+      'target_x_coord'   => request_var('targetXCoord', 0),
+      'target_y_coord'   => request_var('targetYCoord', 0),
+      'resource_ratings' => $ratings
+    ));
 
     // get bidding
-    $bidding = takeover_getBidding();
+    $bidding = takeover_getBidding(count($ownCaves));
     if ($bidding) {
-      tmpl_set($template, '/TAKEOVER/CHOSEN', $bidding);
-      tmpl_set($template, '/TAKEOVER', array('currentXCoord' => $bidding['xCoord'],
-                                             'currentYCoord' => $bidding['yCoord']));
+      $template->addVars(array(
+        'chosen'          => true,
+        'current_x_coord' => $bidding['xCoord'],
+        'current_y_Coord' => $bidding['yCoord'],
+        'bidding'         => $bidding,
+      ));
+    } else {
+      $template->addVar('chosen', false);
     }
   }
-  return tmpl_parse($template);
-}
-
-
-################################################################################
-
-
-/**
- * This function shows a page where one can confirm the change of one's cave
- */
-
-function takeover_confirmChange($caveID, $ownCaves) {
-  global $config;
-
-  // get params
-  $xCoord        = request_var('xCoord', 0);
-  $yCoord        = request_var('yCoord', 0);
-  $currentXCoord = request_var('currentXCoord', 0);
-  $currentYCoord = request_var('currentYCoord', 0);
-
-  // only one ordinate
-  if ($xCoord == 0 || $yCoord == 0)
-    return takeover_show($caveID, $ownCaves, _('Zum Wechseln mu&szlig;t du sowohl die x- als auch die y-Koordinate angeben.'));
-
-  // already bidding on this cave
-  else if ($currentXCoord == $xCoord && $currentYCoord == $yCoord)
-    return takeover_show($caveID, $ownCaves, _('Du bietest bereits f&uuml;r diese H&ouml;hle.'));
-
-  // open template
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'takeover_change.ihtml');
-
-  // generate check value
-  $_SESSION['check'] = uniqid('change');
-
-  // now bidding on another one
-  tmpl_set($template, array('xCoord' => $xCoord, 'yCoord' => $yCoord,
-                            'check' => $_SESSION['check']));
-
-  return tmpl_parse($template);
 }
 
 
@@ -164,49 +147,22 @@ function takeover_confirmChange($caveID, $ownCaves) {
  * This function changes the cave.
  */
 
-function takeover_change($caveID, $ownCaves) {
+function takeover_change($xCoord, $yCoord) {
 
   // get check
-  $check = request_var('check', 0);
-
-  // get coordinates
-  $xCoord = request_var('xCoord', 0);
-  $yCoord = request_var('yCoord', 0);
+  $change_check = request_var('change_check', 0);
 
   // verify $check
-  if ($check != $_SESSION['check'])
-    return takeover_show($caveID, $ownCaves, _('Sie k&ouml;nnen nicht f&uuml;r diese H&ouml;hle bieten. W&auml;hlen sie eine freie H&ouml;hle.'));
-
-  // not enough informations
-  if ($xCoord == 0 || $yCoord == 0)
-    return takeover_show($caveID, $ownCaves, _('Sie k&ouml;nnen nicht f&uuml;r diese H&ouml;hle bieten. W&auml;hlen sie eine freie H&ouml;hle.'));
+  if ($change_check != $_SESSION['change_check']) {
+    return array('type' => 'error', 'message' => _('Sie können nicht für diese Höhle bieten. Wählen sie eine freie Höhle.'));
+  }
 
   // cave change successfull
-  if (changeCaveIfReasonable($xCoord, $yCoord))
-    return takeover_show($caveID, $ownCaves,
-                         sprintf(_('Sie bieten nun f&uuml;r die H&ouml;hle in (%d|%d).'), $xCoord, $yCoord));
+  if (changeCaveIfReasonable($xCoord, $yCoord)) {
+    return array('type' => 'success', 'message' => sprintf(_('Sie bieten nun für die Höhle in (%d|%d).'), $xCoord, $yCoord));
+  }
 
-  return takeover_show($caveID, $ownCaves, _('Sie k&ouml;nnen nicht f&uuml;r diese H&ouml;hle bieten. W&auml;hlen sie eine freie H&ouml;hle.'));
-}
-
-
-################################################################################
-
-
-/**
- * This function shows a page where one can confirm one's withdrawal
- */
-
-function takeover_confirmWithdrawal($caveID, $ownCaves) {;
-
-  // open template
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'takeover_withdrawal.ihtml');
-
-  // generate check value
-  $_SESSION['check'] = uniqid('withdrawal');
-  tmpl_set($template, array('check' => $_SESSION['check']));
-
-  return tmpl_parse($template);
+  return array('type' => 'error', 'message' => _('Sie können nicht für diese Höhle bieten. Wählen sie eine freie Höhle.'));
 }
 
 
@@ -217,26 +173,26 @@ function takeover_confirmWithdrawal($caveID, $ownCaves) {;
  * This function let the player withdraw his bidding.
  */
 
-function takeover_withdrawal($caveID, $ownCaves) {
+function takeover_withdrawal() {
   global $db;
 
   // get check
-  $check = request_var('check', 0);
+  $withdrawal_check = request_var('withdrawal_check', 0);
 
   // verify $check
-  if ($check != $_SESSION['check'])
-    return takeover_show($caveID, $ownCaves, _('Sie konnten ihr Angebot nicht zur&uuml;ckziehen.'));
-
-  // withdraw
+  if ($withdrawal_check != $_SESSION['withdrawal_check']) {
+    return array('type' => 'error', 'message' => _('Sie konnten ihr Angebot nicht zurückziehen.'));
+  }
 
   // prepare query
   $sql = $db->prepare("DELETE FROM ". CAVE_TAKEOVER_TABLE ." WHERE playerID = :playerID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
-  if (!$sql->execute())
-    return takeover_show($caveID, $ownCaves, _('Sie konnten ihr Angebot nicht zur&uuml;ckziehen.'));
+  if (!$sql->execute()) {
+    return array('type' => 'error', 'message' => _('Sie konnten ihr Angebot nicht zurückziehen.'));
+  }
 
-  return takeover_show($caveID, $ownCaves, _('Sie haben ihr Angebot zur&uuml;ckgezogen.'));
+  return array('type' => 'success', 'message' => _('Sie haben ihr Angebot zurückgezogen.'));
 }
 
 
@@ -249,7 +205,7 @@ function takeover_withdrawal($caveID, $ownCaves) {
  *
  */
 
-function takeover_getBidding() {
+function takeover_getBidding($caveCount=0) {
   global $db, $resourceTypeList;
 
   // prepare query
@@ -263,7 +219,7 @@ function takeover_getBidding() {
   // fetch row
   $row = $sql->fetch();
   if (!$row) return NULL;
-  
+
   // fill return value
   $bidding = array('caveID'      => $row['caveID'],
                    'xCoord'      => $row['xCoord'],
@@ -288,10 +244,9 @@ function takeover_getBidding() {
 
   // merge $resources with bidding
   if (sizeof($resources)) {
-    $bidding['RESOURCE'] = $resources;
-    $bidding['SUM'] = array('sum' => $sum);
-  } else {
-    $bidding['NONE'] = array('iterate' => '');
+    $bidding['resource'] = $resources;
+    $bidding['sum'] = $sum;
+    $bidding['proportion'] = ($sum > 0) ? round(($sum / (200 * pow($caveCount, 2))), 3) : 0;
   }
 
   // get other bidders
@@ -313,9 +268,7 @@ function takeover_getBidding() {
 
   // merge $bidders with bidding
   if (sizeof($bidders)) {
-    $bidding['BIDDER'] = $bidders;
-  } else {
-    $bidding['NOONE'] = array('iterate' => '');
+    $bidding['bidder'] = $bidders;
   }
 
   return $bidding;
@@ -365,18 +318,21 @@ function changeCaveIfReasonable($xCoord, $yCoord) {
             $colNames[] = $resource->dbFieldName;
             $values[]   = "0";
         }
-        $colNames = implode(",", $colNames);
-        $values   = implode(", ", $values);
+        $colNames = implode(', ', $colNames);
+        $values   = implode(', ', $values);
 
-        $sql = sprintf("REPLACE INTO ". CAVE_TAKEOVER_TABLE ." ".
-                         "(playerID, caveID, xCoord, yCoord, name, %s, status) ".
-                         "VALUES (%d, %d, %d, %d, '%s', %s, 0)",
-                         $colNames,
-                         $_SESSION['player']->playerID, $row['caveID'],
-                         $row['xCoord'], $row['yCoord'], $row['name'], $values);
-        
-        if ($db->query($sql))
+        $sql = $db->prepare("REPLACE INTO ". CAVE_TAKEOVER_TABLE ."
+                             (playerID, caveID, xCoord, yCoord, name, " . $colNames . ", status)
+                             VALUES (:playerID, :caveID, :xCoord, :yCoord, :name, " . $values . ", 0)");
+        $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+        $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
+        $sql->bindValue('xCoord', $row['xCoord'], PDO::PARAM_INT);
+        $sql->bindValue('yCoord', $row['yCoord'], PDO::PARAM_INT);
+        $sql->bindValue('name', $row['name'], PDO::PARAM_STR);
+        if ($sql->execute()) {
           $result = TRUE;
+        }
+
     }
   }
 

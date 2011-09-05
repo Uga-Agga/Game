@@ -281,6 +281,17 @@ function hideWMTT() {
               <input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked><label for="myartefactsnone">keines</label>
             </li>
           -->
+          {% if artefact %}
+            <li class="bold">Ein Artefact mitnehmen</li>
+            {% for item in artefact %}
+              <input type="radio" name="myartefacts" id="myartefacts{{item.artefactID}}" value="{{item.artefactID}}"><label>{{item.name}}</label><br />
+            {% endfor %}
+            <input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked><label for="myartefactsnone">keines</label>
+          {% endif %}
+          {% if hero %}
+          <li class="bold">Held mitnehmen?</li>
+          <input type="checkbox" name="moveHero" value="true"><label>Helden mitnehmen</label><br />
+          {% endif %}
         </ul>
       </td>
       <td style="width:300px;">
@@ -425,24 +436,18 @@ function hideWMTT() {
             <ul class="clean_list">
               {% if item.units %}
                 {% for item_unit in item.units %}
-                <li>
-                  <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_unit.name }}:</strong>&nbsp;{{ item_unit.value }}&nbsp;<br /></div>
-                </li>
+                  <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
                 {% endfor %}
               {% endif %}
-              <li><br /></li>
+              <li>&nbsp;</li>
               {% if item.resources %}
                 {% for item_resource in item.resources %}
-                  <li>
-                    <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_resource.name }}:</strong>&nbsp;{{ item_resource.value }}&nbsp;<br /></div>
-                  </li>
+                  <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
                 {% endfor %}
               {% endif %}
               {% if item.artefact %}
                 {% for item_artefact in item.artefact %}
-                  <li>
-                    <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</div>
-                  </li>
+                  <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</span></li>
                 {% endfor %}
               {% endif %}
             </ul>
@@ -501,24 +506,18 @@ function hideWMTT() {
           <ul class="clean_list">
           {% if item.units %}
             {% for item_unit in item.units %}
-              <li>
-                <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_unit.name }}:</strong>&nbsp;{{ item_unit.value }}&nbsp;<br /></div>
-              </li>
+              <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
             {% endfor %}
           {% endif %}
-          <li><br /></li>
+          <li>&nbsp;</li>
           {% if item.resources %}
             {% for item_resource in item.resources %}
-              <li>
-                <div style="float: left; font-size: x-small; white-space:nowrap;"><strong>{{ item_resource.name }}:</strong>&nbsp;{{ item_resource.value }}&nbsp;<br /></div>
-              </li>
+              <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
             {% endfor %}
           {% endif %}
           {% if item.artefact %}
             {% for item_artefact in item.artefact %}
-              <li>
-                <div style="valign: top; float: left; font-size: x-small; white-space:nowrap;"><br /><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</div>
-              </li>
+              <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</span></li>
             {% endfor %}
           {% endif %}
           </ul>

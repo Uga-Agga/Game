@@ -886,9 +886,18 @@ void movement_handler (db_t *database, db_result_t *result)
 
       if (artefact > 0)
         put_artefact_into_cave(database, artefact, target_caveID);
-
+      
       if (heroID > 0)
-        kill_hero(database, heroID);
+      {
+        if (cave1.player_id != cave2.player_id) {
+          kill_hero(database, heroID);
+        } else {
+            remove_hero_effects_from_cave (database, heroID);
+            put_hero_into_cave(database, heroID, target_caveID);
+            apply_hero_effects_to_cave(database, heroID);
+          
+        }
+      }
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,

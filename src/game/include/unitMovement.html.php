@@ -46,7 +46,6 @@ function unit_Movement($caveID, &$ownCave) {
 
   // does the cave contain an artefact at least?
   if ($details['artefacts'] > 0) {
-
     // get artefacts
     $myartefacts = artefact_getArtefactsReadyForMovement($caveID);
 
@@ -73,6 +72,19 @@ function unit_Movement($caveID, &$ownCave) {
   /***************************************************************************/
   /***************************************************************************/
 
+  /**
+   * HERO MOVEMENT
+   */
+  
+  $moveHero = 0;
+  
+  if ($details['hero'] != 0 && request_var('moveHero', false) == true)
+    $moveHero = $details['hero'];
+  
+  /**
+   * END HERO MOVEMENTS
+   */
+  
   // put user, its session and nogfx flag into session
   $_SESSION['player'] = Player::getPlayer($_SESSION['player']->playerID);
 
@@ -232,7 +244,7 @@ function unit_Movement($caveID, &$ownCave) {
           $targetXCoord, $targetYCoord,
           $unit, $resource,
           $movementID, $reqFood, $duration,
-          $moveArtefact,
+          $moveArtefact, $moveHero,
           $minutesPerCave * $ua_movements[$movementID]->speedfactor);
 
         switch ($msgID) {
@@ -260,6 +272,10 @@ function unit_Movement($caveID, &$ownCave) {
   // make sure that bagged artefacts are not shown again
   if ($moveArtefact != 0)
     $myartefacts = artefact_getArtefactsReadyForMovement($caveID);
+    
+  // make sure that moved hero is not shown again
+  if ($moveHero != 0)
+    $details['hero'] = 0;
 
 // //////////////////////////////////////////////////////////////
 // Create the page
@@ -374,6 +390,12 @@ function unit_Movement($caveID, &$ownCave) {
   // artefakte
   if (sizeof($myartefacts) != 0) {
     //tmpl_set($template, '/ARTEFACTS/ARTEFACT', $myartefacts); 
+    $template->addVar('artefact', $myartefacts);
+  }
+  
+  // hero
+  if ($details['hero'] != 0) {
+    $template->addVar('hero', true);
   }
 
   // Module "CaveBookmarks" Integration

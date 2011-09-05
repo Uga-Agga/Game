@@ -465,9 +465,9 @@ function createNewHero($typ, $playerID, $caveID) {
       $sql->bindValue('typ', $typ, PDO::PARAM_INT);
       $sql->bindValue('name', $player['name'], PDO::PARAM_INT);
       $sql->bindValue('exp', 100, PDO::PARAM_INT);
-      $sql->bindValue('healPoints', 100, PDO::PARAM_INT);
+      $sql->bindValue('healPoints', 0, PDO::PARAM_INT);
       $sql->bindValue('maxHealPoints', 100, PDO::PARAM_INT);
-      $sql->bindValue('isAlive', 1, PDO::PARAM_INT);
+      $sql->bindValue('isAlive', 0, PDO::PARAM_INT);
       if ($typ == '1'){
       $sql->bindValue('melee_damage_factor', strval(0.05), PDO::PARAM_STR);
       $sql->bindValue('melee_hp_factor', strval(0.0), PDO::PARAM_STR);
@@ -484,12 +484,27 @@ function createNewHero($typ, $playerID, $caveID) {
       $sql->bindValue('food_factor', strval(0.05), PDO::PARAM_STR);
       }
       
-      if ($sql->execute()) {
-        
+      if (!$sql->execute()) {
         $sql->closeCursor();
-        return 3;     
+        return -6;     
       }
+    
+    return 3;
   }
   return -6;
 }
+
+  function hero_removeHeroFromCave ($heroID) {
+    global $db;
+    
+    $sql = $db->prepare("UPDATE " . CAVE_TABLE ." SET
+             hero = 0
+             WHERE hero = :heroID");
+    $sql->bindValue('heroID', $heroID, PDO::PARAM_INT);
+    
+    if (!$sql->execute())
+      return false;
+      
+    return true;
+  }
 ?>

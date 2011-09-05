@@ -1,0 +1,94 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<tmpl:TITLE>{iterate}H&ouml;hlenmerkliste</tmpl:TITLE>
+
+<tmpl:CONTENT>
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+
+<tmpl:ERROR_NOSUCHCAVE><div class="small error nohover">{iterate}Diese H&ouml;hle existiert nicht.</div><br /></tmpl:ERROR_NOSUCHCAVE>
+<tmpl:ERROR_MAXREACHED><div class="small error nohover">Sie d&uuml;rfen nicht mehr als {entries} Eintr&auml;ge in ihre Liste aufnehmen.</div><br /></tmpl:ERROR_MAXREACHED>
+<tmpl:ERROR_INSERTFAILED><div class="small error nohover">{iterate}Die H&ouml;hle konnte nicht eingetragen werden oder war bereits vorhanden.</div><br /></tmpl:ERROR_INSERTFAILED>
+<tmpl:ERROR_DELETEFAILED><div class="small error nohover">{iterate}Der Eintrag konnte nicht entfernt werden.</div><br /></tmpl:ERROR_DELETEFAILED>
+
+
+
+<div class="box small">
+    <div class="box-header nohover">
+         <strong>{iterate}H&ouml;hlenmerkliste</strong>
+    </div>
+     <tmpl:CAVEBOOKMARKS>
+    <div class="smallinner inner success nohover text-left">
+     <table class="table" rules="rows">
+      <tr>
+       <th>&nbsp;</th>
+       <th>Name</th>
+       <th>Koordinaten</th>
+       <th>Region</th>
+       <th>Besitzer</th>
+       <th>Stamm</th>
+       <th>&nbsp;</th>
+       <th>&nbsp;</th>
+      </tr>
+      <tmpl:CAVEBOOKMARK>
+      <tr>
+        <td>&nbsp;</td>
+        <td><a href="?modus=map_detail&amp;targetCaveID={caveID}">{name}</a></td>
+        <td>({xCoord}|{yCoord})</td>
+        <td>{region}</td>
+        <td><a href="?modus=player_detail&amp;detailID={playerID}">{playerName}</a></td>
+        <td><a href="?modus=tribe_detail&amp;tribe={tribe}">{tribe}</a></td>
+        <td>
+         <form method="post" action="main.php">
+          <p><input type="hidden" name="modus" value="unit_movement" />
+          <input type="hidden" name="targetXCoord" value="{xCoord}" />
+          <input type="hidden" name="targetYCoord" value="{yCoord}" />
+          <input type="hidden" name="targetCaveName" value="{name}" />
+          <input type="submit" value="Bewegen!" /></p>
+         </form>
+        </td>
+        <td>
+         <form method="post" action="main.php">
+          <p><input type="hidden" name="modus" value="CaveBookmarks" />
+          <input type="hidden" name="task" value="Delete" />
+          <input type="hidden" name="bookmarkID" value="{bookmarkID}" />
+          <input type="submit" value="l&ouml;schen" /></p>
+         </form>
+        </td>
+      </tr>
+      </tmpl:CAVEBOOKMARK>
+     </table>
+	 </div>
+     </tmpl:CAVEBOOKMARKS>
+
+     <tmpl:NOCAVEBOOKMARKS>
+	 <div class="smallinner notice nohover" style="margin:0px;">
+      {iterate}Bisher keine H&ouml;hlen eingetragen.
+     </div>
+     </tmpl:NOCAVEBOOKMARKS> 
+</div>
+<br />
+
+<div class="small success nohover">
+<form id="newcavebookmarkbyname" method="post" action="main.php">
+  <p>Name: <input name="name" type="text" size="35" maxlength="90" />
+  <input type="submit" name="add" value="Hinzuf&uuml;gen" />
+  <input type="hidden" name="modus" value="CaveBookmarks" />
+  <input type="hidden" name="task" value="Add" /></p>
+</form>
+<br />
+<form id="newcavebookmarkbycoord" method="post" action="main.php">
+  <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
+  y: <input name="yCoord" type="text" size="4" maxlength="4" />
+  <input type="submit" name="add" value="Hinzuf&uuml;gen" />
+  <input type="hidden" name="modus" value="CaveBookmarks" />
+  <input type="hidden" name="task" value="Add" /></p>
+</form>
+</div>
+
+</tmpl:CONTENT>
+
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

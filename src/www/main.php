@@ -27,7 +27,7 @@ page_start();
 
 // session expired?
 if (page_sessionExpired())
-  page_error403("Sie waren f�r " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv. Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction'] . " Uhr."));
+  page_error403("Sie waren fuer " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv. Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction'] . " Uhr."));
 else
   $_SESSION['lastAction'] = time();
 
@@ -535,11 +535,14 @@ $template->addVars(array(
   'messages_list_link'      => MESSAGES_LIST,
   'messages_new_link'       => MESSAGE_NEW,
   'messages_read_link'      => MESSAGE_READ,
+  'player_detail_link'      => PLAYER_DETAIL,
   'ranking_player_link'     => RANKING_PLAYER,
   'ranking_tribe_link'      => RANKING_TRIBE,
   'science_link'            => SCIENCE_BUILDER,
+  'takeover_link'           => TAKEOVER,
   'unit_link'               => UNIT_BUILDER,
   'unit_detail_link'        => UNIT_DETAIL,
+  'unit_movement_link'      => UNIT_MOVEMENT,
   'wonder_link'             => WONDER,
   'wonder_detail_link'      => WONDER_DETAIL,
 ));
