@@ -23,6 +23,9 @@ require_once("include/vote.html.php");
 require_once("include/wonder.rules.php");
 require_once("modules/Messages/Messages.php");
 
+
+date_default_timezone_set('Europe/Berlin'); // slange: added to fix warning in PHP5
+
 page_start();
 
 // session expired?
