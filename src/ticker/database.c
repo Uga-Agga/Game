@@ -8,9 +8,9 @@
  * the License, or (at your option) any later version.
  */
 
-#include <mysql/errmsg.h>
-#include <mysql/mysql.h>
-#include <mysql/mysqld_error.h>
+#include <errmsg.h>
+#include <mysql.h>
+#include <mysqld_error.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

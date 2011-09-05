@@ -2,7 +2,7 @@
 
 # programs
 CC =	      @CC@
-CFLAGS =      @CFLAGS@# @MYSQL_CFLAGS@
+CFLAGS =      @CFLAGS@ @MYSQL_CFLAGS@
 CPPFLAGS =    -Iticker @CPPFLAGS@
 INSTALL =     @INSTALL@
 INSTALL_DATA= @INSTALL_DATA@
@@ -101,13 +101,14 @@ phpext/%.o: ticker/%.c
 %.o: %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
+
 %.tmp: %.xml
 	sed -e 's/\[\([A-Za-z][0-9A-Za-z_]*\)\]/<object id="\1"\/>/g' \
 	    -e '/"[/?]*>/!s/"/\\&/g' -e "s/'/\\&apst;/g" $< >$@
 	$(XMLLINT) $@
 
 # default target
-all: $(CONFIG) $(TICKER) $(CALC) $(PHPEXT) $(TERRAIN)
+all: $(CONFIG) $(TICKER) $(CALC) $(TERRAIN)
 
 # build and run tests
 check: $(CHECK)
