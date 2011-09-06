@@ -17,6 +17,8 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
+<div id="dialog" title="Details"></div>
+
 <div class="box">
   <div class="box-header">Erweiterungen</div>
   <div class="box-content success inner">
@@ -24,12 +26,12 @@
       {% if improvement %}
         {% for item in improvement %}
           {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr class="bg{{ bgID }} building-row">
             <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('improvement_{{ item.building_id }}', this)" /></td>
             <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
             <td class="td-imp-2">
               <dl class="nodistance">
-                <dt><a href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="building-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="">{% include "boxCost.tmpl" %}</dd>
               </dl>
             </td>
@@ -79,12 +81,12 @@
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in improvement_unqualified %}
         {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
+        <tr class="bg{{ bgID }} building-row">
           <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('improvement_{{ item.building_id }}', this)" /></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
           <td class="">
             <dl class="nodistance">
-              <dt><a href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dt><a class="building-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
               <dd class="">{{ item.dependencies }}</dd>
             </dl>
           </td>
@@ -116,12 +118,12 @@
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in improvement_relict %}
       {% set bgID = (bgID+1)%2 %}
-      <tr class="bg{{ bgID }}">
+      <tr class="bg{{ bgID }} building-row" id="building_{{ item.building_id }}">
         <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('improvement_{{ item.building_id }}', this)" /></td>
         <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
         <td class="">
           <dl class="nodistance">
-            <dt><a href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+            <dt><a class="building-detail-link" href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
             <dd class="">{{ item.dependencies }}</dd>
           </dl>
         </td>
@@ -148,6 +150,45 @@
   </div>
 </div>
 {% endif %}
+
+<!---   The following code pops out the descriptions without pressing a button 
+<script>
+  $(document).ready(function() {
+    $('.building-row').hoverIntent({ 
+      interval: 500, timeout : 1000,
+      over : function() {
+        $(this).next().show();
+      }, out : function () {
+        $(this).next().hide();
+      }
+    });
+  })
+</script>
+-->
+
+<!---   The following code loads the improvement details using ajax.  -->
+<script>
+  $(document).ready(function() {
+    $('a.building-detail-link').click(function(e) {
+      var url = $(this).attr('href');
+     // $('body').append('<div></div>').html('Loading...').load(url);
+      $('#dialog').dialog({ 
+        autoOpen: false,
+        height: 500,
+        width: 700,
+        modal: true,
+        resizable: false
+      });
+      $('#dialog').dialog('open')
+      .html("Lädt Informationen...")
+      .load(url+"&method=ajax");
+      e.preventDefault();
+    })
+  })
+</script>
+
+<!--- Please note: we can provide standard behaviour for those users that don't activate Javascript. E.g. in the above example, e.preventDefault won't be executed, thus, clicking the link would open the page as usual. -->
+
 
 {% include 'pageFooter.tmpl' %}
 {% endspaceless %}
