@@ -34,16 +34,18 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
 
   // open template
   if ($method == 'ajax') {
+    $shortVersion = true;
     $template->setFile('improvementDetailAjax.tmpl');
   }
   else {
+    $shortVersion = false;
     $template->setFile('improvementDetail.tmpl');    
   }
 
   $currentlevel = $caveData[$building->dbFieldName];
   $levels = array();
   for ($level = $caveData[$building->dbFieldName], $count = 0;
-       $level < $maxLevel && $count < 6;
+       $level < $maxLevel && $count < ($shortVersion ? 3 : 10);
        ++$count, ++$level, ++$caveData[$building->dbFieldName]){
 
     $duration = time_formatDuration(

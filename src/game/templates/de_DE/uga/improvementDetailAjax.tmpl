@@ -1,30 +1,34 @@
 {% spaceless %}
 
-<div class="box"> 
-  <div class="box-header"><strong>{{ name }}</strong></div>
-  <div class="box-content success inner nohover">
-  <table class="table nohover" >
-   <tr>
-    <td rowspan="4" ><img src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{name}" title="{name}" style="width:250px; border:none;"/></td>
-    <td style="width: 550px" ><strong>Beschreibung: </strong><br />{{ description|raw }}</td>
-   </tr>
-   <tr><td>&nbsp;</td></tr>
-   <tr><td><strong>Maximale Stufe:</strong> {{ maxlevel }} (derzeit: {{ currentlevel}})</td></tr>
-   <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td colspan="2">
+<div style="float: left; width: 39%; max-width: 256px;">
+<img src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
+</div>
+<div style="float: left; width: 61%;">
+{{ description|raw }}
+<br/>
+<strong>Maximale Stufe:</strong> {{ maxlevel }}<br/>
+<br/>
+  
+{% if DEPGROUP %}
+  <strong>Abh&auml;ngigkeiten: </strong><br/>
+	{% for depGroup in DEPGROUP %}
+    <strong>{{ depGroup.name}}:</strong>
+    {% for dependency in depGroup.DEP %}
+      {{ dependency.name }} {{ dependency.level|raw }}
+    {% endfor %}	
+    <br/>			
+	{% endfor %}
+{% endif %}
+
+
+  
 	  {% if LEVELS %}
-      <strong>Kosten pro Stufe bei {{ LEVELS['population'] }} Leuten:</strong>
+	  <br/><strong>Baukosten und -zeiten bei {{ LEVELS.population }} Einwohnern:</strong>
       <table>
-	    <tr><td>&nbsp;</td></tr>
-        <tr>
-         <td><i>Stufe</i></td>
-		 <td style="text-align:left; padding-left: 14px;"><i>Kosten</i></td>
-        </tr>		 
         {% for level in LEVELS['LEVEL'] %}
         <tr>
-          <td style="text-align: right;">{{ level.level }}</td>
-          <td style="padding-left: 14px;">		  
+          <td style="text-align: right;">Stufe {{ level.level }}:</td>
+          <td style="padding-left: 6px;">		  
         	{% for resource in level.RESOURCECOST %}
             <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
             {{ resource.value }} &nbsp;
@@ -37,7 +41,6 @@
               <br />
               {{ building.name }}: {{ building.value }}
             {% endfor %}
-			</td>
         	{% for defense in level.DEFENSECOST %}
               <br />
               {{ defense.name }}: {{ defense.value }}
@@ -49,40 +52,13 @@
         {% endfor %}
        </table>
      {% endif %}
-    </td>
-   </tr>
-   <tr><td>&nbsp;</td></tr>
-   {% if DEPGROUP %}
-   <tr>
-    <td colspan="2">
-     <strong>Abh&auml;ngigkeiten: </strong>
-      <table>
-	          
-	  		{% for depGroup in DEPGROUP %}
-                <tr><td>&nbsp;</td></tr>			  
-                <tr>
-                  <td colspan="2">Dieser Ausbau h&auml;ngt von folgenden {{ depGroup.name}} ab:</td>
-                </tr>
-                <tr>
-                 <td><i>Name</i></td>
-		         <td class="text-right"><i>Stufe</i></td>
-                </tr>                
-                {% for dependency in depGroup.DEP %}
-                  <tr>				                    
-                    <td>{{ dependency.name }}</td>					
-                    <td class="text-right">{{ dependency.level|raw }}</td>
-                  </tr>
-                {% endfor %}				
-	  		{% endfor %}
-      </table>
-    </td>
-   </tr>
-   {% endif %}
-</table>
+
+     
+
+
 </div>
-</div>
-<br />
-<div class="success"><a href="{rules_path}?modus=misc&amp;miscID=5" onclick="window.open(this.href); return false;">weitere Informationen zu allen Erweiterungen</a></div>
+<div style="clear: both;"></div>
+
 
 {% endspaceless %}
 
