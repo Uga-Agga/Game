@@ -220,7 +220,7 @@ switch ($modus) {
 
   case IMPROVEMENT_DETAIL:
     $pagetitle = _("Gebäudeerweiterungen");
-    $content = improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID]);
+    $content = improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID], request_var('method', 0));
     break;
 
   /////////////////////////////////////////////////////////////////////////////

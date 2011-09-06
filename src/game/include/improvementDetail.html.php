@@ -12,7 +12,7 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function improvement_getBuildingDetails($buildingID, $caveData) {
+function improvement_getBuildingDetails($buildingID, $caveData, $method) {
 
   global $buildingTypeList,
          $defenseSystemTypeList,
@@ -33,7 +33,12 @@ function improvement_getBuildingDetails($buildingID, $caveData) {
     $building = current($buildingTypeList);
 
   // open template
-  $template->setFile('improvementDetail.tmpl');
+  if ($method == 'ajax') {
+    $template->setFile('improvementDetailAjax.tmpl');
+  }
+  else {
+    $template->setFile('improvementDetail.tmpl');    
+  }
 
   $currentlevel = $caveData[$building->dbFieldName];
   $levels = array();
