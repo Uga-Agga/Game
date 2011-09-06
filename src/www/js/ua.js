@@ -12,6 +12,24 @@ function moreinfo(bereich, object) {
   }
 }
 
+/** this method is used in the improvement and defense screens
+ to load more details from the server and show and hide the
+ corresponding element. Assumes a specific layout of the rows;
+ namely, there is a row containing the "header" and the links,
+ this row is followed by another row, that should be toggled,
+ and this row contains one element td.object-details that
+ should be populated with the html from the server.*/
+function toggleObjectDetails(a, url, event) {
+  var element = a.parents('tr.object-row').next();
+  var content = element.contents('td.object-details');
+  if (content.children().length == 0) {
+    content.html('Loading...')
+    .load(url+"&method=ajax");
+  }
+  element.toggle();
+  event.preventDefault();
+}
+
 wmtt = null;
 document.onmousemove = updateWMTT;
 function updateWMTT(e) {
@@ -30,7 +48,7 @@ function hideWMTT() {
   wmtt.style.display = "none";
 }
 
-jQuery(document).ready(function($){
+$(document).ready(function() {
   // set up the options to be used for jqDock...
   var dockOptions =
     { align: 'middle' // horizontal menu, with expansion DOWN from a fixed TOP edge
@@ -39,6 +57,13 @@ jQuery(document).ready(function($){
     };
   // ...and apply...
   $('#header-menu').jqDock(dockOptions);
+ 
+  // The following code attaches the ajax-detail toggle to the click
+  // event of all detail links on the page.  
+  $('a.building-detail-link').click(function (event) {
+    var url = $(this).attr('href');
+    toggleObjectDetails($(this), url, event);
+  });
 });
 
 function open_page(url, opt){
