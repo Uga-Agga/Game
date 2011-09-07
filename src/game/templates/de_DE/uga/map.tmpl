@@ -14,7 +14,7 @@
 {% block title %}Karte{% endblock %}
 {% block content %}
 
-<div class="notice" id="message-view" style="display: none;"></div>
+<div class="notice" id="message-view" {% if not message %}style="display: none;"{% endif %}>{{ message }}</div>
 
 <div class="box">
  <div class="boxheader">&nbsp;</div>
@@ -104,7 +104,6 @@
         </tr>
       </table>
       
-
       
          {% if minimap %} 
          <div class="box-content inner success" id="minimap-view">
@@ -126,13 +125,44 @@
 <script>
   $(document).ready(function() {
     
+    function displayMessage()
+    {
+      var message = $('#message');
+      
+      if (message.length == 0) return ;
+      
+      $('#message-view')
+      .html(message.html())
+      .slideDown();
+      
+      message.remove();
+    }
+    
+    function hideMessage()
+    {
+      $('#message-view')
+      .slideUp();
+    }
+    
+    function loadMap(query)
+    {
+      $("#map-view").load(query, function() {
+        if ($('#map-view #message').length > 0) {
+          displayMessage();
+        }
+        else {
+          hideMessage();
+        }
+      });
+    }
+    
     $('#searchCoords').submit(function () {
       var xCoord = $(this).find(':text[name=xCoord]').val();
       var yCoord = $(this).find(':text[name=yCoord]').val();
       
       if (xCoord === '' || yCoord ==='') return false;
       
-      $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
       return false;
     });
     
@@ -141,14 +171,14 @@
       
       if (caveName === '') return false;
       
-      $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveName);
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveName);
       return false;
     });
     
     $('#searchID #targetCaveID').change(function () {
       var targetCaveID = $(this).find(':text[name=targetCaveID]').val();
       if (targetCaveID < 0) return false;
-      $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
       return false;
     });
   
@@ -178,14 +208,13 @@
       xCoord = parseInt(xCoord) + dx;
       yCoord = parseInt(yCoord) + dy;
             
-      $("#map-view")
-      .load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
 
     });
     
     $("#map-view")
-    .html("Loading...")
-    .load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");
+    .html("Loading...");
+    loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");
   })
 </script>
 
