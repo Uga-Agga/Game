@@ -587,7 +587,53 @@ function init_defenseSystems(){
 <!-- Hero -->
 <xsl:template match="HeroType">/****hallo***/</xsl:template>
 <xsl:template match="HeroSkills"></xsl:template>
-<xsl:template match="Potions"></xsl:template>
+
+<!-- Potions -->
+<xsl:template match="Potions">
+/*************** Tränke ******************/
+class Potion {
+
+  var $potionID;
+  var $name = "";
+  var $description = "";
+  var $dbFieldName;
+  var $hp_increase = 0;
+  var $hp_prozentual_increase = 0;
+  var $tp_setBack = 0;
+  var $needed_level = 0;
+
+  function Potion ($potionID, $name, $description, $dbFieldName, $hp_increase, $hp_prozentual_increase, $tp_setBack, $needed_level) {
+    $this-&gt;potionID                  = $potionID;
+    $this-&gt;name                      = $name;
+    $this-&gt;description               = $description;
+    $this-&gt;dbFieldName               = $dbFieldName;
+    $this-&gt;hp_increase               = $hp_increase;
+    $this-&gt;hp_prozentual_increase    = $hp_prozentual_increase;
+    $this-&gt;tp_setBack                = $tp_setBack;
+    $this-&gt;needed_level              = $needed_level;
+  }
+}
+
+function init_potions() {
+  global $potionTypeList;
+  <xsl:apply-templates select="Potion"/>
+}
+</xsl:template>
+
+
+<xsl:template match="Potion">
+  $tmp = new Potion (<xsl:value-of select="count(preceding-sibling::*)"/>, 
+                     '<xsl:value-of select="Name"/>',
+                     "<xsl:apply-templates select="Description[@lang='de_DE']"/>",
+                     '<xsl:value-of select="@id"/>',
+                     <xsl:value-of select="HP_increase"/>, 
+                     <xsl:value-of select="HP_prozentual_increase"/>, 
+                     <xsl:value-of select="TP_setback"/>, 
+                     <xsl:value-of select="NeededLevel"/>
+                     );
+  $potionTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  
+</xsl:template>
 
 
 <!-- Terrains -->

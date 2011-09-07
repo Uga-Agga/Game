@@ -19,9 +19,9 @@
 <div class="box">
  <div class="boxheader">&nbsp;</div>
   <div class="box-content inner success">
-   <table class="nohover">
+   <table class="nohover" style="width: 100%;">
     <tr>    
-      <td>
+      <td style="width: 30%; text-align: left;">
         <form id="searchCoords" method="post" action="main.php">
           <p>(X/Y):
           <input type="text" name="xCoord" size="4" maxlength="4" />
@@ -32,20 +32,10 @@
         </form>
       </td>
 
-      <td>
-        <form id="searchName" method="post" action="main.php">
-          <p>Name:
-          <input type="text" name="caveName" size="10" maxlength="50" />
-          <input type="hidden" name="modus" value="{{modus}}" />
-          <input type="hidden" name="caveID" value="{{caveID}}" />
-          <input type="submit" value="go" /></p>
-        </form>
-      </td>
-
-      <td>
+      <td style="text-align: center;">
         <form id="searchID" method="post" action="main.php">
           <p><a href="?modus=CaveBookmarks&amp;task=Show">H&ouml;hlenliste:</a>
-          <select name="targetCaveID" id="targetCaveID" onchange="document.getElementById('searchID').submit(); return true;">
+          <select name="targetCaveID" id="targetCaveID">
             <option value="-1">Bitte w&auml;hlen</option>
               {% for bookmark in caveBookmarks %}
                 <option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>
@@ -54,6 +44,17 @@
           <input type="hidden" name="modus" value="map" /></p>
         </form>
       </td>
+      
+      <td style="width: 30%; text-align: right;">
+        <form id="searchName" method="post" action="main.php">
+          <p>Name:
+          <input type="text" name="caveName" size="16" maxlength="50" />
+          <input type="hidden" name="modus" value="{{modus}}" />
+          <input type="hidden" name="caveID" value="{{caveID}}" />
+          <input type="submit" value="go" /></p>
+        </form>
+      </td>
+      
     </tr>
    </table>
   </div>
@@ -126,6 +127,28 @@
 
 <script>
   $(document).ready(function() {
+    
+    $('#searchCoords').submit(function () {
+      var xCoord = $(this).find(':text[name=xCoord]').val();
+      var yCoord = $(this).find(':text[name=yCoord]').val();
+      $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
+      return false;
+    });
+    
+    $('#searchName').submit(function () {
+      var caveName = $(this).find(':text[name=caveName]').val();
+      if (caveName === '') return false;
+      $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveName);
+      return false;
+    });
+    
+    $('#searchID #targetCaveID').change(function () {
+      var targetCaveID = $(this).find(':text[name=targetCaveID]').val();
+      if (targetCaveID < 0) return false;
+      $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
+      return false;
+    });
+    
     $("#map-view")
     .html("Loading...")
     .load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");

@@ -129,6 +129,7 @@ init_TradeCategories();
 <xsl:if test="sciences/@all>0">   'sciencesAll'=> <xsl:value-of select="sciences/@all" />,</xsl:if>
           'defenseSystems' => array(<xsl:apply-templates select="defenseSystems/defenseSystem" />),
 <xsl:if test="defenseSystems/@all>0">   'defenseSystemsAll'=> <xsl:value-of select="defenseSystems/@all" />,</xsl:if>
+          'potions'  => array(<xsl:apply-templates select="potions/potion" />),
          )<xsl:if test="position()!=last()">,
                           </xsl:if>
 </xsl:template>
@@ -143,7 +144,7 @@ init_TradeCategories();
                                  'message' => "<xsl:apply-templates />")</xsl:template>
 
 <!--Effects-->
-<xsl:template match="effect|resource|unit|building|science|defenseSystem"><xsl:value-of select="count(id(@id)/preceding-sibling::*)"/> =>
+<xsl:template match="effect|resource|unit|building|science|defenseSystem|potion"><xsl:value-of select="count(id(@id)/preceding-sibling::*)"/> =>
                               array('absolute' => <xsl:value-of select="@absolute"/>,
                                     'relative' => "<xsl:value-of select="@relative"/>",
                                     'maxDelta' => "<xsl:value-of select="@maxDelta"/>",

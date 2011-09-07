@@ -509,6 +509,7 @@ $region = $regions[$ownCaves[$caveID]['regionID']];
 vote_main();
 
 
+
 // fill it
 $template->addVars(array(
   'pagetitle'     => $pagetitle,

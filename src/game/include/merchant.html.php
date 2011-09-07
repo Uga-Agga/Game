@@ -12,8 +12,12 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
+require_once("game_rules.php");
+//init Potions
+init_potions();
+
 function merchant_getMechantDetail($playerID, $caveID, &$details) {
-  global $buildingTypeList, $resourceTypeList, $tradeCategoriesTypeList, $tradeTypeList, $unitTypeList;
+  global $buildingTypeList, $resourceTypeList, $tradeCategoriesTypeList, $tradeTypeList, $unitTypeList, $potionTypeList;
   global $db, $template;
 
   // open template
