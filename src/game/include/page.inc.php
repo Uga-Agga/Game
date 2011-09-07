@@ -144,10 +144,11 @@ function page_sessionValidate() {
   $sql->bindValue('whereMicrotime', $microtime, PDO::PARAM_INT);
   $sql->bindValue('requestTimeout', $config->WWW_REQUEST_TIMEOUT, PDO::PARAM_INT);
   
-  if (!$sql->execute() || $sql->rowCount() == 0)
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return FALSE;
+  }
 
-  return md5($_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']) == $_SESSION['session']['loginchecksum'];
+  return md5($_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']) == $_SESSION['session']['loginchecksum'];
 }
 
 function page_getModus() {

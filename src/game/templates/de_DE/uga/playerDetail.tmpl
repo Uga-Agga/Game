@@ -1,0 +1,142 @@
+{% spaceless %}
+{% include 'pageHeader.tmpl' %}
+
+<div class="box small">
+  <div class="box-header nohover"><strong>Spieler: {{ player_details.name }}</strong></div>
+  <div class="smallinner inner success nohover text-left" >
+    <table class="table">
+      <tr>
+        <td colspan="2"> 
+          {% if player_avatar %}<div class="smallinner notice nohover" style="width:600px;text-align:center"><img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" style="border:none;" alt="Spielerbanner" /></div><br />{% endif %}
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align:top;">
+          <div class="smallinner notice nohover" style="width:250px;">
+            <table  class="table-smallnotice">
+              <tr>
+                <td colspan="2"><strong>Spieler Informationen<br /><br /></strong></td>
+              </tr>
+              <tr>
+                <td>Name</td>
+                <td>{{ player_details.name }}</td>
+              </tr>
+              <tr>
+                <td>Stamm</td>
+                <td><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ player_details.tribe }}">{{ player_details.tribe }}</a></td>
+              </tr>
+              <tr>
+                <td>Awards</td>
+                <td>{% if player_details.award %}<a href="main.php?modus={award_modus}&amp;award={tag}"><img src="images/awards/{tag}.png" width="15" height="15" border="0" hspace="1"></a>{% endif %}</td>
+              </tr>
+              <tr>
+                <td>Geschlecht:</td>
+                <td>{{ player_details.sex }}</td>
+              </tr>
+              <tr>
+                <td>Herkunft:</td>
+                <td>{{ player_details.origin }}</td>
+              </tr>
+              <tr>
+                <td>Uga-Agga-Alter:</td>
+                <td>{{ player_details.age }}</td>
+              </tr>
+              <tr>
+                <td>ICQ:</td>
+                <td>{{ player_details.icq }}</td>
+              </tr>
+              <tr>
+                <td>Knüppelpunkte gewonnen:</td>
+                <td>{{ player_details.warpoints_pos }}</td>
+              </tr>
+              <tr>
+                <td>Knüppelpunkte verloren:</td>
+                <td>{{ player_details.warpoints_neg }}</td>
+              </tr>
+              <tr>
+                <td>geknüppelte Gegner:</td>
+                <td>{{ player_details.body_count }}</td>
+              </tr>
+              <tr>
+                <td><a href="main.php?modus=ranking&amp;offset={playerRankOffset}">Aktuelles Ranking:</a></td>
+                <td>{{ player_details.rank }}</td>
+              </tr>
+              <tr>
+                <td colspan="2">&nbsp;</td>
+              </tr>
+              <tr>
+                <td colspan="2" align="center"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></td>
+              </tr>
+              <tr>
+                <td colspan="2" align="center"><a href="main.php?modus={{ messages_new_link }}&amp;empfaenger={{ player_details.mail_receiver }}">Nachricht senden</a></td>
+              </tr>
+            </table>
+          </div>
+        </td>
+        <td style="vertical-align:top;">
+          <div class="smallinner notice nohover" style="width:300px;overflow:hidden;">
+            <table  class="table-smallnotice">
+              <tr>
+                <td><strong>Beschreibung:<br /><br /></strong></td>
+              </tr>
+              <tr>
+                <td>{{ player_details.description|raw }}</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div class="smallinner notice nohover" style="width:600px;overflow:hidden;">
+            <table  class="table-smallnotice">
+              <tr>
+                <td colspan="2"><strong>Spieler-Geschichte<br /><br /></strong></td>
+              </tr>
+              {% if player_history %}
+                {% for item in player_history %}
+                <tr>
+                  <td>{{ item.timestamp }}</td>
+                  <td>{{ item.entry }}</td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="2">Keine Einträge</td>
+                </tr>
+              {% endif %}
+            </table>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div class="smallinner notice nohover" style="width:600px;">
+            <table class="table-smallnotice">
+              <tr>
+                <td colspan="3"><strong>Höhlenliste<br/><br/></strong></td>
+              </tr>
+              {% for item in player_caves %}
+              <tr>
+                <td><a href="main.php?modus=map&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
+                <td><a href="main.php?modus=unit_movement&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a></td>
+                <td><a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a></td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>  
+</div>
+
+
+{% include 'pageFooter.tmpl' %}
+{% endspaceless %}

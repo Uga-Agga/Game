@@ -78,12 +78,14 @@ class Player {
     if (!$sql->execute()) return NULL;
 
     $playerData = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
     if (!$playerData)  return NULL;
 
     return new Player($playerData);
   }
 
-  function getHistory($playerID) {
+  static function getHistory($playerID) {
     global $db;
 
     // prepare result
@@ -91,8 +93,8 @@ class Player {
 
     // prepare query
     $sql = $db->prepare("SELECT * FROM ". PLAYER_HISTORY_TABLE ." 
-                     WHERE playerID = :playerID 
-                     ORDER BY timestamp ASC");
+                         WHERE playerID = :playerID 
+                         ORDER BY timestamp ASC");
     $sql->bindValue('playerID', $playerID);
 
     // get all entries

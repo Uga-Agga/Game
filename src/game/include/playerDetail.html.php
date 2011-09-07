@@ -13,9 +13,12 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function player_getContent($caveID, $playerID) {
-  global $db, $no_resource_flag;
+  global $db, $template, $no_resource_flag;
 
   $no_resource_flag = 1;
+
+  // open template
+  $template->setFile('playerDetail.tmpl');
 
   // workaround, if no playerID is submitted! TODO
   if ($playerID == 0) $playerID = $_SESSION['player']->playerID;
@@ -25,65 +28,55 @@ function player_getContent($caveID, $playerID) {
   
   if (!$sql->execute()) page_dberror();
 
-  if (!$row = $sql->fetch(PDO::FETCH_ASSOC)) page_dberror();
+  if (!$playerDetails = $sql->fetch(PDO::FETCH_ASSOC)) page_dberror();
   $sql->closeCursor();
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'playerDetail.ihtml');
+  if ($playerDetails['avatar']) {
+    $size = getimagesize($playerDetails['avatar']);
 
-  if ($row['avatar']) {
-    $size = getimagesize($row['avatar']);
-     
-    tmpl_set($template, 'DETAILS/AVATAR_IMG/avatar', $row['avatar']);
-    tmpl_set($template, 'DETAILS/AVATAR_IMG/width',  ($size[0] <= MAX_AVATAR_WIDTH) ? $size[0] : MAX_AVATAR_WIDTH);
-    tmpl_set($template, 'DETAILS/AVATAR_IMG/height', ($size[1] <= MAX_AVATAR_HEIGHT) ? $size[1] : MAX_AVATAR_HEIGHT);
+    $template->addVars(array(
+      'player_avatar'        => $playerDetails['avatar'],
+      'player_avatar_width'  => ($size[0] <= MAX_AVATAR_WIDTH) ? $size[0] : MAX_AVATAR_WIDTH,
+      'player_avatar_height' => ($size[1] <= MAX_AVATAR_HEIGHT) ? $size[1] : MAX_AVATAR_HEIGHT,
+    ));
   }
 
-  if (!empty($row['awards'])) {
-    $tmp = explode('|', $row['awards']);
+  if (!empty($playerDetails['awards'])) {
+    $tmp = explode('|', $playerDetails['awards']);
     $awards = array();
     foreach ($tmp AS $tag) $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
-    $row['award'] = $awards;
+    $playerDetails['award'] = $awards;
   }
-  unset($row['awards']);
+  unset($playerDetails['awards']);
 
-  foreach($row as $k => $v)  {
+  foreach($playerDetails as $k => $v)  {
     if (! $v ) {
-      $row[$k] = _('k.A.');
+      $playerDetails[$k] = _('k.A.');
     }
   }
 
-  $row['mail_modus']    = NEW_MESSAGE;
-  $row['mail_receiver'] = urlencode($row['name']);
-  $row['caveID']        = $caveID;
-  $playerTribe          = $row['tribe'];
+  $playerDetails['mail_receiver'] = urlencode($playerDetails['name']);
+  $playerDetails['caveID']        = $caveID;
+  $playerTribe          = $playerDetails['tribe'];
 
-  $timediff = getUgaAggaTimeDiff(time_fromDatetime($row['created']), time());
-  $row['age'] = 18 + $timediff['year'];
+  $timediff = getUgaAggaTimeDiff(time_fromDatetime($playerDetails['created']), time());
+  $playerDetails['age'] = 18 + $timediff['year'];
   
     // init messages class
   $parser = new parser;
-  $row['description'] = $parser->p($row['description']);
-
-  tmpl_set($template, 'DETAILS', $row);
+  $playerDetails['description'] = $parser->p($playerDetails['description']);
 
   // show player's caves
   $caves = getCaves($playerID);
   if ($caves) {
-    tmpl_set($template, '/DETAILS/CAVES', $caves);
+    $template->addVar('player_caves',  $caves);
   }
-
-  //show bodycount
-  // Keinen Bodycount fuers erste.... Nebrot
-  //$body_count = $row['body_count'];
-  //tmpl_set($template, '/DETAILS/BODYCOUNT/body_count', $body_count);
 
 
   // show player's history
   $history = Player::getHistory($playerID);
   if (sizeof($history)) {
-    tmpl_set($template, '/DETAILS/HISTORY/ENTRY', $history);
-  } else {
-    tmpl_set($template, '/DETAILS/HISTORY/NOENTRIES/iterate', '');
+    $template->addVar('player_history',  $history);
   }
 
   //get player rank
@@ -92,15 +85,13 @@ function player_getContent($caveID, $playerID) {
   if (!$sql->execute()) page_dberror();
 
   if ($row = $sql->fetch()) {
-    $rank = $row['rank'];
+    $playerDetails['rank'] = $row['rank'];
   } else {
-    $rank = '';
+    $playerDetails['rank'] = '';
   }
 
-  // create player ranking link
-  tmpl_set($template, array('/DETAILS/playerRank' => $rank,
-                             '/DETAILS/playerRankOffset' => $rank, //ranking_checkOffset($playerID, FALSE),
-                             '/DETAILS/tribeRankOffset' => rankingTribe_checkOffset($playerTribe)));
-
-  return tmpl_parse($template);
+  $template->addVars(array(
+    'player_details' => $playerDetails,
+    'tribe_rank'     => rankingTribe_checkOffset($playerTribe),
+  ));
 }

@@ -206,8 +206,8 @@ function improvement_getImprovementDetail($caveID, &$details) {
   if ($queue) {
     $template->addVars(array(
       'quene_show'      => true,
-      'quene_name'      => $buildingTypeList[$queue['event_expansionID']]->name,
-      'quene_nextlevel' => $details[$buildingTypeList[$queue['event_expansionID']]->dbFieldName] + 1,
+      'quene_name'      => $buildingTypeList[$queue['expansionID']]->name,
+      'quene_nextlevel' => $details[$buildingTypeList[$queue['expansionID']]->dbFieldName] + 1,
       'quene_finish'    => time_formatDatetime($queue['end']),
       'quene_modus'     => IMPROVEMENT_BUILDER,
       'quene_event_id'  => $queue['event_expansionID']
