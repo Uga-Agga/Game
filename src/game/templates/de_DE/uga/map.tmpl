@@ -1,0 +1,135 @@
+{#
+/* improvement.tmpl -
+ * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>, David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+
+{% extends "base.tmpl" %}
+{% block title %}Karte{% endblock %}
+{% block content %}
+
+<div class="notice" id="message-view" style="display: none;"></div>
+
+<div class="box">
+ <div class="boxheader">&nbsp;</div>
+  <div class="box-content inner success">
+   <table class="nohover">
+    <tr>    
+      <td>
+        <form id="searchCoords" method="post" action="main.php">
+          <p>(X/Y):
+          <input type="text" name="xCoord" size="4" maxlength="4" />
+          <input type="text" name="yCoord" size="4" maxlength="4" />
+          <input type="hidden" name="modus" value="{{modus}}" />
+          <input type="hidden" name="caveID" value="{{caveID}}" />
+          <input type="submit" value="go" /></p>
+        </form>
+      </td>
+
+      <td>
+        <form id="searchName" method="post" action="main.php">
+          <p>Name:
+          <input type="text" name="caveName" size="10" maxlength="50" />
+          <input type="hidden" name="modus" value="{{modus}}" />
+          <input type="hidden" name="caveID" value="{{caveID}}" />
+          <input type="submit" value="go" /></p>
+        </form>
+      </td>
+
+      <td>
+        <form id="searchID" method="post" action="main.php">
+          <p><a href="?modus=CaveBookmarks&amp;task=Show">H&ouml;hlenliste:</a>
+          <select name="targetCaveID" id="targetCaveID" onchange="document.getElementById('searchID').submit(); return true;">
+            <option value="-1">Bitte w&auml;hlen</option>
+              {% for bookmark in caveBookmarks %}
+                <option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>
+              {% endfor  %}
+          </select>
+          <input type="hidden" name="modus" value="map" /></p>
+        </form>
+      </td>
+    </tr>
+   </table>
+  </div>
+</div>
+
+
+
+<table id="two-column-layout-table" class="nohover" style="vertical-align:top; width: 100%">
+<tr>
+<td>
+
+<div class="box">
+  <div style="display: none;" id="map-posX">{{ xCoord }}</div>
+  <div style="display: none;" id="map-posY">{{ yCoord }}</div>
+  <div class="boxheader">&nbsp;</div>
+  <div class="box-content inner success" id="map-view">
+  </div>
+</div>
+
+</td>
+<td style="vertical-align:top; width:152px">
+  
+  <div class="box">
+    <div class="boxheader">&nbsp;</div>
+
+      <table class="nohover" style="width:140px;padding: 0;">
+        <tr>          
+          <td> <tmpl:NW><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a></tmpl:NW>
+          </td>
+          <td> <tmpl:N><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png"  style="border:none;width:40px;hight:40px;" alt="nord" /></a></tmpl:N>
+          </td>
+          <td> <tmpl:NO><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a></tmpl:NO>
+          </td>
+         </tr>
+         <tr>
+          <td> <tmpl:W><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png"  style="border:none;width:40px;hight:40px;" alt="west" /></a></tmpl:W>
+          </td>
+          <td>&nbsp;</td>
+          <td> <tmpl:O><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png"  style="border:none;width:40px;hight:40px;" alt="ost" /></a></tmpl:O>
+          </td>
+         </tr>
+         <tr>
+          <td> <tmpl:SW><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dwest" /></a></tmpl:SW>
+          </td>
+          <td> <tmpl:S><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png"  style="border:none;width:40px;hight:40px;" alt="s&uuml;d" /></a></tmpl:S>
+          </td>
+          <td> <tmpl:SO><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dost" /></a></tmpl:SO>
+          </td>         
+        </tr>
+      </table>
+      
+
+      
+         {% if minimap %} 
+         <div class="box-content inner success" id="minimap-view">
+          <form action="main.php" method="post" id="minimapform">
+           <p><input name="minimap" type="image" style="width: {{ minimap.width}}px; height: {{minimap.height}}px; border: thin groove #009900; cursor: crosshair;" src="{{minimap.file}}" />
+             <input type="hidden" name="scaling" value="{{minimap.scaling}}" />
+             <input type="hidden" name="modus"  value="{{minimap.modus}}" />
+             <input type="hidden" name="caveID" value="{{minimap.caveID}}" />
+           </p>
+          </form>
+          </div>
+         {% endif %}
+  </div>
+         
+</td>
+</tr>
+</table>
+
+<script>
+  $(document).ready(function() {
+    $("#map-view")
+    .html("Loading...")
+    .load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");
+  })
+</script>
+
+{% endblock %}
