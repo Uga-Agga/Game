@@ -19,7 +19,7 @@ function science_getScienceDetails($scienceID, $caveData) {
          $resourceTypeList,
          $scienceTypeList,
          $unitTypeList,
-
+         $template,
          $no_resource_flag;
 
   $no_resource_flag = 1;
@@ -29,15 +29,17 @@ function science_getScienceDetails($scienceID, $caveData) {
   $maxLevel = round(eval('return '.formula_parseToPHP("{$science->maxLevel};", '$caveData')));
   if (!$science || ($science->nodocumentation &&
                  !$caveData[$science->dbFieldName] &&
-                 rules_checkDependencies($science, $caveData) !== TRUE))
+                 rules_checkDependencies($science, $caveData) !== TRUE)) {
     $science = current($scienceTypeList);
+  }
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'science_detail.ihtml');
+  $template->setFile('scienceDetail.tmpl');
+  $shortVersion = 3;
 
   $currentlevel = $caveData[$science->dbFieldName];
   $levels = array();
   for ($level = $caveData[$science->dbFieldName], $count = 0;
-       $level < $maxLevel && $count < 6;
+       $level < $maxLevel && $count < ($shortVersion ? 3 : 6);
        ++$count, ++$level, ++$caveData[$science->dbFieldName]){
 
     $duration = time_formatDuration(
@@ -76,18 +78,18 @@ function science_getScienceDetails($scienceID, $caveData) {
                                         'name'        => $buildingTypeList[$key]->name,
                                         'value'       => ceil(eval('return '.formula_parseToPHP($science->buildingProductionCost[$key] . ';', '$details')))));
 
-    $externalCost = array();
-    foreach ($science->externalProductionCost as $key => $value)
+    $defenseCost = array();
+    foreach ($science->defenseProductionCost as $key => $value)
       if ($value != "" && $value != 0)
-        array_push($externalCost, array('dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
-                                        'name'        => $defenseSystemTypeList[$key]->name,
-                                        'value'       => ceil(eval('return '.formula_parseToPHP($science->externalProductionCost[$key] . ';', '$details')))));
+        array_push($defenseCost, array('dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
+                                       'name'        => $defenseSystemTypeList[$key]->name,
+                                       'value'       => ceil(eval('return '.formula_parseToPHP($science->defenseProductionCost[$key] . ';', '$details')))));
 
 
     $levels[$count] = array('level' => $level + 1,
                             'time'  => $duration,
                             'BUILDINGCOST' => $buildingCost,
-                            'EXTERNALCOST' => $externalCost,
+                            'DEFENSECOST'  => $defenseCost,
                             'RESOURCECOST' => $resourcecost,
                             'UNITCOST'     => $unitcost);
   }
@@ -175,16 +177,15 @@ function science_getScienceDetails($scienceID, $caveData) {
     array_push($dependencies, array('name' => _('Einheiten'),
                                     'DEP'  => $unitdep));
 
-  tmpl_set($template, '/', array('name'          => $science->name,
-                                 'dbFieldName'   => $science->dbFieldName,
-                                 'description'   => $science->description,
-                                 'maxlevel'      => $maxLevel,
-                                 'currentlevel'  => $currentlevel,
-                                 'LEVELS'        => $levels,
-                                 'DEPGROUP'      => $dependencies,
-                                 'rules_path'    => RULES_PATH));
+  $template->addVars(array('name'          => $science->name,
+                           'dbFieldName'   => $science->dbFieldName,
+                           'description'   => $science->description,
+                           'maxlevel'      => $maxLevel,
+                           'currentlevel'  => $currentlevel,
+                           'LEVELS'        => $levels,
+                           'DEPGROUP'      => $dependencies,
+                           'rules_path'    => RULES_PATH));
 
-  return tmpl_parse($template);
 }
 
 ?>

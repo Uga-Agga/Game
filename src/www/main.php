@@ -220,7 +220,7 @@ switch ($modus) {
 
   case IMPROVEMENT_DETAIL:
     $pagetitle = _("Gebäudeerweiterungen");
-    $content = improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID], request_var('method', 0));
+    $content = improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID], request_var('method', ''));
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -542,6 +542,7 @@ $template->addVars(array(
   'ranking_player_link'     => RANKING_PLAYER,
   'ranking_tribe_link'      => RANKING_TRIBE,
   'science_link'            => SCIENCE_BUILDER,
+  'science_detail_link'     => SCIENCE_DETAIL,
   'takeover_link'           => TAKEOVER,
   'unit_link'               => UNIT_BUILDER,
   'unit_detail_link'        => UNIT_DETAIL,

@@ -146,8 +146,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
         'time'             => time_formatDuration(eval('return ' . formula_parseToPHP($building->productionTimeFunction . ";", '$details')) * BUILDING_TIME_BASE_FACTOR),
         'maxlevel'         => $maxLevel,
         'currentlevel'     => "0" + $details[$building->dbFieldName],
-        'description'      => $building->description,
-        'duration_formula' => formula_parseToReadable($building->productionTimeFunction),
+//        'duration_formula' => formula_parseToReadable($building->productionTimeFunction),
         'breakdown_link'   => ($details[$building->dbFieldName] > 0) ? true : false,
       );
       $improvement[$building->buildingID] = array_merge($improvement[$building->buildingID], parseCost($building, $details));
@@ -175,8 +174,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
         'building_id'      => $building->buildingID,
         'cave_id'          => $caveID,
         'currentlevel'     => "0" + $details[$building->dbFieldName],
-        'description'      => $building->description,
-        'duration_formula' => formula_parseToReadable($building->productionTimeFunction),
+//      'duration_formula' => formula_parseToReadable($building->productionTimeFunction),
         'dependencies'     => ($result !== FALSE) ? $result : false
       );
 
@@ -192,8 +190,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
         'building_id'      => $building->buildingID,
         'cave_id'          => $caveID,
         'dependencies'     => $result,
-        'description'      => $building->description,
-        'duration_formula' => formula_parseToReadable($building->productionTimeFunction)
+//      'duration_formula' => formula_parseToReadable($building->productionTimeFunction)
       );
     }
   }
