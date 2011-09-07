@@ -39,22 +39,22 @@ function getCaveDetailsByCoords($minX, $minY, $maxX, $maxY) {
 }
 
 function getEmptyCell(){
-  return array('EMPTY' => array('iterate' => ''));
+  return array('empty' => array('iterate' => ''));
 }
 
 function getCornerCell() {
-  return array('CORNER' => array('iterate' => ''));
+  return array('corner' => array('iterate' => ''));
 }
 
 function getLegendCell($name, $value){
-  return array('HEADER' => array('text' => "<small>$name: $value</small>"));
+  return array('header' => array('text' => "<small>$name: $value</small>"));
 }
 
 function getMapCell($map, $xCoord, $yCoord){
   if (!is_array($map[$xCoord][$yCoord]))
     return getEmptyCell();
   else
-    return array('MAPCELL' => $map[$xCoord][$yCoord]);
+    return array('mapcell' => $map[$xCoord][$yCoord]);
 }
 
 ?>

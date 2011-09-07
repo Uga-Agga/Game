@@ -204,6 +204,11 @@ switch ($modus) {
     $content = getCaveMapContent($caveID, $ownCaves);
     break;
 
+  case MAP_REGION:
+    $pagetitle = _("Höhlenkarte");
+    $content = getCaveMapRegionContent($caveID, $ownCaves);
+    break;
+
   case MAP_DETAIL:
     $pagetitle = _("Höhlenbericht");
     $content = getCaveReport($caveID, $ownCaves, request_var('targetCaveID', 0));
@@ -535,6 +540,7 @@ $template->addVars(array(
   'defense_detail_link'     => DEFENSE_DETAIL,
   'improvement_link'        => IMPROVEMENT_BUILDER,
   'improvement_detail_link' => IMPROVEMENT_DETAIL,
+  'map_region_link'         => MAP_REGION_LINK,
   'merchant_link'           => MERCHANT,
   'messages_list_link'      => MESSAGES_LIST,
   'messages_new_link'       => MESSAGE_NEW,

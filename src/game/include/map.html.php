@@ -2,6 +2,7 @@
 /*
  * map.html.php - 
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  Sascha Lange <salange@uos.de>, David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,30 +15,17 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 @include_once('modules/CaveBookmarks/model/CaveBookmarks.php');
 
-function getCaveMapContent($caveID, $caves) {
 
-  global $config, $terrainList;
-
-  $caveData = $caves[$caveID];
-  $message  = '';
-
-  // template öffnen
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'map.ihtml');
-
-  // Grundparameter setzen
-  tmpl_set($template, 'modus', MAP);
-
-  // default Werte: Koordinaten dieser Höhle
+function determineCoordsFromParameters($caveData, $mapSize) {
+  
+  // default Werte: Koordinaten of the given caveData (that is the data of the presently selected own cave)
   $xCoord  = $caveData['xCoord'];
   $yCoord  = $caveData['yCoord'];
-
-  // Größe der Karte wird benötigt
-  $mapSize = getMapSize();
 
   // wenn in die Minimap geklickt wurde, zoome hinein
   if (($minimap_x = request_var('minimap_x', 0)) && 
       ($minimap_y = request_var('minimap_y', 0)) && 
-      ($scaling = request_var('scaling', 0)) !== 0) {
+      ($scaling   = request_var('scaling', 0)) !== 0) {
         
     $xCoord = Floor($minimap_x * 100 / $scaling) + $mapSize['minX'];
     $yCoord = Floor($minimap_y * 100 / $scaling) + $mapSize['minY'];
@@ -73,19 +61,48 @@ function getCaveMapContent($caveID, $caves) {
     $yCoord = request_var('yCoord', 0);
   }
   
-  if (isset($messageID)) {
-    tmpl_set($template, '/MESSAGE/message', $message);
-  }
-  
   // Koordinaten begrenzen
   if ($xCoord < $mapSize['minX']) $xCoord = $mapSize['minX'];
   if ($yCoord < $mapSize['minY']) $yCoord = $mapSize['minY'];
   if ($xCoord > $mapSize['maxX']) $xCoord = $mapSize['maxX'];
   if ($yCoord > $mapSize['maxY']) $yCoord = $mapSize['maxY'];
+  
+  return array (
+    'xCoord'  => $xCoord,
+    'yCoord'  => $yCoord,
+    'message' => $message);
+  
+}
 
+
+function getCaveMapContent($caveID, $caves) {
+
+  global $config, $terrainList, $template;
+
+  $caveData = $caves[$caveID];
+  $mapSize = getMapSize();  // Größe der Karte wird benötigt
+  $message  = '';
+
+  // template öffnen
+  $template->setFile('map.tmpl');
+
+  // Grundparameter setzen
+  $template->addVars(array(
+    'modus'         => MAP,
+    'mapRegionLink' => MAP_REGION,
+    'caveID'        => $caveID
+    ));
+
+  $resolvedCoords = determineCoordsFromParameters($caveData, $mapSize);
+  $template->addVars($resolvedCoords);
+  
+  $xCoord = $resolvedCoords['xCoord'];
+  $yCoord = $resolvedCoords['yCoord'];
+    
   // width und height anpassen
   $MAP_WIDTH  = min(MAP_WIDTH,  $mapSize['maxX']-$mapSize['minX']+1);
   $MAP_HEIGHT = min(MAP_HEIGHT, $mapSize['maxY']-$mapSize['minY']+1);
+  
 
   // Nun befinden sich in $xCoord und $yCoord die gesuchten Koordinaten.
   // ermittele nun die linke obere Ecke des Bildausschnittes
@@ -167,7 +184,7 @@ function getCaveMapContent($caveID, $caves) {
   }
 
   // Karte mit Beschriftungen ausgeben
-
+/*
   // über alle Zeilen
   for ($j = $minY - 1; $j <= $maxY + 1; ++$j) {
     tmpl_iterate($template, '/ROWS');
@@ -193,7 +210,7 @@ function getCaveMapContent($caveID, $caves) {
         tmpl_set($template, "/ROWS/CELLS", getMapCell($map, $i, $j));
       }
     }
-  }
+  } */
   
   // Minimap
   $width  = $mapSize['maxX'] - $mapSize['minX'] + 1;
@@ -203,15 +220,16 @@ function getCaveMapContent($caveID, $caves) {
   $mcX = $minX + intval($MAP_WIDTH/2);
   $mcY = $minY + intval($MAP_HEIGHT/2);
 
-  tmpl_set($template, "/MINIMAP", array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
+/* $template->addVar("/MINIMAP", array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
                                         'modus'   => MAP,
                                         'width'   => intval($width * MINIMAP_SCALING / 100),
                                         'height'  => intval($height * MINIMAP_SCALING / 100),
                                         'scaling' => MINIMAP_SCALING));
-
+*/
   $MAP_WIDTH_NEG = intval($MAP_WIDTH/2) * -1;
   $MAP_HEIGHT_NEG = intval($MAP_HEIGHT/2) * -1;
 
+/*
   tmpl_set($template, '/O',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
                                                                          'y' =>  $mcY));
 
@@ -234,8 +252,10 @@ function getCaveMapContent($caveID, $caves) {
                                                                          'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
 
   tmpl_set($template, '/NO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
+       
                                                                          'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
-
+*/
+/*
   // Module "CaveBookmarks" Integration
   // FIXME should know whether the module is installed
   if (TRUE) {
@@ -252,9 +272,214 @@ function getCaveMapContent($caveID, $caves) {
     // set bookmarks
     if (sizeof($bookmarks))
       tmpl_set($template, '/CAVEBOOKMARKS/CAVEBOOKMARK', $bookmarks);
-  }
+  }*/
 
-  return tmpl_parse($template);
+}
+
+
+function getCaveMapRegionContent($caveID, $caves) {
+
+  global $config, $terrainList, $template;
+
+  $caveData = $caves[$caveID];
+  $mapSize = getMapSize();  // Größe der Karte wird benötigt
+  $message  = '';
+
+  // template öffnen
+  $template->setFile('mapRegion.tmpl');
+
+  // Grundparameter setzen
+  $template->addVars(array(
+    'modus'         => MAP,
+    'mapRegionLink' => MAP_REGION,
+    'caveID'        => $caveID
+    ));
+
+  $resolvedCoords = determineCoordsFromParameters($caveData,  $mapSize);
+  $template->addVars($resolvedCoords);
+  
+  $xCoord = $resolvedCoords['xCoord'];
+  $yCoord = $resolvedCoords['yCoord'];
+    
+  // width und height anpassen
+  $MAP_WIDTH  = min(MAP_WIDTH,  $mapSize['maxX']-$mapSize['minX']+1);
+  $MAP_HEIGHT = min(MAP_HEIGHT, $mapSize['maxY']-$mapSize['minY']+1);
+  
+
+  // Nun befinden sich in $xCoord und $yCoord die gesuchten Koordinaten.
+  // ermittele nun die linke obere Ecke des Bildausschnittes
+  $minX = min(max($xCoord - intval($MAP_WIDTH/2),  $mapSize['minX']), $mapSize['maxX']-$MAP_WIDTH+1);
+  $minY = min(max($yCoord - intval($MAP_HEIGHT/2), $mapSize['minY']), $mapSize['maxY']-$MAP_HEIGHT+1);
+  // ermittele nun die rechte untere Ecke des Bildausschnittes
+  $maxX = $minX + $MAP_WIDTH  - 1;
+  $maxY = $minY + $MAP_HEIGHT - 1;
+
+  // get the map details
+  $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);
+
+  $map = array();
+  foreach ($caveDetails AS $cave) {
+
+    $cell = array('terrain'   => 'terrain'.$cave['terrain'],
+                  'alt'       => "{$cave['cavename']} - ({$cave['xCoord']}|{$cave['yCoord']}) - {$cave['region']}",
+                  'link'      => "modus=map_detail&amp;targetCaveID={$cave['caveID']}");
+
+    // unbewohnte Höhle
+    if ($cave['playerID'] == 0) {
+
+      // als Frei! zeigen
+      if ($cave['takeoverable'] == 1) {
+        $text = _('Frei!');
+        $file = "icon_cave_empty";
+      // als Einöde zeigen
+      } else {
+        $text = _('Ein&ouml;de');
+        $file = "icon_waste";
+      }
+
+    // bewohnte Höhle
+    } else {
+
+      // eigene Höhle
+      if ($cave['playerID'] == $_SESSION['player']->playerID)
+        $file = "icon_cave_own";
+      // fremde Höhle
+      else
+        $file = "icon_cave_other";
+
+      // mit Artefakt
+      if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY))
+        $file .= "_artefact";
+
+
+      // link zum Tribe einfügen
+      $cell['link_tribe'] = "modus=tribe_detail&amp;tribe=".urlencode(unhtmlentities($cave['tribe']));
+
+      // Stamm abkürzen
+      $decodedTribe = unhtmlentities($cave['tribe']);
+      if (strlen($decodedTribe) > 10)
+        $cell['text_tribe'] = htmlentities(substr($decodedTribe, 0, 8)) . "..";
+      else
+        $cell['text_tribe'] = $cave['tribe'];
+
+      // Besitzer
+      $decodedOwner = unhtmlentities($cave['name']);
+      if (strlen($decodedOwner) > 10)
+        $text = htmlentities(substr($decodedOwner, 0, 8)) . "..";
+      else
+        $text = $cave['name'];
+
+      // übernehmbare Höhlen können gekennzeichnet werden
+      if ($cave['secureCave'] != 1)
+        $cell['unsecure'] = array('dummy' => '');
+    }
+
+    $cell['file'] = $file;
+    $cell['text'] = $text;
+
+    // Wenn die Höhle ein Artefakt enthält und man berechtigt ist -> anzeigen
+    if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
+      $cell['artefacts'] = $cave['artefacts'];
+      $cell['artefacts_text'] = sprintf(_('Artefakte: %d'), $cave['artefacts']);
+    }
+    $map[$cave['xCoord']][$cave['yCoord']] = $cell;
+  }
+  
+  // create a region data array with an empty row as starting point.
+  $regionData = array( 'rows' => array());  
+
+  // über alle Zeilen
+  for ($j = $minY - 1; $j <= $maxY + 1; ++$j) {
+    $cells = array();
+    // über alle Spalten
+    for ($i = $minX - 1; $i <= $maxX + 1; ++$i ) {
+
+      // leere Zellen
+      if (($j == $minY - 1 || $j == $maxY + 1) && 
+          ($i == $minX - 1 || $i == $maxX + 1)) {
+        array_push($cells, getCornerCell());
+      
+      // x-Beschriftung
+      } else if ($j == $minY - 1 || $j == $maxY + 1) {
+        array_push($cells, getLegendCell('x', $i));
+      
+      // y-Beschriftung
+      } else if ($i == $minX - 1 || $i == $maxX + 1) {
+        array_push($cells, getLegendCell('y', $j));
+      
+      // Kartenzelle
+      } else {
+        array_push($cells, getMapCell($map, $i, $j));
+      }
+      
+    }
+    array_push($regionData['rows'], $cells);
+  } 
+  
+  $template->addVars(array('mapregion' => $regionData));
+  
+  // Minimap
+  $width  = $mapSize['maxX'] - $mapSize['minX'] + 1;
+  $height = $mapSize['maxY'] - $mapSize['minY'] + 1;
+  
+  // compute mapcenter coords
+  $mcX = $minX + intval($MAP_WIDTH/2);
+  $mcY = $minY + intval($MAP_HEIGHT/2);
+
+/* $template->addVar("/MINIMAP", array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
+                                        'modus'   => MAP,
+                                        'width'   => intval($width * MINIMAP_SCALING / 100),
+                                        'height'  => intval($height * MINIMAP_SCALING / 100),
+                                        'scaling' => MINIMAP_SCALING));
+*/
+  $MAP_WIDTH_NEG = intval($MAP_WIDTH/2) * -1;
+  $MAP_HEIGHT_NEG = intval($MAP_HEIGHT/2) * -1;
+
+/*
+  tmpl_set($template, '/O',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
+                                                                         'y' =>  $mcY));
+
+  tmpl_set($template, '/SO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
+                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+
+  tmpl_set($template, '/S',  array('modus' => MAP, 'caveID' => $caveID, 'x' =>  $mcX, 
+                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+
+  tmpl_set($template, '/SW', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']),
+                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+
+  tmpl_set($template, '/W',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']),
+                                                                         'y' =>  $mcY));
+
+  tmpl_set($template, '/NW', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']), 
+                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
+
+  tmpl_set($template, '/N',  array('modus' => MAP, 'caveID' => $caveID, 'x' =>  $mcX, 
+                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
+
+  tmpl_set($template, '/NO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
+       
+                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
+*/
+/*
+  // Module "CaveBookmarks" Integration
+  // FIXME should know whether the module is installed
+  if (TRUE) {
+
+    // show CAVEBOOKMARKS context
+    tmpl_set($template, '/CAVEBOOKMARKS/iterate', '');
+
+    // get model
+    $cb_model = new CaveBookmarks_Model();
+    
+    // get bookmarks
+    $bookmarks = $cb_model->getCaveBookmarks(true);
+    
+    // set bookmarks
+    if (sizeof($bookmarks))
+      tmpl_set($template, '/CAVEBOOKMARKS/CAVEBOOKMARK', $bookmarks);
+  }*/
+
 }
 
 function getCaveReport($caveID, $ownCaves, $targetCaveID) {
@@ -280,7 +505,7 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID) {
 
   $region = getRegionByID($cave['regionID']);
 
-  tmpl_set($template, array('cavename'     => $cave['name'],
+  $template->addVar(array('cavename'     => $cave['name'],
                             'xcoord'       => $cave['xCoord'],
                             'ycoord'       => $cave['yCoord'],
                             'terrain'      => $terrainList[$cave['terrain']]['name'],
@@ -291,7 +516,7 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID) {
                                                       $cave['xCoord'], $cave['yCoord'])));
   if ($cave['playerID'] != 0){
 
-    tmpl_set($template, '/OCCUPIED', array('playerLink'  => "?modus=player_detail&amp;detailID=" . $playerDetails['playerID'],
+    $template->addVar('/OCCUPIED', array('playerLink'  => "?modus=player_detail&amp;detailID=" . $playerDetails['playerID'],
                                            'caveOwner'   => $playerDetails['name']));
 
     if ($playerDetails['tribe']){
@@ -325,18 +550,17 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID) {
 
       $caves[] = $temp;
     }
-    tmpl_set($template, '/OCCUPIED/CAVES', $caves);
+    $template->addVar('/OCCUPIED/CAVES', $caves);
 
   } else if (sizeof($ownCaves) < $_SESSION['player']->takeover_max_caves && $cave['takeoverable'] == 1){
 
-    tmpl_set($template, 'TAKEOVERABLE',
+    $template->addVar(
              array('modus'        => TAKEOVER,
                    'caveID'       => $caveID,
                    'targetXCoord' => $cave['xCoord'],
                    'targetYCoord' => $cave['yCoord']));
   }
 
-  return tmpl_parse($template);
 }
 
 ?>
