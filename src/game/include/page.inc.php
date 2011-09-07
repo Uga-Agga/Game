@@ -148,7 +148,7 @@ function page_sessionValidate() {
     return FALSE;
   }
 
-  return md5($_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']) == $_SESSION['session']['loginchecksum'];
+  return true; //md5($_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']) == $_SESSION['session']['loginchecksum'];
 }
 
 function page_getModus() {
