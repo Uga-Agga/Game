@@ -99,6 +99,7 @@ DEFINE('IMPROVEMENT_DETAIL',          'improvement_detail');
 DEFINE('LOGOUT',                      'logout');
 DEFINE('MAIL',                        'mail');
 DEFINE('MAP',                         'map');
+DEFINE('MAP_REGION',                  'map_region');
 DEFINE('MAP_DETAIL',                  'map_detail');
 DEFINE('MESSAGES_LIST',               'messages_list');
 DEFINE('MESSAGE_READ',                'messages_read');
@@ -160,6 +161,7 @@ $require_files[IMPROVEMENT_DETAIL]          = array('formula_parser.inc.php', 'i
 $require_files[MAIL]                        = array('../modules/Suggestions/Suggestions.php');
 $require_files[LOGOUT]                      = array();
 $require_files[MAP]                         = array('formula_parser.inc.php', 'map.inc.php', 'map.html.php');
+$require_files[MAP_REGION]                  = array('formula_parser.inc.php', 'map.inc.php', 'map.html.php');
 $require_files[MAP_DETAIL]                  = array('formula_parser.inc.php', 'map.inc.php', 'map.html.php');
 $require_files[MESSAGES_LIST]               = array('message.html.php', 'message.inc.php');
 $require_files[MESSAGE_READ]                = array('message.html.php', 'message.inc.php');
