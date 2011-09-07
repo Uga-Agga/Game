@@ -3,11 +3,11 @@ function moreinfo(bereich, object) {
 
   if (myHead.style.display == "") {
     // zuklappen
-    object.src = '{{ gfx }}/de_DE/t_uga/icon_plus.png';
+    object.src = '{{ gfx }}/de_DE/t_uga/icon_open.png';
     myHead.style.display = "none";
   } else {
     // aufklappen
-    object.src = '{{ gfx }}/de_DE/t_uga/icon_minus.png';
+    object.src = '{{ gfx }}/de_DE/t_uga/icon_close.png';
     myHead.style.display = "";
   }
 }

@@ -160,9 +160,11 @@ function rankingTribe_getRowsByOffset($caveID, $offset) {
 
   global $db;
 
-  $sql = $db->prepare("SELECT r.*, r.playerAverage AS average, t.awards, t.war_won, t.war_lost ".
-           "FROM ". RANKING_TRIBE_TABLE ." r LEFT JOIN ". TRIBE_TABLE ." t ON r.tribe = t.tag ".
-           "ORDER BY r.rank ASC LIMIT :offset, :rankingRows");
+  $sql = $db->prepare("SELECT r.*, r.playerAverage AS average, t.awards, t.war_won, t.war_lost
+                       FROM ". RANKING_TRIBE_TABLE ." r
+                         LEFT JOIN ". TRIBE_TABLE ." t ON r.tribe = t.tag
+                       ORDER BY r.rank ASC
+                       LIMIT :offset, :rankingRows");
   $sql->bindValue('offset', $offset - 1, PDO::PARAM_INT);
   $sql->bindValue('rankingRows', RANKING_ROWS, PDO::PARAM_INT);
 
@@ -189,8 +191,10 @@ function ranking_getReligiousDistribution() {
 
   global $db;
 
-  $sql = $db->prepare("SELECT religion, COUNT(religion) AS sum FROM ". RANKING_TABLE ." 
-                    WHERE religion NOT LIKE 'none' GROUP BY religion");
+  $sql = $db->prepare("SELECT religion, COUNT(religion) AS sum
+                       FROM ". RANKING_TABLE ."
+                       WHERE religion NOT LIKE 'none'
+                       GROUP BY religion");
 
   if (!$sql->execute()) {
     return array();

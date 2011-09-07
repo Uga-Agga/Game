@@ -23,7 +23,7 @@
         {% for item in defense_system %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
+            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
             <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ item.name }}" /></td>
             <td>
               <dl class="nodistance">
@@ -91,7 +91,7 @@
       {% for item in defense_system_unqualified %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
+          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ name }}" /></td>
           <td class="">
             <dl class="nodistance">
@@ -139,7 +139,7 @@
       {% for item in defense_system_relict %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
+          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ name }}" /></td>
           <td class="">
             <dl class="nodistance">

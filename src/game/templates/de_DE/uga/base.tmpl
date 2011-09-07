@@ -2,191 +2,41 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="de" xml:lang="de">
 <head>
   {% block head %}
-  <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
-  <link rel="shortcut icon" href="./images/favicon.ico" />
-  <link href="mapstyle.php" rel="stylesheet" type="text/css" />
-  <link type="text/css" href="css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />	
+    <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 
-  <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" href="./images/favicon.ico" />
+    <link href="mapstyle.php" rel="stylesheet" type="text/css" />
+    <link type="text/css" href="css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/base.css" rel="stylesheet" />
+    <!--[if lte IE 7]><link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/ie.css" rel="stylesheet" /><![endif]-->
 
-  <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
-  <script type='text/javascript' src='js/jquery.jqDock.min.js'></script>
-  <script type='text/javascript' src='js/jquery.countdown.min.js'></script>
-  <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
-  <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
-  <script type="text/javascript" src="js/ua.js"></script>
-
-
-  <style type="text/css">
-    /******* GLOBAL ***************************************************************/
-    body {background: #FFFFFF; font-family: sans-serif; font-size: 12px;}
-    a {color: #080; text-decoration: none;}
-    a:visited {color: #066;}
-    a:hover {color: #FF0000; text-decoration: underline;}
-    a:active {color: #000099;}
-    dd {margin-left: 10px;}
-    dl {margin: 5px;}
-    img {border: none;}
-    p {margin: 0;}
-    tr:hover {background-color: #c6d880;}
-    ul {list-style-type: none; margin: 0; padding: 0;}
-
-    div#page {position: absolute; width: 100%; min-width: 960px; top: 0; left: 0;}
-
-    div#header-left {position: relative; float: left; height: 192px; width: 454px; z-index: 1; margin-top: -54px;}
-    div#header-middle {position: relative; margin-right: auto; margin-left: auto; text-align: center; width: 500px; height: 54px; z-index: 2;}
-    div#header-right {position: relative; float: right; height: 192px; width: 446px; z-index: 1; margin-top: -54px;}
-
-    div#content {float: left; text-align: center; width: 72%; z-index: 3;}
-    div#content-left {position: relative; float: left; width: 14%;z-index: 4;}
-    div#content-right { float: right; text-align: right; width: 14%;}
-    div#content-small {width: 660px; margin: 0 auto;}
-    div#resources {margin-bottom: 10px;}
-    div#cave-details {margin-bottom: 10px;}
-    div#cave-details-list {margin-bottom: 10px;}
-    div#bottom-left   {float: left; width: 33%; padding-left: 5px;}
-    div#bottom-middle {float: left; width: 33%; text-align: center;}
-    div#bottom-right  {float: right; width: 33%; text-align: right; padding-right: 5px;}
-
-    div#ranking {width: 500px; margin: 0 auto;}
-    div#ranking-Tribe {width: 700px; margin: 0 auto;}
-
-    .bg0 {}
-    .bg1 {background-color: #eee;}
-    .bg1-nohover {background-color: #eee;}
-    .bold {font-weight: bold;}
-
-    .box {background-image: url(css/images/grass.png); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px; behavior: url(/game/css/PIE.htc);}
-    .box-header {color: #FFFFFF; margin: 3px; padding-top: 2px; text-align: center; font-weight:bold;}
-    .box-content {margin: 0 auto; text-align: left;}
-    .nohover tr:hover {background:transparent;} 
-    .tr-smallcontent {background-color: #ffffff;}
-    .date-td {width: 120px;}
-    .less-small {color:#ff0000;}
-
-    .nodistance {margin: 0; padding: 0;}
-    .table {width: 100%; border-color: #000000;}
-    .td-imp-2 {}
-    .td-button-double {width: 45px;}
-    .td-button-single {width: 25px;}
-    .td-mini-icon {width: 25px;}
-    .td-size {width: 90px;}
-    .td-time {width: 80px;}
-    .td-unit-input  {width: 120px;}
-    .time-bar {width: 65px; height: 15px; background-Color: #C3C3C3;}
-    .time-bar-inner {width: 0px; height: 15px; background-Color: #346D1E; color: #FFFFFF; text-align: center; white-Space: nowrap;}
-    .time-bar-td {width: 65px;}
-    .text-left {text-align: left;}
-    .text-right {text-align: right;}
-
-    #ul-menu-left {line-height: 0; text-align: left;}
-    #ul-menu-right {line-height: 0; text-align: right;}
-    
-    /******* HÖHLENÜBERSICHT ********************************************************/
-    .secureCavebold, .secureCave-bold:visited  {font-weight: bold;color: #000;}
-    .secureCave-bold1, .secureCave-1:visited, .secureCave-bold1:visited, .secureCave-1 {font-weight: bold;color: #b8860b;}
-    .unsecureCave-bold, .unsecureCave-bold:visited {font-weight: bold;color: #FF00FF;}
-    .secureCave- {color: #080;}
-    .unsecureCave-, .unsecureCave-:visited {color: #FF00FF;}
-
-    /******* MENU *****************************************************************/
-    /*dock styling...*/
-    #header-menu {padding: 10px;}
-    /*...centre the dock...*/
-    #header-menu div.jqDockWrap {margin:0 auto;}
-    /*...set the cursor...*/
-    #header-menu div.jqDock {cursor:pointer;}
-    /*label styling...*/
-    div.jqDockLabel {padding:0; white-space:nowrap; font-weight: bold; color:#000000; cursor:pointer;}
-
-    /******* INFO BOX *************************************************************/
-    .error, .alert, .notice, .success, .info, .tooltip {padding:0.8em; margin-bottom:1em; border: 2px solid #ddd; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; behavior: url(/game/css/PIE.htc);}
-    .error, .alert {background:#fbe3e4; color:#8a1f11; border-color:#fbc2c4;}
-    .notice {background:#fff6bf; color:#514721; border-color:#ffd324;}
-    .success {background:#e6efc2; color:#264409; border-color:#c6d880;}
-    .info {background:#d5edf8; color:#205791; border-color:#92cae4;}
-    .error a, .alert a {color:#8a1f11;}
-    .notice a {color:#514721;}
-    .success a {color:#264409;}
-    .info a {color:#205791;}
-    .tooltip {padding:0px; margin-bottom:0px; position: absolute; display: none ; width:150px; text-align:center; background:#fbe3e4; color:#8a1f11; border-color:#fbc2c4;}
-    .small {width: 660px;margin: 0 auto;}
-    .small-inner {width:635px;}
-    .inner {padding:0px !important; margin-bottom:0px !important;}
-
-    .row_alternate {background:#e6efc2  !important; color:#264409  !important; border-color:#c6d880  !important;}
-
-    /******* TERMINKALENDER *******************************************************/
-    .digest-building {background-color: #CCFFCC;}
-    .digest-defense {background-color: #FFFFFF;}
-    .digest-science {background-color: #FFCC99;}
-    .digest-unit {background-color: #CCFF99;}
-    .digest-artefact {background-color: #9cf;}
-
-    .digest-mov-1 {background-color: #CCFF99;}
-    .digest-mov-2 {background-color: #CCFF99;}
-    .digest-mov-3 {background-color: #FFCC99;}
-    .digest-mov-4 {background-color: #FFCC99;}
-    .digest-mov-5 {background-color: #FFFFFF;}
-    .digest-mov-6 {background-color: #FFCC99;}
-
-    /******* NACHRICHTEN **********************************************************/
-    div#msg-header {border-bottom: 2px solid #ddd;}
-    div#msg-body {padding: 5px 5px 5px 5px;}
-
-    a.text-msg-next:link {color:#FFFFFF; text-decoration:none;}
-    a.text-msg-next:visited {color:#FFFFFF; text-decoration:none;}
-    a.text-msg-next:active {color:#FFFFFF; text-decoration:none;}
-    a.text-msg-next:hover {color:#FFFFFF; text-decoration:underline;}
-
-    a.text-msg-previous:link {color:#FFFFFF; text-decoration:none;}
-    a.text-msg-previous:visited {color:#FFFFFF; text-decoration:none;}
-    a.text-msg-previous:active {color:#FFFFFF; text-decoration:none;}
-    a.text-msg-previous:hover {color:#FFFFFF; text-decoration:underline;}
-
-    .dt-msg {display: block; float: left; text-align: left; width: 13%;}
-    .dd-msg {margin-left: 14%;}
-
-    .dt-msg2 {display: block; float: left; text-align: left; width: 90px;}
-    .dd-msg2 {margin-left: 92px;}
-
-    .msg_0 {background-color: #fff;} /* Information */
-    .msg_2 {background-color: #fc9;} /* Sieg */
-    .msg_6 {background-color: #cf9;} /* Handelsbericht */
-    .msg_7 {background-color: #ff9;} /* Rückkehr */
-    .msg_8 {background-color: #cfc;} /* Stammesnachricht */
-    .msg_9 {background-color: #9cf;} /* Wunder */
-    .msg_10 {background-color: #FFFFFF;} /* Benutzernachricht */
-    .msg_11 {background-color: #fc9;} /* Spionage */
-    .msg_12 {background-color: #9cf;} /* Artefakt */
-    .msg_20 {background-color: #fc9;} /* Niederlage */
-    .msg_99 {background-color: #ccc;} /* Uga-Agga Team */
-    .msg_1001 {background-color: #fff;} /* ANKÜNDIGUNG */
-    .msg_read0 a {background-image: url('http://game.uga-agga.de/gfx/de_DE/t_uga/messages/mail.gif'); padding-left: 20px; background-repeat: no-repeat; font-weight: bold;}
-
-    /******* KARTE **********************************************************/
-    .unsecure { color: #FF00FF !important; }
-    .terrain0 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_tundra.gif); }
-    .terrain1 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_wald.gif); }
-    .terrain2 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_gebirge.gif); }
-    .terrain3 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_moorland.gif); }
-    .terrain5 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_nichts.gif); }
-    .terrain4 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_geroellwueste.gif); }
-    .terrain6 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_wasser.gif); }
-  </style>
-
-  <!--[if lte IE 7]>
     <style type="text/css">
-      #ul-menu-left {font-size: 0px;}
-      #ul-menu-right {font-size: 0px;}
+      .box {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
+      .error, .alert, .notice, .success, .info, .tooltip { behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
+      .msg_read0 a {background-image: url('http://game.uga-agga.de/gfx/de_DE/t_uga/messages/mail.gif');}
+
+      .terrain0 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_tundra.gif); }
+      .terrain1 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_wald.gif); }
+      .terrain2 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_gebirge.gif); }
+      .terrain3 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_moorland.gif); }
+      .terrain5 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_nichts.gif); }
+      .terrain4 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_geroellwueste.gif); }
+      .terrain6 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_wasser.gif); }
     </style>
-  <![endif]-->
+
+    <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
+    <script type='text/javascript' src='js/jquery.jqDock.min.js'></script>
+    <script type='text/javascript' src='js/jquery.countdown.min.js'></script>
+    <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="js/ua.js"></script>
   {% endblock %}
 </head>
 <body>
   <div id="page">
     <div id="header">
-      <div id="header-middle" style="background-image: url(http://game.uga-agga.de/gfx/de_DE/t_uga/menu/topmenu.png);">
+      <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
         <div id="header-menu">
           <a href="main.php?modus=cave_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese H&ouml;hle' alt='' /></a>
           <a href="main.php?modus=CaveBookmarks"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='H&ouml;hlenliste' alt='' /></a>
@@ -202,8 +52,8 @@
         </div>
         <img id="header_round_name" src="./images/round_name.png" style="margin-top: 90px" alt="" />
       </div>
-      <div id="header-left" style="background-image: url(css/images/header_left.png); background-repeat: no-repeat;">&nbsp;</div>
-      <div id="header-right" style="background-image: url(css/images/header_right.png); background-repeat: no-repeat;text-align:right;">
+      <div id="header-left" style="background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat;">&nbsp;</div>
+      <div id="header-right" style="background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;text-align:right;">
         <a href="main.php?modus=logout"><img id="logout" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" style="width: 35px; height: 30px;" /></a><br />
         <img id="terrain" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" style="margin-right:100px; margin-top:-30px;" /><br />
         <img id="month" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" style="margin-right:120px;" /><br /> 

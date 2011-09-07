@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Höhlenübersicht{% endblock %}
+{% block content %}
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
@@ -75,5 +76,4 @@
 </form>
 {% endif %}
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

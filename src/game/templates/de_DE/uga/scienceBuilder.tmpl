@@ -26,7 +26,7 @@
         {% for item in science %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }} object-row">
-            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
             <td>
               <dl class="nodistance">
                 <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
@@ -66,7 +66,7 @@
       {% for item in science_unqualified %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }} object-row">
-          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
           <td class="">
             <dl class="nodistance">
               <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>

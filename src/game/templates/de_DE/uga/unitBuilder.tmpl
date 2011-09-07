@@ -23,7 +23,7 @@
         {% for item in units %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('unit_{{ item.unit_id }}', this)" /></td>
+            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('unit_{{ item.unit_id }}', this)" /></td>
             <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             <td>
               <dl class="nodistance">
@@ -109,7 +109,7 @@
       {% for item in units_unqualified %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('unit_{{ item.unit_id }}', this)" /></td>
+          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('unit_{{ item.unit_id }}', this)" /></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="{{ item.name }}" title="{{ item.name }}" /></td>
           <td>
             <dl class="nodistance">
