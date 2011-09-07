@@ -154,7 +154,7 @@ class Config {
 
   var $ERROR403_URL         = "error403.html.php";
 
-  var $WWW_REQUEST_TIMEOUT            = .100;
+  var $WWW_REQUEST_TIMEOUT            = .000;
   var $IMPROVEMENT_PAY_BACK_DIVISOR   = 2;
   var $DEFENSESYSTEM_PAY_BACK_DIVISOR = 2;
 
