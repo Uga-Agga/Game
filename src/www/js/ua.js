@@ -60,7 +60,7 @@ $(document).ready(function() {
  
   // The following code attaches the ajax-detail toggle to the click
   // event of all detail links on the page.  
-  $('a.building-detail-link').click(function (event) {
+  $('a.object-detail-link').click(function (event) {
     var url = $(this).attr('href');
     toggleObjectDetails($(this), url, event);
   });
