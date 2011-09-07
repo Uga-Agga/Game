@@ -84,7 +84,7 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
                                       'name'        => $buildingTypeList[$key]->name,
                                       'value'       => ceil(eval('return '.formula_parseToPHP($building->buildingProductionCost[$key] . ';', '$details')))));
 
-  $defense = array();
+  $defenseCost = array();
   foreach ($building->defenseProductionCost as $key => $value)
     if ($value != "" && $value != 0)
       array_push($defenseCost,  array('dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
