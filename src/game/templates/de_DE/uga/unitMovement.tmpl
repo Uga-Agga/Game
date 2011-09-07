@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Bewegungen{% endblock %}
+{% block content %}
 
 <script type="text/javascript">
 // <![CDATA[
@@ -530,5 +531,4 @@ function hideWMTT() {
 </div>
 {% endif %}
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

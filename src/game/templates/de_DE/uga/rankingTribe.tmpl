@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Stammesranking{% endblock %}
+{% block content %}
 
 <script language="JavaScript" type="text/JavaScript">
 <!--
@@ -92,5 +93,4 @@ function swapImage(){
   </div>
 </form>
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

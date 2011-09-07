@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Profil{% endblock %}
+{% block content %}
 
 <div class="box small">
   <div class="box-header nohover"><strong>Spieler: {{ player_details.name }}</strong></div>
@@ -137,6 +138,4 @@
   </div>  
 </div>
 
-
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Einheiten{% endblock %}
+{% block content %}
 
 {% if quene_show %}
   <div class="notice">
@@ -170,5 +171,4 @@
 </div>
 {% endif %}
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

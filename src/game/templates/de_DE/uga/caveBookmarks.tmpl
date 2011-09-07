@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Terminkalender{% endblock %}
+{% block content %}
 
 <tmpl:TITLE>{iterate}H&ouml;hlenmerkliste</tmpl:TITLE>
 
@@ -88,7 +89,4 @@
 </div>
 
 </tmpl:CONTENT>
-
-
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Händler{% endblock %}
+{% block content %}
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
@@ -44,5 +45,4 @@
 </div>
 {% endfor %}
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

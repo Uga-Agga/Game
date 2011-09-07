@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Spieler Ranking{% endblock %}
+{% block content %}
 
 <script type="text/javascript">
 // <![CDATA[
@@ -94,5 +95,4 @@ function swapImage(){
 
 <div style="height: 10px;">&nbsp;</div>
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

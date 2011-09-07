@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Verteidigungsanlagen{% endblock %}
+{% block content %}
 
 {% if quene_show %}
   <div class="notice">
@@ -181,5 +182,4 @@
 </div>
 {% endif %}
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

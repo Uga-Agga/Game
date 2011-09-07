@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Nachrichten{% endblock %}
+{% block content %}
 
 <div class="box">
   <div class="box-header">&nbsp;</div>
@@ -82,5 +83,4 @@
 
 <div class="text-right"><a href="main.php?modus={{ messages_list_link }}&amp;box={{ box }}">zurück zu den Nachrichten</a></div>
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

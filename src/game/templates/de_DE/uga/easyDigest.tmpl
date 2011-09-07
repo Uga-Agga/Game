@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Terminkalender{% endblock %}
+{% block content %}
 
 <a href="?modus=EventReports&amp;task=Movements">zur Bewegungsübersicht</a>
 
@@ -275,6 +276,4 @@
   </div>
 </div>
 <br />
-
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

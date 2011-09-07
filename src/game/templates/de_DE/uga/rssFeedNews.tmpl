@@ -1,4 +1,6 @@
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}News{% endblock %}
+{% block content %}
 
 {% if rssFeeds %}
   {% for item in rssFeeds %}
@@ -11,4 +13,4 @@
   <div class="error">Zur Zeit gibt es leider keine News.</div>
 {% endif %}
 
-{% include 'pageFooter.tmpl' %}
+{% endblock %}

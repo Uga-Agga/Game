@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Helden{% endblock %}
+{% block content %}
 
 {% if status_msg %}<div class="{{ status_msg.type }}" style="width:800px;margin:15px auto;">{{ status_msg.message }}</div>{% endif %}
 {% if hero %}
@@ -168,5 +169,5 @@
 </div>
 </div>
 {% endif %}
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+
+{% endblock %}

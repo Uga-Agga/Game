@@ -1,5 +1,7 @@
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Meldung{% endblock %}
+{% block content %}
 
 <div class ="error"><strong>Da klappte was nicht!!! Oo</strong><br />{{ msg }}</div>
 
-{% include 'pageFooter.tmpl' %}
+{% endblock %}

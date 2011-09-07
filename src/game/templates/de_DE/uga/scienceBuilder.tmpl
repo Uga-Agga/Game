@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Forschungen{% endblock %}
+{% block content %}
 
 <a href="export.php?modus=sciences&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a>
 <a href="export.php?modus=sciences&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="30" height="30" alt="Export als Text" title="Export als Text" /></a><br />
@@ -83,5 +84,4 @@
 </div>
 {% endif %}
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}
