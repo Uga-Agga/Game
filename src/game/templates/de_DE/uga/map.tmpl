@@ -108,10 +108,10 @@
          {% if minimap %} 
          <div class="box-content inner success" id="minimap-view">
           <form action="main.php" method="post" id="minimapform">
-           <p><input name="minimap" type="image" style="width: {{ minimap.width}}px; height: {{minimap.height}}px; border: thin groove #009900; cursor: crosshair;" src="{{minimap.file}}" />
+           <p><input name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
              <input type="hidden" name="scaling" value="{{minimap.scaling}}" />
              <input type="hidden" name="modus"  value="{{minimap.modus}}" />
-             <input type="hidden" name="caveID" value="{{minimap.caveID}}" />
+             <input type="hidden" name="caveID" value="{{caveID}}" />
            </p>
           </form>
           </div>
