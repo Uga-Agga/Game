@@ -313,6 +313,14 @@ function getCaveMapRegionContent($caveID, $caves) {
   // ermittele nun die rechte untere Ecke des Bildausschnittes
   $maxX = $minX + $MAP_WIDTH  - 1;
   $maxY = $minY + $MAP_HEIGHT - 1;
+  
+  $centerX = $minX+($maxX-$minX)/2;
+  $centerY = $minY+($maxY-$minY)/2;
+  
+  $template->addVars(array(
+    'centerXCoord' => $centerX,
+    'centerYCoord' => $centerY
+  ));
 
   // get the map details
   $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);

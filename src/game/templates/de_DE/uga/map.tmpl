@@ -67,8 +67,6 @@
 <td>
 
 <div class="box">
-  <div style="display: none;" id="map-posX">{{ xCoord }}</div>
-  <div style="display: none;" id="map-posY">{{ yCoord }}</div>
   <div class="boxheader">&nbsp;</div>
   <div class="box-content inner success" id="map-view">
   </div>
@@ -82,26 +80,26 @@
 
       <table class="nohover" style="width:140px;padding: 0;">
         <tr>          
-          <td> <tmpl:NW><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a></tmpl:NW>
+          <td> <a class="arrow" id="NW" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a>
           </td>
-          <td> <tmpl:N><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png"  style="border:none;width:40px;hight:40px;" alt="nord" /></a></tmpl:N>
+          <td> <a class="arrow" id="N" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png"  style="border:none;width:40px;hight:40px;" alt="nord" /></a>
           </td>
-          <td> <tmpl:NO><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a></tmpl:NO>
+          <td> <a class="arrow" id="NE" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a>
           </td>
          </tr>
          <tr>
-          <td> <tmpl:W><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png"  style="border:none;width:40px;hight:40px;" alt="west" /></a></tmpl:W>
+          <td> <a class="arrow" id="W" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png"  style="border:none;width:40px;hight:40px;" alt="west" /></a>
           </td>
           <td>&nbsp;</td>
-          <td> <tmpl:O><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png"  style="border:none;width:40px;hight:40px;" alt="ost" /></a></tmpl:O>
+          <td> <a class="arrow" id="E" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png"  style="border:none;width:40px;hight:40px;" alt="ost" /></a>
           </td>
          </tr>
          <tr>
-          <td> <tmpl:SW><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dwest" /></a></tmpl:SW>
+          <td> <a class="arrow" id="SW" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dwest" /></a>
           </td>
-          <td> <tmpl:S><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png"  style="border:none;width:40px;hight:40px;" alt="s&uuml;d" /></a></tmpl:S>
+          <td> <a class="arrow" id="S" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png"  style="border:none;width:40px;hight:40px;" alt="s&uuml;d" /></a>
           </td>
-          <td> <tmpl:SO><a href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dost" /></a></tmpl:SO>
+          <td> <a class="arrow" id="SE" href="./main.php?caveID={caveID}&amp;modus={modus}&amp;xCoord={x}&amp;yCoord={y}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dost" /></a>
           </td>         
         </tr>
       </table>
@@ -131,13 +129,18 @@
     $('#searchCoords').submit(function () {
       var xCoord = $(this).find(':text[name=xCoord]').val();
       var yCoord = $(this).find(':text[name=yCoord]').val();
+      
+      if (xCoord === '' || yCoord ==='') return false;
+      
       $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
       return false;
     });
     
     $('#searchName').submit(function () {
       var caveName = $(this).find(':text[name=caveName]').val();
+      
       if (caveName === '') return false;
+      
       $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveName);
       return false;
     });
@@ -147,6 +150,37 @@
       if (targetCaveID < 0) return false;
       $("#map-view").load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
       return false;
+    });
+  
+    // store the direction to move the map with each arrow
+    $('#NW').data('dx', -1).data('dy', -1); 
+    $('#N').data('dx', 0).data('dy', -1); 
+    $('#NE').data('dx', 1).data('dy', -1); 
+    $('#E').data('dx', 1).data('dy', 0); 
+    $('#SE').data('dx', 1).data('dy', 1); 
+    $('#S').data('dx', 0).data('dy', 1); 
+    $('#SW').data('dx', -1).data('dy', 1); 
+    $('#W').data('dx', -1).data('dy', 0); 
+    
+    $('a.arrow').click(function (event) {
+      event.preventDefault();
+
+      var xCoord = $('#map-centerX').html();
+      var yCoord = $('#map-centerY').html();
+      
+      var dx = $(this).data('dx');
+      var dy = $(this).data('dy');
+      
+      if (xCoord === '' || yCoord === '' || (dx == 0 && dy == 0)) {
+        return false;
+      }
+
+      xCoord = parseInt(xCoord) + dx;
+      yCoord = parseInt(yCoord) + dy;
+            
+      $("#map-view")
+      .load("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
+
     });
     
     $("#map-view")
