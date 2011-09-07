@@ -37,11 +37,11 @@
         {% for item in improvement %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }} object-row">
-            <td class="td-mini-icon"><a class="building-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
             <td class="td-imp-2">
               <dl class="nodistance">
-                <dt><a class="building-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="">{% include "boxCost.tmpl" %}</dd>
               </dl>
             </td>
@@ -81,11 +81,11 @@
       {% for item in improvement_unqualified %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }} object-row">
-          <td class="td-mini-icon"><a class="building-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
           <td class="">
             <dl class="nodistance">
-              <dt><a class="building-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
               <dd class="">{{ item.dependencies }}</dd>
             </dl>
           </td>
@@ -109,11 +109,11 @@
       {% for item in improvement_relict %}
       {% set bgID = (bgID+1)%2 %}
       <tr class="bg{{ bgID }} object-row" id="building_{{ item.building_id }}">
-        <td class="td-mini-icon"><a class="building-detail-link" href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
+        <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
         <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
         <td class="">
           <dl class="nodistance">
-            <dt><a class="building-detail-link" href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+            <dt><a class="object-detail-link" href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
             <dd class="">{{ item.dependencies }}</dd>
           </dl>
         </td>

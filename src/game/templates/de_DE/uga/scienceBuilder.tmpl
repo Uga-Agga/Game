@@ -24,11 +24,11 @@
       {% if science %}
         {% for item in science %}
           {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('science_{{ item.science_id }}', this)" /></td>
+          <tr class="bg{{ bgID }} object-row">
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
             <td>
               <dl class="nodistance">
-                <dt><a href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
               </dl>
             </td>
@@ -42,24 +42,13 @@
               {% endif %}
             </td>
           </tr>
-          <tr class="bg{{ bgID }}" id="science_{{ item.science_id }}" style="display:none"><td>&nbsp;</td>
-            <td colspan="6">
-              <div style="float: left; width: 39%; max-width: 256px;">
-                <img src="{{ gfx }}/sciences/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-              </div>
-              <div style="float: left; width: 61%;">
-                <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-                <br /><br />
-                <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-                <br /><br />
-                <span class="bold">Maximale Stufe:</span> {{ item.maxlevel }} (derzeit: {{ item.currentlevel }})
-              </div>
-              <div style="clear: both;"></div>
+          <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display:none"><td>&nbsp;</td>
+            <td colspan="4" class="object-details">
             </td>
           </tr>
         {% endfor %}
       {% else %}
-        <tr class="bg1"><td>Zur Zeit kannst du leider kein Wissen Forschen.</td></tr>
+        <tr class="bg1"><td>Zur Zeit kannst du nix weiteres erforschen.</td></tr>
       {% endif %}
       {% set bgID = 0 %}
     </table>
@@ -75,26 +64,17 @@
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in science_unqualified %}
         {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('science_{{ item.science_id }}', this)" /></td>
+        <tr class="bg{{ bgID }} object-row">
+          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_plus.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
           <td class="">
             <dl class="nodistance">
-              <dt><a href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
               <dd class="">{{ item.dependencies }}</dd>
             </dl>
           </td>
         </tr>
-        <tr class="bg{{ bgID }}" id="science_{{ item.science_id }}" style="display:none"><td>&nbsp;</td>
-          <td colspan="6">
-            <div style="float: left; width: 39%; max-width: 256px;">
-              <img src="{{ gfx }}/sciences/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-            </div>
-            <div style="float: left; width: 61%;">
-              <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-              <br /><br />
-              <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-            </div>
-            <div style="clear: both;"></div>
+        <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display:none"><td>&nbsp;</td>
+          <td colspan="1" class="object-details">
           </td>
         </tr>
       {% endfor %}
