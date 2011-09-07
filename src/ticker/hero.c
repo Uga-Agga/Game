@@ -1,6 +1,6 @@
 /*
- * heroRitual.c - handle artefacts
- * Copyright (c) 2003  Marcus Lunzenauer
+ * heroRitual.c - handle heros
+ * Copyright (c) 2011 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -24,8 +24,8 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
   db_result_t *result = db_query(database, "SELECT * FROM " DB_TABLE_HERO " WHERE heroID = %d", heroID);
 
 //  /* Bedingung: Held muss vorhanden sein */
-//  if (db_result_num_rows(result) != 1)
-//    throw(SQL_EXCEPTION, "get_hero_by_id: no such heroID");
+  if (db_result_num_rows(result) != 1)
+    throw(SQL_EXCEPTION, "get_hero_by_id: no such heroID");
 
   db_result_next_row(result);
 
@@ -34,6 +34,7 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
   hero->isAlive     = db_result_get_int(result, "isAlive");
   hero->playerID    = db_result_get_int(result, "playerID");
   hero->healPoints  = db_result_get_int(result, "healPoints");
+  hero->maxHealPoints = db_result_get_int(result, "maxHealPoints");
   get_effect_list(result, hero->effect);
 }
 
@@ -102,9 +103,9 @@ void reincarnate_hero (db_t *database, int heroID)
   if (db_affected_rows(database) != 1)
     throw(SQL_EXCEPTION, "initiate_hero: no such heroID or caveID");
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d "
-         "WHERE heroID = %d AND caveID = %d",
-     HERO_ALIVE, hero.heroID, hero.caveID);
+  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, healPoints = %d "
+         " WHERE heroID = %d AND caveID = %d",
+	   HERO_ALIVE, hero.maxHealPoints/2, hero.heroID, hero.caveID);
 
   // apply effects
   apply_hero_effects_to_cave(database, heroID);
@@ -121,8 +122,8 @@ void kill_hero (db_t *database, int heroID)
 
   get_hero_by_id(database, heroID, &hero);
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0 "
-         "WHERE heroID = %d",
+  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0 healPoints = 0 "
+         " WHERE heroID = %d",
      HERO_DEAD, heroID);
 
   db_query(database, "DELETE FROM Event_hero WHERE heroID = %d",

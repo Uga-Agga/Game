@@ -98,10 +98,17 @@
   categoryId CDATA #REQUIRED
   hidden (0 | 1) "0"
 >
+<!--Tränke -->
 <!ELEMENT Potions (Potion+)>
-<!ELEMENT Potion (Name+, Description+, HP_increase, HP_prozentual_increase, TP_setback, Cost*)>
+<!ELEMENT Potion (Name+, Description+, HP_increase, HP_prozentual_increase, TP_setback, NeededLevel)>
 <!ATTLIST Potion
-  id CDATA #REQUIRED
+  id ID #REQUIRED
+>
+<!ELEMENT potions (potion+)>
+<!ELEMENT potion EMPTY>
+<!ATTLIST potion
+  id IDREF #REQUIRED
+  absolute CDATA #REQUIRED
 >
 <!--Wetter-->
 <!ELEMENT Weathers (Weather+)>
@@ -140,7 +147,7 @@
 >
 <!ELEMENT tradeimpacts (tradeimpact+)>
 <!--impact-->
-<!ELEMENT tradeimpact (targetMessage, effects?, resources?, units?, buildings?, sciences?, defenseSystems?)>
+<!ELEMENT tradeimpact (targetMessage, effects?, resources?, units?, buildings?, sciences?, defenseSystems?, potions?)>
 <!ATTLIST tradeimpact
   delay CDATA #REQUIRED
   duration CDATA #REQUIRED
@@ -274,6 +281,8 @@
 <!ELEMENT ExposeInvisible (#PCDATA | object)*>
 <!ELEMENT FuelResourceID (#PCDATA)>
 <!ELEMENT FuelUsage (#PCDATA)>
+<!ELEMENT HP_increase (#PCDATA)>
+<!ELEMENT HP_prozentual_increase (#PCDATA)>
 <!ELEMENT MaxDevelopmentLevel (#PCDATA | object)*>
 <!ELEMENT SafeStorage (#PCDATA | object)*>
 <!ELEMENT MaxStorage (#PCDATA | object)*>
@@ -282,6 +291,7 @@
 <!ELEMENT MovementSpeed (#PCDATA | object)*>
 <!ELEMENT Name (#PCDATA)>
 <!ATTLIST Name lang IDREF "de_DE">
+<!ELEMENT NeededLevel (#PCDATA)>
 <!ELEMENT p (#PCDATA)>
 <!ELEMENT Position (#PCDATA)>
 <!ELEMENT ProductionTime (#PCDATA | object)*>
@@ -295,6 +305,7 @@
 <!ELEMENT TakeoverMaxPopularityPoints (#PCDATA)>
 <!ELEMENT TakeoverMinResourceValue (#PCDATA)>
 <!ELEMENT TakeoverValue (#PCDATA)>
+<!ELEMENT TP_setback (#PCDATA)>
 <!ELEMENT Value (#PCDATA)>
 <!ELEMENT Velocity (#PCDATA)>
 <!ELEMENT Visible (#PCDATA)>
