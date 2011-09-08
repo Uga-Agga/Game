@@ -108,7 +108,7 @@ ALTER TABLE `Hero_rituals`
 #sciences
 
 ALTER TABLE `Player`
-<xsl:apply-templates select="//Science">
+<xsl:apply-templates select="//Science|//Potion">
 <xsl:sort select="name()"/>
 <xsl:sort select="@id"/>
 </xsl:apply-templates>;
@@ -144,12 +144,13 @@ ADD `<xsl:value-of select="@id"/>_delta` INTEGER NOT NULL default '0'</xsl:if>
 <xsl:if test="position()!=last()">,</xsl:if>
 </xsl:template>
 
-<xsl:template match="Building|DefenseSystem|Science|Unit">
+<xsl:template match="Building|DefenseSystem|Science|Unit|Potion">
 ADD `<xsl:value-of select="@id"/>` INTEGER NOT NULL default '0'<xsl:if test="position()!=last()">,</xsl:if>
 </xsl:template>
 
 <xsl:template match="EffectType">
 ADD `<xsl:value-of select="@id"/>` DECIMAL(8,3) NOT NULL DEFAULT '0.00'<xsl:if test="position()!=last()">,</xsl:if>
 </xsl:template>
+
 
 </xsl:stylesheet>
