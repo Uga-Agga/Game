@@ -90,7 +90,7 @@ function digest_getDigest($ownCaves) {
 
   // send to template
   $template->addVars(array(
-    'own_movements'     => $ownMovement,
+    'own_movements'      => $ownMovement,
     'opponent_movement'  => $opponentMovement,
     'initiations'        => $initiations,
     'appointments'       => $appointments,
