@@ -17,9 +17,9 @@ require_once("game_rules.php");
 init_potions();
 
 function merchant_getMechantDetail($playerID, $caveID, &$details) {
-  global $buildingTypeList, $resourceTypeList, $tradeCategoriesTypeList, $tradeTypeList, $unitTypeList, $potionTypeList;
+  global $buildingTypeList, $resourceTypeList, $tradeCategoriesTypeList, $tradeTypeList, $unitTypeList;
   global $db, $template;
-
+  
   // open template
   $template->setFile('merchant.tmpl');
 
@@ -121,7 +121,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 }
 
 function merchant_processOrder($tradeID, $caveID, $caveData) {
-  global $tradeCategoriesTypeList, $tradeTypeList, $db;
+  global $tradeCategoriesTypeList, $tradeTypeList, $db, $potionTypeList;
 
   $sql = $db->prepare("SELECT LockTill < :LockTill as allowed
                        FROM " . TRADELOCK_TABLE ."
@@ -153,28 +153,48 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
     return 0;
   }
 
-  // create a random factor between -0.3 and +0.3
-  $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
-
-  // now calculate the delayDelta depending on the first impact's delay
-  $delayDelta = $tradeTypeList[$tradeID]->impactList[0]['delay'] * $delayRandFactor;
-
-  foreach($tradeTypeList[$tradeID]->impactList AS $impactID => $impact) {
-    $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
-
-    $now = time() + $_SESSION['player']->getTimeCorrection();
-    $sql = $db->prepare("INSERT INTO ". EVENT_TRADE_TABLE ." 
-                         (targetID, tradeID, impactID, start, end)
-                          VALUES (:targetID, :tradeID, :impactID, :start, :end)");
-    $sql->bindValue('targetID', $caveID, PDO::PARAM_INT);
-    $sql->bindValue('tradeID', $tradeID-1, PDO::PARAM_INT);
-    $sql->bindValue('impactID', $impactID, PDO::PARAM_INT);
-    $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
-    $sql->bindValue('end', time_toDatetime($now + $delay), PDO::PARAM_STR);
-
-    if (!$sql->execute()) {
-      processProductionCostSetBack($tradeTypeList[$tradeID], $caveID, $caveData);
-      return -1;
+  $now = time() + $_SESSION['player']->getTimeCorrection();
+  
+  if ($tradeTypeList[$tradeID]->category == "potion") {
+    foreach ($tradeTypeList[$tradeID]->impactList[0]['potions'] AS $potionID => $potion) {
+      
+      if (!$potionTypeList[$potionID])
+        return -1;
+      
+      $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
+                           SET " . $potionTypeList[$potionID]->dbFieldName . " =  " . $potionTypeList[$potionID]->dbFieldName . " + :absolute 
+                           WHERE playerID = :playerID");
+      $sql->bindValue('absolute', $potion['absolute'], PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+      
+      if (!$sql->execute()) {
+        processProductionCostSetBack($tradeTypeList[$tradeID], $caveID, $caveData);
+        return -1;
+      }
+    }
+    
+  } else {
+    // create a random factor between -0.3 and +0.3
+    $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
+  
+    // now calculate the delayDelta depending on the first impact's delay
+    $delayDelta = $tradeTypeList[$tradeID]->impactList[0]['delay'] * $delayRandFactor;
+  
+    foreach($tradeTypeList[$tradeID]->impactList AS $impactID => $impact) {
+      $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
+      $sql = $db->prepare("INSERT INTO ". EVENT_TRADE_TABLE ." 
+                           (targetID, tradeID, impactID, start, end)
+                            VALUES (:targetID, :tradeID, :impactID, :start, :end)");
+      $sql->bindValue('targetID', $caveID, PDO::PARAM_INT);
+      $sql->bindValue('tradeID', $tradeID-1, PDO::PARAM_INT);
+      $sql->bindValue('impactID', $impactID, PDO::PARAM_INT);
+      $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
+      $sql->bindValue('end', time_toDatetime($now + $delay), PDO::PARAM_STR);
+  
+      if (!$sql->execute()) {
+        processProductionCostSetBack($tradeTypeList[$tradeID], $caveID, $caveData);
+        return -1;
+      }
     }
   }
 
@@ -183,7 +203,7 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
   $sql = $db->prepare("INSERT INTO ". TRADELOCK_TABLE ." 
                        (PlayerID, cat, LockTill)
                         VALUES (:playerID, :cat, :LockTill)");
-  $sql->bindValue('playerID', $_SESSION['player']->playerID, Pdo::PARAM_INT);
+  $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('cat', $tradeTypeList[$tradeID]->category, PDO::PARAM_STR);
   $sql->bindValue('LockTill', time_toDatetime($lock), PDO::PARAM_STR);
 
