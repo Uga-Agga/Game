@@ -198,7 +198,7 @@
       {% for item in appointments %}
       <tr class="digest-{{ item.category }}">
         <td>{{ item.event_name }}</td>
-        <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
+        <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></td>
         <td class="date-td">{{ item.event_end_date }}</td>
         <td class="time-bar-td text-right">
           <script type="text/javascript">

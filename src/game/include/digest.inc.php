@@ -336,7 +336,7 @@ function digest_getAppointments($ownCave){
       'cave_name'          => $ownCave[$row['caveID']]['name'],
       'caveID'             => $row['caveID'],
       'category'           => 'defense',
-      'modus'              => EXTERNAL_BUILDER,
+      'modus'              => DEFENSE_BUILDER,
       'eventID'            => $row['event_defenseSystemID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
