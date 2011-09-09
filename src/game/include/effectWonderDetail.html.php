@@ -13,21 +13,14 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function effect_getEffectWonderDetailContent($caveID, $caveData) {
-
-  global $buildingTypeList,
-         $defenseSystemTypeList,
-         $resourceTypeList,
-         $scienceTypeList,
-         $unitTypeList,
-         $wonderTypeList,
-         $effectTypeList,
-         $db;
+  global $db, $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList, $wonderTypeList, $effectTypeList;
 
   // don't show the resource bar
   $no_resource_flag = 1;
 
-  // open the template
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'effectWonderDetail.ihtml');
+  // open template
+  $template->setFile('effectWonderDetail.tmpl');
 
   $wonders = wonder_getActiveWondersForCaveID($caveID);
   $wondersData = array();
@@ -90,25 +83,11 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   } // end iterating through effectTypes
 
   $data = array();
-  if (!sizeof($wondersData))
-    $data['NOWONDER'] = array('dummy' => "");
-  else
-    $data['WONDER'] = $wondersData;
-
-  if (!sizeof($effectsData))
-    $data['NOEFFECT'] = array('dummy' => "");
-  else
-    $data['EFFECT'] = $effectsData;
-
-  // put user, its session and nogfx flag into session
-  $_SESSION['player'] =Player::getPlayer($_SESSION['player']->playerID);
-
+  $data['wonder'] = $wondersData;
+  $data['effect'] = $effectsData;
   $data['farmpoints'] = $_SESSION['player']->fame;
-  $data['rules_path'] = RULES_PATH;
 
-  tmpl_set($template, "/", $data );
-
-  return tmpl_parse($template);
+  $template->addVars($data);
 }
 
 ?>

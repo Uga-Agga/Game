@@ -21,7 +21,7 @@ class Donations_Index_View extends View {
   function Donations_Index_View($language, $skin) {
 
     // open template
-    $this->openTemplate($language, $skin, 'Donations_Index.ihtml');
+    $this->openTemplate($language, $skin, 'donations.tmpl');
   }
 
   function setError($error) {
@@ -29,24 +29,11 @@ class Donations_Index_View extends View {
   }
 
   function getContent() {
-
-    switch ($this->error) {
-//      case CONTACTS_ERROR_NOSUCHPLAYER:
-//        tmpl_set($this->template, '/CONTENT/ERROR_NOSUCHPLAYER/iterate', '');
-//        break;
-
-      default:
-      case CONTACTS_NOERROR:
-        break;
-    }
+    global $template;
 
     // set name and id
-    tmpl_set($this->template, '/CONTENT',
-             array('name' => urlencode($_SESSION['player']->name),
-                   'id'   => $_SESSION['player']->playerID));
-
-    // return parsed template
-    return tmpl_parse($this->template, '/CONTENT');
+    $template->addVar('player_name', urlencode($_SESSION['player']->name));
+    $template->addVar('player_id', $_SESSION['player']->playerID);
   }
 }
 

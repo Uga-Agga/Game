@@ -35,7 +35,7 @@ function wonder_getWonderContent($caveID, &$details) {
 * "wundern" xD
 *
 ****************************************************************************************************/
-    case 'build':
+    case 'wonder':
       $wonderID = request_var('wonderID', -1);
       if ($wonderID != -1) {
         $caveName = request_var('CaveName', '');
@@ -105,10 +105,11 @@ function wonder_getWonderContent($caveID, &$details) {
 ****************************************************************************************************/
   $template->addVars(array(
     'cave_id'             => $caveID,
-    'status_msg '         => (isset($messageID)) ? $messageText[$messageID] : '',
+    'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
     'wonders'             => $wonders,
     'wonders_unqualified' => $wondersUnqualified,
   ));
+  
 }
 
 ?>
