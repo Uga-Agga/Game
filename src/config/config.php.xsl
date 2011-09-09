@@ -602,7 +602,7 @@ class Potion {
   var $tp_setBack = 0;
   var $needed_level = 0;
 
-  function Potion ($potionID, $name, $description, $dbFieldName, $hp_increase, $hp_prozentual_increase, $tp_setBack, $needed_level) {
+  function Potion ($potionID, $name, $description, $dbFieldName, $hp_increase, $hp_prozentual_increase, $tp_setBack, $needed_level, $value) {
     $this-&gt;potionID                  = $potionID;
     $this-&gt;name                      = $name;
     $this-&gt;description               = $description;
@@ -611,6 +611,7 @@ class Potion {
     $this-&gt;hp_prozentual_increase    = $hp_prozentual_increase;
     $this-&gt;tp_setBack                = $tp_setBack;
     $this-&gt;needed_level              = $needed_level;
+    $this-&gt;value                     = $value;
   }
 }
 
@@ -629,8 +630,8 @@ function init_potions() {
                      <xsl:value-of select="HP_increase"/>, 
                      <xsl:value-of select="HP_prozentual_increase"/>, 
                      <xsl:value-of select="TP_setback"/>, 
-                     <xsl:value-of select="NeededLevel"/>
-                     );
+                     <xsl:value-of select="NeededLevel"/>,
+                     0);
   $potionTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
   
 </xsl:template>
