@@ -75,6 +75,8 @@ function determineCoordsFromParameters($caveData, $mapSize) {
 }
 
 
+
+/** creates the map-page with header and the specified map region */
 function getCaveMapContent($caveID, $caves) {
 
   global $config, $terrainList, $template;
@@ -161,39 +163,25 @@ function getCaveMapContent($caveID, $caves) {
     if (sizeof($bookmarks))
       $template->addVars(array( caveBookmarks => $bookmarks));
   }
-
+  
+  $mapData = calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord);
+  $template->addVars($mapData);
 }
 
 
-function getCaveMapRegionContent($caveID, $caves) {
-
-  global $config, $terrainList, $template;
+/** calculates the displayed data for a specific map region. */
+function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
+  
+  global $config, $terrainList;
 
   $caveData = $caves[$caveID];
   $mapSize = getMapSize();  // Größe der Karte wird benötigt
   $message  = '';
-
-  // template öffnen
-  $template->setFile('mapRegion.tmpl');
-
-  // Grundparameter setzen
-  $template->addVars(array(
-    'modus'         => MAP,
-    'mapRegionLink' => MAP_REGION,
-    'caveID'        => $caveID
-    ));
-
-  $resolvedCoords = determineCoordsFromParameters($caveData,  $mapSize);
-  $template->addVars($resolvedCoords);
-  
-  $xCoord = $resolvedCoords['xCoord'];
-  $yCoord = $resolvedCoords['yCoord'];
-    
+      
   // width und height anpassen
   $MAP_WIDTH  = min(MAP_WIDTH,  $mapSize['maxX']-$mapSize['minX']+1);
   $MAP_HEIGHT = min(MAP_HEIGHT, $mapSize['maxY']-$mapSize['minY']+1);
   
-
   // Nun befinden sich in $xCoord und $yCoord die gesuchten Koordinaten.
   // ermittele nun die linke obere Ecke des Bildausschnittes
   $minX = min(max($xCoord - intval($MAP_WIDTH/2),  $mapSize['minX']), $mapSize['maxX']-$MAP_WIDTH+1);
@@ -205,11 +193,6 @@ function getCaveMapRegionContent($caveID, $caves) {
   $centerX = $minX+($maxX-$minX)/2;
   $centerY = $minY+($maxY-$minY)/2;
   
-  $template->addVars(array(
-    'centerXCoord' => $centerX,
-    'centerYCoord' => $centerY
-  ));
-
   // get the map details
   $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);
 
@@ -312,7 +295,16 @@ function getCaveMapRegionContent($caveID, $caves) {
     array_push($regionData['rows'], $cells);
   } 
   
-  $template->addVars(array('mapregion' => $regionData));
+  
+  $mapData = array(
+    'centerXCoord' => $centerX,
+    'centerYCoord' => $centerY,
+    'mapregion' => $regionData);
+
+  return $mapData;
+  
+    // TODO: this functionality has to be added again! may be done in JS.
+/*
   
   // Minimap
   $width  = $mapSize['maxX'] - $mapSize['minX'] + 1;
@@ -322,14 +314,49 @@ function getCaveMapRegionContent($caveID, $caves) {
   $mcX = $minX + intval($MAP_WIDTH/2);
   $mcY = $minY + intval($MAP_HEIGHT/2);
 
-  // TODO: this functionality has to be added again! may be done in JS.
-/* $template->addVar("/MINIMAP", array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
+  $template->addVar("/MINIMAP", array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
                                         'modus'   => MAP,
                                         'width'   => intval($width * MINIMAP_SCALING / 100),
                                         'height'  => intval($height * MINIMAP_SCALING / 100),
                                         'scaling' => MINIMAP_SCALING));
 */
+  
+  
 }
+
+
+/** fills the map-region data into the thin, header-less template. 
+ This is used as response to Ajax calls. */
+function getCaveMapRegionContent($caveID, $caves) {
+
+  global $config, $terrainList, $template;
+
+  $caveData = $caves[$caveID];
+  $mapSize = getMapSize();  // Größe der Karte wird benötigt
+  $message  = '';
+
+  // template öffnen
+  $template->setFile('mapRegion.tmpl');
+
+  // Grundparameter setzen
+  $template->addVars(array(
+    'modus'         => MAP,
+    'mapRegionLink' => MAP_REGION,
+    'caveID'        => $caveID
+    ));
+
+  $resolvedCoords = determineCoordsFromParameters($caveData,  $mapSize);
+  $template->addVars($resolvedCoords);
+  
+  $xCoord = $resolvedCoords['xCoord'];
+  $yCoord = $resolvedCoords['yCoord'];
+
+  $mapData = calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord);
+  $template->addVars($mapData);
+    
+}
+
+
 
 function getCaveReport($caveID, $ownCaves, $targetCaveID) {
   global $terrainList;

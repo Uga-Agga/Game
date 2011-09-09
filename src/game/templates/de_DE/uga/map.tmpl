@@ -69,6 +69,7 @@
 <div class="box">
   <div class="boxheader">&nbsp;</div>
   <div class="box-content inner success" id="map-view">
+    {% include "mapRegion.tmpl" %}
   </div>
 </div>
 
@@ -212,9 +213,9 @@
 
     });
     
-    $("#map-view")
-    .html("Loading...");
-    loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");
+   // $("#map-view")
+   //  .html("Loading...");
+ //   loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");
   })
 </script>
 
