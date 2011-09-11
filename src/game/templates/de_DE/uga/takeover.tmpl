@@ -1,5 +1,6 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Terminkalender{% endblock %}
+{% block content %}
 
 <div id="content-small">
 
@@ -315,5 +316,4 @@
 
 </div>
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

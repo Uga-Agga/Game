@@ -19,11 +19,11 @@ class View {
   function openTemplate($language, $skin, $templateFile){
     global $config, $template;
 
-    $this->template = $template->setFile($templateFile);
+    $template->setFile($templateFile);
   }
   
   function getTitle(){
-    return $this->template ? tmpl_parse($this->template, '/TITLE') : __CLASS__;
+    //return $this->template ? tmpl_parse($this->template, '/TITLE') : __CLASS__;
   }
 }
 
