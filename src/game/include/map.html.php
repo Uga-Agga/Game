@@ -21,6 +21,7 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   // default Werte: Koordinaten of the given caveData (that is the data of the presently selected own cave)
   $xCoord  = $caveData['xCoord'];
   $yCoord  = $caveData['yCoord'];
+  $message = '';
 
   // wenn in die Minimap geklickt wurde, zoome hinein
   if (($minimap_x = request_var('minimap_x', 0)) && 
@@ -35,11 +36,11 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   else if ($caveName = request_var('caveName', "")) {
     $coords = getCaveByName($caveName);
     if (!$coords['xCoord']) {
-      $message = sprintf(_('Die H&ouml;hle mit dem Namen: "%s" konnte nicht gefunden werden!'), $caveName);
+      $message = sprintf(_('Die Höhle mit dem Namen: "%s" konnte nicht gefunden werden!'), $caveName);
     } else {
       $xCoord = $coords['xCoord'];
       $yCoord = $coords['yCoord'];
-      $message = sprintf(_('Die H&ouml;hle mit dem Namen: "%s" befindet sich in (%d|%d).'), $caveName, $xCoord, $yCoord);
+      $message = sprintf(_('Die Höhle mit dem Namen: "%s" befindet sich in (%d|%d).'), $caveName, $xCoord, $yCoord);
     }
   }
 
@@ -47,11 +48,11 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   else if ($targetCaveID = request_var('targetCaveID', 0)) {
     $coords = getCaveByID($targetCaveID);
     if ($coords === null) {
-      $message = sprintf(_('Die H&ouml;hle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       
+      $message = sprintf(_('Die Höhle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       
     } else {
       $xCoord = $coords['xCoord'];
       $yCoord = $coords['yCoord'];
-      $message = sprintf(_('Die H&ouml;hle mit der ID: "%d" befindet sich in (%d|%d).'), $targetCaveID, $xCoord, $yCoord);
+      $message = sprintf(_('Die Höhle mit der ID: "%d" befindet sich in (%d|%d).'), $targetCaveID, $xCoord, $yCoord);
     }
   }
 
@@ -71,7 +72,6 @@ function determineCoordsFromParameters($caveData, $mapSize) {
     'xCoord'  => $xCoord,
     'yCoord'  => $yCoord,
     'message' => $message);
-  
 }
 
 
