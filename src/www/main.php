@@ -536,6 +536,7 @@ $template->addVars(array(
   'ua_time_year'            => $UgaAggaTime['year'],
   'ua_time_time_month_name' => $UgaAggaTime['month_name'],
 
+  'artefact_list_link'      => '',
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,
