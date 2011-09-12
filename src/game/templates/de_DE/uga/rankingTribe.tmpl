@@ -65,7 +65,7 @@ function swapImage(){
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
           <td>{{ item.rank }}</td>
-          <td><a href="main.php{{ item.link|raw }}">{{ item.tribe }}</a></td>
+          <td><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
           <td>{{ item.glory }}</td>
           <td>{{ item.points_rank }}</td>
           <td>{{ item.average }}</td>
@@ -81,8 +81,8 @@ function swapImage(){
 </div>
 
 <div style="text-align: center;">
-  <a href="main.php{{ up_link|raw }}" onmouseover="swapImage('up','','{{ gfx }}/de_DE/t_uga/ranking/up.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/up.png" alt="up" width="20" height="20" class="noborder" id="up" title="up" /></a>&nbsp;
-  <a href="main.php{{ down_link|raw }}" onmouseover="swapImage('down','','{{ gfx }}/de_DE/t_uga/ranking/down.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/down.png" alt="down" width="20" height="20" class="noborder" id="down" title="down" /></a>&nbsp;
+  <a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ offset_up }}" onmouseover="swapImage('up','','{{ gfx }}/de_DE/t_uga/ranking/up.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/up.png" alt="up" width="20" height="20" class="noborder" id="up" title="up" /></a>&nbsp;
+  <a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ offset_down }}" onmouseover="swapImage('down','','{{ gfx }}/de_DE/t_uga/ranking/down.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/down.png" alt="down" width="20" height="20" class="noborder" id="down" title="down" /></a>&nbsp;
 </div>
 
 <form method="post" action="main.php?modus={{ ranking_tribe_link }}">
