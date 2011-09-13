@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Hero -->
+<!ELEMENT HeroTypes (HeroType+)>
+<!ELEMENT HeroType (Name+, Description+, lvl, lvlUp, maxHP, force, regHP, effects*)>
+<!ATTLIST HeroType
+  id CDATA #REQUIRED
+>
+<!ELEMENT HeroSkills (HeroSkill+)>
+<!ELEMENT HeroSkill (Name+, Description+, CostTP, Requirement*)>
+<!ATTLIST HeroSkill
+  id CDATA #REQUIRED
+>
+
