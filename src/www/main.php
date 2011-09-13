@@ -183,8 +183,8 @@ switch ($modus) {
     $content = messages_sendMessage($caveID);
     break;
 
-  case CONTACTS:
-    list($pagetitle, $content) = contacts_main($caveID, $ownCaves);
+  case CONTACTS_BOOKMARKS:
+    list($pagetitle, $content) = contactsbookmarks_main($caveID, $ownCaves);
     break;
 
   case CAVE_BOOKMARKS:
@@ -538,6 +538,7 @@ $template->addVars(array(
 
   'artefact_list_link'      => '',
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
+  'contact_bookmarks_link'  => CONTACTS_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,
   'improvement_link'        => IMPROVEMENT_BUILDER,
