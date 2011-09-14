@@ -35,33 +35,36 @@ class Contacts_Model extends Model {
 
     // prepare query
     $sql = $db->prepare("SELECT c.*, p.name AS contactname, p.tribe AS contacttribe
-                   FROM ". CONTACTS_TABLE ." c 
-                   LEFT JOIN ". PLAYER_TABLE ." p ON c.contactplayerID = p.playerID 
-                   WHERE c.playerID = :playerID
-                   ORDER BY contactname");
+                         FROM ". CONTACTS_TABLE ." c 
+                           LEFT JOIN ". PLAYER_TABLE ." p ON c.contactplayerID = p.playerID 
+                         WHERE c.playerID = :playerID
+                         ORDER BY contactname");
     $sql->bindParam('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) {
+      return array();
+    }
 
-    if ($sql->execute())
-      while($row = $sql->fetch(PDO::FETCH_ASSOC))
-        $result[] = $row;
-
+    $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
     return $result;
   }
 
   function getContact($contactID) {
     global $db;
 
-    $sql = $db->prepare("SELECT c.*, p.name AS contactname FROM ". CONTACTS_TABLE ." c 
-                   LEFT JOIN ". PLAYER_TABLE ." p ON c.contactplayerID = p.playerID ".
-                   "WHERE c.playerID = :playerID AND c.contactID = :contactID LIMIT 1");
-    
+    $sql = $db->prepare("SELECT c.*, p.name AS contactname
+                         FROM ". CONTACTS_TABLE ." c
+                           LEFT JOIN ". PLAYER_TABLE ." p ON c.contactplayerID = p.playerID
+                         WHERE c.playerID = :playerID AND c.contactID = :contactID LIMIT 1");
     $sql->bindParam('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindParam('contactID', $contactID, PDO::PARAM_INT);
-    
-    if ($sql->execute())
-      return $sql->fetch(PDO::FETCH_ASSOC);
-    
-    return 0;
+    if (!$sql->execute()) {
+      return array();
+    }
+
+    $result = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+    return $result;
   }
 
   function addContact($name) {
@@ -74,15 +77,20 @@ class Contacts_Model extends Model {
     if (!$player) {
       return CONTACTS_ERROR_NOSUCHPLAYER;
     } else {
-      $sql = $db->prepare("SELECT * FROM ". CONTACTS_TABLE ."
-                           WHERE contactplayerID = :contactplayerID");
+      $sql = $db->prepare("SELECT *
+                           FROM ". CONTACTS_TABLE ."
+                           WHERE contactplayerID = :contactplayerID
+                             AND playerID = :playerID");
       $sql->bindValue('contactplayerID', $player['playerID'], PDO::PARAM_INT);
-      
-      if (!$sql->execute())
-        return CONTACTS_ERROR_INSERTFAILED;
+      $sql->bindParam('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
-      if ($sql->fetch())
+      if (!$sql->execute()) {
+        return CONTACTS_ERROR_INSERTFAILED;
+      }
+
+      if ($sql->fetch(PDO::FETCH_ASSOC)) {
         return CONTACTS_ERROR_DUPLICATE_ENTRY;
+      }
     }
 
     // no more than CONTACTS_MAX should be inserted
@@ -91,13 +99,13 @@ class Contacts_Model extends Model {
       
     // insert player
     $sql = $db->prepare("INSERT INTO ". CONTACTS_TABLE ." (playerID, contactplayerID)
-                   VALUES (:playerID, :contactID)");
-    
+                         VALUES (:playerID, :contactID)");
     $sql->bindParam('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindParam('contactID', $player['playerID'], PDO::PARAM_INT);
     
-    if (!$sql->execute())
+    if (!$sql->execute()) {
       return CONTACTS_ERROR_INSERTFAILED;
+    }
 
     return CONTACTS_NOERROR;
   }
@@ -107,13 +115,11 @@ class Contacts_Model extends Model {
 
     // prepare query
     $sql = $db->prepare("DELETE FROM ". CONTACTS_TABLE ." WHERE playerID = :playerID
-                   AND contactID = :contactID");
+                         AND contactID = :contactID");
     $sql->bindParam('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindParam('contactID', $contactID, PDO::PARAM_INT);
 
-    return $sql->execute() == 1
-           ? CONTACTS_NOERROR
-           : CONTACTS_ERROR_DELETEFAILED;
+    return $sql->execute() == 1 ? CONTACTS_NOERROR : CONTACTS_ERROR_DELETEFAILED;
   }
 }
 

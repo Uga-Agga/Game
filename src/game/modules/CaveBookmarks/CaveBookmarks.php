@@ -24,7 +24,7 @@ function cavebookmarks_main($caveID, $caves) {
   $controller = NULL;
 
   // get current task
-  $task = request_var('task', "");
+  $task = request_var('task', '');
 
   switch ($task) {
 

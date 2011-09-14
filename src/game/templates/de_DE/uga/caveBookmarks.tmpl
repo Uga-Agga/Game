@@ -1,11 +1,11 @@
 {% extends "base.tmpl" %}
-{% block title %}Terminkalender{% endblock %}
+{% block title %}Höhlen Adressbuch{% endblock %}
 {% block content %}
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
 <div class="small box">
-  <div class="box-header">Höhlenhlenmerkliste</div>
+  <div class="box-header">Höhlen Adressbuch</div>
   <div class="box-content success inner">
     <table class="table text-left" cellpadding="3" cellspacing="0" rules="rows">
       <tr class="bg2 nohover">
@@ -55,18 +55,16 @@
 <br />
 
 <div class="small success nohover">
-  <form id="newcavebookmarkbyname" method="post" action="main.php">
+  <form id="newcavebookmarkbyname" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
     <p>Name: <input name="name" type="text" size="35" maxlength="90" />
-    <input type="submit" name="add" value="Hinzuf&uuml;gen" />
-    <input type="hidden" name="modus" value="CaveBookmarks" />
+    <input type="submit" name="add" value="Hinzufügen" />
     <input type="hidden" name="task" value="Add" /></p>
   </form>
   <br />
-  <form id="newcavebookmarkbycoord" method="post" action="main.php">
+  <form id="newcavebookmarkbycoord" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
     <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
     y: <input name="yCoord" type="text" size="4" maxlength="4" />
-    <input type="submit" name="add" value="Hinzuf&uuml;gen" />
-    <input type="hidden" name="modus" value="CaveBookmarks" />
+    <input type="submit" name="add" value="Hinzufügen" />
     <input type="hidden" name="task" value="Add" /></p>
   </form>
 </div>
