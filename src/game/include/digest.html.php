@@ -71,19 +71,19 @@ function digest_getDigest($ownCaves) {
   foreach ($appointments as $value) {
     switch ($value['modus']){
       case UNIT_BUILDER:
-        unset($units[$value['caveID']]);
+        unset($units[$value['cave_id']]);
         break;
 
       case IMPROVEMENT_DETAIL:
-        unset($buildings[$value['caveID']]);
+        unset($buildings[$value['cave_id']]);
         break;
 
       case DEFENSE_BUILDER:
-        unset($defenses[$value['caveID']]);
+        unset($defenses[$value['cave_id']]);
         break;
 
       case SCIENCE_BUILDER:
-        unset($sciences[$value['caveID']]);
+        unset($sciences[$value['cave_id']]);
         break;
     }
   }

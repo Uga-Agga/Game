@@ -106,7 +106,7 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
     }
 
     $tmp = array(
-      'event_id'               => $row['event_movementID'],
+      'event_id'                => $row['event_movementID'],
       'cave_id'                 => $row['caveID'],
       'source_cave_id'          => $row['source_caveID'],
       'target_cave_id'          => $row['target_caveID'],
@@ -236,7 +236,7 @@ function digest_getInitiationDates($ownCave) {
   $result = array();
   while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $result[] = array(
-      'eventID'            => $row['event_artefactID'],
+      'event_id'           => $row['event_artefactID'],
       'event_typeID'       => $row['event_typeID'],
       'name'               => $ownCave[$row['caveID']]['name'],
       'caveID'             => $row['caveID'],
@@ -290,10 +290,10 @@ function digest_getAppointments($ownCave){
     $result[] = array(
       'event_name'         => $row['quantity'] . "x " . $unitTypeList[$row['unitID']]->name,
       'cave_name'          => $ownCave[$row['caveID']]['name'],
-      'caveID'             => $row['caveID'],
+      'cave_id'            => $row['caveID'],
       'category'           => 'unit',
       'modus'              => UNIT_BUILDER,
-      'eventID'            => $row['event_unitID'],
+      'event_id'           => $row['event_unitID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
       'event_end_date'     => time_formatDatetime($row['end']),
@@ -312,10 +312,10 @@ function digest_getAppointments($ownCave){
     $result[] = array(
       'event_name'         => $buildingTypeList[$row['expansionID']]->name. " Stufe ". $nextLevel,
       'cave_name'          => $ownCave[$row['caveID']]['name'],
-      'caveID'             => $row['caveID'],
+      'cave_id'            => $row['caveID'],
       'category'           => 'building',
-      'modus'              => IMPROVEMENT_DETAIL,
-      'eventID'            => $row['event_expansionID'],
+      'modus'              => IMPROVEMENT_BUILDER,
+      'event_id'           => $row['event_expansionID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
       'event_end_date'     => time_formatDatetime($row['end']),
@@ -334,10 +334,10 @@ function digest_getAppointments($ownCave){
     $result[] = array(
       'event_name'         => $defenseSystemTypeList[$row['defenseSystemID']]->name . " Stufe ". $nextLevel,
       'cave_name'          => $ownCave[$row['caveID']]['name'],
-      'caveID'             => $row['caveID'],
+      'cave_id'            => $row['caveID'],
       'category'           => 'defense',
       'modus'              => DEFENSE_BUILDER,
-      'eventID'            => $row['event_defenseSystemID'],
+      'event_id'           => $row['event_defenseSystemID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
       'event_end_date'     => time_formatDatetime($row['end']),
@@ -357,10 +357,10 @@ function digest_getAppointments($ownCave){
     $result[] = array(
       'event_name'         => $scienceTypeList[$row['scienceID']]->name. " Stufe ". $nextLevel,
       'cave_name'          => $ownCave[$row['caveID']]['name'],
-      'caveID'             => $row['caveID'],
+      'cave_id'            => $row['caveID'],
       'category'           => 'science',
       'modus'              => SCIENCE_BUILDER,
-      'eventID'            => $row['event_scienceID'],
+      'event_id'           => $row['event_scienceID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
       'event_end_date'     => time_formatDatetime($row['end']),
