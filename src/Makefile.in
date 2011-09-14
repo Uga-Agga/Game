@@ -30,7 +30,8 @@ CONFIG =      dbs/game_rules.sql \
 	      game/include/effect_list.php game/include/game_rules.php \
 	      game/include/government.rules.php game/include/relation_list.php \
 	      game/include/startvalues.php game/include/wonder.rules.php \
-	      game/include/trade.rules.php
+	      game/include/trade.rules.php \
+		game/include/hero.rules.php
 
 LANGUAGES =   de_DE
 MODULES =     CaveBookmarks Contacts Donations EventReports Messages Suggestions
@@ -268,6 +269,10 @@ game/include/wonder.rules.php: config/config.tmp config/wonder.php.xsl
 
 game/include/trade.rules.php: config/config.tmp config/trade.php.xsl
 	$(XSLTPROC) config/trade.php.xsl $< >$@
+
+game/include/hero.rules.php: config/hero.xml config/hero.php.xsl
+	$(XMLLINT) $<
+	$(XSLTPROC) config/hero.php.xsl $< >$@
 
 # include files
 phpext/uaconfig.o: phpext/uaconfig.c phpext/uaconfig.h ticker/game_rules.h \

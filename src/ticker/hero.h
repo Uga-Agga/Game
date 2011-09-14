@@ -26,6 +26,7 @@ typedef struct Hero
     int playerID;
     int healPoints;
     int maxHealPoints;
+    int isMoving;
     float effect[MAX_EFFECT];
 } Hero;
 
