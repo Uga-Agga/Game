@@ -153,15 +153,14 @@ install-game: configtest $(CONFIG)
 		    $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
 	    done; \
 	done
-	for lang in $(LANGUAGES); do \
-	    $(INSTALL) -d $(UA_WEBAPP_DIR)/include/languages/$$lang \
-	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES; \
-	    $(INSTALL_DATA) game/include/languages/$$lang/LC_MESSAGES/ugaagga.mo \
-	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES/; \
-	    for tmpl in $(TEMPLATES); do \
+#	for lang in $(LANGUAGES); do \
+#	    $(INSTALL) -d $(UA_WEBAPP_DIR)/include/languages/$$lang \
+#	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES; \
+#	    $(INSTALL_DATA) game/include/languages/$$lang/LC_MESSAGES/ugaagga.mo \
+#	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES/; \
+	for tmpl in $(TEMPLATES); do \
 		$(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
 		$(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl \
-		    game/templates/$$lang/$$tmpl/*.js \
 		    $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
 	    done; \
 	done
