@@ -120,33 +120,30 @@ function getCaveMapContent($caveID, $caves) {
   $MAP_HEIGHT_NEG = intval($MAP_HEIGHT/2) * -1;
 
 
-  // FIXME : need to set these values properly in order to allow navigation without JavaScript
-/*
-  tmpl_set($template, '/O',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
-                                                                         'y' =>  $mcY));
+  $template->addVars(array('E' => array('x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['maxX']),
+                                        'y' =>  $mcY)));
 
-  tmpl_set($template, '/SO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
-                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+  $template->addVars(array('SE' => array('x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['maxX']),
+                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['maxY']))));
 
-  tmpl_set($template, '/S',  array('modus' => MAP, 'caveID' => $caveID, 'x' =>  $mcX, 
-                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+  $template->addVars(array('S' => array('x' =>  $mcX, 
+                                        'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_HEIGHT/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['maxY']))));
 
-  tmpl_set($template, '/SW', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']),
-                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+  $template->addVars(array('SW' => array('x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['minX']),
+                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['maxY']))));
 
-  tmpl_set($template, '/W',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']),
-                                                                         'y' =>  $mcY));
+  $template->addVars(array('W' => array('x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['minX']),
+                                        'y' =>  $mcY)));
 
-  tmpl_set($template, '/NW', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']), 
-                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
+  $template->addVars(array('NW' => array('x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['minX']), 
+                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['minY']))));
 
-  tmpl_set($template, '/N',  array('modus' => MAP, 'caveID' => $caveID, 'x' =>  $mcX, 
-                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
+  $template->addVars(array('N' => array('x' =>  $mcX, 
+                                        'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['minY']))));
 
-  tmpl_set($template, '/NO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
-       
-                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
-*/
+  $template->addVars(array('NE' => array('x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['maxX']),
+                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['minY']))));
+
 
 
   // Module "CaveBookmarks" Integration
