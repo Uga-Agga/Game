@@ -25,7 +25,7 @@ class Contacts_Show_View extends View {
     $this->contacts = array();
 
     // open template
-    $this->openTemplate($language, $skin, 'Contacts_Show.ihtml');
+    $this->openTemplate($language, $skin, 'contactBookmarks.tmpl');
   }
 
   function setContacts($contacts) {
@@ -37,31 +37,30 @@ class Contacts_Show_View extends View {
   }
 
   function getContent() {
-    
-    if (sizeof($this->contacts))
-      tmpl_set($this->template, '/CONTENT/CONTACTS/CONTACT', $this->contacts);
-    else
-      tmpl_set($this->template, '/CONTENT/NOCONTACTS/iterate', '');
+    global $template;
 
+    $template->addVar('contacts', $this->contacts);
+
+    $message = array();
     switch ($this->error) {
       case CONTACTS_ERROR_NOSUCHPLAYER:
-        tmpl_set($this->template, '/CONTENT/ERROR_NOSUCHPLAYER/iterate', '');
+        $message = array('type' => 'error', 'message' => _('Dieser Spieler existiert nicht.'));
         break;
 
       case CONTACTS_ERROR_MAXREACHED:
-        tmpl_set($this->template, '/CONTENT/ERROR_MAXREACHED/entries', CONTACTS_MAX);
+        $message = array('type' => 'error', 'message' => sprintf('Sie dürfen nicht mehr als {entries} Einträge in ihr Adressbuch aufnehmen.', CONTACTS_MAX));
         break;
 
       case CONTACTS_ERROR_INSERTFAILED:
-        tmpl_set($this->template, '/CONTENT/ERROR_INSERTFAILED/iterate', '');
+        $message = array('type' => 'error', 'message' => _('Der Kontakt konnte nicht eingetragen werden oder war bereits vorhanden.'));
         break;
 
       case CONTACTS_ERROR_DELETEFAILED:
-        tmpl_set($this->template, '/CONTENT/ERROR_DELETEFAILED/iterate', '');
+        $message = array('type' => 'error', 'message' => _('Der Eintrag konnte nicht entfernt werden.'));
         break;
-        
+
       case CONTACTS_ERROR_DUPLICATE_ENTRY:
-        tmpl_set($this->template, '/CONTENT/ERROR_DUPLICATE_ENTRY/iterate', '');
+        $message = array('type' => 'error', 'message' => _('Der Eintrag ist schon in der Liste vorhanden.'));
         break;
 
       default:
@@ -69,8 +68,9 @@ class Contacts_Show_View extends View {
         break;
     }
 
-    // return parsed template
-    return tmpl_parse($this->template, '/CONTENT');
+    if (sizeof($message)) {
+      $template->addVar('status_msg', $message);
+    }
   }
 }
 

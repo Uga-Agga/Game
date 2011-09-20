@@ -30,7 +30,7 @@ class Contacts_Add_Controller extends Controller {
     $error = CONTACTS_NOERROR;
 
     // add contact
-    $contact = request_var('contact', 0);
+    $contact = request_var('contact', '');
     $error = $model->addContact($contact);
 
     // return Show Controller

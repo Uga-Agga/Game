@@ -36,28 +36,27 @@ class CaveBookmarks_View_Show extends View {
     $this->error = $error;
   }
 
-  function getContent(){
+  function getContent() {
+    global $template;
 
-    if (sizeof($this->cavebookmarks))
-      tmpl_set($this->template, '/CONTENT/CAVEBOOKMARKS/CAVEBOOKMARK', $this->cavebookmarks);
-    else
-      tmpl_set($this->template, '/CONTENT/NOCAVEBOOKMARKS/iterate', '');
+    $template->addVar('cave_bookmarks', $this->cavebookmarks);
 
-    switch ($this->error){
+    $message = array();
+    switch ($this->error) {
       case CAVEBOOKMARKS_ERROR_NOSUCHCAVE:
-        tmpl_set($this->template, '/CONTENT/ERROR_NOSUCHCAVE/iterate', '');
+        $message = array('type' => 'error', 'message' => 'Diese Höhle existiert nicht.');
         break;
 
       case CAVEBOOKMARKS_ERROR_MAXREACHED:
-        tmpl_set($this->template, '/CONTENT/ERROR_MAXREACHED/entries', CAVESBOOKMARKS_MAX);
+        $message = array('type' => 'error', 'message' => sprintf('Sie dürfen nicht mehr als %d Einträge in ihre Liste aufnehmen.', CAVESBOOKMARKS_MAX));
         break;
 
       case CAVEBOOKMARKS_ERROR_INSERTFAILED:
-        tmpl_set($this->template, '/CONTENT/ERROR_INSERTFAILED/iterate', '');
+        $message = array('type' => 'error', 'message' => 'Die Höhle konnte nicht eingetragen werden oder war bereits vorhanden.');
         break;
 
       case CAVEBOOKMARKS_ERROR_DELETEFAILED:
-        tmpl_set($this->template, '/CONTENT/ERROR_DELETEFAILED/iterate', '');
+        $message = array('type' => 'error', 'message' => 'Der Eintrag konnte nicht entfernt werden');
         break;
 
       default:
@@ -65,8 +64,9 @@ class CaveBookmarks_View_Show extends View {
         break;
     }
 
-    // return parsed template
-    return tmpl_parse($this->template, '/CONTENT');
+    if (sizeof($message)) {
+      $template->addVar('status_msg', $message);
+    }
   }
 }
 

@@ -21,6 +21,7 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   // default Werte: Koordinaten of the given caveData (that is the data of the presently selected own cave)
   $xCoord  = $caveData['xCoord'];
   $yCoord  = $caveData['yCoord'];
+  $message = '';
 
   // wenn in die Minimap geklickt wurde, zoome hinein
   if (($minimap_x = request_var('minimap_x', 0)) && 
@@ -35,11 +36,11 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   else if ($caveName = request_var('caveName', "")) {
     $coords = getCaveByName($caveName);
     if (!$coords['xCoord']) {
-      $message = sprintf(_('Die H&ouml;hle mit dem Namen: "%s" konnte nicht gefunden werden!'), $caveName);
+      $message = sprintf(_('Die HÃ¶hle mit dem Namen: "%s" konnte nicht gefunden werden!'), $caveName);
     } else {
       $xCoord = $coords['xCoord'];
       $yCoord = $coords['yCoord'];
-      $message = sprintf(_('Die H&ouml;hle mit dem Namen: "%s" befindet sich in (%d|%d).'), $caveName, $xCoord, $yCoord);
+      $message = sprintf(_('Die HÃ¶hle mit dem Namen: "%s" befindet sich in (%d|%d).'), $caveName, $xCoord, $yCoord);
     }
   }
 
@@ -47,11 +48,11 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   else if ($targetCaveID = request_var('targetCaveID', 0)) {
     $coords = getCaveByID($targetCaveID);
     if ($coords === null) {
-      $message = sprintf(_('Die H&ouml;hle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       
+      $message = sprintf(_('Die HÃ¶hle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       
     } else {
       $xCoord = $coords['xCoord'];
       $yCoord = $coords['yCoord'];
-      $message = sprintf(_('Die H&ouml;hle mit der ID: "%d" befindet sich in (%d|%d).'), $targetCaveID, $xCoord, $yCoord);
+      $message = sprintf(_('Die HÃ¶hle mit der ID: "%d" befindet sich in (%d|%d).'), $targetCaveID, $xCoord, $yCoord);
     }
   }
 
@@ -71,7 +72,6 @@ function determineCoordsFromParameters($caveData, $mapSize) {
     'xCoord'  => $xCoord,
     'yCoord'  => $yCoord,
     'message' => $message);
-  
 }
 
 
@@ -82,10 +82,10 @@ function getCaveMapContent($caveID, $caves) {
   global $config, $terrainList, $template;
 
   $caveData = $caves[$caveID];
-  $mapSize = getMapSize();  // Größe der Karte wird benötigt
+  $mapSize = getMapSize();  // GrÃ¶ÃŸe der Karte wird benÃ¶tigt
   $message  = '';
 
-  // template öffnen
+  // template Ã¶ffnen
   $template->setFile('map.tmpl');
 
   // Grundparameter setzen
@@ -172,7 +172,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   global $config, $terrainList;
 
   $caveData = $caves[$caveID];
-  $mapSize = getMapSize();  // Größe der Karte wird benötigt
+  $mapSize = getMapSize();  // GrÃ¶ÃŸe der Karte wird benÃ¶tigt
   $message  = '';
       
   // width und height anpassen
@@ -200,26 +200,26 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
                   'alt'       => "{$cave['cavename']} - ({$cave['xCoord']}|{$cave['yCoord']}) - {$cave['region']}",
                   'link'      => "modus=map_detail&amp;targetCaveID={$cave['caveID']}");
 
-    // unbewohnte Höhle
+    // unbewohnte HÃ¶hle
     if ($cave['playerID'] == 0) {
 
       // als Frei! zeigen
       if ($cave['takeoverable'] == 1) {
         $text = _('Frei!');
         $file = "icon_cave_empty";
-      // als Einöde zeigen
+      // als EinÃ¶de zeigen
       } else {
         $text = _('Ein&ouml;de');
         $file = "icon_waste";
       }
 
-    // bewohnte Höhle
+    // bewohnte HÃ¶hle
     } else {
 
-      // eigene Höhle
+      // eigene HÃ¶hle
       if ($cave['playerID'] == $_SESSION['player']->playerID)
         $file = "icon_cave_own";
-      // fremde Höhle
+      // fremde HÃ¶hle
       else
         $file = "icon_cave_other";
 
@@ -228,10 +228,10 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
         $file .= "_artefact";
 
 
-      // link zum Tribe einfügen
+      // link zum Tribe einfÃ¼gen
       $cell['link_tribe'] = "modus=tribe_detail&amp;tribe=".urlencode(unhtmlentities($cave['tribe']));
 
-      // Stamm abkürzen
+      // Stamm abkÃ¼rzen
       $decodedTribe = unhtmlentities($cave['tribe']);
       if (strlen($decodedTribe) > 10)
         $cell['text_tribe'] = htmlentities(substr($decodedTribe, 0, 8)) . "..";
@@ -245,7 +245,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
       else
         $text = $cave['name'];
 
-      // übernehmbare Höhlen können gekennzeichnet werden
+      // Ã¼bernehmbare HÃ¶hlen kÃ¶nnen gekennzeichnet werden
       if ($cave['secureCave'] != 1)
         $cell['unsecure'] = array('dummy' => '');
     }
@@ -253,7 +253,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
     $cell['file'] = $file;
     $cell['text'] = $text;
 
-    // Wenn die Höhle ein Artefakt enthält und man berechtigt ist -> anzeigen
+    // Wenn die HÃ¶hle ein Artefakt enthÃ¤lt und man berechtigt ist -> anzeigen
     if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
       $cell['artefacts'] = $cave['artefacts'];
       $cell['artefacts_text'] = sprintf(_('Artefakte: %d'), $cave['artefacts']);
@@ -264,10 +264,10 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   // create a region data array with an empty row as starting point.
   $regionData = array( 'rows' => array());  
 
-  // über alle Zeilen
+  // Ã¼ber alle Zeilen
   for ($j = $minY - 1; $j <= $maxY + 1; ++$j) {
     $cells = array();
-    // über alle Spalten
+    // Ã¼ber alle Spalten
     for ($i = $minX - 1; $i <= $maxX + 1; ++$i ) {
 
       // leere Zellen
@@ -329,10 +329,10 @@ function getCaveMapRegionContent($caveID, $caves) {
   global $config, $terrainList, $template;
 
   $caveData = $caves[$caveID];
-  $mapSize = getMapSize();  // Größe der Karte wird benötigt
+  $mapSize = getMapSize();  // GrÃ¶ÃŸe der Karte wird benÃ¶tigt
   $message  = '';
 
-  // template öffnen
+  // template Ã¶ffnen
   $template->setFile('mapRegion.tmpl');
 
   // Grundparameter setzen
@@ -356,7 +356,15 @@ function getCaveMapRegionContent($caveID, $caves) {
 
 
 function getCaveReport($caveID, $ownCaves, $targetCaveID) {
-  global $terrainList;
+  global $terrainList, $template;
+
+  if (!$targetCaveID) {
+    $template->throwError('Es wurde keine HÃ¶hle ausgewÃ¤hlt.');
+    return;
+  }
+
+  // open template
+  $template->setFile('mapDetail.tmpl');
 
   $cave  = getCaveByID($targetCaveID);
 
@@ -367,73 +375,52 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID) {
     $playerDetails = getPlayerByID($cave['playerID']);
   }
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'mapdetail.ihtml');
-
+/*
   if ($cave['protected']) tmpl_set($template, 'PROPERTY', _('Anf&auml;ngerschutz aktiv'));
 
   if (!$cave['secureCave'] && $cave['playerID']){
     tmpl_iterate($template, 'PROPERTY');
     tmpl_set($template, 'PROPERTY', _('&uuml;bernehmbar'));
   }
-
+*/
+  $cave['terrain'] = $terrainList[$cave['terrain']]['name'];
   $region = getRegionByID($cave['regionID']);
 
-  $template->addVar(array('cavename'     => $cave['name'],
-                            'xcoord'       => $cave['xCoord'],
-                            'ycoord'       => $cave['yCoord'],
-                            'terrain'      => $terrainList[$cave['terrain']]['name'],
-                            'region'       => $region['name'],
-                            'movementlink' => sprintf("?modus=unit_movement&amp;targetXCoord=%d&amp;targetYCoord=%d&amp;targetCaveName=%s",
-                                                      $cave['xCoord'], $cave['yCoord'], unhtmlentities($cave['name'])),
+  $template->addVar('cave_details', $cave);
+  /*
                             'backlink'     => sprintf("?modus=map&amp;xCoord=%d&amp;yCoord=%d",
                                                       $cave['xCoord'], $cave['yCoord'])));
-  if ($cave['playerID'] != 0){
+*/
 
-    $template->addVar('/OCCUPIED', array('playerLink'  => "?modus=player_detail&amp;detailID=" . $playerDetails['playerID'],
-                                           'caveOwner'   => $playerDetails['name']));
+  if ($cave['playerID'] != 0) {
+    $template->addVar('player_details', $playerDetails);
 
-    if ($playerDetails['tribe']){
-      tmpl_set($template, '/OCCUPIED/TRIBE', array(
-        'tribeLink'   => "?modus=tribe_detail&amp;tribe=".urlencode(unhtmlentities($playerDetails['tribe'])),
-        'ownersTribe' => $playerDetails['tribe']));
-    }
-    if ($cave['artefacts'] != 0 &&
-        ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
-      tmpl_set($template, '/OCCUPIED/ARTEFACT/artefactLink', "?modus=artefact_list&amp;caveID={$caveID}");
-    }
-
+/****************************************************************************************************
+*
+* Alle HÃ¶hlen des Spielers ausgeben
+*
+****************************************************************************************************/
     $caves = array();
     foreach ($caveDetails AS $key => $value) {
-      $temp = array('caveName'     => $value['name'],
-                    'xCoord'       => $value['xCoord'],
-                    'ycoord'       => $value['yCoord'],
-                    'terrain'      => $terrainList[$value['terrain']]['name'],
-                    'caveSize'     => floor($value[CAVE_SIZE_DB_FIELD] / 50) + 1,
-                    'movementLink' => "?modus=unit_movement&amp;targetXCoord=" . $value['xCoord'] .
-                                      "&amp;targetYCoord=" . $value['yCoord'] .
-                                      "&amp;targetCaveName=" . unhtmlentities($value['name']));
+      $temp = array(
+        'caveName'     => $value['name'],
+        'xCoord'       => $value['xCoord'],
+        'yCoord'       => $value['yCoord'],
+        'terrain'      => $terrainList[$value['terrain']]['name'],
+        'caveSize'     => floor($value[CAVE_SIZE_DB_FIELD] / 50) + 1,
+      );
 
-      if ($value['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY))
-        $temp['ARTEFACT'] = array('artefactLink' => "?modus=artefact_list&amp;caveID={$caveID}");
-
-      if ($value['protected'] && $value['playerID'])
-        $temp['PROPERTY'] = array('text' => _('Anf&auml;ngerschutz aktiv'));
-      else if (!$value['secureCave'])
-        $temp['PROPERTY'] = array('text' => _('&uuml;bernehmbar'));
+      if ($value['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
+        $temp['artefact'] = true;
+      }
 
       $caves[] = $temp;
     }
-    $template->addVar('/OCCUPIED/CAVES', $caves);
 
-  } else if (sizeof($ownCaves) < $_SESSION['player']->takeover_max_caves && $cave['takeoverable'] == 1){
-
-    $template->addVar(
-             array('modus'        => TAKEOVER,
-                   'caveID'       => $caveID,
-                   'targetXCoord' => $cave['xCoord'],
-                   'targetYCoord' => $cave['yCoord']));
+    $template->addVar('player_caves', $caves);
+  } else if (sizeof($ownCaves) < $_SESSION['player']->takeover_max_caves && $cave['takeoverable'] == 1) {
+    $template->addVar('takeoverable', true);
   }
-
 }
 
 ?>

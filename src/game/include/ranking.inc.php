@@ -34,13 +34,15 @@ function ranking_checkOffset($playerID, $offset) {
 
     if (!isset($offset)) {
       // $offset is not set yet, show the actual player in the middle of the list
-      $sql = $db->prepare("SELECT rank FROM ". RANKING_TABLE." 
+      $sql = $db->prepare("SELECT rank
+                           FROM ". RANKING_TABLE." 
                            WHERE playerID = :playerID");
       $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
     } else {
       // $offset is a player name
-      $sql = $db->prepare("SELECT rank FROM ". RANKING_TABLE ." 
+      $sql = $db->prepare("SELECT rank
+                           FROM ". RANKING_TABLE ." 
                            WHERE name LIKE :offset");
       $sql->bindValue('offset', $offset, PDO::PARAM_STR);
     }
@@ -90,13 +92,15 @@ function rankingTribe_checkOffset($offset) {
 
     if (!isset($offset) && $_SESSION['player']->tribe != '') {
       // $offset is not set yet, show the actual player's tribe in the middle of the list
-      $sql = $db->prepare("SELECT rank FROM ". RANKING_TRIBE_TABLE ." 
+      $sql = $db->prepare("SELECT rank
+                           FROM ". RANKING_TRIBE_TABLE ." 
                            WHERE tribe = :tibe");
       $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
       
     } else {
       // $offset is a tribe name
-      $sql = $db->prepare("SELECT rank FROM ". RANKING_TRIBE_TABLE ." 
+      $sql = $db->prepare("SELECT rank
+                           FROM ". RANKING_TRIBE_TABLE ." 
                            WHERE tribe LIKE :offset");
       $sql->bindValue('offset', $offset, PDO::PARAM_STR);
     }
@@ -127,12 +131,11 @@ function ranking_getRowsByOffset($caveID, $offset) {
 
   global $db;
 
-  $sql = $db->prepare("SELECT r.rank, r.playerID AS link, r.name, r.average AS points, ".
-                       "r.religion, p.tribe, r.caves, p.awards, r.fame as kp,".
-                       "(IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader ".
-                       "FROM ". RANKING_TABLE ." r LEFT JOIN ". PLAYER_TABLE ." p ON r.playerID = p.playerID ".
-                       "LEFT JOIN ". TRIBE_TABLE ." t ON p.tribe = t.tag ".
-                       "ORDER BY rank ASC LIMIT :offset, :rankingRows");
+  $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, p.tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
+                       FROM ". RANKING_TABLE ." r
+                         LEFT JOIN ". PLAYER_TABLE ." p ON r.playerID = p.playerID
+                         LEFT JOIN ". TRIBE_TABLE ." t ON p.tribe = t.tag
+                       ORDER BY rank ASC LIMIT :offset, :rankingRows");
   $sql->bindValue('offset', ($offset - 1), PDO::PARAM_INT);
   $sql->bindValue('rankingRows', RANKING_ROWS, PDO::PARAM_INT);
 
@@ -148,8 +151,6 @@ function ranking_getRowsByOffset($caveID, $offset) {
       foreach ($tmp AS $tag) $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
       $row['award'] = $awards;
     }
-    $row['link']      = "?modus=" . PLAYER_DETAIL . "&amp;detailID=" . $row['link'];
-    $row['tribelink'] = "?modus=" . TRIBE_DETAIL  . "&amp;tribe="    . urlencode(unhtmlentities($row['tribe']));
     $result[] = $row;
   }
 
@@ -180,7 +181,6 @@ function rankingTribe_getRowsByOffset($caveID, $offset) {
       foreach ($tmp AS $tag) $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
       $row['award'] = $awards;
     }
-    $row['link'] = "?modus=" . TRIBE_DETAIL . "&amp;tribe=" . urlencode(unhtmlentities($row['tribe']));
     $result[] = $row;
   }
 

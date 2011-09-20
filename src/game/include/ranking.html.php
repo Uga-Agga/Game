@@ -38,8 +38,8 @@ function ranking_getContent($caveID, $offset) {
   $row = ranking_getRowsByOffset($caveID, $offset);
 
   $template->addVars(array(
-    'up_link'   => "?modus=" . RANKING_PLAYER . "&amp;offset=" . ($offset - RANKING_ROWS),
-    'down_link' => "?modus=" . RANKING_PLAYER . "&amp;offset=" . ($offset + RANKING_ROWS),
+    'offset_up'   => (($offset - RANKING_ROWS) > 0) ? ($offset - RANKING_ROWS) : 0,
+    'offset_down' => ($offset + RANKING_ROWS),
     'religious' =>  array(
       'ugapercent' => $ugapercent,
       'aggapercent' => $aggapercent
@@ -59,8 +59,8 @@ function rankingTribe_getContent($caveID, $offset){
   $template->setFile('rankingTribe.tmpl');
 
   $template->addVars(array(
-    'up_link'   => "?modus=" . RANKING_TRIBE . "&amp;offset=" . ($offset - RANKING_ROWS),
-    'down_link' => "?modus=" . RANKING_TRIBE . "&amp;offset=" . ($offset + RANKING_ROWS),
+    'offset_up'   => (($offset - RANKING_ROWS) > 0) ? ($offset - RANKING_ROWS) : 0,
+    'offset_down' => ($offset + RANKING_ROWS),
     'row'       => $row,
   ));
 }

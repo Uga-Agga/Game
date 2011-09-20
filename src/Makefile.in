@@ -30,7 +30,8 @@ CONFIG =      dbs/game_rules.sql \
 	      game/include/effect_list.php game/include/game_rules.php \
 	      game/include/government.rules.php game/include/relation_list.php \
 	      game/include/startvalues.php game/include/wonder.rules.php \
-	      game/include/trade.rules.php
+	      game/include/trade.rules.php \
+		game/include/hero.rules.php
 
 LANGUAGES =   de_DE
 MODULES =     CaveBookmarks Contacts Donations EventReports Messages Suggestions
@@ -152,15 +153,14 @@ install-game: configtest $(CONFIG)
 		    $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
 	    done; \
 	done
-	for lang in $(LANGUAGES); do \
-	    $(INSTALL) -d $(UA_WEBAPP_DIR)/include/languages/$$lang \
-	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES; \
-	    $(INSTALL_DATA) game/include/languages/$$lang/LC_MESSAGES/ugaagga.mo \
-	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES/; \
-	    for tmpl in $(TEMPLATES); do \
+#	for lang in $(LANGUAGES); do \
+#	    $(INSTALL) -d $(UA_WEBAPP_DIR)/include/languages/$$lang \
+#	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES; \
+#	    $(INSTALL_DATA) game/include/languages/$$lang/LC_MESSAGES/ugaagga.mo \
+#	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES/; \
+	for tmpl in $(TEMPLATES); do \
 		$(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
 		$(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl \
-		    game/templates/$$lang/$$tmpl/*.js \
 		    $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
 	    done; \
 	done
@@ -268,6 +268,10 @@ game/include/wonder.rules.php: config/config.tmp config/wonder.php.xsl
 
 game/include/trade.rules.php: config/config.tmp config/trade.php.xsl
 	$(XSLTPROC) config/trade.php.xsl $< >$@
+
+game/include/hero.rules.php: config/hero.xml config/hero.php.xsl
+	$(XMLLINT) $<
+	$(XSLTPROC) config/hero.php.xsl $< >$@
 
 # include files
 phpext/uaconfig.o: phpext/uaconfig.c phpext/uaconfig.h ticker/game_rules.h \

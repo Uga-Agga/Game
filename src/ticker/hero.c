@@ -35,6 +35,7 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
   hero->playerID    = db_result_get_int(result, "playerID");
   hero->healPoints  = db_result_get_int(result, "healPoints");
   hero->maxHealPoints = db_result_get_int(result, "maxHealPoints");
+  hero->isMoving    = db_result_get_int(result, "isMoving");
   get_effect_list(result, hero->effect);
 }
 
@@ -44,7 +45,7 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
  */
 void put_hero_into_cave (db_t *database, int heroID, int caveID)
 {
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET caveID = %d "
+  db_query(database, "UPDATE " DB_TABLE_HERO " SET caveID = %d, isMoving = 0 "
          "WHERE heroID = %d", caveID, heroID);
 
   //if (db_affected_rows(database) != 1)
@@ -122,7 +123,7 @@ void kill_hero (db_t *database, int heroID)
 
   get_hero_by_id(database, heroID, &hero);
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0 healPoints = 0 "
+  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0 healPoints = 0, isMoving = 0 "
          " WHERE heroID = %d",
      HERO_DEAD, heroID);
 
@@ -145,9 +146,9 @@ void apply_hero_effects_to_cave (db_t *database, int heroID)
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
 
-  /* Bedingung: muss eingeweiht sein */
+  /* Bedingung: Held muss lebendig sein */
   if (hero.isAlive != HERO_ALIVE)
-    throw(BAD_ARGUMENT_EXCEPTION, "apply_effect_to_cave: hero is not alive");
+    throw(BAD_ARGUMENT_EXCEPTION, "apply_hero_effects_to_cave: hero is not alive");
 
   for (i = 0; i < MAX_EFFECT; ++i)
     dstring_append(ds, "%s %s = %s + %f",
@@ -175,7 +176,10 @@ void remove_hero_effects_from_cave (db_t *database, int heroID)
 
   /* Bedingung: muss tot sein */
   if (hero.isAlive != HERO_DEAD)
-    throw(BAD_ARGUMENT_EXCEPTION, "apply_effect_to_cave: hero is not alive");
+    {
+      if (!hero.isMoving)
+        throw(BAD_ARGUMENT_EXCEPTION, "remove_hero_effect_from_cave: hero is not alive");
+    }
 
   for (i = 0; i < MAX_EFFECT; ++i)
     dstring_append(ds, "%s %s = %s - %f",

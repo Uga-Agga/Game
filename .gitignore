@@ -6,6 +6,7 @@ src/dbs/game_rules.sql
 src/game/include/config.inc.php
 src/game/include/effect_list.php
 src/game/include/game_rules.php
+src/game/include/hero.rules.php
 src/game/include/government.rules.php
 src/game/include/relation_list.php
 src/game/include/startvalues.php

@@ -183,8 +183,8 @@ switch ($modus) {
     $content = messages_sendMessage($caveID);
     break;
 
-  case CONTACTS:
-    list($pagetitle, $content) = contacts_main($caveID, $ownCaves);
+  case CONTACTS_BOOKMARKS:
+    list($pagetitle, $content) = contactsbookmarks_main($caveID, $ownCaves);
     break;
 
   case CAVE_BOOKMARKS:
@@ -536,11 +536,14 @@ $template->addVars(array(
   'ua_time_year'            => $UgaAggaTime['year'],
   'ua_time_time_month_name' => $UgaAggaTime['month_name'],
 
+  'artefact_list_link'      => '',
+  'cave_bookmarks_link'     => CAVE_BOOKMARKS,
+  'contact_bookmarks_link'  => CONTACTS_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,
   'improvement_link'        => IMPROVEMENT_BUILDER,
   'improvement_detail_link' => IMPROVEMENT_DETAIL,
-  'map_region_link'         => MAP_REGION_LINK,
+//  'map_region_link'         => MAP_REGION_LINK,
   'merchant_link'           => MERCHANT,
   'messages_list_link'      => MESSAGES_LIST,
   'messages_new_link'       => MESSAGE_NEW,
@@ -551,6 +554,7 @@ $template->addVars(array(
   'science_link'            => SCIENCE_BUILDER,
   'science_detail_link'     => SCIENCE_DETAIL,
   'takeover_link'           => TAKEOVER,
+  'tribe_detail_link'       => TRIBE_DETAIL,
   'unit_link'               => UNIT_BUILDER,
   'unit_detail_link'        => UNIT_DETAIL,
   'unit_movement_link'      => UNIT_MOVEMENT,

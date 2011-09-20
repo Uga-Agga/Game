@@ -1,92 +1,72 @@
 {% extends "base.tmpl" %}
-{% block title %}Terminkalender{% endblock %}
+{% block title %}Höhlen Adressbuch{% endblock %}
 {% block content %}
-
-<tmpl:TITLE>{iterate}H&ouml;hlenmerkliste</tmpl:TITLE>
-
-<tmpl:CONTENT>
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
-<tmpl:ERROR_NOSUCHCAVE><div class="small error nohover">{iterate}Diese H&ouml;hle existiert nicht.</div><br /></tmpl:ERROR_NOSUCHCAVE>
-<tmpl:ERROR_MAXREACHED><div class="small error nohover">Sie d&uuml;rfen nicht mehr als {entries} Eintr&auml;ge in ihre Liste aufnehmen.</div><br /></tmpl:ERROR_MAXREACHED>
-<tmpl:ERROR_INSERTFAILED><div class="small error nohover">{iterate}Die H&ouml;hle konnte nicht eingetragen werden oder war bereits vorhanden.</div><br /></tmpl:ERROR_INSERTFAILED>
-<tmpl:ERROR_DELETEFAILED><div class="small error nohover">{iterate}Der Eintrag konnte nicht entfernt werden.</div><br /></tmpl:ERROR_DELETEFAILED>
-
-
-
-<div class="box small">
-    <div class="box-header nohover">
-         <strong>{iterate}H&ouml;hlenmerkliste</strong>
-    </div>
-     <tmpl:CAVEBOOKMARKS>
-    <div class="smallinner inner success nohover text-left">
-     <table class="table" rules="rows">
-      <tr>
-       <th>&nbsp;</th>
-       <th>Name</th>
-       <th>Koordinaten</th>
-       <th>Region</th>
-       <th>Besitzer</th>
-       <th>Stamm</th>
-       <th>&nbsp;</th>
-       <th>&nbsp;</th>
+<div class="small box">
+  <div class="box-header">Höhlen Adressbuch</div>
+  <div class="box-content success inner">
+    <table class="table text-left" cellpadding="3" cellspacing="0" rules="rows">
+      <tr class="bg2 nohover">
+        <th class="bg2 nohover">&nbsp;</th>
+        <th class="bg2 nohover">Name</th>
+        <th class="bg2 nohover">Koords</th>
+        <th class="bg2 nohover">Region</th>
+        <th class="bg2 nohover">Besitzer</th>
+        <th class="bg2 nohover">Stamm</th>
+        <th class="bg2 nohover" style="width: 150px;">&nbsp;</th>
       </tr>
-      <tmpl:CAVEBOOKMARK>
-      <tr>
-        <td>&nbsp;</td>
-        <td><a href="?modus=map_detail&amp;targetCaveID={caveID}">{name}</a></td>
-        <td>({xCoord}|{yCoord})</td>
-        <td>{region}</td>
-        <td><a href="?modus=player_detail&amp;detailID={playerID}">{playerName}</a></td>
-        <td><a href="?modus=tribe_detail&amp;tribe={tribe}">{tribe}</a></td>
-        <td>
-         <form method="post" action="main.php">
-          <p><input type="hidden" name="modus" value="unit_movement" />
-          <input type="hidden" name="targetXCoord" value="{xCoord}" />
-          <input type="hidden" name="targetYCoord" value="{yCoord}" />
-          <input type="hidden" name="targetCaveName" value="{name}" />
-          <input type="submit" value="Bewegen!" /></p>
-         </form>
-        </td>
-        <td>
-         <form method="post" action="main.php">
-          <p><input type="hidden" name="modus" value="CaveBookmarks" />
-          <input type="hidden" name="task" value="Delete" />
-          <input type="hidden" name="bookmarkID" value="{bookmarkID}" />
-          <input type="submit" value="l&ouml;schen" /></p>
-         </form>
-        </td>
-      </tr>
-      </tmpl:CAVEBOOKMARK>
-     </table>
-	 </div>
-     </tmpl:CAVEBOOKMARKS>
+      {% if cave_bookmarks %}
+        {% for item in cave_bookmarks %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{{ bgID }}">
+          <td>&nbsp;</td>
+          <td><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
+          <td>({{ item.xCoord }}|{{ item.yCoord }})</td>
+          <td>{{ item.region }}</td>
+          <td><a href="?modus=player_detail&amp;detailID={{ item.playerID }}">{{ item.playerName }}</a></td>
+          <td><a href="?modus=tribe_detail&amp;tribe={{ item.tribe }}">{{ item.tribe }}</a></td>
+          <td style="width: 150px;">
+            <div style="float: right;"><form method="post" action="main.php?modus={{ unit_movement_link }}">
+              <p><input type="hidden" name="targetXCoord" value="{{ item.xCoord }}" />
+              <input type="hidden" name="targetYCoord" value="{{ item.yCoord }}" />
+              <input type="hidden" name="targetCaveName" value="{{ item.name }}" />
+              <input type="submit" value="Bewegen!" /></p>
+            </form></div>
 
-     <tmpl:NOCAVEBOOKMARKS>
-	 <div class="smallinner notice nohover" style="margin:0px;">
-      {iterate}Bisher keine H&ouml;hlen eingetragen.
-     </div>
-     </tmpl:NOCAVEBOOKMARKS> 
+            <div style="float: right;"><form method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+              <p><input type="hidden" name="modus" value="CaveBookmarks" />
+              <input type="hidden" name="task" value="Delete" />
+              <input type="hidden" name="bookmarkID" value="{{ item.bookmarkID }}" />
+              <input type="submit" value="löschen" /></p>
+            </form></div>
+            <div style="clear: both;"></div>
+          </td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="7">Bisher keine Höhlen eingetragen.</td></tr>
+      {% endif %}
+    </table>
+  </div>
 </div>
+
 <br />
 
 <div class="small success nohover">
-<form id="newcavebookmarkbyname" method="post" action="main.php">
-  <p>Name: <input name="name" type="text" size="35" maxlength="90" />
-  <input type="submit" name="add" value="Hinzuf&uuml;gen" />
-  <input type="hidden" name="modus" value="CaveBookmarks" />
-  <input type="hidden" name="task" value="Add" /></p>
-</form>
-<br />
-<form id="newcavebookmarkbycoord" method="post" action="main.php">
-  <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
-  y: <input name="yCoord" type="text" size="4" maxlength="4" />
-  <input type="submit" name="add" value="Hinzuf&uuml;gen" />
-  <input type="hidden" name="modus" value="CaveBookmarks" />
-  <input type="hidden" name="task" value="Add" /></p>
-</form>
+  <form id="newcavebookmarkbyname" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+    <p>Name: <input name="name" type="text" size="35" maxlength="90" />
+    <input type="submit" name="add" value="Hinzufügen" />
+    <input type="hidden" name="task" value="Add" /></p>
+  </form>
+  <br />
+  <form id="newcavebookmarkbycoord" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+    <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
+    y: <input name="yCoord" type="text" size="4" maxlength="4" />
+    <input type="submit" name="add" value="Hinzufügen" />
+    <input type="hidden" name="task" value="Add" /></p>
+  </form>
 </div>
 
-</tmpl:CONTENT>
 {% endblock %}

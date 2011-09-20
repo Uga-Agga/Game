@@ -113,7 +113,7 @@
     <td>&nbsp;</td>
    </tr>
   </table>
-  <br /> {% for cat in skills %}
+  <br /> {% if skills %}
   <div class="notice small" style="width: 660px;">
    <p style="text-align: left; margin-left: 10px; font-weight: bold;">Spezielle Fähigkeiten</p>
    <br />
@@ -121,27 +121,27 @@
     style="text-align: center">
     <tr class="bg2 nohover">
      <th class="bg2 nohover" style="text-align: left;">Name</th>
-     <th class="bg2 nohover">Ab</th>
+     <th class="bg2 nohover">Ben. Level</th>
      <th class="bg2 nohover">Kosten</th>
      <th class="bg2 nohover">&nbsp;</th>
     </tr>
-    {% for skill in cat.data %} 
+    {% for skill in skills %} 
     {% set bgID = (bgID+1)%2 %}
     <tr class="bg{{ bgID }}">
      <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
-     <div style="font-size: x-small;">{{ skill.description }}</div>
+     <div style="font-size: x-small;">{{ skill.description|raw }}</div>
      </td>
-     <td>{{ skill.requirement }}</td>
-     <td>{{ skill.cost }}</td>
+     <td>{{ skill.requiredLevel }}</td>
+     <td>{{ skill.costTP }}</td>
      <td style="text-align: right;"><img
-      src="{{gfx }}/de_DE/t_uga/{{ skill.path }}" width="20" hight="20"
+      src="{{gfx }}/de_DE/t_uga/skills/{{ skill.id }}.jpg" width="20" hight="20"
       style="vertical-align: middle;" />
      </td>
     </tr>
     {% endfor %}
    </table>
   </div>
-  {% endfor %} <br />
+  {% endif %} <br />
   <div class="box small">
    <div class="box-header">Tränke</div>
    <div class="box content smallinner success inner">
@@ -251,15 +251,14 @@
  <div class="box-header">Art des Helden wählen:</div>
  <div class="box-content success small inner">
   <table class="table" rules="rows">
-   {% for item in newhero %} 
+   {% for item in heroTypesList %} 
    {% set bgID = (bgID+1)%2 %}
    <tr class="bg{{ bgID }}">
-    <td><strong>{{ item.heroTypName }}</strong><br />
-     <div style="font-size: x-small;">{{ item.heroTypDescription
-      }}</div>
+    <td><strong>{{ item.name }}</strong><br />
+     <div style="font-size: x-small;">{{ item.description|raw }}</div>
     </td>
     <td style="text-align: right;"><a
-     href="main.php?modus=hero_detail&amp;ID={{ item.heroTypID }}"><img
+     href="main.php?modus=hero_detail&amp;action=createHero&amp;ID={{ item.id }}"><img
       src="{{ gfx }}/de_DE/t_uga/arrow_up.png" />
     </a>
     </td>

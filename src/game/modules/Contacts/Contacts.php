@@ -18,13 +18,13 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  * This function dispatches the task at issue to the respective function.
  */
 
-function contacts_main($caveID, $caves) {
+function contactsbookmarks_main($caveID, $caves) {
 
   // initialize controller
   $controller = NULL;
 
   // get current task
-  $task = request_var('task', 0);
+  $task = request_var('task', '');
 
   switch ($task) {
 

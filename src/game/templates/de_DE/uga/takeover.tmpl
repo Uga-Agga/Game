@@ -1,319 +1,317 @@
-{% spaceless %}
-{% include 'pageHeader.tmpl' %}
+{% extends "base.tmpl" %}
+{% block title %}Terminkalender{% endblock %}
+{% block content %}
 
 <div id="content-small">
+  {% if withdrawal_check %}
+  <div class="info">
+    Entscheidest du dich wirklich dafür, dein Angebot zurückzuziehen? Sobald du 
+    dies getan hast, wird der Häuptling der bebotenen Höhle deine Zuwendungen 
+    vergessen haben und deine Bemühungen zunichte machen ...
+    <br /><br />
+    <form id="confirm" method="post" action="main.php?modus={{ takeover_link }}">
+      <div><input type="hidden" name="action" value="withdrawal" />
+      <input type="hidden" name="withdrawal_check" value="{{ withdrawal_check }}" />
+      <input type="submit" name="confirm_withdrawal" value="'Überzeugungsarbeit' beenden" />
+      <input type="submit" name="abort_withdrawal" value="Lieber nicht ..." /></div>
+    </form>
+  </div>
+  {% endif %}
 
-{% if withdrawal_check %}
-<div class="info">
-  Entscheidest du dich wirklich dafür, dein Angebot zurückzuziehen? Sobald du 
-  dies getan hast, wird der Häuptling der bebotenen Höhle deine Zuwendungen 
-  vergessen haben und deine Bemühungen zunichte machen ...
-  <br /><br />
-  <form id="confirm" method="post" action="main.php?modus={{ takeover_link }}">
-    <div><input type="hidden" name="action" value="withdrawal" />
-    <input type="hidden" name="withdrawal_check" value="{{ withdrawal_check }}" />
-    <input type="submit" name="confirm_withdrawal" value="'Überzeugungsarbeit' beenden" />
-    <input type="submit" name="abort_withdrawal" value="Lieber nicht ..." /></div>
-  </form>
-</div>
-{% endif %}
-
-{% if change_check %}
-<div class="info">
-  Willst du die Höhle in ({{ xCoord }}/{{ yCoord }}) wirklich missionieren?
-  <br /><br />
-  <form id="confirm" method="post" action="main.php?modus={{ takeover_link }}">
-    <div><input type="hidden" name="action" value="change" />
-    <input type="hidden" name="change_check" value="{{ change_check }}" />
-    <input type="hidden" name="xCoord" value="{{ xCoord }}" />
-    <input type="hidden" name="yCoord" value="{{ yCoord }}" />
-    <input type="submit" name="confirm_change" value="Höhle Missionieren!" />
-    <input type="submit" name="abort_change" value="Lieber nicht ..." /></div>
-  </form>
-</div>
-{% endif %}
+  {% if change_check %}
+  <div class="info">
+    Willst du die Höhle in ({{ xCoord }}/{{ yCoord }}) wirklich missionieren?
+    <br /><br />
+    <form id="confirm" method="post" action="main.php?modus={{ takeover_link }}">
+      <div><input type="hidden" name="action" value="change" />
+      <input type="hidden" name="change_check" value="{{ change_check }}" />
+      <input type="hidden" name="xCoord" value="{{ xCoord }}" />
+      <input type="hidden" name="yCoord" value="{{ yCoord }}" />
+      <input type="submit" name="confirm_change" value="Höhle Missionieren!" />
+      <input type="submit" name="abort_change" value="Lieber nicht ..." /></div>
+    </form>
+  </div>
+  {% endif %}
 
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+  {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
-{% if show_page %}
-<div class="info text-left">
-  Höhlen sind die Basis der Macht eines jeden Stammeshäuptlings. Je mehr 
-  er davon kontrolliert, umso mächtiger und gefährlicher kann er werden. 
-  Jede zusätzlich errungene Höhle dient als Ausbildungsstätte für Truppen 
-  und als Quelle göttlicher Wunder.
-</div>
+  {% if show_page %}
+  <div class="info text-left">
+    Höhlen sind die Basis der Macht eines jeden Stammeshäuptlings. Je mehr 
+    er davon kontrolliert, umso mächtiger und gefährlicher kann er werden. 
+    Jede zusätzlich errungene Höhle dient als Ausbildungsstätte für Truppen 
+    und als Quelle göttlicher Wunder.
+  </div>
 
-{% if chosen %}
-<div class="success">
-  <p class="bold">Du leistest derzeit "Überzeugungsarbeit" in Höhle {{ caveName }} ({{ current_x_coord }}|{{ current_y_Coord }}).</p>
-  <br />
-  <div style="width: 550px; margin: 0 auto;">
-    <div style="width: 250px; float: left;">
-      <div class="box">
-        <div class="box-header">Derzeitige Wertpunkte:</div>
-        <div class="box-content inner success">
-          <table>
-            {% if bidding.resource %}
-              <tr>
-                <th align="left" style="width: 125px;">Rohstoff</th>
-                <th align="left" style="width: 125px;">Punkte</th>
-              </tr>
-              {% for item in bidding.resource %}
-              <tr>
-                <td align="left" style="width: 125px;">{{ item.name }}</td>
-                <td align="left" style="width: 125px;">{{ item.value }}</td>
-              </tr>
-              {% endfor %}
-              <tr>
-                <td align="left" style="width: 125px;"><span class="bold">Punkte:</span></td>
-                <td align="left" style="width: 125px;"><span class="bold">{{ bidding.sum }}</span></td>
-              </tr>
-              <tr>
-                <td align="left" style="width: 125px;"><span class="bold">Verhältnis:</span></td>
-                <td align="left" style="width: 125px;"><span class="bold">{{ bidding.proportion }}</span></td>
-              </tr>
-            {% else %}
-              <tr>
-                <td align="left" colspan="2" style="width: 250px;">Du hast noch keine Rohstoffe in die Höhle gebracht.</td>
-              </tr>
-            {% endif %}
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div style="float: right; width: 250px;">
-      <div class="box">
-        <div class="box-header">Mitstreiter:</div>
-        <div class="box-content inner success">
-          <table>
-            {% if bidding.bidder %}
-              <tr>
-                <th align="left" style="width: 125px;">Spieler</th>
-                <th align="left" style="width: 125px;">Sterne</th>
-              </tr>
-              <tr>
-                <td align="left" style="width: 125px;">Eigene:</td>
-                <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ status-img }}.gif" alt="{{ status-txt }}" /></td>
-              </tr>
-              {% for item in bidding.bidder %}
-              <tr>
-                <td align="left" style="width: 125px;"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
-                <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ status-img }}.gif" alt="{{ status-txt }}" /></td>
-              </tr>
-              {% endfor %}
-            {% else %}
-              <tr>
-                <td align="left" colspan="2" style="width: 250px;">>Niemand ist dumm genug, gegen euch anzutreten.</td>
-              </tr>
-            {% endif %}
-          </table>
-        </div>
-      </div>
-    </div>
-    <div style="clear:both;"></div>
-
+  {% if chosen %}
+  <div class="success">
+    <p class="bold">Du leistest derzeit "Überzeugungsarbeit" in Höhle {{ caveName }} ({{ current_x_coord }}|{{ current_y_Coord }}).</p>
+    <br />
     <div style="width: 550px; margin: 0 auto;">
       <div style="width: 250px; float: left;">
-        <form id="unit_movement" method="post" action="main.php?modus={{ unit_movement_link }}">
-          <div><input name="targetXCoord" type="hidden" value="{{ current_x_coord }}" />
-          <input name="targetYCoord" type="hidden" value="{{ current_y_Coord }}" />
-          <input name="targetCaveName" type="hidden" value="{{ uh_caveName }}" />
-          <input type="submit" name="submit" value="Dorthin bewegen!" /></div>
-        </form>
+        <div class="box">
+          <div class="box-header">Derzeitige Wertpunkte:</div>
+          <div class="box-content inner success">
+            <table>
+              {% if bidding.resource %}
+                <tr>
+                  <th align="left" style="width: 125px;">Rohstoff</th>
+                  <th align="left" style="width: 125px;">Punkte</th>
+                </tr>
+                {% for item in bidding.resource %}
+                <tr>
+                  <td align="left" style="width: 125px;">{{ item.name }}</td>
+                  <td align="left" style="width: 125px;">{{ item.value }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td align="left" style="width: 125px;"><span class="bold">Punkte:</span></td>
+                  <td align="left" style="width: 125px;"><span class="bold">{{ bidding.sum }}</span></td>
+                </tr>
+                <tr>
+                  <td align="left" style="width: 125px;"><span class="bold">Verhältnis:</span></td>
+                  <td align="left" style="width: 125px;"><span class="bold">{{ bidding.proportion }}</span></td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td align="left" colspan="2" style="width: 250px;">Du hast noch keine Rohstoffe in die Höhle gebracht.</td>
+                </tr>
+              {% endif %}
+            </table>
+          </div>
+        </div>
       </div>
 
       <div style="float: right; width: 250px;">
-        <form id="confirm_withdrawal" method="post" action="main.php?modus={{ takeover_link }}">
-          <div><input name="action" type="hidden" value="withdrawal" />
-          <input type="submit" name="submit" value="'Überzeugungsarbeit' beenden" /></div>
-        </form>
+        <div class="box">
+          <div class="box-header">Mitstreiter:</div>
+          <div class="box-content inner success">
+            <table>
+              {% if bidding.bidder %}
+                <tr>
+                  <th align="left" style="width: 125px;">Spieler</th>
+                  <th align="left" style="width: 125px;">Sterne</th>
+                </tr>
+                <tr>
+                  <td align="left" style="width: 125px;">Eigene:</td>
+                  <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ status-img }}.gif" alt="{{ status-txt }}" /></td>
+                </tr>
+                {% for item in bidding.bidder %}
+                <tr>
+                  <td align="left" style="width: 125px;"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
+                  <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ status-img }}.gif" alt="{{ status-txt }}" /></td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td align="left" colspan="2" style="width: 250px;">>Niemand ist dumm genug, gegen euch anzutreten.</td>
+                </tr>
+              {% endif %}
+            </table>
+          </div>
+        </div>
       </div>
       <div style="clear:both;"></div>
+
+      <div style="width: 550px; margin: 0 auto;">
+        <div style="width: 250px; float: left;">
+          <form id="unit_movement" method="post" action="main.php?modus={{ unit_movement_link }}">
+            <div><input name="targetXCoord" type="hidden" value="{{ current_x_coord }}" />
+            <input name="targetYCoord" type="hidden" value="{{ current_y_Coord }}" />
+            <input name="targetCaveName" type="hidden" value="{{ uh_caveName }}" />
+            <input type="submit" name="submit" value="Dorthin bewegen!" /></div>
+          </form>
+        </div>
+
+        <div style="float: right; width: 250px;">
+          <form id="confirm_withdrawal" method="post" action="main.php?modus={{ takeover_link }}">
+            <div><input name="action" type="hidden" value="withdrawal" />
+            <input type="submit" name="submit" value="'Überzeugungsarbeit' beenden" /></div>
+          </form>
+        </div>
+        <div style="clear:both;"></div>
+      </div>
     </div>
   </div>
-</div>
-{% endif %}
+  {% endif %}
 
-<div class="box">
-  <div class="box-header">Höhlenauswahl</div>
-  <div class="box-content inner success">
-    <form id="confirm_change" method="post" action="main.php?modus={{ takeover_link }}"><p>
-      Wähle eine Höhle, die du übernehmen möchtest:
-      <br />
-      x/y-Koordinate:
-      <input name="xCoord" type="text" size="4" maxlength="4" value="{{ target_x_coord }}" />
-      &nbsp;
-      <input name="yCoord" type="text" size="4" maxlength="4" value="{{ target_y_coord }}" />
-      <input name="action" type="hidden" value="change" />
-      <input type="submit" name="submit" value="die will ich, Ughh!" />
-    </p></form>
+  <div class="box">
+    <div class="box-header">Höhlenauswahl</div>
+    <div class="box-content inner success">
+      <form id="confirm_change" method="post" action="main.php?modus={{ takeover_link }}"><p>
+        Wähle eine Höhle, die du übernehmen möchtest:
+        <br />
+        x/y-Koordinate:
+        <input name="xCoord" type="text" size="4" maxlength="4" value="{{ target_x_coord }}" />
+        &nbsp;
+        <input name="yCoord" type="text" size="4" maxlength="4" value="{{ target_y_coord }}" />
+        <input name="action" type="hidden" value="change" />
+        <input type="submit" name="submit" value="die will ich, Ughh!" />
+      </p></form>
+    </div>
   </div>
-</div>
-
-<br /><br />
-
-<div class="box" style="width: 150px; margin-right: auto; margin-left: auto;">
-  <div class="box-header">Rohstoffwerte</div>
-  <div class="box-content inner success">
-    <table>
-      <tr>
-        <th align="center" style="width: 75px;">Rohstoff</th>
-        <th align="center" style="width: 75px;">Punkte</th>
-      </tr>
-      {% for item in resource_ratings %}
-      <tr>
-        <td align="center" style="width: 75px;">{{ item.name }}</td>
-        <td align="center" style="width: 75px;">{{ item.value }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-</div>
-
-<br /><br />
-
-<div class="notice text-left">
-  <div style="text-align: center;" class="bold">Hinweise</div>
-  Alles über das Missionieren von Höhlen kann bequem in der
-  <a href="http://faq.uga-agga.de/content/3/5/de/10-fragen-zum-missionieren.html">Online-Hilfe</a>
-  nachgelesen werden.
-  <br /><br />
-  Ein Weg, Höhlen zu erobern, ist sie zu missionieren. Dabei gelten jedoch 
-  folgende Einschränkungen:
-  <br />
-  <ol>
-    <li>
-      Jeder Häuptling kann nur über maximal {maxcaves} Höhlen gebieten.
-    </li>
-    <li>
-      Nur maximal 4 Höhlen können feste Höhlen sein. Alle Anderen können von 
-      Feinden übernommen werden.
-    </li>
-    <li>
-      Die Höhle muss frei und <span class="bold">auf der Karte als bewohnbar gekennzeichnet 
-      sein.</span>
-    </li>
-  </ol>
-
-  Die Missionierung einer Höhle geht nun wie folgt von statten:
-  <br />
-  <ol>
-    <li>Suche auf der Karte eine Höhle die als "frei" markiert ist!</li>
-    <li>Wähle sie als Missionierungshöhle! Von Höhlen mit vielen Mitbewerbern ist meist abzuraten.</li>
-    <li>Transportiere Ressourcen in die Höhle, um den dortigen Häuptling dir gewogen zu stimmen!</li>
-    <li>überbiete alle Mitbewerber an {{ popularity }} - nicht zwingend aufeinander folgenden - Tagen!</li>
-  </ol>
-
-  Dabei muss man jedoch darauf achten, dass pro Tag eine gewisse 
-  Mindestmenge an Ressourcen nötig ist um einen Stern zu erhalten. Diese 
-  Menge ist von der Anzahl der Höhlen abhängig die du schon besitzt. 
-  Solltest du an einem Tag weniger als diese Mindestmenge in eine Höhle 
-  tragen, so sind die Ressourcen verschwendet. Allerdings sind die 
-  Häuptlinge eher von den Gaben schwächerer Stammesführer beeindruckt, so 
-  dass diese deutlich weniger Ressourcen benötigen als ein stärkerer 
-  Mitbieter. Das Verhältnis zwischen Mindestwert und eingesetzten 
-  Ressourcen ist entscheidend.
 
   <br /><br />
 
-  <div class="box" style="width: 240px; float: left;">
-    <div class="box-header">Berechnung</div>
+  <div class="box" style="width: 150px; margin-right: auto; margin-left: auto;">
+    <div class="box-header">Rohstoffwerte</div>
     <div class="box-content inner success">
       <table>
         <tr>
-          <th>Anzahl deiner Höhlen</th>
-          <th>Mindestwertpunkte</th>
+          <th align="center" style="width: 75px;">Rohstoff</th>
+          <th align="center" style="width: 75px;">Punkte</th>
         </tr>
+        {% for item in resource_ratings %}
         <tr>
-          <td align="center"> 1 </td>
-          <td align="center"> 200 </td>
+          <td align="center" style="width: 75px;">{{ item.name }}</td>
+          <td align="center" style="width: 75px;">{{ item.value }}</td>
         </tr>
-        <tr>
-          <td align="center"> 2 </td>
-          <td align="center">200 * 2<sup>2</sup> = 800</td>
-        </tr>
-        <tr>
-          <td align="center"> 3 </td>
-          <td align="center">200 * 3<sup>2</sup> = 1800</td>
-        </tr>
-        <tr>
-          <td align="center"> 4 </td>
-          <td align="center">200 * 4<sup>2</sup> = 3200</td>
-        </tr>
-        <tr>
-          <td align="center"> 5 </td>
-          <td align="center">200 * 5<sup>2</sup> = 5000</td>
-        </tr>
-        <tr>
-          <td align="center"> 6 </td>
-          <td align="center"> 200 * 6<sup>2</sup> = 7200</td>
-        </tr>
-        <tr>
-          <td align="center"> 7 </td>
-          <td align="center"> 200 * 7<sup>2</sup> = 9800</td>
-        </tr>
-        <tr>
-          <td align="center"> 8 </td>
-          <td align="center"> --- </td>
-        </tr>
+        {% endfor %}
       </table>
     </div>
   </div>
 
-  <div class="box" style="width: 365px; float: right;">
-    <div class="box-header">Beispiel</div>
-    <div class="box-content inner success">
-      <table>
-        <tr>
-          <th>Bieter</th>
-          <th>Berechnungswert</th>
-          <th>Eingesetzte Ressourcen</th>
-          <th>Verhältnis</th>
-        </tr>
-        <tr>
-          <td align="center"><b>1 Höhle</b></td>
-          <td align="center"><b>200</b></td>
-          <td align="center"><b>600</b></td>
-          <td align="center"><b>3.0</b></td>
-        </tr>
-        <tr>
-          <td align="center">5 Höhlen</td>
-          <td align="center">5000</td>
-          <td align="center">7500</td>
-          <td align="center">1.5</td>
-        </tr>
-        <tr>
-          <td align="center">3 Höhlen</td>
-          <td align="center">1800</td>
-          <td align="center">1800</td>
-          <td align="center">1.0</td>
-        </tr>
-        <tr>
-          <td align="center">4 Höhlen</td>
-          <td align="center">3200</td>
-          <td align="center">8000</td>
-          <td align="center">2.5</td>
-        </tr>
-      </table>
+  <br /><br />
+
+  <div class="notice text-left">
+    <div style="text-align: center;" class="bold">Hinweise</div>
+    Alles über das Missionieren von Höhlen kann bequem in der
+    <a href="http://faq.uga-agga.de/content/3/5/de/10-fragen-zum-missionieren.html">Online-Hilfe</a>
+    nachgelesen werden.
+    <br /><br />
+    Ein Weg, Höhlen zu erobern, ist sie zu missionieren. Dabei gelten jedoch 
+    folgende Einschränkungen:
+    <br />
+    <ol>
+      <li>
+        Jeder Häuptling kann nur über maximal {maxcaves} Höhlen gebieten.
+      </li>
+      <li>
+        Nur maximal 4 Höhlen können feste Höhlen sein. Alle Anderen können von 
+        Feinden übernommen werden.
+      </li>
+      <li>
+        Die Höhle muss frei und <span class="bold">auf der Karte als bewohnbar gekennzeichnet 
+        sein.</span>
+      </li>
+    </ol>
+
+    Die Missionierung einer Höhle geht nun wie folgt von statten:
+    <br />
+    <ol>
+      <li>Suche auf der Karte eine Höhle die als "frei" markiert ist!</li>
+      <li>Wähle sie als Missionierungshöhle! Von Höhlen mit vielen Mitbewerbern ist meist abzuraten.</li>
+      <li>Transportiere Ressourcen in die Höhle, um den dortigen Häuptling dir gewogen zu stimmen!</li>
+      <li>überbiete alle Mitbewerber an {{ popularity }} - nicht zwingend aufeinander folgenden - Tagen!</li>
+    </ol>
+
+    Dabei muss man jedoch darauf achten, dass pro Tag eine gewisse 
+    Mindestmenge an Ressourcen nötig ist um einen Stern zu erhalten. Diese 
+    Menge ist von der Anzahl der Höhlen abhängig die du schon besitzt. 
+    Solltest du an einem Tag weniger als diese Mindestmenge in eine Höhle 
+    tragen, so sind die Ressourcen verschwendet. Allerdings sind die 
+    Häuptlinge eher von den Gaben schwächerer Stammesführer beeindruckt, so 
+    dass diese deutlich weniger Ressourcen benötigen als ein stärkerer 
+    Mitbieter. Das Verhältnis zwischen Mindestwert und eingesetzten 
+    Ressourcen ist entscheidend.
+
+    <br /><br />
+
+    <div class="box" style="width: 240px; float: left;">
+      <div class="box-header">Berechnung</div>
+      <div class="box-content inner success">
+        <table>
+          <tr>
+            <th>Anzahl deiner Höhlen</th>
+            <th>Mindestwertpunkte</th>
+          </tr>
+          <tr>
+            <td align="center"> 1 </td>
+            <td align="center"> 200 </td>
+          </tr>
+          <tr>
+            <td align="center"> 2 </td>
+            <td align="center">200 * 2<sup>2</sup> = 800</td>
+          </tr>
+          <tr>
+            <td align="center"> 3 </td>
+            <td align="center">200 * 3<sup>2</sup> = 1800</td>
+          </tr>
+          <tr>
+            <td align="center"> 4 </td>
+            <td align="center">200 * 4<sup>2</sup> = 3200</td>
+          </tr>
+          <tr>
+            <td align="center"> 5 </td>
+            <td align="center">200 * 5<sup>2</sup> = 5000</td>
+          </tr>
+          <tr>
+            <td align="center"> 6 </td>
+            <td align="center"> 200 * 6<sup>2</sup> = 7200</td>
+          </tr>
+          <tr>
+            <td align="center"> 7 </td>
+            <td align="center"> 200 * 7<sup>2</sup> = 9800</td>
+          </tr>
+          <tr>
+            <td align="center"> 8 </td>
+            <td align="center"> --- </td>
+          </tr>
+        </table>
+      </div>
     </div>
+
+    <div class="box" style="width: 365px; float: right;">
+      <div class="box-header">Beispiel</div>
+      <div class="box-content inner success">
+        <table>
+          <tr>
+            <th>Bieter</th>
+            <th>Berechnungswert</th>
+            <th>Eingesetzte Ressourcen</th>
+            <th>Verhältnis</th>
+          </tr>
+          <tr>
+            <td align="center"><b>1 Höhle</b></td>
+            <td align="center"><b>200</b></td>
+            <td align="center"><b>600</b></td>
+            <td align="center"><b>3.0</b></td>
+          </tr>
+          <tr>
+            <td align="center">5 Höhlen</td>
+            <td align="center">5000</td>
+            <td align="center">7500</td>
+            <td align="center">1.5</td>
+          </tr>
+          <tr>
+            <td align="center">3 Höhlen</td>
+            <td align="center">1800</td>
+            <td align="center">1800</td>
+            <td align="center">1.0</td>
+          </tr>
+          <tr>
+            <td align="center">4 Höhlen</td>
+            <td align="center">3200</td>
+            <td align="center">8000</td>
+            <td align="center">2.5</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div style="float: right; width: 365px;" class="text-left">Sieger ist der Stammesführer mit 1 Höhle.</div>
+    <div style="clear: both;"></div>
+
+    Die geschenkten Ressourcen verbleiben übrigens (nach Abzug eines 25%-Opfers an die Götter) 
+    in der freien Höhle, soweit deren Lager sie zu fassen vermag. Kluge Häuptlinge schicken daher 
+    öfter Truppen in die freien Höhlen der Umgebung und sorgen dafür dass wertvolle Ressourcen 
+    nicht ungenutzt bleiben. Besonders erfolgreich sind sie dabei wenn sie Informationen über Menge und 
+    Ankunftszeit der Geschenke von den Missionierern erhalten.
+    <br />
+    Sollte allerdings ein Missionierer selbst angreifen, reagieren die Bewohner der freien Höhle sehr 
+    sauer und entfernen alle bisher vergebenen Sterne!
   </div>
-  <div style="float: right; width: 365px;" class="text-left">Sieger ist der Stammesführer mit 1 Höhle.</div>
-  <div style="clear: both;"></div>
-
-  Die geschenkten Ressourcen verbleiben übrigens (nach Abzug eines 25%-Opfers an die Götter) 
-  in der freien Höhle, soweit deren Lager sie zu fassen vermag. Kluge Häuptlinge schicken daher 
-  öfter Truppen in die freien Höhlen der Umgebung und sorgen dafür dass wertvolle Ressourcen 
-  nicht ungenutzt bleiben. Besonders erfolgreich sind sie dabei wenn sie Informationen über Menge und 
-  Ankunftszeit der Geschenke von den Missionierern erhalten.
-  <br />
-  Sollte allerdings ein Missionierer selbst angreifen, reagieren die Bewohner der freien Höhle sehr 
-  sauer und entfernen alle bisher vergebenen Sterne!
-</div>
-{% endif %}
-
+  {% endif %}
 </div>
 
-{% include 'pageFooter.tmpl' %}
-{% endspaceless %}
+{% endblock %}

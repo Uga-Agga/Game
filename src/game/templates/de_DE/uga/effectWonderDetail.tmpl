@@ -1,0 +1,68 @@
+{% extends "base.tmpl" %}
+{% block title %}Höhlenübersicht{% endblock %}
+{% block content %}
+
+<div class="box small">
+  <div class="box-header nohover"><strong>Aktive Auswirkungen der Wunder</strong></div>
+  {% if wonder %}
+    <div class="smallinner inner success nohover text-left">
+      <table class="table">
+        {% for item in wonder %}
+          <tr>
+            <td style="valign: top; float: left;"><span class="bold">{{ item.name }}</span>, wirkt noch bis: {{ item.end }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+    <div class="smallinner notice nohover" style="margin:0px;">
+      <table class="table">
+        <tr>
+          <td>Derzeit wirken keinerlei Wunder auf Eure Höhle, Häuptling!</td>
+        </tr>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<br />
+
+<div class="box small">
+  <div class="box-header nohover"><strong>In der Höhle wirkende Effekte</strong></div>
+  {% if effect %}
+    <div class="smallinner inner success nohover text-left">
+      <table class="table">
+        {% for item in effect %}
+          <tr>
+            <td style="valign: top; float: left;">{{ item.name }}:</td>
+            <td style="valign: top; float: left; width: 70px;">{{ item.value }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  {% else %}
+    <div class="smallinner notice nohover">
+      <table class="table">
+        <tr>
+          <td>Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</td>
+        </tr>
+      </table>
+    </div>
+  {% endif %}
+</div>
+
+<br />
+
+<div class="box small">
+  <div class="box-header nohover"><strong>Aktuelle Farmpunkte</strong></div>
+  <div class="smallinner inner success nohover text-left">
+    <table class="table">
+      <tr>
+        <td style="valign: top; float: left; width: 70px;">Anzahl:</td>
+        <td style="valign: top; float: left; width: 70px;">{{ farmpoints }}</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- Hero -->
+<!ELEMENT Heroes (HeroTypes, HeroSkills)>
+<!ELEMENT HeroTypes (HeroType+)>
+<!ELEMENT HeroType (Name+, Description+, lvl, lvlUp, maxHP, force, regHP, effects*)>
+<!ATTLIST HeroType
+  id CDATA #REQUIRED
+>
+<!ELEMENT HeroSkills (HeroSkill+)>
+<!ELEMENT HeroSkill (Name+, Description+, CostTP, RequiredLevel*)>
+<!ATTLIST HeroSkill
+  id CDATA #REQUIRED
+>
+
+<!--Miscellaneous-->
+<!ELEMENT Name (#PCDATA)>
+<!ATTLIST Name 
+  lang CDATA "de-DE"
+>
+<!ELEMENT Description (p*)>
+<!ATTLIST Description 
+  lang CDATA "de-DE"
+>
+<!ELEMENT lvl (#PCDATA)>
+<!ELEMENT lvlUp (#PCDATA)>
+<!ELEMENT maxHP (#PCDATA)>
+<!ELEMENT force (#PCDATA)>
+<!ELEMENT regHP (#PCDATA)>
+<!ELEMENT p (#PCDATA)>
+<!ELEMENT RequiredLevel (#PCDATA)>
+<!ELEMENT CostTP (#PCDATA)>
+<!--effects-->
+<!ELEMENT effects (effect+)>
+<!ATTLIST effects
+  all (0 | 1) "0"
+>
+<!ELEMENT effect EMPTY>
+<!ATTLIST effect
+  id ID #REQUIRED
+  absolute CDATA "0"
+  relative CDATA "0"
+  maxDelta CDATA "0"
+  type (default | gauss) "default"
+>
+<!--entities-->
+<!ENTITY apst "&amp;#39;">
+<!ENTITY auml "&amp;auml;">
+<!ENTITY ouml "&amp;ouml;">
+<!ENTITY uuml "&amp;uuml;">
+<!ENTITY Auml "&amp;Auml;">
+<!ENTITY Ouml "&amp;Ouml;">
+<!ENTITY Uuml "&amp;Uuml;">
+<!ENTITY szlig "&amp;szlig;">

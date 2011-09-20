@@ -122,15 +122,17 @@
     <div style="clear: both;"></div>
 
     {% block footer %}
-    <div id="bottom-left"><p>Serverzeit: {{ time }}</p></div>
-    <div id="bottom-middle"><p>{% include 'vote.tmpl' %}</p></div>
-    <div id="bottom-right"><p>
-      <a href="main.php?modus=statistic">Statistik</a> &amp;
-      <a href="{{ help_path }}" onclick="open_page(this.href, 1); return false;">Hilfe</a> &amp;
-      <a href="{{ rules_path }}" onclick="open_page(this.href, 1); return false;">Regeln</a>&nbsp;
-      <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
-    </p></div>
-    <div style="clear: both;"></div>
+    <div id="bottom" style="margin-top: 10px;">
+      <div id="bottom-left"><p>Serverzeit: {{ time }}</p></div>
+      <div id="bottom-middle"><p>{% include 'vote.tmpl' %}</p></div>
+      <div id="bottom-right"><p>
+        <a href="main.php?modus=statistic">Statistik</a> &amp;
+        <a href="{{ help_path }}" onclick="open_page(this.href, 1); return false;">Hilfe</a> &amp;
+        <a href="{{ rules_path }}" onclick="open_page(this.href, 1); return false;">Regeln</a>&nbsp;
+        <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
+      </p></div>
+      <div style="clear: both;"></div>
+    </div>
     {% endblock %}
   </div>
 </body>
