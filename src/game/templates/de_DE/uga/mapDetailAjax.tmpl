@@ -1,9 +1,16 @@
-{% extends "base.tmpl" %}
+{#
+/* mapDetailAjax.tmpl -
+ * Copyright (c) 2003  OGP Team  (for original version mapDetail.tmpl)
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 
-{% block title %}Spieler Ranking{% endblock %}
-{% block content %}
-
-<div class="box small">
+<div class="box ">
   <div class="box-header nohover">Dies ist der Landstrich {{ cave_details.name }} ({{ cave_details.xCoord }}|{{ cave_details.yCoord }}) - {{ cave_details.terrain }}</div>
   <div class="smallinner inner success nohover" >
     <ul>
@@ -25,7 +32,7 @@
 
 {% if cave_details.playerID %}
 <br />
-<div class="box small">
+<div class="box ">
   <div class="box-header"><p>Alle Höhlen dieses Häuptlings</p></div>
   <div class="box-content inner success" style="text-align:center">
     <table class="table nohover" rules="rows">
@@ -57,4 +64,3 @@
 </div>
 {% endif %}
 
-{% endblock %}

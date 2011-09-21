@@ -16,6 +16,42 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 @include_once('modules/CaveBookmarks/model/CaveBookmarks.php');
 
 
+
+/** given the querried coordinates, calculates the minimal, maximal and center
+  coordinates of the caves in the visible map region. Uses the constants MAP_WIDTH
+  and MAP_HEIGHT from the configuration to determine size of the region. Also handles
+  the case where the actual map in the database has fewer caves than specified in
+  MAP_WIDTH and / or MAP_HEIGHT */
+function calcVisibleMapRegion($mapSize, $xCoord, $yCoord)
+{
+   // correct width und height for the case where the actual map is smaller than what could be displayed
+   // in a map section.
+  $MAP_WIDTH  = min(MAP_WIDTH,  $mapSize['maxX']-$mapSize['minX']+1); // attention: reads the constant MAP_WIDTH and writes the corrected value to a local variable of same name...
+  $MAP_HEIGHT = min(MAP_HEIGHT, $mapSize['maxY']-$mapSize['minY']+1);
+  
+  // Nun befinden sich in $xCoord und $yCoord die gesuchten Koordinaten.
+  // ermittele nun die linke obere Ecke des Bildausschnittes
+  $minX = min(max($xCoord - intval($MAP_WIDTH/2),  $mapSize['minX']), $mapSize['maxX']-$MAP_WIDTH+1);
+  $minY = min(max($yCoord - intval($MAP_HEIGHT/2), $mapSize['minY']), $mapSize['maxY']-$MAP_HEIGHT+1);
+  
+  // ermittele nun die rechte untere Ecke des Bildausschnittes
+  $maxX = $minX + $MAP_WIDTH  - 1;
+  $maxY = $minY + $MAP_HEIGHT - 1;
+
+  $centerX = $minX+($maxX-$minX)/2;
+  $centerY = $minY+($maxY-$minY)/2;
+  
+  return array(
+    'minX'  => $minX, 'maxX' => $maxX,
+    'minY'  => $minY, 'maxY' => $maxY,
+    'width' => $maxX-$minX+1,
+    'height' => $maxY-$minY+1,
+    'centerX' => $centerX, 
+    'centerY' => $centerY,
+  );
+}
+
+
 function determineCoordsFromParameters($caveData, $mapSize) {
   
   // default Werte: Koordinaten of the given caveData (that is the data of the presently selected own cave)
@@ -84,6 +120,7 @@ function getCaveMapContent($caveID, $caves) {
   $caveData = $caves[$caveID];
   $mapSize = getMapSize();  // Größe der Karte wird benötigt
   $message  = '';
+  
 
   // template öffnen
   $template->setFile('map.tmpl');
@@ -98,17 +135,18 @@ function getCaveMapContent($caveID, $caves) {
   $resolvedCoords = determineCoordsFromParameters($caveData, $mapSize);
   $template->addVars($resolvedCoords);
   
+  // corrected x-y-coords of querried cave
   $xCoord = $resolvedCoords['xCoord'];
   $yCoord = $resolvedCoords['yCoord'];  
-      
-  // Minimap
-  $width  = $mapSize['maxX'] - $mapSize['minX'] + 1;
-  $height = $mapSize['maxY'] - $mapSize['minY'] + 1;
-  
-  // compute mapcenter coords
-  $mcX = $minX + intval($MAP_WIDTH/2);
-  $mcY = $minY + intval($MAP_HEIGHT/2);
+        
+  // determine map dimensions and compute the displayed map-region's center coords
+  $minX = $mapSize['minX'];
+  $minY = $mapSize['minY'];
+  $maxX = $mapSize['maxX'];
+  $maxY = $mapSize['maxY'];
 
+  $section = calcVisibleMapRegion($mapSize, $xCoord, $yCoord);
+  
   $template->addVars(array(
     'minimap' => array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
                        'modus'   => MAP,
@@ -116,37 +154,30 @@ function getCaveMapContent($caveID, $caves) {
                        'height'  => intval($height * MINIMAP_SCALING / 100),
                        'scaling' => MINIMAP_SCALING)));
 
-  $MAP_WIDTH_NEG = intval($MAP_WIDTH/2) * -1;
-  $MAP_HEIGHT_NEG = intval($MAP_HEIGHT/2) * -1;
+  $template->addVars(array('E' => array('x' =>  (($section['centerX'] + $section['width']) < $maxX ? ($section['centerX'] + $section['width']) : $maxX),
+                                        'y' =>    $section['centerY'])));
 
+  $template->addVars(array('SE' => array('x' => (($section['centerX'] + $section['width']  < $maxX) ? ($section['centerX'] + $section['width']) : $maxX),
+                                         'y' => (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
 
-  // FIXME : need to set these values properly in order to allow navigation without JavaScript
-/*
-  tmpl_set($template, '/O',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
-                                                                         'y' =>  $mcY));
+  $template->addVars(array('S' => array('x' =>    $section['centerX'], 
+                                        'y' =>  (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
 
-  tmpl_set($template, '/SO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
-                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+  $template->addVars(array('SW' => array('x' => (($section['centerX'] - $section['width']  > $minX) ? ($section['centerX'] - $section['width']) : $minX),
+                                         'y' => (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
 
-  tmpl_set($template, '/S',  array('modus' => MAP, 'caveID' => $caveID, 'x' =>  $mcX, 
-                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+  $template->addVars(array('W' => array('x' =>  (($section['centerX'] - $section['width']  > $minX) ? ($section['centerX'] - $section['width']) : $minX),
+                                        'y' =>    $section['centerY'])));
 
-  tmpl_set($template, '/SW', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']),
-                                                                         'y' => ((($mcY + $MAP_HEIGHT) < ($mapSize['maxY'] + intval($MAP_WIDTH/2))) ? ($mcY + $MAP_HEIGHT) : $mapSize['minY'])));
+  $template->addVars(array('NW' => array('x' => (($section['centerX'] - $section['width']  > $minX) ? ($section['centerX'] - $section['width']) : $minX), 
+                                         'y' => (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
 
-  tmpl_set($template, '/W',  array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']),
-                                                                         'y' =>  $mcY));
+  $template->addVars(array('N' => array('x' =>    $section['centerX'], 
+                                        'y' =>  (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
 
-  tmpl_set($template, '/NW', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX - $MAP_WIDTH) > $MAP_WIDTH_NEG) ? ($mcX - $MAP_WIDTH) : $mapSize['maxX']), 
-                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
+  $template->addVars(array('NE' => array('x' => (($section['centerX'] + $section['width']  < $maxX) ? ($section['centerX'] + $section['width']) : $maxX),
+                                         'y' => (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
 
-  tmpl_set($template, '/N',  array('modus' => MAP, 'caveID' => $caveID, 'x' =>  $mcX, 
-                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
-
-  tmpl_set($template, '/NO', array('modus' => MAP, 'caveID' => $caveID, 'x' => ((($mcX + $MAP_WIDTH) < ($mapSize['maxX'] + intval($MAP_WIDTH/2))) ? ($mcX + $MAP_WIDTH) : $mapSize['minX']),
-       
-                                                                         'y' => ((($mcY - $MAP_HEIGHT) > $MAP_HEIGHT_NEG) ? ($mcY - $MAP_HEIGHT) : $mapSize['maxY'])));
-*/
 
 
   // Module "CaveBookmarks" Integration
@@ -177,21 +208,16 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   $caveData = $caves[$caveID];
   $mapSize = getMapSize();  // Größe der Karte wird benötigt
   $message  = '';
-      
-  // width und height anpassen
-  $MAP_WIDTH  = min(MAP_WIDTH,  $mapSize['maxX']-$mapSize['minX']+1);
-  $MAP_HEIGHT = min(MAP_HEIGHT, $mapSize['maxY']-$mapSize['minY']+1);
+
+  // calculate the dimensions of the visible map region
+  $section = calcVisibleMapRegion($mapSize, $xCoord, $yCoord);
+  $minX = $section['minX']; // minimum x-coordinate of caves in visible part of the map
+  $minY = $section['minY']; // minimum y-coordinate of caves in visible part of the map
+  $maxX = $section['maxX']; // maximum x-coordinate of caves in visible part of the map
+  $maxY = $section['maxY']; // maximum y-coordinate of caves in visible part of the map
   
-  // Nun befinden sich in $xCoord und $yCoord die gesuchten Koordinaten.
-  // ermittele nun die linke obere Ecke des Bildausschnittes
-  $minX = min(max($xCoord - intval($MAP_WIDTH/2),  $mapSize['minX']), $mapSize['maxX']-$MAP_WIDTH+1);
-  $minY = min(max($yCoord - intval($MAP_HEIGHT/2), $mapSize['minY']), $mapSize['maxY']-$MAP_HEIGHT+1);
-  // ermittele nun die rechte untere Ecke des Bildausschnittes
-  $maxX = $minX + $MAP_WIDTH  - 1;
-  $maxY = $minY + $MAP_HEIGHT - 1;
-  
-  $centerX = $minX+($maxX-$minX)/2;
-  $centerY = $minY+($maxY-$minY)/2;
+  $centerX = $section['centerX'];
+  $centerY = $section['centerY'];
   
   // get the map details
   $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);
@@ -358,16 +384,22 @@ function getCaveMapRegionContent($caveID, $caves) {
 
 
 
-function getCaveReport($caveID, $ownCaves, $targetCaveID) {
+function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
   global $terrainList, $template;
 
   if (!$targetCaveID) {
     $template->throwError('Es wurde keine Höhle ausgewählt.');
     return;
   }
-
-  // open template
-  $template->setFile('mapDetail.tmpl');
+  
+  if ($method == 'ajax') {
+    $shortVersion = true;
+    $template->setFile('mapDetailAjax.tmpl');
+  }
+  else {
+    $shortVersion = false;
+    $template->setFile('mapDetail.tmpl');    
+  }
 
   $cave  = getCaveByID($targetCaveID);
 

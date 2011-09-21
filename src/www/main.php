@@ -211,7 +211,7 @@ switch ($modus) {
 
   case MAP_DETAIL:
     $pagetitle = _("Höhlenbericht");
-    $content = getCaveReport($caveID, $ownCaves, request_var('targetCaveID', 0));
+    $content = getCaveReport($caveID, $ownCaves, request_var('targetCaveID', 0), request_var('method', ''));
     break;
 
   /////////////////////////////////////////////////////////////////////////////
