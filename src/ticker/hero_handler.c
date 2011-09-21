@@ -37,18 +37,21 @@ void hero_handler (db_t *database, db_result_t *result)
   /* get Hero */
   get_hero_by_id(database, heroID, &hero);
   /* XXX hero.caveID != 0 here? */
-  if (hero.caveID == 0)
-	  get_cave_info(database, hero.caveID, &cave);
-  else 
-
-  if (cave.player_id)
-    get_player_info(database, hero.playerID, &player);
-  else	/* System */
-    memset(&player, 0, sizeof player);
+  if (hero.caveID == 0) {
+    get_cave_info(database, hero.caveID, &cave);
+  }
+  else {
+    if (cave.player_id) {
+      get_player_info(database, hero.playerID, &player);
+    }
+    else {	/* System */
+      memset(&player, 0, sizeof player);
+    }
+  }
 
   reincarnate_hero(database, heroID);
   debug(DEBUG_TICKER, "initiated hero");
-
+  get_cave_info(database, hero.caveID, &cave);
   hero_report(database, &cave, &player);
 
 

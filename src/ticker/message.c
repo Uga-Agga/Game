@@ -1394,7 +1394,7 @@ void hero_report (db_t *database,
   template_set(tmpl_hero, "cave", cave->name);
 
   message_new(database, MSG_CLASS_ARTEFACT,
-      cave->player_id, subject, template_eval(tmpl_hero), xml);
+      player->player_id, subject, template_eval(tmpl_hero), xml);
 }
 
 static void wonder_prepare_message (template_t *template,
