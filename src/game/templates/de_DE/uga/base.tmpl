@@ -93,10 +93,10 @@
       <div id="cave-details">
         <div class="block" id="cave-details-list">
           |&nbsp;{% for item in navigateCave %}
-            <a href="main.php?{{ item.query_string|raw }}&amp;caveID={{ item.caveID }}" {% if item.active %}style="font-size: 15px;" {% endif %}class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}" onmouseover="document.getElementById('cave-details-cave').innerHTML='H&ouml;hle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='H&ouml;hle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
+            <a href="main.php?{{ item.query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='H&ouml;hle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='H&ouml;hle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
           {% endfor %}
         </div>
-        
+
         <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
       </div>
 
