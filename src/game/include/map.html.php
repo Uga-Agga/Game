@@ -418,14 +418,11 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
     tmpl_set($template, 'PROPERTY', _('&uuml;bernehmbar'));
   }
 */
-  $cave['terrain'] = $terrainList[$cave['terrain']]['name'];
+  $cave['terrain_name'] = $terrainList[$cave['terrain']]['name'];
+  $cave['terrain_img'] = $terrainList[$cave['terrain']]['img'];
   $region = getRegionByID($cave['regionID']);
 
   $template->addVar('cave_details', $cave);
-  /*
-                            'backlink'     => sprintf("?modus=map&amp;xCoord=%d&amp;yCoord=%d",
-                                                      $cave['xCoord'], $cave['yCoord'])));
-*/
 
   if ($cave['playerID'] != 0) {
     $template->addVar('player_details', $playerDetails);

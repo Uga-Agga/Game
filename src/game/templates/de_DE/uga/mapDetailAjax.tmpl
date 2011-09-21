@@ -11,10 +11,10 @@
 #}
 
 <div class="box ">
-  <div class="box-header nohover">Dies ist der Landstrich {{ cave_details.name }} ({{ cave_details.xCoord }}|{{ cave_details.yCoord }}) - {{ cave_details.terrain }}</div>
+  <div class="box-header nohover">Dies ist der Landstrich {{ cave_details.name }} ({{ cave_details.xCoord }}|{{ cave_details.yCoord }}) - {{ cave_details.terrain_name }}</div>
   <div class="smallinner inner success nohover" >
     <ul>
-      <li><img src="{{ gfx }}/de_DE/t_uga/map/{{ cave_details.terrain }}.jpg" alt="{{ cave_details.terrain }}" title="{{ cave_details.terrain }}" /></li>
+      <li><img src="{{ gfx }}/de_DE/t_uga/map/{{ cave_details.terrain_img }}" alt="{{ cave_details.terrain_name }}" title="{{ cave_details.terrain_name }}" /></li>
       <li><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}&amp;targetCaveName={{ cave_details.name }}">dorthin bewegen!</a></li>
       <li><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ cave_details.xCoord }}&amp;yCoord={{ cave_details.yCoord }}">zur Höhlenliste hinzufügen!</a></li>
       <li>&nbsp;</li>
