@@ -49,10 +49,7 @@ void hero_handler (db_t *database, db_result_t *result)
   reincarnate_hero(database, heroID);
   debug(DEBUG_TICKER, "initiated hero");
 
-  apply_hero_effects_to_cave(database, heroID);
-  debug(DEBUG_TICKER, "applied hero effects");
-
-  //hero_report(database, &cave, &player);
+  hero_report(database, &cave, &player);
 
 
   debug(DEBUG_TICKER, "leaving function hero_handler()");

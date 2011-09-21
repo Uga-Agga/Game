@@ -86,6 +86,8 @@ void remove_hero_from_cave (db_t *database, int heroID)
 void reincarnate_hero (db_t *database, int heroID)
 {
   struct Hero hero;
+  struct Cave cave;
+  struct Player player;
 
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
