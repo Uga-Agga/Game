@@ -582,7 +582,8 @@ if (sizeof($ownCaves)) {
       'active_name'       => $ownCaves[$caveID]['name'],
       'active_x_coord'    => $ownCaves[$caveID]['xCoord'],
       'active_y_coord'    => $ownCaves[$caveID]['yCoord'],
-      'query_string'      => $query_string
+      'query_string'      => $query_string,
+      'active'            => ($Cave['caveID'] == $caveID) ? true : false,
     );
   }
 
