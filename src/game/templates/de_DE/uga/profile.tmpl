@@ -1,0 +1,99 @@
+{% extends "base.tmpl" %}
+{% block title %}Profil{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message }}</div>{% endif %}
+
+<form id="preferences" method="post" action="main.php?modus={{ user_profile_link }}">
+  {% for item in profile_data %}
+    <div class="box small" style="margin-bottom: 10px;">
+      <div class="box-header nohover">{{ item.heading }}:</div>
+      <div class="smallinner inner success nohover text-left">
+      <table>
+        {% if item.entry_info %}
+          {% for item_info in item.entry_info %}
+            <tr>
+              <td>&nbsp;</td>
+              <td>{{ item_info.name|raw }}:</td>
+              <td>{{ item_info.value }}</td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+        {% if item.entry_input %}
+          {% for item_input in item.entry_input %}
+            <tr>
+              <td>&nbsp;</td>
+              <td>{{ item_input.name|raw }}:</td>
+              <td><input name="{{ item_input.dataarray }}[{{ item_input.dataentry }}]" value="{{ item_input.value }}"  type="text" size="{{ item_input.size }}" maxlength="{{ item_input.maxlength }}" /></td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+        {% if item.entry_memo %}
+          {% for item_memo in item.entry_memo %}
+            <tr>          
+              <td>&nbsp;</td>
+              <td>{{ item_memo.name|raw }}:</td>
+              <td><textarea name="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" cols="{{ item_memo.cols }}" rows="{{ item_memo.rows }}">{{ item_memo.value }}</textarea></td>
+            </tr>        
+          {% endfor %}
+        {% endif %}
+        {% if item.entry_input_pwd %}
+          {% for item_input_pwd in item.entry_input_pwd %}
+            <tr>
+              <td>&nbsp;</td>
+              <td>{{ item_input_pwd.name|raw }}:</td>
+              <td><input name="{{ item_input_pwd.dataarray }}[{{ item_input_pwd.dataentry }}]" value="{{ item_input_pwd.value }}"  type="password" size="{{ item_input_pwd.size }}" maxlength="{{ item_input_pwd.maxlength }}" /></td>
+            </tr>        
+          {% endfor %}
+        {% endif %}
+        {% if item.entry_selection %}
+          {% for item_selection in item.entry_selection %}
+            <tr>
+              <td>&nbsp;</td>
+              <td>{{ item_selection.name|raw }}:</td>
+              <td>
+                <select name="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]">
+                  {% for selector in item_selection.selector %}
+                    <option value="{{ selector.key }}" {% if selector.selector %}selected="selected"{% endif %}>{{ selector.text }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+        {% if item.entry_checkbox %}
+          {% for item_checkbox in item.entry_checkbox %}
+            <tr>
+              <td>&nbsp;</td>
+              <td>{{ item_checkbox.name|raw }}:</td>
+              <td><input name="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]" value="{{ item_checkbox.value }}" type="checkbox" {% if item_checkbox.checked %}checked="checked"{% endif %} /></td>
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </table>
+     </div>
+    </div>
+   {% endfor %}
+
+  <div class="small success nohover" style="margin-bottom: 20px;">
+    <input type="hidden" name="task" value="change" />
+    <input type='submit' value="Speichern" />
+    <input type='reset' value="Zurücksetzen" />
+  </div>
+</form>
+
+<div class="box small">
+  <div class="box-header nohover">Account Löschen</div>
+  <div class="smallinner inner error nohover">
+    <ul>
+      <li>Ich habe keine Lust mehr:</li>
+      <li>
+        <form id="delete" method="post" action="main.php?modus={{ delete_account_link }}">
+          <p><input type="submit" value="Den Account löschen!" /></p>
+        </form>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% endblock %}

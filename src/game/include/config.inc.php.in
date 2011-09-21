@@ -178,8 +178,7 @@ class Config {
                                ARTEFACT_DETAIL, TRIBE_DELETE, TRIBE_ADMIN,
                                DEFENSE_BUILDER, TAKEOVER, USER_PROFILE);
 
-  var $template_paths  = array(1 => 'uga',
-                               2 => 'agga');
+  var $template_paths  = array(1 => 'uga');
 
   var $messageImage = array( 2 => "battle_won.gif",
                              6 => "trade_report.gif",

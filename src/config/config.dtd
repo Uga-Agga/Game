@@ -23,13 +23,14 @@
 <!ATTLIST DefenseSystem id ID #REQUIRED hidden (0 | 1) "0">
 <!--Terrains-->
 <!ELEMENT Terrains (Terrain+)>
-<!ELEMENT Terrain (Name+, Description+, Color, Effect*)>
+<!ELEMENT Terrain (Name+, img+, Description+, Color, Effect*)>
 <!ATTLIST Terrain
           id CDATA #REQUIRED
           takeoverByCombat (0 | 1) "0"
           barren (0 | 1) "0">
 <!ELEMENT Color EMPTY>
 <!ATTLIST Color r CDATA #REQUIRED g CDATA #REQUIRED b CDATA #REQUIRED>
+<!ELEMENT img (#PCDATA)>
 <!--Regions-->
 <!ELEMENT Regions (Region+)>
 <!ELEMENT Region (Name+, Description+, Effect*)>
