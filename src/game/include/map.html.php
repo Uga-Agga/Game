@@ -384,16 +384,22 @@ function getCaveMapRegionContent($caveID, $caves) {
 
 
 
-function getCaveReport($caveID, $ownCaves, $targetCaveID) {
+function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
   global $terrainList, $template;
 
   if (!$targetCaveID) {
     $template->throwError('Es wurde keine Höhle ausgewählt.');
     return;
   }
-
-  // open template
-  $template->setFile('mapDetail.tmpl');
+  
+  if ($method == 'ajax') {
+    $shortVersion = true;
+    $template->setFile('mapDetailAjax.tmpl');
+  }
+  else {
+    $shortVersion = false;
+    $template->setFile('mapDetail.tmpl');    
+  }
 
   $cave  = getCaveByID($targetCaveID);
 

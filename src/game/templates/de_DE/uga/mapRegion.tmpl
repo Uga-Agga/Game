@@ -38,7 +38,7 @@
             {% endif %}   
                <br /> 
             {% if cell.mapcell.link %}
-               <a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }} class="unsecure"{% endif %}><small>{{ cell.mapcell.text|raw }}</small></a>
+               <a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }}{% endif %} class="map-detail-link{% if cell.mapcell.unsecure %} unsecure{% endif %}"><small>{{ cell.mapcell.text|raw }}</small></a>
             {% endif %}
             </p>
           </td>
