@@ -410,14 +410,6 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
     $playerDetails = getPlayerByID($cave['playerID']);
   }
 
-/*
-  if ($cave['protected']) tmpl_set($template, 'PROPERTY', _('Anf&auml;ngerschutz aktiv'));
-
-  if (!$cave['secureCave'] && $cave['playerID']){
-    tmpl_iterate($template, 'PROPERTY');
-    tmpl_set($template, 'PROPERTY', _('&uuml;bernehmbar'));
-  }
-*/
   $cave['terrain_name'] = $terrainList[$cave['terrain']]['name'];
   $cave['terrain_img'] = $terrainList[$cave['terrain']]['img'];
   $region = getRegionByID($cave['regionID']);
