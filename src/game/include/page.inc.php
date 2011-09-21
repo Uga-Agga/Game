@@ -55,8 +55,9 @@ function page_start() {
 
   // check for cookie
   // FIXME german string..
-  if (!sizeof($_COOKIE))
+  if (!sizeof($_COOKIE)) {
     page_error403('Sie m&uuml;ssen 3rd party cookies erlauben.');
+  }
 
   // start session
   session_start();

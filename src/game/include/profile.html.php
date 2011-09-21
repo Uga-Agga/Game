@@ -19,6 +19,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function profile_main() {
+  global $config, $template;
 
   // initialize return value
   $result = '';
@@ -27,8 +28,10 @@ function profile_main() {
   $task = request_var('task', "");
 
   // connect to login db
-  $db_login = db_connectToLoginDB();
-  if (!$db_login) page_dberror();
+  if (!($db_login = DbConnect($config->DB_LOGIN_HOST, $config->DB_LOGIN_USER, $config->DB_LOGIN_PWD, $config->DB_LOGIN_NAME))) {
+    $template->throwError('Datenbankverbindungsfehler. Bitte wende dich an einen Administrator.');
+    return;
+  }
 
   switch ($task) {
 
@@ -51,22 +54,25 @@ function profile_main() {
 
 
 function profile_show($db_login, $feedback = NULL) {
+  global $template;
+
+  // open template
+  $template->setFile('profile.tmpl');
 
   // get login data
   $playerData = profile_getPlayerData($db_login);
-  if (!$playerData) page_dberror();
-
-  // open template
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'profile.ihtml');
+  if (!$playerData) {
+    $template->throwError('Datenbankfehler. Bitte wende dich an einen Administrator');
+    return;
+  }
 
   // show message
-  if ($feedback)
-    tmpl_set($template, '/MESSAGE/message', $feedback);
+  if ($feedback) {
+    $template->addVar('status_msg', $feedback);
+  }
 
   // show the profile's data
   profile_fillUserData($template, $playerData);
-
-  return tmpl_parse($template);
 }
 
 
@@ -98,25 +104,44 @@ function profile_change($db_login) {
 function profile_getPlayerData($db_login){
   global $db;
 
-  // get playerID
-  $playerID = $_SESSION['player']->playerID;
-
-  // get game data
+/****************************************************************************************************
+*
+* Profil aus der Game Datenbank auslesen
+*
+****************************************************************************************************/
   $sql_game = $db->prepare("SELECT * FROM ". PLAYER_TABLE ." WHERE playerID = :playerID"); 
-  $sql_game->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  $sql_game->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  if (!$sql_game->execute()) {
+    return NULL;
+  }
+  $game = $sql_game->fetch(PDO::FETCH_ASSOC);
+  $sql_game->closeCursor();
 
-  // get login data
-  $sql_login = $db_login->prepare("SELECT * FROM Login WHERE LoginID = :playerID"); 
-  $sql_login->bindValue('playerID', $playerID, PDO::PARAM_INT);
+/****************************************************************************************************
+*
+* Profil aus der Login Datenbank auslesen
+*
+****************************************************************************************************/
+  $sql_login = $db_login->prepare("SELECT * FROM " . LOGIN_TABLE . " WHERE LoginID = :playerID"); 
+  $sql_login->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  if (!$sql_login->execute()) {
+    return NULL;
+  }
+  $login = $sql_login->fetch(PDO::FETCH_ASSOC);
+  $sql_login->closeCursor();
 
-  // empty records
-  if (!$sql_game->execute() || !$sql_login->execute()) return NULL;
+/****************************************************************************************************
+*
+* Sollte zwar NIE vorkommen aber mal lieber prüfen ob ein query leer ist.
+*
+****************************************************************************************************/
+  if (empty($game) || empty($login)) {
+    return NULL;
+  }
 
-  // recode description
-  $game = $sql_game->fetch();
   $game['description'] = str_replace("<br />", "", $game['description']);
 
-  return array("game" => $game, "login" => $sql_login->fetch());
+  return array("game" => $game, "login" => $login);
 }
 
 
@@ -127,10 +152,11 @@ function profile_getPlayerData($db_login){
  *  database.
  */
 function profile_fillUserData($template, $playerData) {
-  global $config;
+  global $config, $template;
+
+  $profileData = array();
 
   ////////////// user data //////////////////////
-  
   $p = new ProfileDataGroup(_('Benutzerdaten'));
   $p->add(new ProfileElementInfo(_('Name'), $playerData['game']['name']));
   $p->add(new ProfileElementInfo(_('Geschlecht'), $playerData['game']['sex']));
@@ -138,49 +164,41 @@ function profile_fillUserData($template, $playerData) {
   $p->add(new ProfileElementInput(_('Email 2'), $playerData['game']['email2'], 'data', 'email2', 30, 90));
   $p->add(new ProfileElementInput(_('Herkunft'), $playerData['game']['origin'], 'data', 'origin', 30, 30));
   $p->add(new ProfileElementInput(_('ICQ#'), $playerData['game']['icq'], 'data', 'icq', 15, 15));
-  $p->add(new ProfileElementInput(_('Avatar URL <br /><small>(max. Breite: '.MAX_AVATAR_WIDTH.', max. H&ouml;he: '.MAX_AVATAR_HEIGHT .')</small>'), $playerData['game']['avatar'], 'data', 'avatar', 60, 200));
+  $p->add(new ProfileElementInput(_('Avatar URL <br /><small>(max. Breite: '.MAX_AVATAR_WIDTH.', max. Höhe: '.MAX_AVATAR_HEIGHT .')</small>'), $playerData['game']['avatar'], 'data', 'avatar', 60, 200));
   $p->add(new ProfileElementMemo(_('Beschreibung'), $playerData['game']['description'], 'data', 'description', 25, 8));
-
-  tmpl_set($template, '/DATA_GROUP', $p->getTmplData());
+  $profileData[] = $p->getTmplData();
 
   ////////////// L10N //////////////////////
-  
   $uaLanguageNames = LanguageNames::getLanguageNames();
   
   $p = new ProfileDataGroup(_('Lokalisierung'));
   $slct = new ProfileElementSelection(_('Sprache'), 'data', 'language');
-  foreach ($uaLanguageNames as $key => $text)
+  foreach ($uaLanguageNames as $key => $text) {
     $slct->add(new ProfileSelector($key, $text, $key == $_SESSION['player']->language));
+  }
   $p->add($slct);
-
-  tmpl_iterate($template, '/DATA_GROUP');
-  tmpl_set($template, '/DATA_GROUP', $p->getTmplData());
+  $profileData[] = $p->getTmplData();
 
   ////////////// template //////////////////////
-
-  $p = new ProfileDataGroup(_('Template ausw&auml;hlen'));
-  $slct = new ProfileElementSelection(_('Template ausw&auml;hlen'), 'data', 'template');
-  foreach ($config->template_paths as $key => $text)
+  $p = new ProfileDataGroup(_('Template auswählen'));
+  $slct = new ProfileElementSelection(_('Template auswählen'), 'data', 'template');
+  foreach ($config->template_paths as $key => $text) {
     $slct->add(new ProfileSelector($key, $text, $key == $_SESSION['player']->template));
-  $p->add($slct);
-
-  tmpl_iterate($template, '/DATA_GROUP');
-  tmpl_set($template, '/DATA_GROUP', $p->getTmplData());
+  }
+  $p->add($slct);$profileData[] = $p->getTmplData();
 
   ////////////// gfxpath //////////////////////
   $p = new ProfileDataGroup(_('Grafikpack'));
   $p->add(new ProfileElementInput(sprintf(_('Pfad zum Grafikpack<br />(default:%s)'), DEFAULT_GFX_PATH), $playerData['game']['gfxpath'], 'data', 'gfxpath', 60, 200));
-
-  tmpl_iterate($template, '/DATA_GROUP');
-  tmpl_set($template, '/DATA_GROUP', $p->getTmplData());
+  $profileData[] = $p->getTmplData();
 
   ////////////// password //////////////////////
-  $p = new ProfileDataGroup(_('Passwort-&Auml;nderung'));
+  $p = new ProfileDataGroup(_('Passwort-Änderung'));
   $p->add(new ProfileElementPassword(_('Neues Passwort'),  '', 'password', 'password1', 15, 15));
   $p->add(new ProfileElementPassword(_('Neues Passwort - Wiederholung'), '', 'password', 'password2', 15, 15));
+  $profileData[] = $p->getTmplData();
 
-  tmpl_iterate($template, '/DATA_GROUP');
-  tmpl_set($template, '/DATA_GROUP', $p->getTmplData());
+  $template->addVar('profile_data', $profileData);
 }
 
 
@@ -210,37 +228,39 @@ function profile_update($db_login) {
   if (array_key_exists('avatar', $data)) {
     if (($data['avatar'] !== '') && !getimagesize($data['avatar'])) {
       $data['avatar'] = '';
-      return _('Ung&uuml;ltiges Bild oder URL beim Avatar! Wird zur&uuml;ckgesetzt!');
+      return array('type' => 'error', 'message' => ('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!'));
     }
   }
 
   if ($set = db_makeSetStatementSecure($data, $fields)) {
     $query = sprintf("UPDATE ". PLAYER_TABLE ." SET %s WHERE playerID = %d", $set, $playerID);
     if (!$db->query($query))
-      return _('Die Daten konnten gar nicht oder zumindest nicht vollst&auml;ndig aktualisiert werden.');
+      return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
   }
 
   // ***** now update the password, if it is set **** **************************
   if (strlen($password['password1'])) {
-
     // typo?
-    if (strcmp($password['password1'], $password['password2']) != 0)
-      return _('Das Passwort stimmt nicht mit der Wiederholung &uuml;berein.');
+    if (strcmp($password['password1'], $password['password2']) != 0) {
+      return array('type' => 'error', 'message' => _('Das Passwort stimmt nicht mit der Wiederholung überein.'));
+    }
 
     // password too short?
-    if(!preg_match('/^\w{6,}$/', unhtmlentities($password['password1'])))
-      return _('Das Passwort muss mindestens 6 Zeichen lang sein!');
-      
+    if(!preg_match('/^\w{6,}$/', unhtmlentities($password['password1']))) {
+      return array('type' => 'error', 'message' => _('Das Passwort muss mindestens 6 Zeichen lang sein!'));
+    }
+
     // set password
     $sql = $db_login->prepare("UPDATE Login SET password = :password WHERE LoginID = :loginID");
     $sql->bindValue('password', $password['password1'], PDO::PARAM_STR); 
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-    
-    if (!$sql->execute())
-      return _('Die Daten konnten gar nicht oder zumindest nicht vollst&auml;ndig aktualisiert werden.');
+
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
+    }
   }
 
-  return _('Die Daten wurden erfolgreich aktualisiert.');
+  return array('type' => 'success', 'message' => _('Die Daten wurden erfolgreich aktualisiert.'));
 }
 
 
@@ -303,7 +323,7 @@ class ProfileElementInfo extends ProfileElement {
   }
 
   function getTmplContext() {
-    return 'ENTRY_INFO';
+    return 'entry_info';
   }
 
   function getTmplData(){
@@ -334,7 +354,7 @@ class ProfileElementInput extends ProfileElement {
   }
 
   function getTmplContext(){
-    return 'ENTRY_INPUT';
+    return 'entry_input';
   }
 
   function getTmplData(){
@@ -363,7 +383,7 @@ class ProfileElementPassword extends ProfileElementInput {
   }
 
   function getTmplContext() {
-    return 'ENTRY_INPUT';
+    return 'entry_input';
   }
 }
 
@@ -390,7 +410,7 @@ class ProfileElementMemo extends ProfileElement {
   }
 
   function getTmplContext() {
-    return 'ENTRY_MEMO';
+    return 'entry_memo';
   }
 
   function getTmplData() {
@@ -426,7 +446,7 @@ class ProfileElementSelection extends ProfileElement {
   }
 
   function getTmplContext() {
-    return 'ENTRY_SELECTION';
+    return 'entry_selection';
   }
 
   function getTmplData() {
@@ -456,12 +476,12 @@ class ProfileSelector extends ProfileElement {
   }
 
   function getTmplContext() {
-    return 'SELECTOR';
+    return 'selector';
   }
 
   function getTmplData() {
     $result = array('text' => $this->text, 'key' => $this->key);
-    if ($this->selected) $result['SELECTION'] = array('iterate' => '');
+    if ($this->selected) $result['selector'] = true;
     return $result;
   }
 }
@@ -487,7 +507,7 @@ class ProfileCheckbox extends ProfileElement {
   }
 
   function getTmplContext() {
-    return 'ENTRY_CHECKBOX';
+    return 'entry_checkbox';
   }
 
   function getTmplData() {

@@ -77,6 +77,8 @@ DEFINE('TRIBE_TABLE',                   'Tribe');
 DEFINE('TRIBE_HISTORY_TABLE',           'TribeHistory');
 DEFINE('TRIBE_MESSAGE_TABLE',           'TribeMessage');
 
+DEFINE('LOGIN_TABLE',                   'Login');
+
 DEFINE('ALL_CAVE_DETAIL',             'all_cave_detail');
 DEFINE('ARTEFACT_DETAIL',             'artefact_detail');
 DEFINE('ARTEFACT_LIST',               'artefact_list');
