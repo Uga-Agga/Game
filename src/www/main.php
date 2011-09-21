@@ -508,8 +508,6 @@ $region = $regions[$ownCaves[$caveID]['regionID']];
 // init vote
 vote_main();
 
-
-
 // fill it
 $template->addVars(array(
   'pagetitle'     => $pagetitle,
@@ -522,7 +520,7 @@ $template->addVars(array(
   'cave_terrain'  => $ownCaves[$caveID]['terrain'],
   'time'          => date("d.m.Y H:i:s"),
   'bottom'        => vote_main(),
-  'new_mail_link' => (!empty($nm_content)) ? '_new' : '',
+  'new_mail_link' => (!empty($newMessageCount)) ? '_new' : '',
   'rules_path'    => RULES_PATH,
   'help_path'     => HELP_PATH,
   'player_fame'   => $_SESSION['player']->fame,
