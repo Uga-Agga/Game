@@ -33,8 +33,13 @@
         {% if cell.mapcell %}
           <td style="text-align:center;vertical-align:top; min-width:60px;" class="{{ cell.mapcell.terrain }} t_{{ cell.mapcell.text_tribe }}">
             <p><img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80%" height="20" alt="{{ cell.mapcell.alt }}" /><br />
-               <a href="main.php?{{ cell.mapcell.link_tribe }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.text_tribe }}</small></a><br /> 
-               <a href="main.php?{{ cell.mapcell.link }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }} class="unsecure"{% endif %}><small>{{ cell.mapcell.text|raw }}</small></a>
+            {% if cell.mapcell.link_tribe %}
+               <a href="main.php?{{ cell.mapcell.link_tribe|raw }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.text_tribe }}</small></a>
+            {% endif %}   
+               <br /> 
+            {% if cell.mapcell.link %}
+               <a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }} class="unsecure"{% endif %}><small>{{ cell.mapcell.text|raw }}</small></a>
+            {% endif %}
             </p>
           </td>
         {% endif %}

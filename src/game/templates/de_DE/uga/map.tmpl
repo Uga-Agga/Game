@@ -177,7 +177,7 @@
     });
     
     $('#searchID #targetCaveID').change(function () {
-      var targetCaveID = $(this).find(':text[name=targetCaveID]').val();
+      var targetCaveID = $(this).val();
       if (targetCaveID < 0) return false;
       loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
       return false;
