@@ -56,7 +56,7 @@ function digest_getDigest($ownCaves) {
     $buildings[$value['caveID']] = array(
       'caveID' => $value['caveID'],
       'cave_name' => $value['name'],
-      'modus'  => IMPROVEMENT_DETAIL);
+      'modus'  => IMPROVEMENT_BUILDER);
     $defenses[$value['caveID']] = array(
       'caveID' => $value['caveID'],
       'cave_name' => $value['name'],
@@ -74,7 +74,7 @@ function digest_getDigest($ownCaves) {
         unset($units[$value['cave_id']]);
         break;
 
-      case IMPROVEMENT_DETAIL:
+      case IMPROVEMENT_BUILDER:
         unset($buildings[$value['cave_id']]);
         break;
 

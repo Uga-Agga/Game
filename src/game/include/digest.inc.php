@@ -230,9 +230,9 @@ function digest_getInitiationDates($ownCave) {
                          LEFT JOIN " . ARTEFACT_CLASS_TABLE . " ac ON a.artefactClassID = ac.artefactClassID
                          WHERE " . $caveIDs . " ORDER BY e.end ASC, e.event_artefactID ASC");
 
-  if (!$sql->execute()) return array();
+  if (!$sql->execute()) 
+    return array();
 
-  // bewegungen durchgehen
   $result = array();
   while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $result[] = array(
@@ -278,7 +278,8 @@ function digest_getAppointments($ownCave){
     $allCaves[$row['caveID']] = $row;
   }
   $sql->closeCursor();
-
+  
+  // unit building events
   $result = array();
   $sql = $db->prepare("SELECT *
                        FROM " . EVENT_UNIT_TABLE . "
@@ -300,7 +301,8 @@ function digest_getAppointments($ownCave){
       'seconds_before_end' => time_fromDatetime($row['end']) - time());
   }
   $sql->closeCursor();
-
+  
+  // improvement events
   $sql = $db->prepare("SELECT *
                        FROM " . EVENT_EXPANSION_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
@@ -322,7 +324,8 @@ function digest_getAppointments($ownCave){
       'seconds_before_end' => time_fromDatetime($row['end']) - time());
   }
   $sql->closeCursor();
-
+  
+  // defense systms events
   $sql = $db->prepare("SELECT *
                        FROM " . EVENT_DEFENSE_SYSTEM_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
@@ -345,7 +348,8 @@ function digest_getAppointments($ownCave){
     );
   }
   $sql->closeCursor();
-
+  
+  //science events
   $sql = $db->prepare("SELECT *
                        FROM " . EVENT_SCIENCE_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
@@ -360,6 +364,29 @@ function digest_getAppointments($ownCave){
       'cave_id'            => $row['caveID'],
       'category'           => 'science',
       'modus'              => SCIENCE_BUILDER,
+      'event_id'           => $row['event_scienceID'],
+      'event_start'        => time_fromDatetime($row['start']),
+      'event_end'          => time_fromDatetime($row['end']),
+      'event_end_date'     => time_formatDatetime($row['end']),
+      'seconds_before_end' => time_fromDatetime($row['end']) - time()
+    );
+  }
+  $sql->closeCursor();
+  
+  // hero events
+  $sql = $db->prepare("SELECT *
+                       FROM " . EVENT_HERO_TABLE . "
+                       WHERE caveID IN (" . $caveIDs . ")
+                       ORDER BY end ASC, event_heroID ASC");
+
+  if (!$sql->execute()) return array();
+  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+    $result[] = array(
+      'event_name'         => "Wiedererweckung des Helden",
+      'cave_name'          => $ownCave[$row['caveID']]['name'],
+      'cave_id'            => $row['caveID'],
+      'category'           => 'hero',
+      'modus'              => HERO_DETAIL,
       'event_id'           => $row['event_scienceID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
