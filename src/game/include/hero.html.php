@@ -147,9 +147,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
               //typ='force';
               if ($hero['forceLvl']<10) {
                 $hero['force']=0.05*($hero['forceLvl']+1);
-                if (skillForce($playerID, $hero)) {
-                  //$hero['forceLvl']++;
-                  //$hero['tpFree']--;
+                if (skillForce($playerID)) {
                   $messageID=1;
                 }
                 break;
@@ -161,8 +159,6 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
               if ($hero['maxHpLvl']<10) {
                 $hero['maxHealPoints']=floor(100+25*pow($hero['maxHpLvl'], 3)/2);
                 if (skillMaxHp($playerID,$hero['maxHealPoints'])) {
-                  $hero['maxHpLvl']++;
-                  $hero['tpFree']--;
                   $messageID=1;
                 } else {
                   $messageID = -5;
@@ -176,8 +172,6 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
               if ($hero['regHpLvl']<10) {
                 $hero['regHealPoints']=5*pow($hero['regHpLvl']+1,2);
                 if (skillRegHp($playerID)) {
-                  $hero['regHpLvl']++;
-                  $hero['tpFree']--;
                   $messageID=1;
                 } else {
                   $messageID = -5;

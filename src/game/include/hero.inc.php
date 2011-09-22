@@ -65,10 +65,10 @@ function getHeroByPlayer($playerID) {
     $hero['path']=_('hero_constructor.gif');
   }
   
-  $hero['force'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force'], $hero) . ";");
-  $hero['lvlUp'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['lvl'], $hero) . ";");
+  $hero['force'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force']) . ";");
+  $hero['lvlUp'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['lvl']) . ";");
   $hero['expLeft']= $hero['lvlUp'] - $hero['exp'];
-  $hero['regHealPoints'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP'], $hero) . ";");
+  $hero['regHealPoints'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP']) . ";");
   
   if ($hero['healPoints'] == 0 || $hero['isAlive'] == false) {
       $hero['location'] = _('wird wiederbelebt');
@@ -90,7 +90,7 @@ function getHeroByPlayer($playerID) {
 
 }
 
-function hero_parseFormulas ($formula, $hero) {
+function hero_parseFormulas ($formula) {
   $formula = str_replace(
     array(
       '{forceLvl}',
@@ -154,7 +154,7 @@ function getHeroQueue($playerID) {
   return $result;
 
 }
-function skillForce($playerID, &$hero) {
+function skillForce($playerID) {
   global $db;
 
   // set database query with playerID
