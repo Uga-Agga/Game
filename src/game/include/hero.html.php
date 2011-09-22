@@ -51,6 +51,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
 
   $messageText = array(
+  -11 => array('type' => 'error', 'message' => _('Nicht genug Talentpunkte vorhanden!')),
   -10 => array('type' => 'error', 'message' => _('Ihr Held ist noch nicht erfahren genug, diesen Trank zu nutzen!')),
   -9 => array('type' => 'error', 'message' => _('Nicht genug Tränke vorhanden!')),
   -8 => array('type' => 'error', 'message' => _('Fehler beim Anwenden des Trankes!')),
@@ -75,8 +76,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newHeroID = request_var('ID', '');
   if ($action =="createHero") {
     foreach ($heroTypesList AS $typeName => $type) {
-      if ($newHeroID == $typeName) {
-        $messageID = createNewHero($typeName, $playerID, $caveID);
+      if ($newHeroID == $type['heroTypeID']) {
+        $messageID = createNewHero($heroTypesList[$typeName]['heroTypeID'], $playerID, $caveID);
         break;
       }
     }
@@ -88,26 +89,9 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   if($hero!= null) {
 
     $disabled = 'disabled=disabled';
-    $hero['force']=0.05*$hero['forceLvl'];
-    $hero['expLeft']=100+3*pow($hero['lvl']+1, 4)-$hero['exp'];
-    $hero['regHP']=5*pow($hero['regHpLvl'],2);
-
+    
     $eventHero=getEventHero($playerID);
     
-    if ($hero['HP'] == 0 || $hero['isAlive'] == false) {
-      if ($eventHero === true) {
-        $disabled = _('');
-      }
-      $hero['location'] = _('tot');
-      $hero['path'] = _('hero_death.gif');
-    }
-    elseif($hero['caveID'] == 0){
-      $hero['location'] = _('in Bewegung');
-    }
-    else{
-      $hero['location'] = $ownCaves[$hero['caveID']]['name']. ' in (' .$ownCaves[$hero['caveID']]['xCoord']. '/'. $ownCaves[$hero['caveID']]['yCoord'] .')';
-    }
-
     $ritual = getRitualByLvl($hero['lvl']);
     $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
@@ -124,7 +108,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       $resource[$key->dbFieldName]= $tmp;
     }
 
-    if($hero['HP']<=0.2*$hero['maxHP']){
+    if($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
       $hero['HPbar']='error';
     }
     else{
@@ -145,7 +129,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         break;
 
       case 'cancelOrder':
-        if ($eventHero === false){
+        if ($eventHero === false) {
           $sql = $db->prepare("DELETE FROM " . EVENT_HERO_TABLE . "
                        WHERE playerID = :playerID ");
           $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
@@ -156,41 +140,48 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         break;
 
       case 'skill':
-        if ($hero['tpFree']>=1){
+        if ($hero['tpFree']>=1) {
           $skill = request_var('skill', '');
           switch ($skill) {
             case 'force':
               //typ='force';
-              if ($hero['forceLvl']<10){
+              if ($hero['forceLvl']<10) {
                 $hero['force']=0.05*($hero['forceLvl']+1);
-                skillForce($playerID);
-                $hero['forceLvl']++;
-                $hero['tpFree']--;
-                $messageID=1;
+                if (skillForce($playerID, $hero)) {
+                  //$hero['forceLvl']++;
+                  //$hero['tpFree']--;
+                  $messageID=1;
+                }
                 break;
               }
               $messageID=-5;
               break;
             case 'maxHP':
               //typ='maxHP';
-              if ($hero['maxHpLvl']<10){
-                $hero['maxHP']=floor(100+25*pow($hero['maxHpLvl'], 3)/2);
-                skillMaxHp($playerID,$hero['maxHP']);
-                $hero['maxHpLvl']++;
-                $hero['tpFree']--;
-                $messageID=1;
+              if ($hero['maxHpLvl']<10) {
+                $hero['maxHealPoints']=floor(100+25*pow($hero['maxHpLvl'], 3)/2);
+                if (skillMaxHp($playerID,$hero['maxHealPoints'])) {
+                  $hero['maxHpLvl']++;
+                  $hero['tpFree']--;
+                  $messageID=1;
+                } else {
+                  $messageID = -5;
+                }
                 break;
               }
               $messageID=-5;
               break;
             case 'regHP':
               //typ='regHP';
-              if ($hero['regHpLvl']<10){
-                $hero['regHP']=5*pow($hero['regHpLvl']+1,2);
-                skillRegHp($playerID);
-                $hero['regHpLvl']++;
-                $hero['tpFree']--;
-                $messageID=1;
+              if ($hero['regHpLvl']<10) {
+                $hero['regHealPoints']=5*pow($hero['regHpLvl']+1,2);
+                if (skillRegHp($playerID)) {
+                  $hero['regHpLvl']++;
+                  $hero['tpFree']--;
+                  $messageID=1;
+                } else {
+                  $messageID = -5;
+                }
                 break;
               }
               $messageID=-5;
@@ -255,6 +246,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   }
 
   if ($hero) {
+    $hero = getHeroByPlayer($playerID);
     $template->addVars(array(
         'hero'               => $hero,
     'disabled'           => (isset($disabled)) ? $disabled : '',

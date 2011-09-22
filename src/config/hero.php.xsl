@@ -24,13 +24,15 @@ function init_heroSkills() {
 
 <xsl:template match="HeroType">
   
-  $heroTypesList['<xsl:value-of select="@id"/>'] =  array(
+  $heroTypesList['<xsl:value-of select="count(preceding-sibling::*)"/>'] =  array(
                      'name' =&gt; '<xsl:value-of select="Name"/>',
                      'description' =&gt; "<xsl:apply-templates select="Description"/>",
                      'id' =&gt; '<xsl:value-of select="@id"/>',
+                     'heroTypeID' =&gt; <xsl:value-of select="count(preceding-sibling::*)"/>,
                      'lvl' =&gt; '<xsl:value-of select="lvl"/>', 
                      'force' =&gt; '<xsl:value-of select="force"/>', 
                      'regHP' =&gt; '<xsl:value-of select="regHP"/>', 
+                     'maxHpLvl' =&gt; '<xsl:value-of select="maxHP"/>',
                      'effects' =&gt; array(<xsl:apply-templates select="effects/effect"/>));
   
 </xsl:template>
