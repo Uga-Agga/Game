@@ -9,9 +9,18 @@
  * the License, or (at your option) any later version.
  */
 
+require_once("game_rules.php");
+require_once("hero.rules.php");
+//init Potions
+init_potions();
+//init HeroTypes
+init_heroTypes();
+//init HeroSkills
+init_heroSkills();
+
 
 function getHeroByPlayer($playerID) {
-  global $db;
+  global $db, $heroTypesList;
 
   // set database query with playerID
   $sql = $db->prepare("SELECT *
@@ -27,7 +36,7 @@ function getHeroByPlayer($playerID) {
   //otherwise
 
   if (empty($result))
-  return null;
+    return null;
 
   // otherwise
   $sql->closeCursor();
@@ -35,29 +44,78 @@ function getHeroByPlayer($playerID) {
       'heroID'       => $result['heroID'],
       'playerID'     => $result['playerID'],
       'name'         => $result['name'],
-      'heroTypeID'    => $result['heroTypeID'],
+      'heroTypeID'   => $result['heroTypeID'],
       'lvl'          => $result['lvl'],
       'exp'          => $result['exp'],
       'caveID'       => $result['caveID'],
       'isAlive'      => $result['isAlive'],
       'tpFree'       => $result['tpFree'],
-      'HP'           => $result['healPoints'],
-      'maxHP'        => $result['maxHealPoints'],
+      'healPoints'           => $result['healPoints'],
+      'maxHealPoints'        => $result['maxHealPoints'],
       'forceLvl'     => $result['forceLvl'],
       'maxHpLvl'     => $result['maxHpLvl'],
       'regHpLvl'     => $result['regHpLvl'],
       'path'         => _('hero_imperator.gif'),
       'location'     => _('tot')
   );
-  if($hero['heroTypeID']==2){
+  if($hero['id']=='Defender'){
     $hero['path']=_('hero_defender.gif');
   }
-  if($hero['heroTypeID']==3){
+  if($hero['id']=='Constructor'){
     $hero['path']=_('hero_constructor.gif');
   }
+  
+  $hero['force'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force']) . ";");
+  $hero['lvlUp'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['lvl']) . ";");
+  $hero['expLeft']= $hero['lvlUp'] - $hero['exp'];
+  $hero['regHealPoints'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP']) . ";");
+  
+  if ($hero['healPoints'] == 0 || $hero['isAlive'] == false) {
+      $hero['location'] = _('wird wiederbelebt');
+      if ($eventHero == true) {
+        $disabled = _('');
+        $hero['location'] = _('tot');
+      }
+      $hero['path'] = _('hero_death.gif');
+    }
+    elseif($hero['caveID'] == 0) {
+      $hero['location'] = _('in Bewegung');
+    }
+    else {
+      $cave = getCaveByID($hero['caveID']);
+      $hero['location'] = $cave['name'] . " in (" . $cave['xCoord'] . "|" . $cave['yCoord'] .")";
+    }
+  
   return $hero;
 
 }
+
+function hero_parseFormulas ($formula) {
+  $formula = str_replace(
+    array(
+      '{forceLvl}',
+      '{lvl}', 
+      '{exp}',
+      '{regHpLvl}',
+      '{healPoints}', 
+      '{maxHealPoints}',
+      '{tpFree}', 
+      '{maxHpLvl}'
+    ), 
+    array(
+      '$hero[\'forceLvl\']',
+      '$hero[\'lvl\']',
+      '$hero[\'exp\']',
+      '$hero[\'regHpLvl\']',
+      '$hero[\'healPoints\']',
+      '$hero[\'maxHealPoints\']',
+      '$hero[\'tpFree\']',
+      '$hero[\'maxHpLvl\']'
+    ), $formula);
+  
+  return $formula;
+}
+
 function getEventHero($playerID) {
   global $db;
 
@@ -102,10 +160,12 @@ function skillForce($playerID) {
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET forceLvl = forceLvl + 1,
-             tpFree = tpFree - 1
-                         WHERE playerID = :playerID");
+                         tpFree = tpFree - 1
+                       WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  $sql->execute();
+  
+  
+  return $sql->execute();
 }
 function skillMaxHp($playerID,$maxHP) {
   global $db;
@@ -118,7 +178,7 @@ function skillMaxHp($playerID,$maxHP) {
                          WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('maxHP', $maxHP, PDO::PARAM_INT);
-  $sql->execute();
+  return $sql->execute();
 }
 function skillRegHp($playerID) {
   global $db;
@@ -129,7 +189,7 @@ function skillRegHp($playerID) {
              tpFree = tpFree - 1
                          WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  $sql->execute();
+  return $sql->execute();
 
 }
 function getRitualByLvl($lvl) {
@@ -232,7 +292,7 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
              :healPoints, :maxHealPoints, :isAlive)");
     $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-    $sql->bindValue('heroTypeID', $heroTypeID, PDO::PARAM_STR);
+    $sql->bindValue('heroTypeID', $heroTypeID, PDO::PARAM_INT);
     $sql->bindValue('name', $player['name'], PDO::PARAM_INT);
     $sql->bindValue('exp', 100, PDO::PARAM_INT);
     $sql->bindValue('healPoints', 0, PDO::PARAM_INT);
@@ -241,6 +301,7 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
 
     if (!$sql->execute()) {
       $sql->closeCursor();
+      echo $sql->errorInfo();
       return -6;
     }
 
@@ -252,6 +313,7 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
       
       if (!$sql->execute()) {
         $sql->closeCursor();
+        echo $sql->errorInfo();
         return -6;
       }
     }
@@ -326,8 +388,8 @@ function hero_usePotion ($potionID, $value) {
     $newHealPoints += floor($hero['maxHP'] * $potion->hp_prozentual_increase/100) + 
                    $potion->hp_increase;
   }
-  if ($hero['maxHP'] < $newHealPoints)
-    $newHealPoints = $hero['maxHP'];
+  if ($hero['maxHealPoints'] < $newHealPoints)
+    $newHealPoints = $hero['maxHealPoints'];
   var_dump($hero);
   if ($potion->tp_setBack == false) {
     $sql = $db->prepare("UPDATE " .HERO_TABLE ."
