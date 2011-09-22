@@ -18,111 +18,99 @@
 <div id="detail-dialog" style="display: none;" title="Höhlendetails"></div>
 
 <div class="box">
- <div class="boxheader">&nbsp;</div>
+  <div class="boxheader">&nbsp;</div>
   <div class="box-content inner success">
-   <table class="nohover" style="width: 100%;">
-    <tr>    
-      <td style="width: 30%; text-align: left;">
-        <form id="searchCoords" method="post" action="main.php">
-          <p>(X/Y):
-          <input type="text" name="xCoord" size="4" maxlength="4" />
-          <input type="text" name="yCoord" size="4" maxlength="4" />
-          <input type="hidden" name="modus" value="{{modus}}" />
-          <input type="hidden" name="caveID" value="{{caveID}}" />
-          <input type="submit" value="go" /></p>
-        </form>
-      </td>
+    <table class="nohover" style="width: 100%;">
+      <tr>
+        <td style="width: 30%; text-align: left;">
+          <form id="searchCoords" method="post" action="main.php">
+            <p>(X/Y):
+              <input type="text" name="xCoord" size="4" maxlength="4" />
+              <input type="text" name="yCoord" size="4" maxlength="4" />
+              <input type="hidden" name="modus" value="{{modus}}" />
+              <input type="hidden" name="caveID" value="{{caveID}}" />
+              <input type="submit" value="go" />
+            </p>
+          </form>
+        </td>
 
-      <td style="text-align: center;">
-        <form id="searchID" method="post" action="main.php">
-          <p><a href="?modus=CaveBookmarks&amp;task=Show">H&ouml;hlenliste:</a>
-          <select name="targetCaveID" id="targetCaveID">
-            <option value="-1">Bitte w&auml;hlen</option>
+        <td style="text-align: center;">
+          <form id="searchID" method="post" action="main.php">
+            <p><a href="?modus=CaveBookmarks&amp;task=Show">Höhlenliste:</a>
+            <select name="targetCaveID" id="targetCaveID">
+              <option value="-1">Bitte wählen</option>
               {% for bookmark in caveBookmarks %}
-                <option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>
+              <option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>
               {% endfor  %}
-          </select>
-          <input type="hidden" name="modus" value="map" /></p>
-        </form>
-      </td>
-      
-      <td style="width: 30%; text-align: right;">
-        <form id="searchName" method="post" action="main.php">
-          <p>Name:
-          <input type="text" name="caveName" size="16" maxlength="50" />
-          <input type="hidden" name="modus" value="{{modus}}" />
-          <input type="hidden" name="caveID" value="{{caveID}}" />
-          <input type="submit" value="go" /></p>
-        </form>
-      </td>
-      
-    </tr>
-   </table>
+            </select>
+            <input type="hidden" name="modus" value="map" /></p>
+          </form>
+        </td>
+
+        <td style="width: 30%; text-align: right;">
+          <form id="searchName" method="post" action="main.php">
+            <p>Name:
+              <input type="text" name="caveName" size="16" maxlength="50" />
+              <input type="hidden" name="modus" value="{{modus}}" />
+              <input type="hidden" name="caveID" value="{{caveID}}" />
+              <input type="submit" value="go" />
+            </p>
+          </form>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
 
 
 
 <table id="two-column-layout-table" class="nohover" style="vertical-align:top; width: 100%">
-<tr>
-<td>
+  <tr>
+    <td>
+      <div class="box">
+        <div class="boxheader">&nbsp;</div>
+        <div class="box-content inner success" id="map-view">
+          {% include "mapRegion.tmpl" %}
+        </div>
+      </div>
+    </td>
+    <td style="vertical-align:top; width:152px">
+      <div class="box">
+        <div class="boxheader">&nbsp;</div>
+        <table class="nohover" style="width:140px;padding: 0;">
+          <tr>
+            <td><a class="arrow" id="NW" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a></td>
+            <td><a class="arrow" id="N" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ N.x }}&amp;yCoord={{N.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png"  style="border:none;width:40px;hight:40px;" alt="nord" /></a></td>
+            <td><a class="arrow" id="NE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ NE.x }}&amp;yCoord={{NE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a></td>
+          </tr>
+          <tr>
+            <td><a class="arrow" id="W" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{W.x}}&amp;yCoord={{W.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png"  style="border:none;width:40px;hight:40px;" alt="west" /></a></td>
+            <td>&nbsp;</td>
+            <td><a class="arrow" id="E" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{E.x}}&amp;yCoord={{E.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png"  style="border:none;width:40px;hight:40px;" alt="ost" /></a></td>
+          </tr>
+          <tr>
+            <td><a class="arrow" id="SW" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SW.x}}&amp;yCoord={{SW.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="südwest" /></a></td>
+            <td><a class="arrow" id="S" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{S.x}}&amp;yCoord={{S.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png"  style="border:none;width:40px;hight:40px;" alt="süd" /></a></td>
+            <td><a class="arrow" id="SE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SE.x}}&amp;yCoord={{SE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a></td>
+          </tr>
+        </table>
 
-<div class="box">
-  <div class="boxheader">&nbsp;</div>
-  <div class="box-content inner success" id="map-view">
-    {% include "mapRegion.tmpl" %}
-  </div>
-</div>
-
-</td>
-<td style="vertical-align:top; width:152px">
-  
-  <div class="box">
-    <div class="boxheader">&nbsp;</div>
-
-      <table class="nohover" style="width:140px;padding: 0;">
-        <tr>          
-          <td> <a class="arrow" id="NW" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a>
-          </td>
-          <td> <a class="arrow" id="N" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ N.x }}&amp;yCoord={{N.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png"  style="border:none;width:40px;hight:40px;" alt="nord" /></a>
-          </td>
-          <td> <a class="arrow" id="NE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ NE.x }}&amp;yCoord={{NE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a>
-          </td>
-         </tr>
-         <tr>
-          <td> <a class="arrow" id="W" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{W.x}}&amp;yCoord={{W.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png"  style="border:none;width:40px;hight:40px;" alt="west" /></a>
-          </td>
-          <td>&nbsp;</td>
-          <td> <a class="arrow" id="E" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{E.x}}&amp;yCoord={{E.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png"  style="border:none;width:40px;hight:40px;" alt="ost" /></a>
-          </td>
-         </tr>
-         <tr>
-          <td> <a class="arrow" id="SW" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SW.x}}&amp;yCoord={{SW.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dwest" /></a>
-          </td>
-          <td> <a class="arrow" id="S" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{S.x}}&amp;yCoord={{S.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png"  style="border:none;width:40px;hight:40px;" alt="s&uuml;d" /></a>
-          </td>
-          <td> <a class="arrow" id="SE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SE.x}}&amp;yCoord={{SE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="s&uuml;dost" /></a>
-          </td>         
-        </tr>
-      </table>
-      
-      
-         {% if minimap %} 
-         <div id="minimap-base-url" style="display: none;">{{ minimap.file_base|raw }}</div>
-         <div class="box-content inner success" id="minimap-view">
-          <form action="main.php" method="post" id="minimapform">
-           <p><input id="minimap-image" name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
-             <input type="hidden" name="scaling" value="{{minimap.scaling}}" />
-             <input type="hidden" name="modus"  value="{{minimap.modus}}" />
-             <input type="hidden" name="caveID" value="{{caveID}}" />
-           </p>
-          </form>
+        {% if minimap %} 
+          <div id="minimap-base-url" style="display: none;">{{ minimap.file_base|raw }}</div>
+          <div class="box-content inner success text-center" id="minimap-view">
+            <form action="main.php" method="post" id="minimapform">
+              <p>
+                <input id="minimap-image" name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
+                <input type="hidden" name="scaling" value="{{minimap.scaling}}" />
+                <input type="hidden" name="modus"  value="{{minimap.modus}}" />
+                <input type="hidden" name="caveID" value="{{caveID}}" />
+              </p>
+            </form>
           </div>
-         {% endif %}
-  </div>
-         
-</td>
-</tr>
+        {% endif %}
+      </div>
+    </td>
+  </tr>
 </table>
 
 <script>

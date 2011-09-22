@@ -37,8 +37,8 @@ $db     = DbConnect();
 $post   = new POST();
 
 // which coordinate should be marked
-$x    = (int) $post->x;
-$y    = (int) $post->y;
+$x = request_var('x', 0);
+$y = request_var('y', 0);
 
 // get map size
 $size = getMapSize();

@@ -79,7 +79,7 @@ define("TOOLS_PATH", "@TOOLS_URL@");
 /* ***** MAP ***** ********************************************************* */
 define("MAP_WIDTH",       9);
 define("MAP_HEIGHT",      9);
-define("MINIMAP_SCALING", 150);
+define("MINIMAP_SCALING", 200);
 
 /* ***** GOVERNOR ***** **************************************************** */
 define("GOVERNOR_ACTIVATED", 0);
