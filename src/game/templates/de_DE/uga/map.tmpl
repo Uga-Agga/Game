@@ -108,9 +108,10 @@
       
       
          {% if minimap %} 
+         <div id="minimap-base-url" style="display: none;">{{ minimap.file_base|raw }}</div>
          <div class="box-content inner success" id="minimap-view">
           <form action="main.php" method="post" id="minimapform">
-           <p><input name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
+           <p><input id="minimap-image" name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
              <input type="hidden" name="scaling" value="{{minimap.scaling}}" />
              <input type="hidden" name="modus"  value="{{minimap.modus}}" />
              <input type="hidden" name="caveID" value="{{caveID}}" />
@@ -187,6 +188,14 @@
           hideMessage();
         }
         connectDetailClickedEvents();
+        
+        // get a new minimap with corrected position marker
+        var xCoord = parseInt($('#map-queryX').html());
+        var yCoord = parseInt($('#map-queryY').html());
+        var minimapbase = $('#minimap-base-url').html();
+        
+        $('#minimap-image').attr('src', (minimapbase+"?x="+xCoord+"&y="+yCoord));
+        
       });
     }
     
@@ -248,9 +257,6 @@
     
     connectDetailClickedEvents();  // connect the map-detail-links to the ajax event handler
     
-   // $("#map-view")
-   //  .html("Loading...");
- //   loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord={{xCoord}}&yCoord={{yCoord}}");
   })
 </script>
 

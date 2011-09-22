@@ -2,6 +2,7 @@
 /*
  * minimap.png.php - erzeugt eine Minimap mit einer Markierung für den aktuellen Standpunkt
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2011  Sascha Lange <salange@uos.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -32,7 +33,7 @@ define("MAP_TIMEOUT", 60*60);
 
 
 $config = new Config();
-$db     = new Db();
+$db     = DbConnect();
 $post   = new POST();
 
 // which coordinate should be marked
@@ -93,7 +94,7 @@ function getMapSize(){
 	global $db;
 
 	if($res = $db->query("SELECT MIN(xCoord) as minX, MAX(xCoord) as maxX, MIN(yCoord) as minY, MAX(yCoord) as maxY FROM Cave")){
-	  return $res->nextRow(MYSQL_ASSOC);
+	  return $res->fetch();
 	}
 	return 0;
 }
@@ -122,7 +123,7 @@ function createTerrainMap($db){
     return false;
   }
   $terrain = array();
-  while($row = $db_result->nextRow(MYSQL_ASSOC)){
+  while($row = $db_result->fetch()){
     if(array_key_exists($row['terrain'], $terrain_colour))
       ImageSetPixel($terrainMap, $row['xCoord'] - $size['minX'], $row['yCoord'] - $size['minY'], $terrain_colour[$row['terrain']]);
   }

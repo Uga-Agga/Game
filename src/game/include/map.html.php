@@ -197,6 +197,15 @@ function getCaveMapContent($caveID, $caves) {
   
   $mapData = calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord);
   $template->addVars($mapData);
+  
+  $template->addVars(array( 'minimap' => array(
+    'file_base' => "images/minimap.png.php",
+    'file'      => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
+    'modus'     => MAP,
+    'width'     => intval(($maxX-$minX+1) * MINIMAP_SCALING / 100),
+    'height'    => intval(($maxY-$minY+1) * MINIMAP_SCALING / 100),
+    'scaling'   => MINIMAP_SCALING)));
+
 }
 
 
@@ -321,33 +330,15 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
     array_push($regionData['rows'], $cells);
   } 
   
-  
   $mapData = array(
     'centerXCoord' => $centerX,
     'centerYCoord' => $centerY,
-    'mapregion' => $regionData);
+    'queryXCoord'  => $xCoord,
+    'queryYCoord'  => $yCoord,
+    'mapregion'    => $regionData
+  );
 
   return $mapData;
-  
-    // TODO: this functionality has to be added again! may be done in JS.
-/*
-  
-  // Minimap
-  $width  = $mapSize['maxX'] - $mapSize['minX'] + 1;
-  $height = $mapSize['maxY'] - $mapSize['minY'] + 1;
-  
-  // compute mapcenter coords
-  $mcX = $minX + intval($MAP_WIDTH/2);
-  $mcY = $minY + intval($MAP_HEIGHT/2);
-
-  $template->addVar("/MINIMAP", array('file'    => "images/minimap.png.php?x=" . $xCoord . "&amp;y=" . $yCoord,
-                                        'modus'   => MAP,
-                                        'width'   => intval($width * MINIMAP_SCALING / 100),
-                                        'height'  => intval($height * MINIMAP_SCALING / 100),
-                                        'scaling' => MINIMAP_SCALING));
-*/
-  
-  
 }
 
 
