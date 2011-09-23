@@ -217,8 +217,8 @@
       event.preventDefault();
       var x = event.pageX - $(this).offset().left;
       var y = event.pageY - $(this).offset().top;
-
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+x+"&yCoord="+y);
+    //  alert ("Modus: {{minimap.modus}} scaling: {{minimap.scaling}}");
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&minimap_x="+x+"&minimap_y="+y+"&scaling={{minimap.scaling}}");
 
       return false;
     });
