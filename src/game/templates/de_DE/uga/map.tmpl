@@ -212,6 +212,16 @@
       loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
       return false;
     });
+    
+    $('#minimap-image').click(function (event) {
+      event.preventDefault();
+      var x = event.pageX - $(this).offset().left;
+      var y = event.pageY - $(this).offset().top;
+
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+x+"&yCoord="+y);
+
+      return false;
+    });
   
     // store the direction to move the map with each arrow
     $('#NW').data('dx', -1).data('dy', -1); 
