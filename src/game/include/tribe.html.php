@@ -18,31 +18,30 @@ define("TRIBE_ACTION_LEAVE",         3);
 define("TRIBE_ACTION_MESSAGE",       4);
 
 function tribe_getContent($playerID, $tribe) {
-  
-  global $no_resource_flag, $governmentList;
+    global $template, $no_resource_flag, $governmentList;
 
   $no_resource_flag = 1;
 
   // messages
   $messageText = array (
-   -14 => _('Nicht zul&auml;ssiges Stammesk&uuml;rzel oder Passwort.'),
+   -14 => _('Nicht zulässiges Stammeskürzel oder Passwort.'),
    -13 => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.'),
    -12 => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.'),
-   -11 => _('Die Stammeszugeh&ouml;rigkeit hat sich erst vor kurzem ge&auml;ndert. Warten Sie, bis die Stammeszugeh&ouml;rigkeit ge&auml;ndert werden darf.'),
-   -10 => _('Ihr Stamm befindet sich im Krieg. Sie d&uuml;rfen derzeit nicht austreten.'),
+   -11 => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.'),
+   -10 => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.'),
     -9 => _('Die Nachricht konnte nicht eingetragen werden.'),
-    -8 => _('Sie sind der Stammesanf&uuml;hrer und konnten nicht entfernt werden.'),
+    -8 => _('Sie sind der Stammesanführer und konnten nicht entfernt werden.'),
     -7 => _('Das Passwort konnte nicht gesetzt werden!'),
     -6 => _('Der Stamm konnte nicht angelegt werden.'),
-    -5 => _('Es gibt schon einen Stamm mit diesem K&uuml;rzel;'),
-    -4 => _('Sie konnten nicht austreten. Vermutlich geh&ouml;ren Sie gar keinem Stamm an.'),
+    -5 => _('Es gibt schon einen Stamm mit diesem Kürzel;'),
+    -4 => _('Sie konnten nicht austreten. Vermutlich gehören Sie gar keinem Stamm an.'),
     -3 => _('Sie konnten dem Stamm nicht beitreten. Vermutlich sind Sie schon bei einem anderen Stamm Mitglied.'),
-    -2 => _('Passwort und Stammesk&uuml;rzel stimmen nicht &uuml;berein.'),
+    -2 => _('Passwort und Stammeskürzel stimmen nicht ü berein.'),
     -1 => _('Bei der Aktion ist ein unerwarteter Datenbankfehler aufgetreten!'),
      1 => _('Sie sind dem Stamm beigetreten.'),
      2 => _('Sie haben den Stamm verlassen.'),
      3 => _('Der Stamm wurde erfolgreich angelegt.'),
-     4 => _('Sie waren das letzte Mitglied, der Stamm wurde aufgel&ouml;st'),
+     4 => _('Sie waren das letzte Mitglied, der Stamm wurde aufgelöst'),
      5 => _('Die Nachricht wurde eingetragen'),
     10 => _('Dieser Stammesname ist nicht erlaubt!'));
 
@@ -85,10 +84,7 @@ function tribe_getContent($playerID, $tribe) {
         break;
     }
 
-    if ($tribeAction == TRIBE_ACTION_JOIN  ||
-        $tribeAction == TRIBE_ACTION_LEAVE ||
-        $tribeAction == TRIBE_ACTION_CREATE) {
-
+    if ($tribeAction == TRIBE_ACTION_JOIN  || $tribeAction == TRIBE_ACTION_LEAVE || $tribeAction == TRIBE_ACTION_CREATE) {
       // the tribe might have changed
       page_refreshUserData();
       $tribe = $_SESSION['player']->tribe;
@@ -100,57 +96,46 @@ function tribe_getContent($playerID, $tribe) {
 // ------- SECTION FOR PLAYERS WITHOUT MEMBERSHIP -----------------------------
 
   if (!$tribe) {            // not a tribe member
-    $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'tribe.ihtml');
-
-    if ($messageID) {
-      tmpl_set($template, "MESSAGE/message", $messageText[$messageID]);
-    }
+    $template->setFile('tribe.tmpl');
 
     // ------------------------------------------------------------------------
     // ----------- Join existing tribe ----------------------------------------
-
-    tmpl_iterate($template, "FORM");
-
-    $form = array(
+    $template->addVars(array(
       "heading"         => _('Einem Stamm beitreten'),
       "modus_name"      => "modus",
       "modus_value"     => TRIBE,
       "action_name"     => "tribeAction",
       "action_value"    => TRIBE_ACTION_JOIN,
 
-      "TAG/fieldname"   => "tag",
-      "TAG/tag_regexp"  => _("Buchstaben, Zahlen, Bindestriche; keine Zahlen oder Bindestrich am Anfang"),
-      "TAG/value"       => ($tribe ? $tribe : request_var('tag', "")),
-      "TAG/size"        => 8,
-      "TAG/maxlength"   => 8,
-      "TAG/form_prefix"     => "join_",
+      "tag_fieldname"   => "tag",
+      "tag_tag_regexp"  => _("Buchstaben, Zahlen, Bindestriche; keine Zahlen oder Bindestrich am Anfang"),
+      "tag_value"       => ($tribe ? $tribe : request_var('tag', "")),
+      "tag_size"        => 8,
+      "tag_maxlength"   => 8,
+      "tag_form_prefix"     => "join_",
 
-      "PASSWORD/fieldname" => "password",
-      "PASSWORD/pw_regexp" => _("mind. 6 Buchstaben oder Zahlen"),
-      "PASSWORD/value"     => request_var('password', ""),
-      "PASSWORD/size"      => 8,
-      "PASSWORD/maxlength" => 15,
-      "PASSWORD/form_prefix"     => "join_",
+      "password_fieldname" => "password",
+      "password_pw_regexp" => _("mind. 6 Buchstaben oder Zahlen"),
+      "password_value"     => request_var('password', ""),
+      "password_size"      => 8,
+      "password_maxlength" => 15,
+      "password_form_prefix"     => "join_",
 
       "BUTTON/caption"  => _('Beitreten')
-      );
-
-    tmpl_set($template, "FORM", $form);
+    ));
 
     // ------------------------------------------------------------------------
     // ----------- Create new tribe -------------------------------------------
 
-    tmpl_iterate($template, "FORM");
-
     // only change the different values for creation
-    $form["heading"]                  = _('Einen neuen Stamm gr&uuml;nden');
-    $form["TAG/form_prefix"]          = "create_";
-    $form["PASSWORD/form_prefix"]     = "create_";
+    $form["heading"]                  = _('Einen neuen Stamm gründen');
+    $form["tag_form_prefix"]          = "create_";
+    $form["password_form_prefix"]     = "create_";
     $form["action_value"]             = TRIBE_ACTION_CREATE;
-    $form["BUTTON/caption"]           = _('Neu gr&uuml;nden');
+    $form["BUTTON/caption"]           = _('Neu gründen');
     $form["RESTORERANKING/fieldName"] = "restore_rank";
 
-    tmpl_set($template, "FORM", $form);
+    //tmpl_set($template, "FORM", $form);
   }
 
 
@@ -163,9 +148,6 @@ function tribe_getContent($playerID, $tribe) {
 
     $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'tribeMember.ihtml');
 
-    if ($messageID) {
-      tmpl_set($template, "MESSAGE/message", $messageText[$messageID]);
-    }
 
     if (tribe_isLeaderOrJuniorLeader($playerID, $tribe)) {
       $adminData = array(
@@ -215,7 +197,7 @@ function tribe_getContent($playerID, $tribe) {
         "LEADER/modus_value"          => PLAYER_DETAIL);
         }
     else {
-      $leaderData = array ("NOLEADER/message" => _('Ihr Stamm hat zur Zeit keinen Anf&uuml;hrer.'));
+      $leaderData = array ("NOLEADER/message" => _('Ihr Stamm hat zur Zeit keinen Anführer.'));
     }
 
     $leaderDeterminationData = array (
@@ -272,8 +254,10 @@ function tribe_getContent($playerID, $tribe) {
 
     tmpl_set($template, "NORMAL", $data);
   }
-
-  return tmpl_parse($template);
+  
+  if ($messageID) {
+    tmpl_set($template, "MESSAGE/message", $messageText[$messageID]);
+  }
 }
 
 ?>

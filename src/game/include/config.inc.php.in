@@ -178,6 +178,8 @@ class Config {
                                ARTEFACT_DETAIL, TRIBE_DELETE, TRIBE_ADMIN,
                                DEFENSE_BUILDER, TAKEOVER, USER_PROFILE);
 
+  var $requestKeysNeed = array('modus');
+
   var $template_paths  = array(1 => 'uga');
 
   var $messageImage = array( 2 => "battle_won.gif",

@@ -648,32 +648,24 @@ function parseCost($building, &$details) {
   return $ret;
 }
 
-function parseUrl($queryAry, $allow=array(), $new=array()) {
-  if (empty($queryAry) || empty($allow)) {
-    return;
+function createRequestString($requestKeys) {
+  global $config;
+
+  // standard typen
+  if (!is_array($requestKeys) || empty($requestKeys)) {
+    return (isset($_REQUEST['modus'])) ? 'modus='.$_REQUEST['modus'] : '';
   }
 
-  parse_str($queryString, $queryAry);
+  $requestKeys = array_merge($config->requestKeysNeed, $requestKeys);
 
-  foreach ($queryAry as $item => $value) {
-    if (!in_array($item, $allow)) {
-      unset($queryAry[$item]);
-      continue;
+  $requestAry = array();
+  foreach ($requestKeys as $key) {
+    if (isset($_REQUEST[$key])) {
+      $requestAry[] = $key . '=' . $_REQUEST[$key];
     }
   }
 
-  foreach ($new as $item => $value) {
-    $queryAry[urlencode($item)] = urlencode($value);
-  }
-
-  $return = array();
-  foreach ($queryAry as $item => $value) {
-    $return[] = $item . '=' . $value;
-  }
-
-  $return = implode("&amp;", $return);
-
-  return $return;
+  return implode('&amp;', $requestAry);
 }
 
 ?>

@@ -88,7 +88,7 @@ page_ore();
 
 ################################################################################
 
-
+$requestKeys = array();
 ///////////////////////////////////////////////////////////////////////////////
 $showads = false;
 switch ($modus) {
@@ -160,9 +160,11 @@ switch ($modus) {
   case MESSAGES_LIST:
     $deletebox = request_var('deletebox', array('' => ''));
     $box = request_var('box', 1);
+    $box = (!empty($box)) ? $box : 1;
 
     $pagetitle = _("Nachrichten");
     $content = messages_getMessages($caveID, $deletebox, $box);
+    $requestKeys = array('box');
     break;
 
   case MESSAGE_READ:
@@ -171,6 +173,7 @@ switch ($modus) {
 
     $pagetitle = _("Nachricht lesen");
     $content = messages_showMessage($caveID, $messageID, $box);
+    $requestKeys = array('messageID', 'box', 'filter');
     break;
 
   case MESSAGE_NEW:
@@ -351,7 +354,7 @@ switch ($modus) {
     break;
 
   /////////////////////////////////////////////////////////////////////////////
-  // FRAGEB�GEN                                                              //
+  // FRAGEBÖGEN                                                              //
   /////////////////////////////////////////////////////////////////////////////
 
   case QUESTIONNAIRE:
@@ -562,8 +565,7 @@ $template->addVars(array(
   'wonder_detail_link'      => WONDER_DETAIL,
 ));
 
-$query_string = preg_replace('/&caveID=[^&]*/', "", $_SERVER['QUERY_STRING']);
-$query_string = preg_replace('/&/', '&amp;', $query_string);
+$requestString = createRequestString($requestKeys);
 
 $caves = array();
 if (sizeof($ownCaves)) {
@@ -580,7 +582,7 @@ if (sizeof($ownCaves)) {
       'active_name'       => $ownCaves[$caveID]['name'],
       'active_x_coord'    => $ownCaves[$caveID]['xCoord'],
       'active_y_coord'    => $ownCaves[$caveID]['yCoord'],
-      'query_string'      => $query_string,
+      'query_string'      => $requestString,
       'active'            => ($Cave['caveID'] == $caveID) ? true : false,
     );
   }

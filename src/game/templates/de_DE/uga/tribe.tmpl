@@ -1,0 +1,54 @@
+{% extends "base.tmpl" %}
+{% block title %}Stämmes{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+
+<div class="box small">
+  <div class="box-header">Stamm gründen</div>
+  <div class="box-content success inner">
+    <form name="tribe_create" method="post" action="main.php?modus={{ tribe_link }}">
+      <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+        <tr>
+          <td width="150px;"><label for="create_tag">Stammesürzel</label></td>
+          <td><input name="tag" id="create_tag" value="{{ create_tag_value }}" type="text" size="16" maxlength="8" /></td>
+        </tr>
+        <tr>
+          <td width="150px;"><label for="create_password">Passwort</label></td>
+          <td><input name="password" id="create_password" value="{{ create_password_value }}" type="password" size="16" maxlength="8" /></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <input name="restore_rank" id="restore_rank" checked="checked" value="yes" type="checkbox" />
+            <label for="restore_rank">Ranking aus der alten Runde übernehmen</label><br />
+            <span style="font-size: x-small;">Passwort und Stammeskürzel müssen mit denen aus der alten Runde übereinstimmen.</span>
+          </td>
+        </tr>
+        <tr><td colspan="2"><input type="submit" value="Stamm gründen!" /></td></tr>
+      </table>
+      <input type="hidden" name="tribeAction" value="{{ tribe_action_create }}" />
+    </form>
+  </div>
+</div>
+
+<div class="box small">
+  <div class="box-header">Stamm beitreten</div>
+  <div class="box-content success inner">
+    <form name="tribe_join" method="post" action="main.php?modus={{ tribe_link }}">
+      <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+        <tr>
+          <td width="150px;"><label for="join_tag">Stammesürzel</label></td>
+          <td><input name="tag" id="join_tag" value="{{ join_tag_value }}" type="text" size="16" maxlength="8" /></td>
+        </tr>
+        <tr>
+          <td width="150px;"><label for="join_password">Passwort</label></td>
+          <td><input name="password" id="join_password" value="{{ join_password_value }}" type="password" size="16" maxlength="8" /></td>
+        </tr>
+        <tr><td colspan="2"><input type="submit" value="Stamm beitreten!" /></td></tr>
+      </table>
+      <input type="hidden" name="tribeAction" value="{{ tribe_action_join }}" />
+    </form>
+  </div>
+</div>
+
+{% endblock %}
