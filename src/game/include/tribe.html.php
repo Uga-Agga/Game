@@ -132,7 +132,7 @@ function tribe_getContent($playerID, $tribe) {
     $warTargets = relation_getWarTargetsAndFame($tribe);
     if (sizeof($warTargets)) {
       foreach($warTargets as $target) {
-        $targetFacts = array(
+        $targetFact = array(
           'target'         =>  $target['target'],
           'fame_own'       =>  $target['fame_own'],
           'fame_target'    =>  $target['fame_target'],
@@ -140,18 +140,20 @@ function tribe_getContent($playerID, $tribe) {
         );
 
         if ($target['isForcedSurrenderTheoreticallyPossible']) {
-          $targetFacts['percent_estimated'] = $target['percent_estimated'];
+          $targetFact['percent_estimated'] = $target['percent_estimated'];
           if ($target['isForcedSurrenderPracticallyPossible']) {
-            $targetFacts['class'] = 'enough';
+            $targetFact['class'] = 'enough';
           } else if ($target['isForcedSurrenderPracticallyPossibleForTarget']) {
-            $targetFacts['class'] = 'less';
+            $targetFact['class'] = 'less';
           } else {
-            $targetFacts['class'] = '';
+            $targetFact['class'] = '';
           }
         }
+
+        $targetFacts[] = $targetFact;
       }
 
-      $template->addVar('targetFacts', $targetFacts);
+      $template->addVar('target_facts', $targetFacts);
     }
 
     // init messages class
