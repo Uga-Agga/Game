@@ -70,8 +70,8 @@
           <th>Knüppelpunkte: (ihre/unsere)</th>
           <th>Kriegsanteil</th>
         </tr>
-        {% if player_caves %}
-          {% for item in player_caves %}
+        {% if target_facts %}
+          {% for item in target_facts %}
           <tr>
             <td>{{ item.target }}</td>
             <td>{{ item.fame_target }}/{{ item.fame_own }}</td>

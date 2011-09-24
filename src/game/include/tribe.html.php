@@ -151,7 +151,7 @@ function tribe_getContent($playerID, $tribe) {
         }
       }
 
-      $template->addVars('targetFacts', $targetFacts);
+      $template->addVar('targetFacts', $targetFacts);
     }
 
     // init messages class
