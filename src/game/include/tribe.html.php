@@ -12,252 +12,176 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-define("TRIBE_ACTION_JOIN",          1);
-define("TRIBE_ACTION_CREATE",        2);
-define("TRIBE_ACTION_LEAVE",         3);
-define("TRIBE_ACTION_MESSAGE",       4);
+define('TRIBE_ACTION_JOIN',          1);
+define('TRIBE_ACTION_CREATE',        2);
+define('TRIBE_ACTION_LEAVE',         3);
+define('TRIBE_ACTION_MESSAGE',       4);
 
 function tribe_getContent($playerID, $tribe) {
-    global $template, $no_resource_flag, $governmentList;
+  global $template, $no_resource_flag, $governmentList;
 
   $no_resource_flag = 1;
 
   // messages
   $messageText = array (
-   -14 => _('Nicht zulässiges Stammeskürzel oder Passwort.'),
-   -13 => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.'),
-   -12 => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.'),
-   -11 => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.'),
-   -10 => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.'),
-    -9 => _('Die Nachricht konnte nicht eingetragen werden.'),
-    -8 => _('Sie sind der Stammesanführer und konnten nicht entfernt werden.'),
-    -7 => _('Das Passwort konnte nicht gesetzt werden!'),
-    -6 => _('Der Stamm konnte nicht angelegt werden.'),
-    -5 => _('Es gibt schon einen Stamm mit diesem Kürzel;'),
-    -4 => _('Sie konnten nicht austreten. Vermutlich gehören Sie gar keinem Stamm an.'),
-    -3 => _('Sie konnten dem Stamm nicht beitreten. Vermutlich sind Sie schon bei einem anderen Stamm Mitglied.'),
-    -2 => _('Passwort und Stammeskürzel stimmen nicht ü berein.'),
-    -1 => _('Bei der Aktion ist ein unerwarteter Datenbankfehler aufgetreten!'),
-     1 => _('Sie sind dem Stamm beigetreten.'),
-     2 => _('Sie haben den Stamm verlassen.'),
-     3 => _('Der Stamm wurde erfolgreich angelegt.'),
-     4 => _('Sie waren das letzte Mitglied, der Stamm wurde aufgelöst'),
-     5 => _('Die Nachricht wurde eingetragen'),
-    10 => _('Dieser Stammesname ist nicht erlaubt!'));
+   -14 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
+   -13 => array('type' => 'error', 'message' => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.')),
+   -12 => array('type' => 'error', 'message' => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.')),
+   -11 => array('type' => 'error', 'message' => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.')),
+   -10 => array('type' => 'error', 'message' => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.')),
+    -9 => array('type' => 'error', 'message' => _('Die Nachricht konnte nicht eingetragen werden.')),
+    -8 => array('type' => 'error', 'message' => _('Sie sind der Stammesanführer und konnten nicht entlassen werden.')),
+    -7 => array('type' => 'error', 'message' => _('Das Passwort konnte nicht gesetzt werden!')),
+    -6 => array('type' => 'error', 'message' => _('Der Stamm konnte nicht angelegt werden.')),
+    -5 => array('type' => 'error', 'message' => _('Es gibt schon einen Stamm mit diesem Kürzel.')),
+    -4 => array('type' => 'error', 'message' => _('Sie konnten nicht austreten. Vermutlich gehören Sie gar keinem Stamm an.')),
+    -3 => array('type' => 'error', 'message' => _('Sie konnten dem Stamm nicht beitreten. Vermutlich sind Sie schon bei einem anderen Stamm Mitglied.')),
+    -2 => array('type' => 'error', 'message' => _('Stammeskürzel und Passwort stimmen nicht überein.')),
+    -1 => array('type' => 'error', 'message' => _('Bei der Aktion ist ein unerwarteter Datenbankfehler aufgetreten!')),
+     1 => array('type' => 'success', 'message' => _('Sie sind dem Stamm beigetreten.')),
+     2 => array('type' => 'success', 'message' => _('Sie haben den Stamm verlassen.')),
+     3 => array('type' => 'success', 'message' => _('Der Stamm wurde erfolgreich angelegt.')),
+     4 => array('type' => 'success', 'message' => _('Sie waren das letzte Mitglied, der Stamm wurde aufgelöst')),
+     5 => array('type' => 'success', 'message' => _('Die Nachricht wurde eingetragen')),
+    10 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!'))
+  );
 
   // process form data
-
   $messageID = 0;
-  if ($tribeAction = request_var('tribeAction', 0)) {
-    switch ($tribeAction) {
+  $tribeAction =  request_var('tribeAction', 0);
+  switch ($tribeAction) {
+    case TRIBE_ACTION_JOIN:
+      if (tribe_validatePassword(request_var('password', '')) && tribe_validateTag(request_var('tag', ''))) {
+        $messageID = tribe_processJoin($playerID, request_var('tag', ''), request_var('password', ''));
+      } else {
+        $messageID = tribe_processJoinFailed();
+      }
+    break;
 
-      case TRIBE_ACTION_JOIN:
-        if (tribe_validatePassword(request_var('password', "")) && tribe_validateTag(request_var('tag', ""))) {
-          $messageID = tribe_processJoin($playerID, request_var('tag', ""), request_var('password', ""));
-        } else {
-          $messageID = tribe_processJoinFailed();
-        }
-        break;
+    case TRIBE_ACTION_CREATE:
+      if (tribe_validatePassword(request_var('password', '')) && tribe_validateTag(request_var('tag', ''))){
+        $messageID = tribe_processCreate($playerID, request_var('tag', ''), request_var('password', ''), request_var('restore_rank', 'no') == 'yes');
+      } else {
+        $messageID = tribe_processCreateFailed();
+      }
+    break;
 
-      case TRIBE_ACTION_CREATE:
-        if (tribe_validatePassword(request_var('password', "")) && tribe_validateTag(request_var('tag', ""))){
-          $messageID = tribe_processCreate($playerID, request_var('tag', ""), request_var('password', ""), request_var('restore_rank', 'no') == 'yes');
-        } else {
-          $messageID = tribe_processCreateFailed();
-        }
-        break;
+    case TRIBE_ACTION_LEAVE:
+      $messageID = tribe_processLeave($playerID, $tribe);
+    break;
 
-      case TRIBE_ACTION_LEAVE:
-        $messageID = tribe_processLeave($playerID, $tribe);
-        break;
+    case TRIBE_ACTION_MESSAGE:
+      $msgTxt = request_var('messageText', '');
+      $msgTxt = (!empty($msgTxt)) ? $msgTxt : '';
+      $ingame = (request_var('ingame', 0)) ? true : false;
 
-      case TRIBE_ACTION_MESSAGE:
-        $mesText = request_var('messageText', "");
-        $text = (!empty($mesText)) ? $mesText : "";
-        $ingame = (request_var('ingame', 0)) ? true : false;
+      if ($msgTxt && $ingame){
+        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $msgTxt);
+      } else if ($msgTxt && !$ingame){
+        $messageID = tribe_processSendTribeMessage($playerID, $tribe, $msgTxt);
+      }
+    break;
+  }
 
-        if ($mesText && $ingame){
-          $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $text);
-        } else if ($mesText && !$ingame){
-          $messageID = tribe_processSendTribeMessage($playerID, $tribe, $text);
-        }
-        break;
-    }
-
-    if ($tribeAction == TRIBE_ACTION_JOIN  || $tribeAction == TRIBE_ACTION_LEAVE || $tribeAction == TRIBE_ACTION_CREATE) {
-      // the tribe might have changed
-      page_refreshUserData();
-      $tribe = $_SESSION['player']->tribe;
-    }
-
+  if ($tribeAction == TRIBE_ACTION_JOIN  || $tribeAction == TRIBE_ACTION_LEAVE || $tribeAction == TRIBE_ACTION_CREATE) {
+    // the tribe might have changed
+    page_refreshUserData();
+    $tribe = $_SESSION['player']->tribe;
   }
 
 // ----------------------------------------------------------------------------
 // ------- SECTION FOR PLAYERS WITHOUT MEMBERSHIP -----------------------------
 
-  if (!$tribe) {            // not a tribe member
+  if (empty($tribe)) {            // not a tribe member
     $template->setFile('tribe.tmpl');
-
-    // ------------------------------------------------------------------------
-    // ----------- Join existing tribe ----------------------------------------
-    $template->addVars(array(
-      "heading"         => _('Einem Stamm beitreten'),
-      "modus_name"      => "modus",
-      "modus_value"     => TRIBE,
-      "action_name"     => "tribeAction",
-      "action_value"    => TRIBE_ACTION_JOIN,
-
-      "tag_fieldname"   => "tag",
-      "tag_tag_regexp"  => _("Buchstaben, Zahlen, Bindestriche; keine Zahlen oder Bindestrich am Anfang"),
-      "tag_value"       => ($tribe ? $tribe : request_var('tag', "")),
-      "tag_size"        => 8,
-      "tag_maxlength"   => 8,
-      "tag_form_prefix"     => "join_",
-
-      "password_fieldname" => "password",
-      "password_pw_regexp" => _("mind. 6 Buchstaben oder Zahlen"),
-      "password_value"     => request_var('password', ""),
-      "password_size"      => 8,
-      "password_maxlength" => 15,
-      "password_form_prefix"     => "join_",
-
-      "BUTTON/caption"  => _('Beitreten')
-    ));
-
-    // ------------------------------------------------------------------------
-    // ----------- Create new tribe -------------------------------------------
-
-    // only change the different values for creation
-    $form["heading"]                  = _('Einen neuen Stamm gründen');
-    $form["tag_form_prefix"]          = "create_";
-    $form["password_form_prefix"]     = "create_";
-    $form["action_value"]             = TRIBE_ACTION_CREATE;
-    $form["BUTTON/caption"]           = _('Neu gründen');
-    $form["RESTORERANKING/fieldName"] = "restore_rank";
-
-    //tmpl_set($template, "FORM", $form);
   }
-
 
 // ----------------------------------------------------------------------------
 // ------- SECTION FOR TRIBE MEMBERS ------------- ----------------------------
   else {
     if (!($tribeData = tribe_getTribeByTag($tribe))) {
-      return _('Fehler');
+      $template->throwError('Der Stamm konnte nicht geladen werden.');
+      return;
     }
 
-    $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'tribeMember.ihtml');
-
+    // open template
+    $template->setFile('tribeMember.tmpl');
 
     if (tribe_isLeaderOrJuniorLeader($playerID, $tribe)) {
-      $adminData = array(
-          "modus_name"        => "modus",
-          "modus_value"       => TRIBE_ADMIN,
-          "TRIBEMESSAGEFORM"  => array (
-          "message_name"      => "messageText",
-          "modus_name"        => "modus",
-          "modus_value"       => TRIBE,
-          "action_name"       => "tribeAction",
-          "action_value"      => TRIBE_ACTION_MESSAGE));
-      tmpl_set($template, "ADMIN", $adminData);
+      $template->addVar('is_leader', true);
     }
 
-    $data = array(
-      "tag"          => $tribe,
-      "name"         => $tribeData['name'],
-      "link_tribe"   => "modus=".TRIBE_DETAIL."&amp;tribe=".urlencode(unhtmlentities($tribeData['tag'])),
-
-      "MEMBERS/tag_name"      => "tag",
-      "MEMBERS/tag_value"     => $tribe,
-      "MEMBERS/modus_name"    => "modus",
-      "MEMBERS/modus_value"   => TRIBE_PLAYER_LIST,
-
-      "LEAVE/modus_name"      => "modus",
-      "LEAVE/modus_value"     => TRIBE,
-      "LEAVE/action_name"     => "tribeAction",
-      "LEAVE/action_value"    => TRIBE_ACTION_LEAVE
-      );
-
-    if ($tribeData['leaderID']) {
-      if($tribeData['juniorLeaderID']) {
-        $JuniorAdmin = $targetPlayer = new Player(getPlayerByID($tribeData['juniorLeaderID']));
-      }
-      else {
-        $JuniorAdmin = $targetPlayer = array();
-      }
-
-      $leaderData = array (
-        "LEADER/name"                 => $tribeData['leaderName'],
-        "LEADER/leaderID_name"        => "detailID",
-        "LEADER/leaderID_value"       => $tribeData['leaderID'],
-        "LEADER/juniorLeaderName"     => (isset($JuniorAdmin->name)) ? $JuniorAdmin->name : '',
-        "LEADER/juniorLeaderID_name"  => "detailID",
-        "LEADER/juniorLeaderID_value" => (isset($JuniorAdmin->playerID)) ? $JuniorAdmin->playerID : 0,
-        "LEADER/modus_name"           => "modus",
-        "LEADER/modus_value"          => PLAYER_DETAIL);
-        }
+    if($tribeData['juniorLeaderID']) {
+      $juniorAdmin = new Player(getPlayerByID($tribeData['juniorLeaderID']));
+    }
     else {
-      $leaderData = array ("NOLEADER/message" => _('Ihr Stamm hat zur Zeit keinen Anführer.'));
+      $juniorAdmin = array();
     }
 
-    $leaderDeterminationData = array (
-      "LEADERDETERMINATION/modus_name"     => "modus",
-      "LEADERDETERMINATION/modus_value"    => TRIBE_LEADER_DETERMINATION);
+    $template->addVars(array(
+      'tribe_name'   => $tribeData['name'],
+      'tribe_tag'    => $tribeData['tag'],
+      'leader_name'  => $tribeData['leaderName'],
+      'leader_id'    => $tribeData['leaderID'],
+      'junior_leader_name' => (isset($JuniorAdmin->name)) ? $JuniorAdmin->name : '',
+      'junior_leader_id'   => (isset($JuniorAdmin->playerID)) ? $JuniorAdmin->playerID : 0,
+      'government_name'    => $governmentList[$tribeData['governmentID']]['name']
+    ));
 
-    $governmentData = array("GOVERNMENT/name" => $governmentList[$tribeData['governmentID']]['name']);
-
-    if ($warTargets=relation_getWarTargetsAndFame($tribe)){
-      tmpl_set($template, "NORMAL/WAR", array());
-
-      foreach($warTargets as $target){
-        $target_facts = array(
-          "target"         =>  $target["target"],
-          "fame_own"       =>  $target["fame_own"],
-          "fame_target"    =>  $target["fame_target"],
-          "percent_actual" =>  $target["percent_actual"]
+    $targetFacts = array();
+    $warTargets = relation_getWarTargetsAndFame($tribe);
+    if (sizeof($warTargets)) {
+      foreach($warTargets as $target) {
+        $targetFacts = array(
+          'target'         =>  $target['target'],
+          'fame_own'       =>  $target['fame_own'],
+          'fame_target'    =>  $target['fame_target'],
+          'percent_actual' =>  $target['percent_actual']
         );
 
-        if ($target["isForcedSurrenderTheoreticallyPossible"]) {
-          $target_facts["FORCEDSURRENDER/percent_estimated"] = $target["percent_estimated"];
-          if ($target["isForcedSurrenderPracticallyPossible"]) {
-            $target_facts["FORCEDSURRENDER/class"] = "enough";
-          } else if ($target["isForcedSurrenderPracticallyPossibleForTarget"]) {
-            $target_facts["FORCEDSURRENDER/class"] = "less";
+        if ($target['isForcedSurrenderTheoreticallyPossible']) {
+          $targetFacts['percent_estimated'] = $target['percent_estimated'];
+          if ($target['isForcedSurrenderPracticallyPossible']) {
+            $targetFacts['class'] = 'enough';
+          } else if ($target['isForcedSurrenderPracticallyPossibleForTarget']) {
+            $targetFacts['class'] = 'less';
           } else {
-            $target_facts["FORCEDSURRENDER/class"] = "";
+            $targetFacts['class'] = '';
           }
         }
-
-        tmpl_iterate($template, "NORMAL/WAR/TARGET");
-        tmpl_set($template, "NORMAL/WAR/TARGET", $target_facts);
       }
+
+      $template->addVars('targetFacts', $targetFacts);
     }
 
     // init messages class
     $messagesClass = new Messages;
 
     $alternate=0;
+    $messageAry = array();
     if ($messages = tribe_getTribeMessages($tribe)) {
-      foreach($messages AS $messageID => $messageData) {
-        $message = array(
-          "time"          => $messageData['date'],
-          "subject"       => $messageData['messageSubject'],
-          "message"       => $messagesClass->p($messageData['messageText']),
-          "alternate"     => ((++$alternate % 2) ? 'row_alternate' : ''));
-
-        tmpl_iterate($template, "NORMAL/TRIBEMESSAGE");
-        tmpl_set($template, "NORMAL/TRIBEMESSAGE", $message);    
+      foreach($messages AS $msgID => $messageData) {
+        $messageAry[] = array(
+          'time'          => $messageData['date'],
+          'subject'       => $messageData['messageSubject'],
+          'message'       => $messagesClass->p($messageData['messageText']),
+        );
       }
+
+      $template->addVar('tribe_messages', $messageAry);
     }
-
-    $data = array_merge($data, $leaderData, $leaderDeterminationData, $governmentData);
-
-    tmpl_set($template, "NORMAL", $data);
   }
-  
-  if ($messageID) {
-    tmpl_set($template, "MESSAGE/message", $messageText[$messageID]);
+
+  if ($messageID && isset($messageText[$messageID])) {
+    $template->addVar('status_msg', $messageText[$messageID]);
   }
+
+  $template->addVars(array(
+    'tribe_action_create'  => TRIBE_ACTION_CREATE,
+    'tribe_action_join'    => TRIBE_ACTION_JOIN,
+    'tribe_action_leave'   => TRIBE_ACTION_LEAVE,
+    'tribe_action_message' => TRIBE_ACTION_MESSAGE,
+  ));
 }
 
 ?>

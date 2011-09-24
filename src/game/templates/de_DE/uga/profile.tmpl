@@ -7,8 +7,8 @@
 <form id="preferences" method="post" action="main.php?modus={{ user_profile_link }}">
   {% for item in profile_data %}
     <div class="box small" style="margin-bottom: 10px;">
-      <div class="box-header nohover">{{ item.heading }}:</div>
-      <div class="smallinner inner success nohover text-left">
+      <div class="box-header">{{ item.heading }}:</div>
+      <div class="box-content success inner text-left nohover">
       <table>
         {% if item.entry_info %}
           {% for item_info in item.entry_info %}
@@ -75,7 +75,7 @@
     </div>
    {% endfor %}
 
-  <div class="small success nohover" style="margin-bottom: 20px;">
+  <div class="small nohover" style="margin-bottom: 20px;">
     <input type="hidden" name="task" value="change" />
     <input type='submit' value="Speichern" />
     <input type='reset' value="Zurücksetzen" />
@@ -83,8 +83,8 @@
 </form>
 
 <div class="box small">
-  <div class="box-header nohover">Account Löschen</div>
-  <div class="smallinner inner error nohover">
+  <div class="box-header">Account Löschen</div>
+  <div class="box-content success inner text-center">
     <ul>
       <li>Ich habe keine Lust mehr:</li>
       <li>

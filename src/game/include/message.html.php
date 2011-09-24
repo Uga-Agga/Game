@@ -83,7 +83,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
 
   $classes = array();
   foreach ($messagesClass->MessageClass as $id => $text) {
-    $messageClass = (isset($_POST['messageClass'])) ? request_var('messageClass', 0) : 0;
+    $messageClass = (isset($_REQUEST['messageClass'])) ? request_var('messageClass', 0) : 0;
     if ($id != 1001) {
       $selected = ($messageClass == $id) ? 'selected="selected"' : '';
       $classes[] = array('id' => $id, 'text' => $text, 'selected' => $selected);
@@ -97,7 +97,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
 
   // calculate offset
   $offset = request_var('offset', 0);
-  $messageClass = (isset($_REQUEST['filter'])) ? request_var('messageClass', 0) : -2;
+  $messageClass = (isset($_REQUEST['messageClass'])) ? request_var('messageClass', 0) : -2;
   switch ($box){
     default:
     case BOX_INCOMING:

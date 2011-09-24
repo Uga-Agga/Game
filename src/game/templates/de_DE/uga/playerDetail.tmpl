@@ -4,83 +4,79 @@
 
 <div class="box small">
   <div class="box-header nohover">Spieler: {{ player_details.name }}</div>
-  <div class="smallinner inner success nohover text-left">
-    <div class="smallinner notice nohover" style="text-align: center; margin: 10px;">
+  <div class="box-content success inner">
+    <div class="notice text-center" style="text-align: center; margin: 10px;">
       {% if player_avatar %}<img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" alt="Spielerbanner" />{% else %}Kein Avatar ausgewählt{% endif %}
     </div>
 
-    <div style="width: 310px; float: left; margin-left: 10px;">
-      <div class="smallinner notice nohover">
-        <ul>
-          <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
+    <div class="notice" style="width: 290px; float: left; margin-left: 10px;">
+      <ul>
+        <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
 
-          <li class="player_detail_left">Name:</li>
-          <li class="player_detail_right">{{ player_details.name }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Name:</li>
+        <li class="player_detail_right">{{ player_details.name }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Stamm:</li>
-          <li class="player_detail_right"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe }}">{{ player_details.tribe }}</a></li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Stamm:</li>
+        <li class="player_detail_right"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe }}">{{ player_details.tribe }}</a></li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Awards:</li>
-          <li class="player_detail_right">{% if player_details.award %}<a href="main.php?modus={award_modus}&amp;award={tag}"><img src="images/awards/{tag}.png" width="15" height="15" border="0" hspace="1"></a>{% endif %}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Awards:</li>
+        <li class="player_detail_right">{% if player_details.award %}<a href="main.php?modus={award_modus}&amp;award={tag}"><img src="images/awards/{tag}.png" width="15" height="15" border="0" hspace="1"></a>{% endif %}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Geschlecht:</li>
-          <li class="player_detail_right">{{ player_details.sex }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Geschlecht:</li>
+        <li class="player_detail_right">{{ player_details.sex }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Herkunft:</li>
-          <li class="player_detail_right">{{ player_details.origin }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Herkunft:</li>
+        <li class="player_detail_right">{{ player_details.origin }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Uga-Agga-Alter:</li>
-          <li class="player_detail_right">{{ player_details.age }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Uga-Agga-Alter:</li>
+        <li class="player_detail_right">{{ player_details.age }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">ICQ:</li>
-          <li class="player_detail_right">{{ player_details.icq }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">ICQ:</li>
+        <li class="player_detail_right">{{ player_details.icq }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Knüppelpunkte gewonnen:</li>
-          <li class="player_detail_right">{{ player_details.warpoints_pos }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Knüppelpunkte gewonnen:</li>
+        <li class="player_detail_right">{{ player_details.warpoints_pos }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">Knüppelpunkte verloren:</li>
-          <li class="player_detail_right">{{ player_details.warpoints_neg }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">Knüppelpunkte verloren:</li>
+        <li class="player_detail_right">{{ player_details.warpoints_neg }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left">geknüppelte Gegner:</li>
-          <li class="player_detail_right">{{ player_details.body_count }}</li>
-          <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_left">geknüppelte Gegner:</li>
+        <li class="player_detail_right">{{ player_details.body_count }}</li>
+        <li class="clr"><br class="clr" /></li>
 
-          <li class="player_detail_left"><a href="main.php?modus=ranking&amp;offset={playerRankOffset}">Aktuelles Ranking:</a></li>
-          <li class="player_detail_right">{{ player_details.rank }}</li>
-          <li class="clr"><br class="clr" /></li>
-          
-          <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
-          <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus={{ messages_new_link }}&amp;empfaenger={{ player_details.mail_receiver }}">Nachricht senden</a></li>
-        </ul>
-      </div>
+        <li class="player_detail_left"><a href="main.php?modus=ranking&amp;offset={playerRankOffset}">Aktuelles Ranking:</a></li>
+        <li class="player_detail_right">{{ player_details.rank }}</li>
+        <li class="clr"><br class="clr" /></li>
+        
+        <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
+        <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus={{ messages_new_link }}&amp;empfaenger={{ player_details.mail_receiver }}">Nachricht senden</a></li>
+      </ul>
     </div>
 
-    <div style="width: 310px; float: right; margin-right: 10px;">
-      <div class="smallinner notice nohover">
-        <ul>
-          <li class="bold" style="padding-bottom: 10px; text-align: center;">Beschreibung:</li>
-          <li style="padding-bottom: 10px;">{{ player_details.description|raw }}</li>
-        </ul>
-      </div>
+    <div class="notice" style="width: 290px; float: right; margin-right: 10px;">
+      <ul>
+        <li class="bold" style="padding-bottom: 10px; text-align: center;">Beschreibung:</li>
+        <li style="padding-bottom: 10px;">{{ player_details.description|raw }}</li>
+      </ul>
     </div>
     <div style="clear: both;"></div>
 
-    <div class="smallinner notice nohover" style="margin: 0 10px 10px;">
+    <div class="notice" style="margin: 0 10px 10px;">
       <ul>
         <li class="bold" style="padding-bottom: 10px; text-align: center;">Spieler-Geschichte:</li>
         {% if player_history %}
           {% for item in player_history %}
             <li class="player_detail_left" style="width: 140px;">{{ item.timestamp }}</li>
-            <li class="player_detail_right" style="width: 467px;">{{ item.entry }}</li>
+            <li class="player_detail_right" style="width: 467px;">{{ item.entry|raw }}</li>
             <li class="clr"><br class="clr" /></li>
           {% endfor %}
         {% else %}
@@ -89,16 +85,18 @@
       </ul>
     </div>
 
-    <div class="smallinner notice nohover" style="margin: 0 10px 10px;">
+    <div class="notice nohover" style="margin: 0 10px 10px;">
       <ul>
         <li class="bold" style="padding-bottom: 10px; text-align: center;">Höhlenliste:</li>
         <li>
-          <table class="table-smallnotice">
+          <table style="width: 100%">
             {% for item in player_caves %}
             <tr>
-              <td><a href="main.php?modus=map&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
-              <td><a href="main.php?modus=unit_movement&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a></td>
-              <td><a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a></td>
+              <td class="text-left"><a href="main.php?modus=map&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
+              <td class="text-right">
+                <a href="main.php?modus=unit_movement&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a>
+                <a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a>
+              </td>
             </tr>
             {% endfor %}
           </table>

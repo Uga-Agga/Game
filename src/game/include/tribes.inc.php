@@ -30,15 +30,13 @@ function leaderDetermination_processChoiceUpdate($voterID, $playerID, $tribe) {
     return 1;
   }
 
-  $player =new Player(getPlayerByID($playerID));
+  $player = new Player(getPlayerByID($playerID));
 
   if (!$player || strcasecmp ($player->tribe, $tribe)) {
     return -1;
   } else {
     $sql = $db->prepare("REPLACE ". ELECTION_TABLE." 
-                         SET voterID = :voterID, 
-                         playerID = :playerID, 
-                         tribe = :tribe");
+                         SET voterID = :voterID,  playerID = :playerID,  tribe = :tribe");
     $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
@@ -53,26 +51,24 @@ function leaderDetermination_processChoiceUpdate($voterID, $playerID, $tribe) {
 function leaderDetermination_deleteChoiceForPlayer($voterID) {
   global $db;
   
-    $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ." WHERE voterID = :voterID ");
-    $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
+  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ." WHERE voterID = :voterID ");
+  $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
 
-    if (!$sql->execute()) {
-      return 0;
-    }
-    return 1;
+  if (!$sql->execute()) {
+    return 0;
+  }
+  return 1;
 }
 
 function leaderDetermination_getElectionResultsForTribe($tribe) {
   global $db;
   
-  $sql = $db->prepare(
-    "SELECT p.name, COUNT(e.voterID) AS votes 
-    FROM ". ELECTION_TABLE ." e 
-    LEFT JOIN Player p ON p.playerID = e.playerID 
-    WHERE e.tribe like :tribe
-    GROUP BY e.playerID, p.name");
+  $sql = $db->prepare("SELECT p.name, COUNT(e.voterID) AS votes 
+                       FROM ". ELECTION_TABLE ." e 
+                         LEFT JOIN Player p ON p.playerID = e.playerID 
+                       WHERE e.tribe like :tribe
+                       GROUP BY e.playerID, p.name");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
@@ -81,6 +77,8 @@ function leaderDetermination_getElectionResultsForTribe($tribe) {
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     array_push($votes, $row);
   }
+  $sql->closeCursor();
+
   return $votes;
 }
 
@@ -89,7 +87,6 @@ function leaderDetermination_getVoteOf($playerID) {
   
   $sql = $db->prepare("SELECT playerID FROM ". ELECTION_TABLE . " WHERE voterID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-
   if (!$sql->execute()) {
     return 0;
   }
@@ -97,26 +94,26 @@ function leaderDetermination_getVoteOf($playerID) {
   if (!($row = $sql->fetch(PDO::FETCH_ASSOC))) {
     return 0;
   }
+  $sql->closeCursor();
+
   return $row['playerID'];
 }
 
 function government_getGovernmentForTribe($tag) {
   global $db;
   
-  $sql = $db->prepare("SELECT governmentID, 
-                      DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, 
-                      duration, 
-                      duration < NOW()+0 AS isChangeable 
-                      FROM " . TRIBE_TABLE ." 
-                      WHERE tag LIKE :tag");
+  $sql = $db->prepare("SELECT governmentID, DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, duration, duration < NOW()+0 AS isChangeable 
+                       FROM " . TRIBE_TABLE ." 
+                       WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
   if (!($data = $sql->fetch(PDO::FETCH_ASSOC))) {
     return 0;
   }
+  $sql->closeCursor();
+
   return $data ;
 
 }
@@ -125,12 +122,10 @@ function government_setGovernment($tag, $governmentID) {
   global $db;
 
   $sql = $db->prepare("UPDATE " . TRIBE_TABLE . " 
-                      SET governmentID = :governmentID,
-                      duration = (NOW() + INTERVAL ".GOVERNMENT_CHANGE_TIME_HOURS." HOUR)+0 
-                      WHERE tag LIKE :tag");
+                       SET governmentID = :governmentID, duration = (NOW() + INTERVAL ".GOVERNMENT_CHANGE_TIME_HOURS." HOUR)+0 
+                       WHERE tag LIKE :tag");
   $sql->bindValue('governmentID', $governmentID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
@@ -152,11 +147,11 @@ function government_processGovernmentUpdate($tag, $governmentData) {
   }
 
   tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER,
-       "Die Regierung wurde ge&auml;ndert",
-       "Ihr Stammesanf&uuml;hrer hat die Regierung Ihres ".
+       "Die Regierung wurde geändert",
+       "Ihr Stammesanführer hat die Regierung Ihres ".
        "Stammes auf ".
        $governmentList[$governmentData['governmentID']]['name'].
-       " ge&auml;ndert.");
+       " geändert.");
 
   return 4;
 }
@@ -172,8 +167,7 @@ function relation_checkForRelationAttrib($tag_tribe1, $tag_tribe2, $attribArray)
   $result = FALSE;
   
   foreach($attribArray as $attrib) {
-    $result = ($relationList[$relation['own']['relationType']][$attrib]==1) && 
-              ($relationList[$relation['other']['relationType']][$attrib]==1); 
+    $result = ($relationList[$relation['own']['relationType']][$attrib]==1) && ($relationList[$relation['other']['relationType']][$attrib]==1); 
     if ($result) {
       break;
     }
@@ -399,20 +393,20 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   $relationName = $relationList[$relationType]['name'];
   tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION,
-       "Haltung gegen&uuml;ber {$targetTribeInfo['tag']} ".
-       "ge&auml;ndert",
-       "Ihr Stammesanf&uuml;hrer hat die Haltung Ihres ".
-       "Stammes gegen&uuml;ber dem Stamm ".
+       "Haltung gegenüber {$targetTribeInfo['tag']} ".
+       "geändert",
+       "Ihr Stammesanführer hat die Haltung Ihres ".
+       "Stammes gegenüber dem Stamm ".
        "{$targetTribeInfo['tag']} auf $relationName ".
-       "ge&auml;ndert.");
+       "geändert.");
 
   tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-       "Der Stamm $tag &auml;ndert seine Haltung",
-       "Der Stammesanf&uuml;hrer des Stammes $tag ".
+       "Der Stamm $tag ändert seine Haltung",
+       "Der Stammesanführer des Stammes $tag ".
        "hat die Haltung seines ".
-       "Stammes ihnen gegen&uuml;ber ".
+       "Stammes ihnen gegenüber ".
        "auf $relationName ".
-       "ge&auml;ndert.");
+       "geändert.");
 
   // switch other side if necessary (and not at this type already)
   if (!$end_time && ($oST = $relationInfo['otherSideTo']) >= 0) {
@@ -437,21 +431,21 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
     $relationName = $relationList[$oST]['name'];
     tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-         "Haltung gegen&uuml;ber $tag ".
-         "ge&auml;ndert",
+         "Haltung gegenüber $tag ".
+         "geändert",
          "Die Haltung Ihres ".
-         "Stammes gegen&uuml;ber dem Stamm ".
+         "Stammes gegenüber dem Stamm ".
          "$tag  wurde automatisch auf $relationName ".
-         "ge&auml;ndert.");
+         "geändert.");
 
     tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION,
-         "Der Stamm {$targetTribeInfo['tag']} &auml;ndert ".
+         "Der Stamm {$targetTribeInfo['tag']} ändert ".
          "seine ".
          "Haltung",
          "Der Stamm {$targetTribeInfo['tag']} ".
-         "hat die Haltung ihnen gegen&uuml;ber ".
+         "hat die Haltung ihnen gegenüber ".
          "automatisch auf $relationName ".
-         "ge&auml;ndert.");
+         "geändert.");
   }
 
   tribe_generateMapStylesheet();
@@ -481,18 +475,20 @@ function relation_getTribeHistory($tribe) {
   global $db;
   
   $sql = $db->prepare("SELECT * 
-                      FROM " . TRIBE_HISTORY_TABLE . "
-                      WHERE tribe LIKE :tribe
-                      ORDER BY timestamp ASC");
+                       FROM " . TRIBE_HISTORY_TABLE . "
+                       WHERE tribe LIKE :tribe
+                       ORDER BY timestamp ASC");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
+
   $history = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     array_push($history, $row);
   }
+  $sql->closeCursor();
+
   return $history;
 }
 
@@ -503,8 +499,8 @@ function relation_insertIntoHistory($tribe, $message) {
   $month = getMonthName($time['month']);
 
   $sql = $db->prepare("INSERT INTO " . TRIBE_HISTORY_TABLE . " 
-                      (tribe, ingameTime, message) 
-                      VALUES (:tribe, :ingameTime, :mesage)");
+                       (tribe, ingameTime, message) 
+                       VALUES (:tribe, :ingameTime, :mesage)");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
   $sql->bindValue('ingameTime', "{$time['day']}. $month<br>im Jahr {$time['year']}", PDO::PARAM_STR);
   $sql->bindValue('message', $message, PDO::PARAM_STR);
@@ -553,8 +549,7 @@ function tribe_SetTribeInvalid($tag) {
   }
 
   $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
-                       SET valid = '0', 
-                       validatetime  = (NOW() + INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0 
+                       SET valid = '0', validatetime  = (NOW() + INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0 
                        WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
@@ -564,7 +559,7 @@ function tribe_SetTribeInvalid($tag) {
     $result = tribe_sendTribeMessage($tag, TRIBE_MESSAGE_INFO,
               "Mitgliederzahl",
               "Ihr Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen ".
-              "zu d&uuml;rfen.");
+              "zu dürfen.");
   }
   return $result;
 }
@@ -583,7 +578,7 @@ function tribe_SetTribeValid($tag) {
     return tribe_sendTribeMessage($tag, TRIBE_MESSAGE_INFO,
            "Mitgliederzahl",
            "Ihr Stamm hat nun genug Mitglieder um Beziehungen eingehen ".
-           "zu d&uuml;rfen.");
+           "zu dürfen.");
   }
   return $result;
 }
@@ -593,13 +588,15 @@ function tribe_getPoints($tag) {
   
   $sql = $db->prepare("SELECT * FROM ". TRIBE_TABLE." WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return -1;
   }
+
   if (!($row = $sql->fetch(PDO::FETCH_ASSOC))) {
     return 0;
   }
+  $sql->closeCursor();
+
   return $row['points_rank'];
 }
 
@@ -610,16 +607,17 @@ function tribe_getPoints($tag) {
 function tribe_getMight($tag) {
   global $db;
   
-  $sql = $db->prepare("SELECT points_rank FROM ". RANKING_TRIBE_TABLE ." 
-                      WHERE tribe LIKE :tag");
+  $sql = $db->prepare("SELECT points_rank FROM ". RANKING_TRIBE_TABLE ."  WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return -1;
   }
+
   if (!($row = $sql->fetch(PDO::FETCH_ASSOC))) {
     return 0;
   }
+  $sql->closeCursor();
+
   return $row['points_rank'];
 }
 
@@ -703,8 +701,8 @@ function relation_setRelation($from, $target, $relation, $duration,
                                      $from_points, $from_points_old);
     }
     $sql = $db->prepare("UPDATE ". TRIBE_TABLE . "
-                        SET fame = fame + :fame
-                        WHERE tag LIKE :from");
+                         SET fame = fame + :fame
+                         WHERE tag LIKE :from");
     $sql->bindValue('fame', $fame, PDO::PARAM_INT);
     $sql->bindValue('from', $from, PDO::PARAM_STR);
 
@@ -719,45 +717,45 @@ function relation_setRelation($from, $target, $relation, $duration,
 function relation_getRelation($from, $target) {
   global $db;
   
-  $sql = $db->prepare("SELECT *, ".
-                      "DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, ".
-                      "(NOW()+0) > duration AS changeable ".
-                      "FROM ". RELATION_TABLE .
-                      " WHERE tribe LIKE :from ".
-                      "AND tribe_target LIKE :target");
+  $sql = $db->prepare("SELECT *, DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, (NOW()+0) > duration AS changeable
+                       FROM ". RELATION_TABLE. "
+                       WHERE tribe LIKE :from
+                         AND tribe_target LIKE :target");
   $sql->bindValue('from', $from, PDO::PARAM_STR);
   $sql->bindValue('target', $target, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
 
   if (!($own = $sql->fetch(PDO::FETCH_ASSOC))) {
-    $own = array("tribe" => $from,
-                 "tribe_target" => $target,
-                 "changeable"   => 1,
-                 "relationType" => 0);
+    $own = array(
+      "tribe" => $from,
+      "tribe_target" => $target,
+      "changeable"   => 1,
+      "relationType" => 0
+    );
   }
+  $sql->closeCursor();
 
-  $sql = $db->prepare("SELECT *, ".
-                      "DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, ".
-                      "(NOW()+0) > duration AS changeable ".
-                      "FROM ". RELATION_TABLE .
-                      " WHERE tribe LIKE :target ".
-                      "AND tribe_target LIKE :from");
+  $sql = $db->prepare("SELECT *, DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, (NOW()+0) > duration AS changeable
+                       FROM ". RELATION_TABLE . "
+                       WHERE tribe LIKE :target
+                         AND tribe_target LIKE :from");
   $sql->bindValue('from', $from, PDO::PARAM_STR);
   $sql->bindValue('target', $target, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
 
   if (!($other = $sql->fetch(PDO::FETCH_ASSOC))) {
-    $other = array("tribe" => $target,
-       "tribe_target" => $from,
-       "changeable"   => 1,
-       "relationType" => 0);
+    $other = array(
+      "tribe" => $target,
+      "tribe_target" => $from,
+      "changeable"   => 1,
+      "relationType" => 0
+    );
   }
+  $sql->closeCursor();
 
   return array("own" => $own, "other" => $other);
 }
@@ -775,13 +773,10 @@ function relation_getRelationsForTribe($tag) {
   global $db;
   // get relations from $tag to other tribes
 
-  $sql = $db->prepare("SELECT *, 
-                      DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, 
-                      (NOW()+0) > duration AS changeable 
-                      FROM ". RELATION_TABLE . "
-                      WHERE tribe LIKE :tag");
+  $sql = $db->prepare("SELECT *,  DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time,  (NOW()+0) > duration AS changeable 
+                       FROM ". RELATION_TABLE . "
+                       WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
@@ -790,14 +785,14 @@ function relation_getRelationsForTribe($tag) {
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $own[strtoupper($row['tribe_target'])] = $row;
   }
+  $sql->closeCursor();
 
   // get relations from other tribes to $tag
 
-  $sql = $db->prepare("SELECT * ".
-                      "FROM ". RELATION_TABLE .
-                      " WHERE tribe_target LIKE :tag");
+  $sql = $db->prepare("SELECT *
+                       FROM ". RELATION_TABLE . "
+                       WHERE tribe_target LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
@@ -806,6 +801,7 @@ function relation_getRelationsForTribe($tag) {
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $other[strtoupper($row['tribe'])] = $row;
   }
+  $sql->closeCursor();
 
   return array("own" => $own, "other" => $other);
 }
@@ -954,12 +950,12 @@ function relation_forceSurrender($tag, $relationData) {
 
   // tribe messages for forced surrender
   tribe_sendTribeMessage($ownTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-       "Zwangskapitulation &uuml;ber $target", 
-       "Ihr Stammesanf&uuml;hrer hat den Stamm $target zur Aufgabe gezwungen.");
+       "Zwangskapitulation über $target", 
+       "Ihr Stammesanführer hat den Stamm $target zur Aufgabe gezwungen.");
 
   tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
        "Zwangskapitulation gegen $tag", 
-       "Der Stammesanf&uuml;hrer des Stammes $tag hat ihren Stamm zur Aufgabe gezwungen.");
+       "Der Stammesanführer des Stammes $tag hat ihren Stamm zur Aufgabe gezwungen.");
 
   $relationDataLooser = array('tag' => $tag,
                               'relationID' => $surrenderId);
@@ -1029,14 +1025,12 @@ function tribe_getAllTribes() {
 function tribe_getAllMembers($tag) {
   global $db;
   
-  $sql = $db->prepare("SELECT p.playerID, p.name, s.lastAction ".
-           "FROM ". PLAYER_TABLE ." p ".
-           "LEFT JOIN ". SESSION_TABLE ." s ON s.playerID = p.playerID ".
-           "WHERE tribe LIKE :tag ".
-           "ORDER BY name ASC");
+  $sql = $db->prepare("SELECT p.playerID, p.name, s.lastAction 
+                       FROM ". PLAYER_TABLE ." p
+                         LEFT JOIN ". SESSION_TABLE ." s ON s.playerID = p.playerID
+                       WHERE tribe LIKE :tag
+                       ORDER BY name ASC");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-
   if (!$sql->execute()) {
     return -1;
   }
@@ -1046,6 +1040,8 @@ function tribe_getAllMembers($tag) {
     $row['lastAction'] = date("d.m.Y H:i:s", time_timestampToTime($row['lastAction']));
     $members[$row['playerID']] = $row;
   }
+  $sql->closeCursor();
+
   return $members;
 }
 
@@ -1059,20 +1055,11 @@ function tribe_isDeletable($tag) {
   if (!strcmp($tag, GOD_ALLY))
     return 0;
 
-  $sqlo = $db->prepare("SELECT * ".
-                       "FROM " . TRIBE_TABLE . 
-                       " WHERE tag LIKE :tag ".
-                       "AND validatetime  < (NOW() - INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0");
+  $sqlo = $db->prepare("SELECT *
+                        FROM " . TRIBE_TABLE . "
+                        WHERE tag LIKE :tag
+                          AND validatetime  < (NOW() - INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-
-//Nebrot: relations are deleted in tribes.php 
-// if relationList instantiatetd, check Relations
-//  if ($relationList && ! relation_leaveTribeAllowed($tag, $db) ) {
-//    return 0;
-//  }
-
-
   if (!$sql->execute()){
     return 0;
   }
@@ -1095,16 +1082,18 @@ function tribe_getNumberOfMembers($tag) {
     if (!$sql->execute() || !($row_count = $sql->fetch(PDO::FETCH_ASSOC))) {
       return -1;
     }
+    $sql->closeCursor();
+
     return $row_count['members'];
 }
 
 function tribe_getTribeByTag($tag) {
   global $db;
   
-  $sql = $db->prepare("SELECT t.*, p.name AS leaderName ".
-                      "FROM ". TRIBE_TABLE ." t ".
-                      "LEFT JOIN ". PLAYER_TABLE ." p ON t.leaderID = p.playerID ".
-                      "WHERE t.tag LIKE :tag");
+  $sql = $db->prepare("SELECT t.*, p.name AS leaderName
+                       FROM ". TRIBE_TABLE ." t
+                         LEFT JOIN ". PLAYER_TABLE ." p ON t.leaderID = p.playerID
+                       WHERE t.tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -1113,78 +1102,78 @@ function tribe_getTribeByTag($tag) {
   if (!($row = $sql->fetch(PDO::FETCH_ASSOC))) {
     return 0;
   }
+  $sql->closeCursor();
+
   return $row;
 }
 
 function tribe_makeLeader($playerID, $tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . 
-                      " SET leaderID = :playerID ".
-                      "WHERE tag LIKE :tag ");
+  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                       SET leaderID = :playerID
+                       WHERE tag LIKE :tag ");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
+
   return 1;
 }
 
 function tribe_makeJuniorLeader($playerID, $tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". TRIBE_TABLE .
-                      " SET juniorLeaderID = :playerID ".
-                      "WHERE tag LIKE :tag ");
+  $sql = $db->prepare("UPDATE ". TRIBE_TABLE . "
+                       SET juniorLeaderID = :playerID
+                       WHERE tag LIKE :tag ");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
+
   return 1;
 }
 
 function tribe_unmakeJuniorLeader($playerID, $tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". TRIBE_TABLE .
-                      " SET juniorLeaderID = 0 ".
-                      "WHERE tag LIKE :tag ");
+  $sql = $db->prepare("UPDATE ". TRIBE_TABLE . "
+                       SET juniorLeaderID = 0
+                       WHERE tag LIKE :tag ");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
+
   return 1;
 }
 
 function tribe_unmakeLeader($playerID, $tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". TRIBE_TABLE .
-                      " SET leaderID = 0 ".
-                      "WHERE tag LIKE :tag ");
+  $sql = $db->prepare("UPDATE ". TRIBE_TABLE . "
+                       SET leaderID = 0
+                       WHERE tag LIKE :tag ");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
+
   return 1;
 }
 
 function tribe_joinTribe($playerID, $tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". PLAYER_TABLE .
-                      " SET tribe = :tag ".
-                      "WHERE playerID = :playerID ".
-                      "AND tribe LIKE ''");
+  $sql = $db->prepare("UPDATE ". PLAYER_TABLE . "
+                      SET tribe = :tag
+                      WHERE playerID = :playerID
+                        AND tribe = ''");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
@@ -1195,21 +1184,19 @@ function tribe_joinTribe($playerID, $tag) {
 function tribe_leaveTribe($playerID, $tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". PLAYER_TABLE .
-                      " SET tribe = '' ".
-                      //"fame = fame - ".TRIBE_LEAVE_FAME_COST." ".
-                      "WHERE playerID = :playerID ".
-                      "AND tribe LIKE :tag");
+  $sql = $db->prepare("UPDATE ". PLAYER_TABLE . "
+                       SET tribe = ''
+                       WHERE playerID = :playerID
+                         AND tribe LIKE :tag");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
 
-  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE .
-                      " WHERE voterID = :playerID ".
-                      "OR playerID LIKE :playerID");
+  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE . "
+                       WHERE voterID = :playerID
+                         OR playerID LIKE :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
   if (!$sql->execute()) {
@@ -1304,13 +1291,12 @@ function tribe_createRanking($tag) {
 function tribe_createTribe($tag, $name, $leaderID) {
   global $db;
   
-  $sql = $db->prepare("INSERT INTO ". TRIBE_TABLE .
-                      " (tag, name, leaderID, created, governmentID, validatetime, valid) ".
-                      "values (:tag, :name, 0, NOW() + 0, 1,
-                      ((NOW() + INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND ) + 0),0)");
+  $sql = $db->prepare("INSERT INTO ". TRIBE_TABLE . "
+                         (tag, name, leaderID, created, governmentID, validatetime, valid)
+                       values 
+                         (:tag, :name, 0, NOW() + 0, 1, ((NOW() + INTERVAL " . TRIBE_MINIMUM_LIVESPAN . " SECOND ) + 0),0)");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('name', $name, PDO::PARAM_STR);
-
   if (!$sql->execute()) {
     return 0;
   }
@@ -1318,14 +1304,17 @@ function tribe_createTribe($tag, $name, $leaderID) {
   if(!tribe_createRanking($tag)) {
     return 0;
   }
-  if ($leaderID && ! tribe_joinTribe($leaderID, $tag)) {
+
+  if (!tribe_joinTribe($leaderID, $tag)) {
     return 0;
   }
 
-  if ($leaderID && ! tribe_makeLeader($leaderID, $tag)) {
+  if (!tribe_makeLeader($leaderID, $tag)) {
+  die('4');
     tribe_leaveTribe($leaderID, $tag);
     return 0;
   }
+
   return 1;
 }
 
@@ -1373,9 +1362,9 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
       // insert tribe message
       $relationName = $relationList[$oDST]['name'];
       tribe_sendTribeMessage($otherTag, TRIBE_MESSAGE_RELATION,
-        "Haltung gegen&uuml;ber $tag ge&auml;ndert",
-        "Die Haltung Ihres Stammes gegen&uuml;ber dem Stamm $tag  wurde ".
-        "automatisch auf $relationName ge&auml;ndert.");
+        "Haltung gegenüber $tag geändert",
+        "Die Haltung Ihres Stammes gegenüber dem Stamm $tag  wurde ".
+        "automatisch auf $relationName geändert.");
     }
   }
 
@@ -1406,13 +1395,13 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
     $messagesClass = new Messages;
     $messagesClass->sendSystemMessage($playerID,
             8,
-            "Aufl&ouml;sung des Stammes",
-            "Ihr Stamm $tag wurde soeben aufgel&ouml;st. ".
+            "Auflösung des Stammes",
+            "Ihr Stamm $tag wurde soeben aufgelöst. ".
             "Sollten Sie Probleme mit dem ".
-            "Stammesmen&uuml; haben, loggen Sie sich ".
+            "Stammesmenü haben, loggen Sie sich ".
             "bitte neu ein.");
 
-    Player::addHistoryEntry($playerID, sprintf(_('verl&auml;sst den Stamm \'%s\''), $tag));
+    Player::addHistoryEntry($playerID, sprintf(_('verlässt den Stamm \'%s\''), $tag));
   }
 
   $sql = $db->prepare("DELETE FROM ". TRIBE_TABLE .
@@ -1486,7 +1475,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
       return 0;
   }
 
-  Player::addHistoryEntry($tribe['leaderID'], sprintf(_('l&ouml;st den Stamm \'%s\' auf'), $tag));
+  Player::addHistoryEntry($tribe['leaderID'], sprintf(_('löst den Stamm \'%s\' auf'), $tag));
 
   return 1;
 }
@@ -1566,8 +1555,8 @@ function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
   if (!$newLeadership[0]) {
     tribe_sendTribeMessage($tag,
          TRIBE_MESSAGE_LEADER,
-         "Stammesf&uuml;hrung",
-         "Ihr Stamm hat momentan keinen Anf&uuml;hrer ".
+         "Stammesführung",
+         "Ihr Stamm hat momentan keinen Anführer ".
          "mehr");
   }
   $player = getPlayerByID($newLeadership[0]);
@@ -1575,9 +1564,9 @@ function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
   if ($newLeadership[0] && !$newLeadership[1]) {
     tribe_sendTribeMessage($tag,
          TRIBE_MESSAGE_LEADER,
-         "Stammesf&uuml;hrung",
-         "Ihr Stamm hat eine neue Stammesf&uuml;hrung:<br>".
-         "Stammesanf&uuml;hrer: ".$newLeadershipName."<br>".
+         "Stammesführung",
+         "Ihr Stamm hat eine neue Stammesführung:<br>".
+         "Stammesanführer: ".$newLeadershipName."<br>".
          "Stellvertreter:  <i>nicht vorhanden</i>");
   }
   $player = getPlayerByID($newLeadership[1]);
@@ -1585,9 +1574,9 @@ function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
   if ($newLeadership[0] && $newLeadership[1]) {
     tribe_sendTribeMessage($tag,
          TRIBE_MESSAGE_LEADER,
-         "Stammesf&uuml;hrung",
-         "Ihr Stamm hat eine neue Stammesf&uuml;hrung:<br>".
-         "Stammesanf&uuml;hrer: ".$newLeadershipName."<br>".
+         "Stammesführung",
+         "Ihr Stamm hat eine neue Stammesführung:<br>".
+         "Stammesanführer: ".$newLeadershipName."<br>".
          "Stellvertreter:  ".$newJuniorLeaderName);
   }     
 }
@@ -1739,14 +1728,16 @@ function tribe_setBlockingPeriodPlayerID($playerID) {
 function tribe_changeTribeAllowedForPlayerID($playerID) {
   global $db;
   
-  $sql = $db->prepare("SELECT (tribeBlockEnd > NOW()+0) AS blocked ".
-                      "FROM ". PLAYER_TABLE .
-                      " WHERE playerID = :playerID");
+  $sql = $db->prepare("SELECT (tribeBlockEnd > NOW()+0) AS blocked
+                       FROM ". PLAYER_TABLE . "
+                       WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_STR);
 
   if (!$sql->execute() || !($row = $sql->fetch())) {
     return 0;
   }
+  $sql->closeCursor();
+
   return $row['blocked'] != 1;
 }
 
@@ -1781,7 +1772,7 @@ function tribe_processLeave($playerID, $tag, $FORCE = 0) {
   }
 
   Player::addHistoryEntry($playerID,
-                          sprintf(_('verl&auml;&szlig;t den Stamm \'%s\''), $tag));
+                          sprintf(_('verläßt den Stamm \'%s\''), $tag));
 
   tribe_setBlockingPeriodPlayerID($playerID);
 
@@ -1834,12 +1825,12 @@ function tribe_processKickMember($playerID, $tag) {
   tribe_setBlockingPeriodPlayerID($playerID);
 
   tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieler rausgeschmissen",
-    "Der Spieler {$player['name']} wurde soeben vom Anf&uuml;hrer aus dem Stamm ".
+    "Der Spieler {$player['name']} wurde soeben vom Anführer aus dem Stamm ".
     "ausgeschlossen.");
 
-  $messagesClass->sendSystemMessage($playerID, 8, "Clanausschluss.",
-    "Sie wurden aus dem Clan $tag ausgeschlossen. Bitte loggen Sie sich aus ".
-    "und melden Sie sich wieder an, damit das Stammesmen&uuml; bei Ihnen wieder ".
+  $messagesClass->sendSystemMessage($playerID, 8, "Stammausschluss.",
+    "Sie wurden aus dem Stamm $tag ausgeschlossen. Bitte loggen Sie sich aus ".
+    "und melden Sie sich wieder an, damit das Stammesmenü bei Ihnen wieder ".
     "richtig funktioniert.");
 
   return 1;
@@ -1865,7 +1856,7 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
   }
 
   while ($member = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanf&uuml;hrer", $message, true)) {
+    if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanführer", $message, true)) {
       return -9;
     }
   }
@@ -1874,28 +1865,29 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
 }
 
 function tribe_processSendTribeMessage($leaderID, $tag, $message) {
-
   if (!tribe_isLeaderOrJuniorLeader($leaderID, $tag)) {
     return -9;
   }
 
-  if (!tribe_sendTribeMessage($tag,
-                              TRIBE_MESSAGE_LEADER,
-                              "Nachricht vom Stammesanf&uuml;hrer",
-                              $message)) {
+  if (!tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Nachricht vom Stammesanführer", $message)) {
     return -9;
   }
+
   return 5;
 }
 
 function tribe_sendTribeMessage($tag, $type, $heading, $message) {
   global $db;
 
-  $query =
-    "INSERT INTO TribeMessage ".
-    "(tag, messageClass, messageSubject, messageText, messageTime) ".
-    "values( '".$tag."', '".$type."', '".$heading."', '".$message."', NOW()+0 )";
-  return $db->query($query);
+  $sql = $db->prepare("INSERT INTO " . TRIBE_MESSAGE_TABLE . " 
+                       (tag, messageClass, messageSubject, messageText, messageTime) 
+                       VALUES (:tag, :messageClass, :messageSubject, :messageText, NOW()+0)");
+  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  $sql->bindValue('messageClass', $type, PDO::PARAM_INT);
+  $sql->bindValue('messageSubject', $heading, PDO::PARAM_STR);
+  $sql->bindValue('messageText', $message, PDO::PARAM_STR);
+  
+  return $sql->execute();
 }
 
 function tribe_getTribeMessages($tag) {
@@ -1923,27 +1915,22 @@ function tribe_getTribeMessages($tag) {
 function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) {
   global $db;
   
-  if (! tribe_changeTribeAllowedForPlayerID($leaderID)) {
+  if (!tribe_changeTribeAllowedForPlayerID($leaderID)) {
     return -11;
   }
 
-  $sql = $db->prepare("SELECT name ".
-                      "FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tag");
+  $sql = $db->prepare("SELECT name
+                      FROM ". TRIBE_TABLE . "
+                      WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-  if (!$sql->execute())
-  {
-    return -1;
-  }
-
-  if ($sql->fetch()) {
+  if ($sql->rowCountSelect() > 0) {
     return -5;
   }
-  if (!tribe_createTribe($tag, $tag, $leaderID))
-  {
+
+  if (!tribe_createTribe($tag, $tag, $leaderID)) {
     return -6;
   }
+
   if ($restore_rank) {
     if (!tribe_restoreOldRanking($tag, $password))
     {
@@ -1961,7 +1948,7 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
     return -7;
   }
 
-  Player::addHistoryEntry($leaderID, sprintf(_('gr&uuml;ndet den Stamm \'%s\''),
+  Player::addHistoryEntry($leaderID, sprintf(_('gründet den Stamm \'%s\''),
                           $tag));
 
   return 3;
@@ -2066,21 +2053,17 @@ function tribe_isLeader($playerID, $tribe) {
 function tribe_isLeaderOrJuniorLeader($playerID, $tribe) {
   global $db;
   
-  $sql = $db->prepare("SELECT name ".
-                      "FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tribe ".
-                      "AND". 
-                      "(leaderID = :playerID ".
-                      "OR juniorLeaderID = :playerID)");
+  $sql = $db->prepare("SELECT name 
+                       FROM " . TRIBE_TABLE . "
+                       WHERE tag LIKE :tribe
+                         AND (leaderID = :playerID OR juniorLeaderID = :playerID)");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
-  if (!$sql->execute()) {
+  if ($sql->rowCountSelect() == 0) {
     return 0;
   }
-  if (!$sql->fetch()) {
-    return 0;
-  }
+
   return 1;
 }
 
@@ -2136,7 +2119,7 @@ function tribe_generateMapStylesheet() {
         case 6:  // NAP
           fwrite($outfile, "2px solid blue");
           break;
-        case 7:  // B�ndnis
+        case 7:  // Bündnis
           fwrite($outfile, "2px solid green");
           break;
       }

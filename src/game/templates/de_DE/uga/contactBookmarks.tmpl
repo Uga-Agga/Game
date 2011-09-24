@@ -41,14 +41,14 @@
   </div>
 </div>
 
-<br />
-
-<div class="small success nohover">
-  <form id="newcontactbookmarkbyname" method="post" action="main.php?modus={{ contact_bookmarks_link }}">
-    <p>Name: <input name="contact" type="text" size="35" maxlength="90" />
-    <input type="submit" name="add" value="Hinzufügen" />
-    <input type="hidden" name="task" value="Add" /></p>
-  </form>
+<div class="small box">
+  <div class="box-header">Kontakt hinzufügen</div>
+  <div class="box-content success inner text-center">
+    <form id="newcontactbookmarkbyname" method="post" action="main.php?modus={{ contact_bookmarks_link }}">
+      <p>Name: <input name="contact" type="text" size="35" maxlength="90" />
+      <input type="submit" name="add" value="Hinzufügen" />
+      <input type="hidden" name="task" value="Add" /></p>
+    </form>
+  </div>
 </div>
-
 {% endblock %}

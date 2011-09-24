@@ -262,11 +262,8 @@ function defense_builder($caveID, &$details) {
  *
  */
 
-function defense_showProperties($cave) {
-
+function defense_showProperties($defenseID, $cave) {
   global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
-
-  $defenseID = intval(request_var('defense_id', 0));
 
   // first check whether that defense should be displayed...
   $defense = $defenseSystemTypeList[$defenseID];
