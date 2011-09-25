@@ -12,7 +12,6 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-<<<<<<< HEAD
 function science_getScienceDetails($scienceID, $caveData, $method) {
 
   global $buildingTypeList,
@@ -24,11 +23,6 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
          $no_resource_flag;
 
   $no_resource_flag = 1;
-=======
-function science_getScienceDetails($scienceID, $caveData) {
-  global $template;
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
->>>>>>> 7198063fb4f720ee0b25a9eb3697419298588442
 
   // first check whether that science should be displayed...
   $science = $scienceTypeList[$scienceID];
@@ -39,7 +33,6 @@ function science_getScienceDetails($scienceID, $caveData) {
     $science = current($scienceTypeList);
   }
 
-<<<<<<< HEAD
   if ($method == 'ajax') {
     $template->setFile('scienceDetailAjax.tmpl');
     $shortVersion = 1;
@@ -48,11 +41,6 @@ function science_getScienceDetails($scienceID, $caveData) {
     $template->setFile('scienceDetail.tmpl');
     $shortVersion = 0;
   }
-=======
-  $template->setFile('scienceDetail.tmpl');
-  $template->setShowRresource(false);
-  $shortVersion = 3;
->>>>>>> 7198063fb4f720ee0b25a9eb3697419298588442
 
   $currentlevel = $caveData[$science->dbFieldName];
   $levels = array();
