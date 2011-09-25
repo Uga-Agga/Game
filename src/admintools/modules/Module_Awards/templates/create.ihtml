@@ -1,0 +1,22 @@
+<h1>Creating A New Award</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="award_create" method="get">
+  <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+    <tr>
+      <td width="50%" align="right">Tag:</td>
+      <td width="50%"><input name="awardTag" type="text" id="awardTag" size="32" maxlength="32"/></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Title:</td>
+      <td width="50%"><input name="awardTitle" type="text" id="awardTitle" size="64" maxlength="255"/></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Description:</td>
+      <td width="50%"><textarea name="awardDescription" cols="64" rows="10" id="awardDescription"></textarea></td>
+    </tr>
+    <tr align="center">
+      <td>&nbsp;<input name="modus" type="hidden" value="award_create"></td>
+      <td><input name="creator" type="submit" id="creator" value="Create"></td>
+    </tr>
+  </table>
+</form>

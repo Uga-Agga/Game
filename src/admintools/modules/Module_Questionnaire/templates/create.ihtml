@@ -1,0 +1,35 @@
+<h1>Erstellung einer neuen Umfrage</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<tmpl:FORM>
+<form name="creation" method="get" action="?modus=questionnaire_create">
+  <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+    <tr>
+      <td width="50%" align="right">Frage:</td>
+      <td width="50%"><input name="questionText" type="text" id="questionText" size="64" maxlength="255"></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Laufzeit:</td>
+      <td width="50%"><input name="laufzeit" type="text" id="laufzeit" value="14" size="5" maxlength="3"> in Tagen</td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Bonuspunkte:</td>
+      <td width="50%"><input name="credits" type="text" id="credits" value="1" size="5" maxlength="3"></td>
+    </tr>
+    <tr align="center">
+      <td colspan="2">Antwortm&ouml;glichkeiten:</td>
+    </tr>
+    <tmpl:CHOICE>
+    <tr align="center">
+      <td colspan="2"><input name="choiceID[{choiceID}]" type="text" id="choiceID[{choiceID}]" size="64" maxlength="255"></td>
+    </tr>
+    </tmpl:CHOICE>
+    <tr align="center">
+      <td><a href="?modus=questionnaire_create&amp;moreChoices={moreChoices}">mehr Antwortm&ouml;glichkeiten</a></td>
+      <td>
+        <input name="modus" type="hidden" value="questionnaire_create">
+        <input name="creator" type="submit" id="creator" value="Erstellen">
+      </td>
+    </tr>
+  </table>
+</form>
+</tmpl:FORM>

@@ -1,0 +1,8 @@
+<h1>Find a Player</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="findaplayer" method="get">
+  <label for="player">Player:</label>
+  <input name="player" type="text" id="player" size="64" maxlength="64">
+  <input name="modus" type="hidden" value="player_show">
+  <input name="finder" type="submit" id="finder" value="Finden!">
+</form>

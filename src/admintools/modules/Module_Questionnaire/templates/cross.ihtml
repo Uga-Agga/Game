@@ -1,0 +1,22 @@
+<h1>Umfrageergebnisse</h1>
+<tmpl:RESULT>
+<table>
+  <tmpl:CHOICEONE>
+  <tr>
+    <tmpl:CHOICETWO><td>{value}</td></tmpl:CHOICETWO>
+  </tr>
+  </tmpl:CHOICEONE>
+</table>
+</tmpl:RESULT>
+<form name="crossing" method="get">
+<br>
+<select name="questionOne">
+<tmpl:QUESTIONONE><option value="{questionID}">{questionText}</option></tmpl:QUESTIONONE>
+</select>
+<br>
+<select name="questionTwo">
+<tmpl:QUESTIONTWO><option value="{questionID}">{questionText}</option></tmpl:QUESTIONTWO>
+</select>
+<input name="modus" type="hidden" value="questionnaire_cross">
+<input name="crossing" type="submit" id="crossing" value="Cross it!">
+</form>

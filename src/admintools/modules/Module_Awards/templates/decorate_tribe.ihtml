@@ -1,0 +1,42 @@
+<h1>Decorate A Tribe</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+
+<tmpl:FORM_CHOOSE>
+<form name="decorate_choose" method="get">
+  <fieldset>
+    <legend>Choose a tribe</legend>
+    <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+      <tr>
+        <td>
+          Tribe: <input name="decorateTribe" type="text" id="decorateTribe" size="8" maxlength="8" value="{tag}">
+          <input name="modus" type="hidden" value="award_decorate_tribe">
+          <input name="decorate_choose" type="submit" id="decorate_choose" value="Choose!">
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+</tmpl:FORM_CHOOSE>
+
+
+<tmpl:FORM_DECORATE>
+<form name="decorate" method="get">
+  <fieldset>
+    <legend>Decorate '{tag}'</legend>
+    <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+      <tmpl:AWARD>
+      <tr>
+        <td><input type="checkbox" name="decorateAward[]" value="{awardID}"<tmpl:CHOSEN>{dummy} checked</tmpl:CHOSEN>>&nbsp;<img src="{awards_img_path}/{tag}.png" align="Middle">&nbsp;{title}</td>
+      </tr>
+      </tmpl:AWARD>
+      <tr align="center">
+        <td>
+          <input name="decorateTribe" type="hidden" value="{tag}">
+          <input name="modus" type="hidden" value="award_decorate_tribe">
+          <input name="decorator" type="submit" id="decorator" value="Decorate!">
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+</tmpl:FORM_DECORATE>

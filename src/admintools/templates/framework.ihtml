@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Spieladministration</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="templates/css/style000.css" rel="stylesheet" type="text/css">
+</head>
+<body bgcolor="#CCCC99">
+<table>
+  <tr>
+    <tmpl:SELECTOR>
+      <td NOWRAP>
+        <form name="form_{modus}" method="GET">
+          <input type="hidden" name="modus" value="{modus}">
+          <select name="{modus}ID" onChange="document.form_{modus}.submit()">
+            <tmpl:OPTION>
+              <option value="{value}" {selected}>{description}</option>
+            </tmpl:OPTION>
+          </select>
+          <input type="submit" name="Submit" value="&gt;">
+        </form>
+      </td>
+    </tmpl:SELECTOR>
+  </tr>
+</table>
+
+<table width="100%" border="0" cellspacing="5" cellpadding="0">
+  <tr>
+    <td width="178" valign="top">
+
+      <tmpl:MENU>
+      <table border="0" width="145" cellpadding="0" cellspacing="0">
+        <tr>
+          <td background="templates/images/table-title.gif" width="145" height="20">
+            <div class="boxtitle">&nbsp;&nbsp;{name}</div>
+          </td>
+        </tr>
+        <tr>
+          <td><img src="templates/images/pixel000.gif" width="100%" height="3"></td>
+        </tr>
+      </table>
+      <table width="145" class="box">
+        <tr>
+          <td>
+            <tmpl:ITEM><strong><big>&middot;</big></strong>&nbsp;<a href="{link}"<tmpl:TARGET> target="{target}"</tmpl:TARGET>>{text}</a><br></tmpl:ITEM>
+          </td>
+        </tr>
+      </table>
+      <br>
+      </tmpl:MENU>
+
+    </td>
+    <td rowspan="2" valign="top">{content}</td>
+  </tr>
+  <tr>
+    <td width="178" valign="top">
+      <img src="http://www.uga-agga.org/rules/templates/images/logo.gif" width="178" height="496" border="0" alt="www.uga-agga.de" title="www.uga-agga.de">
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<h1>Cave Details</h1>
+<h2>Modify {name}:</h2>
+<form name="modifycave" method="post" class="form">
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Höhlen Informationen</th></tr>
+      <tr>
+        <td width="20%" align="left">Besitzer</td>
+        <td width="80%">{PlayerName}<input type="hidden" name="PlayerID" value="{PlayerID}"</td>
+      </tr>
+      <tr>
+        <td width="20%" align="left">Koordinaten</td>
+        <td width="80%">({xCoord}/{yCoord})</td>
+      </tr>
+      <tr>
+        <td width="20%" align="left">Höhlen Name</td>
+        <td width="80%"><input name="name" type="text" id="name" size="50" maxlength="255" value="{name}" /></td>
+        <input type="hidden" value="{name}" name="old_name" />
+      </tr>
+      <tr>
+        <td width="20%" align="left">Sichere Höhle</td>
+        <td width="80%"><input type="checkbox" name="secureCave" id="secureCave" value="1"<tmpl:SECURECAVE>{iterate} checked="checked"</tmpl:SECURECAVE> /></td>
+        <input type="hidden" value="{secureCaveValue}" name="old_secureCave" />
+      </tr>
+      <tr>
+        <td width="20%" align="left">Übernehmbare Höhle</td>
+        <td width="80%"><input type="checkbox" name="takeoverable" id="takeoverable" value="1"<tmpl:TAKEOVERABLE>{iterate} checked="checked"</tmpl:TAKEOVERABLE> /></td>
+        <input type="hidden" value="{takeoverableValue}" name="old_takeoverable" />
+      </tr>
+      <tr>
+        <td width="20%" align="left">Start Höhle</td>
+        <td width="80%"><input type="checkbox" name="startingposition" id="startingposition" value="1"<tmpl:STARTINGPOSITION>{iterate} checked="checked"</tmpl:STARTINGPOSITION> /></td>
+        <input type="hidden" value="{startingpositionValue}" name="old_startingposition" />
+      </tr>
+      <tr>
+        <td width="20%" align="left">Keine Statistik</td>
+        <td width="80%"><input type="checkbox" name="noStatistic" id="noStatistic" value="1"<tmpl:NOSTATISTIC>{iterate} checked="checked"</tmpl:NOSTATISTIC> /></td>
+        <input type="hidden" value="{noStatisticValue}" name="old_noStatistic" />
+      </tr>
+  </table>
+
+  <hr />
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Resourcen</th></tr>
+    <tmpl:RESOURCE>
+      <tr>
+        <td width="20%" align="left">{lang}</td>
+        <td width="80%"><input name="resource_{id}" type="text" id="resource_{id}" size="10" maxlength="20" value="{value}" /></td>
+        <input type="hidden" value="{value}" name="old_resource_{id}" />
+      </tr>
+    </tmpl:RESOURCE>
+  </table>
+
+  <hr />
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Erweiterungen</th></tr>
+    <tmpl:BUILDING>
+      <tr>
+        <td width="20%" align="left">{lang}</td>
+        <td width="80%"><input name="building_{id}" type="text" id="building_{id}" size="10" maxlength="20" value="{value}" /></td>
+        <input type="hidden" value="{value}" name="old_building_{id}" />
+      </tr>
+    </tmpl:BUILDING>
+  </table>
+
+  <hr />
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Einheiten</th></tr>
+    <tmpl:UNIT>
+      <tr>
+        <td width="20%" align="left">{lang}</td>
+        <td width="80%"><input name="unit_{id}" type="text" id="unit_{id}" size="10" maxlength="20" value="{value}" /></td>
+        <input type="hidden" value="{value}" name="old_unit_{id}" />
+      </tr>
+    </tmpl:UNIT>
+  </table>
+
+  <hr />
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Verteidigungsanlagen</th></tr>
+    <tmpl:DEFENSE>
+      <tr>
+        <td width="20%" align="left">{lang}</td>
+        <td width="80%"><input name="defense_{id}" type="text" id="defense_{id}" size="10" maxlength="20" value="{value}" /></td>
+        <input type="hidden" value="{value}" name="old_defense_{id}" />
+      </tr>
+    </tmpl:DEFENSE>
+  </table>
+
+  <hr />
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Sonstiges</th></tr>
+    <tmpl:OTHER>
+      <tr>
+        <td width="20%" align="left">{lang}</td>
+        <td width="80%"><input name="other_{id}" type="text" id="other_{id}" size="10" maxlength="20" value="{value}" /></td>
+        <input type="hidden" value="{value}" name="old_other_{id}" />
+      </tr>
+    </tmpl:OTHER>
+  </table>
+
+	<br />
+	<br />
+<hr>
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">Forschungen&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp; <i>Achtung: dies wird auf alle Höhlen des Spielers übertragen</i></th></tr>
+    <tmpl:SCIENCE>
+      <tr>
+        <td width="20%" align="left">{lang}</td>
+        <td width="80%"><input name="science_{id}" type="text" id="defense_{id}" size="10" maxlength="20" value="{value}" /></td>
+        <input type="hidden" value="{value}" name="old_science_{id}" />
+      </tr>
+    </tmpl:SCIENCE>
+  </table>
+<br><br>
+  <input name="modus" type="hidden" value="cave_modify" />
+  <input type="hidden" value="{CaveID}" name="CaveID" />
+  <input name="modifier" type="submit" id="modifier" value="Modify!" />
+</form>

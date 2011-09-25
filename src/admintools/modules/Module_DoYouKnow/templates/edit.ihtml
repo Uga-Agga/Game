@@ -1,0 +1,22 @@
+<h1>DoYouKnow Details</h1>
+<form name="modify_doyouknow" method="post" class="form">
+
+  <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+    <tr><th colspan="2" align="left">DoYouKnow</th></tr>
+      <tr>
+        <td width="20%" align="left">Titel</td>
+        <td><input name="titel" type="text" id="titel" size="50" maxlength="255" value="{titel}" /></td>
+      </tr>
+      <tr>
+        <td width="20%" align="left">Text</td>
+        <td><textarea name="content" cols="50" rows="10">{content}</textarea></td>
+      </tr>
+  </table>
+
+	<br />
+	<br />
+
+  <input name="modus" type="hidden" value="doyouknow_edit" />
+  <input type="hidden" value="{id}" name="id" />
+  <input name="submit" type="submit" id="submit" value="submit" />
+</form>

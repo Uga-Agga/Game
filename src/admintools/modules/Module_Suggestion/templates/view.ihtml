@@ -1,0 +1,7 @@
+<h1>Viewing Suggestion {suggestion_id}</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<p><a href="?modus=suggestion_list#{suggestion_id}">zur&uuml;ck</a></p>
+<h4>Submitted by: {player}</h4>
+<p style="border: 1px solid white;">
+{suggestion}
+</p>

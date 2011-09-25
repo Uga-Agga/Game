@@ -1,0 +1,46 @@
+td         {font-family: verdana,helvetica; font-size: 11px}
+th         {border-bottom: 1px dashed black;}
+body       {scrollbar-face-color: #dee3e7; scrollbar-highlight-color: #ffffff; scrollbar-shadow-color: #dee3e7;
+            scrollbar-3dlight-color: #d1d7dc; scrollbar-arrow-color: #006699; scrollbar-track-color: #efefef;
+            scrollbar-darkshadow-color: #98aab1; background-color: #cccc99}
+p          {font-family: verdana,helvetica; font-size: 11px}
+input,
+select     {font-family: verdana,helvetica; font-size: 9px;}
+
+textarea   {margin: 2px 2px 2px 2px}
+
+fieldset   {border: 1px solid #000000; margin: 1em .5em .5em .5em}
+legend     {padding: 0.2em 0.5em; border:1px solid black; color:black; background-color: #ffffcc;
+            font-size:90%}
+
+ul         {list-style: outside url(../images/bullet.gif);}
+
+a:link     {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+a:active   {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+a:visited  {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+a:hover    {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+.title     {background: none; color: #000000; font-size: 13px; font-weight: bold; font-family: verdana, helvetica; text-decoration: none}
+.box       {font-family: verdana,helvetica; font-size: 11px; border: 1px solid #000000; background-color: #ffffff}
+.boxtitle  {color: #003300; font-weight: bold;}
+.alternate {background: #ffffcc}
+
+h1         {background-color: #000000; color: #FFFFFF; font-size: large; font-variant: small-caps; padding: 4px; width: 100%}
+
+.form label, .form input {
+  display:block;
+  float:left;
+  margin-bottom:10px;
+}
+.form label {
+  text-align:right;
+  padding-right:20px;
+  width:30%;
+}
+.form input {
+}
+.form br {
+  clear:both;
+}
+
+.grid { border-collapse: collapse; }
+.grid td { border: 1px solid black; }

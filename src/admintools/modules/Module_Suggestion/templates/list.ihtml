@@ -1,0 +1,24 @@
+<h1>Listing Suggestions</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+  <tmpl:NOENTRIES>
+    <p>Es gibt noch keine Verbesserungsvorschl&auml;ge.</p>
+  </tmpl:NOENTRIES>
+  <tr>
+    <th>Player</th>
+    <th>Suggestion</th>
+    <th>&nbsp;</th>
+  </tr>
+  <tmpl:ROW>
+  <tr class="{class}">
+    <td><a name="{suggestion_id}">{player}</td>
+    <td><a href="?modus=suggestion_view&amp;suggestionID={suggestion_id}">{suggestion}</td>
+    <td>
+      <form method="get" style="margin: 0px;">
+        <input type="hidden" name="modus" value="suggestion_delete">
+        <input type="hidden" name="suggestionID" value="{suggestion_id}">
+        <input type="submit" name="deletesuggestion" value="l&ouml;schen">
+      </form>
+  </tr>
+  </tmpl:ROW>
+</table>

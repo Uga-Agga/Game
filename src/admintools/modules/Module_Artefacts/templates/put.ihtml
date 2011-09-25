@@ -1,0 +1,22 @@
+<h1>Put artefact into cave</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+
+<form name="artefacts_put" method="get">
+  <fieldset>
+    <legend>Put artefact into cave</legend>
+    <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+      <tr>
+        <td>{name} ({artefactID})</td>
+      </tr>
+      <tr>
+        <td>
+          x: <input name="xCoord" type="text" id="xCoord" size="3" maxlength="3" value="">
+          y: <input name="yCoord" type="text" id="yCoord" size="3" maxlength="3" value="">
+          <input name="modus" type="hidden" value="artefacts_put">
+          <input name="artefactID" type="hidden" value="{artefactID}">
+          <input name="artefacts_put_submit" type="submit" id="artefacts_put_submit" value="Put!">
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
