@@ -28,7 +28,7 @@
 {% endif %}
 
 <div class="box small">
-  <div class="box-header nohover">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
+  <div class="box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
   <div class="box-content success inner text-center">
     <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
       <ul>
@@ -50,15 +50,23 @@
         <li class="tribe_right"><a href="http://game.uga-agga.de/rules/?modus=governments" onclick="open_page(this.href, 1); return false;">{{ government_name }}</a></li>
         <li class="clr"><br class="clr" /></li>
 
-        <li class="text-center"><a href="main.php?{modus_name}={modus_value}">Anführer bestimmen</a></li>
-        <li class="text-center"><a href="main.php?{modus_name}={modus_value}&amp;{tag_name}={tag_value}">Mitgliederliste</a></li>
+        <li class="text-center"><a href="main.php?modus={{ tribe_leader_determination_link }}">Anführer bestimmen</a></li>
+        <li class="text-center"><a href="main.php?modus={{ tribe_player_list_link }}&amp;tag={{ tribe_tag|url_encode }}">Mitgliederliste</a></li>
       </ul>
     </div>
 
-    <div class="notice nohover" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
+    <div class="notice nohover text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
       <ul>
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Beziehungen:</li>
-        <li>Ihr habt zur Zeit keine Beziehungen.</li>
+        <li class="bold" style="padding-bottom: 10px; text-align: center;">Verbündete Stämme:</li>
+        {% if tribe_relations_ally %}
+          {% for item in tribe_relations_ally %}
+            <li><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li>Zur Zeit seit ihr mit keinem Stamm verbündet.</li>
+        {% endif %}
+        <li>&nbsp;</li>
+        <li class="text-center" style="font-size: 11px;"><a href="main.php?modus={{ tribe_relation_link }}&amp;tag={{ tribe_tag|url_encode }}">Alle Beziehungen anzeigen.</a></li>
       </ul>
     </div>
     <div style="clear: both;"></div>
@@ -66,14 +74,14 @@
     <div class="notice nohover" style="margin-left: 10px; margin-right: 10px;">
       <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
         <tr>
-          <th>Gegner</th>
+          <th class="text-left">Gegner</th>
           <th>Knüppelpunkte: (ihre/unsere)</th>
           <th>Kriegsanteil</th>
         </tr>
         {% if target_facts %}
           {% for item in target_facts %}
           <tr>
-            <td>{{ item.target }}</td>
+            <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.target|url_encode }}">{{ item.target }}</a></td>
             <td>{{ item.fame_target }}/{{ item.fame_own }}</td>
             <td><span class="{{ item.class }}">{{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)</span></td>
           </tr>

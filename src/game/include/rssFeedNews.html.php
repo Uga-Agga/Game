@@ -16,6 +16,7 @@ function rssFeedNews_getContent() {
   global $config, $template;
 
   $template->setFile('rssFeedNews.tmpl');
+  $template->setShowRresource(false);
 
   $rss = new Rss;
   $rss->cache_dir = realpath(dirname(__FILE__) . '/../cache'); //path to cache directory on your server from this script. Chmod 777!

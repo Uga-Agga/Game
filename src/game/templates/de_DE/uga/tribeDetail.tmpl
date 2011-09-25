@@ -44,8 +44,9 @@
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
 
-          <li style="padding-bottom: 10px;"><a href="main.php?modus={playerList_modus}&amp;tag={urltag}">Liste der Mitglieder</a></li>
-          <li style="padding-bottom: 10px;"><a href="main.php?modus={tribeRelationList_modus}&amp;tag={urltag}">Übersicht über die Stammesgeschichte</a></li>
+          <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_player_list_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Mitglieder anzeigen</a></li>
+          <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_history_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Stammesgeschichte anzeigen</a></li>
+          <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_relation_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Beziehungen anzeigen</a></li>
           <li style="padding-bottom: 10px;">Knüppelpunkte gewonnen: {{ tribe_details.warpoints_pos }}</li>
           <li style="padding-bottom: 10px;">Knüppelpunkte verloren: {{ tribe_details.warpoints_neg }}</li>
 

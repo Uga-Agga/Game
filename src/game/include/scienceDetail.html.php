@@ -13,16 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function science_getScienceDetails($scienceID, $caveData) {
-
-  global $buildingTypeList,
-         $defenseSystemTypeList,
-         $resourceTypeList,
-         $scienceTypeList,
-         $unitTypeList,
-         $template,
-         $no_resource_flag;
-
-  $no_resource_flag = 1;
+  global $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
   // first check whether that science should be displayed...
   $science = $scienceTypeList[$scienceID];
@@ -34,6 +26,7 @@ function science_getScienceDetails($scienceID, $caveData) {
   }
 
   $template->setFile('scienceDetail.tmpl');
+  $template->setShowRresource(false);
   $shortVersion = 3;
 
   $currentlevel = $caveData[$science->dbFieldName];

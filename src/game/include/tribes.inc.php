@@ -129,6 +129,7 @@ function government_setGovernment($tag, $governmentID) {
   if (!$sql->execute()) {
     return 0;
   }
+
   return 1;
 }
 
@@ -240,9 +241,9 @@ function tribe_isTopTribe($tag) {
   global $db;
   
   $sql = $db->prepare("SELECT rank 
-                      FROM " . RANKING_TRIBE_TABLE . " 
-                      WHERE tribe = :tag
-                      LIMIT 0 , 30");
+                       FROM " . RANKING_TRIBE_TABLE . " 
+                       WHERE tribe = :tag
+                       LIMIT 0 , 30");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -552,7 +553,6 @@ function tribe_SetTribeInvalid($tag) {
                        SET valid = '0', validatetime  = (NOW() + INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0 
                        WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   $result = $sql->execute();
 
   if ($result) {
@@ -571,7 +571,6 @@ function tribe_SetTribeValid($tag) {
                        SET valid = '1' 
                        WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   $result = $sql->execute();
 
   if ($result) {
@@ -639,8 +638,7 @@ function relation_calcFame($winner, $winnerOld, $looser, $looserOld) {
     max(.125, min(8, ($looser / $winner) * ($looser / $winner) * ($winner_old / $looser_old)));
 }
 
-function relation_setRelation($from, $target, $relation, $duration, 
-                              $end_time, $from_points_old, $target_points_old, $fame=0) {
+function relation_setRelation($from, $target, $relation, $duration, $end_time, $from_points_old, $target_points_old, $fame=0) {
   global $relationList, $db;
 
   if (($from_points = tribe_getMight($from)) < 0) {
@@ -656,10 +654,14 @@ function relation_setRelation($from, $target, $relation, $duration,
   }
 
   if ($relation == 0) {
-    $query =
-      "DELETE FROM " . RELATION_TABLE . 
-      " WHERE tribe = '$from' ".
-      " AND tribe_target = '$target'";
+    $sql = $db->prepare("DELETE " . RELATION_TABLE . " 
+                         WHERE tribe = :tribe
+                           AND tribe_target = :tribe_target");
+    $sql->bindValue('tribe', $from, PDO::PARAM_STR);
+    $sql->bindValue('tribe_target', $target, PDO::PARAM_STR);
+    if (!$sql->execute()) {
+      return 0;
+    }
   }
   else {
     $query =
@@ -683,10 +685,9 @@ function relation_setRelation($from, $target, $relation, $duration,
        "duration = '$end_time' " :
        "duration = (NOW() + INTERVAL '$duration' HOUR) + 0 ").", ".
        "fame ='$fame'";
-  }
-
-  if (!$db->query($query)) {
-    return 0;
+    if (!$db->query($query)) {
+      return 0;
+    }
   }
 
   // calculate the fame update if necessary
@@ -771,8 +772,8 @@ function relation_isPossible($to, $from) {
 
 function relation_getRelationsForTribe($tag) {
   global $db;
-  // get relations from $tag to other tribes
 
+  // get relations from $tag to other tribes
   $sql = $db->prepare("SELECT *,  DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time,  (NOW()+0) > duration AS changeable 
                        FROM ". RELATION_TABLE . "
                        WHERE tribe LIKE :tag");
@@ -788,7 +789,6 @@ function relation_getRelationsForTribe($tag) {
   $sql->closeCursor();
 
   // get relations from other tribes to $tag
-
   $sql = $db->prepare("SELECT *
                        FROM ". RELATION_TABLE . "
                        WHERE tribe_target LIKE :tag");
@@ -875,7 +875,6 @@ function relation_getWarTargetsAndFame($tag) {
     "AND r_own.relationType = '$warId' ".
     "AND r_own.tribe LIKE '$tag' ".
     "ORDER BY r_own.timestamp ASC";
-
   $result = $db->query($query);
 
   // copy result into an array
@@ -1007,18 +1006,17 @@ function tribe_processAdminUpdate($leaderID, $tag, $data) {
 function tribe_getAllTribes() {
   global $db;
   
-  $sql = "SELECT *, ".
-         "(validatetime < NOW() + 0) AS ValidationTimeOver ".
-         "FROM " . TRIBE_TABLE;
-
-  if (!$db_all_tribes = $db->query($sql)) {
+  $sql = "SELECT *, (validatetime < NOW() + 0) AS ValidationTimeOver FROM " . TRIBE_TABLE;
+  if (!$sql = $db->query($sql)) {
     return -1;
   }
 
   $tribes = array();
-  while ($row = $db_all_tribes->fetch(PDO::FETCH_ASSOC)) {
+  while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $tribes[$row['tag']] = $row;
   }
+  $sql->closeCursor();
+
   return $tribes;
 }
 
@@ -1043,6 +1041,25 @@ function tribe_getAllMembers($tag) {
   $sql->closeCursor();
 
   return $members;
+}
+
+function tribe_getPlayerList($tag) {
+  global $db;
+
+  $sql = $db->prepare("SELECT p.playerID, p.name, p.awards, r.rank, r.average AS points, r.caves, r.religion, r.fame, r.fame as kp
+                       FROM ". PLAYER_TABLE ." p
+                         LEFT JOIN ".RANKING_TABLE ." r
+                           ON r.playerID = p.playerID
+                       WHERE p.tribe LIKE :tag
+                       ORDER BY r.rank ASC");
+  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  if (!$sql->execute()) {
+    return;
+  }
+  $return = $sql->fetchAll(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  return $return;
 }
 
 /**
@@ -1209,16 +1226,19 @@ function tribe_leaveTribe($playerID, $tag) {
 function ranking_sort(){
   global $db;
   
-  $query = 
-    "SELECT rankingID FROM ". RANKING_TRIBE_TABLE ." ORDER BY points_rank DESC, -1*(1+playerAverage)";
-  $db_rank = $db->query($query);
-  if(!$db_rank){
+  $sql = "SELECT rankingID FROM ". RANKING_TRIBE_TABLE ." ORDER BY points_rank DESC, -1*(1+playerAverage)";
+  if (!$sql = $db->query($sql)) {
     return 0;
   }
+
   $count = 1;
-  while($row = $db_rank->fetch()){
-    $query = "UPDATE ".RANKING_TRIBE_TABLE ." SET rank = ".$count++." WHERE rankingID = ".$row['rankingID'];
-    if(!$db->query($query)){
+  while($row = $sql->fetch()) {
+    $sql = $db->prepare("UPDATE ". RANKING_TRIBE_TABLE . "
+                        SET rank = :rank
+                        WHERE rankingID = :rankingID");
+    $sql->bindValue('rank', $count++, PDO::PARAM_INT);
+    $sql->bindValue('rankingID', $row['rankingID'], PDO::PARAM_INT);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
       return 0;
     }
   }
@@ -1227,9 +1247,11 @@ function ranking_sort(){
 function tribe_restoreOldRanking($tag, $pw) {
   global $db;
   
-  $sql = $db->prepare("SELECT * FROM ". OLD_TRIBES_TABLE .
-                      " WHERE tag LIKE :tag AND password = :pw AND used = 0 ".
-                      "LIMIT 1");
+  $sql = $db->prepare("SELECT * FROM ". OLD_TRIBES_TABLE . "
+                       WHERE tag LIKE :tag
+                         AND password = :pw
+                         AND used = 0
+                       LIMIT 1");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('pw', $pw, PDO::PARAM_STR);
   
@@ -1237,25 +1259,29 @@ function tribe_restoreOldRanking($tag, $pw) {
   $row = $sql->fetch();
   if (!$row) return 1; // bail out if no tribe is found, but with positive return value
   
-  $sql = $db->prepare("UPDATE ". RANKING_TRIBE_TABLE .
-                      " SET points_rank = :points_rank ".
-                      "WHERE tribe LIKE :tag'");
+  $sql = $db->prepare("UPDATE ". RANKING_TRIBE_TABLE . "
+                       SET points_rank = :points_rank
+                       WHERE tribe LIKE :tag'");
   $sql->bindValue('points_rank', $row['points_rank'], PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  
-  if (!$sql->execute()) return 0;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return 0;
+  }
+
   return 1;
 }
 
 function tribe_removeTribeFromOldRanking($tag) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". OLD_TRIBES_TABLE .
-                      " SET used = 1 ".
-                      "WHERE tag = :tag");
+  $sql = $db->prepare("UPDATE ". OLD_TRIBES_TABLE . "
+                       SET used = 1
+                       WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  
-  if (!$sql->execute()) return 0;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return 0;
+  }
+
   return 1;
 }
 
@@ -1263,7 +1289,6 @@ function tribe_createRanking($tag) {
   global $db;
   
   $sql = $db->prepare("SELECT MAX(rank) +1 AS newrank FROM " . RANKING_TRIBE_TABLE);
-
   if (!$sql->execute()) {
     return -1;
   }
@@ -1276,9 +1301,10 @@ function tribe_createRanking($tag) {
   if (is_null($newrank))
     $newrank = 1;
 
-  $sql = $db->prepare("INSERT INTO ". RANKING_TRIBE_TABLE ." ".
-                      "(tribe, rank, points_rank) ".
-                      "VALUES (:tag, :newrank, 1500)");
+  $sql = $db->prepare("INSERT INTO ". RANKING_TRIBE_TABLE ."
+                         (tribe, rank, points_rank)
+                       VALUES
+                         (:tag, :newrank, 1500)");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('newrank', $newrank, PDO::PARAM_INT);
   
@@ -1372,8 +1398,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-  if ($tribe['leaderID'] &&
-      ! tribe_unmakeLeader($tribe['leaderID'], $tag))
+  if ($tribe['leaderID'] && !tribe_unmakeLeader($tribe['leaderID'], $tag))
   {
     return 0;
   }
@@ -1382,13 +1407,11 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
   }
 
   foreach ($members AS $playerID => $playerData) {
-    if (! tribe_leaveTribe($playerID, $tag))
-    {
+    if (! tribe_leaveTribe($playerID, $tag)) {
       return 0;
     }
 
-    if (! tribe_setBlockingPeriodPlayerID($playerID))
-    {
+    if (! tribe_setBlockingPeriodPlayerID($playerID)) {
       return 0;
     }
 
@@ -1404,50 +1427,44 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
     Player::addHistoryEntry($playerID, sprintf(_('verlässt den Stamm \'%s\''), $tag));
   }
 
-  $sql = $db->prepare("DELETE FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". TRIBE_TABLE . " WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
     return 0;
   }
 
-  $sql = $db->prepare("DELETE FROM ". RELATION_TABLE .
-                      " WHERE tribe LIKE :tag ".
-                      "OR tribe_target LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". RELATION_TABLE . "
+                       WHERE tribe LIKE :tag
+                         OR tribe_target LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
     return 0;
   }
 
-  $sql = $db->prepare("DELETE FROM ". TRIBE_MESSAGE_TABLE .
-                      " WHERE tag LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". TRIBE_MESSAGE_TABLE . " WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
     return 0;
   }
 
-  $sql = $db->prepare("DELETE FROM ". TRIBE_HISTORY_TABLE .
-                      " WHERE tribe LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". TRIBE_HISTORY_TABLE . " WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
     return 0;
   }
 
-  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE .
-                      " WHERE tribe LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE . " WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
     return 0;
   }
 
-  $sql = $db->prepare("SELECT rank ".
-                      "FROM ". RANKING_TRIBE_TABLE .
-                      " WHERE tribe LIKE :tag");
+  $sql = $db->prepare("SELECT rank FROM ". RANKING_TRIBE_TABLE . " WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -1459,8 +1476,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
   }
   $rank = $row['rank'];
 
-  $sql = $db->prepare("DELETE FROM ". RANKING_TRIBE_TABLE .
-                      " WHERE tribe LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". RANKING_TRIBE_TABLE . " WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   
   if (!$sql->execute()) {
@@ -1587,7 +1603,7 @@ function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
  */
 function tribe_recalcLeader1($tag) {
   global $db;
-  
+
   $sql = $db->prepare("SELECT p.playerID, p.name ".
                       "FROM ". PLAYER_TABLE ." p ".
                       "LEFT JOIN Ranking r ON p.playerID = r.playerID ".
@@ -1597,8 +1613,7 @@ function tribe_recalcLeader1($tag) {
                       "LIMIT 0, 2");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
-  if (!$sql->execute())
-  {
+  if (!$sql->execute()) {
     return -1;
   }
 
@@ -1619,17 +1634,15 @@ function tribe_recalcLeader1($tag) {
 function tribe_recalcLeader2($tag) {
   global $db;
   
-  $sql = $db->prepare("SELECT e.playerID, COUNT(e.voterID) AS votes ".
-                      "FROM ". ELECTION_TABLE ." e ".
-                      "LEFT JOIN Player p ON p.playerID = e.playerID ".
-                      "WHERE e.tribe like :tag ".
-                      "GROUP BY e.playerID, p.name ".
-                      "ORDER BY votes DESC ".
-                      "LIMIT 0,1");
+  $sql = $db->prepare("SELECT e.playerID, COUNT(e.voterID) AS votes
+                       FROM ". ELECTION_TABLE ." e
+                         LEFT JOIN Player p ON p.playerID = e.playerID
+                       WHERE e.tribe like :tag
+                       GROUP BY e.playerID, p.name
+                       ORDER BY votes DESC
+                       LIMIT 0,1");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-  if (!$sql->execute())
-  {
+  if (!$sql->execute()) {
     return -1;
   }
   if (!($row = $sql->fetch())) {
@@ -1655,10 +1668,10 @@ function tribe_processJoin($playerID, $tag, $password) {
     return -12;
   }
 
-  $sql = $db->prepare("SELECT tag ".
-                      "FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tag ".
-                      "AND password = :password ");
+  $sql = $db->prepare("SELECT tag
+                       FROM ". TRIBE_TABLE . "
+                       WHERE tag LIKE :tag
+                         AND password = :password");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('password', $password, PDO::PARAM_STR);
 
@@ -1678,8 +1691,8 @@ function tribe_processJoin($playerID, $tag, $password) {
 
   if ((int) TRIBE_MAXIMUM_SIZE > 0) {
     $sql = $db->prepare("SELECT count(*) < " . (int) TRIBE_MAXIMUM_SIZE . " as IsOk 
-                        FROM " . PLAYER_TABLE . "
-                        WHERE tribe LIKE :tag");
+                         FROM " . PLAYER_TABLE . "
+                         WHERE tribe LIKE :tag");
     $sql->bindValue('tag', $tag, PDO::PARAM_STR);
     
    if (!$sql->execute()) {
@@ -1716,10 +1729,9 @@ function tribe_processJoinFailed () {
 function tribe_setBlockingPeriodPlayerID($playerID) {
   global $db;
   
-  $sql = $db->prepare("UPDATE ". PLAYER_TABLE .
-                      " SET tribeBlockEnd = (NOW() + INTERVAL ".
-                      TRIBE_BLOCKING_PERIOD_PLAYER." SECOND)+0 ".
-                      "WHERE playerID = :playerID");
+  $sql = $db->prepare("UPDATE ". PLAYER_TABLE . "
+                       SET tribeBlockEnd = (NOW() + INTERVAL ". TRIBE_BLOCKING_PERIOD_PLAYER." SECOND)+0
+                       WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_STR);
 
   return $sql->execute();
@@ -1841,14 +1853,12 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
 
   // init messages class
   $messagesClass = new Messages;
-
   if (!tribe_isLeaderOrJuniorLeader($leaderID, $tag)) {
     return -9;
   }
 
   // get all members
-  $sql = $db->prepare("SELECT p.name AS name FROM ". PLAYER_TABLE ." p ".
-                       "WHERE p.tribe LIKE :tag");
+  $sql = $db->prepare("SELECT name FROM ". PLAYER_TABLE ." WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if(!$sql->execute()) {
@@ -1880,8 +1890,9 @@ function tribe_sendTribeMessage($tag, $type, $heading, $message) {
   global $db;
 
   $sql = $db->prepare("INSERT INTO " . TRIBE_MESSAGE_TABLE . " 
-                       (tag, messageClass, messageSubject, messageText, messageTime) 
-                       VALUES (:tag, :messageClass, :messageSubject, :messageText, NOW()+0)");
+                         (tag, messageClass, messageSubject, messageText, messageTime) 
+                       VALUES
+                         (:tag, :messageClass, :messageSubject, :messageText, NOW()+0)");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('messageClass', $type, PDO::PARAM_INT);
   $sql->bindValue('messageSubject', $heading, PDO::PARAM_STR);
@@ -1893,11 +1904,11 @@ function tribe_sendTribeMessage($tag, $type, $heading, $message) {
 function tribe_getTribeMessages($tag) {
   global $db;
   
-  $sql = $db->prepare("SELECT *, DATE_FORMAT(messageTime, '%d.%m.%Y %H:%i') AS date ".
-                      "FROM ". TRIBE_MESSAGE_TABLE .
-                      " WHERE tag LIKE :tag ".
-                      "ORDER BY messageTime DESC ".
-                      "LIMIT 0, 30");
+  $sql = $db->prepare("SELECT *, DATE_FORMAT(messageTime, '%d.%m.%Y %H:%i') AS date 
+                       FROM ". TRIBE_MESSAGE_TABLE . "
+                       WHERE tag LIKE :tag
+                       ORDER BY messageTime DESC
+                       LIMIT 0, 30");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()){
@@ -1920,8 +1931,8 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
   }
 
   $sql = $db->prepare("SELECT name
-                      FROM ". TRIBE_TABLE . "
-                      WHERE tag LIKE :tag");
+                       FROM ". TRIBE_TABLE . "
+                       WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if ($sql->rowCountSelect() > 0) {
     return -5;
@@ -1932,13 +1943,11 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
   }
 
   if ($restore_rank) {
-    if (!tribe_restoreOldRanking($tag, $password))
-    {
+    if (!tribe_restoreOldRanking($tag, $password)) {
       return -1;
     }
   }
-  if (!tribe_removeTribeFromOldRanking($tag))
-  {
+  if (!tribe_removeTribeFromOldRanking($tag)) {
     return -1;
   }
 
@@ -1948,8 +1957,7 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
     return -7;
   }
 
-  Player::addHistoryEntry($leaderID, sprintf(_('gründet den Stamm \'%s\''),
-                          $tag));
+  Player::addHistoryEntry($leaderID, sprintf(_('gründet den Stamm "%s"'), $tag));
 
   return 3;
 }
@@ -1961,9 +1969,9 @@ function tribe_processCreateFailed() {
 function tribe_setPassword($tag, $password) {
   global $db;
   
-  $sql = $db->prepare("UPDATE " . TRIBE_TABLE .
-                      " SET password = :password ".
-                      "WHERE tag LIKE :tag");
+  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                       SET password = :password
+                       WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('password', $password, PDO::PARAM_STR);
 
@@ -1981,9 +1989,9 @@ function tribe_processChangePassword($tag, $password) {
 function tribe_getTagOfPlayerID($playerID) {
   global $db;
   
-  $sql= $db->prepare("SELECT tribe ".
-                    "FROM ". PLAYER_TABLE .
-                    " WHERE playerID = :playerID ");
+  $sql= $db->prepare("SELECT tribe
+                      FROM ". PLAYER_TABLE . "
+                      WHERE playerID = :playerID ");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -1998,9 +2006,9 @@ function tribe_getTagOfPlayerID($playerID) {
 function tribe_getLeaderID($tribe) {
   global $db;
   
-  $sql = $db->prepare("SELECT leaderID ".
-                      "FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tribe ");
+  $sql = $db->prepare("SELECT leaderID
+                       FROM ". TRIBE_TABLE . "
+                       WHERE tag LIKE :tribe ");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -2015,9 +2023,9 @@ function tribe_getLeaderID($tribe) {
 function tribe_getJuniorLeaderID($tribe) {
   global $db;
   
-  $sql = $db->prepare("SELECT juniorLeaderID ".
-                      "FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tribe ");
+  $sql = $db->prepare("SELECT juniorLeaderID
+                       FROM ". TRIBE_TABLE . "
+                       WHERE tag LIKE :tribe");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -2033,10 +2041,10 @@ function tribe_getJuniorLeaderID($tribe) {
 function tribe_isLeader($playerID, $tribe) {
   global $db;
   
-  $sql = $db->prepare("SELECT name ".
-                      "FROM ". TRIBE_TABLE .
-                      " WHERE tag LIKE :tribe ".
-                      "AND leaderID = :playerID");
+  $sql = $db->prepare("SELECT name
+                       FROM ". TRIBE_TABLE . "
+                       WHERE tag LIKE :tribe
+                         AND leaderID = :playerID");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   
@@ -2079,10 +2087,10 @@ function tribe_generateMapStylesheet() {
   if (!$outfile)
     die("Could not create file!");
 
-  $sql = $db->prepare("SELECT * ".
-                     "FROM ". RELATION_TABLE .
-                     " WHERE tribe = :tribe ".
-                     "OR tribe_target = :tribe");
+  $sql = $db->prepare("SELECT *
+                       FROM ". RELATION_TABLE . "
+                       WHERE tribe = :tribe
+                         OR tribe_target = :tribe");
   $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
 
   $sql->execute();
@@ -2132,9 +2140,9 @@ function tribe_generateMapStylesheet() {
 function relation_deleteRelations($tag) {
   global $db;
 
-  $sql = $db->prepare("DELETE FROM ". RELATION_TABLE .
-                      " WHERE tribe LIKE :tag ".
-                      "OR tribe_target LIKE :tag");
+  $sql = $db->prepare("DELETE FROM ". RELATION_TABLE . "
+                       WHERE tribe LIKE :tag
+                         OR tribe_target LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   return $sql->execute();
@@ -2183,34 +2191,57 @@ function ranking_calculateElo($winnertag, $winnerpoints, $losertag, $loserpoints
       $k = 25;
   }
   $eloneu = $loserpoints_actual + min(-2,$k * $faktor * (0 - (1/(1+pow(10, ($winnerpoints - $loserpoints)/400)))));
-  $query =
-    "UPDATE ". RANKING_TRIBE_TABLE ." SET points_rank=".(int)$eloneu.", calculateTime = calculateTime+1 WHERE tribe like '$losertag'";
-  if(!$db->query($query))
+
+  $sql = $db->prepare("UPDATE " . RANKING_TRIBE_TABLE . "
+                       SET points_rank = :points_rank
+                         calculateTime = calculateTime + 1
+                       WHERE tag LIKE :tag");
+  $sql->bindValue('points_rank', $eloneu, PDO::PARAM_INT);
+  $sql->bindValue('tag', $losertag, PDO::PARAM_STR);
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
-  return 1;
- 
-  //return ranking_sort($db);  
+  }
 }
 
 function ranking_updateWonLost($tag, $targettag, $targetwon) {
   global $db;
-  
-  if ($targetwon){
-    $query =
-      "UPDATE ". TRIBE_TABLE ." SET war_lost = war_lost + 1 WHERE tag LIKE '$tag'";
-    $query2 =
-      "UPDATE ".TRIBE_TABLE ." SET war_won = war_won + 1 WHERE tag LIKE '$targettag'";
-    if(!$db->query($query) || !$db->query($query2))
+
+  if ($targetwon) {
+    $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                         SET war_lost = war_lost + 1
+                         WHERE tag LIKE :tag ");
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
       return 0;
+    }
+    
+    $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                         SET war_won = war_won + 1
+                         WHERE tag LIKE :tag ");
+    $sql->bindValue('tag', $targettag, PDO::PARAM_STR);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return 0;
+    }
+
     return 1;
   }
   else if (!$targetwon) {
-    $query =
-      "UPDATE ". TRIBE_TABLE ." SET war_won = war_won + 1 WHERE tag LIKE '$tag'";
-    $query2 =
-      "UPDATE ". TRIBE_TABLE ." SET war_lost = war_lost + 1 WHERE tag LIKE '$targettag'";
-    if(!$db->query($query) || !$db->query($query2))
+    $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                         SET war_won = war_won + 1
+                         WHERE tag LIKE :tag ");
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
       return 0;
+    }
+    
+    $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                         SET war_lost = war_lost + 1
+                         WHERE tag LIKE :tag ");
+    $sql->bindValue('tag', $targettag, PDO::PARAM_STR);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return 0;
+    }
+
     return 1;
   }
 }

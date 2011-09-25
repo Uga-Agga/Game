@@ -18,9 +18,7 @@ define('TRIBE_ACTION_LEAVE',         3);
 define('TRIBE_ACTION_MESSAGE',       4);
 
 function tribe_getContent($playerID, $tribe) {
-  global $template, $no_resource_flag, $governmentList;
-
-  $no_resource_flag = 1;
+  global $template, $governmentList;
 
   // messages
   $messageText = array (
@@ -73,7 +71,7 @@ function tribe_getContent($playerID, $tribe) {
     case TRIBE_ACTION_MESSAGE:
       $msgTxt = request_var('messageText', '');
       $msgTxt = (!empty($msgTxt)) ? $msgTxt : '';
-      $ingame = (request_var('ingame', 0)) ? true : false;
+      $ingame = (isset($_POST['ingame'])) ? true : false;
 
       if ($msgTxt && $ingame){
         $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $msgTxt);
@@ -94,6 +92,7 @@ function tribe_getContent($playerID, $tribe) {
 
   if (empty($tribe)) {            // not a tribe member
     $template->setFile('tribe.tmpl');
+    $template->setShowRresource(false);
   }
 
 // ----------------------------------------------------------------------------
@@ -106,6 +105,7 @@ function tribe_getContent($playerID, $tribe) {
 
     // open template
     $template->setFile('tribeMember.tmpl');
+    $template->setShowRresource(false);
 
     if (tribe_isLeaderOrJuniorLeader($playerID, $tribe)) {
       $template->addVar('is_leader', true);
@@ -156,12 +156,25 @@ function tribe_getContent($playerID, $tribe) {
       $template->addVar('target_facts', $targetFacts);
     }
 
+    $relationAlly = array();
+    $relationsAll = relation_getRelationsForTribe($tribeData['name']);
+    if (sizeof($relationsAll)) {
+      foreach ($relationsAll['own'] as $name => $relationTribe) {
+        if ($relationTribe['relationType'] == RELATION_ALLY) {
+          $relationAlly[] = $relationTribe;
+        }
+      }
+
+      $template->addVar('tribe_relations_ally', $relationAlly);
+    }
+
     // init messages class
     $messagesClass = new Messages;
 
     $alternate=0;
     $messageAry = array();
-    if ($messages = tribe_getTribeMessages($tribe)) {
+    $messages = tribe_getTribeMessages($tribe);
+    if (sizeof($messages)) {
       foreach($messages AS $msgID => $messageData) {
         $messageAry[] = array(
           'time'          => $messageData['date'],

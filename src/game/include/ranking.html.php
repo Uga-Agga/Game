@@ -15,12 +15,11 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 define("RANKING_ROWS", 20);
 
 function ranking_getContent($caveID, $offset) {
-  global $template, $no_resource_flag;
+  global $template;
 
   // open template
   $template->setFile('rankingPlayer.tmpl');
-
-  $no_resource_flag = 1;
+  $template->setShowRresource(false);
 
   $religions = ranking_getReligiousDistribution();
   
@@ -49,14 +48,13 @@ function ranking_getContent($caveID, $offset) {
 }
 
 function rankingTribe_getContent($caveID, $offset){
-  global $template, $no_resource_flag;
-
-  $no_resource_flag = 1;
-
-  $row = rankingTribe_getRowsByOffset($caveID, $offset);
+  global $template;
 
   // open template
   $template->setFile('rankingTribe.tmpl');
+  $template->setShowRresource(false);
+
+  $row = rankingTribe_getRowsByOffset($caveID, $offset);
 
   $template->addVars(array(
     'offset_up'   => (($offset - RANKING_ROWS) > 0) ? ($offset - RANKING_ROWS) : 0,

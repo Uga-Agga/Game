@@ -13,46 +13,49 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribePlayerList_getContent($caveID, $tribe) {
-  global $db, $no_resource_flag;
+  global $db, $template;
 
-  $no_resource_flag = 1;
+  $template->setFile('tribePlayerList.tmpl');
+  $template->setShowRresource(false);
+  $template->addVars(array(
+    'show_page'  => true,
+    'tribe_name' => $tribe,
+  ));
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'tribePlayerList.ihtml');
-
-  tmpl_set($template, 'tribe', $tribe);
-
-
-  $sql = $db->prepare("SELECT r.rank, r.playerID AS link, r.name, r.average AS points, 
-             r.caves, r.religion, r.fame, p.awards, r.fame as kp " .
-           " FROM ". RANKING_TABLE ." r" .
-           " LEFT JOIN ".PLAYER_TABLE ." p" .
-           " ON p.playerID = r.playerID" .
-           " WHERE p.tribe LIKE :tribe" .
-           " ORDER BY r.rank ASC");
-  $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-
-  if (!$sql->execute()) page_dberror();
-  
-  $i = 0;
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $i++;
-    tmpl_iterate($template, 'ROWS');
-    $row['link'] = "main.php?modus=" . PLAYER_DETAIL . "&detailID=" . $row['link'] . "&caveID=" . $caveID;
-
-    if (!empty($row['awards'])){
-      $tmp = explode('|', $row['awards']);
-      $awards = array();
-      foreach ($tmp AS $tag) $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
-      $row['award'] = $awards;
-    }
-
-    if ($i % 2)
-      tmpl_set($template, 'ROWS/ROW_ALTERNATE', $row);
-    else
-      tmpl_set($template, 'ROWS/ROW',           $row);
+  if (empty($tribe)) {
+    $template->addVars(array(
+      'status_msg' => array('type' => 'error', 'message' => 'Dieser Stamm wurde nicht gefunden.'),
+      'show_page'  => false,
+    ));
   }
 
-  return tmpl_parse($template);
+  $playerList = tribe_getPlayerList($tribe);
+  foreach($playerList AS $id => $playerData) {
+    if (!empty($playerData['awards'])) {
+      $playerData['awards'] = explode('|', $playerData['awards']);
+
+      $awards = array();
+      foreach ($tmp AS $tag) {
+        $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
+      }
+
+      $playerData['award'] = $awards;
+    }
+
+    foreach($playerData as $k => $v) {
+      if ($k == 'awards' || $k == 'religion') {
+        continue;
+      }
+
+      if (!$v) {
+        $playerData[$k] = _('k.A.');
+      }
+    }
+
+    $playerList[$id] = $playerData;
+  }
+
+  $template->addVar('tribe_player_list', $playerList);
 }
 
 ?>

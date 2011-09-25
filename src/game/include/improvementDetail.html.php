@@ -13,16 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function improvement_getBuildingDetails($buildingID, $caveData, $method) {
-
-  global $buildingTypeList,
-         $defenseSystemTypeList,
-         $resourceTypeList,
-         $scienceTypeList,
-         $unitTypeList,
-         $no_resource_flag,
-         $template;
-
-  $no_resource_flag = 1;
+  global $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
   // first check whether that building should be displayed...
   $building = $buildingTypeList[$buildingID];
@@ -39,8 +31,9 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   }
   else {
     $shortVersion = false;
-    $template->setFile('improvementDetail.tmpl');    
+    $template->setFile('improvementDetail.tmpl');
   }
+  $template->setShowRresource(false);
 
   $currentlevel = $caveData[$building->dbFieldName];
   $levels = array();

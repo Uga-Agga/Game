@@ -484,8 +484,7 @@ switch ($modus) {
 
 // prepare resource bar
 $resources = array();
-if (!isset($no_resource_flag)) $no_resource_flag = false;
-if (!$no_resource_flag && isset($resourceTypeList)) {
+if ($template->getShowRresource() && isset($resourceTypeList)) {
   foreach ($resourceTypeList as $resource) {
     $amount = floor($ownCaves[$caveID][$resource->dbFieldName]);
     if (!$resource->nodocumentation || $amount > 0) {
@@ -552,7 +551,8 @@ $template->addVars(array(
   'ua_time_year'            => $UgaAggaTime['year'],
   'ua_time_time_month_name' => $UgaAggaTime['month_name'],
 
-  'artefact_list_link'      => '',
+  'artefact_list_link'      => ARTEFACT_LIST,
+  'award_detail_link'       => AWARD_DETAIL,
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
   'contact_bookmarks_link'  => CONTACTS_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
@@ -574,7 +574,11 @@ $template->addVars(array(
   'takeover_link'           => TAKEOVER,
   'tribe_link'              => TRIBE,
   'tribe_admin_link'        => TRIBE_ADMIN,
+  'tribe_leader_determination_link' => TRIBE_LEADER_DETERMINATION,
   'tribe_detail_link'       => TRIBE_DETAIL,
+  'tribe_history_link'      => TRIBE_HISTORY,
+  'tribe_relation_link'     => TRIBE_RELATION_LIST,
+  'tribe_player_list_link'  => TRIBE_PLAYER_LIST,
   'unit_link'               => UNIT_BUILDER,
   'unit_detail_link'        => UNIT_DETAIL,
   'unit_movement_link'      => UNIT_MOVEMENT,

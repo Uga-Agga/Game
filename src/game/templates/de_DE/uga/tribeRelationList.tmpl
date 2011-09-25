@@ -1,0 +1,36 @@
+{% extends "base.tmpl" %}
+{% block title %}Karte{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
+
+{% if show_page %}
+<div class="box small">
+  <div class="box-header">Beziehungsübersicht vom Stamme {{ tribe_name }}</div>
+  <div class="box-content success inner text-center">
+    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      <tr>
+        <th class="text-left">Stamm</th>
+        <th>Haltung von {{ tribe_name }}</th>
+        <th>Haltung gegenüber {{ tribe_name }}</th>
+      </tr>
+      {% if relations_data %}
+        {% for item in relations_data %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
+            <td>{{ item.relation_to }}</td>
+            <td>{{ item.relation_from }}</td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="3">Zur Zeit hat dieser Stamm keine Beziehungen</td></tr>
+      {% endif %}
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="notice small"><a href="{{ rules_path }}?modus=relations" onclick="open_page(this.href, 1); return false;">Beschreibung aller Beziehungen</a></div>
+
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.tmpl" %}
+{% block title %}Nachrichten{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
+
+{% if show_page %}
+<div class="box small">
+  <div class="box-header">Spieler aus dem Stamm {{ tribe_name }}</div>
+  <div class="box-content success inner text-center">
+
+  <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+    <tr>
+      <th>Rank</th>
+      <th>Name</th>
+      <th>&nbsp;</th>
+      <th>Punktzahl</th>
+      <th>Knüppelpunkte</th>
+      <th>Höhlen</th>
+      <th>&nbsp;</th>
+    </tr>
+    {% if tribe_player_list %}
+      {% for item in tribe_player_list %}
+        <tr>
+          <td>{{ item.rank }}</td>
+          <td><a href="{link}">{{ item.name }}</a></td>
+          <td>{% if item.religion %}<img src="%gfx%/de_DE/t_slimfast/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
+          <td>{{ item.points }}</td>
+          <td>{{ item.kp }}</td>
+          <td>{{ item.caves }}</td>
+          <td>
+            {% if item.award %}
+              {% for item2 in item.award %}
+                <a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>
+              {% endfor %}
+            {% else %}&nbsp;{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <li>Zur Zeit seit ihr mit keinem Stamm verbündet.</li>
+    {% endif %}
+  </table>
+
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

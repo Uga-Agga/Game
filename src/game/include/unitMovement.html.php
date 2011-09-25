@@ -16,7 +16,6 @@ require_once('lib/Movement.php');
 @include_once('modules/CaveBookmarks/model/CaveBookmarks.php');
 
 function unit_Movement($caveID, &$ownCave) {
-
   global $config, $db, $template;
   global $MAX_RESOURCE, $MOVEMENTCOSTCONSTANT, $MOVEMENTSPEEDCONSTANT, $FUELRESOURCEID, $resourceTypeList, $unitTypeList;
 

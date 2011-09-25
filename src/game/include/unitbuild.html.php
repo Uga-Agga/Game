@@ -137,7 +137,7 @@ function unit_getUnitDetail($caveID, &$details) {
       // show the building link ?!
       if ($queue)
         $units[$unit->unitID]['no_build_msg'] = _('Ausbau im Gange');
-      else if ($units[$unit->unitID]['notenough'] && $maxLevel > $details[$unit->dbFieldName])
+      else if ($units[$unit->unitID]['notenough'])
         $units[$unit->unitID]['no_build_msg'] = _('Zu wenig Rohstoffe');
       else {
         $units[$unit->unitID]['build_link'] = true;
