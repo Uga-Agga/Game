@@ -138,6 +138,11 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
       if ($row['artefactID']) {
         $tmp['artefact'] = artefact_getArtefactByID($row['artefactID']);
       }
+      
+      // show hero
+      if ($row['heroID']) {
+        $tmp['hero'] = "Held läuft mit!";
+      }
 
       // eval(ExposeInvisible)
       // FIXME (mlunzena): oben holen wir schon bestimmte Höhlendaten,

@@ -1,7 +1,7 @@
-<tmpl:TITLE>Eine Lieferung von Skon-Tho in  {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Eine Lieferung von Skon-Tho in {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
-In der Höhle {cave}:
+In der HÃ¶hle {cave}:
 {wonder_message}
 
 Es zeigten sich folgende Wirkungen:

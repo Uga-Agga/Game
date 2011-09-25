@@ -9,7 +9,7 @@
  the License, or (at your option) any later version.
  -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:output method="text" encoding="ISO-8859-1"/>
+<xsl:output method="text" encoding="UTF-8"/>
 <!-- text elements -->
 <xsl:strip-space elements="Name Description targetMessage sourceMessage p"/>
 <!-- replace-string -->

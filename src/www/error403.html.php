@@ -3,12 +3,9 @@
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="de" xml:lang="de">
 <head>
-  <title>Uga Agga Online Game</title>
+  <title>Uga Agga Online Game - Zugriff verweigert!</title>
   <link rel="shortcut icon" href="./images/favicon.ico" />
   <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
-<head>
-    <title>Zugriff verweigert</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <meta HTTP-EQUIV="Refresh" CONTENT="5; URL=<?php define('_VALID_UA', 1); require_once('config.inc.php'); require_once('include/config.inc.php'); echo LOGIN_PATH;?>">
     <script language="javascript" type="text/javascript">
       if (top.location != self.location) top.location = self.location;

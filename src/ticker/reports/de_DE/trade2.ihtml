@@ -1,10 +1,10 @@
-<tmpl:TITLE>Handelsbericht in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Handelsbericht in HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 <p>
 Aus
-{if self}deiner Höhle {orig}{else}
-der Höhle {orig} {if sender}des Spielers {sender}{/if}
+{if self}deiner HÃ¶hle {orig}{else}
+der HÃ¶hle {orig} {if sender}des Spielers {sender}{/if}
 {/if}
 ist ein Transport eingetroffen:
 </p>

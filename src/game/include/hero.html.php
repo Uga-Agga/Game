@@ -92,6 +92,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     
     $eventHero=getEventHero($playerID);
     
+    if ($eventHero) {
+      $disabled = '';
+    }
+    
     $ritual = getRitualByLvl($hero['lvl']);
     $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
@@ -107,11 +111,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       );
       $resource[$key->dbFieldName]= $tmp;
     }
-
+    
     if($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
       $hero['HPbar']='error';
     }
-    else{
+    else {
       $hero['HPbar']='success';
     }
 

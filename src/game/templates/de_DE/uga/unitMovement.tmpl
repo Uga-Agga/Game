@@ -315,17 +315,17 @@ function hideWMTT() {
           
           <li class="border_top" style="height: 10px;">&nbsp;</li>
           <li>
-            <div style="width: 105px; height: 25px; float: left;">Bewegungsdauer:</div>
+            <div style="width: 115px; height: 25px; float: left;">Bewegungsdauer:</div>
             <div style="width: 150px; height: 25px; float: left;" id="duration">- Min</div>
             <div style="clear: both;"></div>
           </li>
           <li>
-            <div style="width: 120px; height: 25px; float: left;">Nahrungsverbrauch:</div>
+            <div style="width: 130px; height: 25px; float: left;">Nahrungsverbrauch:</div>
             <div style="width: 132px; height: 25px; float: left;" id="food">- Nahrung</div>
             <div style="clear: both;"></div>
           </li>
           <li>
-            <div style="width: 162px; height: 25px; float: left;">Bewegungsgeschwindigkeit:</div>
+            <div style="width: 176px; height: 25px; float: left;">Bewegungsgeschwindigkeit:</div>
             <div style="width: 85px; height: 25px; float: left;" id="movementspeed">0</div>
             <div style="clear: both;"></div>
           </li>
@@ -449,9 +449,17 @@ function hideWMTT() {
                   <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</span></li>
                 {% endfor %}
               {% endif %}
+              {% if item.hero %}
+                  <li><span style="font-size: x-small; white-space:nowrap;">{{ item.hero }}</span></li>
+              {% endif %}
             </ul>
           </td>
-          <td style="text-align:right; vertical-align:middle;"><!--<tmpl:CANCEL><a href="main.php?modus={modus}&amp;eventID={eventID}"><img src="{{ gfx }}/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>&nbsp;</tmpl:CANCEL>--></td>
+          <td style="text-align:right; vertical-align:middle;">
+          {% if item.CANCEL %}
+          <a href="main.php?modus={{ item.CANCEL.modus }}&amp;eventID={{ item.CANCEL.eventID }}"><img src="{{ gfx }}/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>
+          {% endif %}
+          &nbsp;</td>
+          
         </tr>
       {% endfor %}
     </table>

@@ -58,10 +58,10 @@ function getHeroByPlayer($playerID) {
       'path'         => _('hero_imperator.gif'),
       'location'     => _('tot')
   );
-  if($hero['id']=='Defender'){
+  if($hero['id']=='Defender') {
     $hero['path']=_('hero_defender.gif');
   }
-  if($hero['id']=='Constructor'){
+  if($hero['id']=='Constructor') {
     $hero['path']=_('hero_constructor.gif');
   }
   
@@ -71,20 +71,14 @@ function getHeroByPlayer($playerID) {
   $hero['regHealPoints'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP']) . ";");
   
   if ($hero['healPoints'] == 0 || $hero['isAlive'] == false) {
-      $hero['location'] = _('wird wiederbelebt');
-      if ($eventHero == true) {
-        $disabled = _('');
-        $hero['location'] = _('tot');
-      }
+      $hero['location'] = _('tot');
       $hero['path'] = _('hero_death.gif');
-    }
-    elseif($hero['caveID'] == 0) {
+  } elseif($hero['caveID'] == 0 && $hero['isAlive'] == true) {
       $hero['location'] = _('in Bewegung');
-    }
-    else {
-      $cave = getCaveByID($hero['caveID']);
-      $hero['location'] = $cave['name'] . " in (" . $cave['xCoord'] . "|" . $cave['yCoord'] .")";
-    }
+  } else {
+    $cave = getCaveByID($hero['caveID']);
+    $hero['location'] = $cave['name'] . " in (" . $cave['xCoord'] . "|" . $cave['yCoord'] .")";
+  }
   
   return $hero;
 

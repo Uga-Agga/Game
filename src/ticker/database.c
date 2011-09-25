@@ -174,6 +174,7 @@ db_t *db_connect (const char *host, const char *user, const char *passwd,
     db->passwd = passwd;
     db->dbname = dbname;
 
+    mysql_options(MYSQL(db), MYSQL_SET_CHARSET_NAME, "utf8");
     if (!mysql_real_connect(MYSQL(db), host, user, passwd, dbname, 0, NULL, 0))
 	throwf(DB_EXCEPTION, "db_connect: %s", mysql_error(MYSQL(db)));
 

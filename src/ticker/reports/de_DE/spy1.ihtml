@@ -1,19 +1,19 @@
-<tmpl:TITLE>Spionagebericht von Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Spionagebericht von HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 {if report}
 <p>
 Deine Spione berichten von
-{if self}deiner Höhle {cave}:{else}
-der Höhle {cave} {if player}des Spielers {player}{/if}:
+{if self}deiner HÃ¶hle {cave}:{else}
+der HÃ¶hle {cave} {if player}des Spielers {player}{/if}:
 {/if}
 </p>
 {elseif dead}
 <p>
-Leider waren deine Kundschafter etwas zu ungeschickt, so daß sie von den
+Leider waren deine Kundschafter etwas zu ungeschickt, so daÃŸ sie von den
 gegnerischen Wachen bemerkt worden sind und ein Teil von ihnen einen schnellen
-Tod gefunden hat. Es beschleicht dich das Gefühl, daß du vielleicht doch
-etwas mehr Wert auf eine gute Ausbildung hättest legen sollen.
+Tod gefunden hat. Es beschleicht dich das GefÃ¼hl, daÃŸ du vielleicht doch
+etwas mehr Wert auf eine gute Ausbildung hÃ¤ttest legen sollen.
 </p>
 <tmpl:DEAD>
 <tmpl:UNITS>
@@ -30,9 +30,9 @@ etwas mehr Wert auf eine gute Ausbildung hättest legen sollen.
 </tmpl:ARTEFACT>
 {else}
 <p>
-Leider waren deine Kundschafter etwas zu ungeschickt, so daß sie von den
-gegnerischen Wachen bemerkt worden sind, bevor sie Informationen über
-die Höhle sammeln konnten. Zum Glück konnten sie sich aber durch eine
+Leider waren deine Kundschafter etwas zu ungeschickt, so daÃŸ sie von den
+gegnerischen Wachen bemerkt worden sind, bevor sie Informationen Ã¼ber
+die HÃ¶hle sammeln konnten. Zum GlÃ¼ck konnten sie sich aber durch eine
 schnelle Flucht der Gefangennahme entziehen.
 </p>
 {/if}
@@ -46,11 +46,11 @@ schnelle Flucht der Gefangennahme entziehen.
 {elseif num <   4097}ein kleiner Haufen
 {elseif num <  16385}ein beachtlicher Haufen
 {elseif num <  32769}eine Menge
-{elseif num <  65537}eine große Menge
+{elseif num <  65537}eine groÃŸe Menge
 {elseif num < 131074}ein Berg
-{elseif num < 262148}ein großer Berg
+{elseif num < 262148}ein groÃŸer Berg
 {elseif num < 524296}ein riesiger Berg
-{else}unglaublicher Überfluss
+{else}unglaublicher Ãœberfluss
 {/if}
 </td></tr>
 </tmpl:RESOURCE>
@@ -61,7 +61,7 @@ schnelle Flucht der Gefangennahme entziehen.
 <p>Verteidigungsanlagen:</p>
 <table><col><col align="right">
 <tmpl:DEFENSE><tr><td>{name}:</td><td>
-{if     num <     5}ein kümmerlicher Haufen
+{if     num <     5}ein kÃ¼mmerlicher Haufen
 {elseif num <     9}eine Handvoll
 {elseif num <    17}ein Dutzend
 {elseif num <    33}ein Trupp
@@ -87,14 +87,14 @@ schnelle Flucht der Gefangennahme entziehen.
 {elseif     num <  4097}eine Menge
 {elseif     num <  6145}eine Legion
 {elseif     num <  8193}ein Haufen
-{elseif     num < 12289}ein großer Haufen
+{elseif     num < 12289}ein groÃŸer Haufen
 {elseif     num < 16385}verdammt viele 
 {elseif     num < 20481}Unmengen
 {elseif     num < 32769}eine Streitmacht 
 {elseif     num < 49153}eine Armee
 {elseif     num < 65537}Heerscharen 
 {elseif     num < 98305}eine haltlose Horde 
-{else}darüber eine endlose wogende Masse
+{else}darÃ¼ber eine endlose wogende Masse
 {/if}
 </td></tr>
 </tmpl:UNIT>
@@ -105,7 +105,7 @@ schnelle Flucht der Gefangennahme entziehen.
 <p>Erweiterungen:</p>
 <table><col><col align="right">
 <tmpl:BUILDING><tr><td>{name}:</td><td>
-{if     num <     5}ein kümmerlicher Haufen
+{if     num <     5}ein kÃ¼mmerlicher Haufen
 {elseif num <     9}eine Handvoll
 {elseif num <    17}ein Dutzend
 {elseif num <    33}ein Trupp
@@ -127,7 +127,7 @@ schnelle Flucht der Gefangennahme entziehen.
 
 <tmpl:MONSTER>
 <p>
-Am Höhleneingang lauert ein gräßliches Monster:
+Am HÃ¶hleneingang lauert ein grÃ¤ssliches Monster:
 </p>
 <p>
 {name} {attack}A {defense}V {mental}M {strength}K {exp} Exp<br/>
