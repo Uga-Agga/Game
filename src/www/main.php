@@ -242,7 +242,7 @@ switch ($modus) {
 
   case WONDER_DETAIL:
     $pagetitle = _("Wunder");
-    $content = wonder_getWonderDetailContent(request_var('wonderID', 0), $ownCaves[$caveID]);
+    $content = wonder_getWonderDetailContent(request_var('wonderID', 0), $ownCaves[$caveID], request_var('method', ''));
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ switch ($modus) {
 
   case DEFENSE_DETAIL:
     $pagetitle = _("Verteidigungsanlagen und externe Gebäude");
-    $content = defense_showProperties($ownCaves[$caveID]);
+    $content = defense_showProperties(request_var('defenseID', 0), $ownCaves[$caveID], request_var('method', ''));
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -270,7 +270,7 @@ switch ($modus) {
 
   case SCIENCE_DETAIL:
     $pagetitle = _("Forschungen");
-    $content = science_getScienceDetails(request_var('scienceID', 0), $ownCaves[$caveID]);
+    $content = science_getScienceDetails(request_var('scienceID', 0), $ownCaves[$caveID], request_var('method', ''));
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -285,7 +285,7 @@ switch ($modus) {
 
   case UNIT_DETAIL:
     $pagetitle = _("Einheitsattribute");
-    $content = unit_showUnitProperties(request_var('unitID', 0), $ownCaves[$caveID]);
+    $content = unit_getUnitDetails(request_var('unitID', 0), $ownCaves[$caveID], request_var('method', ''));
     break;
 
   case UNIT_MOVEMENT:

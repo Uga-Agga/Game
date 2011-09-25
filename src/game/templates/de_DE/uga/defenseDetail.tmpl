@@ -1,13 +1,13 @@
 {% extends "base.tmpl" %}
-{% block title %}Forschungen{% endblock %}
+{% block title %}Verteidigungsanlage{% endblock %}
 {% block content %}
-
 
 <div class="box"> 
   <div class="box-header"><strong>{{ name }}</strong></div>
   <div class="box-content success inner nohover">
   <table class="table nohover" >
    <tr>
+    <td rowspan="4" ><img src="{{ gfx }}/externals/{{ dbFieldName }}_large.gif" alt="{name}" title="{name}" style="width:250px; border:none;"/></td>
     <td style="width: 550px" >{{ description|raw }}</td>
    </tr>
    <tr><td>&nbsp;</td></tr>
@@ -63,7 +63,7 @@
 	  		{% for depGroup in DEPGROUP %}
                 <tr><td>&nbsp;</td></tr>			  
                 <tr>
-                  <td colspan="2">Diese Forschung h&auml;ngt von folgenden {{ depGroup.name}} ab:</td>
+                  <td colspan="2">Diese Verteidigungsanlage h&auml;ngt von folgenden {{ depGroup.name}} ab:</td>
                 </tr>
                 <tr>
                  <td><i>Name</i></td>
@@ -83,5 +83,8 @@
 </table>
 </div>
 </div>
+<br />
+<div class="success"><a href="{rules_path}?modus=misc&amp;miscID=5" onclick="window.open(this.href); return false;">weitere Informationen zu allen Erweiterungen</a></div>
+
 
 {% endblock %}

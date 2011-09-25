@@ -35,7 +35,7 @@ function unit_getUnitDetail($caveID, &$details) {
   switch ($action) {
 /****************************************************************************************************
 *
-* Verteidigungsanlage bauen
+* Einheiten bauen
 *
 ****************************************************************************************************/
     case 'build':
@@ -59,7 +59,7 @@ function unit_getUnitDetail($caveID, &$details) {
 
 /****************************************************************************************************
 *
-* Ausbau der Verteidigungsanlage abbrechen
+* Ausbau der Einheiten abbrechen
 *
 ****************************************************************************************************/
     case 'cancelOrder':

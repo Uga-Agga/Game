@@ -22,12 +22,12 @@
       {% if units %}
         {% for item in units %}
           {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('unit_{{ item.unit_id }}', this)" /></td>
+          <tr class="bg{{ bgID }} object-row">
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             <td>
               <dl class="nodistance">
-                <dt><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.unit_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
               </dl>
             </td>
@@ -47,47 +47,8 @@
             </td>
           </tr>
 
-          <tr class="bg{{ bgID }}" id="unit_{{ item.unit_id }}" style="display:none"><td>&nbsp;</td>
-            <td colspan="6">
-              <div style="float: left; width: 39%; max-width: 256px;">
-                <img src="{{ gfx }}/units/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-              </div>
-              <div style="float: left; width: 61%;">
-                <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-                <br /><br />
-                <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-                <br /><br />
-                <div style="float: left;">
-                  <table border="0">
-                    <tr><th colspan="2" class="text-left"><span class="bold">Eigenschaften:</span></th></tr>
-                    <tr><td>Fernangriffschaden:</td><td>{{ item.range_attack }}</td></tr>
-                    <tr><td>Geb&auml;udeschaden:</td><td>{{ item.areal_attack }}</td></tr>
-                    <tr><td>Get&uuml;mmelschaden:</td><td>{{ item.attack_rate }}</td></tr>
-                    <tr><td>Fernkampf-Widerstand:</td><td>{{ item.rd_resist }}</td></tr>
-                    <tr><td>Nahkampf-Widerstand:</td><td>{{ item.defense_rate }}</td></tr>
-                    <tr><td>Gr&ouml;&szlig;e:</td><td>{{ item.size }}</td></tr>
-                    <tr><td>Reiseproviant:</td><td>{{ item.fuel_factor }}x <img src="{{ gfx }}/resources/{{ item.fuel_name }}_icon.gif" class="noborder" width="15" height="15" alt="Food:" title="" /></td></tr>
-                    <tr><td>Geschwindigkeit:</td><td>{{ item.way_cost }}</td></tr>
-                    <tr><td colspan="2" ><strong>{% if item.visible %}sichtbar{% else %}unsichtbar{% endif %}</strong></td></tr>
-                  </table>
-                </div>
-                <div style="float: left; padding-left: 15px;">
-                  <table border="0">
-                    <tr><th colspan="2" class="text-left"><span class="bold">Spionagefertigkeiten:</span></th></tr>
-                    <tr><td>Spionageklasse:</td><td>{{ item.spy_value }}</td></tr>
-                    <tr><td>Spionagefertigkeit:</td><td>{{ item.spy_chance }}</td></tr>
-                    <tr><td>Gegenspionagefertigkeit:</td><td>{{ item.anti_spy_chance }}</td></tr>
-                  </table>
-                  <br />
-                  <table border="0">
-                    <tr><th colspan="2" class="text-left"><span class="bold">Trefferchancen:</span></th></tr>
-                    <tr><td>Normale Trefferchance:</td><td>{{ item.normal_damage_probabilit }}%</td></tr>
-                    <tr><td>Schwer Trefferchance:</td><td>{{ item.heavy_damage_probability }}%</td></tr>
-                    <tr><td>Kritisch Trefferchance:</td><td>{{ item.critical_damage_probability }}%</td></tr>
-                  </table>
-                </div>
-              </div>
-              <div style="clear: both;"></div>
+          <tr class="bg{{ bgID }} detail-row" id="unit_{{ item.unit_id }}" style="display:none"><td>&nbsp;</td>
+            <td class="object-details" colspan="6">
             </td>
           </tr>
         {% endfor %}
@@ -108,61 +69,19 @@
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in units_unqualified %}
         {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('unit_{{ item.unit_id }}', this)" /></td>
+        <tr class="bg{{ bgID }} object-row">
+          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="{{ item.name }}" title="{{ item.name }}" /></td>
           <td>
             <dl class="nodistance">
-              <dt><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{item.unitID }}&amp;caveID={{ item.unit_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
               <dd class="">{{ item.dependencies }}</dd>
             </dl>
           </td>
         </tr>
 
-        <tr class="bg{{ bgID }}" id="unit_{{ item.unit_id }}" style="display:none"><td>&nbsp;</td>
-          <td colspan="6">
-            <div style="float: left; width: 39%; max-width: 256px;">
-              <img src="{{ gfx }}/units/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-            </div>
-            <div style="float: left; width: 61%;">
-              <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-              <br /><br />
-              {% include "boxCost.tmpl" %}
-              <br /><br />
-              <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-              <br /><br />
-              <div style="float: left;">
-                <table border="0">
-                  <tr><th colspan="2" class="text-left"><span class="bold">Eigenschaften:</span></th></tr>
-                  <tr><td>Fernangriffschaden:</td><td>{{ item.range_attack }}</td></tr>
-                  <tr><td>Geb&auml;udeschaden:</td><td>{{ item.areal_attack }}</td>
-                  </tr>
-                  <tr><td>Get&uuml;mmelschaden:</td><td>{{ item.attack_rate }}</td></tr>
-                  <tr><td>Fernkampf-Widerstand:</td><td>{{ item.rd_resist }}</td></tr>
-                  <tr><td>Nahkampf-Widerstand:</td><td>{{ item.defense_rate }}</td></tr>
-                  <tr><td>Gr&ouml;&szlig;e:</td><td>{{ item.size }}</td></tr>
-                  <tr><td>Reiseproviant:</td><td>{{ item.fuel_factor }}x <img src="{{ gfx }}/resources/{{ item.fuel_name }}_icon.gif" class="noborder" width="15" height="15" alt="Food:" title="" /></td></tr>
-                  <tr><td>Geschwindigkeit:</td><td>{{ item.way_cost }}</td></tr>
-                  <tr><td colspan="2" ><strong>{% if item.visible %}sichtbar{% else %}unsichtbar{% endif %}</strong></td></tr>
-                </table>
-              </div>
-              <div style="float: left; padding-left: 15px;">
-                <table border="0">
-                  <tr><th colspan="2" class="text-left"><span class="bold">Spionagefertigkeiten:</span></th></tr>
-                  <tr><td>Spionageklasse:</td><td>{{ item.spy_value }}</td></tr>
-                  <tr><td>Spionagefertigkeit:</td><td>{{ item.spy_chance }}</td></tr>
-                  <tr><td>Gegenspionagefertigkeit:</td><td>{{ item.anti_spy_chance }}</td></tr>
-                </table>
-                <br />
-                <table border="0">
-                  <tr><th colspan="2" class="text-left"><span class="bold">Trefferchancen:</span></th></tr>
-                  <tr><td>Normale Trefferchance:</td><td>{{ item.normal_damage_probabilit }}%</td></tr>
-                  <tr><td>Schwer Trefferchance:</td><td>{{ item.heavy_damage_probability }}%</td></tr>
-                  <tr><td>Kritisch Trefferchance:</td><td>{{ item.critical_damage_probability }}%</td></tr>
-                </table>
-              </div>
-            </div>
-            <div style="clear: both;"></div>
+        <tr class="bg{{ bgID }} detail-row" id="unit_{{ item.unit_id }}" style="display:none"><td>&nbsp;</td>
+          <td class="object-details" colspan="6">
           </td>
         </tr>
       {% endfor %}

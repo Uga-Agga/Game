@@ -11,10 +11,11 @@
       {% if wonders %}
         {% for item in wonders %}
           {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr class="bg{{ bgID }} object-row">
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td>
               <dl class="nodistance">
-                <dt><a href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="td_won_dd_1">{% include "boxCost.tmpl" %}</dd>
               </dl>
             </td>
@@ -50,6 +51,10 @@
               {% endif %}
             </td>
           </tr>
+          <tr class="detail-row" style="display: none">
+            <td class="object-details" colspan="3">
+            </td>
+          </tr>  
         {% endfor %}
       {% else %}
         <tr class="bg1"><td>Dein Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</td></tr>
@@ -68,14 +73,19 @@
       <table class="table" cellpadding="3" cellspacing="0" rules="rows">
         {% for item in wonders_unqualified %}
           {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr class="bg{{ bgID }} object-row">
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td>
               <dl class="nodistance">
-                <dt><a href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ caveID }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ caveID }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="td_won_dd_3">{{ item.dependencies }}</dd>
               </dl>
             </td>
           </tr>
+          <tr class="detail-row" style="display: none">
+            <td class="object-details" colspan="2">
+            </td>
+          </tr>  
         {% endfor %}
       </table>
     </div>

@@ -1,0 +1,134 @@
+{% extends "base.tmpl" %}
+{% block title %}Einheitenattribute{% endblock %}
+{% block content %}
+
+
+<div class="box">
+  <div class="box-header"><strong>{{name}}</strong></div>
+  <div class="box-content success inner nohover">
+  <table class="table nohover" >
+   <tr>
+    <td rowspan="4" ><img src="{{ gfx }}/units/{{dbFieldName}}_large.gif" alt="{{name}}" title="{{name}}" style="width:250px; border:none;"/></td>
+    <td style="width: 550px" >{{description|raw}}</td>
+   </tr>
+   <tr><td>&nbsp;</td></tr>
+   <tr>
+    <td>
+      <strong>Kosten: </strong><br />
+      {% for resource in RESOURCECOST %}
+      <img src="{{gfx}}/resources/{{resource.dbFieldName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{resource.name}}" title="{{resource.name}}" />
+      {{resource.value}} &nbsp;
+      {% endfor %}
+	    Dauer: {{duration}}
+      {% for unit in UNITCOST %}
+        <br />
+        {{unit.name}}: {{unit.value}}
+      {% endfor %}
+      {% for building in BUILDINGCOST %}
+        <br />
+        {{building.name}}: {{building.value}}
+      {% endfor %}
+      {% for defense in DEFENSECOST %}
+        <br />
+        {{defense.name}}: {{defense.value}}
+      {% endfor %}
+        
+    </td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+   <tr>
+    <td colspan="2">
+      <strong>Eigenschaften:</strong>
+      <table>
+        <tr>
+		 <td>Fernangriffschaden: </td>
+          <td class="text-right">{{rangeAttack}}</td>
+        </tr>
+		<tr>
+		 <td>Geb&auml;udeschaden: </td>
+          <td class="text-right">{{arealAttack}}</td>
+        </tr>
+		<tr>
+		 <td>Get&uuml;mmelschaden: </td>
+          <td class="text-right">{{attackRate}}</td>
+        </tr>
+        <tr>
+         <td>Fernkampf-Widerstand: </td>
+         <td class="text-right">{{rd_Resist}}</td>
+        </tr>
+        <tr>
+         <td>Nahkampf-Widerstand: </td>
+         <td class="text-right">{{defenseRate}}</td>
+        </tr>
+        <tr>
+         <td>Gr&ouml;&szlig;e: </td>
+         <td class="text-right">{{size}}</td>
+        </tr>
+		<tr>
+         <td>Reiseproviant: </td>
+         <td class="text-right">{{fuelFactor}}x</td><td><img src="{{gfx}}/resources/{{fuelName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="Nahrung" /></td>
+        </tr>
+		<tr>
+         <td>Geschwindigkeit: </td>
+         <td class="text-right">{{wayCost}}</td>
+        </tr>
+		    {% if INVISIBLE %}
+         <tr>
+          <td><strong>{{INVISIBLE.text}}</strong></td>
+         </tr>
+        {% endif %}
+      </table>
+    </td>
+   </tr>
+   <tr><td>&nbsp;</td></tr>
+   <tr>
+    <td colspan="2">
+     <strong>Spionagefertigkeiten: </strong>
+      <table>
+	   <tr>
+        <td>Spionageklasse: </td>
+        <td class="text-right">{{spyValue}}</td>
+	   </tr>
+	   <tr>
+        <td>Spionagefertigkeit: </td>
+        <td class="text-right">{{spyChance}}</td>
+	   </tr>
+	   <tr>
+        <td>Gegenspionagefertigkeit: </td>
+        <td class="text-right">{{antiSpyChance}}</td>
+	   </tr>
+      </table>
+    </td>
+   </tr>
+   <tr><td>&nbsp;</td></tr>
+   <tr>
+    <td colspan="2">
+     <strong>Abhängigkeiten: </strong>
+      <table>
+	          {% for group in DEPGROUP %}
+            <tr><td>&nbsp;</td></tr>			  
+            <tr>
+              <td colspan="2">Die Einheit hängt von folgenden {{group.name}} ab:</td>
+            </tr>
+            <tr>
+              <td><i>Name</i></td>
+		          <td class="text-right"><i>Stufe</i></td>
+            </tr>                
+	          {% for dependency in group.DEP %}
+              <tr>				                    
+                <td>{{dependency.name}}</td>					
+                <td class="text-right">{{dependency.level|raw}}</td>
+              </tr>
+            {% endfor %}
+            {% endfor %}
+      </table>
+    </td>
+   </tr>
+   <tr><td>&nbsp;</td></tr>
+</table>
+</div>
+</div>
+<br />
+<div class="success"><a href="{{rules_path}}?modus=misc&amp;miscID=1" onclick="window.open(this.href); return false;">weitere Informationen zu allen Einheiten</a></div>
+
+{% endblock %}

@@ -1,3 +1,15 @@
+{#
+/* improvement.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+
 {% extends "base.tmpl" %}
 {% block title %}Verteidigungsanlagen{% endblock %}
 {% block content %}
@@ -22,12 +34,12 @@
       {% if defense_system %}
         {% for item in defense_system %}
           {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-            <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
+          <tr class="bg{{ bgID }} object-row">
+            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ item.name }}" /></td>
             <td>
               <dl class="nodistance">
-                <dt><a href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
               </dl>
             </td>
@@ -44,30 +56,8 @@
               {% endif %}
             </td>
           </tr>
-          <tr class="bg{{ bgID }}" id="defense_{{ item.defense_id }}" style="display:none"><td>&nbsp;</td>
-            <td colspan="6">
-              <div style="float: left; width: 39%; max-width: 256px;">
-                <img src="{{ gfx }}/externals/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-              </div>
-              <div style="float: left; width: 61%;">
-                <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-                <br /><br />
-                <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-                <br /><br />
-                <span class="bold">Maximale Stufe:</span> {{ item.maxlevel }} (derzeit: {{ item.currentlevel }})
-                <br /><br />
-                <table border="0">
-                  <tr><th colspan="2" class="text-left"><span class="bold">Eigenschaften:</span></th></tr>
-                  <tr><td>Fernangriffschaden:</td><td>{{ item.rangeAttack }}</td></tr>
-                  <tr><td>Getümmelschaden:</td><td>{{ item.attackRate }}</td></tr>
-                  <tr><td>Widerstandspunkte:</td><td>{{ item.defenseRate }}</td></tr>
-                  <tr><td>Größe:</td><td>{{ item.size }}</td></tr>
-                  <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                  <tr><td colspan="2" class="text-left"><span class="bold">Spionagefertigkeiten:</span></td></tr>
-                  <tr><td>Gegenspionagefertigkeit:</td><td>{{ item.antiSpyChance }}</td></tr>
-                </table>
-              </div>
-              <div style="clear: both;"></div>
+          <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
+            <td colspan="6" class="object-details">
             </td>
           </tr>
         {% endfor %}
@@ -90,40 +80,21 @@
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in defense_system_unqualified %}
         {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
+        <tr class="bg{{ bgID }} object-row">
+          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ name }}" /></td>
           <td class="">
             <dl class="nodistance">
-              <dt><a href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}"><span class="bold">{{ item.name }}</span></a></dt>
               <dd class="">{{ item.dependencies }}</dd>
             </dl>
           </td>
         </tr>
-        <tr class="bg{{ bgID }}" id="defense_{{ item.defense_id }}" style="display:none"><td>&nbsp;</td>
-          <td colspan="6">
-            <div style="float: left; width: 39%; max-width: 256px;">
-              <img src="{{ gfx }}/externals/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-            </div>
-            <div style="float: left; width: 61%;">
-              <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-              <br /><br />
-              <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-              <br /><br />
-              <table border="0">
-                <tr><th colspan="2" class="text-left"><span class="bold">Eigenschaften:</span></th></tr>
-                <tr><td>Fernangriffschaden:</td><td>{{ item.rangeAttack }}</td></tr>
-                <tr><td>Getümmelschaden:</td><td>{{ item.attackRate }}</td></tr>
-                <tr><td>Widerstandspunkte:</td><td>{{ item.defenseRate }}</td></tr>
-                <tr><td>Größe:</td><td>{{ item.size }}</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td colspan="2" class="text-left"><span class="bold">Spionagefertigkeiten:</span></td></tr>
-                <tr><td>Gegenspionagefertigkeit:</td><td>{{ item.antiSpyChance }}</td></tr>
-              </table>
-            </div>
-            <div style="clear: both;"></div>
+        <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
+          <td colspan="6" class="object-details">
           </td>
         </tr>
+
       {% endfor %}
       {% set bgID = 0 %}
     </table>
@@ -138,42 +109,20 @@
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in defense_system_relict %}
         {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td class="td-mini-icon"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" onclick="moreinfo('defense_{{ item.defense_id }}', this)" /></td>
+        <tr class="bg{{ bgID }} object-row">
+          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
           <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ name }}" /></td>
           <td class="">
             <dl class="nodistance">
-              <dt><a href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+              <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}"><span class="bold">{{ item.name }}</span></a></dt>
               <dd class="">{{ item.dependencies }}</dd>
             </dl>
           </td>
           <td class="td-size">Stufe: {{ item.currentlevel }}</td>
           <td class="td-button-single text-right"><a href="main.php?modus=defense_demolish&amp;defenseID={{ item.defense_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
         </tr>
-        <tr class="bg{{ bgID }}" id="defense_{{ item.defense_id }}" style="display:none"><td>&nbsp;</td>
-          <td colspan="6">
-            <div style="float: left; width: 39%; max-width: 256px;">
-              <img src="{{ gfx }}/externals/{{ item.dbFieldName }}_large.gif" alt="{{ item.name }}" title="{{ item.name }}" width="250" height="250" />
-            </div>
-            <div style="float: left; width: 61%;">
-              <span class="bold">Beschreibung:</span><br />{{ item.description|raw }}
-              <br /><br />
-              <img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.duration_formula }}
-              <br /><br />
-              <span class="bold">Stufe:</span> {{ item.currentlevel }}
-              <br /><br />
-              <table border="0">
-                <tr><th colspan="2" class="text-left"><span class="bold">Eigenschaften:</span></th></tr>
-                <tr><td>Fernangriffschaden:</td><td>{{ item.rangeAttack }}</td></tr>
-                <tr><td>Getümmelschaden:</td><td>{{ item.attackRate }}</td></tr>
-                <tr><td>Widerstandspunkte:</td><td>{{ item.defenseRate }}</td></tr>
-                <tr><td>Größe:</td><td>{{ item.size }}</td></tr>
-                <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-                <tr><td colspan="2" class="text-left"><span class="bold">Spionagefertigkeiten:</span></td></tr>
-                <tr><td>Gegenspionagefertigkeit:</td><td>{{ item.antiSpyChance }}</td></tr>
-              </table>
-            </div>
-            <div style="clear: both;"></div>
+        <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
+          <td colspan="6" class="object-details">
           </td>
         </tr>
       {% endfor %}

@@ -35,7 +35,7 @@ function science_getScienceDetail($caveID, &$details){
   switch ($action) {
 /****************************************************************************************************
 *
-* Verteidigungsanlage bauen
+* Forschung starten
 *
 ****************************************************************************************************/
     case 'build':
@@ -58,7 +58,7 @@ function science_getScienceDetail($caveID, &$details){
 
 /****************************************************************************************************
 *
-* Ausbau der Verteidigungsanlage abbrechen
+* Forschung abbrechen
 *
 ****************************************************************************************************/
     case 'cancelOrder':

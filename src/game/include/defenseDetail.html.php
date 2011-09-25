@@ -1,7 +1,7 @@
 <?php
 /*
- * science_detail.html.php -
- * Copyright (c) 2004  OGP-Team
+ * defense.html.php -
+ * Copyright (c) 2004  OGP Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -12,52 +12,60 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function science_getScienceDetails($scienceID, $caveData, $method) {
 
-  global $buildingTypeList,
-         $defenseSystemTypeList,
-         $resourceTypeList,
-         $scienceTypeList,
-         $unitTypeList,
-         $template,
-         $no_resource_flag;
+################################################################################
 
-  $no_resource_flag = 1;
+/**
+ *
+ */
 
-  // first check whether that science should be displayed...
-  $science = $scienceTypeList[$scienceID];
-  $maxLevel = round(eval('return '.formula_parseToPHP("{$science->maxLevel};", '$caveData')));
-  if (!$science || ($science->nodocumentation &&
-                 !$caveData[$science->dbFieldName] &&
-                 rules_checkDependencies($science, $caveData) !== TRUE)) {
-    $science = current($scienceTypeList);
+function defense_showProperties($defenseID, $cave, $method) {
+
+  global 
+    $buildingTypeList, 
+    $defenseSystemTypeList, 
+    $resourceTypeList, 
+    $scienceTypeList, 
+    $unitTypeList,
+    $template;
+
+  // first check whether that defense should be displayed...
+  $defense = $defenseSystemTypeList[$defenseID];
+  $maxLevel = round(eval('return '.formula_parseToPHP("{$defense->maxLevel};", '$cave')));
+  $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
+
+  if (!$defense || ($defense->nodocumentation &&
+                 !$cave[$defense->dbFieldName] &&
+                 rules_checkDependencies($defense, $cave) !== TRUE)) {
+    $defense = current($defenseSystemTypeList);
   }
 
+  // open template
   if ($method == 'ajax') {
-    $template->setFile('scienceDetailAjax.tmpl');
-    $shortVersion = 1;
+    $shortVersion = true;
+    $template->setFile('defenseDetailAjax.tmpl');
   }
   else {
-    $template->setFile('scienceDetail.tmpl');
-    $shortVersion = 0;
+    $shortVersion = false;
+    $template->setFile('defenseDetail.tmpl');    
   }
 
-  $currentlevel = $caveData[$science->dbFieldName];
+  $currentlevel = $cave[$defense->dbFieldName];
   $levels = array();
-  for ($level = $caveData[$science->dbFieldName], $count = 0;
+  for ($level = $cave[$defense->dbFieldName], $count = 0;
        $level < $maxLevel && $count < ($shortVersion ? 3 : 10);
-       ++$count, ++$level, ++$caveData[$science->dbFieldName]){
+       ++$count, ++$level, ++$cave[$defense->dbFieldName]){
 
     $duration = time_formatDuration(
                   eval('return ' .
-                       formula_parseToPHP($scienceTypeList[$scienceID]->productionTimeFunction.";",'$caveData'))
-                  * BUILDING_TIME_BASE_FACTOR);
+                       formula_parseToPHP($defense->productionTimeFunction.";",'$cave'))
+                  * DEFENSESYSTEM_TIME_BASE_FACTOR);
 
     // iterate ressourcecosts
     $resourcecost = array();
-    foreach ($science->resourceProductionCost as $resourceID => $function){
+    foreach ($defense->resourceProductionCost as $resourceID => $function){
 
-      $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
+      $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$cave')));
       if ($cost)
         array_push($resourcecost,
                    array(
@@ -67,8 +75,8 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
     }
     // iterate unitcosts
     $unitcost = array();
-    foreach ($science->unitProductionCost as $unitID => $function){
-      $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
+    foreach ($defense->unitProductionCost as $unitID => $function){
+      $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$cave')));
       if ($cost)
         array_push($unitcost,
                    array(
@@ -78,19 +86,18 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
     }
 
     $buildingCost = array();
-    foreach ($science->buildingProductionCost as $key => $value)
+    foreach ($defense->buildingProductionCost as $key => $value)
       if ($value != "" && $value != 0)
         array_push($buildingCost, array('dbFieldName' => $buildingTypeList[$key]->dbFieldName,
                                         'name'        => $buildingTypeList[$key]->name,
-                                        'value'       => ceil(eval('return '.formula_parseToPHP($science->buildingProductionCost[$key] . ';', '$details')))));
+                                        'value'       => ceil(eval('return '.formula_parseToPHP($defense->buildingProductionCost[$key] . ';', '$details')))));
 
     $defenseCost = array();
-    foreach ($science->defenseProductionCost as $key => $value)
+    foreach ($defense->defenseProductionCost as $key => $value)
       if ($value != "" && $value != 0)
         array_push($defenseCost, array('dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
                                        'name'        => $defenseSystemTypeList[$key]->name,
-                                       'value'       => ceil(eval('return '.formula_parseToPHP($science->defenseProductionCost[$key] . ';', '$details')))));
-
+                                       'value'       => ceil(eval('return '.formula_parseToPHP($defense->defenseProductionCost[$key] . ';', '$details')))));
 
     $levels[$count] = array('level' => $level + 1,
                             'time'  => $duration,
@@ -100,7 +107,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
                             'UNITCOST'     => $unitcost);
   }
   if (sizeof($levels))
-    $levels = array('population' => $caveData['population'], 'LEVEL' => $levels);
+    $levels = array('population' => $cave['population'], 'LEVEL' => $levels);
 
 
   $dependencies     = array();
@@ -110,57 +117,56 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   $sciencedep       = array();
   $unitdep          = array();
 
-  foreach ($science->buildingDepList as $key => $level)
+  foreach ($defense->buildingDepList as $key => $level)
     if ($level)
       array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
                                      'level' => "&gt;= " . $level));
 
-  foreach ($science->defenseSystemDepList as $key => $level)
+  foreach ($defense->defenseSystemDepList as $key => $level)
     if ($level)
       array_push($defensesystemdep, array('name'  => $defenseSystemTypeList[$key]->name,
                                           'level' => "&gt;= " . $level));
 
-  foreach ($science->resourceDepList as $key => $level)
+  foreach ($defense->resourceDepList as $key => $level)
     if ($level)
       array_push($resourcedep, array('name'  => $resourceTypeList[$key]->name,
                                      'level' => "&gt;= " . $level));
 
-  foreach ($science->scienceDepList as $key => $level)
+  foreach ($defense->scienceDepList as $key => $level)
     if ($level)
       array_push($sciencedep, array('name'  => $scienceTypeList[$key]->name,
                                     'level' => "&gt;= " . $level));
 
-  foreach ($science->unitDepList as $key => $level)
+  foreach ($defense->unitDepList as $key => $level)
     if ($level)
       array_push($unitdep, array('name'  => $unitTypeList[$key]->name,
                                  'level' => "&gt;= " . $level));
 
 
-  foreach ($science->maxBuildingDepList as $key => $level)
+  foreach ($defense->maxBuildingDepList as $key => $level)
     if ($level != -1)
       array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
                                      'level' => "&lt;= " . $level));
 
-  foreach ($science->maxDefenseSystemDepList as $key => $level)
+  foreach ($defense->maxDefenseSystemDepList as $key => $level)
     if ($level != -1)
       array_push($defensesystemdep, array('name'  => $defenseSystemTypeList[$key]->name,
                                           'level' => "&lt;= " . $level));
 
-  foreach ($science->maxResourceDepList as $key => $level)
+  foreach ($defense->maxResourceDepList as $key => $level)
     if ($level != -1)
       array_push($resourcedep, array('name'  => $resourceTypeList[$key]->name,
                                      'level' => "&lt;= " . $level));
 
-  foreach ($science->maxScienceDepList as $key => $level)
+  foreach ($defense->maxScienceDepList as $key => $level)
     if ($level != -1)
       array_push($sciencedep, array('name'  => $scienceTypeList[$key]->name,
                                     'level' => "&lt;= " . $level));
 
-  foreach ($science->maxUnitDepList as $key => $level)
+  foreach ($defense->maxUnitDepList as $key => $level)
     if ($level != -1)
       array_push($unitdep, array('name'  => $unitTypeList[$key]->name,
                                  'level' => "&lt;= " . $level));
-
 
 
   if (sizeof($buildingdep))
@@ -183,14 +189,20 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
     array_push($dependencies, array('name' => _('Einheiten'),
                                     'DEP'  => $unitdep));
 
-  $template->addVars(array('name'          => $science->name,
-                           'dbFieldName'   => $science->dbFieldName,
-                           'description'   => $science->description,
-                           'maxlevel'      => $maxLevel,
-                           'currentlevel'  => $currentlevel,
-                           'LEVELS'        => $levels,
-                           'DEPGROUP'      => $dependencies,
-                           'rules_path'    => RULES_PATH));
+  $template->addVars(array('name'          => $defense->name,
+                                 'dbFieldName'   => $defense->dbFieldName,
+                                 'description'   => $defense->description,
+                                 'maxlevel'      => $maxLevel,
+                                 'currentlevel'  => $currentlevel,
+                                 'rangeAttack'   => $defense->attackRange,
+                                 'attackRate'    => $defense->attackRate,
+                                 'defenseRate'   => $defense->defenseRate,
+                                 'size'          => $defense->hitPoints,
+                                 'antiSpyChance' => $defense->antiSpyChance,
+                                 'LEVELS'        => $levels,
+                                 'DEPGROUP'      => $dependencies,
+                                 'rules_path'    => RULES_PATH));
+
 
 }
 

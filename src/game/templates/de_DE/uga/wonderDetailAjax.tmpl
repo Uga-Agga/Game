@@ -1,0 +1,43 @@
+{% spaceless %}
+
+
+  <table class="table nohover" >
+   <tr>    
+    <td >{{description|raw}}</td>
+   </tr>
+   <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td>
+      <strong>Eigenschaften:</strong>
+      <table>
+        <tr>
+          <td>
+            <i>Erfolgswahrscheinlichkeit:</i> {{chance}}<br />
+            <i>M&ouml;gliche Ziele:</i> {{target|raw}}<br />
+            <i>Art:</i> {{offensiveness}}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <strong>Kosten:</strong>
+      <table>
+        <tr>
+          <td>
+            {% for resource in RESOURCECOST %}
+              <img src="{{gfx}}/resources/{{resource.dbFieldName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{resource.name}}" title="{{resource.name}}" />
+              {{resource.value}} &nbsp;
+            {% endfor %}
+            {% for unit in UNITCOST %}
+              {{name}}: {{value}} &nbsp;
+            {% endfor %}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+ </table>
+
+{% endspaceless %}

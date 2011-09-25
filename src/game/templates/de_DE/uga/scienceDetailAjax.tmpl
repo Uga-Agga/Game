@@ -1,0 +1,56 @@
+{% spaceless %}
+
+<div>
+  <ul>
+    <li style="padding-bottom: 10px;">{{ description|raw }}</li>
+    <li><span class="bold">Maximale Stufe:</span> {{ maxlevel }}</li>
+    
+    {% if DEPGROUP %}
+      <li class="bold" style="padding-top: 10px;">Abhängigkeiten:</li>
+      <li>
+        <dl>
+          {% for depGroup in DEPGROUP %}
+            <dt class="bold" style="margin-left: 0;">{{ depGroup.name}}:</dt>
+            {% for dependency in depGroup.DEP %}
+              <dd>{{ dependency.name }} {{ dependency.level|raw }}</dd>
+            {% endfor %}
+          {% endfor %}
+        </dl>
+      </li>
+    {% endif %}
+
+    {% if LEVELS %}
+      <li class="bold" style="padding-top: 10px;">Baukosten und -zeiten bei {{ LEVELS.population }} Einwohnern:</li>
+      <li>
+        <table>
+            {% for level in LEVELS['LEVEL'] %}
+            <tr>
+              <td style="text-align: right;">Stufe {{ level.level }}:</td>
+              <td style="padding-left: 6px;">		  
+                {% for resource in level.RESOURCECOST %}
+                <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />
+                {{ resource.value }} &nbsp;
+                {% endfor %}
+                {% for unit in level.UNITCOST %}
+                <br />
+                {{ unit.name }}: {{ unit.value }}
+                {% endfor %}
+                {% for building in level.BUILDINGCOST %}
+                <br />
+                {{ building.name }}: {{ building.value }}
+                {% endfor %}
+                {% for defense in level.DEFENSECOST %}
+                <br />
+                {{ defense.name }}: {{ defense.value }}
+                {% endfor %}
+              </td>
+              <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+
+{% endspaceless %}

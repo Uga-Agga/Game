@@ -12,7 +12,7 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function wonder_getWonderDetailContent($wonderID, $caveData) {
+function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
 
   global
     $buildingTypeList,
@@ -21,7 +21,7 @@ function wonder_getWonderDetailContent($wonderID, $caveData) {
     $scienceTypeList,
     $unitTypeList,
     $wonderTypeList,
-
+    $template,
     $no_resource_flag,
     $config;
 
@@ -36,8 +36,15 @@ function wonder_getWonderDetailContent($wonderID, $caveData) {
        rules_checkDependencies($wonder, $caveData) !== TRUE))
     $wonder = current($wonderTypeList);
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'wonderDetail.ihtml');
-
+  // open template
+  if ($method == 'ajax') {
+    $shortVersion = true;
+    $template->setFile('wonderDetailAjax.tmpl');
+  }
+  else {
+    $shortVersion = false;
+    $template->setFile('wonderDetail.tmpl');    
+  }
 
   // iterate ressourcecosts
   $resourcecost = array();
@@ -145,18 +152,16 @@ function wonder_getWonderDetailContent($wonderID, $caveData) {
   $target = $uaWonderTargetText[$wonder->target];
   $chance = eval('return '. formula_parseToPHP($wonder->chance . ';', '$caveData'));
 
-  tmpl_set($template, '/', array('name'          => $wonder->name,
-                                 'ID'   => $wonder->wonderID,
-                                 'chance'        => $chance,
-                                 'offensiveness' => $wonder->offensiveness,
-                                 'target'        => $target,
-                                 'description'   => $wonder->description,
-                                 'RESOURCECOST'  => $resourcecost,
-                                 'UNITCOST'      => $unitcost,
-                                 'DEPGROUP'      => $dependencies,
-                                 'rules_path'    => RULES_PATH));
-
-  return tmpl_parse($template);
+  $template->addVars(array('name'          => $wonder->name,
+                           'ID'   => $wonder->wonderID,
+                           'chance'        => $chance,
+                           'offensiveness' => $wonder->offensiveness,
+                           'target'        => $target,
+                           'description'   => $wonder->description,
+                           'RESOURCECOST'  => $resourcecost,
+                           'UNITCOST'      => $unitcost,
+                           'DEPGROUP'      => $dependencies,
+                           'rules_path'    => RULES_PATH));
 
 }
 
