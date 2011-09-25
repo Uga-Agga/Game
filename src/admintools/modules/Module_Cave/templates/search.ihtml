@@ -1,0 +1,21 @@
+<h1>Find a Player</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="findcave" method="get">
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="150"><label for="CaveID">Cave ID:</label></td>
+    <td><input name="CaveID" type="text" id="CaveID" size="30" maxlength="11"></td>
+  </tr>
+  <tr>
+    <td width="150"><label for="CaveName">Cave Name:</label></td>
+    <td><input name="CaveName" type="text" id="CaveName" size="30" maxlength="255"></td>
+  </tr>
+  <tr>
+    <td width="150"><label for="CaveCoord">Cave Koordinaten: (X/Y)</label></td>
+    <td><input name="xCoord" type="text" id="xCoord" size="5" maxlength="11"><input name="yCoord" type="text" id="yCoord" size="5" maxlength="11"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><input name="modus" type="hidden" value="cave_show"><input name="finder" type="submit" id="finder" value="Finden!"></td>
+  </tr>
+</table>
+</form>

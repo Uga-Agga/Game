@@ -1,0 +1,18 @@
+<h1>Give A Snail</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="giveasnail" method="get">
+  <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+    <tr>
+      <td width="50%" align="right">Player:</td>
+      <td width="50%"><input name="snailPlayer" type="text" id="snailPlayer" size="64" maxlength="64"></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Snails:</td>
+      <td width="50%"><input name="snailNumber" type="text" id="snailNumber" value="1" size="5" maxlength="5"></td>
+    </tr>
+    <tr align="center">
+      <td>&nbsp;<input name="modus" type="hidden" value="questionnaire_snails"></td>
+      <td><input name="creator" type="submit" id="creator" value="Give A Snail!"></td>
+    </tr>
+  </table>
+</form>

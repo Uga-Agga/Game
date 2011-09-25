@@ -1,0 +1,26 @@
+<h1>News</h1>
+<tmpl:NEWS>
+<table class="box" width="100%">
+  <tr>
+    <td><div class="title"><b>&nbsp;{title}</b></div></td>
+  </tr>
+
+  <tr>
+    <td>
+      <table border="0" width="98%" align="center">
+        <tr>
+          <td>
+            <img src="modules/Module_News/templates/images/{category}.gif" alt="{category}" title="{category}" border="0" align="right">
+            <div class="content">{content}</div>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+
+  <tr>
+    <td><div class="tiny"> Geschrieben von {author} am {date}</div></td>
+  </tr>
+</table>
+<br>
+</tmpl:NEWS>

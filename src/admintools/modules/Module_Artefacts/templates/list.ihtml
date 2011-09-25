@@ -1,0 +1,39 @@
+<h1>Artefacts list</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+
+<tr><th colspan="4">in cave</th></tr>
+<tmpl:ARTEFACTINCAVE>
+  <tr>
+    <td>{artefactid}</td>
+    <td>{artefactname}</td>
+    <td>{cavename} ({xCoord}|{yCoord})</td>
+    <td>
+      <a href="?modus=artefacts_remove&amp;artefactID={artefactID}">remove</a>
+    </td>
+  </tr>
+</tmpl:ARTEFACTINCAVE>
+
+<tr><th colspan="4">moving</th></tr>
+<tmpl:ARTEFACTMOVING>
+  <tr>
+    <td>{artefactid}</td>
+    <td>{artefactname}</td>
+    <td>&nbsp;</td>
+    <td></td>
+  </tr>
+</tmpl:ARTEFACTMOVING>
+
+<tr><th colspan="4">in limbo</th></tr>
+<tmpl:ARTEFACTLIMBO>
+  <tr>
+    <td>{artefactid}</td>
+    <td>{artefactname}</td>
+    <td>&nbsp;</td>
+    <td>
+      <a href="?modus=artefacts_put&amp;artefactID={artefactID}">put</a>
+    </td>
+  </tr>
+</tmpl:ARTEFACTLIMBO>
+
+</table>

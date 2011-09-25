@@ -1,0 +1,45 @@
+<script type="text/javascript" src="modules/Module_Multihunter/templates/wz_tooltip.js"></script>
+<h1>Derzeit gesperrte Spieler</h1>
+<table cellpadding="6" cellspacing="0" class="box">
+  <tr>
+    <th>Name</th>
+    <th>Grund</th>
+    <th>Letzte Änderung</th>
+    <th>ID</th>
+    <th>Gespert bis</th>
+    <th>Kommentar</th>
+  </tr>
+  <tmpl:ELEM>
+  <tr style="background-color: {bg}"> 
+    <td><a href="?player={name}&modus=player_show&finder=Finden">{name}</a></td> 
+    <td>{reason}</td>
+    <td>{lastChange}</td>
+    <td>{id}</td>
+    <td>{until}</td>
+    <td><span id="Span{id}" style="display:none;">{comment}</span><a href="#" onmouseover="TagToTip('Span{id}')" onmouseout="UnTip()">MausOver für Kommentar </a></td>
+  </tr>
+  </tmpl:ELEM>
+</table>
+
+
+<h1>Spieler mit MultiID bei denen der Ban abgelaufen ist</h1>
+<table cellpadding="6" cellspacing="0" class="box">
+  <tr>
+    <th>Name</th>
+    <th>Grund</th>
+    <th>Letzte Änderung</th>
+    <th>ID</th>
+    <th>Gespert bis</th>
+    <th>Kommentar</th>
+  </tr>
+  <tmpl:ELEMOUTDATET>
+  <tr style="background-color: {bg}"> 
+    <td><a href="?player={name}&modus=player_show&finder=Finden">{name}</a></td> 
+    <td>{reason}</td>
+    <td>{lastChange}</td>
+    <td>{id}</td>
+    <td>{until}</td>
+    <td><span id="Span{id}" style="display:none;">{comment}</span><a href="#" onmouseover="TagToTip('Span{id}')" onmouseout="UnTip()">MausOver für Kommentar </a></td>
+  </tr>
+  </tmpl:ELEMOUTDATET>
+</table>

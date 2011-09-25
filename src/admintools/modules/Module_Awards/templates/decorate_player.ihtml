@@ -1,0 +1,43 @@
+<h1>Decorate A Player</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+
+<tmpl:FORM_CHOOSE>
+<form name="decorate_choose" method="get">
+  <fieldset>
+    <legend>Choose a player</legend>
+    <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+      <tr>
+        <td>
+          Player: <input name="decoratePlayer" type="text" id="decoratePlayer" size="64" maxlength="64" value="{name}">
+          <input name="modus" type="hidden" value="award_decorate_player">
+          <input name="decorate_choose" type="submit" id="decorate_choose" value="Choose!">
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+</tmpl:FORM_CHOOSE>
+
+
+<tmpl:FORM_DECORATE>
+<form name="decorate" method="get">
+  <fieldset>
+    <legend>Decorate '{name}'</legend>
+    <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+      <tmpl:AWARD>
+      <tr>
+        <td><input type="checkbox" name="decorateAward[]" value="{awardID}"<tmpl:CHOSEN>{dummy} checked</tmpl:CHOSEN>>&nbsp;<img src="{awards_img_path}/{tag}.png" align="Middle">&nbsp;{title}</td>
+      </tr>
+      </tmpl:AWARD>
+      <tr align="center">
+        <td>
+          <input name="decoratePlayerID" type="hidden" value="{playerID}">
+          <input name="decoratePlayer" type="hidden" value="{name}">
+          <input name="modus" type="hidden" value="award_decorate_player">
+          <input name="decorator" type="submit" id="decorator" value="Decorate!">
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+</tmpl:FORM_DECORATE>

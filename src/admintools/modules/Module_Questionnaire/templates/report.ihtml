@@ -1,0 +1,34 @@
+<h1>Umfrageergebnisse</h1>
+<div align="center">
+<tmpl:RESULT>
+<br>
+<div class="caption">{questionText}</div><br>
+<table border="0" cellpadding="3" cellspacing="5"  class="box">
+  <tmpl:CHOICE>
+  <tr>
+    <td class="content">{choiceText}</td>
+    <td>
+    <img src="modules/Module_Questionnaire/templates/images/poll_left.gif" height="16" width="6" alt="{percent} %" title="{percent} %"><img src="modules/Module_Questionnaire/templates/images/poll_middle.gif" height="16" width="{barwidth}" alt="{percent} %" title="{percent} %"><img src="modules/Module_Questionnaire/templates/images/poll_right.gif" height="16" width="6" alt="{percent} %" title="{percent} %">
+      {percent}% ({absolute})
+    </td>
+  </tr>
+  </tmpl:CHOICE>
+</table>
+<br>
+<div class="caption">Stimmen: {voters}</div>
+</tmpl:RESULT>
+
+
+<tmpl:QUESTIONS>
+<br>
+<table cellpadding="3" cellspacing="0" class="box">
+  <tmpl:QUESTION>
+  <tr valign="top">
+    <td><strong><big>&middot;</big></strong></td>
+    <td>Nr.{questionID} {questionText} (<a href="?modus=questionnaire_report&amp;questionID={questionID}">Results</a>)</td>
+  </tr>
+  </tmpl:QUESTION>
+</table>
+</tmpl:QUESTIONS>
+
+</div>

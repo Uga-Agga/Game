@@ -1,0 +1,123 @@
+{% extends "base.tmpl" %}
+{% block title %}Geschenke{% endblock %}
+{% block content %}
+
+
+{% if account %}
+<div class="small success nohover">
+   <strong>Bisher erhaltene Schnecken:</strong>
+    <br />
+    {{account.copper}}x
+    <img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" style="vertical-align:middle" />
+    {% if account.silver %}
+      {{account.silver}}x
+      <img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" style="vertical-align:middle" />
+    {% endif %}
+    {% if account.gold %}
+      {{account.gold}}x
+      <img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" style="vertical-align:middle" />
+    {% endif %}
+    
+</div>
+<br />
+{% endif %}
+
+{% if message %}
+<div class="box small">
+ <div class="box-header nohover">&nbsp;</div>
+ <div class="smallinner notice nohover" > 
+  {{message}}
+ </div>
+</div> 
+{% endif %}
+
+<form method="post" action="main.php">
+<div class="box small">
+  <div class="box-header nohover">
+    <strong>Geschenke</strong>
+  </div>
+  <div class="smallinner inner success nohover text-left">
+  <table class="table">
+  <tr>
+    <td>&nbsp;</td>
+    <td>
+      <p style="text-align:justify;">Ihr unterhaltet euch kurz mit der Weisen Alten Frau eures Stammes. Sie
+      erklärt euch, dass ihr eure wertvollen Schnecken gegen interessante
+      Kostbarkeiten eintauschen könnt.<br />
+      &quot;Allerdings geb ich euch nicht mehr, als in eure Höhle passt. (Die Schnecken behalt' ich aber trotzdem..)&quot;<br /><br /></p>
+      {% if presents %}
+        <p style="text-align:center;">Zur Zeit hat sie folgende Angebote: </p>
+      {% endif %}
+    </td>
+	<td>&nbsp;</td>
+  </tr>
+  </table>
+  <table class="table">
+  {% if presents %}
+  <tr>
+    <td style="width:20px"><input type="radio" name="presentID" id="presentID0" value="0" checked="checked" /></td>
+    <td colspan="2"><label for="presentID0">W&auml;hle eine Kostbarkeit</label></td>
+  </tr>
+  {% for present in presents.present %}
+  <tr>
+    <td style="width:20px"><input type="radio" name="presentID" id="presentID{{present.presentID}}" value="{{present.presentID}}" /></td>
+    <td>
+      <table>
+        <tr>
+          {% if present.copper %}
+          <td><label for="presentID{{present.presentID}}">{{present.copper}}x</label></td>
+          <td><img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" /></td>
+          {% endif %}
+
+          {% if present.silver %}
+          <td><label for="presentID{{present.presentID}}">{{present.silver}}x</label></td>
+          <td><img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" /></td>
+          {% endif %}
+
+          {% if present.gold %}
+          <td><label for="presentID{{present.presentID}}">{{present.gold}}x</label></td>
+          <td><img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" /></td>
+          {% endif %}
+        </tr>
+      </table>
+    </td>
+    <td><label for="presentID{{present.presentID}}">{{present.name}}</label></td>
+    <td>
+    {% for external in present.EXTERNAL %}
+      <label for="presentID{{present.presentID}}">{{external.amount}}x {{external.name}}</label><br />
+    {% endfor %}
+    {% for resource in present.RESOURCE %}
+      <label for="presentID{{present.presentID}}">{{resource.amount}}x {{resource.name}}</label><br />
+    {% endfor %}
+    {% for unit in present.UNIT %}
+      <label for="presentID{{present.presentID}}">{{unit.amount}}x {{unit.name}}</label><br />
+    {% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <td>
+      <input type="submit" value="UGH!" />
+      {% for param in presents.params %}
+        <input type="hidden" name="{{param.name}}" value="{{param.value}}" />
+      {% endfor %}
+    </td>
+  </tr>
+  {% endif %}
+  </table>
+  
+  {% if NO_PRESENT %}
+  <table class="table">
+  <tr align="center">
+    <td colspan="3"><strong>"Im Moment kann ich euch leider nichts anbieten!"</strong></td>
+  </tr>
+  </table>
+  {% endif %}
+  
+ </div>
+</div>
+</form>
+<br />
+<div class="small success nohover"><a href="main.php?modus={{QUESTIONNAIRE}}">zu den Fragen</a></div>
+
+{% endblock %}

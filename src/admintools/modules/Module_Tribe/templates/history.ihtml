@@ -1,0 +1,28 @@
+<h1>Creating An Entry For A Tribe's History</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="tribe_history" method="get">
+  <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+    <tr>
+      <td width="50%" align="right">Tribe:</td>
+      <td width="50%"><input name="historyTribe" type="text" id="historyTribe" size="8" maxlength="8"/></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Ingame Time:</td>
+      <td width="50%">
+        <input name="historyDay" type="text" id="historyDay" size="2" maxlength="2"/>
+        <select name="historyMonth" id="newsCategory">
+          <tmpl:MONTH><option value="{value}">{text}</option></tmpl:MONTH>
+        </select>
+        <input name="historyYear" type="text" id="historyYear" size="3" maxlength="3"/>
+      </td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Message:</td>
+      <td width="50%"><input name="historyMessage" type="text" id="historyMessage" size="64" maxlength="255"/></td>
+    </tr>
+    <tr align="center">
+      <td>&nbsp;<input name="modus" type="hidden" value="tribe_history"></td>
+      <td><input name="creator" type="submit" id="creator" value="Create"></td>
+    </tr>
+  </table>
+</form>

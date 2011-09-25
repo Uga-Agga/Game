@@ -1,0 +1,22 @@
+<script type="text/javascript" src="modules/Module_DoYouKnow/templates/wz_tooltip.js"></script>
+<h1>DoYouKnow</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="doyouknow_edit" method="get">
+<table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+
+<tr><th colspan="4">Vorhanden</th></tr>
+<tmpl:DOYOUKNOW>
+  <tr>
+    <td><span id="Span{id}" style="display:none;">{content}</span><a href="#" onmouseover="TagToTip('Span{id}')" onmouseout="UnTip()">{titel}</a></td>
+    <td>
+      <a href="?modus=doyouknow_edit&amp;id={ID}">edit</a>&nbsp;<a href="?modus=doyouknow_remove&amp;id={ID}">remove</a>
+    </td>
+  </tr>
+  <tr><th colspan="4">&nbsp;</th></tr>
+</tmpl:DOYOUKNOW>
+
+  <tr>
+    <td colspan="6"><input name="modus" type="hidden" value="doyouknow_add"><input name="adddoyouknow" type="submit" id="adddoyouknow" value="Add Entry"></td>
+  </tr>
+</table>
+</form>

@@ -1,0 +1,2 @@
+<h1>Remove artefact from cave</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>

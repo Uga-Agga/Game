@@ -1,0 +1,50 @@
+<h1>View messages</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="finddialogue" method="get">
+  View communication between
+  <input name="sender" type="text" size="64" <tmpl:SENDER>value="{sender}"</tmpl:SENDER>maxlength="64">
+  and
+  <input name="recipient" type="text" size="64" <tmpl:RECIPIENT>value="{recipient}"</tmpl:RECIPIENT>maxlength="64">
+
+  <input name="modus" type="hidden" value="player_dialogue">
+  <input name="dialogue" type="submit" value="Suchen!"> <br>
+</form>
+<form name="findmessages" method="get">
+  or search for a particular pattern within messages:
+  <input name="pattern" type="text" <tmpl:PATTERN>value="{pattern}" </tmpl:PATTERN>size="64">
+  (% matches any number of any character)
+  <input name="modus" type="hidden" value="player_messages">
+  <input name="messages" type="submit" value="Search!"> <br>
+</form>
+<hr>
+<tmpl:ONEMESSAGE>
+<h4>Message</h4>
+From: {sender}<br>
+To: {recipient}<br>
+Timestamp: {time}<br>
+<hr width="60%" align="left">
+<p width="60%">
+{message}
+</p>
+</tmpl:MESSAGE>
+<tmpl:NOMESAGES>
+There are no messages that fit the above criteria.
+</tmpl:NOMESSAGES>
+<tmpl:MESSAGES>
+<table>
+  <tr>
+    <th>From</th>
+    <th>To</th>
+    <th>Date</th>
+    <th>Message Preview</th>
+  <tr>
+  <tmpl:ROW>
+  <tr class="{class}">
+    <td>{sender}</td>
+    <td>{recipient</td>
+    <td>{date}</td>
+    <td>{message}</td>
+  </tr>
+  </tmpl:ROW>
+</table>
+</tmpl:MESSAGES>

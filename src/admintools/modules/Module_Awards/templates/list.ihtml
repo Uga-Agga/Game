@@ -1,0 +1,27 @@
+<h1>Awards Administration</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<form name="award_edit" method="get">
+<table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+<!--
+  <tr>
+    <th>tag</th>
+    <th>title</th>
+    <th>description</th>
+    <th>edit</th>
+    <th>delete</th>
+  </tr>
+-->
+<tmpl:AWARD>
+  <tr>
+    <td><img src="{awards_img_path}/{tag}.png"></td>
+    <td>{title}</td>
+    <td>{description_short}</td>
+    <td><a href="?modus=award_edit&amp;awardID={awardID}">edit</a></td>
+    <td><a href="?modus=award_delete&amp;awardID={awardID}">delete</a></td>
+  </tr>
+</tmpl:AWARD>
+  <tr>
+    <td colspan="6"><input name="modus" type="hidden" value="award_create"><input name="createaward" type="submit" id="createaward" value="create a new award"></td>
+  </tr>
+</table>
+</form>

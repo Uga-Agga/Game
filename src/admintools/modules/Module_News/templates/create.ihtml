@@ -1,0 +1,59 @@
+<h1>Creating A New Message</h1>
+<tmpl:MESSAGE><h3>{message}</h3></tmpl:MESSAGE>
+<tmpl:FORM>
+<form name="news_creation" method="get">
+  <table width="100%" border="0" align="center" cellpadding="5" cellspacing="0">
+    <tr>
+      <td width="50%" align="right">Author:</td>
+      <td width="50%"><input name="newsAuthor" type="text" id="newsAuthor" value="News Team" size="64" maxlength="255"/></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Date:</td>
+      <td width="50%"><input name="newsDate" type="text" id="newsDate" size="64" maxlength="255" value="{date}" /></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Category:</td>
+      <td width="50%">
+        <select name="newsCategory" id="newsCategory">
+          <tmpl:CATEGORY><option value="{value}">{text}</option></tmpl:CATEGORY>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Title:</td>
+      <td width="50%"><input name="newsTitle" type="text" id="newsTitle" size="64" maxlength="255"/></td>
+    </tr>
+    <tr>
+      <td width="50%" align="right">Content:</td>
+      <td width="50%"> <textarea name="newsContent" cols="64" rows="10" id="newsContent"></textarea></td>
+    </tr>
+    <tr align="center">
+      <td>&nbsp;<input name="modus" type="hidden" value="news_create"></td>
+      <td><input name="creator" type="submit" id="creator" value="Erstellen"></td>
+    </tr>
+  </table>
+</form>
+</tmpl:FORM>
+
+<table class="box grid" align="center">
+  <tr>
+    <td colspan="2"><div class="title"><b>Hilfe</b></div></td>
+  </tr>
+  <tr>
+    <td>[B]text[/B]</td>
+    <td><b>text</b></td>
+  </tr>
+  <tr>
+    <td>[I]text[/I]</td>
+    <td><i>text</i></td>
+  </tr>
+  <tr>
+    <td>[A=http://www.uga-agga.org]text[/A]</td>
+    <td><a href="http://www.uga-agga.org" target="_blank">text</a></td>
+  </tr>
+  <tr>
+    <td>[IMG]http://www.mysite.com/myimage.png[/IMG]</td>
+    <td><img src="modules/Module_News/templates/images/design.gif"></td>
+  </tr>
+</table>
+<br>
