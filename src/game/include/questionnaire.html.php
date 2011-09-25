@@ -17,7 +17,7 @@ define("COPPERPERSILVER", 13);
 
 function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
 
-  global $no_resource_flag;
+  global $no_resource_flag, $template;
 
   $no_resource_flag = 1;
   $msg = "";
@@ -25,33 +25,34 @@ function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
   if (sizeof(request_var('question', array('' => ''))))
     $msg = questionnaire_giveAnswers();
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'questionnaire.ihtml');
+  $template->setFile('questionnaire.tmpl');
 
   // show message
-  if ($msg != "")
-    tmpl_set($template, 'MESSAGE/message', $msg);
-
+  if ($msg != "") {
+    $template->addVar('message', $msg);
+  }
+  
   // show my credits
   if ($account = questionnaire_getCredits($_SESSION['player']->questionCredits))
-    tmpl_set($template, 'ACCOUNT', $account);
+    $template->addVar('account', $account);
 
   // show the questions
   $questions = questionnaire_getQuestions();
 
-  if (sizeof($questions)) {
-    tmpl_set($template, 'QUESTIONS/QUESTION', $questions);
-    // set params
-    tmpl_set($template, 'QUESTIONS/PARAMS', array(
-      array('name' => "modus", 'value' => QUESTIONNAIRE)));
+  if (sizeof($questions)>0) {
+    $template->addVar('questions', array(
+      'question' => $questions,
+      'params'   => array(
+        array('name' => "modus", 'value' => QUESTIONNAIRE)
+      )
+    ));
   } else {
-    tmpl_iterate($template, 'MESSAGE');
-    tmpl_set($template, 'MESSAGE/message', _('Derzeit liegen keine weiteren Fragen vor.'));
+    $template->addVar('message', _('Derzeit liegen keine weiteren Fragen vor.'));
   }
 
   // show the link to the present page
-  tmpl_set($template, 'QUESTIONNAIRE_PRESENTS', QUESTIONNAIRE_PRESENTS);
+  $template->addVar('QUESTIONNAIRE_PRESENTS', QUESTIONNAIRE_PRESENTS);
 
-  return tmpl_parse($template);
 }
 
 function questionnaire_getCredits($credits) {
@@ -60,11 +61,11 @@ function questionnaire_getCredits($credits) {
   $gold   = intval($credits / SILVERPERGOLD / COPPERPERSILVER);
 
   $result = array('credits' => $credits);
-  if (!$credits) $result['COPPER'] = array('copper' => 0);
+  if (!$credits) $result['copper'] = 0;
   else {
-    if ($copper) $result['COPPER'] = array('copper' => $copper);
-    if ($silver) $result['SILVER'] = array('silver' => $silver);
-    if ($gold)   $result['GOLD']   = array('gold'   => $gold);
+    if ($copper) $result['copper'] = $copper;
+    if ($silver) $result['silver'] = $silver;
+    if ($gold)   $result['gold']   = $gold;
   }
   return $result;
 }
@@ -204,11 +205,11 @@ function questionnaire_addCredits($credits) {
 }
 
 function questionnaire_presents($caveID, &$ownCaves) {
-  global $db, $defenseSystemTypeList, $unitTypeList, $resourceTypeList, $no_resource_flag;
+  global $db, $defenseSystemTypeList, $unitTypeList, $resourceTypeList, $no_resource_flag, $template;
 
   $no_resource_flag = 1;
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'questionnaire_presents.ihtml');
+  $template->setFile('questionnairePresents.tmpl');
 
   $msg = "";
   if (intval(request_var('presentID', 0)) > 0)
@@ -216,11 +217,11 @@ function questionnaire_presents($caveID, &$ownCaves) {
 
   // show message
   if ($msg != "")
-    tmpl_set($template, 'MESSAGE/message', $msg);
+    $template->setVar('message', $msg);
 
   // show my credits
   if ($account = questionnaire_getCredits($_SESSION['player']->questionCredits))
-    tmpl_set($template, 'ACCOUNT', $account);
+    $template->addVar('account', $account);
 
 
   $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_PRESENTS_TABLE ." ORDER BY presentID ASC");
@@ -259,17 +260,20 @@ function questionnaire_presents($caveID, &$ownCaves) {
     $presents[] = $row;
   }
   if (sizeof($presents)){
-    tmpl_set($template, 'PRESENTS/PRESENT', $presents);
-    tmpl_set($template, 'PRESENTS/PARAMS', array(
-      array('name' => "modus", 'value' => QUESTIONNAIRE_PRESENTS)));
+    $template->addVar('presents', array(
+      'present' => $presents,
+      'params'  => array(
+        array('name' => "modus", 'value' => QUESTIONNAIRE_PRESENTS)
+      )
+    ));
   }
-  else
-    tmpl_set($template, 'NO_PRESENT/dummy', "");
-
+  else {
+    $template->addVar('NO_PRESENT', "&nbsp;");
+  }
+  
   // show the link to the questions page
-  tmpl_set($template, 'QUESTIONNAIRE', QUESTIONNAIRE);
+  $template->addVar('QUESTIONNAIRE', QUESTIONNAIRE);
 
-  return tmpl_parse($template);
 }
 
 function questionnaire_timeIsRight($row) {
@@ -390,7 +394,7 @@ function questionnaire_getPresent($caveID, &$ownCaves, $presentID) {
              " WHERE caveID = :caveID AND playerID = :playerID");
     $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-print_r($sql);
+
     if (!$sql->execute())
       return _('Fehler') . ": " . mysql_error();
 
