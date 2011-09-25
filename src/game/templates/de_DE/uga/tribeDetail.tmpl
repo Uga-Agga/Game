@@ -4,7 +4,7 @@
 
 <div class="box small">
   <div class="box-header nohover">Stamm: {{ tribe_details.name }}</div>
-  <div class="smallinner inner success nohover text-left">
+  <div class="box-content success inner text-left">
     {% if tribe_details.avatar %}
       <div class="smallinner notice nohover" style="text-align: center; margin: 10px;">
         <img src="{{ tribe_details.avatar }}" width="{{ tribe_details.avatar_width }}" height="{{ tribe_details.avatar_heigt }}" alt="Stammesbanner" />
@@ -16,24 +16,24 @@
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
 
-          <li class="tripe_detail_left">Stammestag:</li>
-          <li class="tripe_detail_right">{{ tribe_details.tag }}</li>
+          <li class="tribe_detail_left">Stammestag:</li>
+          <li class="tribe_detail_right">{{ tribe_details.tag }}</li>
           <li class="clr"><br class="clr" /></li>
 
-          <li class="tripe_detail_left">Stammesname:</li>
-          <li class="tripe_detail_right">{{ tribe_details.name }}</li>
+          <li class="tribe_detail_left">Stammesname:</li>
+          <li class="tribe_detail_right">{{ tribe_details.name }}</li>
           <li class="clr"><br class="clr" /></li>
 
-          <li class="tripe_detail_left">Anführer:</li>
-          <li class="tripe_detail_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a></li>
+          <li class="tribe_detail_left">Anführer:</li>
+          <li class="tribe_detail_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a></li>
           <li class="clr"><br class="clr" /></li>
 
-          <li class="tripe_detail_left">Stellvertreter:</li>
-          <li class="tripe_detail_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.junior_leader_id }}">{{ tribe_details.junior_leader_name }}</a></li>
+          <li class="tribe_detail_left">Stellvertreter:</li>
+          <li class="tribe_detail_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.junior_leader_id }}">{{ tribe_details.junior_leader_name }}</a></li>
           <li class="clr"><br class="clr" /></li>
 
-          <li class="tripe_detail_left"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">Ranking:</a></li>
-          <li class="tripe_detail_right"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">{{ tribe_details.rank }}</a></li>
+          <li class="tribe_detail_left"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">Ranking:</a></li>
+          <li class="tribe_detail_right"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">{{ tribe_details.rank }}</a></li>
           <li class="clr"><br class="clr" /></li>
         </ul>
       </div>
@@ -44,8 +44,9 @@
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
 
-          <li style="padding-bottom: 10px;"><a href="main.php?modus={playerList_modus}&amp;tag={urltag}">Liste der Mitglieder</a></li>
-          <li style="padding-bottom: 10px;"><a href="main.php?modus={tribeRelationList_modus}&amp;tag={urltag}">Übersicht über die Stammesgeschichte</a></li>
+          <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_player_list_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Mitglieder anzeigen</a></li>
+          <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_history_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Stammesgeschichte anzeigen</a></li>
+          <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_relation_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Beziehungen anzeigen</a></li>
           <li style="padding-bottom: 10px;">Knüppelpunkte gewonnen: {{ tribe_details.warpoints_pos }}</li>
           <li style="padding-bottom: 10px;">Knüppelpunkte verloren: {{ tribe_details.warpoints_neg }}</li>
 

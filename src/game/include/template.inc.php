@@ -13,7 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 class Template {
-  public $file;
+  private $file;
+  private $showRresource;
 
   private $vars;
   private $twig;
@@ -45,6 +46,7 @@ class Template {
     }
     
     $this->vars = array();
+    $this->showRresource = true;
   }
   
   public function addVars($vars) {
@@ -66,6 +68,14 @@ class Template {
 
   public function setFile($file) {
     $this->file = $file;
+  }
+
+  public function setShowRresource($flag) {
+    $this->showRresource = $flag;
+  }
+
+  public function getShowRresource() {
+    return $this->showRresource;
   }
 
   public function render() {

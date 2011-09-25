@@ -13,12 +13,11 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function player_getContent($caveID, $playerID) {
-  global $db, $template, $no_resource_flag;
-
-  $no_resource_flag = 1;
+  global $db, $template;
 
   // open template
   $template->setFile('playerDetail.tmpl');
+  $template->setShowRresource(false);
 
   // workaround, if no playerID is submitted! TODO
   if ($playerID == 0) $playerID = $_SESSION['player']->playerID;

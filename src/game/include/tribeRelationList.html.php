@@ -13,59 +13,51 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeRelationList_getContent($tribe) {
-  global $db, $no_resource_flag, $config, $relationList;
+  global  $config, $db, $template, $relationList;
 
-  $no_resource_flag = 1;
+  // open template
+  $template->setFile('tribeRelationList.tmpl');
+  $template->setShowRresource(false);
+  $template->addVars(array(
+    'show_page'  => true,
+    'tribe_name' => $tribe,
+  ));
 
-  $template =
-    tmpl_open($_SESSION['player']->getTemplatePath() . 'tribeRelationList.ihtml');
-
-  tmpl_set($template, 'tribe', $tribe);
+  if (empty($tribe)) {
+    $template->addVars(array(
+      'status_msg' => array('type' => 'error', 'message' => 'Dieser Stamm wurde nicht gefunden.'),
+      'show_page'  => false,
+    ));
+  }
 
   $relations = relation_getRelationsForTribe($tribe);
-
-  if (!$relations) page_dberror();
-
-  foreach($relations['own'] AS $target => $relationData) {
-    tmpl_iterate($template, 'ROWS');
-
-    $data = array (
-      "tribe"        => $relationData['tribe_target'],
-      "relationTo"   => $relationList[$relationData['relationType']]['name'],
-      "relationFrom" => ($relations['other'][$target] ?
-         $relationList[$relations['other'][$target]['relationType']]['name'] :
-         $relationList[0]['name']),
-      "link"         => "main.php?modus=" . TRIBE_DETAIL .
-                        "&tribe=" . $relationData['tribe_target']);
-    $relations['other'][$target] = 0;         // mark this relation
-
-    if ($i++ % 2)
-      tmpl_set($template, 'ROWS/ROW_ALTERNATE', $data);
-    else
-      tmpl_set($template, 'ROWS/ROW',           $data);
-  }
-
-  foreach($relations['other'] AS $target => $relationData) {
-    if (! $relationData) {      // already printed out this relation
-      continue;
+  $relationsData = array();
+  if (isset($relations['own'])) {
+    foreach($relations['own'] AS $target => $relationData) {
+      $relationsData[$target] = array (
+        'tribe'         => $relationData['tribe_target'],
+        'relation_to'   => $relationList[$relationData['relationType']]['name'],
+        'relation_from' => ($relations['other'][$target] ? $relationList[$relations['other'][$target]['relationType']]['name'] : $relationList[0]['name']),
+      );
     }
-
-    tmpl_iterate($template, 'ROWS');
-
-    $data = array (
-      "tribe"        => $relationData['tribe'],
-      "relationFrom" => $relationList[$relationData['relationType']]['name'],
-      "relationTo"   => $relationList[0]['name'],
-      "link"         => "main.php?modus=" . TRIBE_DETAIL .
-                        "&tribe=" . $relationData['tribe']);
-
-    if ($i++ % 2)
-      tmpl_set($template, 'ROWS/ROW_ALTERNATE', $data);
-    else
-      tmpl_set($template, 'ROWS/ROW',           $data);
   }
 
-  return tmpl_parse($template);
+  if (isset($relations['other'])) {
+    foreach($relations['other'] AS $target => $relationData) {
+      // already printed out this relation
+      if (isset($relationsData[$target])) {
+        continue;
+      }
+
+      $relationsData[$target] = array (
+        'tribe'         => $relationData['tribe'],
+        'relation_to'   => $relationList[$relationData['relationType']]['name'],
+        'relation_from' => $relationList[0]['name'],
+      );
+    }
+  }
+
+  $template->addVar('relations_data', $relationsData);
 }
 
 ?>

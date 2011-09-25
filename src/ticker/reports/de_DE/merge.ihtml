@@ -1,56 +1,56 @@
-<tmpl:TITLE>Artefakt-Verwandlung in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Artefakt-Verwandlung in HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
-<p>Neuigkeiten in deiner Höhle {cave}:</p>
+<p>Neuigkeiten in deiner HÃ¶hle {cave}:</p>
 <p>
 Kaum ist die Alte Weise Frau deines Stammes mit dem Einweihungstamtam
-fertig, spielt sich plötzlich eine seltsame Szene ab:<br>
-Die Alte schaut auf das Artefakt, schaut in Richtung der Höhlenmalereien,
-dann verzerrt sich ihr Gesicht zur Fratze und fängt plötzlich an, wie
+fertig, spielt sich plÃ¶tzlich eine seltsame Szene ab:<br>
+Die Alte schaut auf das Artefakt, schaut in Richtung der HÃ¶hlenmalereien,
+dann verzerrt sich ihr Gesicht zur Fratze und fÃ¤ngt plÃ¶tzlich an, wie
 irrsinnig zu lachen.<br>
 Langsam frast du dich, ob die gute noch ganz bei Sinnen ist. Da dreht sie
 sich ungeachtet ihres hohen Alters auf der Ferse um und sprintet - ja
-wirklich! - in Richtung der heiligen Stätten. Irgendwie kommt dir das
-ganze geradezu *ähem* spanisch vor.<br>
+wirklich! - in Richtung der heiligen StÃ¤tten. Irgendwie kommt dir das
+ganze geradezu *Ã¤hem* spanisch vor.<br>
 Doch da taucht die Gute auch schon wieder auf beladen mit ihrem Sack voller
-Menschenschädel. Sie ritzt einige Zeichen hinein und wirft danach mit einer
-ungeahnten Wucht den Schädel an einen naheliegenden Baumstamm.<br>
+MenschenschÃ¤del. Sie ritzt einige Zeichen hinein und wirft danach mit einer
+ungeahnten Wucht den SchÃ¤del an einen naheliegenden Baumstamm.<br>
 "Nun reichts langsam", denkst du dir, "irgendwas kann hier nicht stimmen
 ... " und gehst zu der inzwischen auf dem Boden kriechenden Frau.<br>
-"Was machst du da, Ehrwürdige?", entkriecht völlig verstörrt deinen Lippen.
-Sie zeigt dir den Schädel auf dem nun ein paar Löcher und Risse entlang
+"Was machst du da, EhrwÃ¼rdige?", entkriecht vÃ¶llig verstÃ¶rt deinen Lippen.
+Sie zeigt dir den SchÃ¤del auf dem nun ein paar LÃ¶cher und Risse entlang
 der Zeichen verlaufen.
 </p>
 <p>
-Dann erklärt sie dir, daß das von ihr gerade eingeweihte Artefakt auf
+Dann erklÃ¤rt sie dir, daÃŸ das von ihr gerade eingeweihte Artefakt auf
 wunderbare Weise
 {if lock_artefact}
-mit einem deiner anderen Artefakte zusammenpaßt.
+mit einem deiner anderen Artefakte zusammenpaÃŸt.
 {else}
-wertwoller scheint, als du zunächst annahmst.
+wertwoller scheint, als du zunÃ¤chst annahmst.
 {/if}
 </p>
 <p>
 Von Neugier getrieben entscheidest du dich kurzerhand, die alte Weise
-Frau das finale Ritual durchführen zu lassen.<br>
-Sorgfältig erhitzt sie in ihrem kleinen Ofen verschiedene Zutaten und
-gießt den dabei entstehenden neblig dampfenden Sud auf das Artefakt.
-Blitze zucken über den Schauplatz und alles ist für einige Sekunden in
-unirdische Stille gehüllt...
+Frau das finale Ritual durchfÃ¼hren zu lassen.<br>
+SorgfÃ¤ltig erhitzt sie in ihrem kleinen Ofen verschiedene Zutaten und
+gieÃŸt den dabei entstehenden neblig dampfenden Sud auf das Artefakt.
+Blitze zucken Ã¼ber den Schauplatz und alles ist fÃ¼r einige Sekunden in
+unirdische Stille gehÃ¼llt...
 </p>
 {if res_artefact}
 <p>
-Nachdem du dir die Augen gewischt hast, siehst du, daß ein neues
+Nachdem du dir die Augen gewischt hast, siehst du, daÃŸ ein neues
 Artefakt entstanden ist.
 </p>
 {else}
 <p>
 {if lock_artefact}
-Nachdem du dir die Augen gewischt hast, siehst du, daß dort, wo eben
-noch die Artefakte lagen, jetzt nur noch zwei Häufchen Asche liegen.
+Nachdem du dir die Augen gewischt hast, siehst du, daÃŸ dort, wo eben
+noch die Artefakte lagen, jetzt nur noch zwei HÃ¤ufchen Asche liegen.
 {else}
-Nachdem du dir die Augen gewischt hast, siehst du, daß dort, wo eben
-noch das Artefakt lag, jetzt nur noch ein Häufchen Asche liegt.
+Nachdem du dir die Augen gewischt hast, siehst du, daÃŸ dort, wo eben
+noch das Artefakt lag, jetzt nur noch ein HÃ¤ufchen Asche liegt.
 {/if}
 </p>
 <p>Ob das alles so richtig war?</p>

@@ -3,9 +3,9 @@
 {% block content %}
 
 <div class="box small">
-  <div class="box-header nohover"><strong>Aktive Auswirkungen der Wunder</strong></div>
+  <div class="box-header">Aktive Auswirkungen der Wunder</div>
+  <div class="box-content success inner text-center">
   {% if wonder %}
-    <div class="smallinner inner success nohover text-left">
       <table class="table">
         {% for item in wonder %}
           <tr>
@@ -13,25 +13,17 @@
           </tr>
         {% endfor %}
       </table>
-    </div>
   {% else %}
-    <div class="smallinner notice nohover" style="margin:0px;">
-      <table class="table">
-        <tr>
-          <td>Derzeit wirken keinerlei Wunder auf Eure Höhle, Häuptling!</td>
-        </tr>
-      </table>
-    </div>
+    <div class="success" style="margin-bottom: 0px">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
   {% endif %}
+  </div>
 </div>
 
-<br />
-
 <div class="box small">
-  <div class="box-header nohover"><strong>In der Höhle wirkende Effekte</strong></div>
+  <div class="box-header">In der Höhle wirkende Effekte</div>
   {% if effect %}
-    <div class="smallinner inner success nohover text-left">
-      <table class="table">
+    <div class="box-content success inner">
+      <table class="table nohover">
         {% for item in effect %}
           <tr>
             <td style="valign: top; float: left;">{{ item.name }}:</td>
@@ -41,22 +33,14 @@
       </table>
     </div>
   {% else %}
-    <div class="smallinner notice nohover">
-      <table class="table">
-        <tr>
-          <td>Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</td>
-        </tr>
-      </table>
-    </div>
+    <div class="notice" style="margin-bottom: 0px">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
   {% endif %}
 </div>
 
-<br />
-
 <div class="box small">
-  <div class="box-header nohover"><strong>Aktuelle Farmpunkte</strong></div>
-  <div class="smallinner inner success nohover text-left">
-    <table class="table">
+  <div class="box-header">Aktuelle Farmpunkte</div>
+  <div class="box-content success inner">
+    <table class="table nohover">
       <tr>
         <td style="valign: top; float: left; width: 70px;">Anzahl:</td>
         <td style="valign: top; float: left; width: 70px;">{{ farmpoints }}</td>

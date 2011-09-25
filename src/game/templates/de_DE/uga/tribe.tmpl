@@ -2,13 +2,13 @@
 {% block title %}Stämmes{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
 
 <div class="box small">
   <div class="box-header">Stamm gründen</div>
-  <div class="box-content success inner">
+  <div class="box-content success inner nohover">
     <form name="tribe_create" method="post" action="main.php?modus={{ tribe_link }}">
-      <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+      <table class="table" cellpadding="3" cellspacing="0">
         <tr>
           <td width="150px;"><label for="create_tag">Stammesürzel</label></td>
           <td><input name="tag" id="create_tag" value="{{ create_tag_value }}" type="text" size="16" maxlength="8" /></td>
@@ -33,9 +33,9 @@
 
 <div class="box small">
   <div class="box-header">Stamm beitreten</div>
-  <div class="box-content success inner">
-    <form name="tribe_join" method="post" action="main.php?modus={{ tribe_link }}">
-      <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+  <div class="box-content success inner nohover">
+    <form name="tribe_create" method="post" action="main.php?modus={{ tribe_link }}">
+      <table class="table" cellpadding="3" cellspacing="0">
         <tr>
           <td width="150px;"><label for="join_tag">Stammesürzel</label></td>
           <td><input name="tag" id="join_tag" value="{{ join_tag_value }}" type="text" size="16" maxlength="8" /></td>

@@ -1,0 +1,114 @@
+{% extends "base.tmpl" %}
+{% block title %}Nachrichten{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
+
+{% if is_leader %}
+<div class="box small">
+  <div class="box-header">Stammesverwaltung</div>
+  <div class="box-content success inner text-center">
+    <form method="post" action="main.php?modus={{ tribe_link }}">
+    <ul>
+      <li>Nachricht an alle Mitglieder:</li>
+      <li>
+        <textarea name="messageText" cols="60" rows="8"></textarea>
+      </li>
+      <li>
+        <input type="hidden" name="tribeAction" value="{{ tribe_action_message }}" />
+        <input type="submit" value="Stammes nachricht" />
+        <input type="submit" name="ingame" value="Private Nachricht" />
+      </li>
+      <li>&nbsp;</li>
+      <li style="font-size: 11px;"><a href="main.php?modus={{ tribe_admin_link }}">Den Stamm verwalten.</a></li>
+    </ul>
+      </form>
+  </div>
+</div>
+{% endif %}
+
+<div class="box small">
+  <div class="box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
+  <div class="box-content success inner text-center">
+    <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
+      <ul>
+        <li class="bold" style="padding-bottom: 10px; text-align: center;">Informationen:</li>
+
+        {% if leader_name %}
+          <li class="tribe_left">Anführer:</li>
+          <li class="tribe_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ leader_id }}">{{ leader_name }}</a></li>
+          <li class="clr"><br class="clr" /></li>
+
+          <li class="tribe_left">Stellvertreter:</li>
+          <li class="tribe_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ junior_leader_id }}">{{ junior_leader_name }}</a></li>
+          <li class="clr"><br class="clr" /></li>
+        {% else %}
+          <li>Ihr Stamm hat zur Zeit keinen Anführer.</li>
+        {% endif %}
+
+        <li class="tribe_left">Regierung:</li>
+        <li class="tribe_right"><a href="http://game.uga-agga.de/rules/?modus=governments" onclick="open_page(this.href, 1); return false;">{{ government_name }}</a></li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li class="text-center"><a href="main.php?modus={{ tribe_leader_determination_link }}">Anführer bestimmen</a></li>
+        <li class="text-center"><a href="main.php?modus={{ tribe_player_list_link }}&amp;tag={{ tribe_tag|url_encode }}">Mitgliederliste</a></li>
+      </ul>
+    </div>
+
+    <div class="notice nohover text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
+      <ul>
+        <li class="bold" style="padding-bottom: 10px; text-align: center;">Verbündete Stämme:</li>
+        {% if tribe_relations_ally %}
+          {% for item in tribe_relations_ally %}
+            <li><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li>Zur Zeit seit ihr mit keinem Stamm verbündet.</li>
+        {% endif %}
+        <li>&nbsp;</li>
+        <li class="text-center" style="font-size: 11px;"><a href="main.php?modus={{ tribe_relation_link }}&amp;tag={{ tribe_tag|url_encode }}">Alle Beziehungen anzeigen.</a></li>
+      </ul>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div class="notice nohover" style="margin-left: 10px; margin-right: 10px;">
+      <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
+        <tr>
+          <th class="text-left">Gegner</th>
+          <th>Knüppelpunkte: (ihre/unsere)</th>
+          <th>Kriegsanteil</th>
+        </tr>
+        {% if target_facts %}
+          {% for item in target_facts %}
+          <tr>
+            <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.target|url_encode }}">{{ item.target }}</a></td>
+            <td>{{ item.fame_target }}/{{ item.fame_own }}</td>
+            <td><span class="{{ item.class }}">{{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)</span></td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
+        {% endif %}
+      </table>
+    </div>
+
+    <ul style="margin-left: 10px; margin-right: 10px;">
+      <li class="bold">Nachrichten</li>
+      {% for item in tribe_messages %}
+        <li>
+          <div class="info text-left">
+            <h3 class="loud">{{ item.time }}&nbsp;&nbsp;{{ item.subject }}</h3>
+            {{ item.message|raw }}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <form method="post" action="main.php?modus={{ tribe_link }}">
+      <p><input type="hidden" name="tribeAction" value="{{ tribe_action_leave }}" />
+      <input type="submit" value="Diesen Stamm verlassen!" onclick="return confirm('Wollen Sie den Stamm wirklich verlassen?');" /></p>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

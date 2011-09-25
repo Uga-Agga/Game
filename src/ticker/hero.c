@@ -125,7 +125,7 @@ void kill_hero (db_t *database, int heroID)
 
   get_hero_by_id(database, heroID, &hero);
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0 healPoints = 0, isMoving = 0 "
+  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0, healPoints = 0, isMoving = 0 "
          " WHERE heroID = %d",
      HERO_DEAD, heroID);
 

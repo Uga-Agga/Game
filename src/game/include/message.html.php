@@ -83,7 +83,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
 
   $classes = array();
   foreach ($messagesClass->MessageClass as $id => $text) {
-    $messageClass = (isset($_POST['messageClass'])) ? request_var('messageClass', 0) : 0;
+    $messageClass = (isset($_REQUEST['messageClass'])) ? request_var('messageClass', 0) : 0;
     if ($id != 1001) {
       $selected = ($messageClass == $id) ? 'selected="selected"' : '';
       $classes[] = array('id' => $id, 'text' => $text, 'selected' => $selected);
@@ -97,7 +97,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
 
   // calculate offset
   $offset = request_var('offset', 0);
-  $messageClass = (isset($_REQUEST['filter'])) ? request_var('messageClass', 0) : -2;
+  $messageClass = (isset($_REQUEST['messageClass'])) ? request_var('messageClass', 0) : -2;
   switch ($box){
     default:
     case BOX_INCOMING:
@@ -171,16 +171,14 @@ function messages_getMessages($caveID, $deletebox, $box) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function messages_showMessage($caveID, $messageID, $box) {
-  
-  global $no_resource_flag, $config, $template;
+  global $config, $template;
 
   // init messages class
   $messagesClass = new Messages;
 
-  $no_resource_flag = 1;
-
   // open template
   $template->setFile('messageDetail.tmpl');
+  $template->setShowRresource(false);
 
   if (!empty($messageID)) {
     $message = $messagesClass->getMessageDetail($messageID);
@@ -248,8 +246,7 @@ function messages_showMessage($caveID, $messageID, $box) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function messages_newMessage($caveID) {
-  global $config, $template, $no_resource_flag;
-  $no_resource_flag = 1;
+  global $config, $template;
 
   // get contacts model
   $contacts_model = new Contacts_Model();
@@ -257,6 +254,7 @@ function messages_newMessage($caveID) {
 
   // open template
   $template->setFile('messageDialogue.tmpl');
+  $template->setShowRresource(false);
 
   $template->addVars(array(
     'box'        => request_var('box', BOX_INCOMING),
@@ -277,12 +275,11 @@ function messages_newMessage($caveID) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function messages_sendMessage($caveID) {
-  global $config, $template, $no_resource_flag;
+  global $config, $template;
 
   // init messages class
   $messagesClass = new Messages;
 
-  $no_resource_flag = 1;
   $zeichen = 16384;
 
   $betreff = request_var('betreff', "");
@@ -308,6 +305,7 @@ function messages_sendMessage($caveID) {
 
   // open template
   $template->setFile('messageDialogue.tmpl');
+  $template->setShowRresource(false);
 
   if (strlen($nachricht) > $zeichen) {
     $message = array('type' => 'error', 'message' => sprintf(_('Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass die Nachricht nicht länger als %d Zeichen ist.'), $zeichen));

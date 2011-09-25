@@ -1,9 +1,9 @@
-<tmpl:TITLE>Angriff nicht möglich auf Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Angriff nicht mÃ¶glich auf HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 <p>
 Beim Eintreffen deiner Armee stellt dein Oberkeulenschwinger mit
-Entsetzen fest, daß in der angegebenen Höhle nichts zu holen ist.
-Die Zielhöhle {cave} des Spielers {player} steht unter Anfängerschutz.
+Entsetzen fest, daÃŸ in der angegebenen HÃ¶hle nichts zu holen ist.
+Die ZielhÃ¶hle {cave} des Spielers {player} steht unter AnfÃ¤ngerschutz.
 </p>
 </tmpl:MSG>

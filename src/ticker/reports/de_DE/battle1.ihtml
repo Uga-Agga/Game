@@ -1,22 +1,22 @@
-<tmpl:TITLE_WIN>Sieg bei Höhle {cave} ({xpos}/{ypos})
-</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Niederlage bei Höhle {cave} ({xpos}/{ypos})
+<tmpl:TITLE_WIN>Sieg bei HÃ¶hle {cave} ({xpos}/{ypos})
+</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Niederlage bei HÃ¶hle {cave} ({xpos}/{ypos})
 </tmpl:TITLE_LOSE>
 
 <tmpl:MSG>
 <p>Dein Oberkeulenschwinger berichtet direkt vom Schlachtfeld:</p>
 <p>
-Mein oberster Stammesführer! Du hast den Kampf um
-{if self}deine Höhle {cave}{else}
-die Höhle {cave} {if player}des Spielers {player}{/if}
+Mein oberster StammesfÃ¼hrer! Du hast den Kampf um
+{if self}deine HÃ¶hle {cave}{else}
+die HÃ¶hle {cave} {if player}des Spielers {player}{/if}
 {/if}
 {if att_won}gewonnen{else}verloren{/if}!
 </p>
 <tmpl:GUESS>
 <p>
-Du wartest lange auf die Rückkehr deiner Krieger, aber niemand scheint den
-Kampf überlebt zu haben. In deiner Not wendest du dich an den Schamanen des
-Stammes, der die Knochen wirft und die Stärke der gegnerischen Armee auf
-ungefähr {size} Größenpunkte schätzt.
+Du wartest lange auf die RÃ¼ckkehr deiner Krieger, aber niemand scheint den
+Kampf Ã¼berlebt zu haben. In deiner Not wendest du dich an den Schamanen des
+Stammes, der die Knochen wirft und die StÃ¤rke der gegnerischen Armee auf
+ungefÃ¤hr {size} GrÃ¶ÃŸenpunkte schÃ¤tzt.
 </p>
 </tmpl:GUESS>
 <tmpl:UNITS>
@@ -59,9 +59,9 @@ ungefähr {size} Größenpunkte schätzt.
 </thead>
 <tbody>
 <tr><td>Fernschaden:</td><td>{range}</td></tr>
-<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+<tr><td>GebÃ¤udeschaden:</td><td>{struct}</td></tr>
 <tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
-<tr><td>Größe:</td><td>{size}</td></tr>
+<tr><td>GrÃ¶ÃŸe:</td><td>{size}</td></tr>
 <tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
 <tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
 </tbody>
@@ -100,9 +100,9 @@ ungefähr {size} Größenpunkte schätzt.
 </thead>
 <tbody>
 <tr><td>Fernschaden:</td><td>{range}</td></tr>
-<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+<tr><td>GebÃ¤udeschaden:</td><td>{struct}</td></tr>
 <tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
-<tr><td>Größe:</td><td>{size}</td></tr>
+<tr><td>GrÃ¶ÃŸe:</td><td>{size}</td></tr>
 <tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
 <tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
 </tbody>
@@ -143,7 +143,7 @@ Der Kampf brachte dir {PointsOwn} und dem Gegner {PointsOther} Kriegspunkte.
 <tmpl:ARTEFACT>
 <p>
 {if att_won}
-Bei der Plünderung der Höhle bist du auf ein Artefakt "{artefact}" gestoßen!
+Bei der PlÃ¼nderung der HÃ¶hle bist du auf ein Artefakt "{artefact}" gestoÃŸen!
 {else}
 Das transportierte Artefakt "{artefact}" ist verloren!
 {/if}
@@ -152,8 +152,8 @@ Das transportierte Artefakt "{artefact}" ist verloren!
 
 <tmpl:ARTEFACT_LOST>
 <p>
-Bei dem Kampf ist das Artefakt "{artefact}" verloren gegangen! Es muß
-irgendwo in der Nachbarschaft der Höhle liegen.
+Bei dem Kampf ist das Artefakt "{artefact}" verloren gegangen! Es muÃŸ
+irgendwo in der Nachbarschaft der HÃ¶hle liegen.
 </p>
 </tmpl:ARTEFACT_LOST>
 </tmpl:MSG>

@@ -238,7 +238,6 @@ function defense_builder($caveID, &$details) {
     'defense_system_relict'      => $defenseSystemRelict,
   ));
 }
-
-
+git
 
 ?>

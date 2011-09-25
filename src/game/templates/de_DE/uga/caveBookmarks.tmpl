@@ -52,21 +52,21 @@
   </div>
 </div>
 
-<br />
-
-<div class="small success nohover">
-  <form id="newcavebookmarkbyname" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
-    <p>Name: <input name="name" type="text" size="35" maxlength="90" />
-    <input type="submit" name="add" value="Hinzufügen" />
-    <input type="hidden" name="task" value="Add" /></p>
-  </form>
-  <br />
-  <form id="newcavebookmarkbycoord" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
-    <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
-    y: <input name="yCoord" type="text" size="4" maxlength="4" />
-    <input type="submit" name="add" value="Hinzufügen" />
-    <input type="hidden" name="task" value="Add" /></p>
-  </form>
+<div class="small box">
+  <div class="box-header">Höhle hinzufügen</div>
+  <div class="box-content success inner text-center">
+    <form id="newcavebookmarkbyname" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+      <p>Name: <input name="name" type="text" size="35" maxlength="90" />
+      <input type="submit" name="add" value="Hinzufügen" />
+      <input type="hidden" name="task" value="Add" /></p>
+    </form>
+    <br />
+    <form id="newcavebookmarkbycoord" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+      <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
+      y: <input name="yCoord" type="text" size="4" maxlength="4" />
+      <input type="submit" name="add" value="Hinzufügen" />
+      <input type="hidden" name="task" value="Add" /></p>
+    </form>
+  </div>
 </div>
-
 {% endblock %}

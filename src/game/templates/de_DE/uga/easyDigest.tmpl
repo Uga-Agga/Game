@@ -12,7 +12,7 @@
       <img src="{{ gfx }}/de_DE/t_uga/icon_close.png" style="margin:-3px" width="16" height="16" alt="Minus" title="Minus" onclick="moreinfo('opponent', this)" />&nbsp;&nbsp;Fremde Bewegungen  
     </div>
 
-    <div class="box-content inner success" id="opponent">
+    <div class="box-content success inner" id="opponent">
       <table class="table" cellpadding="3" cellspacing="0" rules="rows">
         {% for item in opponent_movement %}
         <tr class="digest-mov-{{ item.movement_id }}" onclick="moreinfo('movement_{{ item.event_id }}', 1)">
@@ -79,7 +79,6 @@
       </table>     
     </div>
   </div>
-  <br />
 {% endif %}
 
 {% if own_movements %}
@@ -154,7 +153,6 @@
       </table>
     </div>
   </div>
-  <br />
 {% endif %}
 
 <!--
@@ -219,56 +217,52 @@
     </table>
   </div>
 </div>
-<br />
 
 <div class="box">
   <div class="box-header">Kein Erweiterungsbau</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_building %}
-        <tr><td><span><a href="main.php?caveID={{ item.caveID }}&amp;modus={{ item.modus }}">{{ item.cave_name }}</a></span></td></tr>
+        <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
       {% else %}
         <tr><td><span>Du baust in allen Höhlen Erweiterungen.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
-<br />
 
 <div class="box">
   <div class="box-header">Keine Einheitenproduktion</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_unit %}
-        <tr><td><span><a href="main.php?caveID={{ item.caveID }}&amp;modus={{ item.modus }}">{{ item.cave_name }}</a></span></td></tr>
+        <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
       {% else %}
         <tr><td><span>Du baust in allen Höhlen Einheiten.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
-<br />
-  
+
 <div class="box">
   <div class="box-header">Kein Verteidigungsbau</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_defenses %}
-        <tr><td><span><a href="main.php?caveID={{ item.caveID }}&amp;modus={{ item.modus }}">{{ item.cave_name }}</a></span></td></tr>
+        <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
       {% else %}
         <tr><td><span>Du baust in allen Höhlen Verteidigungsanlagen.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
-<br />
 
 <div class="box">
   <div class="box-header">Keine Forschungen</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_sciences %}
-        <tr><td><span><a href="main.php?caveID={{ item.caveID }}&amp;modus={{ item.modus }}">{{ item.cave_name }}</a></span></td></tr>
+        <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
       {% else %}
         <tr><td><span>Du forscht in allen Höhlen.</span></td></tr>
       {% endfor %}

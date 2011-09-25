@@ -16,9 +16,6 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   global $db, $template;
   global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList, $wonderTypeList, $effectTypeList;
 
-  // don't show the resource bar
-  $no_resource_flag = 1;
-
   // open template
   $template->setFile('effectWonderDetail.tmpl');
 

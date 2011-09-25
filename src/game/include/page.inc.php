@@ -148,6 +148,7 @@ function page_sessionValidate() {
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return FALSE;
   }
+  $sql->closeCursor();
 
   return true; //md5($_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']) == $_SESSION['session']['loginchecksum'];
 }
@@ -156,11 +157,15 @@ function page_getModus() {
   global $config;
 
   $modus = request_var('modus', NEWS);
+  if (empty($modus)) {
+    $modus = NEWS;
+  }
 
-  if (in_array($modus, $config->rememberModusInclude))
+  if (in_array($modus, $config->rememberModusInclude)) {
     $_SESSION['current_modus'] = $modus;
-  else
+  } else {
     $_SESSION['current_modus'] = NEWS;
+  }
 
   return $modus;
 }

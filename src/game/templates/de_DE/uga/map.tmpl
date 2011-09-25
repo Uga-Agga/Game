@@ -19,7 +19,7 @@
 
 <div class="box">
   <div class="boxheader">&nbsp;</div>
-  <div class="box-content inner success">
+  <div class="box-content success inner">
     <table class="nohover" style="width: 100%;">
       <tr>
         <td style="width: 30%; text-align: left;">
@@ -69,7 +69,7 @@
     <td>
       <div class="box">
         <div class="boxheader">&nbsp;</div>
-        <div class="box-content inner success" id="map-view">
+        <div class="box-content success inner" id="map-view">
           {% include "mapRegion.tmpl" %}
         </div>
       </div>
@@ -97,7 +97,7 @@
 
         {% if minimap %} 
           <div id="minimap-base-url" style="display: none;">{{ minimap.file_base|raw }}</div>
-          <div class="box-content inner success text-center" id="minimap-view">
+          <div class="box-content success inner text-center" id="minimap-view">
             <form action="main.php" method="post" id="minimapform">
               <p>
                 <input id="minimap-image" name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />

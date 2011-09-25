@@ -16,7 +16,6 @@ require_once('lib/Movement.php');
 @include_once('modules/CaveBookmarks/model/CaveBookmarks.php');
 
 function unit_Movement($caveID, &$ownCave) {
-
   global $config, $db, $template;
   global $MAX_RESOURCE, $MOVEMENTCOSTCONSTANT, $MOVEMENTSPEEDCONSTANT, $FUELRESOURCEID, $resourceTypeList, $unitTypeList;
 
@@ -386,7 +385,7 @@ function unit_Movement($caveID, &$ownCave) {
       'ownMovement' => $ownMovement,
       'oppMovement' => $oppMovement,
     ));
-
+  
   // artefakte
   if (sizeof($myartefacts) != 0) {
     //tmpl_set($template, '/ARTEFACTS/ARTEFACT', $myartefacts); 

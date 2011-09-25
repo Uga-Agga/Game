@@ -1,12 +1,12 @@
-<tmpl:TITLE>Rückkehr in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>RÃ¼ckkehr in HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 <p>
 Deine Einheiten sind von
-{if self}deiner Höhle {orig}{else}
-der Höhle {orig} {if sender}des Spielers {sender}{/if}
+{if self}deiner HÃ¶hle {orig}{else}
+der HÃ¶hle {orig} {if sender}des Spielers {sender}{/if}
 {/if}
-wieder zurückgekehrt.
+wieder zurÃ¼ckgekehrt.
 </p>
 
 <tmpl:UNITS>
