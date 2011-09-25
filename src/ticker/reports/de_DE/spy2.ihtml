@@ -1,13 +1,13 @@
-<tmpl:TITLE>Spionageabwehr bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Spionageabwehr bei HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 <p>
 {if dead}
-Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten
-aufgestöbert, die sich auffällig für deine Höhle interessiert haben.
+Deine Wachen haben eine Gruppe Ã¤uÃŸerst zwielichtiger Gestalten
+aufgestÃ¶bert, die sich auffÃ¤llig fÃ¼r deine HÃ¶hle interessiert haben.
 {else}
-Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten gesichtet,
-die sich an deine Höhle heranschleichen wollten. Sie hatten zwar
+Deine Wachen haben eine Gruppe Ã¤uÃŸerst zwielichtiger Gestalten gesichtet,
+die sich an deine HÃ¶hle heranschleichen wollten. Sie hatten zwar
 noch keine Gelegenheit, etwas in Erfahrung zu bringen, konnten aber
 bedauerlicherweise den Wachen entkommen.
 {/if}
@@ -17,7 +17,7 @@ bedauerlicherweise den Wachen entkommen.
 <p>Einheiten:</p>
 <table><col><col align="right">
 <tmpl:UNIT><tr><td>{name}:</td><td>
-{if     num <     5}ein kümmerlicher Haufen
+{if     num <     5}ein kÃ¼mmerlicher Haufen
 {elseif num <     9}eine Handvoll
 {elseif num <    17}ein Dutzend
 {elseif num <    33}ein Trupp
@@ -52,7 +52,7 @@ zu stellen:
 </table>
 <p>
 Da die Wachen es aber gewohnt sind, erst zuzuschlagen und dann Fragen zu
-stellen, ist niemand davon mehr am Leben, der dir berichten könnte, woher
+stellen, ist niemand davon mehr am Leben, der dir berichten kÃ¶nnte, woher
 sie kamen.
 </p>
 </tmpl:UNITS>
@@ -60,8 +60,8 @@ sie kamen.
 
 {if dead}
 <tmpl:RESOURCES>
-<p>Zu deiner Überraschung hatten sie einige Rohstoffe bei sich, die nun
-deine Lager füllen:</p>
+<p>Zu deiner Ãœberraschung hatten sie einige Rohstoffe bei sich, die nun
+deine Lager fÃ¼llen:</p>
 <table><col><col align="right">
 <tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
 </tmpl:RESOURCE>

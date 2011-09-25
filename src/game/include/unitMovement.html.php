@@ -386,7 +386,7 @@ function unit_Movement($caveID, &$ownCave) {
       'ownMovement' => $ownMovement,
       'oppMovement' => $oppMovement,
     ));
-
+  
   // artefakte
   if (sizeof($myartefacts) != 0) {
     //tmpl_set($template, '/ARTEFACTS/ARTEFACT', $myartefacts); 

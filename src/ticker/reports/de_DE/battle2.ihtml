@@ -1,5 +1,5 @@
-<tmpl:TITLE_WIN>Sieg bei Höhle {cave} ({xpos}/{ypos})
-</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Niederlage bei Höhle {cave} ({xpos}/{ypos})
+<tmpl:TITLE_WIN>Sieg bei HÃ¶hle {cave} ({xpos}/{ypos})
+</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Niederlage bei HÃ¶hle {cave} ({xpos}/{ypos})
 </tmpl:TITLE_LOSE>
 
 <tmpl:MSG>
@@ -7,16 +7,16 @@
 {if att_won}
 Ihr seht mit euren blutunterlaufenen Augen zu, wie ein fremder Stamm aus
 {else}
-Ihr seht vergnügt zu, wie ein fremder Stamm aus
+Ihr seht vergnÃ¼gt zu, wie ein fremder Stamm aus
 {/if}
-{if self}eurer Höhle {orig}{else}
-der Höhle {orig} {if sender}des Spielers {sender}{/if}
+{if self}eurer HÃ¶hle {orig}{else}
+der HÃ¶hle {orig} {if sender}des Spielers {sender}{/if}
 {/if}
 {if att_won}
-eure Höhle {cave} plündert! Ihr habt den Kampf um eure Höhle verloren!
+eure HÃ¶hle {cave} plÃ¼ndert! Ihr habt den Kampf um eure HÃ¶hle verloren!
 {else}
-vor der überlegenen Streitmacht eurer Höhle {cave} flieht, nachdem sie versucht
-hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
+vor der Ã¼berlegenen Streitmacht eurer HÃ¶hle {cave} flieht, nachdem sie versucht
+hatten, eure HÃ¶hle zu plÃ¼ndern! Ihr habt den Kampf um eure HÃ¶hle gewonnen!
 {/if}
 </p>
 
@@ -52,9 +52,9 @@ hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
 </thead>
 <tbody>
 <tr><td>Fernschaden:</td><td>{range}</td></tr>
-<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+<tr><td>GebÃ¤udeschaden:</td><td>{struct}</td></tr>
 <tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
-<tr><td>Größe:</td><td>{size}</td></tr>
+<tr><td>GrÃ¶ÃŸe:</td><td>{size}</td></tr>
 <tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
 <tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
 </tbody>
@@ -93,9 +93,9 @@ hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
 </thead>
 <tbody>
 <tr><td>Fernschaden:</td><td>{range}</td></tr>
-<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+<tr><td>GebÃ¤udeschaden:</td><td>{struct}</td></tr>
 <tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
-<tr><td>Größe:</td><td>{size}</td></tr>
+<tr><td>GrÃ¶ÃŸe:</td><td>{size}</td></tr>
 <tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
 <tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
 </tbody>
@@ -116,7 +116,7 @@ hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
 <tmpl:RESOURCES>
 {if att_won}
 <p>
-Der fremde Stamm hat eure Höhle geplündert. Einiges konntet ihr ja noch
+Der fremde Stamm hat eure HÃ¶hle geplÃ¼ndert. Einiges konntet ihr ja noch
 verstecken, trotzdem hat er folgende Ressourcen erbeutet:
 </p>
 {else}
@@ -138,9 +138,9 @@ Der Kampf brachte dir {PointsOwn} und dem Gegner {PointsOther} Kriegspunkte.
 <tmpl:ARTEFACT>
 <p>
 {if att_won}
-Der Angreifer hat aus eurer Höhle das Artefakt "{artefact}" gestohlen!
+Der Angreifer hat aus eurer HÃ¶hle das Artefakt "{artefact}" gestohlen!
 {else}
-Zwischen den Überresten der getöteten Feinde habt ihr das Artefakt
+Zwischen den Ãœberresten der getÃ¶teten Feinde habt ihr das Artefakt
 "{artefact}" gefunden!
 {/if}
 </p>
@@ -148,8 +148,8 @@ Zwischen den Überresten der getöteten Feinde habt ihr das Artefakt
 
 <tmpl:ARTEFACT_LOST>
 <p>
-Bei dem Kampf ist euer Artefakt "{artefact}" verloren gegangen! Es muß
-irgendwo in der Nachbarschaft der Höhle liegen.
+Bei dem Kampf ist euer Artefakt "{artefact}" verloren gegangen! Es muÃŸ
+irgendwo in der Nachbarschaft der HÃ¶hle liegen.
 </p>
 </tmpl:ARTEFACT_LOST>
 </tmpl:MSG>

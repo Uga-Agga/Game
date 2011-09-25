@@ -1,9 +1,9 @@
-<tmpl:TITLE>Wunder zeigt Wirkung in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Wunder zeigt Wirkung in HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 <p>
-Ein Kundschafter berichtet, daß ein Wunder "{wonder}" in der Höhle {cave}
-Wirkung zeigt. Da dieses Wunder allerdings bereits in der Höhle wirkte,
-wurde dadurch nun die Dauer des Wunders verlängert.
+Ein Kundschafter berichtet, daÃŸ ein Wunder "{wonder}" in der HÃ¶hle {cave}
+Wirkung zeigt. Da dieses Wunder allerdings bereits in der HÃ¶hle wirkte,
+wurde dadurch nun die Dauer des Wunders verlÃ¤ngert.
 </p>
 </tmpl:MSG>

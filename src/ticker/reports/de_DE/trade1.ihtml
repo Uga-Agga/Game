@@ -1,10 +1,10 @@
-<tmpl:TITLE>Handelsbericht in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+<tmpl:TITLE>Handelsbericht in HÃ¶hle {cave} ({xpos}/{ypos})</tmpl:TITLE>
 
 <tmpl:MSG>
 <p>
 Deine Lieferung ist in
-{if self}deiner Höhle {cave}{else}
-der Höhle {cave} {if player}des Spielers {player}{/if}
+{if self}deiner HÃ¶hle {cave}{else}
+der HÃ¶hle {cave} {if player}des Spielers {player}{/if}
 {/if}
 eingetroffen:
 </p>
