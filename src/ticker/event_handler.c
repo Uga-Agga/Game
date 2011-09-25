@@ -55,12 +55,11 @@ const struct EventTable eventTableList[] = {
         .table    = "Event_weatherEnd",
 	.id_field = "activeWeatherID",
 	.handler  = weatherEnd_handler
-	}/*, {
+	}, {
         .table    = "Event_hero",
   .id_field = "event_heroID",
   .handler  = hero_handler
-    } */
-
+  }
 };
 
 const int eventTableSize = sizeof eventTableList / sizeof eventTableList[0];
