@@ -13,14 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function science_getScienceDetails($scienceID, $caveData, $method) {
-
-  global $buildingTypeList,
-         $defenseSystemTypeList,
-         $resourceTypeList,
-         $scienceTypeList,
-         $unitTypeList,
-         $template,
-         $no_resource_flag;
+  global $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
   $no_resource_flag = 1;
 
@@ -39,6 +33,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   }
   else {
     $template->setFile('scienceDetail.tmpl');
+    $template->setShowRresource(false);
     $shortVersion = 0;
   }
 
@@ -183,15 +178,16 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
     array_push($dependencies, array('name' => _('Einheiten'),
                                     'DEP'  => $unitdep));
 
-  $template->addVars(array('name'          => $science->name,
-                           'dbFieldName'   => $science->dbFieldName,
-                           'description'   => $science->description,
-                           'maxlevel'      => $maxLevel,
-                           'currentlevel'  => $currentlevel,
-                           'LEVELS'        => $levels,
-                           'DEPGROUP'      => $dependencies,
-                           'rules_path'    => RULES_PATH));
-
+  $template->addVars(array(
+    'name'          => $science->name,
+    'dbFieldName'   => $science->dbFieldName,
+    'description'   => $science->description,
+    'maxlevel'      => $maxLevel,
+    'currentlevel'  => $currentlevel,
+    'LEVELS'        => $levels,
+    'DEPGROUP'      => $dependencies,
+    'rules_path'    => RULES_PATH
+  ));
 }
 
 ?>

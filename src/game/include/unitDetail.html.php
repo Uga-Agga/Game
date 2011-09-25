@@ -13,16 +13,9 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function unit_getUnitDetails($unitID, $caveData, $method) {
+  global $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
-  global $buildingTypeList,
-         $defenseSystemTypeList,
-         $resourceTypeList,
-         $scienceTypeList,
-         $unitTypeList,
-         $template,
-         $no_resource_flag;
-
-  $no_resource_flag = 1;
   $details = $caveData;
   // first check whether that unit should be displayed...
   $unit = $unitTypeList[$unitID];
@@ -38,7 +31,8 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
   }
   else {
     $shortVersion = false;
-    $template->setFile('unitDetail.tmpl');    
+    $template->setFile('unitDetail.tmpl');
+    $template->setShowRresource(false);    
   }
 
   $resourceCost = array();
@@ -68,10 +62,10 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
                                       'name'        => $defenseSystemTypeList[$key]->name,
                                       'value'       => ceil(eval('return '.formula_parseToPHP($unit->defenseProductionCost[$key] . ';', '$details')))));
 
-  if (!$shortVersion) {
+  $dependencies     = array();
+  $buildingdep      = array();
 
-    $dependencies     = array();
-    $buildingdep      = array();
+  if (!$shortVersion) {
     foreach ($unit->buildingDepList as $key => $level)
       if ($level)
         array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
@@ -148,30 +142,32 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
   if ($unit->visible != 1) {
     $template->addVar('INVISIBLE', array('text' => _('unsichtbar')));
   }
-  $template->addVars( array('name'          => $unit->name,
-                                 'dbFieldName'   => $unit->dbFieldName,
-                                 'description'   => $unit->description,
-                                 'RESOURCECOST'  => $resourceCost,
-                                 'UNITCOST'      => $unitCost,
-                                 'BUILDINGCOST'  => $buildingCost,
-                                 'DEFENSECOST'   => $defenseCost,
-                                 'rangeAttack'   => $unit->attackRange,
-                                 'arealAttack'   => $unit->attackAreal,
-                                 'attackRate'    => $unit->attackRate,
-                                 'rd_Resist'     => $unit->rangedDamageResistance,
-                                 'defenseRate'   => $unit->defenseRate,
-                                 'size'          => $unit->hitPoints,
-                                 'spyValue'      => $unit->spyValue,
-                                 'spyChance'     => $unit->spyChance,
-                                 'spyQuality'    => $unit->spyQuality,
-                                 'antiSpyChance' => $unit->antiSpyChance,
-                                 'fuelName'      => $resourceTypeList[1]->dbFieldName,
-                                 'fuelFactor'    => $unit->foodCost,
-                                 'wayCost'       => $unit->wayCost,
-                                 'DEPGROUP'      => $dependencies,
-                                 'duration'      => time_formatDuration(eval('return '.formula_parseToPHP($unit->productionTimeFunction.";", '$details')) * BUILDING_TIME_BASE_FACTOR),
-                                 'rules_path'    => RULES_PATH));
 
+  $template->addVars(array(
+    'name'          => $unit->name,
+    'dbFieldName'   => $unit->dbFieldName,
+    'description'   => $unit->description,
+    'RESOURCECOST'  => $resourceCost,
+    'UNITCOST'      => $unitCost,
+    'BUILDINGCOST'  => $buildingCost,
+    'DEFENSECOST'   => $defenseCost,
+    'rangeAttack'   => $unit->attackRange,
+    'arealAttack'   => $unit->attackAreal,
+    'attackRate'    => $unit->attackRate,
+    'rd_Resist'     => $unit->rangedDamageResistance,
+    'defenseRate'   => $unit->defenseRate,
+    'size'          => $unit->hitPoints,
+    'spyValue'      => $unit->spyValue,
+    'spyChance'     => $unit->spyChance,
+    'spyQuality'    => $unit->spyQuality,
+    'antiSpyChance' => $unit->antiSpyChance,
+    'fuelName'      => $resourceTypeList[1]->dbFieldName,
+    'fuelFactor'    => $unit->foodCost,
+    'wayCost'       => $unit->wayCost,
+    'DEPGROUP'      => $dependencies,
+    'duration'      => time_formatDuration(eval('return '.formula_parseToPHP($unit->productionTimeFunction.";", '$details')) * BUILDING_TIME_BASE_FACTOR),
+    'rules_path'    => RULES_PATH
+  ));
 }
 
 ?>

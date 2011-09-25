@@ -13,9 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribe_getContent($caveID, $tag) {
-  global $db, $template, $no_resource_flag;
-
-  $no_resource_flag = 1;
+  global $db, $template;
 
   if (!$tag) {
     $template->throwError('Es wurde kein Stamm ausgewählt.');
@@ -24,6 +22,7 @@ function tribe_getContent($caveID, $tag) {
 
   // open template
   $template->setFile('tribeDetail.tmpl');
+  $template->setShowRresource(false);
 
   $sql = $db->prepare("SELECT t.*, p.playerID, p.name AS leader_name
                        FROM ". TRIBE_TABLE ." t

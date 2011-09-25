@@ -24,7 +24,7 @@
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }} object-row">
             <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-            <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+            <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
             <td>
               <dl class="nodistance">
                 <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
@@ -71,7 +71,7 @@
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }} object-row">
           <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-          <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+          <td class="td-mini-icon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
           <td>
             <dl class="nodistance">
               <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
