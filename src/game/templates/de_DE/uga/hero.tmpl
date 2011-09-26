@@ -38,6 +38,18 @@
          <div style="font-size: x-small;">({{ hero.expLeft }} Exp bis Lvlup)</div>
         </td>
        </tr>
+       {% if showLevelUp %}
+       <tr>
+        <td><strong>Levelup: </strong></td>
+        <td class="text-right">
+           <a href="main.php?modus=hero_detail&amp;action=lvlUp">
+           <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
+             style="width: 16px; hight: 16px; vertical-align: middle; border: none"
+             alt="Plus" />
+           </a>
+           </td>
+       </tr>
+       {% endif %}
        <tr></tr>
        <tr>
         <td><strong>Ort: </strong>
@@ -68,9 +80,9 @@
            <td class="text-right">{{ hero.force }}</td>
            <td class="text-right">Lvl <strong>{{ hero.forceLvl }}</strong>
            </td>
-           <td class="text-right"><a
-            href="main.php?modus=hero_detail&amp;action=skill&amp;skill=force"><img
-             src="{{ gfx }}/de_DE/t_uga/icon_plus.png"
+           <td class="text-right">
+           <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=force">
+            <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
              style="width: 16px; hight: 16px; vertical-align: middle; border: none"
              alt="Plus" />
            </a>
@@ -82,9 +94,9 @@
            <td class="text-right">{{ hero.maxHealPoints }}</td>
            <td class="text-right">Lvl <strong>{{ hero.maxHpLvl }}</strong>
            </td>
-           <td class="text-right"><a
-            href="main.php?modus=hero_detail&amp;action=skill&amp;skill=maxHP"><img
-             src="{{ gfx }}/de_DE/t_uga/icon_plus.png"
+           <td class="text-right">
+           <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=maxHP">
+            <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
              style="width: 16px; hight: 16px; vertical-align: middle; border: none"
              alt="Plus" />
            </a>
@@ -93,12 +105,12 @@
           <tr>
            <td><strong>HP-Reg: </strong>
            </td>
-           <td class="text-right">+{{ hero.regHealPoints }}</td>
+           <td class="text-right">+{{ hero.regHP }}</td>
            <td class="text-right">Lvl <strong>{{ hero.regHpLvl }}</strong>
            </td>
-           <td class="text-right"><a
-            href="main.php?modus=hero_detail&amp;action=skill&amp;skill=regHP"><img
-             src="{{ gfx }}/de_DE/t_uga/icon_plus.png"
+           <td class="text-right">
+           <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=regHP">
+           <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
              style="width: 16px; hight: 16px; vertical-align: middle; border: none"
              alt="Plus" />
            </a>
@@ -167,14 +179,14 @@
         id="{{ potion.dbFieldName }}1" method="post">
         <input type="hidden" name="action" value="usePotion">
         <input type="hidden" name="potionID" value="{{ potion.potionID}}"/>
-        <input name="value" value="1" type="submit"/>
+        <input name="value" value="1x" type="submit"/>
        </form>
       </td>
       <td><form action="main.php?modus=hero_detail"
         id="{{ potion.name }}5" method="post">
         <input type="hidden" name="action" value="usePotion" />
         <input type="hidden" name="potionID" value="{{ potion.potionID }}"/>
-        <input name="value" value="5" type="submit" />
+        <input name="value" value="5x" type="submit" />
        </form>
       </td>
      </tr>
@@ -215,20 +227,25 @@
       
       <table>
        <tr>
-        <td>{% for item in resource %} {% if item.value %} <img
+        <td>{% for item in resource %} 
+        {% if item.value %} <img
          src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif"
          class="noborder" width="15" height="15" alt="{{ item.name }}"
-         title="{{ item.name }}" /> {% if item.enough %} <span
-         class="enough small">{{ item.value }}</span> {% else %} <span
+         title="{{ item.name }}" /> 
+         {% if item.enough %} 
+         <span class="enough small">{{ item.value }}</span> 
+         {% else %} 
+         <span
          class="less-small"
          onmouseover="showWMTT('missing_{{ item.dbFieldName }}')"
          onmouseout="hideWMTT()">{{ item.value }}</span>
-         <div id="missing_{{ item.dbFieldName }}" class="tooltip">Es
-          fehlen noch: {{ item.missing }} {{ item.name }}</div> {% endif %}
-         &nbsp; {% endif %} {% endfor %}</td>
+         <div id="missing_{{ item.dbFieldName }}" class="tooltip">
+         Es fehlen noch: {{ item.missing }} {{ item.name }}</div> 
+         {% endif %} &nbsp; 
+         {% endif %} 
+         {% endfor %}</td>
         <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif"
-         style="width: 16px; hight: 16px; vertical-align: bottom" />{{
-         delay }}</td>
+         style="width: 16px; hight: 16px; vertical-align: bottom" />{{ delay }}</td>
        </tr>
       </table>
       <br />
