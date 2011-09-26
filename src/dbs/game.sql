@@ -484,7 +484,9 @@ CREATE TABLE IF NOT EXISTS `Hero_new` (
   `tpFree` int(11) unsigned NOT NULL DEFAULT '0',
   `maxHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
   `forceLvl` int(11) unsigned NOT NULL DEFAULT '0',
+  `force` varchar(11) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `regHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
+  `regHp` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`heroID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 

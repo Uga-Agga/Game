@@ -198,7 +198,7 @@ function skillRegHp($playerID, $hero) {
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('regHP', $regHP, PDO::PARAM_INT);
-  echo $regHP;
+  
   return $sql->execute();
 
 }
