@@ -125,4 +125,10 @@ printf("%d",i);
 
     debug(DEBUG_SQL, "%s", dstring_str(ds));
     db_query_dstring(database, ds);
+
+    /* Update Hero Heal Points */
+    ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(healPoints + regHP, maxHealPoints) WHERE isAlive > 0 ");
+    debug(DEBUG_SQL, "%s", dstring_str(ds));
+    db_query_dstring(database, ds);
+    
 }
