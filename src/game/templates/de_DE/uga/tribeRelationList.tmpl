@@ -2,7 +2,7 @@
 {% block title %}Karte{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
 {% if show_page %}
 <div class="box small">

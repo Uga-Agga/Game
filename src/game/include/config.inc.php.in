@@ -175,7 +175,7 @@ class Config {
                                    USER_PROFILE,         WEATHER_REPORT);
 
   // only this modi will be logged
-  var $logModusInclude = array(UNIT_MOVEMENT, DELETE_ACCOUNT, CAVE_GIVE_UP_CONFIRM,
+  var $logModusInclude = array(UNIT_MOVEMENT, DELETE_ACCOUNT,
                                ARTEFACT_DETAIL, TRIBE_DELETE, TRIBE_ADMIN,
                                DEFENSE_BUILDER, TAKEOVER, USER_PROFILE);
 

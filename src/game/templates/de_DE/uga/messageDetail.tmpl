@@ -26,7 +26,7 @@
           <dt class="dt-msg">Betreff:</dt><dd class="dd-msg">{{ message.betreff }}</dd>
           <dt class="dt-msg">Von:</dt><dd class="dd-msg">{{ message.sender }}</dd>
           <dt class="dt-msg">An:</dt><dd class="dd-msg">{{ message.empfaenger }}</dd>
-          <dt class="dt-msg">Datum:</dt><dd class="dd-msg">{{ message.datum }}</dd>          
+          <dt class="dt-msg">Datum:</dt><dd class="dd-msg">{{ message.datum }}</dd>
         </dl>
        <div style="margin-left:5px;">{% if xml_button %}<a href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml" onclick="return exportPopup(this.href)"><img src="http://game.uga-agga.de/gfx//de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div>
       </div>
@@ -36,7 +36,7 @@
 
     <div id="msg-body">
       {% if message_img %}<div style="float: right"><img src="{{ gfx }}/de_DE/t_uga/{{ message_img }}" alt="" title="" /></div>{% endif %}
-      {% if message.nachrichtenart != 8 or message.nachrichtenart != 10 %}{{ message.nachricht|raw }}{% else %}{{ message.nachricht }}{% endif %}
+      {{ message.nachricht|raw }}
     </div>
   </div>
 </div>

@@ -117,20 +117,6 @@ switch ($modus) {
     $content = getAllCavesDetailsContent($ownCaves);
     break;
 
-  case CAVE_GIVE_UP_CONFIRM:
-    $pagetitle = _("Höhle aufgeben");
-    $giveUpCaveID = request_var('giveUpCaveID', 0);
-    if (isset($ownCaves[$giveUpCaveID]))
-      $content = cave_giveUpConfirm($ownCaves[$giveUpCaveID]);
-    else
-      $content = "Die Höle befindet sch nicht in deinem Besitz.";
-    break;
-
-  case END_PROTECTION_CONFIRM:
-    $pagetitle = _("Anfängerschutz beenden");
-    $content = beginner_endProtectionConfirm($ownCaves[$caveID]);
-    break;
-
   case EASY_DIGEST:
     $pagetitle = _("Termin-Übersicht | Runde Tetraktys");
     $content = digest_getDigest($ownCaves);
@@ -554,6 +540,7 @@ $template->addVars(array(
   'artefact_list_link'      => ARTEFACT_LIST,
   'award_detail_link'       => AWARD_DETAIL,
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
+  'cave_detail_link'        => CAVE_DETAIL,
   'contact_bookmarks_link'  => CONTACTS_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,
@@ -566,6 +553,8 @@ $template->addVars(array(
   'messages_new_link'       => MESSAGE_NEW,
   'messages_read_link'      => MESSAGE_READ,
   'player_detail_link'      => PLAYER_DETAIL,
+  'questionaire_present_link' => QUESTIONNAIRE_PRESENTS,
+  'questionaire_link'       => QUESTIONNAIRE,
   'user_profile_link'       => USER_PROFILE,
   'ranking_player_link'     => RANKING_PLAYER,
   'ranking_tribe_link'      => RANKING_TRIBE,

@@ -41,7 +41,7 @@ class Player {
   var $tribe;
   var $tribeBlockEnd;
 
-  function Player($record){
+  function Player($record) {
 
     $this->playerID           = $record['playerID'];
     $this->name               = $record['name'];
@@ -67,7 +67,7 @@ class Player {
     $this->tribeBlockEnd      = $record['tribeBlockEnd'];
   }
 
-  static function getPlayer($playerID){
+  static function getPlayer($playerID, $complete=false) {
     global $db;
 
     // get player out of the database
@@ -82,7 +82,7 @@ class Player {
 
     if (!$playerData)  return NULL;
 
-    return new Player($playerData);
+    return ($complete) ? $playerData : new Player($playerData);
   }
 
   static function getHistory($playerID) {

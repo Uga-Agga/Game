@@ -19,24 +19,59 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
   // open template
   $template->setFile('cave.tmpl');
 
-  $message = "";
-  // give this cave up
-  if (request_var('caveGiveUpConfirm', 0) && isset($_POST['submit'])) {
-    if (cave_giveUpCave(request_var('giveUpCaveID', ""), $_SESSION['player']->playerID, $_SESSION['player']->tribe)) {
-      return _('Sie haben sich aus dieser Höhle zurückgezogen.');
-    } else {
-      $statusMsg = array('type' => 'error', 'message' => _('Diese Höhle kann nicht aufgegeben werden.'));
-    }
+  $statusMsg = '';
+  $action = request_var('action', '');
+  switch ($action) {
+/****************************************************************************************************
+*
+* Höhle aufgeben!
+*
+****************************************************************************************************/
+    case 'caveGiveUp':
+      if (request_var('id', 0) == $details['caveID'] && isset($_POST['cancelOrderConfirm'])) {
+        if (cave_giveUpCave($details['caveID'], $_SESSION['player']->playerID, $_SESSION['player']->tribe)) {
+          $template->throwError(_('Sie haben sich aus dieser Höhle zurückgezogen.'));
+          return;
+        } else {
+          $statusMsg = array('type' => 'error', 'message' => _('Diese Höhle kann nicht aufgegeben werden.'));
+        }
+      } else {
+        $template->addVars(array(
+          'cancelOrder_box' => true,
+          'confirm_action'  => 'caveGiveUp',
+          'confirm_id'      => $details['caveID'],
+          'confirm_mode'    => CAVE_DETAIL,
+          'confirm_msg'     => _('Möchtest du die Höhle wirklich aufgeben?'),
+        ));
+      }    break;
+
+/****************************************************************************************************
+*
+* Anfängerschutz deaktivieren
+*
+****************************************************************************************************/
+    case 'endProtection':
+      if (request_var('id', 0) == $details['caveID'] && isset($_POST['cancelOrderConfirm'])) {
+        if (beginner_endProtection($details['caveID'], $_SESSION['player']->playerID)) {
+          $statusMsg = array('type' => 'success', 'message' => _('Sie haben den Anfängerschutz abgeschaltet.'));
+          $details['protected'] = 0;
+        } else {
+          $statusMsg = array('type' => 'error', 'message' => _('Sie konnten den Anfängerschutz nicht abschalten.'));
+        }
+      } else {
+        $template->addVars(array(
+          'cancelOrder_box' => true,
+          'confirm_action'  => 'endProtection',
+          'confirm_id'      => $details['caveID'],
+          'confirm_mode'    => CAVE_DETAIL,
+          'confirm_msg'     => _('Möchtest du den Anfängerschutz wirklich abbrechen?'),
+        ));
+      }
+    break;
   }
 
-  // end beginners protection
-  else if (request_var('endProtectionConfirm', 0) && isset($_POST['submit'])) {
-    if (beginner_endProtection($details['caveID'], $_SESSION['player']->playerID)) {
-      $statusMsg = array('type' => 'success', 'message' => _('Sie haben den Anfängerschutz abgeschaltet.'));
-      $details['protected'] = 0;
-    } else {
-      $statusMsg = array('type' => 'error', 'message' => _('Sie konnten den Anfängerschutz nicht abschalten.'));
-    }
+  if (!empty($statusMsg)) {
+    $template->addVar('status_msg', $statusMsg);
   }
 
   // get region data

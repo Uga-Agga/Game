@@ -22,13 +22,11 @@ function player_getContent($caveID, $playerID) {
   // workaround, if no playerID is submitted! TODO
   if ($playerID == 0) $playerID = $_SESSION['player']->playerID;
   
-  $sql = $db->prepare("SELECT * FROM ". PLAYER_TABLE ." WHERE playerID = :playerID");
-  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) page_dberror();
-
-  if (!$playerDetails = $sql->fetch(PDO::FETCH_ASSOC)) page_dberror();
-  $sql->closeCursor();
+  $playerDetails = Player::getPlayer($playerID, true);
+  if (!$playerDetails) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
 
   if ($playerDetails['avatar']) {
     $size = getimagesize($playerDetails['avatar']);
@@ -55,8 +53,8 @@ function player_getContent($caveID, $playerID) {
   }
 
   $playerDetails['mail_receiver'] = urlencode($playerDetails['name']);
-  $playerDetails['caveID']        = $caveID;
-  $playerTribe          = $playerDetails['tribe'];
+  $playerDetails['caveID'] = $caveID;
+  $playerTribe = $playerDetails['tribe'];
 
   $timediff = getUgaAggaTimeDiff(time_fromDatetime($playerDetails['created']), time());
   $playerDetails['age'] = 18 + $timediff['year'];
@@ -70,7 +68,6 @@ function player_getContent($caveID, $playerID) {
   if ($caves) {
     $template->addVar('player_caves',  $caves);
   }
-
 
   // show player's history
   $history = Player::getHistory($playerID);

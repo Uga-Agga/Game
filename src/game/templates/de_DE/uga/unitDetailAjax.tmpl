@@ -13,7 +13,7 @@
       <img src="{{gfx}}/resources/{{resource.dbFieldName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{resource.name}}" title="{{resource.name}}" />
       {{resource.value}} &nbsp;
       {% endfor %}
-	    Dauer: {{duration}}
+      Dauer: {{duration}}
       {% for unit in UNITCOST %}
         <br />
         {{unit.name}}: {{unit.value}}
@@ -35,15 +35,15 @@
       <strong>Eigenschaften:</strong>
       <table>
         <tr>
-		 <td>Fernangriffschaden: </td>
+          <td>Fernangriffschaden: </td>
           <td class="text-right">{{rangeAttack}}</td>
         </tr>
-		<tr>
-		 <td>Geb&auml;udeschaden: </td>
+        <tr>
+          <td>Gebäudeschaden: </td>
           <td class="text-right">{{arealAttack}}</td>
         </tr>
-		<tr>
-		 <td>Get&uuml;mmelschaden: </td>
+        <tr>
+          <td>Getümmelschaden: </td>
           <td class="text-right">{{attackRate}}</td>
         </tr>
         <tr>
@@ -55,18 +55,18 @@
          <td class="text-right">{{defenseRate}}</td>
         </tr>
         <tr>
-         <td>Gr&ouml;&szlig;e: </td>
+         <td>Größe: </td>
          <td class="text-right">{{size}}</td>
         </tr>
-		<tr>
+        <tr>
          <td>Reiseproviant: </td>
          <td class="text-right">{{fuelFactor}}x</td><td><img src="{{gfx}}/resources/{{fuelName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="Nahrung" /></td>
         </tr>
-		<tr>
+        <tr>
          <td>Geschwindigkeit: </td>
          <td class="text-right">{{wayCost}}</td>
         </tr>
-		    {% if INVISIBLE %}
+          {% if INVISIBLE %}
          <tr>
           <td><strong>{{INVISIBLE.text}}</strong></td>
          </tr>
@@ -74,7 +74,6 @@
       </table>
     </td>
    </tr>
-   <tr><td>&nbsp;</td></tr>
    <tr>
     <td colspan="2">
      <strong>Spionagefertigkeiten: </strong>

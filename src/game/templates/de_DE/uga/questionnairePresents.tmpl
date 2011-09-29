@@ -26,7 +26,7 @@
 <div class="box small">
  <div class="box-header nohover">&nbsp;</div>
  <div class="smallinner notice nohover" > 
-  {{message}}
+  {{ message|raw }}
  </div>
 </div> 
 {% endif %}
@@ -118,6 +118,6 @@
 </div>
 </form>
 <br />
-<div class="small success nohover"><a href="main.php?modus={{QUESTIONNAIRE}}">zu den Fragen</a></div>
+<div class="small success nohover"><a href="main.php?modus={{ questionaire_link }}">zu den Fragen</a></div>
 
 {% endblock %}

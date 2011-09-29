@@ -13,31 +13,95 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeAdmin_getContent($playerID, $tag) {
-  global $config, $no_resource_flag, $relationList,
-         $governmentList,$wonderTypeList;
+  global $config, $template, $relationList, $governmentList, $wonderTypeList;
 
-  $no_resource_flag = 1;
+  // messages
+  $messageText = array(
+    -29 => _('Ungültiges Passwort! (Mind. 6 Zeichen, ohne Sonderzeichen)'),
+    -28 => _('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!'),
+    -27 => _('Das Stammeswunder wurde gewirkt.'),
+    -26 => _('Das Stammeswunder konnte nicht gewirkt werden.'),
+    -25 => _('Ihr Kriegsanteil ist nicht hoch genug, um den Gegner zur Aufgabe zu zwingen.'),
+    -24 => _('Nur in der Demokratie sind solche Wahlen möglich.'),
+    -23 => _('Sie sind schon Stammesanführer.'),
+    -22 => _('Dieser Spieler ist nicht im Stamm.'),
+    -21 => _('Dies darf nur der Stammesanführer tun.'),
+    -20 => _('Es ist kein gleicher Kriegsgegner vorhanden.'),  	                    
+    -19 => _('Die Beziehung des anderen Stammes erlauben kein Kriegsbündniss.'), 
+    -18 => _('Unsere aktuelle Beziehung erlaubt kein Kriegsbündniss.'), 
+    -17 => _('Der Stamm hat noch nicht genug Mitglieder um Beziehungen eingehen zu dürfen'),
+    -16 => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.'),
+    -15 => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.'),
+    -14 => _('Die Beziehung wurde nicht geändert, weil der ausgewählte Beziehungstyp bereits eingestellt ist.'),
+    -13 => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so gro&szlig;en Stamm einzugehen.'),
+    -12 => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so kleinen Stamm einzugehen.'),
+    -11 => sprintf(_('Die Moral des Gegners ist noch nicht schlecht genug. Sie muss unter %d sinken. Eine weitere Chance besteht, wenn die Mitgliederzahl des gegnerischen Stammes um 30 Prozent gesunken ist. Das Verhältnis Eurer Rankingpunkte zu denen des Gegners muss sich seit Kriegsbeginn verdoppelt haben.'), RELATION_FORCE_MORAL_THRESHOLD),
+    -10 => _('Die zu ändernde Beziehung wurde nicht gefunden!'),
+     -9 => _('Die Regierung konnte nicht geändert werden, weil sie erst vor kurzem geändert wurde.'),
+     -8 => _('Die Regierung konnte aufgrund eines Fehlers nicht aktualisiert werden'),
+     -7 => _('Zu sich selber kann man keine Beziehungen aufnehmen!'),
+     -6 => _('Den Stamm gibt es nicht!'),
+     -5 => _('Von der derzeitigen Beziehung kann nicht direkt auf die ausgewählte Beziehungsart gewechselt werden.'),
+     -4 => _('Die Mindestlaufzeit läuft noch!'),
+     -3 => _('Die Beziehung konnte aufgrund eines Fehlers nicht aktualisiert werden.'),
+     -2 => _('Der Spieler ist ebenfalls Stammesanführer und kann nicht gekickt werden. Er kann nur freiwillig gehen.'),
+     -1 => _('Der Spieler konnte nicht gekickt werden!'),
+      0 => _('Die Daten wurden erfolgreich aktualisiert.'),
+      1 => _('Der Spieler wurde erfolgreich gekickt.'),
+      2 => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'),
+      3 => _('Die Beziehung wurde umgestellt.'),
+      4 => _('Die Regierung wurde geändert.'));
 
-  
+  if ($_SESSION['player']->playerID != 1) {
+      $template->throwError('Diese Seite wird gerade überarbeitet');
+      return;
+  }
+
+  // open template
+  $template->setFile('tribeAdmin.tmpl');
+  $template->setShowRresource(false);
+  $template->addVar('show_page', true);
+
   // check, for security reasons!
-  if (!tribe_isLeaderOrJuniorLeader($playerID, $tag))
-    page_dberror();
+  if (!tribe_isLeaderOrJuniorLeader($playerID, $tag)) {
+    $template->addVars(array(
+      'status_msg' => array('type' => 'error', 'message' => 'Du hast keine Berechtigung den Stamm zu verwalten'),
+      'show_page'  => false
+    ));
+  }
 
-  $isLeader = tribe_isLeader($playerID, $tag);
-  $isLeader ? $leaderID=$playerID : $leaderID=tribe_getLeaderID($tag); 
-  !$isLeader ? $juniorLeaderID=$playerID : $juniorLeaderID=tribe_getJuniorLeaderID($tag); 
-  
+  // get the tribe data
+  if (!($tribeData = tribe_getTribeByTag($tag))) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
+  $template->addVar('tribe_data', $tribeData);
+
   //get Member Data
-  
-  if (!($memberData = tribe_getAllMembers($tag)))
-    page_dberror();
+  if (!($memberData = tribe_getAllMembers($tag))) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
 
   // get government
-  if (!($tribeGovernment = government_getGovernmentForTribe($tag)))
-    page_dberror();
+  if (!($tribeGovernment = government_getGovernmentForTribe($tag))) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
 
-  $tribeGovernment['name'] =
-    $governmentList[$tribeGovernment['governmentID']]['name'];
+/****************************************************************************************************
+*
+* Leader vom Stamm? Oder doch nur JuniorLeader?
+*
+****************************************************************************************************/
+  $isLeader = tribe_isLeader($playerID, $tag);
+  if ($isLeader) {
+    $leaderID = $playerID;
+    $juniorLeaderID = tribe_getJuniorLeaderID($tag);
+  } else {
+    $leaderID = tribe_getLeaderID($tag);
+    $juniorLeaderID = $playerID;
+  }
 
   //seems to be leader, but not in tribe  
   if ($isLeader && !is_array($memberData[$leaderID])) {
@@ -49,59 +113,74 @@ function tribeAdmin_getContent($playerID, $tag) {
     tribe_unmakeJuniorLeader($leaderID, $tag);
   }
 
-  // messages
-  $messageText = array(-29 => _('Ung&uuml;ltiges Passwort! (Mind. 6 Zeichen, ohne Sonderzeichen)'),
-                       -28 => _('Ung&uuml;ltiges Bild oder URL beim Avatar! Wird zur&uuml;ckgesetzt!'),
-                       -27 => _('Das Stammeswunder wurde gewirkt.'),
-                       -26 => _('Das Stammeswunder konnte nicht gewirkt werden.'),
-                       -25 => _('Ihr Kriegsanteil ist nicht hoch genug, um den Gegner zur Aufgabe zu zwingen.'),
-                       -24 => _('Nur in der Demokratie sind solche Wahlen m&ouml;glich.'),
-                       -23 => _('Sie sind schon Stammesanf&uuml;hrer.'),
-                       -22 => _('Dieser Spieler ist nicht im Stamm.'),
-                       -21 => _('Dies darf nur der Stammesanf&uuml;hrer tun.'),
-                       -20 => _('Es ist kein gleicher Kriegsgegner vorhanden.'),  	                    
-                       -19 => _('Die Beziehung des anderen Stammes erlauben kein Kriegsb&uuml;ndniss.'), 
-                       -18 => _('Unsere aktuelle Beziehung erlaubt kein Kriegsb&uuml;ndniss.'), 
-                       -17 => _('Der Stamm hat noch nicht genug Mitglieder um Beziehungen eingehen zu d&uuml;rfen'),
-                       -16 => _('Die Stammeszugeh&ouml;rigkeit hat sich erst vor kurzem ge&auml;ndert. Warten Sie, bis die Stammeszugeh&ouml;rigkeit ge&auml;ndert werden darf.'),
-                       -15 => _('Ihr Stamm befindet sich im Krieg. Sie d&uuml;rfen derzeit nicht austreten.'),
-                       -14 => _('Die Beziehung wurde nicht ge&auml;ndert, weil der ausgew&auml;hlte Beziehungstyp bereits eingestellt ist.'),
-                       -13 => _('Eure Untergebenen weigern sich, diese Beziehung gegen&uuml;ber einem so gro&szlig;en Stamm einzugehen.'),
-                       -12 => _('Eure Untergebenen weigern sich, diese Beziehung gegen&uuml;ber einem so kleinen Stamm einzugehen.'),
-                       -11 => sprintf(_('Die Moral des Gegners ist noch nicht schlecht genug. Sie muss unter %d sinken. Eine weitere Chance besteht, wenn die Mitgliederzahl des gegnerischen Stammes um 30 Prozent gesunken ist. Das Verh&auml;ltnis Eurer Rankingpunkte zu denen des Gegners muss sich seit Kriegsbeginn verdoppelt haben.'),
-                                      RELATION_FORCE_MORAL_THRESHOLD),
-                       -10 => _('Die zu &auml;ndernde Beziehung wurde nicht gefunden!'),
-                        -9 => _('Die Regierung konnte nicht ge&auml;ndert werden, weil sie erst vor kurzem ge&auml;ndert wurde.'),
-                        -8 => _('Die Regierung konnte aufgrund eines Fehlers nicht aktualisiert werden'),
-                        -7 => _('Zu sich selber kann man keine Beziehungen aufnehmen!'),
-                        -6 => _('Den Stamm gibt es nicht!'),
-                        -5 => _('Von der derzeitigen Beziehung kann nicht direkt auf die ausgew&auml;hlte Beziehungsart gewechselt werden.'),
-                        -4 => _('Die Mindestlaufzeit l&auml;uft noch!'),
-                        -3 => _('Die Beziehung konnte aufgrund eines Fehlers nicht aktualisiert werden.'),
-                        -2 => _('Der Spieler ist ebenfalls Stammesanf&uuml;hrer und kann nicht gekickt werden. Er kann nur freiwillig gehen.'),
-                        -1 => _('Der Spieler konnte nicht gekickt werden!'),
-                         0 => _('Die Daten wurden erfolgreich aktualisiert.'),
-                         1 => _('Der Spieler wurde erfolgreich gekickt.'),
-                         2 => _('Die Daten konnten gar nicht oder zumindest nicht vollst&auml;ndig aktualisiert werden.'),
-                         3 => _('Die Beziehung wurde umgestellt.'),
-                         4 => _('Die Regierung wurde ge&auml;ndert.'));
+/****************************************************************************************************
+*
+* Auswahl des JuniorAdmins
+*
+****************************************************************************************************/
+  if ($isLeader && $tribeGovernment['governmentID'] == 2) {
+    $JuniorLeaderSelect = array();
+    $JuniorLeaderSelect[] = array(
+      'value'    => 0,
+      'selected' => ($tribeData['juniorLeaderID'] == 0 ? 'selected' : ''),
+      'name'     => _('keinen Stellvertreter wählen')
+    );
 
+    foreach($memberData AS $playerID => $playerData) {
+      if ($leaderID == $playerID) {
+        continue; 
+      }
+
+      $JuniorLeaderSelect[] = array(
+        'value'    => $playerID,
+        'selected' => ($tribeData['juniorLeaderID'] == $playerID ? 'selected' : ''),
+        'name'     => $playerData['name']
+      );
+    }
+
+    $template->addVar('junior_leader_select', $JuniorLeaderSelect);
+  }
+
+/****************************************************************************************************
+*
+* Auswahl der Regierungsformen
+*
+****************************************************************************************************/
+  if ($isLeader && $tribeGovernment['isChangeable']) {
+    $GovernmentSelect = array();
+    foreach($governmentList AS $governmentID => $typeData) {
+      $GovernmentSelect[] = array(
+        'value'    => $governmentID,
+        'selected' => ($governmentID == $tribeGovernment['governmentID'] ? 'selected' : ''),
+        'name'     => $typeData['name']
+      );
+    }
+
+    $template->addVar('government_select', $GovernmentSelect);
+  } else {
+    $template->addVar('government_data', array('name' => $tribeGovernment['name'], 'duration' => $tribeGovernment['time']));
+  }
+
+  return;
+
+
+  
+  $tribeGovernment['name'] = $governmentList[$tribeGovernment['governmentID']]['name'];
+  
   // proccess form data
   if (($relationData = request_var('relationData', array('' => ''))) && request_var('forceSurrender', 0)) {
     $messageID = relation_forceSurrender($tag, $relationData);
-
   } else if (($relationData = request_var('relationData', array('' => ''))) && !request_var('forceSurrender', 0)) {
-
-    $messageID = relation_processRelationUpdate($tag,
-                                                $relationData);
-  
+    $messageID = relation_processRelationUpdate($tag, $relationData);
   } else if ($data = request_var('data', array('' => ''))) {
-    $postData = array('name'        => $data['name'],
-                      'password'    => $data['password'],
-                      'avatar'      => $data['avatar'],
-                      'description' => $data['description']);
-    $messageID = tribe_processAdminUpdate($playerID, $tag, $postData);
+    $postData = array(
+      'name'        => $data['name'],
+      'password'    => $data['password'],
+      'avatar'      => $data['avatar'],
+      'description' => $data['description']
+    );
 
+    $messageID = tribe_processAdminUpdate($playerID, $tag, $postData);
   } else if (request_var('kick', 0)) {
     if (!$isLeader) {
       $messageID = -21;
@@ -137,95 +216,29 @@ function tribeAdmin_getContent($playerID, $tag) {
   }
 
   // get the tribe data
-  if (!($tribeData = tribe_getTribeByTag($tag)))
-    page_dberror();
+  if (!($tribeData = tribe_getTribeByTag($tag))) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
 
-  $tribeData['description'] = str_replace('<br />', '',
-                                          $tribeData['description']);
+  $tribeData['description'] = str_replace('<br />', '', $tribeData['description']);
 
   // get relations
-  if (!($tribeRelations = relation_getRelationsForTribe($tag)))
-    page_dberror();
+  if (!($tribeRelations = relation_getRelationsForTribe($tag))) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
     
   // get current wars
   $tribeWarTargets = relation_getWarTargetsAndFame($tag);
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'tribeAdmin.ihtml');
 
+
+return;
   // Show a special message
   if (isset($messageID)) {
     tmpl_set($template, '/MESSAGE/message', $messageText[$messageID]);
   }
-
-  // show the profile's data
-  tmpl_set($template, 'modus_name', 'modus');
-  tmpl_set($template, 'modus_value', TRIBE_ADMIN);
-
-  ////////////// user data //////////////////////
-
-  tmpl_set($template, 'DATA_GROUP/heading', _('Stammesdaten'));
-
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INFO/name',  _('Tag'));
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INFO/value', $tribeData['tag']);
-  tmpl_iterate($template, 'DATA_GROUP/ENTRY_INFO');
-
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/name',      _('Name'));
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/dataarray', 'data');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/dataentry', 'name');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/value',     $tribeData['name']);
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/size',      '20');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/maxlength', '90');
-  tmpl_iterate($template, 'DATA_GROUP/ENTRY_INPUT');
-
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/name',      _('Password'));
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/dataarray', 'data');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/dataentry', 'password');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/value',     $tribeData['password']);
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/size',      '15');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/maxlength', '15');
-  tmpl_iterate($template, 'DATA_GROUP/ENTRY_INPUT');
-  
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/name',      _('Avatar URL <br /><small>(max. Breite: '.MAX_AVATAR_WIDTH.', max. H&ouml;he: '.MAX_AVATAR_HEIGHT .')</small>'));
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/dataarray', 'data');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/dataentry', 'avatar');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/value',     $tribeData['avatar']);
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/size',      '20');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_INPUT/maxlength', '90');
-
-  tmpl_set($template, 'DATA_GROUP/ENTRY_MEMO/name',      _('Beschreibung'));
-  tmpl_set($template, 'DATA_GROUP/ENTRY_MEMO/dataarray', 'data');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_MEMO/dataentry', 'description');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_MEMO/value',     $tribeData['description']);
-  tmpl_set($template, 'DATA_GROUP/ENTRY_MEMO/cols',      '25');
-  tmpl_set($template, 'DATA_GROUP/ENTRY_MEMO/rows',      '8');
-
-
-  ////////////// junioLeader ////////////////////
-  if ($isLeader && ($tribeGovernment['governmentID']==2)) {
-    tmpl_set($template, 'JUNIORADMIN',
-             array('modus_name'=> "modus",
-                   'modus'     => TRIBE_ADMIN,
-                   'caption'   => _('W&auml;hlen'),
-                   'SELECTOR'  => array('dataarray' => 'juniorLeader',
-                                        'dataentry' => 'juniorLeaderID')));
-    foreach($memberData AS $playerID => $playerData) {
-      if ($leaderID==$playerID) {
-        continue; 
-      };
-      tmpl_iterate($template, 'JUNIORADMIN/SELECTOR/OPTION');
-      tmpl_set($template, 'JUNIORADMIN/SELECTOR/OPTION',
-             array("value"             => $playerID, 
-                      'selected' => ($tribeData['juniorLeaderID'] == $playerID ? "selected" : ""),
-                      'text' => $playerData['name']));
-    };
-    tmpl_iterate($template, 'JUNIORADMIN/SELECTOR/OPTION');
-    tmpl_set($template, 'JUNIORADMIN/SELECTOR/OPTION',
-         array("value"             => 0, 
-                  'selected' => ($tribeData['juniorLeaderID'] == 0 ? "selected" : ""),
-                  'text' => _('keinen Stellvertreter w&auml;hlen')));
-              
-  }
-
 
   ////////////// government /////////////////////
   if ($isLeader) {
@@ -233,7 +246,7 @@ function tribeAdmin_getContent($playerID, $tag) {
       tmpl_set($template, 'GOVERNMENT',
                array('modus_name'=> "modus",
                      'modus'     => TRIBE_ADMIN,
-                     'caption'   => _('&auml;ndern'),
+                     'caption'   => _('ändern'),
                      'SELECTOR'  => array('dataarray' => 'governmentData',
                                           'dataentry' => 'governmentID')));
   
@@ -284,7 +297,7 @@ function tribeAdmin_getContent($playerID, $tag) {
                  'value'     => (array_key_exists('tag', $relationData)) ? $relationData['tag'] : "",
                  'size'      => 8,
                  'maxlength' => 8,
-                 'caption'   => _('&auml;ndern')));
+                 'caption'   => _('ändern')));
 
   tmpl_set($template, 'RELATION_NEW/SELECTOR',
            array('dataarray' => "relationData",
@@ -347,7 +360,7 @@ function tribeAdmin_getContent($playerID, $tag) {
                      'their_relation' => $tribeRelations['other'][$target]
                                          ? $relationList[$tribeRelations['other'][$target]['relationType']]['name']
                                          : $relationList[0]['name'],
-                     'caption'        => _('&auml;ndern')); 
+                     'caption'        => _('ändern')); 
 
       // war?
       if($tribeWarTargets[$target]){
@@ -433,9 +446,9 @@ function tribeAdmin_getContent($playerID, $tag) {
   if ($isLeader) {
     tmpl_set($template, 'DELETE/modus_name', 'modus');
     tmpl_set($template, 'DELETE/modus', TRIBE_DELETE);
-    tmpl_set($template, 'DELETE/heading', _('Stamm aufl&ouml;sen'));
-    tmpl_set($template, 'DELETE/text', _('Den gesamten Stamm aufl&ouml;sen. Alle Mitglieder sind danach stammeslos.'));
-    tmpl_set($template, 'DELETE/caption', sprintf(_('%s aufl&ouml;sen'), $tag));
+    tmpl_set($template, 'DELETE/heading', _('Stamm auflösen'));
+    tmpl_set($template, 'DELETE/text', _('Den gesamten Stamm auflösen. Alle Mitglieder sind danach stammeslos.'));
+    tmpl_set($template, 'DELETE/caption', sprintf(_('%s auflösen'), $tag));
   }
   
   

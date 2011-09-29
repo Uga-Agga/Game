@@ -13,7 +13,10 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeLeaderDetermination_getContent($playerID, $tribe) {
-  global $no_resource_flag, $governmentList, $leaderDeterminationList;
+  global $template, $governmentList, $leaderDeterminationList;
+
+  $template->throwError('Diese Seite wird noch überarbeitet.');
+  return;
 
   $no_resource_flag = 1;
 

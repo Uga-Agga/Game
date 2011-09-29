@@ -3,7 +3,7 @@
 {% block content %} 
 {% if status_msg %}
 <div class="{{ status_msg.type }}"
- style="width: 800px; margin: 15px auto;">{{ status_msg.message }}</div>
+ style="width: 800px; margin: 15px auto;">{{ status_msg.message|raw }}</div>
 {% endif %} 
 {% if hero %}
 <div class="box" style="width: 800px; margin: 15px auto;">

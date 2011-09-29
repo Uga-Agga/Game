@@ -6,17 +6,17 @@
 <div style="float: left; width: 61%;">
 {{ description|raw }}
 <br/>
-<strong>Maximale Stufe:</strong> {{ maxlevel }}<br/>
+<span class="bold">Maximale Stufe:</span> {{ maxlevel }}<br/>
 <br/>
   
 {% if DEPGROUP %}
-  <strong>Abh&auml;ngigkeiten: </strong><br/>
+  <strong>Abhängigkeiten: </strong><br/>
 	{% for depGroup in DEPGROUP %}
     <strong>{{ depGroup.name}}:</strong>
     {% for dependency in depGroup.DEP %}
       {{ dependency.name }} {{ dependency.level|raw }}
-    {% endfor %}	
-    <br/>			
+    {% endfor %}
+    <br/>
 	{% endfor %}
 {% endif %}
 

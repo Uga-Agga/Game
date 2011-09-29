@@ -211,7 +211,7 @@ function hideWMTT() {
 // ]]>
 </script>
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
 <form id="unitMoving" action="main.php" method="post">
   <div class="box">
@@ -238,7 +238,7 @@ function hideWMTT() {
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
           <td>&nbsp;</td>
-          <td><a href="main.php?modus={{ unit_details }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
+          <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
           <td><input id="unit_{{ item.warrior_id }}" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();" onclick="dur();getMaxLoad();" onchange="dur();getMaxLoad();" onkeyup="dur();getMaxLoad();" /></td>
           <td>{{ item.max_warrior_count }}</td>
           {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}

@@ -451,7 +451,7 @@ CREATE TABLE IF NOT EXISTS `Event_wonderEnd` (
 -- Tabellenstruktur für Tabelle `Event_hero`
 --
 
-CREATE TABLE IF NOT EXISTS `Event_heroRitual` (
+CREATE TABLE IF NOT EXISTS `Event_hero` (
   `event_heroID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `caveID` int(11) unsigned NOT NULL DEFAULT '0',
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',

@@ -2,7 +2,7 @@
 {% block title %}Profil{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %}
 
 <form id="preferences" method="post" action="main.php?modus={{ user_profile_link }}">
   {% for item in profile_data %}

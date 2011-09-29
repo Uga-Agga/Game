@@ -13,7 +13,7 @@
 
 {% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
 <div class="box">
   <div class="box-header">Einheiten</div>

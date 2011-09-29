@@ -122,11 +122,12 @@ function government_setGovernment($tag, $governmentID) {
   global $db;
 
   $sql = $db->prepare("UPDATE " . TRIBE_TABLE . " 
-                       SET governmentID = :governmentID, duration = (NOW() + INTERVAL ".GOVERNMENT_CHANGE_TIME_HOURS." HOUR)+0 
+                       SET governmentID = :governmentID, 
+                         duration = (NOW() + INTERVAL ".GOVERNMENT_CHANGE_TIME_HOURS." HOUR)+0 
                        WHERE tag LIKE :tag");
   $sql->bindValue('governmentID', $governmentID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  if (!$sql->execute()) {
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
 
@@ -544,24 +545,20 @@ function tribe_SetTribeInvalid($tag) {
       $sql = $db->prepare("DELETE FROM " . RELATION_TABLE . "
                            WHERE relationID= :relationID");
       $sql->bindValue('relationID', $relation['relationID'], PDO::PARAM_INT);
-      
       $sql->execute();
     }
   }
 
   $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
-                       SET valid = '0', validatetime  = (NOW() + INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0 
+                       SET valid = '0', 
+                         validatetime  = (NOW() + INTERVAL ".TRIBE_MINIMUM_LIVESPAN." SECOND) + 0 
                        WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  $result = $sql->execute();
-
-  if ($result) {
-    $result = tribe_sendTribeMessage($tag, TRIBE_MESSAGE_INFO,
-              "Mitgliederzahl",
-              "Ihr Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen ".
-              "zu dürfen.");
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return false;
   }
-  return $result;
+
+  return tribe_sendTribeMessage($tag, TRIBE_MESSAGE_INFO, "Mitgliederzahl", "Ihr Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen zu dürfen.");
 }
 
 function tribe_SetTribeValid($tag) {
@@ -571,15 +568,11 @@ function tribe_SetTribeValid($tag) {
                        SET valid = '1' 
                        WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  $result = $sql->execute();
-
-  if ($result) {
-    return tribe_sendTribeMessage($tag, TRIBE_MESSAGE_INFO,
-           "Mitgliederzahl",
-           "Ihr Stamm hat nun genug Mitglieder um Beziehungen eingehen ".
-           "zu dürfen.");
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return false;
   }
-  return $result;
+
+  return tribe_sendTribeMessage($tag, TRIBE_MESSAGE_INFO, "Mitgliederzahl", "Ihr Stamm hat nun genug Mitglieder um Beziehungen eingehen zu dürfen.");
 }
 
 function tribe_getPoints($tag) {
@@ -706,9 +699,8 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
                          WHERE tag LIKE :from");
     $sql->bindValue('fame', $fame, PDO::PARAM_INT);
     $sql->bindValue('from', $from, PDO::PARAM_STR);
-
-    if (!$sql->execute()) {
-      return 0;
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return false;
     }
   }
 
@@ -991,8 +983,7 @@ function tribe_processAdminUpdate($leaderID, $tag, $data) {
   $sql->bindParam('description', $data['description']);
   $sql->bindValue('avatar', $data['avatar'], PDO::PARAM_STR);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-  if (!$sql->execute()) {
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return 2;
   }
 
@@ -2047,14 +2038,11 @@ function tribe_isLeader($playerID, $tribe) {
                          AND leaderID = :playerID");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  
 
-  if (!$sql->execute()) {
+  if ($sql->rowCountSelect() == 0) {
     return 0;
   }
-  if (!$sql->fetch()) {
-    return 0;
-  }
+
   return 1;
 }
 

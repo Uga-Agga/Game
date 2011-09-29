@@ -1,5 +1,5 @@
 {#
-/* improvement.tmpl -
+/* defenseBuilder.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
  *
@@ -25,7 +25,7 @@
 
 {% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
 <div class="box">
   <div class="box-header">Verteidigungsanlagen</div>

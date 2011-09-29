@@ -13,7 +13,11 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function artefact_getDetail($caveID, &$myCaves) {
-  global $config, $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
+  global $config, $template;
+  global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
+  
+  $template->throwError('Diese Seite wird noch überarbeitet.');
+  return;
 
   $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'artefactdetail.ihtml');
 
@@ -115,6 +119,10 @@ function artefact_getDetail($caveID, &$myCaves) {
 }
 
 function artefact_getList($caveID, $myCaves) {
+  global $template;
+
+  $template->throwError('Diese Seite wird noch überarbeitet.');
+  return;
 
   $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'artefactlist.ihtml');
 

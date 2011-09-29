@@ -14,7 +14,10 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 define('GRAPH_URL', 'http://chart.apis.google.com/chart?');
 
 function statistic_getContent() {
-  global $db, $scienceTypeList, $unitTypeList;
+  global $db, $template, $scienceTypeList, $unitTypeList;
+
+  $template->throwError('Diese Seite wird noch überarbeitet.');
+  return;
 
   $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'statistic.ihtml');
 
