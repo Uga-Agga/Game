@@ -118,7 +118,7 @@ class ePDOStatement extends PDOStatement {
     $start = microtime();
     $data = parent::execute($params);
     $this->pdo->incraseQueryTime($start, microtime());
-    
+
     return $data;
   }
 
