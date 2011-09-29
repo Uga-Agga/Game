@@ -1,3 +1,14 @@
+{#
+/* vote.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 {% for item in vote_button %}
 <a href='main.php?modus=vote&amp;task=vote&amp;id={{ item.id }}' onclick="open_page(this.href, 1); return false;"><img src='{{ item.imgSrc }}' class="noborder" alt="" title="" /></a>
 {% endfor %}
