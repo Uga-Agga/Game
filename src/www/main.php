@@ -274,13 +274,13 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case RANKING_PLAYER:
-    $offset  = ranking_checkOffset($_SESSION['player']->playerID, request_var('offset', 0));
+    $offset  = ranking_checkOffset($_SESSION['player']->playerID, request_var('offset', ''));
     ranking_getContent($caveID, $offset);
     $requestKeys = array('offset');
     break;
 
   case RANKING_TRIBE:
-    $offset  = rankingTribe_checkOffset(request_var('offset', 0));
+    $offset  = rankingTribe_checkOffset(request_var('offset', ''));
     rankingTribe_getContent($caveID, $offset);
     $requestKeys = array('offset');
     break;

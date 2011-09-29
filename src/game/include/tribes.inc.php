@@ -1269,7 +1269,7 @@ function tribe_removeTribeFromOldRanking($tag) {
                        SET used = 1
                        WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
+  if (!$sql->execute()) {
     return 0;
   }
 
@@ -1283,7 +1283,7 @@ function tribe_createRanking($tag) {
   if (!$sql->execute()) {
     return -1;
   }
-  
+
   if (!($row = $sql->fetch())) {
     return -2;
   }
@@ -1528,12 +1528,10 @@ function tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID, $oldJuniorLeader
   }
 
   if ($newLeadership[0] <> $oldLeaderID) {
-    if ($oldLeaderID && !tribe_unmakeLeader($oldLeaderID, $tag))
-    {
+    if ($oldLeaderID && !tribe_unmakeLeader($oldLeaderID, $tag)) {
       return -2;
     }
-    if ($newLeadership[0] && !tribe_makeLeader($newLeadership[0], $tag))
-    {
+    if ($newLeadership[0] && !tribe_makeLeader($newLeadership[0], $tag)) {
       return -3;
     }
   }
@@ -1790,8 +1788,9 @@ function tribe_processKickMember($playerID, $tag) {
   $messagesClass = new Messages;
 
   // leader must not be kicked
-  if (tribe_isLeaderOrJuniorLeader($playerID, $tag))
+  if (tribe_isLeaderOrJuniorLeader($playerID, $tag)) {
     return -2;
+  }
 
   // do not kick in wartime
   if (!relation_leaveTribeAllowed($tag))
@@ -1805,12 +1804,14 @@ function tribe_processKickMember($playerID, $tag) {
   $player = getPlayerByID($playerID);
 
   // no such player
-  if (!$player)
+  if (!$player) {
     return -1;
+  }
 
   // remove player
-  if (!tribe_leaveTribe($playerID, $tag))
+  if (!tribe_leaveTribe($playerID, $tag)) {
     return -1;
+  }
 
   Player::addHistoryEntry($playerID,
                           sprintf(_('wird aus dem Stamm \'%s\' geworfen'), $tag));
@@ -1929,6 +1930,7 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
       return -1;
     }
   }
+
   if (!tribe_removeTribeFromOldRanking($tag)) {
     return -1;
   }
@@ -1939,7 +1941,7 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
     return -7;
   }
 
-  Player::addHistoryEntry($leaderID, sprintf(_('gründet den Stamm "%s"'), $tag));
+  echo Player::addHistoryEntry($leaderID, sprintf(_("gründet den Stamm '%s'"), $tag));
 
   return 3;
 }
