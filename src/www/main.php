@@ -487,6 +487,7 @@ $template->addVars(array(
   'ua_time_time_month_name' => $UgaAggaTime['month_name'],
 
   'artefact_list_link'      => ARTEFACT_LIST,
+  'artefact_detail_link'    => ARTEFACT_DETAIL,
   'award_detail_link'       => AWARD_DETAIL,
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
   'cave_detail_link'        => CAVE_DETAIL,
@@ -496,6 +497,7 @@ $template->addVars(array(
   'delete_account_link'     => DELETE_ACCOUNT,
   'improvement_link'        => IMPROVEMENT_BUILDER,
   'improvement_detail_link' => IMPROVEMENT_DETAIL,
+  'map_detail_link'         => MAP_DETAIL,
 //  'map_region_link'         => MAP_REGION_LINK,
   'merchant_link'           => MERCHANT,
   'messages_list_link'      => MESSAGES_LIST,
