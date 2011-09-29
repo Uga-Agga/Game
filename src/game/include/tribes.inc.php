@@ -1665,50 +1665,41 @@ function tribe_processJoin($playerID, $tag, $password) {
                          AND password = :password");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('password', $password, PDO::PARAM_STR);
-
-  if (!$sql->execute()) {
-    return -1;
-  }
-
-  if (!($row = $sql->fetch())) {
+  if (!$sql->rowCountSelect()) {
     return -2;
   }
-
-  $tag = $row['tag'];
 
   if (!($player = getPlayerByID($playerID))) {
     return -3;
   }
 
+  $tribeData = tribe_getTribeByTag($tag);
+
   if ((int) TRIBE_MAXIMUM_SIZE > 0) {
     $sql = $db->prepare("SELECT count(*) < " . (int) TRIBE_MAXIMUM_SIZE . " as IsOk 
                          FROM " . PLAYER_TABLE . "
                          WHERE tribe LIKE :tag");
-    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-    
-   if (!$sql->execute()) {
-     return -13;
+    $sql->bindValue('tag', $tribeData['tag'], PDO::PARAM_STR);
+
+    if (!$sql->execute()) {
+      return -13;
     }
     $row = $sql->fetch();
-    
+
     if (!$row['IsOk']) {
-     return -13;
+      return -13;
     }
   }
 
-  if (!tribe_joinTribe($playerID, $tag)) {
+  if (!tribe_joinTribe($playerID, $tribeData['tag'])) {
     return -3;
   }
 
   tribe_setBlockingPeriodPlayerID($playerID);
 
-  Player::addHistoryEntry($playerID, sprintf(_('tritt dem Stamm \'%s\' bei'), $tag));
+  Player::addHistoryEntry($playerID, sprintf(_("tritt dem Stamm '%s' bei"), $tribeData['tag']));
 
-  tribe_sendTribeMessage($tag,
-       TRIBE_MESSAGE_MEMBER,
-       "Spielerbeitritt",
-       "Der Spieler {$player['name']} ist soeben dem ".
-       "Stamm beigetreten.");
+  tribe_sendTribeMessage($tribeData['tag'], TRIBE_MESSAGE_MEMBER, "Spielerbeitritt", "Der Spieler {$player['name']} ist soeben dem Stamm beigetreten.");
 
   return 1;
 }
