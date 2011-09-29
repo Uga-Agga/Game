@@ -1,0 +1,60 @@
+{% extends "base.tmpl" %}
+{% block title %}Artefakte - Übersicht{% endblock %}
+{% block content %}
+
+{% if ownArtefactsList %}
+<div class="box small">
+  <div class="box-header">Eigene Artefakte</div>
+  <div class="box-content success inner text-center">
+  <table class="table">
+    <tr class="bg2 nohover">
+      <th class="bg2 nohover">Name</th>
+      <th class="bg2 nohover">Höhle</th>
+      <th class="bg2 nohover">&nbsp;</th>
+    </tr>
+    {% for artefact in ownArtefactsList %}
+    {% set bgID = (bgID+1)%2 %}
+    <tr class="bg{{ bgID }} object-row">
+      <td><a href="main.php?modus={{ artefact_detail_link }}&amp;artefactID={{ artefact.artefactID }}">{{ artefact.artefactname}}</a></td>
+      <td><a href="main.php?modus={{ artefact.modus_map_detail }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.cavename }} ({{ artefact.xCoord }}|{{ artefact.yCoord }})</a></td>
+      <td>
+        {% if artefact.initiation_possible %}
+        <a href="main.php?modus={{ artefact.modus_artefact_detail }}&amp;artefactID={{ artefact.artefactID }}">uneingeweiht</a>
+        {% elseif artefact.initiation_not_possible %}
+        {{ artefact.initiation_not_possible.status }}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% elseif otherArtefactsList %}
+<div class="box small">
+  <div class="box-header">Fremde Artefakte</div>
+  <div class="box-content success inner text-center">
+  <table class="table">
+    <tr class="bg2 nohover">
+      <th class="bg2 nohover">Name</th>
+      <th class="bg2 nohover">Höhle</th>
+      <th class="bg2 nohover">Besitzer</th>
+      <th class="bg2 nohover">Stamm</th>
+    </tr>
+    {% for artefact in otherArtefactsList %}
+    {% set bgID = (bgID+1)%2 %}
+    <tr class="bg{{ bgID }} object-row">
+      <td><a href="main.php?modus={{ artefact.modus_artefact_detail }}&amp;artefactID={{ artefact.artefactID }}">{{ artefact.artefactname}}</a></td>
+      <td><a href="main.php?modus={{ artefact.modus_map_detail }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.cavename }} ({{ artefact.xCoord }}|{{ artefact.yCoord }})</a></td>
+      <td><a href="main.php?modus={{ artefact.modus_player_detail }}&amp;detailID={{ artefact.playerID}">{{ artefact.name }}</a></td>
+      <td><a href="main.php?modus={{ artefact.modus_tribe_detail }}&amp;tribe={{ tribe }}">{{ artefact.tribe }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+
+{% else %}
+<div class="success" style="margin-bottom: 0px">Derzeit sind keine Artefakte vorhanden!</div>
+{% endif %}
+
+{% endblock %}

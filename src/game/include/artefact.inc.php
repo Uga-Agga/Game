@@ -66,14 +66,14 @@ function getArtefactMovement($artefactID) {
                        FROM ". EVENT_MOVEMENT_TABLE ." WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
 
-  if (!$sql->execute() && ($result = $sql->fetch(PDO::FETCH_ASSOC)))
+  if (!$sql->execute() && !($result = $sql->fetch(PDO::FETCH_ASSOC)))
     return array();
 
   $result['event_end'] = time_formatDatetime($result['end']);
 
   $sql = $db->prepare("SELECT c.name AS source_cavename, c.xCoord AS source_xCoord, ".
          "c.yCoord AS source_yCoord, ".
-         "IF(ISNULL(p.name), '" . _('leere Höhle') . "',p.name) AS source_name, ".
+         "IF(ISNULL(p.name), '" . _('leere HÃ¶hle') . "',p.name) AS source_name, ".
          "p.tribe AS source_tribe, p.playerID AS source_playerID ".
          "FROM ". CAVE_TABLE ." c LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID ".
          "WHERE c.caveID = :source_caveID");
@@ -87,13 +87,13 @@ function getArtefactMovement($artefactID) {
 
   $sql = $db->prepare("SELECT c.name AS destination_cavename, c.xCoord AS destination_xCoord, ".
          "c.yCoord AS destination_yCoord, ".
-         "IF(ISNULL(p.name), '" . _('leere Höhle') . "',p.name) AS destination_name, ".
+         "IF(ISNULL(p.name), '" . _('leere HÃ¶hle') . "',p.name) AS destination_name, ".
          "p.tribe AS destination_tribe, p.playerID AS destination_playerID ".
          "FROM ". CAVE_TABLE ." c LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID ".
          "WHERE c.caveID = :caveID");
   $sql->bindValue('caveID', $result['target_caveID'], PDO::PARAM_INT);
 
-  if (!$sql->execut()) {
+  if (!$sql->execute()) {
     return array();
   }
   $result += $sql->fetch(PDO::FETCH_ASSOC);

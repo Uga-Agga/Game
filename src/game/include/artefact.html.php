@@ -31,7 +31,7 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   // Gott oder nicht?
   if ($_SESSION['player']->tribe != GOD_ALLY) {
-    // gibts nicht oder nicht in einer H�hle
+    // gibts nicht oder nicht in einer Höhle
     if (!$artefact['caveID']) {
       $show_artefact = FALSE;
 
@@ -56,10 +56,10 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   if ($show_artefact) {
 
-    // eigene H�hle ...
+    // eigene Höhle ...
     if (array_key_exists($artefact['caveID'], $myCaves)) {
 
-      // Ritual ausf�hren?
+      // Ritual ausführen?
       if (isset($_POST['initiate'])) {
         $message = artefact_beginInitiation($artefact);
         tmpl_set($template, 'message', $message);
@@ -68,7 +68,7 @@ function artefact_getDetail($caveID, &$myCaves) {
         $myCaves = getCaves($_SESSION['player']->playerID);
       }
 
-      // wenn noch uneingeweiht und in der "richtigen" Hoehle, ritual zeigen
+      // wenn noch uneingeweiht und in der "richtigen" Höhle, ritual zeigen
       else if ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_UNINITIATED) {
 
         // Check, ob bereits eingeweiht wird.
@@ -100,7 +100,7 @@ function artefact_getDetail($caveID, &$myCaves) {
                                                                  array('name' => "initiate",   'value' => 1)));
         }
 
-        // es wird bereits in dieser H�hle eingeweiht...
+        // es wird bereits in dieser Höhle eingeweiht...
         else {
           tmpl_iterate($template, 'ARTEFACT/NO_INITIATION');
         }
@@ -112,138 +112,140 @@ function artefact_getDetail($caveID, &$myCaves) {
 
     tmpl_set($template, 'ARTEFACT', $artefact);
   } else {
-    tmpl_set($template, 'message', _('&Uuml;ber dieses Artefakt wei&szlig; man nichts.'));
+    tmpl_set($template, 'message', _('Über dieses Artefakt weiß man nichts.'));
   }
 
   return tmpl_parse($template);
 }
 
-function artefact_getList($caveID, $myCaves) {
+function artefact_getList($caveID, $ownCaves) {
   global $template;
 
-  $template->throwError('Diese Seite wird noch überarbeitet.');
-  return;
+  $template->setFile('artefactlist.tmpl');
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'artefactlist.ihtml');
-
+  //get artefacts
   $artefacts = getArtefactList();
 
   // get moving artefacts
   $movements = artefact_getArtefactMovements();
 
-  $alternate_own = 0;
-  $alternate_other = 0;
-  $alternate_hidden = 0; 
-  $alternate_moving = 0;
-  $alternate_limbus = 0;
-  foreach ($artefacts AS $value) {
-
+  $ownArtefactsList = array();
+  $otherArtefactsList = array();
+  $movedArtefactsList = array();
+  
+  foreach ($artefacts AS $artefact) { 
+    
     // eigenes Artefakt
-    if (array_key_exists($value['caveID'], $myCaves)) {
-      $context = 'ARTEFACT_OWN';
-      $value['alternate'] = ++$alternate_own % 2 ? "alternate" : "";
+    if (array_key_exists($artefact['caveID'], $ownCaves)) {
+      $artefact['isOwnArtefact'] = true;
 
-      switch ($value['initiated']) {
+      switch ($artefact['initiated']) {
 
-        case ARTEFACT_UNINITIATED: if ($value['caveID'] == $caveID)
-                                     $value['INITIATION_POSSIBLE'] = array(
-                                       'modus_artefact_detail' => ARTEFACT_DETAIL,
-                                       'artefactID' => $value['artefactID']);
-                                   else
-                                     $value['INITIATION_NOT_POSSIBLE'] = array('status' => _('uneingeweiht'));
-                                   break;
-        case ARTEFACT_INITIATING:  $value['INITIATION_NOT_POSSIBLE'] = array('status' => _('wird gerade eingeweiht'));break;
-        case ARTEFACT_INITIATED:   $value['INITIATION_NOT_POSSIBLE'] = array('status' => _('eingeweiht'));break;
-        default:                   $value['INITIATION_NOT_POSSIBLE'] = array('status' => _('Fehler'));
+        case ARTEFACT_UNINITIATED: 
+          if ($artefact['caveID'] == $caveID) {
+              $artefact['initiation_possible'] = array(
+               'modus_artefact_detail' => ARTEFACT_DETAIL,
+               'artefactID' => $artefact['artefactID']);
+          }
+          else {
+            $artefact['initiation_not_possible'] = array('status' => _('uneingeweiht'));
+          }
+          break;
+          
+        case ARTEFACT_INITIATING:
+          $artefact['initiation_not_possible'] = array('status' => _('wird gerade eingeweiht'));
+          break;
+          
+        case ARTEFACT_INITIATED:
+          $artefact['initiation_not_possible'] = array('status' => _('eingeweiht'));
+          break;
+          
+        default:
+          $artefact['initiation_not_possible'] = array('status' => _('Fehler'));
+          break;
       }
-
+      
+      $ownArtefactsList[] = $artefact;
     // fremdes Artefakt
     } else {
 
-      // Berechtigung pr�fen
+      // Berechtigung prüfen
 
       // ***** kein Gott! *****************************************************
-      if ($_SESSION['player']->tribe != GOD_ALLY){
+      if ($_SESSION['player']->tribe != GOD_ALLY) {
 
-        // Artefakt liegt in einer H�hle
-        if ($value['caveID'] != 0) {
+        // Artefakt liegt in einer Höhle
+        if ($artefact['caveID'] != 0) {
 
-          // A. in Ein�den und von G�ttern sind Tabu
-          if ($value['playerID'] == 0 || $value['tribe'] == GOD_ALLY) continue;
+          // A. in Einöden und von Göttern sind Tabu
+          if ($artefact['playerID'] == 0 || $artefact['tribe'] == GOD_ALLY) continue;
 
-          $context = 'ARTEFACT_OTHER';
-          $value['alternate'] = ++$alternate_other % 2 ? "alternate" : "";
+          $artefact['isOwnArtefact'] = false;
+          $otherArtefactsList[] = $artefact;
         }
 
-        // Artefakt liegt nicht in einer H�hle
+        // Artefakt liegt nicht in einer Höhle
         else {
 
           // A. wird bewegt?
-          $move = $movements[$value['artefactID']];
+          $move = $movements[$artefact['artefactID']];
 
           // nein. Limbusartefakt!
           if (!$move)
             continue;
 
           // A. wird bewegt!
-          $context = 'ARTEFACT_MOVING_ETA';
-          $value += $move;
-          $value['alternate'] = ++$alternate_moving % 2 ? "alternate" : "";
+          $artefact['showEndTime'] = true;
+          $artefact += $move;
+          $movedArtefactsList = $artefact;
         }
       }
 
       // ***** Gott! *****************************************************+++++
       else {
 
-        // Artefakt liegt in einer H�hle
-        if ($value['caveID'] != 0){
+        // Artefakt liegt in einer Höhle
+        if ($artefact['caveID'] != 0) {
 
 
-          // A. liegt in Ein�de.
-          if ($value['playerID'] == 0){
-            $context = 'ARTEFACT_HIDDEN';
-            $value['alternate'] = ++$alternate_hidden % 2 ? "alternate" : "";
+          // A. liegt in Einöde.
+          if ($artefact['playerID'] == 0) {
+            $artefact['hideArtefact'] = true;
           }
 
           // A. liegt bei einem Spieler
           else {
-            $context = 'ARTEFACT_OTHER';
-            $value['alternate'] = ++$alternate_other % 2 ? "alternate" : "";
+            $artefact['isOwnArtefact'] = false;
+            $otherArtefactsList = $artefact;
           }
         }
 
-        // Artefakt liegt nicht in einer H�hle
+        // Artefakt liegt nicht in einer Höhle
         else {
 
           // A. wird bewegt?
-          $move = $movements[$value['artefactID']];
+          $move = $movements[$artefact['artefactID']];
 
           // nein. Limbusartefakt!
           if (!$move){
-            $context = 'ARTEFACT_LIMBUS';
-            $value['alternate'] = ++$alternate_limbus % 2 ? "alternate" : "";
+            $artefact['isLimbusArtefact'] = true;
           }
 
           // A. wird bewegt!
           else {
-            $context = 'ARTEFACT_MOVING_ETA';
-            $value += $move;
-            $value['alternate'] = ++$alternate_moving % 2 ? "alternate" : "";
+            $artefact['showEndTime'] = true;
+            $artefact += $move;
+            $movedArtefactsList = $artefact;
           }
         }
       } // Gott
     } // fremdes Artefakt
-
-    $value['modus_artefact_detail'] = ARTEFACT_DETAIL;
-    $value['modus_map_detail']      = MAP_DETAIL;
-    $value['modus_player_detail']   = PLAYER_DETAIL;
-    $value['modus_tribe_detail']    = TRIBE_DETAIL;
-
-    tmpl_iterate($template, $context . '/ARTEFACT');
-    tmpl_set($template, $context . '/ARTEFACT', $value);
-  }
-
-  return tmpl_parse($template);
+  } // foreach
+  
+  $template->addVars(array('ownArtefactsList' => $ownArtefactsList, 
+                           'otherArtefactsList' => $otherArtefactsList,
+                           'movedArtefactsList' => $movedArtefactsList));
+  //print_r($template);
 }
 
 ?>
