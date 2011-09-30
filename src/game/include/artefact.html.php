@@ -137,15 +137,12 @@ function artefact_getList($caveID, $ownCaves) {
     
     // eigenes Artefakt
     if (array_key_exists($artefact['caveID'], $ownCaves)) {
-      $artefact['isOwnArtefact'] = true;
 
       switch ($artefact['initiated']) {
 
         case ARTEFACT_UNINITIATED: 
           if ($artefact['caveID'] == $caveID) {
-              $artefact['initiation_possible'] = array(
-               'modus_artefact_detail' => ARTEFACT_DETAIL,
-               'artefactID' => $artefact['artefactID']);
+            $artefact['initiation_possible'] = array('artefactID' => $artefact['artefactID']);
           }
           else {
             $artefact['initiation_not_possible'] = array('status' => _('uneingeweiht'));
@@ -193,11 +190,11 @@ function artefact_getList($caveID, $ownCaves) {
           // nein. Limbusartefakt!
           if (!$move)
             continue;
-
+          
           // A. wird bewegt!
           $artefact['showEndTime'] = true;
           $artefact += $move;
-          $movedArtefactsList = $artefact;
+          $movedArtefactsList[] = $artefact;
         }
       }
 
@@ -211,12 +208,13 @@ function artefact_getList($caveID, $ownCaves) {
           // A. liegt in Einöde.
           if ($artefact['playerID'] == 0) {
             $artefact['hideArtefact'] = true;
+            $otherArtefactsList[] = $artefact;
           }
 
           // A. liegt bei einem Spieler
           else {
             $artefact['isOwnArtefact'] = false;
-            $otherArtefactsList = $artefact;
+            $otherArtefactsList[] = $artefact;
           }
         }
 
@@ -227,7 +225,7 @@ function artefact_getList($caveID, $ownCaves) {
           $move = $movements[$artefact['artefactID']];
 
           // nein. Limbusartefakt!
-          if (!$move){
+          if (!$move) {
             $artefact['isLimbusArtefact'] = true;
           }
 
@@ -235,7 +233,7 @@ function artefact_getList($caveID, $ownCaves) {
           else {
             $artefact['showEndTime'] = true;
             $artefact += $move;
-            $movedArtefactsList = $artefact;
+            $movedArtefactsList[] = $artefact;
           }
         }
       } // Gott

@@ -47,7 +47,7 @@ function unit_Movement($caveID, &$ownCave) {
   if ($details['artefacts'] > 0) {
     // get artefacts
     $myartefacts = artefact_getArtefactsReadyForMovement($caveID);
-
+  
     // was an artefact chosen?
     if (request_var('myartefacts', 0) > 0) {
 
