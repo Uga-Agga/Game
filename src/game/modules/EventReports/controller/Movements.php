@@ -44,7 +44,7 @@ class EventReports_Movements_Controller extends Controller {
 
       // set name and caves-header
       $category = array('name' => $ua_movements[$category]->description,
-                        'CAVE' => $caves);
+                        'cave' => $caves);
 
       // foreach unittype..
       foreach ($unitTypeList as $unitType) {
@@ -62,9 +62,9 @@ class EventReports_Movements_Controller extends Controller {
 
         // foreach cave..
         foreach ($caves as $caveID => $cave)
-          $unit['CAVE'][] = array('amount' => intval($moves[$unitType->dbFieldName][$caveID]));
+          $unit['cave'][] = array('amount' => intval($moves[$unitType->dbFieldName][$caveID]));
 
-        $category['UNIT'][] = $unit;
+        $category['unit'][] = $unit;
       }
       $categories[] = $category;
     }

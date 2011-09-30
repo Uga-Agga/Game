@@ -1,0 +1,68 @@
+{% extends "base.tmpl" %}
+{% block title %}Artefakte - Übersicht{% endblock %}
+{% block content %}
+
+{% if categories %}
+{% for category in categories %}
+
+<div class="box" style="float: left;">
+  <div class="box-header">{{ category.name }}</div>
+  <div class="box-content success inner">
+    <table cellpadding="3" cellspacing="0" rules="rows">
+      <tr>
+        <th>Einheit:</th>
+        {% for cave in category.cave %}
+          <th><a href="main.php?caveID={{ cave.caveID }}" target="_top">
+              <img src="images/stringup.png.php?cave_id={{ cave.caveID }}" alt="{{ cave.name }}" title="{{ cave.name }}" border="0"></a>
+          </th>
+        {% endfor %}
+        <th>&sum;</th>
+      </tr>
+      {% for unit in category.unit %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr>
+          <td><img src="{{ gfx }}/units/{{ unit.dbFieldName }}_small.gif" alt="{{ unit.name }}" title="{{ unit.name }}"></td>
+           {% for cave in unit.cave %}
+             <td>{{ cave.amount }}</td>
+           {% endfor %}
+          <td>{{ unit.sum }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div style="clear:both;"></div>
+{% endfor %}
+{% else %}
+<div class="notice" style="margin-bottom: 0px">Zur Zeit gibt es keine Bewegungen.</div>
+{% endif %}
+<p>Zurück zum <a href="main.php?modus=easy_digest">Terminkalender</a></p>
+<!-- 
+<tmpl:CATEGORY>
+  <table class="grid">
+    <caption>{name}</caption>
+    <thead>
+      <tr>
+        <th>Einheit</th>
+        <tmpl:CAVE>
+          <th><a href="main.php?caveID={caveID}" target="_top"><img src="images/stringup.png.php?cave_id={caveID}" alt="{name}" title="{name}" border="0"></a></th>
+        </tmpl:CAVE>
+        <th>&sum;</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tmpl:UNIT>
+        <tr class="alt{alternate}">
+          <td><img src="%gfx%/units/{dbFieldName}_small.gif" alt="{name}" title="{name}"></td>
+          <tmpl:CAVE>
+            <td>{amount}</td>
+          </tmpl:CAVE>
+          <td>{sum}</td>
+        </tr>
+      </tmpl:UNIT>
+    </tbody>
+  </table>
+</tmpl:CATEGORY>
+<p>Zurück zum <a href="main.php?modus=easy_digest">Terminkalender</a></p>
+-->
+{% endblock %}
