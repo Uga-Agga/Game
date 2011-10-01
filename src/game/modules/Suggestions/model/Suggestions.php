@@ -31,9 +31,10 @@ class Suggestions_Model extends Model {
                          VALUES (:playerID, :suggestion)");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('suggestion', addslashes($suggestion), PDO::PARAM_STR);
-    
+
     if (!$sql->execute())
       return SUGGESTIONS_ERROR_INSERTFAILED;
+
     // refresh number of used suggestion credits
     $sql = $db->prepare("UPDATE ". PLAYER_TABLE ."
                          SET suggestion_credits = suggestion_credits + 1

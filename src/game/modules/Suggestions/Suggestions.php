@@ -24,7 +24,7 @@ function suggestions_main($caveID, $caves) {
   $controller = NULL;
 
   // get current task
-  $task = request_var('task', 0);
+  $task = request_var('task', '');
 
   switch ($task) {
 
