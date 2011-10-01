@@ -43,7 +43,8 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
           'confirm_mode'    => CAVE_DETAIL,
           'confirm_msg'     => _('Möchtest du die Höhle wirklich aufgeben?'),
         ));
-      }    break;
+      }
+    break;
 
 /****************************************************************************************************
 *

@@ -121,7 +121,7 @@ DEFINE('TRIBE_ADMIN',                 'tribe_admin');
 DEFINE('TRIBE_DELETE',                'tribe_delete');
 DEFINE('TRIBE_DETAIL',                'tribe_detail');
 DEFINE('TRIBE_HISTORY',               'tribe_history');
-DEFINE('TRIBE_LEADER_DETERMINATION',  'tribe_leader_determination');
+DEFINE('TRIBE_CHOOSE_LEADER',         'tribe_choose_leader');
 DEFINE('TRIBE_PLAYER_LIST',           'tribe_player_list');
 DEFINE('TRIBE_RELATION_LIST',         'tribe_relation_list');
 DEFINE('UNIT_BUILDER',                'unit_builder');
@@ -179,7 +179,7 @@ $require_files[TRIBE_ADMIN]                 = array('tribeAdmin.html.php', 'trib
 $require_files[TRIBE_DELETE]                = array('tribeDelete.html.php', 'tribes.inc.php', 'relation_list.php', 'message.inc.php');
 $require_files[TRIBE_DETAIL]                = array('tribeDetail.html.php', 'tribes.inc.php', 'ranking.inc.php', 'messageParser.inc.php');
 $require_files[TRIBE_HISTORY]               = array('tribeHistory.html.php', 'tribes.inc.php');
-$require_files[TRIBE_LEADER_DETERMINATION]  = array('tribeLeaderDetermination.html.php', 'government.rules.php', 'tribes.inc.php');
+$require_files[TRIBE_CHOOSE_LEADER]         = array('tribeChooseLeader.html.php', 'government.rules.php', 'tribes.inc.php');
 $require_files[TRIBE_PLAYER_LIST]           = array('tribePlayerList.html.php', 'tribes.inc.php');
 $require_files[TRIBE_RELATION_LIST]         = array('tribeRelationList.html.php', 'tribes.inc.php', 'relation_list.php');
 $require_files[UNIT_BUILDER]                = array('formula_parser.inc.php', 'unit.html.php', 'unit.inc.php');

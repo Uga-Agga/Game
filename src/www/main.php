@@ -312,8 +312,8 @@ switch ($modus) {
     tribeDelete_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $confirm);
     break;
 
-  case TRIBE_LEADER_DETERMINATION:
-    tribeLeaderDetermination_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
+  case TRIBE_CHOOSE_LEADER:
+    tribeChooseLeader_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -514,7 +514,7 @@ $template->addVars(array(
   'takeover_link'           => TAKEOVER,
   'tribe_link'              => TRIBE,
   'tribe_admin_link'        => TRIBE_ADMIN,
-  'tribe_leader_determination_link' => TRIBE_LEADER_DETERMINATION,
+  'tribe_choose_leader_link' => TRIBE_CHOOSE_LEADER,
   'tribe_detail_link'       => TRIBE_DETAIL,
   'tribe_history_link'      => TRIBE_HISTORY,
   'tribe_relation_link'     => TRIBE_RELATION_LIST,

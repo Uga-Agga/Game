@@ -20,11 +20,11 @@ DEFINE("TRIBE_MESSAGE_MEMBER",   3);
 DEFINE("TRIBE_MESSAGE_RELATION", 4);
 DEFINE("TRIBE_MESSAGE_INFO",    10);
 
-function leaderDetermination_processChoiceUpdate($voterID, $playerID, $tribe) {
+function leaderChoose_processChoiceUpdate($voterID, $playerID, $tribe) {
   global $db;
 
   if ($playerID == 0) {
-    if (! leaderDetermination_deleteChoiceForPlayer($voterID)) {
+    if (!leaderChoose_deleteChoiceForPlayer($voterID)) {
       return -1;
     }
     return 1;
@@ -48,7 +48,7 @@ function leaderDetermination_processChoiceUpdate($voterID, $playerID, $tribe) {
   }
 }
 
-function leaderDetermination_deleteChoiceForPlayer($voterID) {
+function leaderChoose_deleteChoiceForPlayer($voterID) {
   global $db;
   
   $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ." WHERE voterID = :voterID ");
@@ -60,7 +60,7 @@ function leaderDetermination_deleteChoiceForPlayer($voterID) {
   return 1;
 }
 
-function leaderDetermination_getElectionResultsForTribe($tribe) {
+function leaderChoose_getElectionResultsForTribe($tribe) {
   global $db;
   
   $sql = $db->prepare("SELECT p.name, COUNT(e.voterID) AS votes 
@@ -82,7 +82,7 @@ function leaderDetermination_getElectionResultsForTribe($tribe) {
   return $votes;
 }
 
-function leaderDetermination_getVoteOf($playerID) {
+function leaderChoose_getVoteOf($playerID) {
   global $db;
   
   $sql = $db->prepare("SELECT playerID FROM ". ELECTION_TABLE . " WHERE voterID = :playerID");
@@ -1941,7 +1941,7 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
     return -7;
   }
 
-  echo Player::addHistoryEntry($leaderID, sprintf(_("gründet den Stamm '%s'"), $tag));
+  Player::addHistoryEntry($leaderID, sprintf(_("gründet den Stamm '%s'"), $tag));
 
   return 3;
 }
@@ -2074,14 +2074,12 @@ function tribe_generateMapStylesheet() {
                          OR tribe_target = :tribe");
   $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
 
-  $sql->execute();
-
   fwrite($outfile, "a.t_".$_SESSION['player']->tribe." {\n");
   fwrite($outfile, "  width: 100%;\n");
   fwrite($outfile, "  border-top: 2px solid darkgreen;\n");
   fwrite($outfile, "}\n\n");
 
-  if ($result) {
+  if ($sql->execute()) {
     while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
       fwrite($outfile, "a.t_".($row['tribe'] == $_SESSION['player']->tribe ? $row['tribe_target'] : $row['tribe'])." {\n");
       fwrite($outfile, "  width: 100%;\n");
