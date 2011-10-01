@@ -1,0 +1,262 @@
+{#
+/* tribeAdmin.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Stammesverwaltung{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
+
+{% if show_page %}
+<div class="box small">
+  <div class="box-header">Stammesverwaltung</div>
+  <div class="box-content success inner text-left">
+    <div class="notice nohover" style="width: 315px; float: left; margin-left: 5px; margin-top: 5px;">
+      <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+      <ul>
+        <li class="tribe_left">Tag:</li>
+        <li class="tribe_right">{{ tribe_data.tag }}</li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li class="tribe_left">Name:</li>
+        <li class="tribe_right"><input name="data[name]" value="{{ tribe_data.name }}"  type="text" size="26" maxlength="20" /></li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li class="tribe_left">Password:</li>
+        <li class="tribe_right"><input name="data[password]" value="password"  type="password" size="26" maxlength="15" /></li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li class="tribe_left">Avatar URL:</li>
+        <li class="tribe_right"><input name="data[avatar]" value="{{ tribe_data.avatar }}"  type="text" size="26" maxlength="90" /></li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li class="tribe_left">Beschreibung:</li>
+        <li class="tribe_right"><textarea name="data[description]" cols="25" rows="8">{{ tribe_data.description }}</textarea></li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li>&nbsp;</li>
+        <li class="text-center"><input type="hidden" name="action" value="update" /><input type="submit" value="Aktualisieren" /></li>
+      </ul>
+      </form>
+    </div>
+
+    {% if junior_leader_select %}
+    <div class="notice nohover" style="width: 270px; float: right; margin-right: 5px; margin-top: 5px;">
+      <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+      <ul>
+        <li class="text-center bold">Stellvertreter:</li>
+        <li>&nbsp;</li>
+        <li class="text-center">
+          <select name="juniorLeader[juniorLeaderID]">
+            {% for item in junior_leader_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
+          </select>
+        </li>
+        <li>&nbsp;</li>
+        <li class="text-center"><input type="hidden" name="action" value="juniorLeader" /><input type="submit" value="Absenden" /></li>
+      </ul>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="notice nohover" style="width: 270px; float: right; margin-right: 5px; margin-top: 5px;">
+      <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+      <ul>
+        {% if government_select %}
+          <li class="tribe_left">Regierungsform:</li>
+          <li class="tribe_right" style="width: 165px;">
+            <select name="governmentData[governmentID]">
+              {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }} >{{ item.name }}</option>{% endfor %}
+            </select>
+          </li>
+          <li class="clr"><br class="clr" /></li>
+
+          <li>&nbsp;</li>
+          <li class="text-center"><input type="hidden" name="action" value="changeGoverment" /><input type="submit" value="Aktualisieren" /></li>
+        {% else %}
+          <li class="text-center bold">Regierungsform:</li>
+          <li>&nbsp;</li>
+          <li class="text-left">{{ government_data.name }} bis mindestens {{ government_data.duration }}</li>
+        {% endif %}
+      </ul>
+      </form>
+    </div>
+
+    <div class="notice nohover" style="width: 270px; float: right; margin-right: 5px; margin-top: 5px;">
+      <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+      <ul>
+        <li class="text-center bold">Neue Beziehung:</li>
+        <li>&nbsp;</li>
+        <li class="tribe_left">Stammestag:</li>
+        <li class="tribe_right" style="width: 165px;"><input name="relationData[tag]" value="" type="text" size="16" maxlength="8" /></li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li class="tribe_left">Beziehung:</li>
+        <li class="tribe_right" style="width: 165px;">
+          <select name="relationData[relationID]">
+            {% for item in relation_list %}<option value="{{ item.relationID }}" >{{ item.name }}</option>{% endfor %}
+          </select>
+        </li>
+        <li class="clr"><br class="clr" /></li>
+
+        <li>&nbsp;</li>
+        <li class="text-center"><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Beziehung eingehen" /></li>
+      </ul>
+      </form>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div class="notice nohover" style="margin-left: 5px; margin-right: 5px;">
+      <div class="text-center bold">Mitgliederliste</div>
+      <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
+        <tr>
+          <th class="text-left">Name</th>
+          <th>zuletzt gesehen am:</th>
+          <th>&nbsp;</th>
+        </tr>
+        {% for item in tribe_members %}
+        <tr>
+          <td class="text-left"><a href="main.php?{{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
+          <td class="text-center">{{ item.lastAction }}</td>
+          <td class="text-right">{% if is_leader %}<a href="main.php?modus={{ tribe_admin_link }}&amp;action=kick&amp;playerID={{ item.playerID }}">Rauswerfen</a>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+<!--
+    <div class="notice nohover" style="margin-left: 5px; margin-right: 5px;">
+      <div class="text-center bold">Beziehungen</div>
+      <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
+        <tr>
+          <th class="text-left">Stamm</th>
+          <th class="text-left" colspan="2">Beziehungen</th>
+          <th class="text-left">Dauer</th>
+          <th>Sonstiges</th>
+        </tr>
+        {% for item in relations_info %}
+        <tr>
+          <td class="text-left">{{ item.tag }}</td>
+          <td class="text-left">
+            Eigene: <span class="bold">{{ item.relation }}</span><br />
+            Ihre: <span class="bold">{{ item.their_relation }}</span>
+          </td>
+          <td class="text-left">bis: {{ item.duration }}</td>
+          <td class="text-right">
+            {% if item.war %}
+              Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+              Kriegsanteil: {{ item.percent_actual }}&nbsp;%
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+        {% for item in relations %}
+        <tr>
+          <td class="text-left">{{ item.tag }}</td>
+          <td class="text-left">Eigene: <span class="bold">{{ item.relation }}</span></td>
+          <td class="text-left">Ihre: <span class="bold">{{ item.their_relation }}</span></td>
+          </td>
+          <td class="text-left">bis: {{ item.duration }}</td>
+          <td class="text-right">
+            {% if item.war %}
+              Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+              Kriegsanteil: {{ item.percent_actual }}&nbsp;%
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+  <div class="smallinner notice nohover" style="width:450px;"><strong>Beziehungen:<br /><br /></strong>
+  <table class="table-smallnotice">
+  <tr>
+    <td>
+      <tmpl:RELATION_INFO>
+      <table>
+        <tr>
+          <td>{tag}</td>
+          <td>{relation} bis mindestens {duration}</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Ihre Haltung uns gegen&uuml;ber: {their_relation}</td>
+        </tr>
+        <tmpl:WAR>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Knüppelpunkte: Unsere: {fame_own}. Ihre: {fame_target}.</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td>Kriegsanteil: {percent_actual}&nbsp;%</td>
+        </tr>
+        </tmpl:WAR>
+      </table>
+      </tmpl:RELATION_INFO>
+---------------------------------------------------------------------
+      <tmpl:RELATION>
+      <form method="post" action="main.php">
+        <p><input type="hidden" name="{modus_name}" value="{modus}" />
+        <input type="hidden" name="{dataarray}[{dataentry}]" value="{value}" /></p>
+
+        <table>
+          <tr>
+            <td>{value}</td>
+
+            <tmpl:SELECTOR>
+            <td>
+              <select name="{dataarray}[{dataentry}]">
+                <tmpl:OPTION><option value="{value}" {selected}>{text}</option></tmpl:OPTION>
+              </select>
+            </td>
+            </tmpl:SELECTOR>
+
+            <td>
+              <input type="submit" value="{caption}">
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>Ihre Haltung uns gegen&uuml;ber: {their_relation}</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td>Punkte damals: Unsere: {tribe_points}. Ihre: {target_points}.</td>
+          </tr>
+          <tmpl:WAR>
+          <tr>
+            <td>&nbsp;</td>
+            <td>Kn&uuml;ppelpunkte: Unsere: {fame_own}. Ihre: {fame_target}.</td>
+          </tr>
+          <td>
+            <td>&nbsp;</td>
+            <td>Kriegsanteil: {percent_actual}&nbsp;%
+              <tmpl:FORCEDSURRENDER>
+              <span class="{class}">({percent_estimated}&nbsp;% ben&ouml;tigt)</span>
+            </td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+            <td><p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p></td>
+            </tmpl:FORCEDSURRENDER>
+          </tr>
+          </tmpl:WAR>
+        </table>
+      </form>
+      </tmpl:RELATION>
+    </td>
+  </tr>
+</table>-->
+</div></div>
+
+{% endblock %}
