@@ -1,0 +1,161 @@
+<table width="100%" border="0" cellspacing="0" cellpadding="1">
+  <tr>
+    <td colspan="2" valign="top" class="title"><strong>{name}</strong><br />&nbsp;</td>
+  </tr>
+
+  <tr>
+    <td valign="top">
+      <fieldset>
+        <legend>Beschreibung</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>{description}&nbsp;</td>
+          </tr>
+        </table>
+      </fieldset>
+
+      <fieldset>
+        <legend>Kosten</legend>
+        <table border="0" cellspacing="0" cellpadding="5">
+          <tr>
+            <tmpl:RESOURCECOST>
+             <td><img src="%gfx%/resources/{dbFieldName}_icon.gif" alt="{name}" width="20" height="20" title="{name}" /> {amount} </td>
+            </tmpl:RESOURCECOST>
+          </tr>
+        </table>
+
+        <br />
+
+        <tmpl:MORECOSTS>
+          <table border="0" cellspacing="0" cellpadding="5">
+            <tmpl:MORECOST>
+              <tr><td>{name}</td><td>{amount}</td></tr>
+            </tmpl:MORECOST>
+          </table>
+        <br />
+        </tmpl:MORECOSTS>
+
+        <table>
+          <tr>
+            <td><img src="templates/images/hourglass.gif" width="20" height="20" alt="" /></td>
+            <td>{productionTime}</td>
+          </tr>
+        </table>
+
+      </fieldset>
+
+      <br />
+
+      <fieldset>
+        <legend>Eigenschaften</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>Fernangriffsschaden</td>
+            <td>{rangeAttack}</td>
+          </tr>
+          <tr>
+            <td>Geb&auml;udeschaden</td>
+            <td>{arealAttack}</td>
+          </tr>
+          <tr>
+           <td>Get&uuml;mmelschaden</td>
+           <td>{attackRate}</td>
+          </tr>
+          <tr>
+           <td>Fernkampfwiderstand</td>
+           <td>{rangedDefenseRate}</td>
+          </tr>
+          <tr>
+           <td>Nahkampfwiderstand</td>
+           <td>{meleeDefenseRate}</td>
+          </tr>
+          <tr>
+           <td>Gr&ouml;&szlig;e</td>
+           <td>{size}</td>
+          </tr>
+          <tr>
+           <td>Kn&uuml;ppelpunkte</td>
+           <td>{warpoints}</td>
+          </tr>
+        </table>
+      </fieldset>
+
+      <br />
+
+      <fieldset>
+        <legend>Trefferwahrscheinlichkeiten</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>Normal</td>
+            <td>{normalDamageProbabilit} %</td>
+          </tr>
+          <tr>
+            <td>Schwer</td>
+            <td>{heavyDamageProbability} %</td>
+          </tr>
+          <tr>
+            <td>Kritisch</td>
+            <td>{criticalDamageProbability} %</td>
+          </tr>
+        </table>
+      </fieldset>
+
+      <br />
+
+      <fieldset>
+        <legend>Bewegungs - Eigenschaften</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>Tempo</td>
+            <td>{movement_speed}</td>
+          </tr>
+          <tr>
+            <td>Proviant</td>
+            <td>{movement_cost}</td>
+          </tr>
+        </table>
+      </fieldset>
+
+      <br />
+
+      <fieldset>
+        <legend>Spionage - Eigenschaften</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>Spionageabwehr</td>
+            <td>{antiSpyChance}</td>
+          </tr>
+          <tr>
+            <td>Spionagefertigkeit</td>
+            <td>{spyChance}</td>
+          </tr>
+          <tr>
+           <td>Spionageklasse</td>
+           <td>{spyValue}</td>
+          </tr>
+          <tr>
+           <td>Spionagequalität</td>
+           <td>{spyQuality}</td>
+          </tr>
+        </table>
+      </fieldset>
+
+      <br />
+
+      <fieldset>
+        <legend>Vorraussetzungen</legend>
+
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tmpl:DEPENDENCIES>
+          <tr>
+            <td><a href="index.php?modus={category}&amp;{category}ID={id}">{name}</a></td>
+            <td>{level}</td>
+          </tr>
+          </tmpl:DEPENDENCIES>
+        </table>
+        &nbsp;
+      </fieldset>
+    </td>
+    <td valign="top"><img src="%gfx%/units/{dbFieldName}_large.gif" alt="{name}" title="{name}" /></td>
+  </tr>
+</table>

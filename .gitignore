@@ -12,6 +12,7 @@ src/game/include/relation_list.php
 src/game/include/startvalues.php
 src/game/include/trade.rules.php
 src/game/include/wonder.rules.php
+src/game/templates/de_DE/uga/extendsFooter.tmpl
 src/phpext/*
 src/ticker/check_config
 src/ticker/game_rules.c

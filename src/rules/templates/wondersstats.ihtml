@@ -1,0 +1,24 @@
+<table cellpadding="3" cellspacing="0" class="box">
+<colgroup>
+    <col />
+    <col span="3" width="100" />
+ </colgroup>
+  <tr>
+    <th align="left">Name</th>
+    <th>Basiswahrsch.</th>
+    <th>Zielh&ouml;hle</th>
+    <th>Art*</th>
+	<th>Wirkung</th>
+  </tr>
+  <tmpl:WONDERS>
+  <tr class="row{iterator}">
+    <td><a href="index.php?modus=wonders&amp;wondersID={id}">{name}</a></td>
+    <td align="center">{chance}</td>
+    <td align="center">{target}</td>
+    <td align="center">{offensiveness}</td>
+	<td align="left">{remark}</td>
+  </tr>
+  </tmpl:WONDERS>
+</table>
+<p><strong>* defensiv = verst&auml;rkendes positives Wunder<br />
+* offensiv = verschlechterndes negatives Wunder</strong></p>

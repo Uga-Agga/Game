@@ -1,0 +1,50 @@
+<h2>Wie kann der Stammesf&uuml;hrer bestimmt werden?</h2>
+<tmpl:LEADERDETERMINATION>
+<table width="100%" border="0" cellspacing="5" cellpadding="0">
+  <tr> 
+    <td colspan="2" bgcolor="#006600"><img name=" " src="images/governemnt/spacer.gif" width="1" height="1" alt=" "></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><strong>{name}</strong></td>
+  </tr>
+  <tr> 
+    <td valign="top">
+      <div align="justify" class="small">{description}</div><br>
+    </td>
+  </tr>
+  <tr> 
+    <td colspan="2" bgcolor="#006600"><img name=" " src="images/artefacts/spacer.gif" width="1" height="1" alt=" "></td>
+  </tr>
+</table>
+</tmpl:LEADERDETERMINATION>
+
+<h2>Regierungsformen</h2>
+<tmpl:GOVERNMENT>
+<table width="100%" border="0" cellspacing="5" cellpadding="0">
+  <tr> 
+    <td bgcolor="#006600"><img name=" " src="images/artefacts/spacer.gif" width="1" height="1" alt=" "></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>{name}</strong></td>
+  </tr>
+  <tr> 
+    <td valign="top">
+      <div align="justify" class="small">{description}</div><br>
+      <div align="justify" class="small">{leaderDetermination}</div><br>
+
+      <tmpl:EFFECTS>
+        <div align="justify" class="small">
+          {lore}<br>
+        </div><br>
+      </tmpl:EFFECTS>
+    </td>
+  </tr>
+  <tr> 
+    <td bgcolor="#006600"><img name=" " src="images/artefacts/spacer.gif" width="1" height="1" alt=" "></td>
+  </tr>
+</table>
+</tmpl:GOVERNMENT>
+
+
+
+

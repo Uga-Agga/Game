@@ -1,0 +1,32 @@
+<table width="700" cellpadding="3" cellspacing="0" class="box">
+<tr><td><div><h2>Wie kann der Stammesf&uuml;hrer bestimmt werden?</h2></div></td></tr>
+<tmpl:LEADERDETERMINATION>
+  <tr class="row{iterator}">
+    <td><div class="left"><strong>{name}</strong></div>
+	<div>{description}</div></td>
+  </tr>
+</tmpl:LEADERDETERMINATION>
+</table>
+<br style="clear:both" />
+<table width="700" cellspacing="0" cellpadding="3" class="box">
+<tr><td><div><h2>Regierungsformen</h2></div></td></tr>
+<tmpl:GOVERNMENT>
+  <tr class="row{iterator}">
+
+    <td><div class="left"><strong>{name}</strong></div>
+      <div>{description}</div><br />
+      <div class="small"><i>Wie wird der Stammesf&uuml;hrer bestimmt?</i></div>
+      <div class="small">{leaderDetermination}</div><br />
+
+      <tmpl:EFFECTS>
+        <div align="justify">
+          {effects}<br />
+        </div><br />
+      </tmpl:EFFECTS>
+    </td>
+  </tr>
+</tmpl:GOVERNMENT>
+</table>
+
+
+
