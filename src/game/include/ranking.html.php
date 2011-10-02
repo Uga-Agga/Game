@@ -22,7 +22,7 @@ function ranking_getContent($caveID, $offset) {
   $template->setShowRresource(false);
 
   $religions = ranking_getReligiousDistribution();
-  
+
   if (!array_key_exists('uga', $religions)) $religions['uga'] = 0;
   if (!array_key_exists('agga', $religions)) $religions['agga'] = 0;
   
@@ -43,7 +43,7 @@ function ranking_getContent($caveID, $offset) {
       'ugapercent' => $ugapercent,
       'aggapercent' => $aggapercent
     ),
-    'row'       => $row,
+    'row' => $row,
   ));
 }
 

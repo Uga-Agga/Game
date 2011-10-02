@@ -229,56 +229,56 @@
   </div>
 </div>
 
+{% if no_building %}
 <div class="box">
   <div class="box-header">Kein Erweiterungsbau</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_building %}
         <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
-      {% else %}
-        <tr><td><span>Du baust in allen Höhlen Erweiterungen.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
+{% endif %}
 
+{% if no_unit %}
 <div class="box">
   <div class="box-header">Keine Einheitenproduktion</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_unit %}
         <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
-      {% else %}
-        <tr><td><span>Du baust in allen Höhlen Einheiten.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
+{% endif %}
 
+{% if no_defenses %}
 <div class="box">
   <div class="box-header">Kein Verteidigungsbau</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_defenses %}
         <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
-      {% else %}
-        <tr><td><span>Du baust in allen Höhlen Verteidigungsanlagen.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
+{% endif %}
 
+{% if no_sciences %}
 <div class="box">
   <div class="box-header">Keine Forschungen</div>
   <div class="box-content success inner">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_sciences %}
         <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
-      {% else %}
-        <tr><td><span>Du forscht in allen Höhlen.</span></td></tr>
       {% endfor %}
     </table>
   </div>
 </div>
+{% endif %}
 
 {% endblock %}
