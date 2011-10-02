@@ -1,7 +1,7 @@
 <?php
 /*
  * export.inc.php -
- * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2004  OGP Team, 2011 Sascha Lange <salange@uos.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
