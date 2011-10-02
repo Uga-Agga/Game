@@ -19,12 +19,12 @@ class EventReports_Movements_View extends View {
   var $categories;
 
   function EventReports_Movements_View($language, $skin) {
-
+    global $template;
     // init categories
     $this->categories  = NULL;
 
     // open template
-    $this->openTemplate($language, $skin, 'EventReports_Movements.ihtml');
+    $template->setFile('eventReport_movement.tmpl');
   }
 
   function setCategories($data) {
@@ -32,17 +32,12 @@ class EventReports_Movements_View extends View {
   }
 
   function getContent() {
+    global $template;
 
     // set categories
     if ($this->categories)
-      tmpl_set($this->template, '/CONTENT/CATEGORY', $this->categories);
-
-    // set nomovements
-    else
-      tmpl_set($this->template, '/CONTENT/NOMOVEMENTS/iterate', '');
-
-    // return parsed template
-    return tmpl_parse($this->template, '/CONTENT');
+      $template->addVars(array('categories' => $this->categories));
+      
   }
 }
 

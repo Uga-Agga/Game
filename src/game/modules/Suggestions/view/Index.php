@@ -21,7 +21,7 @@ class Suggestions_Index_View extends View {
 
   function Suggestions_Index_View($language, $skin) {
     // open template
-    $this->openTemplate($language, $skin, 'Suggestions_Index.ihtml');
+    $this->openTemplate($language, $skin, 'suggestions.tmpl');
   }
 
   function setError($error) {
@@ -29,27 +29,19 @@ class Suggestions_Index_View extends View {
   }
 
   function getContent($count) {
-
+    global $template;
+echo $this->error;
     switch ($this->error) {
       default:
       case SUGGESTIONS_NOERROR:
         break;
     }
 
-    // insert maximum number of suggestions
-    tmpl_set($this->template, '/CONTENT',
-             array('max_count' => SUGGESTIONS_MAX));
-
-    // output suggestion box
-    if ($count < SUGGESTIONS_MAX) {
-      tmpl_set($this->template, '/CONTENT/SUGGESTIONS/SUGGESTION',
-               array('num' => $count+1, 'max_count' => SUGGESTIONS_MAX));
-    } else {
-      tmpl_set($this->template, '/CONTENT/MAX_SUGGESTIONS_REACHED', array('iterate' => ''));
-    }
-
-    // return parsed template
-    return tmpl_parse($this->template, '/CONTENT');
+    $template->addVars(array(
+      'count'          => $count,
+      'max_count'      => SUGGESTIONS_MAX,
+      'no_suggestions' => ($count < SUGGESTIONS_MAX) ? false : true,
+    ));
   }
 }
 

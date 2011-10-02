@@ -1,5 +1,16 @@
+{#
+/* caves.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 {% extends "base.tmpl" %}
-{% block title %}Höhlenübersicht{% endblock %}
+{% block title %}Höhlen-Übersicht{% endblock %}
 {% block content %}
 
 <div id="export_button"><a href="export.php?modus=allCaves&amp;format=xml" onclick="return exportPopup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a></div>
@@ -10,7 +21,7 @@
     <table cellpadding="3" cellspacing="0" rules="rows">
       <tr>
         <th>&nbsp;</th>
-        {% for item in caves %}<th colspan="2" style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        {% for item in caves %}<th colspan="2" style="text-align:left"><a href="main.php?modus={{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
         <th style="text-align: left;" colspan="2">&sum;</th>
         <th>&nbsp;</th>
       </tr>
@@ -37,7 +48,7 @@
     <table cellpadding="3" cellspacing="0" rules="rows">
       <tr>
         <th>&nbsp;</th>
-        {% for item in caves %}<th style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        {% for item in caves %}<th style="text-align:left"><a href="main.php?modus={{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
         <th style="text-align: left;">&sum;</th>
         <th>&nbsp;</th>
       </tr>
@@ -60,7 +71,7 @@
     <table cellpadding="3" cellspacing="0" rules="rows">
       <tr>
         <th>&nbsp;</th>
-        {% for item in caves %}<th style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        {% for item in caves %}<th style="text-align:left"><a href="main.php?modus){{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
         <th style="text-align: left;">&sum;</th>
         <th>&nbsp;</th>
       </tr>
@@ -83,7 +94,7 @@
     <table cellpadding="3" cellspacing="0" rules="rows">
       <tr>
         <th>&nbsp;</th>
-        {% for item in caves %}<th style="text-align:left"><a href="main.php?caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+        {% for item in caves %}<th style="text-align:left"><a href="main.php?modus={{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
         <th style="text-align: left;">&sum;</th>
         <th>&nbsp;</th>
       </tr>

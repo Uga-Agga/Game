@@ -41,22 +41,24 @@ function getHeroByPlayer($playerID) {
   // otherwise
   $sql->closeCursor();
   $hero = array(
-      'heroID'       => $result['heroID'],
-      'playerID'     => $result['playerID'],
-      'name'         => $result['name'],
-      'heroTypeID'   => $result['heroTypeID'],
-      'lvl'          => $result['lvl'],
-      'exp'          => $result['exp'],
-      'caveID'       => $result['caveID'],
-      'isAlive'      => $result['isAlive'],
-      'tpFree'       => $result['tpFree'],
-      'healPoints'           => $result['healPoints'],
-      'maxHealPoints'        => $result['maxHealPoints'],
-      'forceLvl'     => $result['forceLvl'],
-      'maxHpLvl'     => $result['maxHpLvl'],
-      'regHpLvl'     => $result['regHpLvl'],
-      'path'         => _('hero_imperator.gif'),
-      'location'     => _('tot')
+      'heroID'        => $result['heroID'],
+      'playerID'      => $result['playerID'],
+      'name'          => $result['name'],
+      'heroTypeID'    => $result['heroTypeID'],
+      'lvl'           => $result['lvl'],
+      'exp'           => $result['exp'],
+      'caveID'        => $result['caveID'],
+      'isAlive'       => $result['isAlive'],
+      'tpFree'        => $result['tpFree'],
+      'healPoints'    => $result['healPoints'],
+      'forceLvl'      => $result['forceLvl'],
+      'force'         => $result['force'],
+      'maxHpLvl'      => $result['maxHpLvl'],
+      'maxHealPoints' => $result['maxHealPoints'],
+      'regHpLvl'      => $result['regHpLvl'],
+      'regHP'         => $result['regHP'],
+      'path'          => _('hero_imperator.gif'),
+      'location'      => _('tot')
   );
   if($hero['id']=='Defender') {
     $hero['path']=_('hero_defender.gif');
@@ -65,10 +67,8 @@ function getHeroByPlayer($playerID) {
     $hero['path']=_('hero_constructor.gif');
   }
   
-  $hero['force'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force']) . ";");
-  $hero['lvlUp'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['lvl']) . ";");
+  $hero['lvlUp'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['lvlUp_formula']) . ";");
   $hero['expLeft']= $hero['lvlUp'] - $hero['exp'];
-  $hero['regHealPoints'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP']) . ";");
   
   if ($hero['healPoints'] == 0 || $hero['isAlive'] == false) {
       $hero['location'] = _('tot');
@@ -148,41 +148,57 @@ function getHeroQueue($playerID) {
   return $result;
 
 }
-function skillForce($playerID) {
-  global $db;
 
+
+function skillForce($playerID, $hero) {
+  global $db, $heroTypesList;
+
+  $hero['forceLvl'] = $hero['forceLvl']++;
+  $force = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force_formula']) . ";");
+  
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET forceLvl = forceLvl + 1,
-                         tpFree = tpFree - 1
+                       tpFree = tpFree - 1, 
+                       `force` = :force
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  
+  $sql->bindValue('force', $force, PDO::PARAM_STR);
   
   return $sql->execute();
 }
-function skillMaxHp($playerID,$maxHP) {
-  global $db;
 
+
+function skillMaxHp($playerID, $hero) {
+  global $db, $heroTypesList;
+  
+  $hero['maxHpLvl'] = $hero['maxHpLvl']++;
+  $maxHP = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['maxHP_formula']) . ";");
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
-                       SET maxHpLvl = maxHpLvl + 1,
-             tpFree = tpFree - 1,
-             maxHealPoints = :maxHP
-                         WHERE playerID = :playerID");
+                     SET maxHpLvl = maxHpLvl + 1,
+                       tpFree = tpFree - 1,
+                       maxHealPoints = :maxHP
+                     WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('maxHP', $maxHP, PDO::PARAM_INT);
   return $sql->execute();
 }
-function skillRegHp($playerID) {
-  global $db;
+function skillRegHp($playerID, $hero) {
+  global $db, $heroTypesList;
+  
+  $hero['regHpLvl'] = $hero['regHpLvl']++;
+  $regHP = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP_formula']) . ";");
 
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET regHpLvl = regHpLvl + 1,
-             tpFree = tpFree - 1
-                         WHERE playerID = :playerID");
+                       tpFree = tpFree - 1,
+                       regHP = :regHP
+                       WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  $sql->bindValue('regHP', $regHP, PDO::PARAM_INT);
+  
   return $sql->execute();
 
 }
@@ -377,14 +393,14 @@ function hero_usePotion ($potionID, $value) {
     
   
   // apply potion effects
-  $newHealPoints = $hero['HP'];
+  $newHealPoints = $hero['healPoints'];
   for ($i = 0; $i< $value; $i ++) {
     $newHealPoints += floor($hero['maxHP'] * $potion->hp_prozentual_increase/100) + 
                    $potion->hp_increase;
   }
   if ($hero['maxHealPoints'] < $newHealPoints)
     $newHealPoints = $hero['maxHealPoints'];
-  var_dump($hero);
+  
   if ($potion->tp_setBack == false) {
     $sql = $db->prepare("UPDATE " .HERO_TABLE ."
                          SET healPoints = :newHealPoints
@@ -410,6 +426,25 @@ function hero_usePotion ($potionID, $value) {
   }
 
   return 5;
+}
+
+function hero_levelUp($hero) {
+  global $db;
+  
+  if ($hero['exp'] < $hero['lvlUp'])
+    return false;
+  
+  $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
+                       lvl = lvl +1,
+                       exp = exp - :levelUp
+                       WHERE playerID = :playerID");
+  $sql->bindValue('levelUp', $hero['lvlUp'], PDO::PARAM_INT);
+  $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
+  
+  if (!$sql->execute())
+    return false;
+    
+  return true;
 }
 
 

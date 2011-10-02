@@ -482,7 +482,7 @@ class parser {
 
     // remove the garbage
     // 30th Jan 2010 added Unicode support
-    //$s = htmlentities($s, ENT_QUOTES, 'UTF-8');
+    $s = htmlentities($s, ENT_QUOTES, 'UTF-8');
     //$s = htmlentities($s, ENT_QUOTES, 'ISO-8859-15');
 
     // S m i l i e s

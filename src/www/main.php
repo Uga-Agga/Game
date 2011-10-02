@@ -98,42 +98,23 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case NO_CAVE_LEFT:
-    $pagetitle = _("Keine Höhle mehr");
-    $content = _("Leider besitzen sie keine Höhle mehr.");
+    $template->throwError("Leider besitzen sie keine Höhle mehr.");
     break;
 
   case NOT_MY_CAVE:
-    $pagetitle = _("Fehler");
-    $content = _("Diese Höhle gehört nicht ihnen.");
+    $template->throwError("Diese Höhle gehört nicht ihnen.");
     break;
 
   case CAVE_DETAIL:
-    $pagetitle = _("Höhlendetails");
-    $content = getCaveDetailsContent($ownCaves[$caveID]);
+    getCaveDetailsContent($ownCaves[$caveID]);
     break;
 
   case ALL_CAVE_DETAIL:
-    $pagetitle = _("Höhlen-Übersicht");
-    $content = getAllCavesDetailsContent($ownCaves);
-    break;
-
-  case CAVE_GIVE_UP_CONFIRM:
-    $pagetitle = _("Höhle aufgeben");
-    $giveUpCaveID = request_var('giveUpCaveID', 0);
-    if (isset($ownCaves[$giveUpCaveID]))
-      $content = cave_giveUpConfirm($ownCaves[$giveUpCaveID]);
-    else
-      $content = "Die Höle befindet sch nicht in deinem Besitz.";
-    break;
-
-  case END_PROTECTION_CONFIRM:
-    $pagetitle = _("Anfängerschutz beenden");
-    $content = beginner_endProtectionConfirm($ownCaves[$caveID]);
+    getAllCavesDetailsContent($ownCaves);
     break;
 
   case EASY_DIGEST:
-    $pagetitle = _("Termin-Übersicht | Runde Tetraktys");
-    $content = digest_getDigest($ownCaves);
+    digest_getDigest($ownCaves);
     break;
 
   case EVENT_REPORTS:
@@ -145,12 +126,10 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case ARTEFACT_DETAIL:
-    $pagetitle = _("Artefaktdetail");
-    $content = artefact_getDetail($caveID, $ownCaves);
+    $artefact_getDetail($caveID, $ownCaves);
     break;
   case ARTEFACT_LIST:
-    $pagetitle = _("Artefakte");
-    $content = artefact_getList($caveID, $ownCaves);
+    artefact_getList($caveID, $ownCaves);
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -162,8 +141,7 @@ switch ($modus) {
     $box = request_var('box', 1);
     $box = (!empty($box)) ? $box : 1;
 
-    $pagetitle = _("Nachrichten");
-    $content = messages_getMessages($caveID, $deletebox, $box);
+    messages_getMessages($caveID, $deletebox, $box);
     $requestKeys = array('box', 'messageClass');
     break;
 
@@ -171,19 +149,16 @@ switch ($modus) {
     $messageID = request_var('messageID', 0);
     $box = request_var('box', 1);
 
-    $pagetitle = _("Nachricht lesen");
-    $content = messages_showMessage($caveID, $messageID, $box);
+    messages_showMessage($caveID, $messageID, $box);
     $requestKeys = array('messageID', 'box', 'filter');
     break;
 
   case MESSAGE_NEW:
-    $pagetitle = _("Nachricht schreiben");
-    $content = messages_newMessage($caveID);
+    messages_newMessage($caveID);
     break;
 
   case NEW_MESSAGE_RESPONSE:
-    $pagetitle = _("Verschicken einer Nachricht");
-    $content = messages_sendMessage($caveID);
+    messages_sendMessage($caveID);
     break;
 
   case CONTACTS_BOOKMARKS:
@@ -203,18 +178,15 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case MAP:
-    $pagetitle = _("Höhlenkarte");
-    $content = getCaveMapContent($caveID, $ownCaves);
+    getCaveMapContent($caveID, $ownCaves);
     break;
 
   case MAP_REGION:
-    $pagetitle = _("Höhlenkarte");
-    $content = getCaveMapRegionContent($caveID, $ownCaves);
+    getCaveMapRegionContent($caveID, $ownCaves);
     break;
 
   case MAP_DETAIL:
-    $pagetitle = _("Höhlenbericht");
-    $content = getCaveReport($caveID, $ownCaves, request_var('targetCaveID', 0), request_var('method', ''));
+    getCaveReport($caveID, $ownCaves, request_var('targetCaveID', 0), request_var('method', ''));
     $requestKeys = array('targetCaveID');
     break;
 
@@ -223,13 +195,11 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case IMPROVEMENT_BUILDER:
-    $pagetitle = _("Erweiterungen errichten");
-    $content = improvement_getImprovementDetail($caveID, $ownCaves[$caveID]);
+    improvement_getImprovementDetail($caveID, $ownCaves[$caveID]);
     break;
 
   case IMPROVEMENT_DETAIL:
-    $pagetitle = _("Gebäudeerweiterungen");
-    $content = improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID], request_var('method', ''));
+    improvement_getBuildingDetails(request_var('buildingID', 0), $ownCaves[$caveID], request_var('method', ''));
     $requestKeys = array('buildingID');
     break;
 
@@ -238,13 +208,11 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case WONDER:
-    $pagetitle = _("Wunder erwirken");
-    $content = wonder_getWonderContent($caveID, $ownCaves[$caveID]);
+    wonder_getWonderContent($caveID, $ownCaves[$caveID]);
     break;
 
   case WONDER_DETAIL:
-    $pagetitle = _("Wunder");
-    $content = wonder_getWonderDetailContent(request_var('wonderID', 0), $ownCaves[$caveID], request_var('method', ''));
+    wonder_getWonderDetailContent(request_var('wonderID', 0), $ownCaves[$caveID], request_var('method', ''));
     $requestKeys = array('wonderID');
     break;
 
@@ -253,13 +221,11 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case DEFENSE_BUILDER:
-    $pagetitle = _("Verteidigungsanlagen und externe Gebäude errichten");
-    $content = defense_builder($caveID, $ownCaves[$caveID]);
+    defense_builder($caveID, $ownCaves[$caveID]);
     break;
 
   case DEFENSE_DETAIL:
-    $pagetitle = _("Verteidigungsanlagen und externe Gebäude");
-    $content = defense_showProperties(request_var('defenseID', 0), $ownCaves[$caveID], request_var('method', ''));
+    defense_showProperties(request_var('defenseID', 0), $ownCaves[$caveID], request_var('method', ''));
     $requestKeys = array('defense_id');
     break;
 
@@ -268,13 +234,11 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case SCIENCE_BUILDER:
-    $pagetitle = _("Wissen erforschen");
-    $content = science_getScienceDetail($caveID, $ownCaves[$caveID]);
+    science_getScienceDetail($caveID, $ownCaves[$caveID]);
     break;
 
   case SCIENCE_DETAIL:
-    $pagetitle = _("Forschungen");
-    $content = science_getScienceDetails(request_var('scienceID', 0), $ownCaves[$caveID], request_var('method', ''));
+    science_getScienceDetails(request_var('scienceID', 0), $ownCaves[$caveID], request_var('method', ''));
     $requestKeys = array('scienceID');
     break;
 
@@ -283,20 +247,17 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case UNIT_BUILDER:
-    $pagetitle = _("Einheiten bauen");
-    $content = unit_getUnitDetail($caveID, $ownCaves[$caveID]);
+    unit_getUnitDetail($caveID, $ownCaves[$caveID]);
     break;
 
 
   case UNIT_DETAIL:
-    $pagetitle = _("Einheitsattribute");
-    $content = unit_getUnitDetails(request_var('unitID', 0), $ownCaves[$caveID], request_var('method', ''));
+    unit_getUnitDetails(request_var('unitID', 0), $ownCaves[$caveID], request_var('method', ''));
     $requestKeys = array('unitID');
     break;
 
   case UNIT_MOVEMENT:
-    $pagetitle = _("Einheiten bewegen");
-    $content = unit_Movement($caveID, $ownCaves);
+    unit_Movement($caveID, $ownCaves);
     $requestKeys = array('targetXCoord', 'targetYCoord', 'targetCaveName');
     break;
 
@@ -305,8 +266,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case TAKEOVER:
-    $pagetitle = _("Missionieren");
-    $content = takeover_main($caveID, $ownCaves);
+    takeover_main($caveID, $ownCaves);
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -314,16 +274,14 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case RANKING_PLAYER:
-    $pagetitle = _("Spielerranking");
-    $offset  = ranking_checkOffset($_SESSION['player']->playerID, request_var('offset', 0));
-    $content = ranking_getContent($caveID, $offset);
+    $offset  = ranking_checkOffset($_SESSION['player']->playerID, request_var('offset', ''));
+    ranking_getContent($caveID, $offset);
     $requestKeys = array('offset');
     break;
 
   case RANKING_TRIBE:
-    $pagetitle = _("Stammesranking");
-    $offset  = rankingTribe_checkOffset(request_var('offset', 0));
-    $content = rankingTribe_getContent($caveID, $offset);
+    $offset  = rankingTribe_checkOffset(request_var('offset', ''));
+    rankingTribe_getContent($caveID, $offset);
     $requestKeys = array('offset');
     break;
 
@@ -332,36 +290,30 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case TRIBE:
-    $pagetitle = _("Stämme");
-    $content = tribe_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
+    tribe_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
     break;
 
   case TRIBE_ADMIN:
-    $pagetitle = _("Stamm verwalten");
-    $content = tribeAdmin_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
+    tribeAdmin_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
     break;
 
   case TRIBE_RELATION_LIST:
-    $pagetitle = _("Beziehungen");
-    $content = tribeRelationList_getContent(request_var('tag', ''));
+    tribeRelationList_getContent(request_var('tag', ''));
     $requestKeys = array('tag');
     break;
 
   case TRIBE_HISTORY:
-    $pagetitle = _("Stammesgeschichte");
-    $content = tribeHistory_getContent(request_var('tag', ''));
+    tribeHistory_getContent(request_var('tag', ''));
     $requestKeys = array('tag');
     break;
 
   case TRIBE_DELETE:
-    $pagetitle = _("Stamm verwalten");
     $confirm = isset($_POST['confirm']) ? true : false;
-    $content = tribeDelete_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $confirm);
+    tribeDelete_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $confirm);
     break;
 
-  case TRIBE_LEADER_DETERMINATION:
-    $pagetitle = _("Stammesanführer bestimmen");
-    $content = tribeLeaderDetermination_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
+  case TRIBE_CHOOSE_LEADER:
+    tribeChooseLeader_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -369,13 +321,11 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case QUESTIONNAIRE:
-    $pagetitle = _("Fragebogen");
-    $content = questionnaire_getQuestionnaire($caveID, $ownCaves);
+    questionnaire_getQuestionnaire($caveID, $ownCaves);
     break;
 
   case QUESTIONNAIRE_PRESENTS:
-    $pagetitle = _("Fragebogen Treuebonus");
-    $content = questionnaire_presents($caveID, $ownCaves);
+    questionnaire_presents($caveID, $ownCaves);
     break;
 
   case SUGGESTIONS:
@@ -387,8 +337,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case HERO_DETAIL:
-    $pagetitle = _("Mein Held");
-    $content = hero_getHeroDetail($caveID, $ownCaves);
+    hero_getHeroDetail($caveID, $ownCaves);
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -396,8 +345,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case AWARD_DETAIL:
-    $pagetitle = _("Auszeichnung");
-    $content = award_getAwardDetail(request_var('award', 0));
+    award_getAwardDetail(request_var('award', 0));
     $requestKeys = array('award');
     break;
 
@@ -406,61 +354,50 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case NEWS:
-    $pagetitle = _("Uga-Agga News");
-    $content = rssFeedNews_getContent();
+    rssFeedNews_getContent();
     break;
 
   case STATISTIC:
-    $pagetitle = _("Uga-Agga Statistik");
-    $content = statistic_getContent();
+    statistic_getContent();
     break;
 
   case EFFECTWONDER_DETAIL:
-    $pagetitle = _("Aktive Effekte und Wunder");
-    $content = effect_getEffectWonderDetailContent($caveID, $ownCaves[$caveID]);
+    effect_getEffectWonderDetailContent($caveID, $ownCaves[$caveID]);
     break;
 
   case WEATHER_REPORT:
-    $pagetitle = _('Wetterbericht');
-    $content = weather_getReport();
+    weather_getReport();
     break;
 
   case USER_PROFILE:
-    $pagetitle = _("Einstellungen");
-    $content = profile_main();
+    profile_main();
     break;
 
   case DELETE_ACCOUNT:
-    $pagetitle = _("Account löschen");
-    $content = profile_deleteAccount($_SESSION['player']->playerID);
+    profile_deleteAccount($_SESSION['player']->playerID);
     break;
 
   case PLAYER_DETAIL:
-    $pagetitle = _("Spielerbeschreibung");
-    $content = player_getContent($caveID, request_var('detailID', 0));
+    player_getContent($caveID, request_var('detailID', 0));
     $requestKeys = array('detailID');
     break;
 
   case TRIBE_DETAIL:
-    $pagetitle = _("Stammesbeschreibung");
-    $content = tribe_getContent($caveID, request_var('tribe', ""));
+    tribe_getContent($caveID, request_var('tribe', ""));
     $requestKeys = array('tribe');
     break;
 
   case TRIBE_PLAYER_LIST:
-    $pagetitle = _("Stammesmitglieder ...");
-    $content = tribePlayerList_getContent($caveID, request_var('tag', ''));
+    tribePlayerList_getContent($caveID, request_var('tag', ''));
     $requestKeys = array('tag');
     break;
 
   case DYK:
-    $pagetitle = _("Infos rund um Uga-Agga");
-    $content = doYouKnow_getContent();
+    doYouKnow_getContent();
   break;
 
   case MERCHANT:
-    $pagetitle = _("Der Händler");
-    $content = merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
+    merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
   break;
 
   case MAIL:
@@ -478,8 +415,8 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   default:
-    $pagetitle = _("Modus nicht bekannt");
-    $content = "Modus " . $modus . "ist nicht verfügbar. CaveID :" . $caveID;
+    $template->throwError("Modus " . $modus . "ist nicht verfügbar. CaveID :" . $caveID);
+    break;
 }
 
 // prepare resource bar
@@ -527,9 +464,7 @@ vote_main();
 
 // fill it
 $template->addVars(array(
-  'pagetitle'     => $pagetitle,
   'showads'       => ($showads) ? true : false,
-  'content'       => $content,
   'cave_id'       => $caveID,
   'cave_name'     => $ownCaves[$caveID]['name'],
   'cave_x_coord'  => $ownCaves[$caveID]['xCoord'],
@@ -552,29 +487,35 @@ $template->addVars(array(
   'ua_time_time_month_name' => $UgaAggaTime['month_name'],
 
   'artefact_list_link'      => ARTEFACT_LIST,
+  'artefact_detail_link'    => ARTEFACT_DETAIL,
   'award_detail_link'       => AWARD_DETAIL,
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
+  'cave_detail_link'        => CAVE_DETAIL,
   'contact_bookmarks_link'  => CONTACTS_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,
   'delete_account_link'     => DELETE_ACCOUNT,
   'improvement_link'        => IMPROVEMENT_BUILDER,
   'improvement_detail_link' => IMPROVEMENT_DETAIL,
+  'map_detail_link'         => MAP_DETAIL,
 //  'map_region_link'         => MAP_REGION_LINK,
   'merchant_link'           => MERCHANT,
   'messages_list_link'      => MESSAGES_LIST,
   'messages_new_link'       => MESSAGE_NEW,
   'messages_read_link'      => MESSAGE_READ,
   'player_detail_link'      => PLAYER_DETAIL,
+  'questionaire_present_link' => QUESTIONNAIRE_PRESENTS,
+  'questionaire_link'       => QUESTIONNAIRE,
   'user_profile_link'       => USER_PROFILE,
   'ranking_player_link'     => RANKING_PLAYER,
   'ranking_tribe_link'      => RANKING_TRIBE,
   'science_link'            => SCIENCE_BUILDER,
   'science_detail_link'     => SCIENCE_DETAIL,
+  'suggestions_link'        => SUGGESTIONS,
   'takeover_link'           => TAKEOVER,
   'tribe_link'              => TRIBE,
   'tribe_admin_link'        => TRIBE_ADMIN,
-  'tribe_leader_determination_link' => TRIBE_LEADER_DETERMINATION,
+  'tribe_choose_leader_link' => TRIBE_CHOOSE_LEADER,
   'tribe_detail_link'       => TRIBE_DETAIL,
   'tribe_history_link'      => TRIBE_HISTORY,
   'tribe_relation_link'     => TRIBE_RELATION_LIST,

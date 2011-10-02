@@ -1,10 +1,21 @@
+{#
+/* questionaire.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 {% extends "base.tmpl" %}
 {% block title %}Umfrage{% endblock %}
 {% block content %}
 
 {% if account %}
-<div class="small success nohover">
-   <strong>Bisher erhaltene Schnecken:</strong>
+<div class="success small nohover bottom_space">
+   <span class="bold">Bisher erhaltene Schnecken:</span>
     <br />
     {{account.copper}}x
     <img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" style="vertical-align:middle" />
@@ -18,37 +29,28 @@
     {% endif %}
     
 </div>
-<br />
 {% endif %}
 
-
-{% if message %}
-<div class="box small">
- <div class="box-header nohover">&nbsp;</div>
- <div class="smallinner notice nohover" > 
-  {{message}}
- </div>
-</div> 
-{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
 {% if questions %}
 <br />
 <div class="box small">
 <form method="post" action="main.php">
 
-  <div class="box-header nohover"><strong>Fragebogen</strong></div>
+  <div class="box-header nohover">Fragebogen</div>
   <div class="box-content success inner nohover">
   <table>
   {% for question in questions.question %}
   <tr>
-    <td>Nr. {{question.questionID}}:&nbsp;{{question.questionText}}</td>
-    <td>{{question.message}}</td>
+    <td>Nr. {{ question.questionID }}:&nbsp;{{ question.questionText }}</td>
+    <td>{{ question.message }}</td>
     <td>
       <select name="question[{{question.questionID}}]">
           <option value="-1" selected="selected">Wähle eine Antwort</option>
           <option value="-1">-----------------------</option>
           {% for choice in question.CHOICE %}
-            <option value="{{choice.choiceID}}">{{choice.choiceText}}</option>
+            <option value="{{ choice.choiceID }}">{{ choice.choiceText }}</option>
           {% endfor %}
       </select>
     </td>
@@ -62,13 +64,13 @@
   </table>
   </div>
 {% for param in questions.params %}
-  <p><input type="hidden" name="{{param.name}}" value="{{param.value}}" /></p>
+  <p><input type="hidden" name="{{ param.name }}" value="{{ param.value }}" /></p>
 {% endfor %}
 </form>
 </div>
 {% endif %}
 <br />
 
-<div class="small success nohover"><a href="main.php?modus={{QUESTIONNAIRE_PRESENTS}}">zu den Geschenken</a></div>
+<div class="small success nohover"><a href="main.php?modus={{ questionaire_present_link }}">zu den Geschenken</a></div>
  
- {% endblock %}
+{% endblock %}

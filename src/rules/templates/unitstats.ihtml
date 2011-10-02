@@ -1,0 +1,36 @@
+<table cellpadding="3" cellspacing="0" class="box">
+  <tr>
+    <th align="left">Name</th>
+    <th>Punkte*</th>
+    <th>Fern</th>
+    <th>Geb&auml;ude</th>
+    <th>Get&uuml;mmel</th>
+    <th>FernWid.</th>
+    <th>NahWid.</th>
+    <th>Gr&ouml;ﬂe</th>
+    <th>Proviant</th>
+    <th>Tempo</th>
+    <th>Kn&uuml;ppelpunkte</th>
+    <th>Bemerkung</th>
+  </tr>
+  <tmpl:UNIT>
+  <tr align="left"  class="row{iterator}">
+    <td><a href="index.php?modus=units&amp;unitsID={id}">{name}</a></td>
+    <td align="center">{ranking}</td>
+    <td align="center">{attackRange}</td>
+    <td align="center">{attackAreal}</td>
+    <td align="center">{attackRate}</td>
+    <td align="center">{RDResist}</td>
+    <td align="center">{defenseRate}</td>
+    <td align="center">{hitPoints}</td>
+    <td align="center">{foodCost}</td>
+    <td align="center">{wayCost}</td>
+    <td align="center">{warpoints}</td>
+    <td align="center"><tmpl:REMARK>{remark}</tmpl:REMARK></td>
+  </tr>
+  </tmpl:UNIT>
+</table>
+<p><strong>Im Spiel sind beim H&auml;ndler weitere Einheiten erh&auml;ltlich: <br />
+Grauer Straﬂenk&ouml;ter, Rennender Kn&uuml;ppelkrieger, Rennender Steinschleuderer, 
+Eichenweicher, Obeliskentr&auml;ger, Schwefelschlepper, Bemannte Transporttrage</strong></p>
+<p><strong>* Dienen zur Berechnung des Rankings</strong></p>

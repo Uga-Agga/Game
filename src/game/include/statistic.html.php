@@ -14,9 +14,9 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 define('GRAPH_URL', 'http://chart.apis.google.com/chart?');
 
 function statistic_getContent() {
-  global $db, $scienceTypeList, $unitTypeList;
+  global $db, $template, $scienceTypeList, $unitTypeList, $template;
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'statistic.ihtml');
+  $template->setFile('statistic.tmpl');
 
   foreach ($unitTypeList AS $value)
   {
@@ -45,38 +45,41 @@ function statistic_getContent() {
     return;
   }
 
-  /*
-   * print god stats
-   */
+/*
+* print god stats
+*/
+  $GodStatsList = array();
   $GodStats = $StatsData[GOD_STATS];
   ksort($GodStats);
   foreach ($GodStats as $God => $value) {
-    tmpl_iterate($template, "GODS");
-    tmpl_set($template, array("GODS/name"  => $ScienceFieldsName[$God],
-                              "GODS/value" => array_pop(unserialize($value))));
+    $GodStatsList[] =  array("name" => $ScienceFieldsName[$God],
+                              "value" => array_pop(unserialize($value)));
   }
+  $template->addVars(array('GodStats' => $GodStatsList));
 
-  /*
-   * print god halfgod stats
-   */
+/*
+* print god halfgod stats
+*/
+  $HalfGodStatsList = array();
   $HalfGodStats = $StatsData[HALFGOD_STATS];
   ksort($HalfGodStats);
   foreach ($HalfGodStats as $HalfGod => $value) {
-    tmpl_iterate($template, "HALFGODS");
-    tmpl_set($template, array("HALFGODS/name"  => $ScienceFieldsName[$HalfGod],
-                              "HALFGODS/value" => array_pop(unserialize($value))));
+    $HalfGodStatsList[] = array("name" => $ScienceFieldsName[$HalfGod],
+                              "value" => array_pop(unserialize($value)));
   }
+  $template->addVars(array('HalfGodStats' => $HalfGodStatsList));
 
   /*
-   * print storage stats
-   */
+* print storage stats
+*/
+  $StorageStatsList = array();
   $StorageStats = $StatsData[STORAGE_STATS];
   ksort($StorageStats);
   foreach ($StorageStats as $Storage => $value) {
-    tmpl_iterate($template, "STORAGE");
-    tmpl_set($template, array("STORAGE/name"  => $Storage,
-                              "STORAGE/value" => array_pop(unserialize($value))));
+    $StorageStatsList[] = array("name" => $Storage,
+                              "value" => array_pop(unserialize($value)));
   }
+  $template->addVars(array('StorageStats' => $StorageStatsList));
 
   /*
    * het Unit stats
@@ -111,7 +114,7 @@ function statistic_getContent() {
                    'name'  => 'Insgesamt:',
                    'value' => $UnitAll);
 
-  tmpl_set($template, 'UNIT', $Units);
+  $template->addVars(array('Units' => $Units));
   unset($Name, $Unit, $Units, $UnitAll, $LastUnitStats);
 
   /*
@@ -120,9 +123,11 @@ function statistic_getContent() {
   if ((request_var('show', "") == "unit_detail" && request_var('unit', "")) && request_var('show', "") != "all") {
     $Unit = request_var('unit', "");
 
-    tmpl_iterate($template, "UNITDETAILS");
-    tmpl_set($template, 'UNITDETAILS/title', 'Einheiten Statistik');
-    tmpl_set($template, 'UNITDETAILS/name', $UnitFieldsName[$Unit]);
+    $template->addVars(array(
+                             'showUnitDetails' => true, 
+                             'unitName' => $UnitFieldsName[$Unit]
+    ));
+//    tmpl_set($template, 'UNITDETAILS/title', 'Einheiten Statistik');
 
     /*
      * get hour stats
@@ -140,7 +145,7 @@ function statistic_getContent() {
                                  'value' => $data['value']);
     }
     unset($data, $id);
-    tmpl_set($template, 'UNITDETAILS/UNITDETAILHOUR', $GraphDataHour);
+    $template->addVars(array('GraphDataHour' => $GraphDataHour));
 
     /*
      * get day stats
@@ -158,10 +163,10 @@ function statistic_getContent() {
                                 'value' => $data['value']);
     }
     unset($data, $id);
-    tmpl_set($template, 'UNITDETAILS/UNITDETAILDAY', $GraphDataDay);
+    $template->addVars(array('GraphDataDay' => $GraphDataDay));
   }
-
-  return tmpl_parse($template);
+  
+  //print_r($template);
 }
 
 ?>

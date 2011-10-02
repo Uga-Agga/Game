@@ -67,8 +67,9 @@ function page_start() {
 
   // check for valid session
   // FIXME german string..
-  if (!($_SESSION['player']->playerID))
+  if (!isset($_SESSION['player']) || !$_SESSION['player']->playerID) {
     page_error403(sprintf('Sie waren für %d Minuten oder mehr inaktiv.', date("i", ini_get("session.gc_maxlifetime"))));
+  }
 
   // connect to database
   if (!($db = DbConnect())) {

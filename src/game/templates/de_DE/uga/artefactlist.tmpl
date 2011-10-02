@@ -1,0 +1,103 @@
+{#
+/* caveBookmarks.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>, Georg Pitterle
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Artefakte - Übersicht{% endblock %}
+{% block content %}
+
+{% if ownArtefactsList %}
+<div class="box small">
+  <div class="box-header">Eigene Artefakte</div>
+  <div class="box-content success inner text-center">
+  <table class="table">
+    <tr class="bg2 nohover">
+      <th class="bg2 nohover">Name</th>
+      <th class="bg2 nohover">Höhle</th>
+      <th class="bg2 nohover">&nbsp;</th>
+    </tr>
+    {% for artefact in ownArtefactsList %}
+    {% set bgID = (bgID+1)%2 %}
+    <tr class="bg{{ bgID }} object-row">
+      <td><a href="main.php?modus={{ artefact_detail_link }}&amp;artefactID={{ artefact.artefactID }}">{{ artefact.artefactname}}</a></td>
+      <td><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.cavename }} ({{ artefact.xCoord }}|{{ artefact.yCoord }})</a></td>
+      <td>
+        {% if artefact.initiation_possible %}
+        <a href="main.php?modus={{ artefact.modus_artefact_detail }}&amp;artefactID={{ artefact.artefactID }}">uneingeweiht</a>
+        {% elseif artefact.initiation_not_possible %}
+        {{ artefact.initiation_not_possible.status }}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endif %}
+{% if otherArtefactsList %}
+<div class="box small">
+  <div class="box-header">Fremde Artefakte</div>
+  <div class="box-content success inner text-center">
+  <table class="table">
+    <tr class="bg2 nohover">
+      <th class="bg2 nohover">Name</th>
+      <th class="bg2 nohover">Höhle</th>
+      <th class="bg2 nohover">Besitzer</th>
+      <th class="bg2 nohover">Stamm</th>
+    </tr>
+    {% for artefact in otherArtefactsList %}
+    {% set bgID = (bgID+1)%2 %}
+    <tr class="bg{{ bgID }} object-row">
+      <td><a href="main.php?modus={{ artefact_detail_link }}&amp;artefactID={{ artefact.artefactID }}">{{ artefact.artefactname}}</a></td>
+      <td><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.cavename }} ({{ artefact.xCoord }}|{{ artefact.yCoord }})</a></td>
+      <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ artefact.playerID }}">{{ artefact.name }}</a></td>
+      <td><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ artefact.tribe }}">{{ artefact.tribe }}</a></td>
+    </tr>
+    {% if artefact.isLimbusArtefact %}
+      <tr><td>Artefakt befindet sich nicht im Spiel!</td></tr>
+    {% endif %}
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endif %}
+{% if movedArtefactsList %}
+<div class="box small">
+  <div class="box-header">Artefakte, die transportiert werden</div>
+  <div class="box-content success inner text-center">
+  <table class="table">
+    <tr class="bg2 nohover">
+      <th class="bg2 nohover">Name</th>
+      <th class="bg2 nohover">von</th>
+      <th class="bg2 nohover">nach</th>
+      <th class="bg2 nohover">Ankunft</th>
+    </tr>
+    {% for artefact in movedArtefactsList %}
+    {% set bgID = (bgID+1)%2 %}
+    <tr class="bg{{ bgID }} object-row">
+      <td><a href="main.php?modus={{ artefact_detail_link }}&amp;artefactID={{ artefact.artefactID }}">{{ artefact.artefactname}}</a></td>
+      <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ artefact.source_playerID }}">{{ artefact.source_name }}</a>
+          <small><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ artefact.source_tribe }}">{{ artefact.source_tribe }}</a></small><br />
+          <a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.source_cavename }} ({{ artefact.source_xCoord }}|{{ artefact.source_yCoord }})</a></td>
+      <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ artefact.destination_playerID }}">{{ artefact.destination_name }}</a>
+          <small><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ artefact.destination_tribe }}">{{ artefact.destination_tribe }}</a></small><br />
+          <a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.destination_cavename }} ({{ artefact.destination_xCoord }}|{{ artefact.destination_yCoord }})</a></td>
+      <td>{{ artefact.event_end }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+{% endif %}
+{% if not ownArtefactsList and not otherArtefactsList and not movedArtefactsList %}
+<div class="notice" style="margin-bottom: 0px">Derzeit sind keine Artefakte in der Übersicht vorhanden.</div>
+{% endif %}
+
+{% endblock %}

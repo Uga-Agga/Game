@@ -34,7 +34,6 @@ define("MAP_TIMEOUT", 60*60);
 
 $config = new Config();
 $db     = DbConnect();
-$post   = new POST();
 
 // which coordinate should be marked
 $x = request_var('x', 0);

@@ -1,5 +1,16 @@
+{#
+/* tribeDetail.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 {% extends "base.tmpl" %}
-{% block title %}Karte{% endblock %}
+{% block title %}Stammesbeschreibung{% endblock %}
 {% block content %}
 
 <div class="box small">
@@ -12,7 +23,7 @@
     {% endif %}
 
     <div style="width: 310px; float: left; margin-left: 10px;">
-      <div class="smallinner notice nohover">
+      <div class="notice nohover">
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
 
@@ -40,7 +51,7 @@
     </div>
 
     <div style="width: 310px; float: right; margin-right: 10px;">
-      <div class="smallinner notice nohover">
+      <div class="notice nohover">
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
 

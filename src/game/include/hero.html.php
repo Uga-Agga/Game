@@ -51,6 +51,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
 
   $messageText = array(
+  -12 => array('type' => 'error', 'message' => _('Fehler beim Erhöhen des Levels')),
   -11 => array('type' => 'error', 'message' => _('Nicht genug Talentpunkte vorhanden!')),
   -10 => array('type' => 'error', 'message' => _('Ihr Held ist noch nicht erfahren genug, diesen Trank zu nutzen!')),
   -9 => array('type' => 'error', 'message' => _('Nicht genug Tränke vorhanden!')),
@@ -68,7 +69,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   3 => array('type' => 'success', 'message' => _('Euer Held wurde erstellt.')),
   4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.')), 
   5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')), 
-  6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.'))
+  6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
+  7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!'))
   );
   
   // create new hero
@@ -89,11 +91,16 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   if($hero!= null) {
 
     $disabled = 'disabled=disabled';
+    $showLevelUp = false;
     
     $eventHero=getEventHero($playerID);
     
-    if ($eventHero) {
+    if (!$eventHero || !$hero['isAlive']) {
       $disabled = '';
+    }
+    
+    if ($hero['expLeft'] <= 0) {
+      $showLevelUp = true;
     }
     
     $ritual = getRitualByLvl($hero['lvl']);
@@ -122,7 +129,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $action = request_var('action', '');
     switch ($action) {
       case 'Wiederbeleben':
-        if ($eventHero === true){
+        if ($eventHero === true) {
           $messageID = createRitual($caveID, $playerID, $resource, $hero, $ownCaves);
           if ($messageID === 2) {
             $disabled = 'disabled=disabled';
@@ -150,8 +157,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
             case 'force':
               //typ='force';
               if ($hero['forceLvl']<10) {
-                $hero['force']=0.05*($hero['forceLvl']+1);
-                if (skillForce($playerID)) {
+                if (skillForce($playerID, $hero)) {
                   $messageID=1;
                 }
                 break;
@@ -161,8 +167,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
             case 'maxHP':
               //typ='maxHP';
               if ($hero['maxHpLvl']<10) {
-                $hero['maxHealPoints']=floor(100+25*pow($hero['maxHpLvl'], 3)/2);
-                if (skillMaxHp($playerID,$hero['maxHealPoints'])) {
+                if (skillMaxHp($playerID, $hero)) {
                   $messageID=1;
                 } else {
                   $messageID = -5;
@@ -174,8 +179,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
             case 'regHP':
               //typ='regHP';
               if ($hero['regHpLvl']<10) {
-                $hero['regHealPoints']=5*pow($hero['regHpLvl']+1,2);
-                if (skillRegHp($playerID)) {
+                if (skillRegHp($playerID, $hero)) {
                   $messageID=1;
                 } else {
                   $messageID = -5;
@@ -187,6 +191,14 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           }
           break;
         }
+        
+        case 'lvlUp':
+          if (hero_levelUp ($hero)) {
+            $messageID = 7;
+          } else {
+            $messageID = -12;
+          }
+        break;
         
         case 'usePotion':
           if (($potionID = request_var('potionID', -1)) == -1) {
@@ -246,14 +258,15 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   if ($hero) {
     $hero = getHeroByPlayer($playerID);
     $template->addVars(array(
-        'hero'               => $hero,
+    'hero'               => $hero,
     'disabled'           => (isset($disabled)) ? $disabled : '',
+    'showLevelUp'        => (isset ($showLevelUp)) ? $showLevelUp : '',
     'delay'              => time_formatDuration($ritual['duration']),
     'ritual'             => $ritual,
     'resource'           => $resource,
-
     ));
   }
+  
   if ($newhero) {
     $template->addVars(array(
         'newhero'               => $newhero,

@@ -1,0 +1,16 @@
+<table cellpadding="3" cellspacing="0" class="box">
+  <tr> 
+    <th align="left">Name</th>
+    <tmpl:HEADER_RESOURCES>
+    <th class="broader"><img src="%gfx%/resources/{dbFieldName}_icon.gif" alt="{name}" width="20" height="20" title="{name}" /></th>
+    </tmpl:HEADER_RESOURCES>
+  </tr>
+  <tmpl:UNIT> 
+  <tr align="left" class="row{iterator}">
+    <td><a href="?modus=units&amp;unitsID={unitID}">{name}</a></td>
+    <tmpl:ENCUMBRANCE>
+    <td align="center">{value}</td>
+    </tmpl:ENCUMBRANCE>
+  </tr>
+  </tmpl:UNIT> 
+</table>

@@ -1,0 +1,49 @@
+body       {bgcolor="#CCCC99"}
+div.center	{text-align: center;}
+div.left	{text-align: left;}
+div.right	{text-align: right;}
+td         {font-family: verdana,helvetica; font-size: 11px}
+.row0      {background-color:#CCCC99}
+.row1      {background-color:#FFFFCC}
+body       {scrollbar-face-color: #dee3e7; scrollbar-highlight-color: #ffffff; scrollbar-shadow-color: #dee3e7;
+            scrollbar-3dlight-color: #d1d7dc; scrollbar-arrow-color: #006699; scrollbar-track-color: #efefef;
+            scrollbar-darkshadow-color: #98aab1; background-color: #cccc99}
+p          {font-family: verdana,helvetica; font-size: 11px}
+input,
+select     {font-family: verdana,helvetica; font-size: 9px;}
+
+textarea   {margin: 2px 2px 2px 2px}
+
+fieldset   {border: 1px solid #000000; margin: 1em .5em .5em .5em}
+legend     {padding: 0.2em 0.5em; border:1px solid black; color:black; background-color: #ffffcc;
+            font-size:90%}
+
+a:link     {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+a:active   {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+a:visited  {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+a:hover    {background: none; color: #000000; font-size: 11px; font-family: verdana, helvetica; text-decoration: underline}
+.title     {background: none; color: #000000; font-size: 13px; font-weight: bold; font-family: verdana, helvetica; text-decoration: none}
+.box       {font-family: verdana,helvetica; font-size: 11px; border: 1px solid #000000; background-color: #99CCCC}
+.broader	{padding-right: 10px;}
+
+div.selector {width: 1100px}
+div.selector li {float: left;}
+div.selector ul {list-style: none;}
+
+div.top    {float: none;}
+
+div.frame_left   {float: left; white-space: nowrap;}
+
+div.main	{position: absolute; margin-left: 150px;}
+
+div.menu ul {list-style: outside url(../images/bullet.gif);}
+
+div.content ul {list-style: none; float: left;}
+
+div.logo ul {list-style: none;}
+
+.clean_list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}

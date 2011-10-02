@@ -1,3 +1,14 @@
+{#
+/* unitMovement.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 {% extends "base.tmpl" %}
 {% block title %}Bewegungen{% endblock %}
 {% block content %}
@@ -211,7 +222,7 @@ function hideWMTT() {
 // ]]>
 </script>
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
 <form id="unitMoving" action="main.php" method="post">
   <div class="box">
@@ -238,7 +249,7 @@ function hideWMTT() {
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
           <td>&nbsp;</td>
-          <td><a href="main.php?modus={{ unit_details }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
+          <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
           <td><input id="unit_{{ item.warrior_id }}" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();" onclick="dur();getMaxLoad();" onchange="dur();getMaxLoad();" onkeyup="dur();getMaxLoad();" /></td>
           <td>{{ item.max_warrior_count }}</td>
           {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
@@ -283,7 +294,7 @@ function hideWMTT() {
           {% if artefact %}
             <li class="bold">Ein Artefact mitnehmen</li>
             {% for item in artefact %}
-              <input type="radio" name="myartefacts" id="myartefacts{{item.artefactID}}" value="{{item.artefactID}}"><label>{{item.name}}</label><br />
+              <input type="radio" name="myartefacts" id="myartefacts{{ item.artefactID }}" value="{{ item.artefactID }}"><label>{{ item.name }}</label><br />
             {% endfor %}
             <input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked><label for="myartefactsnone">keines</label>
           {% endif %}
@@ -445,9 +456,7 @@ function hideWMTT() {
                 {% endfor %}
               {% endif %}
               {% if item.artefact %}
-                {% for item_artefact in item.artefact %}
-                  <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</span></li>
-                {% endfor %}
+                <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item.artefact.name }}</span></li>
               {% endif %}
               {% if item.hero %}
                   <li><span style="font-size: x-small; white-space:nowrap;">{{ item.hero }}</span></li>

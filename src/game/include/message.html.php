@@ -282,8 +282,8 @@ function messages_sendMessage($caveID) {
 
   $zeichen = 16384;
 
-  $betreff = request_var('betreff', "");
-  $nachricht = request_var('nachricht', "");
+  $betreff = $_POST['betreff'];
+  $nachricht = $_POST['nachricht'];
 
   // **** get recipient ****
   $contactID = request_var('contactID', 0);

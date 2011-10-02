@@ -1,3 +1,14 @@
+{#
+/* improvementDetailAjax.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
 {% spaceless %}
 
 <div style="float: left; width: 39%; max-width: 256px;">
@@ -6,17 +17,17 @@
 <div style="float: left; width: 61%;">
 {{ description|raw }}
 <br/>
-<strong>Maximale Stufe:</strong> {{ maxlevel }}<br/>
+<span class="bold">Maximale Stufe:</span> {{ maxlevel }}<br/>
 <br/>
   
 {% if DEPGROUP %}
-  <strong>Abh&auml;ngigkeiten: </strong><br/>
+  <strong>Abhängigkeiten: </strong><br/>
 	{% for depGroup in DEPGROUP %}
     <strong>{{ depGroup.name}}:</strong>
     {% for dependency in depGroup.DEP %}
       {{ dependency.name }} {{ dependency.level|raw }}
-    {% endfor %}	
-    <br/>			
+    {% endfor %}
+    <br/>
 	{% endfor %}
 {% endif %}
 

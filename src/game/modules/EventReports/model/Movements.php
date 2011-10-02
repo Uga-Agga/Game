@@ -56,10 +56,17 @@ class EventReports_Movements_Model extends Model {
     global $unitTypeList;
 
     $result = array();
-    foreach ($this->movements as $movement)
-      foreach ($unitTypeList as $unitType)
-        if ($movement[$unitType->dbFieldName])
-          $result[$movement['movementID']][$unitType->dbFieldName][$movement['caveID']] += $movement[$unitType->dbFieldName];
+    foreach ($this->movements as $movement) {
+      foreach ($unitTypeList as $unitType) {
+        if ($movement[$unitType->dbFieldName]) {
+          if (!isset($result[$movement['movementID']][$unitType->dbFieldName][$movement['caveID']])) {
+             $result[$movement['movementID']][$unitType->dbFieldName][$movement['caveID']] = $movement[$unitType->dbFieldName];
+          } else {
+            $result[$movement['movementID']][$unitType->dbFieldName][$movement['caveID']] += $movement[$unitType->dbFieldName];
+          }
+        }
+      }
+    }
 
     return $result;
   }

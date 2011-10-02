@@ -1,0 +1,145 @@
+{#
+/* caveBookmarks.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>, Georg Pitterle
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Artefakte - Übersicht{% endblock %}
+{% block content %}
+
+{% if showUnitDetails %}
+<fieldset style="text-align: left;">
+  <legend>{{ unitName }}</legend>
+
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', '{{ unitName }}');
+        data.addRows([
+        {% for unit in GraphDataHour %}
+        ['{{ unit.name }}', {{ unit.value}}],
+        {% endfor %}
+        ]);
+        var chart = new google.visualization.AreaChart(document.getElementById('UnitHourDiv'));
+        chart.draw(data, {width: 600, height: 240, legend: 'bottom', title: '{{ unitName }} der letzten 24 Std'});
+      }
+    </script>
+
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Year');
+        data.addColumn('number', '{{ unitName }}');
+        data.addRows([
+        {% for unit in GraphDataDay %}
+        ['{{ unit.name }}', {{ unit.value}}],
+        {% endfor %}
+        ]);
+        var chart = new google.visualization.AreaChart(document.getElementById('UnitDayDiv'));
+        chart.draw(data, {width: 600, height: 240, legend: 'bottom', title: '{{ unitName }} der letzten 24 Tage'});
+      }
+    </script>
+ 
+  <div id="UnitHourDiv"></div>
+  <div id="UnitDayDiv"></div>
+</fieldset>
+{% endif %}
+
+<div class="box small">
+  <div class="box-header">Götter/Halbgötter Statistik</div>
+  <div class="box-content success inner text-center nohover">
+    <table>
+      <tr>
+        <td style="vertical-align: top;">
+          <div class="notice" style="width: 280px;">
+            <table>
+              <tr align="left">
+                <th width="230px">Gott</th>
+                <th width="50px">Anbeter</th>
+              </tr>
+              {% for god in GodStats %}
+              <tr>
+                <td align="left">{{ god.name }}</td>
+                <td align="right">{{ god.value }}</td>
+              </tr>
+            {% endfor %}
+            </table>
+          </div>
+        </td>
+        <td style="vertical-align: top;">
+          <div class="notice" style="width: 280px;">
+            <table>
+              <tr align="left">
+                <th width="230px">Halbgott</th>
+                <th width="50px">Anbeter</th>
+              </tr>
+              {% for halfgod in HalfGodStats %}
+                <tr>
+                  <td align="left">{{ halfgod.name }}</td>
+                  <td align="right">{{ halfgod.value }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="box small">
+  <div class="box-header">Einheiten/Lager Statistik</div>
+  <div class="box-content success inner text-center nohover">
+    <table>
+      <tr>
+        <td style="vertical-align: top;">
+          <div class="notice" style="width: 280px;">
+            <table>
+              <tr align="left">
+                <th width="230px">Name</th>
+                <th width="50px">Lebend</th>
+              </tr>
+              {% for unit in Units %}
+              <tr>
+                <td align="left"><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
+                <td align="right">{{ unit.value }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </td>
+        <td style="vertical-align: top;">
+          <div class="notice" style="width: 280px;">
+            <table>
+              <tr align="left">
+                <th width="230px">Lagerstufe</th>
+                <th width="50px">Anzahl</th>
+              </tr>
+              {% for storage in StorageStats %}
+              <tr>
+                <td align="left">{{ storage.name }}</td>
+                <td align="right">{{ storage.value }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

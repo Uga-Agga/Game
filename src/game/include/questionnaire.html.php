@@ -22,19 +22,22 @@ function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
   $no_resource_flag = 1;
   $msg = "";
 
-  if (sizeof(request_var('question', array('' => ''))))
+  if (sizeof(request_var('question', array('' => '')))) {
     $msg = questionnaire_giveAnswers();
+  }
 
   $template->setFile('questionnaire.tmpl');
+  $template->setShowRresource(false);
 
   // show message
-  if ($msg != "") {
-    $template->addVar('message', $msg);
+  if (!empty($msg)) {
+    $template->addVar('status_msg', $msg);
   }
   
   // show my credits
-  if ($account = questionnaire_getCredits($_SESSION['player']->questionCredits))
+  if ($account = questionnaire_getCredits($_SESSION['player']->questionCredits)) {
     $template->addVar('account', $account);
+  }
 
   // show the questions
   $questions = questionnaire_getQuestions();
@@ -47,12 +50,8 @@ function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
       )
     ));
   } else {
-    $template->addVar('message', _('Derzeit liegen keine weiteren Fragen vor.'));
+    $template->addVar('status_msg', array('type' => 'notice', 'message' => _('Derzeit liegen keine weiteren Fragen vor.')));
   }
-
-  // show the link to the present page
-  $template->addVar('QUESTIONNAIRE_PRESENTS', QUESTIONNAIRE_PRESENTS);
-
 }
 
 function questionnaire_getCredits($credits) {
@@ -75,12 +74,17 @@ function questionnaire_getQuestions() {
 
   // get possible questions
   $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_QUESTIONS_TABLE ." WHERE expiresOn > NOW() + 0 ORDER BY questionID ASC");
-  if ($sql->rowCountSelect() == 0) return array();
-    if (!$sql->execute()) return array();
+  if (!$sql->execute()) {
+    return array();
+  }
 
   $questions = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $questions[$row['questionID']] = $row;
+  }
+  
+  if (sizeof($questions) == 0) {
+    return array();
   }
 
   // get answers
@@ -89,8 +93,9 @@ function questionnaire_getQuestions() {
            "AND questionID IN (".implode(", ", array_map(array($db, 'quote'), array_keys($questions))).") ".
            "ORDER BY questionID ASC");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-
-  if (!$sql->execute()) return array();
+  if (!$sql->execute()) {
+    return array();
+  }
 
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     unset($questions[$row['questionID']]);
@@ -100,16 +105,18 @@ function questionnaire_getQuestions() {
   
   if (empty($questionIDs)) return array();
   
-  $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_CHOISES_TABLE ." ".
-           "WHERE questionID IN (". $questionIDs . ") ".
-           "ORDER BY choiceID ASC");
+  $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_CHOISES_TABLE ."
+                       WHERE questionID IN (". $questionIDs . ")
+                       ORDER BY choiceID ASC");
 
   if ($sql->rowCountSelect() == 0) return array();
   if (!$sql->execute()) return array();
 
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if (isset($question[$row['questionID']]['CHOICE']))
+    if (isset($question[$row['questionID']]['CHOICE'])) {
       $questions[$row['questionID']]['CHOICE'] = array();
+    }
+
     $questions[$row['questionID']]['CHOICE'][$row['choiceID']] = $row;
   }
   return $questions;
@@ -125,11 +132,11 @@ function questionnaire_giveAnswers() {
   }
 
   // get valid answers
-  $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_CHOISES_TABLE ." ".
-           "WHERE questionID IN (".implode(", ", array_map(array($db, 'quote'), array_keys($answers))).")");
-
-  if ($sql->rowCountSelect() == 0) return _('Keine derartigen Fragen!');
-    if (!$sql->execute()) return _('Fehler') . ": " . mysql_error();
+  $sql = $db->prepare("SELECT * 
+                       FROM ". QUESTIONNAIRE_CHOISES_TABLE ."
+                       WHERE questionID IN (".implode(", ", array_map(array($db, 'quote'), array_keys($answers))).")");
+  if ($sql->rowCountSelect() == 0) return array('type' => 'error', 'message' => _('Keine derartigen Fragen!'));
+    if (!$sql->execute()) return array('type' => 'error', 'message' => _('Fehler') . ": " . mysql_error());
 
   $valid = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
@@ -155,11 +162,11 @@ function questionnaire_giveAnswers() {
 
   // get questions
   $questions = array();
-  $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_QUESTIONS_TABLE ." ".
-           "WHERE questionID IN (".implode(",", array_keys($answers)).")");
-  
-  if ($sql->rowCountSelect() == 0) return _('Keine derartigen Fragen!');
-  if (!$sql->execute()) return _('Fehler') . ": " . mysql_error();
+  $sql = $db->prepare("SELECT * 
+                       FROM ". QUESTIONNAIRE_QUESTIONS_TABLE ."
+                       WHERE questionID IN (".implode(",", array_keys($answers)).")");
+  if ($sql->rowCountSelect() == 0) return array('type' => 'error', 'message' => _('Keine derartigen Fragen!'));
+  if (!$sql->execute()) return array('type' => 'error', 'message' => _('Fehler') . ": " . mysql_error());
   
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $questions[$row['questionID']] = $row;
@@ -174,18 +181,19 @@ function questionnaire_giveAnswers() {
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('questionID', $questionID, PDO::PARAM_INT);
     $sql->bindValue('choiceID', $choiceID, PDO::PARAM_INT);
-    
-    if (!$sql->execute()) return _('Fehler') . ": " . mysql_error();
+
+    if (!$sql->execute()) return array('type' => 'error', 'message' => _('Fehler') . ": " . mysql_error());
     if ($sql->rowCount() != 1) continue;
     $sql->closeCursor();
     $rewards += $questions[$questionID]['credits'];
   }
   
   // now update playerstats
-  if (!questionnaire_addCredits($rewards))
-    return _('Probleme beim Eintragen der Bonuspunkte.');
+  if (!questionnaire_addCredits($rewards)) {
+    return array('type' => 'error', 'message' => _('Probleme beim Eintragen der Bonuspunkte.'));
+  }
 
-  return "";
+  return;
 }
 
 function questionnaire_addCredits($credits) {
@@ -205,11 +213,10 @@ function questionnaire_addCredits($credits) {
 }
 
 function questionnaire_presents($caveID, &$ownCaves) {
-  global $db, $defenseSystemTypeList, $unitTypeList, $resourceTypeList, $no_resource_flag, $template;
-
-  $no_resource_flag = 1;
+  global $db, $defenseSystemTypeList, $unitTypeList, $resourceTypeList, $template;
 
   $template->setFile('questionnairePresents.tmpl');
+  $template->setShowRresource(false);
 
   $msg = "";
   if (intval(request_var('presentID', 0)) > 0)
@@ -270,10 +277,6 @@ function questionnaire_presents($caveID, &$ownCaves) {
   else {
     $template->addVar('NO_PRESENT', "&nbsp;");
   }
-  
-  // show the link to the questions page
-  $template->addVar('QUESTIONNAIRE', QUESTIONNAIRE);
-
 }
 
 function questionnaire_timeIsRight($row) {
