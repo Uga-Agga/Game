@@ -78,7 +78,7 @@ define("RSS_PATH", "@RSS_URL@");
 define("TOOLS_PATH", "@TOOLS_URL@");
 
 /* ***** MAP ***** ********************************************************* */
-define("MAP_WIDTH",       9);
+define("MAP_WIDTH",       7);
 define("MAP_HEIGHT",      9);
 define("MINIMAP_SCALING", 200);
 
