@@ -291,8 +291,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     }
 
     // check if switching to same relation as target or relation is possible
-    if ($relation['other']['relationType'] != $relationType &&
-        !relation_isPossible($relationType, //to
+    if ($relation['other']['relationType'] != $relationType && !relation_isPossible($relationType, //to
                               $relation['own']['relationType'])) {  //from 
       return -5;
     }
@@ -337,18 +336,14 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   // if switching to the same relation of other clan towards us,
   // use their treaty's end_time!
-  if ($relationType == $relation['other']['relationType'] &&
-      $relationType != 0) {
+  if ($relationType == $relation['other']['relationType'] && $relationType != 0) {
     $end_time = $relation['other']['duration'];
-  }
-  else {
-    $duration =
-      $relationList[$relationTypeActual]['transitions'][$relationType]['time'];
-      $end_time = 0;
+  } else {
+    $duration = $relationList[$relationTypeActual]['transitions'][$relationType]['time'];
+    $end_time = 0;
   }
 
-  if ($relationList[$relationFrom]['isPrepareForWar'] && 
-      $relationList[$relationTo]['isWar']) {
+  if ($relationList[$relationFrom]['isPrepareForWar'] &&  $relationList[$relationTo]['isWar']) {
     $OurFame = $relation['own']['fame'];
     $OtherFame = $relation['other']['fame'];
   } else {
@@ -381,12 +376,8 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
   }
 
   // insert history message
-  if ($message = $relationList[$relationType]['historyMessage']) {
-    relation_insertIntoHistory(
-      $tag,
-      relation_prepareHistoryMessage($tag,
-             $targetTribeInfo['tag'],
-             $message));
+  if (isset($relationList[$relationType]['historyMessage'])) {
+    relation_insertIntoHistory($tag, relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $relationList[$relationType]['historyMessage']));
   }
 
   $relationName = $relationList[$relationType]['name'];
@@ -408,14 +399,9 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     }
 
     // insert history
-    if ($message = $relationList[$oST]['historyMessage']) {
-      relation_insertIntoHistory(
-                $targetTribeInfo['tag'],
-                relation_prepareHistoryMessage($tag,
-                                              $targetTribeInfo['tag'],
-                                              $message));
+    if (isset($relationList[$oST]['historyMessage'])) {
+      relation_insertIntoHistory($targetTribeInfo['tag'], relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $relationList[$oST]['historyMessage']));
     }
-
 
     $relationName = $relationList[$oST]['name'];
     tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Haltung gegenüber $tag geändert",
@@ -622,7 +608,7 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
   }
 
   if ($relation == 0) {
-    $sql = $db->prepare("DELETE " . RELATION_TABLE . " 
+    $sql = $db->prepare("DELETE FROM " . RELATION_TABLE . " 
                          WHERE tribe = :tribe
                            AND tribe_target = :tribe_target");
     $sql->bindValue('tribe', $from, PDO::PARAM_STR);
@@ -635,7 +621,7 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
     $query =
       "REPLACE " . RELATION_TABLE .
       " SET tribe = '$from', ".
-      ($target_members != 0 ? "target_members = '$target_members', " : "").
+      ((isset($target_members) && $target_members != 0) ? "target_members = '$target_members', " : "").
       "tribe_target = '$target', ".
       "timestamp = NOW() +0, ".
       "relationType = '$relation', ".
@@ -697,10 +683,12 @@ function relation_getRelation($from, $target) {
 
   if (!($own = $sql->fetch(PDO::FETCH_ASSOC))) {
     $own = array(
-      "tribe" => $from,
-      "tribe_target" => $target,
-      "changeable"   => 1,
-      "relationType" => 0
+      'tribe'        => $from,
+      'tribe_target' => $target,
+      'changeable'   => 1,
+      'relationType' => 0,
+      'tribe_rankingPoints'  => 0,
+      'target_rankingPoints' => 0
     );
   }
   $sql->closeCursor();
@@ -717,10 +705,10 @@ function relation_getRelation($from, $target) {
 
   if (!($other = $sql->fetch(PDO::FETCH_ASSOC))) {
     $other = array(
-      "tribe" => $target,
-      "tribe_target" => $from,
-      "changeable"   => 1,
-      "relationType" => 0
+      'tribe' => $target,
+      'tribe_target' => $from,
+      'changeable'   => 1,
+      'relationType' => 0
     );
   }
   $sql->closeCursor();
@@ -1345,9 +1333,8 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
         return 0;
 
       // insert history
-      if ($message = $relationList[$oDST]['historyMessage']){
-        relation_insertIntoHistory($otherTag,
-          relation_prepareHistoryMessage($tag, $otherTag, $message));
+      if (isset($relationList[$oDST]['historyMessage'])){
+        relation_insertIntoHistory($otherTag, relation_prepareHistoryMessage($tag, $otherTag, $relationList[$oDST]['historyMessage']));
       }
       // insert tribe message
       $relationName = $relationList[$oDST]['name'];

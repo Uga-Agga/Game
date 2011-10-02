@@ -130,14 +130,13 @@
         {% endfor %}
       </table>
     </div>
-<!--
+
     <div class="notice nohover" style="margin-left: 5px; margin-right: 5px;">
       <div class="text-center bold">Beziehungen</div>
       <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
         <tr>
           <th class="text-left">Stamm</th>
-          <th class="text-left" colspan="2">Beziehungen</th>
-          <th class="text-left">Dauer</th>
+          <th class="text-left">Beziehungen</th>
           <th>Sonstiges</th>
         </tr>
         {% for item in relations_info %}
@@ -145,13 +144,13 @@
           <td class="text-left">{{ item.tag }}</td>
           <td class="text-left">
             Eigene: <span class="bold">{{ item.relation }}</span><br />
-            Ihre: <span class="bold">{{ item.their_relation }}</span>
+            Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+            Bis: <span class="bold">{{ item.duration }}</span>
           </td>
-          <td class="text-left">bis: {{ item.duration }}</td>
           <td class="text-right">
             {% if item.war %}
               Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-              Kriegsanteil: {{ item.percent_actual }}&nbsp;%
+              Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
             {% endif %}
           </td>
         </tr>
@@ -159,15 +158,20 @@
         {% for item in relations %}
         <tr>
           <td class="text-left">{{ item.tag }}</td>
-          <td class="text-left">Eigene: <span class="bold">{{ item.relation }}</span></td>
-          <td class="text-left">Ihre: <span class="bold">{{ item.their_relation }}</span></td>
+          <td class="text-left">
+            Ihre: <span class="bold">{{ item.their_relation }}</span><br />
           </td>
-          <td class="text-left">bis: {{ item.duration }}</td>
           <td class="text-right">
             {% if item.war %}
               Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-              Kriegsanteil: {{ item.percent_actual }}&nbsp;%
+              Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
             {% endif %}
+            <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+              <p><select name="relationData[relationID]">
+                {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
+              </select>
+              <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
+            </form>
           </td>
         </tr>
         {% endfor %}
@@ -176,34 +180,7 @@
   </div>
 </div>
 {% endif %}
-
-  <div class="smallinner notice nohover" style="width:450px;"><strong>Beziehungen:<br /><br /></strong>
-  <table class="table-smallnotice">
-  <tr>
-    <td>
-      <tmpl:RELATION_INFO>
-      <table>
-        <tr>
-          <td>{tag}</td>
-          <td>{relation} bis mindestens {duration}</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-          <td>Ihre Haltung uns gegen&uuml;ber: {their_relation}</td>
-        </tr>
-        <tmpl:WAR>
-        <tr>
-          <td>&nbsp;</td>
-          <td>Knüppelpunkte: Unsere: {fame_own}. Ihre: {fame_target}.</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-          <td>Kriegsanteil: {percent_actual}&nbsp;%</td>
-        </tr>
-        </tmpl:WAR>
-      </table>
-      </tmpl:RELATION_INFO>
----------------------------------------------------------------------
+<!--
       <tmpl:RELATION>
       <form method="post" action="main.php">
         <p><input type="hidden" name="{modus_name}" value="{modus}" />
@@ -256,7 +233,7 @@
       </tmpl:RELATION>
     </td>
   </tr>
-</table>-->
+</table>
 </div></div>
-
+-->
 {% endblock %}
