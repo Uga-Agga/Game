@@ -64,11 +64,11 @@
         <li class="player_detail_right">{{ player_details.body_count }}</li>
         <li class="clr"><br class="clr" /></li>
 
-        <li class="player_detail_left"><a href="main.php?modus=ranking&amp;offset={playerRankOffset}">Aktuelles Ranking:</a></li>
+        <li class="player_detail_left"><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ player_details.rank }}">Aktuelles Ranking:</a></li>
         <li class="player_detail_right">{{ player_details.rank }}</li>
         <li class="clr"><br class="clr" /></li>
         
-        <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
+        <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus={{ contact_bookmarks_link }}&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
         <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus={{ messages_new_link }}&amp;empfaenger={{ player_details.mail_receiver }}">Nachricht senden</a></li>
       </ul>
     </div>

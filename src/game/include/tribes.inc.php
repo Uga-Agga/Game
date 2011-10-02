@@ -1415,7 +1415,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
             "Stammesmenü haben, loggen Sie sich ".
             "bitte neu ein.");
 
-    Player::addHistoryEntry($playerID, sprintf(_('verlässt den Stamm \'%s\''), $tag));
+    Player::addHistoryEntry($playerID, sprintf(_("verlässt den Stamm '%s'"), $tag));
   }
 
   $sql = $db->prepare("DELETE FROM ". TRIBE_TABLE . " WHERE tag LIKE :tag");
@@ -1482,7 +1482,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
       return 0;
   }
 
-  Player::addHistoryEntry($tribe['leaderID'], sprintf(_('löst den Stamm \'%s\' auf'), $tag));
+  Player::addHistoryEntry($tribe['leaderID'], sprintf(_("löst den Stamm '%s' auf"), $tag));
 
   return 1;
 }
@@ -1763,8 +1763,7 @@ function tribe_processLeave($playerID, $tag, $FORCE = 0) {
     return -4;
   }
 
-  Player::addHistoryEntry($playerID,
-                          sprintf(_('verläßt den Stamm \'%s\''), $tag));
+  Player::addHistoryEntry($playerID, sprintf(_("verläßt den Stamm '%s'"), $tag));
 
   tribe_setBlockingPeriodPlayerID($playerID);
 
@@ -1813,8 +1812,7 @@ function tribe_processKickMember($playerID, $tag) {
     return -1;
   }
 
-  Player::addHistoryEntry($playerID,
-                          sprintf(_('wird aus dem Stamm \'%s\' geworfen'), $tag));
+  Player::addHistoryEntry($playerID, sprintf(_("wird aus dem Stamm '%s' geworfen"), $tag));
 
   // block player
   tribe_setBlockingPeriodPlayerID($playerID);

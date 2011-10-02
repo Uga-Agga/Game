@@ -122,7 +122,7 @@ class Player {
                      VALUES (:playerID, :timestamp, :entry)");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     $sql->bindValue('timestamp', time_toDatetime($timestamp), PDO::PARAM_STR);
-    $sql->bindValue('entry', addslashes($entry), PDO::PARAM_STR);
+    $sql->bindValue('entry', $entry, PDO::PARAM_STR);
     
     return $sql->execute();
   }

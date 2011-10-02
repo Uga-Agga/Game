@@ -58,7 +58,7 @@ function player_getContent($caveID, $playerID) {
 
   $timediff = getUgaAggaTimeDiff(time_fromDatetime($playerDetails['created']), time());
   $playerDetails['age'] = 18 + $timediff['year'];
-  
+
     // init messages class
   $parser = new parser;
   $playerDetails['description'] = $parser->p($playerDetails['description']);

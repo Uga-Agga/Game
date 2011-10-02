@@ -43,13 +43,6 @@ function tribe_getContent($caveID, $tag) {
 
   $JuniorAdmin = $targetPlayer = new Player(getPlayerByID($row['juniorLeaderID']));
 
-  $row["urltag"] = urlencode(unhtmlentities($tag));
-  $row["playerList_modus"]   = TRIBE_PLAYER_LIST;
-  $row["playerDetail_modus"] = PLAYER_DETAIL;
-  $row["tribeHistory_modus"] = TRIBE_HISTORY;
-  $row["tribeRelationList_modus"] = TRIBE_RELATION_LIST;
-  $row["tribeRanking_modus"] = RANKING_TRIBE;
-
   if (!empty($row['awards'])){
     $tmp = explode('|', $row['awards']);
     $awards = array();

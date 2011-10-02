@@ -123,8 +123,8 @@ function tribe_getContent($playerID, $tribe) {
       'tribe_tag'    => $tribeData['tag'],
       'leader_name'  => $tribeData['leaderName'],
       'leader_id'    => $tribeData['leaderID'],
-      'junior_leader_name' => (isset($JuniorAdmin->name)) ? $JuniorAdmin->name : '',
-      'junior_leader_id'   => (isset($JuniorAdmin->playerID)) ? $JuniorAdmin->playerID : 0,
+      'junior_leader_name' => (isset($juniorAdmin->name)) ? $juniorAdmin->name : '',
+      'junior_leader_id'   => (isset($juniorAdmin->playerID)) ? $juniorAdmin->playerID : 0,
       'government_name'    => $governmentList[$tribeData['governmentID']]['name']
     ));
 
