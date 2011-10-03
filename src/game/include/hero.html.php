@@ -248,7 +248,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
   ));
 
-  if ($queue) {
+  if (isset($queue) && $queue) {
     $template->addVars(array(
       'quene_show'      => true,
       'quene_finish'    => time_formatDatetime($queue['end']),
@@ -274,7 +274,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     ));
   }
   
-  if ($potions) {
+  if (isset($potions) && $potions) {
     $template->addVars(array(
       'potions'               => $potions,
     ));

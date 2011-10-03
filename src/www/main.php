@@ -479,6 +479,7 @@ $template->addVars(array(
   'weather_id'    => $weatherTypeList[$region['weather']]->weatherID,
   'weather_name'  => $weatherTypeList[$region['weather']]->name,
   'gfx'           => ($_SESSION['nogfx']) ? DEFAULT_GFX_PATH : $_SESSION['player']->gfxpath,
+  'show_hero_link' => ($ownCaves[$caveID][HERO_DB_FIELD] > 0) ? true : false,
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],
@@ -498,6 +499,7 @@ $template->addVars(array(
   'donations_link'          => DONATIONS,
   'easy_digest_link'        => EASY_DIGEST,
   'effectwonder_detail_link' => EFFECTWONDER_DETAIL,
+  'hero_link'               => HERO_DETAIL,
   'improvement_link'        => IMPROVEMENT_BUILDER,
   'improvement_detail_link' => IMPROVEMENT_DETAIL,
   'map_link'                => MAP,
