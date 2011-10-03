@@ -13,14 +13,16 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeHistory_getContent($tag) {
-  global $no_resource_flag;
+  global $template;
 
-  $no_resource_flag = 1;
-
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'tribeHistory.ihtml');
+  // open template
+  $template->setFile('tribeHistory.tmpl');
+  $template->setShowRresource(false);
 
   $history = relation_getTribeHistory($tag);
-
+  $template->addVar('tribe_history', $history);
+  return;
+  
   $i = 0;
   foreach($history AS $key => $values) {
     tmpl_iterate($template, 'ROWS');

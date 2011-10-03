@@ -361,8 +361,8 @@ $buildings = unsetBanned($buildings, $banned_players);
 $maxval = max($buildings) / 10000;
 
 $sqlUpdate = $db->prepare("UPDATE " . RANKING_TABLE . "
-                           SET resources = :buildings,
-                             resources_rank = :buildings_rank
+                           SET buildings = :buildings,
+                             buildings_rank = :buildings_rank
                            WHERE playerID = :playerID");
 foreach ($buildings as $playerID => $buildings) {
   $sqlUpdate->bindValue('buildings', $buildings, PDO::PARAM_INT);

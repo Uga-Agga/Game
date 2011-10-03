@@ -64,6 +64,10 @@ function statistic_getContent() {
   $HalfGodStats = $StatsData[HALFGOD_STATS];
   ksort($HalfGodStats);
   foreach ($HalfGodStats as $HalfGod => $value) {
+    if (!isset($ScienceFieldsName[$HalfGod])) {
+      continue;
+    }
+
     $HalfGodStatsList[] = array("name" => $ScienceFieldsName[$HalfGod],
                               "value" => array_pop(unserialize($value)));
   }
@@ -150,23 +154,23 @@ function statistic_getContent() {
     /*
      * get day stats
      */
-    foreach ($UnitStats[STATS_DAY] as $id => $data) {
-        $UnitDayStats[$id] = array('time' => $data['time'], 'value' => $data[$Unit]);
-    }
-    unset($data, $id);
+    if (isset($UnitStats[STATS_DAY]) && sizeof($UnitStats[STATS_DAY])) {
+      foreach ($UnitStats[STATS_DAY] as $id => $data) {
+          $UnitDayStats[$id] = array('time' => $data['time'], 'value' => $data[$Unit]);
+      }
+      unset($data, $id);
 
-    $GraphDataDay = array(); $i = 0;
-    krsort($UnitDayStats);
-    foreach ($UnitDayStats as $id => $data) {
-        $GraphDataDay[] = array('id'    => $i++,
-                                'name'  => substr($data['time'], 5, -3),
-                                'value' => $data['value']);
+      $GraphDataDay = array(); $i = 0;
+      krsort($UnitDayStats);
+      foreach ($UnitDayStats as $id => $data) {
+          $GraphDataDay[] = array('id'    => $i++,
+                                  'name'  => substr($data['time'], 5, -3),
+                                  'value' => $data['value']);
+      }
+      unset($data, $id);
+      $template->addVars(array('GraphDataDay' => $GraphDataDay));
     }
-    unset($data, $id);
-    $template->addVars(array('GraphDataDay' => $GraphDataDay));
   }
-  
-  //print_r($template);
 }
 
 ?>

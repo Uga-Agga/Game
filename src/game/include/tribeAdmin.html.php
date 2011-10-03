@@ -53,11 +53,6 @@ function tribeAdmin_getContent($playerID, $tag) {
       4 => array('type' => 'success', 'message' => _('Die Regierung wurde geändert.'))
   );
 
-/*  if ($_SESSION['player']->playerID != 1) {
-      $template->throwError('Diese Seite wird gerade überarbeitet');
-      return;
-  }*/
-
   // open template
   $template->setFile('tribeAdmin.tmpl');
   $template->setShowRresource(false);
@@ -76,7 +71,7 @@ function tribeAdmin_getContent($playerID, $tag) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
     return;
   }
-  $tribeData['description'] = str_replace('<br />', '', $tribeData['description']);
+  $tribeData['description'] = str_replace('<br />', '\n', $tribeData['description']);
   $template->addVar('tribe_data', $tribeData);
 
   //get Member Data
@@ -215,6 +210,7 @@ function tribeAdmin_getContent($playerID, $tag) {
       $relationData = request_var('relationData', array('' => ''));
 
       $messageID = relation_processRelationUpdate($tag, $relationData);
+      $tribeRelations = relation_getRelationsForTribe($tag);
     break;
   }
 
@@ -227,7 +223,7 @@ function tribeAdmin_getContent($playerID, $tag) {
     $JuniorLeaderSelect = array();
     $JuniorLeaderSelect[] = array(
       'value'    => 0,
-      'selected' => ($tribeData['juniorLeaderID'] == 0 ? 'selected' : ''),
+      'selected' => ($tribeData['juniorLeaderID'] == 0 ? 'selected="selected"' : ''),
       'name'     => _('keinen Stellvertreter wählen')
     );
 
@@ -283,7 +279,7 @@ function tribeAdmin_getContent($playerID, $tag) {
       // war?
       if(array_key_exists($target, $tribeWarTargets)) {
         $relation_info[$target]['war'] = true;
-        $relation_info[$target]['ame_own'] = $tribeWarTargets[$target]['fame_own'];
+        $relation_info[$target]['fame_own'] = $tribeWarTargets[$target]['fame_own'];
         $relation_info[$target]['fame_target'] = $tribeWarTargets[$target]['fame_target'];
         $relation_info[$target]['percent_actual'] = $tribeWarTargets[$target]['percent_actual'];
       }
@@ -293,6 +289,7 @@ function tribeAdmin_getContent($playerID, $tag) {
         'target_points'  => $targetData['target_rankingPoints'],
         'tribe_points'   => $targetData['tribe_rankingPoints'],
         'their_relation' =>  (isset($tribeRelations['other'][$target])) ? $relationList[$tribeRelations['other'][$target]['relationType']]['name'] : $relationList[0]['name'],
+        'relation_type'  => $targetData['relationType'],
       );
 
       if (isset($tribeWarTargets[$target])) {

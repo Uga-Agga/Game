@@ -127,7 +127,7 @@ function &getUnitsEncumbrance(){
       $encumbrances = array();
       foreach ($resourceTypeList AS $resource){
         if (!$resource->nodocumentation)
-          $encumbrances[] = array('value' => intval($unit->encumbranceList[$resource->resourceID]));
+          $encumbrances[] = array('value' => (isset($unit->encumbranceList[$resource->resourceID])) ? intval($unit->encumbranceList[$resource->resourceID]) : 0);
       }
 
       tmpl_iterate($template, 'UNIT');

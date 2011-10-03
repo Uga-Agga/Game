@@ -36,6 +36,7 @@ function formula_parseToReadable($formula){
   foreach($FORMULA_READABLE as $key => $value)
     $formula = str_replace($key, $value, $formula);
 
+  $sql = '';
   // parse symbols
   for ($i = 0; $i < strlen($formula); $i++){
 

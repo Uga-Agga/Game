@@ -1,0 +1,35 @@
+{#
+/* tribePlayerList.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Stamesmitglieder{% endblock %}
+{% block content %}
+
+<div class="box small">
+  <div class="box-header">Geschichte des Stammes {{ tribe_name }}</div>
+  <div class="box-content success inner text-center">
+    <span class="bold text-center">Geschichte</span><br />
+    {% if tribe_history %}
+      {% for item in tribe_history %}
+        <div class="info text-left" style="margin-left: 10px; margin-right: 10px;">
+          <h3 class="loud">{{ item.ingameTime }}</h3>
+          {{ item.message }}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="info text-left">
+        Dieser Stamm hat noch keine Geschichte.
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

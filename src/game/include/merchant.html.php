@@ -92,7 +92,8 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
         'bgID'        => ($count++ % 2) + 1,
         'name'        => $trade->name,
         'trade_id'    => $id,
-        'description' => $trade->description
+        'description' => $trade->description,
+        'dbFieldName' => $trade->tradeID
       );
 
        $trades[$j]['data'][$id] = array_merge($trades[$j]['data'][$id], parseCost($trade, $details));

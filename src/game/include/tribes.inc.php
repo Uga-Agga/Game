@@ -148,12 +148,8 @@ function government_processGovernmentUpdate($tag, $governmentData) {
     return -8;
   }
 
-  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER,
-       "Die Regierung wurde geändert",
-       "Ihr Stammesanführer hat die Regierung Ihres ".
-       "Stammes auf ".
-       $governmentList[$governmentData['governmentID']]['name'].
-       " geändert.");
+  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Die Regierung wurde geändert",
+    "Ihr Stammesanführer hat die Regierung Ihres Stammes auf " . $governmentList[$governmentData['governmentID']]['name'] . " geändert.");
 
   return 4;
 }
@@ -295,8 +291,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     }
 
     // check if switching to same relation as target or relation is possible
-    if ($relation['other']['relationType'] != $relationType &&
-        !relation_isPossible($relationType, //to
+    if ($relation['other']['relationType'] != $relationType && !relation_isPossible($relationType, //to
                               $relation['own']['relationType'])) {  //from 
       return -5;
     }
@@ -341,18 +336,14 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   // if switching to the same relation of other clan towards us,
   // use their treaty's end_time!
-  if ($relationType == $relation['other']['relationType'] &&
-      $relationType != 0) {
+  if ($relationType == $relation['other']['relationType'] && $relationType != 0) {
     $end_time = $relation['other']['duration'];
-  }
-  else {
-    $duration =
-      $relationList[$relationTypeActual]['transitions'][$relationType]['time'];
-      $end_time = 0;
+  } else {
+    $duration = $relationList[$relationTypeActual]['transitions'][$relationType]['time'];
+    $end_time = 0;
   }
 
-  if ($relationList[$relationFrom]['isPrepareForWar'] && 
-      $relationList[$relationTo]['isWar']) {
+  if ($relationList[$relationFrom]['isPrepareForWar'] &&  $relationList[$relationTo]['isWar']) {
     $OurFame = $relation['own']['fame'];
     $OtherFame = $relation['other']['fame'];
   } else {
@@ -385,30 +376,16 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
   }
 
   // insert history message
-  if ($message = $relationList[$relationType]['historyMessage']) {
-    relation_insertIntoHistory(
-      $tag,
-      relation_prepareHistoryMessage($tag,
-             $targetTribeInfo['tag'],
-             $message));
+  if (isset($relationList[$relationType]['historyMessage'])) {
+    relation_insertIntoHistory($tag, relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $relationList[$relationType]['historyMessage']));
   }
 
   $relationName = $relationList[$relationType]['name'];
-  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION,
-       "Haltung gegenüber {$targetTribeInfo['tag']} ".
-       "geändert",
-       "Ihr Stammesanführer hat die Haltung Ihres ".
-       "Stammes gegenüber dem Stamm ".
-       "{$targetTribeInfo['tag']} auf $relationName ".
-       "geändert.");
+  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION, "Haltung gegenüber {$targetTribeInfo['tag']} geändert",
+    "Ihr Stammesanführer hat die Haltung Ihres Stammes gegenüber dem Stamm {$targetTribeInfo['tag']} auf $relationName geändert.");
 
-  tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-       "Der Stamm $tag ändert seine Haltung",
-       "Der Stammesanführer des Stammes $tag ".
-       "hat die Haltung seines ".
-       "Stammes ihnen gegenüber ".
-       "auf $relationName ".
-       "geändert.");
+  tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Der Stamm $tag ändert seine Haltung",
+    "Der Stammesanführer des Stammes $tag hat die Haltung seines Stammes ihnen gegenüber auf $relationName geändert.");
 
   // switch other side if necessary (and not at this type already)
   if (!$end_time && ($oST = $relationInfo['otherSideTo']) >= 0) {
@@ -422,32 +399,16 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     }
 
     // insert history
-    if ($message = $relationList[$oST]['historyMessage']) {
-      relation_insertIntoHistory(
-                $targetTribeInfo['tag'],
-                relation_prepareHistoryMessage($tag,
-                                              $targetTribeInfo['tag'],
-                                              $message));
+    if (isset($relationList[$oST]['historyMessage'])) {
+      relation_insertIntoHistory($targetTribeInfo['tag'], relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $relationList[$oST]['historyMessage']));
     }
 
-
     $relationName = $relationList[$oST]['name'];
-    tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-         "Haltung gegenüber $tag ".
-         "geändert",
-         "Die Haltung Ihres ".
-         "Stammes gegenüber dem Stamm ".
-         "$tag  wurde automatisch auf $relationName ".
-         "geändert.");
+    tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Haltung gegenüber $tag geändert",
+      "Die Haltung Ihres Stammes gegenüber dem Stamm $tag  wurde automatisch auf $relationName geändert.");
 
-    tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION,
-         "Der Stamm {$targetTribeInfo['tag']} ändert ".
-         "seine ".
-         "Haltung",
-         "Der Stamm {$targetTribeInfo['tag']} ".
-         "hat die Haltung ihnen gegenüber ".
-         "automatisch auf $relationName ".
-         "geändert.");
+    tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION, "Der Stamm {$targetTribeInfo['tag']} ändert seine Haltung",
+      "Der Stamm {$targetTribeInfo['tag']} hat die Haltung ihnen gegenüber automatisch auf $relationName geändert.");
   }
 
   tribe_generateMapStylesheet();
@@ -502,11 +463,11 @@ function relation_insertIntoHistory($tribe, $message) {
 
   $sql = $db->prepare("INSERT INTO " . TRIBE_HISTORY_TABLE . " 
                        (tribe, ingameTime, message) 
-                       VALUES (:tribe, :ingameTime, :mesage)");
+                       VALUES (:tribe, :ingameTime, :message)");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-  $sql->bindValue('ingameTime', "{$time['day']}. $month<br>im Jahr {$time['year']}", PDO::PARAM_STR);
+  $sql->bindValue('ingameTime', "{$time['day']}. $month im Jahr {$time['year']}", PDO::PARAM_STR);
   $sql->bindValue('message', $message, PDO::PARAM_STR);
-  
+
   return $sql->execute();
 }
 
@@ -647,7 +608,7 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
   }
 
   if ($relation == 0) {
-    $sql = $db->prepare("DELETE " . RELATION_TABLE . " 
+    $sql = $db->prepare("DELETE FROM " . RELATION_TABLE . " 
                          WHERE tribe = :tribe
                            AND tribe_target = :tribe_target");
     $sql->bindValue('tribe', $from, PDO::PARAM_STR);
@@ -660,7 +621,7 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
     $query =
       "REPLACE " . RELATION_TABLE .
       " SET tribe = '$from', ".
-      ($target_members != 0 ? "target_members = '$target_members', " : "").
+      ((isset($target_members) && $target_members != 0) ? "target_members = '$target_members', " : "").
       "tribe_target = '$target', ".
       "timestamp = NOW() +0, ".
       "relationType = '$relation', ".
@@ -722,10 +683,12 @@ function relation_getRelation($from, $target) {
 
   if (!($own = $sql->fetch(PDO::FETCH_ASSOC))) {
     $own = array(
-      "tribe" => $from,
-      "tribe_target" => $target,
-      "changeable"   => 1,
-      "relationType" => 0
+      'tribe'        => $from,
+      'tribe_target' => $target,
+      'changeable'   => 1,
+      'relationType' => 0,
+      'tribe_rankingPoints'  => 0,
+      'target_rankingPoints' => 0
     );
   }
   $sql->closeCursor();
@@ -742,10 +705,10 @@ function relation_getRelation($from, $target) {
 
   if (!($other = $sql->fetch(PDO::FETCH_ASSOC))) {
     $other = array(
-      "tribe" => $target,
-      "tribe_target" => $from,
-      "changeable"   => 1,
-      "relationType" => 0
+      'tribe' => $target,
+      'tribe_target' => $from,
+      'changeable'   => 1,
+      'relationType' => 0
     );
   }
   $sql->closeCursor();
@@ -940,13 +903,11 @@ function relation_forceSurrender($tag, $relationData) {
   }
 
   // tribe messages for forced surrender
-  tribe_sendTribeMessage($ownTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-       "Zwangskapitulation über $target", 
-       "Ihr Stammesanführer hat den Stamm $target zur Aufgabe gezwungen.");
+  tribe_sendTribeMessage($ownTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Zwangskapitulation über $target",
+    "Ihr Stammesanführer hat den Stamm $target zur Aufgabe gezwungen.");
 
-  tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION,
-       "Zwangskapitulation gegen $tag", 
-       "Der Stammesanführer des Stammes $tag hat ihren Stamm zur Aufgabe gezwungen.");
+  tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Zwangskapitulation gegen $tag",
+    "Der Stammesanführer des Stammes $tag hat ihren Stamm zur Aufgabe gezwungen.");
 
   $relationDataLooser = array('tag' => $tag,
                               'relationID' => $surrenderId);
@@ -1372,16 +1333,13 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
         return 0;
 
       // insert history
-      if ($message = $relationList[$oDST]['historyMessage']){
-        relation_insertIntoHistory($otherTag,
-          relation_prepareHistoryMessage($tag, $otherTag, $message));
+      if (isset($relationList[$oDST]['historyMessage'])){
+        relation_insertIntoHistory($otherTag, relation_prepareHistoryMessage($tag, $otherTag, $relationList[$oDST]['historyMessage']));
       }
       // insert tribe message
       $relationName = $relationList[$oDST]['name'];
-      tribe_sendTribeMessage($otherTag, TRIBE_MESSAGE_RELATION,
-        "Haltung gegenüber $tag geändert",
-        "Die Haltung Ihres Stammes gegenüber dem Stamm $tag  wurde ".
-        "automatisch auf $relationName geändert.");
+      tribe_sendTribeMessage($otherTag, TRIBE_MESSAGE_RELATION, "Haltung gegenüber $tag geändert",
+        "Die Haltung Ihres Stammes gegenüber dem Stamm $tag  wurde automatisch auf $relationName geändert.");
     }
   }
 
@@ -1558,32 +1516,23 @@ function tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID, $oldJuniorLeader
  */
 function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
   if (!$newLeadership[0]) {
-    tribe_sendTribeMessage($tag,
-         TRIBE_MESSAGE_LEADER,
-         "Stammesführung",
-         "Ihr Stamm hat momentan keinen Anführer ".
-         "mehr");
+    tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Stammesführung",
+      "Ihr Stamm hat momentan keinen Anführer mehr");
   }
+
   $player = getPlayerByID($newLeadership[0]);
   $newLeadershipName = $player ? $player['name'] : $newLeadership[0];
   if ($newLeadership[0] && !$newLeadership[1]) {
-    tribe_sendTribeMessage($tag,
-         TRIBE_MESSAGE_LEADER,
-         "Stammesführung",
-         "Ihr Stamm hat eine neue Stammesführung:<br>".
-         "Stammesanführer: ".$newLeadershipName."<br>".
-         "Stellvertreter:  <i>nicht vorhanden</i>");
+    tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Stammesführung",
+      "Ihr Stamm hat eine neue Stammesführung:\nStammesanführer: ".$newLeadershipName."\nStellvertreter: [i]nicht vorhanden[/i]");
   }
+
   $player = getPlayerByID($newLeadership[1]);
   $newJuniorLeaderName = $player ? $player['name'] : $newLeadership[1];
   if ($newLeadership[0] && $newLeadership[1]) {
-    tribe_sendTribeMessage($tag,
-         TRIBE_MESSAGE_LEADER,
-         "Stammesführung",
-         "Ihr Stamm hat eine neue Stammesführung:<br>".
-         "Stammesanführer: ".$newLeadershipName."<br>".
-         "Stellvertreter:  ".$newJuniorLeaderName);
-  }     
+    tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Stammesführung",
+      "Ihr Stamm hat eine neue Stammesführung:\nStammesanführer: ".$newLeadershipName."\nStellvertreter:  ".$newJuniorLeaderName);
+  }
 }
 
 
@@ -1593,13 +1542,13 @@ function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
 function tribe_recalcLeader1($tag) {
   global $db;
 
-  $sql = $db->prepare("SELECT p.playerID, p.name ".
-                      "FROM ". PLAYER_TABLE ." p ".
-                      "LEFT JOIN Ranking r ON p.playerID = r.playerID ".
-                      "WHERE p.tribe LIKE :tag ".
-                      "AND r.playerID IS NOT NULL ".
-                      "ORDER BY r.rank ASC ".
-                      "LIMIT 0, 2");
+  $sql = $db->prepare("SELECT p.playerID, p.name
+                       FROM ". PLAYER_TABLE ." p
+                         LEFT JOIN Ranking r ON p.playerID = r.playerID
+                       WHERE p.tribe LIKE :tag
+                         AND r.playerID IS NOT NULL
+                       ORDER BY r.rank ASC
+                       LIMIT 0, 2");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if (!$sql->execute()) {
@@ -1635,15 +1584,15 @@ function tribe_recalcLeader2($tag) {
     return -1;
   }
   if (!($row = $sql->fetch())) {
-    return array( 0 => 0, 1 => 0); // no leader!
+    return array(0 => 0, 1 => 0); // no leader!
   }
 
   if ($row['votes'] <=  tribe_getNumberOfMembers($tag) / 2)
   {          // more than 50% ?
-    return array( 0 => 0, 1 => 0); // no leader!
+    return array(0 => 0, 1 => 0); // no leader!
   }
 
-  return array( 0 => $row['playerID'], 1 => 0);
+  return array(0 => $row['playerID'], 1 => 0);
 }
 
 
@@ -1697,7 +1646,8 @@ function tribe_processJoin($playerID, $tag, $password) {
 
   Player::addHistoryEntry($playerID, sprintf(_("tritt dem Stamm '%s' bei"), $tribeData['tag']));
 
-  tribe_sendTribeMessage($tribeData['tag'], TRIBE_MESSAGE_MEMBER, "Spielerbeitritt", "Der Spieler {$player['name']} ist soeben dem Stamm beigetreten.");
+  tribe_sendTribeMessage($tribeData['tag'], TRIBE_MESSAGE_MEMBER, "Spielerbeitritt",
+    "Der Spieler {$player['name']} ist soeben dem Stamm beigetreten.");
 
   return 1;
 }
@@ -1767,11 +1717,8 @@ function tribe_processLeave($playerID, $tag, $FORCE = 0) {
 
   tribe_setBlockingPeriodPlayerID($playerID);
 
-  tribe_sendTribeMessage($tag,
-       TRIBE_MESSAGE_MEMBER,
-       "Spieleraustritt",
-       "Der Spieler {$player['name']} ist soeben aus dem ".
-       "Stamm ausgetreten.");
+  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieleraustritt",
+    "Der Spieler {$player['name']} ist soeben aus dem Stamm ausgetreten.");
 
   if (tribe_getNumberOfMembers($tag) == 0) {  // tribe has to be deleted
     tribe_deleteTribe($tag, $FORCE);
@@ -1818,13 +1765,10 @@ function tribe_processKickMember($playerID, $tag) {
   tribe_setBlockingPeriodPlayerID($playerID);
 
   tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieler rausgeschmissen",
-    "Der Spieler {$player['name']} wurde soeben vom Anführer aus dem Stamm ".
-    "ausgeschlossen.");
+    "Der Spieler {$player['name']} wurde soeben vom Anführer aus dem Stamm ausgeschlossen.");
 
   $messagesClass->sendSystemMessage($playerID, 8, "Stammausschluss.",
-    "Sie wurden aus dem Stamm $tag ausgeschlossen. Bitte loggen Sie sich aus ".
-    "und melden Sie sich wieder an, damit das Stammesmenü bei Ihnen wieder ".
-    "richtig funktioniert.");
+    "Sie wurden aus dem Stamm $tag ausgeschlossen. Bitte loggen Sie sich aus und melden Sie sich wieder an, damit das Stammesmenü bei Ihnen wieder richtig funktioniert.");
 
   return 1;
 }

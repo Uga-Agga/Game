@@ -49,8 +49,9 @@
     <div id="header">
       <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
         <div id="header-menu">
-          <a href="main.php?modus={{ cave_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese H&ouml;hle' alt='' /></a>
-          <a href="main.php?modus={{ cave_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='H&ouml;hlenliste' alt='' /></a>
+          {% if show_hero_link %}<a href="main.php?modus={{ hero_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>{% endif %}
+          <a href="main.php?modus={{ cave_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
+          <a href="main.php?modus={{ cave_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
           <a href="main.php?modus={{ questionaire_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
           <a href="main.php?modus={{ donations_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
           <a href="main.php?modus={{ tribe_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
@@ -79,7 +80,7 @@
         <li><a href="main.php?modus={{ easy_digest_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></a></li>
         <li><a href="main.php?modus={{ unit_movement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></a></li>
         <li><a href="main.php?modus={{ messages_list_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
-        <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle H&ouml;hlen" /></a></li>
+        <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></a></li>
         <li><a href="main.php?modus={{ ranking_player_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></a></li>
         <li><a href="main.php?modus={{ map_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></a></li>
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
@@ -103,12 +104,14 @@
       <div id="cave-details">
         <div class="block" id="cave-details-list">
           |&nbsp;{% for item in navigateCave %}
-            <a href="main.php?{{ item.query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='H&ouml;hle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='H&ouml;hle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
+            <a href="main.php?{{ item.query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
           {% endfor %}
         </div>
 
         <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
       </div>
+
+      <div class="info small bottom_space">Uga-Agga Runde 12 ist nun gestart (ja auch der Ticker!).<br />Da sich wie ihr vielleicht sehen könnt viel geändert hat, bitten wir euch alle Fehler im <a href="http://forum.uga-agga.de" onclick="open_page(this.href, 1); return false;">Uga-Agga Forum</a> zu melden.</div>
 
       {% block content %}{% endblock %}
     </div>
@@ -118,7 +121,7 @@
         <li><a href="main.php?modus={{ science_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></a></li>
         <li><a href="main.php?modus={{ defense_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
         <li><a href="main.php?modus={{ unit_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
-        <li><a href="main.php?modus={{ merchant_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="H&auml;ndler" /></a></li>
+        <li><a href="main.php?modus={{ merchant_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
         <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
         <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
         <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
@@ -126,8 +129,6 @@
         <li><a href="main.php?modus={{ suggestions_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></a></li>
         <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
       </ul>
-      <br />
-      <br />
     </div>
     <div style="clear: both;"></div>
 

@@ -15,11 +15,6 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function tribeChooseLeader_getContent($playerID, $tribe) {
   global $template, $governmentList, $leaderDeterminationList;
 
-  if ($_SESSION['player']->playerID != 1) {
-    $template->throwError('Diese Seite wird gerade überarbeitet');
-    return;
-  }
-
   // open template
   $template->setFile('tribeChooseLeader.tmpl');
   
