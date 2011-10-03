@@ -30,6 +30,26 @@ function toggleObjectDetails(a, url, event) {
   event.preventDefault();
 }
 
+function displayExportDialog(a, url, event) {
+  
+    // prepare dialog window
+    $('#export-dialog').dialog({
+        autoOpen:false,
+        height: 600,
+        width: 800,
+        modal: true,
+        resizable: true,
+        buttons: {
+          Schließen: function() {
+            $(this).dialog('close');
+          }
+        }
+    });
+    
+    $('#export-dialog').dialog('open').html("Exportiere Daten...").load(url+"&method=ajax");
+
+}
+
 wmtt = null;
 document.onmousemove = updateWMTT;
 function updateWMTT(e) {
@@ -63,6 +83,12 @@ $(document).ready(function() {
   $('a.object-detail-link').click(function (event) {
     var url = $(this).attr('href');
     toggleObjectDetails($(this), url, event);
+  });
+  
+  $('a.export-link').click(function (event) {
+    var url = $(this).attr('href');
+    displayExportDialog(this, url, event);
+    event.preventDefault();
   });
 });
 

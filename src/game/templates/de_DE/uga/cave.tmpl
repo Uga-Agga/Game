@@ -18,7 +18,8 @@
 {% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
 
 <br />
-<a href="export.php?modus=thisCave&amp;caveID={{ cave_id }}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><br />
+<a class="export-link" href="export.php?modus=thisCave&amp;caveID={{ cave_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><div id="export-dialog"></div>
+<br />
 <br />
 
 <div class="box">

@@ -424,9 +424,10 @@ function hideWMTT() {
               <li>{{ item.movementID_description }}</li>
               <li>&nbsp;</li>
               <li>
-                <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-                <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-                <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+                <div id="export-dialog"></div>
               </li>
             </ul>
           </td>
