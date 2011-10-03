@@ -301,7 +301,7 @@ function messages_sendMessage($caveID) {
     $empfaenger = request_var('empfaenger', "");
   }
 
-  if ($betreff == "") $betreff = _('&lt;leer&gt;');
+  if ($betreff == "") $betreff = _('Kein Betreff');
 
   // open template
   $template->setFile('messageDialogue.tmpl');
