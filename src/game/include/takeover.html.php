@@ -283,7 +283,7 @@ function takeover_getBidding($caveCount=0) {
  */
 
 function takeover_getStatusPic($status) {
-  return array('status-img' => 'star' . substr($status + 1000, 1), 'status-txt' => $status);
+  return array('status_img' => 'star' . substr($status + 1000, 1), 'status_txt' => $status);
 }
 
 

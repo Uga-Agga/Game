@@ -99,24 +99,24 @@
           <div class="box-header">Mitstreiter:</div>
           <div class="box-content success inner">
             <table>
-              {% if bidding.bidder %}
                 <tr>
                   <th align="left" style="width: 125px;">Spieler</th>
                   <th align="left" style="width: 125px;">Sterne</th>
                 </tr>
                 <tr>
                   <td align="left" style="width: 125px;">Eigene:</td>
-                  <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ status-img }}.gif" alt="{{ status-txt }}" /></td>
+                  <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ bidding.status_txt }}.gif" alt="{{ bidding.status_img }}" /></td>
                 </tr>
+              {% if bidding.bidder %}
                 {% for item in bidding.bidder %}
                 <tr>
                   <td align="left" style="width: 125px;"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
-                  <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ status-img }}.gif" alt="{{ status-txt }}" /></td>
+                  <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
                 </tr>
                 {% endfor %}
               {% else %}
                 <tr>
-                  <td align="left" colspan="2" style="width: 250px;">>Niemand ist dumm genug, gegen euch anzutreten.</td>
+                  <td colspan="2" class="text-center" style="width: 250px;">Niemand ist dumm genug, gegen euch anzutreten.</td>
                 </tr>
               {% endif %}
             </table>

@@ -20,53 +20,53 @@ define("DEBUG", FALSE);
 /* ***** TEMPLATES ********************************************************* */
 /* ************************************************************************* */
 
-DEFINE("_MSG_SUBJECT_MAXCAVES",         "Missionierung: Zu viele Höhlen");
+DEFINE("_MSG_SUBJECT_MAXCAVES",         "Missionierung: Zu viele HÃ¶hlen");
 DEFINE("_MSG_SUBJECT_SUCCEEDEDONCE",    "Missionierung: Gunst gewonnen!");
 DEFINE("_MSG_SUBJECT_FAILEDONCE",       "Missionierung: Zu wenig Geschenke");
 DEFINE("_MSG_SUBJECT_BIDDINGTOOLOW",    "Missionierung: Geschenke wurden nicht beachtet");
 DEFINE("_MSG_SUBJECT_FAILEDCOMPLETELY", "Missionierung: Versagt!");
-DEFINE("_MSG_SUBJECT_CAVETRANSFER",     "Missionierung: Höhle unter Kontrolle!");
+DEFINE("_MSG_SUBJECT_CAVETRANSFER",     "Missionierung: HÃ¶hle unter Kontrolle!");
 
 DEFINE("_MSG_MAXCAVES",
-       "Du hast bereits die maximale Anzahl von {numCaves} Höhlen erreicht. ".
-       "Du kannst keine weiteren Höhlen missionieren.\n");
+       "Du hast bereits die maximale Anzahl von {numCaves} HÃ¶hlen erreicht. ".
+       "Du kannst keine weiteren HÃ¶hlen missionieren.\n");
 
 DEFINE("_MSG_SUCCEEDEDONCE",
-       "Ein Bote bringt eine frohe Botschaft. Du hast in die freie Höhle ".
+       "Ein Bote bringt eine frohe Botschaft. Du hast in die freie HÃ¶hle ".
        "'{name}' ({xCoord}|{yCoord}) Rohstoffe im Wert von {abs_bidding} ".
        "Punkten geschafft. Die Bewohner von '{name}' betrachten diese Gaben ".
        "und bewerten sie mit {rel_bidding} Punkten. Mehr hat ihnen heute ".
        "niemand geschenkt, und ihr steigt in ihrer Gunst.");
 
 DEFINE("_MSG_FAILEDONCE",
-       "Ein Bote bringt eine schlechte Botschaft. Du hast in die freie Höhle ".
+       "Ein Bote bringt eine schlechte Botschaft. Du hast in die freie HÃ¶hle ".
        "'{name}' ({xCoord}|{yCoord}) Rohstoffe im Wert von {abs_bidding} ".
        "Punkten geschafft. Die Bewohner von '{name}' betrachten diese Gaben ".
        "und bewerten sie mit {rel_bidding} Punkten.<tmpl:WINNER> Die Gaben des ".
-       "Häuptlings '{player_name}' haben sie jedoch mit {rel_bidding} Punkten ".
+       "HÃ¤uptlings '{player_name}' haben sie jedoch mit {rel_bidding} Punkten ".
        " bewertet. Er hat heute ihre Gunst gewonnen.</tmpl:WINNER>");
 
 
 DEFINE("_MSG_BIDDINGTOOLOW",
-       "Ein Bote bringt eine schlechte Botschaft. Du hast in die freie Höhle ".
+       "Ein Bote bringt eine schlechte Botschaft. Du hast in die freie HÃ¶hle ".
        "'{name}' ({xCoord}|{yCoord}) Rohstoffe im Wert von {abs_bidding} ".
        "Punkten geschafft. Die Bewohner von '{name}' betrachten diese Gaben ".
-       "und bewerten sie mit {rel_bidding} Punkten. Damit sie sich überhaupt ".
-       "an deine Geschenke erinnern, mußt du ihnen aber mindestens ".
+       "und bewerten sie mit {rel_bidding} Punkten. Damit sie sich Ã¼berhaupt ".
+       "an deine Geschenke erinnern, muÃŸt du ihnen aber mindestens ".
        "{takeoverminresourcevalue} schenken.<tmpl:WINNER> Die Gaben des ".
-       "Häuptlings '{player_name}' haben sie jedoch mit {rel_bidding} Punkten ".
+       "HÃ¤uptlings '{player_name}' haben sie jedoch mit {rel_bidding} Punkten ".
        " bewertet. Er hat heute ihre Gunst gewonnen.</tmpl:WINNER>");
 
 DEFINE("_MSG_FAILEDCOMPLETELY",
-       "Der Häuptling der freien Höhle '{name}' ({xCoord}|{yCoord}) hat ".
-       "heute entschieden, sich einem Häuptling unterzuordnen. ".
+       "Der HÃ¤uptling der freien HÃ¶hle '{name}' ({xCoord}|{yCoord}) hat ".
+       "heute entschieden, sich einem HÃ¤uptling unterzuordnen. ".
        "Leider fiel die Wahl nicht auf Dich.".
-       "<tmpl:WINNER> Er folgt nun dem Häuptling '{name}'.</tmpl:Winner>\n");
+       "<tmpl:WINNER> Er folgt nun dem HÃ¤uptling '{name}'.</tmpl:Winner>\n");
 
 DEFINE("_MSG_CAVETRANSFER",
-       "Der Häuptling der freien Höhle '{name}' ({xCoord}|{yCoord}) hat ".
-       "heute entschieden, sich einem Häuptling unterzuordnen.".
-       "Die Wahl fiel dabei auf euch. Ihr habt ab nun die Kontrolle über ".
+       "Der HÃ¤uptling der freien HÃ¶hle '{name}' ({xCoord}|{yCoord}) hat ".
+       "heute entschieden, sich einem HÃ¤uptling unterzuordnen.".
+       "Die Wahl fiel dabei auf euch. Ihr habt ab nun die Kontrolle Ã¼ber ".
        "'{name}'!");
 
 /***** INIT *****/
@@ -107,7 +107,7 @@ echo "***** BACKUP *****\n";
 if (!DEBUG)
   echo "backup: " . (takeover_backup_table() ? "erfolgreich" : ("FEHLER:" . mysql_error())) . "\n";
 else
-  echo "DEBUG: backup: nicht ausgeführt\n";
+  echo "DEBUG: backup: nicht ausgefÃ¼hrt\n";
 
 
 

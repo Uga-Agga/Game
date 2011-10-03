@@ -27,7 +27,7 @@ if ($queryCount === false) {
   echo "Could not cleanup.\n";
   return -1;
 }
-echo "Cleanup: " . ( "0" + $queryCount) . " Flags gelöscht.\n";
+echo "Cleanup: " . ( "0" + $queryCount) . " Flags gelÃ¶scht.\n";
 
 // get regions
 $sql = $db->prepare("SELECT * FROM " . REGIONS_TABLE . " WHERE startRegion = 1");
@@ -86,7 +86,7 @@ foreach ($regions as $regionID => $region) {
     // how many more caves are needed:
     $diff = $demand - $supply;
 
-    echo "Es fehlen noch $diff Höhlen!\n";
+    echo "Es fehlen noch $diff HÃ¶hlen!\n";
 
     // first get all the caves with the takeoverable = 2 (those are caves given up or freed by the deleteInactives script)
     $sql = $db->prepare("SELECT caveID
@@ -158,9 +158,9 @@ foreach ($regions as $regionID => $region) {
       }
     }
 
-    echo "Es wurden $count_new_caves weitere Höhlen freigegeben!\n";
+    echo "Es wurden $count_new_caves weitere HÃ¶hlen freigegeben!\n";
   } else {
-    echo "Angebotsüberschuss: " . ($supply['count'] - $demand) . "\n";
+    echo "AngebotsÃ¼berschuss: " . ($supply['count'] - $demand) . "\n";
   }
   
   echo "\n";
