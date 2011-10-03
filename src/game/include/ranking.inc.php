@@ -32,7 +32,7 @@ function ranking_checkOffset($playerID, $offset) {
   if (strval(intval($offset)) != $offset) {
     // $offset is NOT a line number
 
-    if (!isset($offset)) {
+    if (empty($offset)) {
       // $offset is not set yet, show the actual player in the middle of the list
       $sql = $db->prepare("SELECT rank
                            FROM ". RANKING_TABLE." 
@@ -128,7 +128,6 @@ function rankingTribe_checkOffset($offset) {
 
 
 function ranking_getRowsByOffset($caveID, $offset) {
-
   global $db;
 
   $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, p.tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
