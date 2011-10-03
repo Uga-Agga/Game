@@ -289,7 +289,7 @@ function getAllCavesDetailsContent($ownCaves) {
   }
 
   if ($sum > 0) {
-    $template->addVar('defense', $mydefenses);
+    $template->addVar('defenses', $mydefenses);
   }
 }
 

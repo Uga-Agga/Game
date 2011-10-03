@@ -100,7 +100,7 @@
         <th style="text-align: left;">&sum;</th>
         <th>&nbsp;</th>
       </tr>
-      {% for item in defense %}
+      {% for item in defenses %}
         <tr class="bg{alternate}">
           <td><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
           {% for cave_data in item.cave %}<td>{{ cave_data.amount }}</td>{% endfor %}
