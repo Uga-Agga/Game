@@ -400,11 +400,6 @@ switch ($modus) {
     merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
   break;
 
-  case MAIL:
-    list($pagetitle, $content) = suggestions_main($caveID, $ownCaves);
-  break;
-
-
   case LOGOUT:
     session_destroy();
     Header("Location: logout.php");
