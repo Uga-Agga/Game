@@ -62,6 +62,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
   if (isset($_POST['delete_all'])) {
     $deleted = $messagesClass->deleteAllMessages($box, request_var('messageClass', -2));
     $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleted));
+    unset($_REQUEST['messageClass']);
   }
 
    
