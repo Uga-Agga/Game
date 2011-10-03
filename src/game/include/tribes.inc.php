@@ -463,11 +463,11 @@ function relation_insertIntoHistory($tribe, $message) {
 
   $sql = $db->prepare("INSERT INTO " . TRIBE_HISTORY_TABLE . " 
                        (tribe, ingameTime, message) 
-                       VALUES (:tribe, :ingameTime, :mesage)");
+                       VALUES (:tribe, :ingameTime, :message)");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-  $sql->bindValue('ingameTime', "{$time['day']}. $month<br>im Jahr {$time['year']}", PDO::PARAM_STR);
+  $sql->bindValue('ingameTime', "{$time['day']}. $month im Jahr {$time['year']}", PDO::PARAM_STR);
   $sql->bindValue('message', $message, PDO::PARAM_STR);
-  
+
   return $sql->execute();
 }
 
