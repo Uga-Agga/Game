@@ -38,7 +38,7 @@ function export_switch() {
           
           
         default:
-          echo "Unbekanntes Format f&uuml;r Export! (" . $format .")" ;
+          echo "Unbekanntes Format für Export! (" . $format .")" ;
           break;
       }
       break;
@@ -58,7 +58,7 @@ function export_switch() {
           break;
           
         default:
-          return "Unbekanntes Format f&uuml;r Export! (" . $format .")" ;
+          return "Unbekanntes Format für Export! (" . $format .")" ;
           break;
       }
       break;
@@ -71,7 +71,7 @@ function export_switch() {
           
           
         default:
-          return "Unbekanntes Format f&uuml;r Export! (" . $format .")" ;
+          return "Unbekanntes Format für Export! (" . $format .")" ;
           break;
       }
       break;
@@ -87,7 +87,7 @@ function export_switch() {
           break;
           
         default:
-          return "Unbekanntes Format f&uuml;r Export! (" . $format .")";
+          return "Unbekanntes Format für Export! (" . $format .")";
       }
       break;
     
@@ -102,7 +102,7 @@ function export_switch() {
           break;
           
         default:
-          return "Unbekanntes Format f&uuml;r Export! (" . $format .")";
+          return "Unbekanntes Format für Export! (" . $format .")";
           break;
       }
       break;
@@ -114,13 +114,13 @@ function export_switch() {
           break;
           
         default: 
-          return "Unbekanntes Format f&uuml;r Export (" . $format .")";
+          return "Unbekanntes Format für Export (" . $format .")";
       }
       break;
 
       
     default:
-      return "Unbekannter Modus f&uuml;r Export!";
+      return "Unbekannter Modus für Export!";
       break;
   }
 }
@@ -146,7 +146,7 @@ function export_allCaves_xml() {
   } else return 'Datenbankfehler!';
   
 
-  $xml = new mySimpleXML("<allCaves></allCaves>");
+  $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><allCaves></allCaves>");
   $allCaves = $xml;
   $header = $allCaves->addChild('header');
   $header->addChild('playerName', $_SESSION['player']->name);
@@ -228,7 +228,7 @@ function export_thisCave_xml($caveID) {
   } else return 'Datenbankfehler!';
   
 
-  $xml = new mySimpleXML("<thisCave></thisCave>");
+  $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><thisCave></thisCave>");
   $cave = $xml;
   $header = $cave->addChild('header');
   $header->addChild('playerName', $_SESSION['player']->name);
@@ -317,7 +317,7 @@ function export_movement_xml($movementID) {
   }
   
   // form xml-object
-  $xml = new mySimpleXML("<movement></movement>");
+  $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><movement></movement>");
   
   $movement = $xml;
   
@@ -562,7 +562,7 @@ function export_sciences_xml() {
       $player_data = $sql->fetch(PDO::FETCH_ASSOC);
   } else return 'Datenbankfehler!';
 
-  $xml = new mySimpleXML("<sciences></sciences>");
+  $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><sciences></sciences>");
 
   $header = $xml->addChild('header');
   $header->addChild('playerName', $_SESSION['player']->name);
@@ -626,7 +626,7 @@ function export_buildings_xml($caveID) {
       $row = $sql->fetch(PDO::FETCH_ASSOC);
   else return 'Datenbankfehler!';
 
-  $xml = new mySimpleXML("<buildings></buildings>");
+  $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><buildings></buildings>");
   $cave = $xml;
 
   $header = $xml->addChild('header');
