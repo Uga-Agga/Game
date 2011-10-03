@@ -68,7 +68,7 @@
   {% if delete %}
     <div style="width: 73px; float: left; text-align: left; margin-right: 10px;">
       <form id="loeschen" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}">
-        <p><input type="submit" name="delete" value="L&ouml;schen" />
+        <p><input type="submit" name="mark_action" value="Löschen" />
         {% for item in delete %}
           <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
         {% endfor %}

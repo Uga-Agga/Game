@@ -198,8 +198,9 @@ function messages_showMessage($caveID, $messageID, $box) {
     if ($message['nachrichtenart'] != 1001)
       $template->addVars(array(
         'delete' => array(
-          array('arg' => "box",            'value' => $box),
-          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID)
+          array('arg' => "box", 'value' => $box),
+          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+          array('arg' => "mark_action_value", 'value' => 'delete'),
         )
       ));
   }
