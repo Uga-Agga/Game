@@ -1,7 +1,7 @@
 <?php
 /*
  * export.php -
- * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2003  OGP Team, 2011 Sascha Lange <salange@uos.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,6 +22,7 @@ require_once("include/time.inc.php");
 require_once("include/basic.lib.php");
 require_once("include/movement.lib.php");
 require_once("include/artefact.inc.php");
+require_once("include/template.inc.php");
 
 
 page_start();
@@ -31,13 +32,13 @@ init_resources();
 init_units();
 init_sciences();
 
-// open the template
-$template = tmpl_open($_SESSION['player']->getTemplatePath() . 'export.ihtml');
+$template = new Template;
+$template->setFile('export.tmpl');
 
 $content = export_switch();
-tmpl_set($template, 'content', $content );
-echo tmpl_parse($template);
+$template->addVar('content', $content );
 
+$template->render();
 
 page_end();
 

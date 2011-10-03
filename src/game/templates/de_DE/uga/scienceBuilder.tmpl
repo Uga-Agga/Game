@@ -13,8 +13,9 @@
 {% block title %}Forschungen{% endblock %}
 {% block content %}
 
-<a href="export.php?modus=sciences&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a>
-<a href="export.php?modus=sciences&amp;format=bb" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="30" height="30" alt="Export als Text" title="Export als Text" /></a><br />
+<a class="export-link" href="export.php?modus=sciences&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a>
+<a class="export-link" href="export.php?modus=sciences&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="30" height="30" alt="Export als Text" title="Export als Text" /></a><br />
+<div id="export-dialog"></div>
 
 {% if quene_show %}
   <div class="notice">
