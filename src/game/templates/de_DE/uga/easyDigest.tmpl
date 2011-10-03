@@ -43,7 +43,7 @@
               $(function () {
                   var timer_movement_date_{{ item.event_id }} = new Date();
                   timer_movement_date_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                  $('#timer_movement_date_{{ item.event_id }}').countdown({until: timer_movement_date_{{ item.event_id }}, compact: true, description: ''});
+                  $('#timer_movement_date_{{ item.event_id }}').countdown({until: timer_movement_date_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: ''});
               });
               // ]]>
             </script>
@@ -117,7 +117,7 @@
               $(function () {
                   var timer_movement_date_{{ item.event_id }} = new Date();
                   timer_movement_date_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                  $('#timer_movement_date_{{ item.event_id }}').countdown({until: timer_movement_date_{{ item.event_id }}, compact: true, description: ''});
+                  $('#timer_movement_date_{{ item.event_id }}').countdown({until: timer_movement_date_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: ''});
               });
               // ]]>
             </script>
@@ -215,7 +215,7 @@
             $(function () {
                 var timer_{{ item.category }}_appointment_{{ item.event_id }} = new Date();
                 timer_{{ item.category }}_appointment_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                $('#timer_{{ item.category }}_appointment_{{ item.event_id }}').countdown({until: timer_{{ item.category }}_appointment_{{ item.event_id }}, compact: true, description: ''});
+                $('#timer_{{ item.category }}_appointment_{{ item.event_id }}').countdown({until: timer_{{ item.category }}_appointment_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: ''});
             });
             // ]]>
           </script>

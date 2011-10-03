@@ -25,7 +25,7 @@ function ranking_getContent($caveID, $offset) {
 
   if (!array_key_exists('uga', $religions)) $religions['uga'] = 0;
   if (!array_key_exists('agga', $religions)) $religions['agga'] = 0;
-  
+
   if($religions['uga']+$religions['agga'] != 0) {
     $ugapercent = round($religions['uga']/($religions['uga'] + $religions['agga'])*100);
     $aggapercent = round($religions['agga']/($religions['uga'] + $religions['agga'])*100);
@@ -33,7 +33,7 @@ function ranking_getContent($caveID, $offset) {
     $ugapercent = 0;
     $aggapercent = 0;
   }
-  
+
   $row = ranking_getRowsByOffset($caveID, $offset);
 
   $template->addVars(array(
