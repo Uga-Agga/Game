@@ -42,6 +42,22 @@
     <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
     <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
     <script type="text/javascript" src="js/ua.js"></script>
+
+    <script type="text/javascript">
+    function moreinfo(bereich, object) {
+      myHead = document.getElementById(bereich);
+
+      if (myHead.style.display == "") {
+        // zuklappen
+        object.src = '{{ gfx }}/de_DE/t_uga/icon_open.png';
+        myHead.style.display = "none";
+      } else {
+        // aufklappen
+        object.src = '{{ gfx }}/de_DE/t_uga/icon_close.png';
+        myHead.style.display = "";
+      }
+    }
+    </script>
   {% endblock %}
 </head>
 <body>

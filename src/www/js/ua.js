@@ -1,17 +1,3 @@
-function moreinfo(bereich, object) {
-  myHead = document.getElementById(bereich);
-
-  if (myHead.style.display == "") {
-    // zuklappen
-    object.src = '{{ gfx }}/de_DE/t_uga/icon_open.png';
-    myHead.style.display = "none";
-  } else {
-    // aufklappen
-    object.src = '{{ gfx }}/de_DE/t_uga/icon_close.png';
-    myHead.style.display = "";
-  }
-}
-
 /** this method is used in the improvement and defense screens
  to load more details from the server and show and hide the
  corresponding element. Assumes a specific layout of the rows;
