@@ -295,7 +295,7 @@ class Messages extends Parser {
                       $t{8}.$t{9}  .":".
                       $t{10}.$t{11}.":".
                       $t{12}.$t{13};
-      $row['nachrichtenart'] = $this->MessageClass[$row['messageClass']];
+      $row['nachrichtenart'] = isset($this->MessageClass[$row['messageClass']]) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
       $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_INCOMING . '&amp;filter='. $messageClass;
       $row[($row['flag'] ? 'FLAGGED' : 'UNFLAGGED') . '/id'] = $row['messageID'];
       $nachrichten[] = $row;

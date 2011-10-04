@@ -691,24 +691,24 @@ function export_buildings_bb($caveID) {
  */
 function export_messages_xml($messageID) {
   global $db; 
-  
+
   $sql = $db->prepare("SELECT messageID, senderID, recipientID, messageXML
                        FROM " . MESSAGE_TABLE . "
                        WHERE messageID = :messageID");
   $sql->bindValue('messageID', $messageID, PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     return "Datenbankfehler!";
   }
-  
+
   $message_data = $sql->fetch(PDO::FETCH_ASSOC);
-  
+
   if ($message_data['senderID'] !== $_SESSION['player']->playerID &&
       $message_data['recipientID'] !== $_SESSION['player']->playerID) {
         return "Sie können nur auf eigene Nachrichten zugreifen!";
   }
-  
-  $xml = simplexml_load_string($message_data['messageXML'], mySimpleXML);
+
+  $xml = simplexml_load_string($message_data['messageXML'], 'mySimpleXML');
 
   return $xml->asPrettyXML();
 }
