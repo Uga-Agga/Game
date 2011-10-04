@@ -432,14 +432,11 @@ static double fuzzy_wonder_value (double value, double chance) {
   return chance > drand() ? value * factor : 0;
 }
 
-static void report_fuzzy_size (template_t *template, const Battle *result) {
+static void report_fuzzy_size (template_t *template, const Battle *result, int defender_size_guessed) {
   float spy_quality = get_spy_quality_battle(result);
-  int def_size = result->defenders_acc_hitpoints_units_before +
-     result->defenders_acc_hitpoints_defenseSystems_before;
 
   if (spy_quality > 0)
-    template_set_fmt(template, "GUESS/size", "%d",
-    fuzzy_value(def_size, spy_quality, 1.0) / 100 * 100);
+    template_set_fmt(template, "GUESS/size", "%d", defender_size_guessed);
 }
 
 static int guess_values (int guess[], const int value[], int len,
@@ -740,7 +737,8 @@ static char* battle_report_xml (db_t *database,
         int change_owner, int takeover_multiplier,
         const struct Relation *relation1,
         const struct Relation *relation2,
-        int show_warpoints, int attacker_warpoints, int defender_warpoints, int show_defender)
+        int show_warpoints, int attacker_warpoints, int defender_warpoints, int show_defender,
+        int defender_size_guessed)
 {
   mxml_node_t *xml;
   mxml_node_t *battlereport;
@@ -1029,9 +1027,15 @@ void battle_report (db_t *database,
   template_set_fmt(template1, "factor", "%d", takeover_multiplier);
   template_set_fmt(template2, "factor", "%d", takeover_multiplier);
 
+  // calculate one single estimate for the defender's size for all cases where it's needed
+  float spy_quality = get_spy_quality_battle(result);
+  int def_size = result->defenders_acc_hitpoints_units_before +
+     result->defenders_acc_hitpoints_defenseSystems_before;
+  int defender_size_guessed = fuzzy_value(def_size, spy_quality, 1.0) / 100 * 100;
+
   /* attackers_acc_hitpoints_units is actually the army size */
   if (result->attackers_acc_hitpoints_units == 0) {
-    report_fuzzy_size(template1, result);
+    report_fuzzy_size(template1, result, defender_size_guessed);
     report_army_units(template1, player1->locale_id, result->attackers);
     xml1 = battle_report_xml(database,
                 cave1, player1,
@@ -1040,7 +1044,7 @@ void battle_report (db_t *database,
                 change_owner, takeover_multiplier,
                 relation1,
                 relation2,
-                show_warpoints, attacker_warpoints, defender_warpoints, 0);
+                show_warpoints, attacker_warpoints, defender_warpoints, 0, defender_size_guessed);
   } else {
     report_army_table(template1, player1->locale_id, result);
     xml1 = battle_report_xml(database,
@@ -1050,7 +1054,7 @@ void battle_report (db_t *database,
                 change_owner, takeover_multiplier,
                 relation1,
                 relation2,
-                show_warpoints, attacker_warpoints, defender_warpoints, 1);
+                show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed);
   }
 
   report_army_table(template2, player2->locale_id, result);
@@ -1061,7 +1065,7 @@ void battle_report (db_t *database,
               change_owner, takeover_multiplier,
               relation1,
               relation2,
-              show_warpoints, attacker_warpoints, defender_warpoints, 1);
+              show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed);
 
   if (result->winner == FLAG_ATTACKER) {
     report_resources(template1, player1->locale_id,
