@@ -588,6 +588,7 @@ static char* trade_report_xml(db_t *database,
        const int resources[], const int units[], int artefact) {
 
   mxml_node_t *xml, *tradereport;
+  mxml_node_t *curtime;
   mxml_node_t *source, *target, *player, *tribe;
   mxml_node_t *caveName, *xCoord, *yCoord;
   mxml_node_t *Units, *Unit, *name, *value;
@@ -598,6 +599,8 @@ static char* trade_report_xml(db_t *database,
 
   xml = mxmlNewXML("1.0");
   tradereport = mxmlNewElement(xml, "tradereport");
+  curtime = mxmlNewElement(tradereport, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
 
   source = mxmlNewElement(tradereport, "source");
     player = mxmlNewElement(source, "playerName");
