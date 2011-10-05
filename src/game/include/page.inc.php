@@ -181,7 +181,7 @@ function page_logRequest($modus, $caveID) {
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
     $sql->bindValue('ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-    $sql->bindValue('request', addslashes(var_export($_POST, TRUE)), PDO::PARAM_STR);
+    $sql->bindValue('request', var_export($_REQUEST, TRUE), PDO::PARAM_STR);
     $sql->bindValue('sessionID', session_id(), PDO::PARAM_STR);
     $sql->execute();
   }

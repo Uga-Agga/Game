@@ -368,7 +368,7 @@ function hideWMTT() {
                 <div style="width: 167px; height: 25px; float: left;">
                   <select name="targetCaveID" id="targetCaveID" onchange="disable_to(); return true;" style="width: 170px;">
                     <option value="-1">Bitte wählen</option>
-                    {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.player_name }}</option>{% endfor %}
+                    {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
                   </select>
                 </div>
                 <div style="clear: both;"></div>
@@ -421,8 +421,7 @@ function hideWMTT() {
           <td>&nbsp;</td>
           <td>
             <ul class="clean_list">
-              <li>{{ item.movementID_description }}</li>
-              <li>&nbsp;</li>
+              <li>{{ item.movement_id_description }}</li>
               <li>
                 <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
                 <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
@@ -498,8 +497,7 @@ function hideWMTT() {
         <td>&nbsp;</td> 
         <td>
           <ul class="clean_list">
-            <li>{{ item.movementID_description }}</li>
-            <li>&nbsp;</li>
+            <li>{{ item.movement_id_description }}</li>
             <li>
               <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML" title="Export als XML" /></a>
               <a href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc" onclick="return popitup(this.href)"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export als IRC" /></a>

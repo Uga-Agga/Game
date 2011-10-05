@@ -39,7 +39,7 @@
           <dt class="dt-msg">An:</dt><dd class="dd-msg">{{ message.empfaenger }}</dd>
           <dt class="dt-msg">Datum:</dt><dd class="dd-msg">{{ message.datum }}</dd>
         </dl>
-       <div style="margin-left:5px;">{% if xml_button %}<a class="export-link" href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml"><img src="http://game.uga-agga.de/gfx//de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div>
+       <div style="margin-left:5px;">{% if xml_button %}<a class="export-link" href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div>
       </div>
       <div id="export-dialog"></div>
       <div style="float: right; width: 40%;" class="text-right"><iframe src="http://rcm-de.amazon.de/e/cm?t=ugag-21&amp;o=3&amp;p=20&amp;l=ez&amp;f=ifr&amp;f=ifr" width="120" height="90" scrolling="no" marginwidth="0" marginheight="0" border="0" frameborder="0" style="border:none; margin: 5px;"></iframe></div>

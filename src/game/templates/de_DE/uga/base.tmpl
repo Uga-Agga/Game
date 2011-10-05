@@ -84,8 +84,8 @@
       <div id="header-right" style="background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;text-align:right;">
         <a href="main.php?modus=logout"><img id="logout" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" style="width: 35px; height: 30px;" /></a><br />
         <img id="terrain" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" style="margin-right:100px; margin-top:-30px;" /><br />
-        <img id="month" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" style="margin-right:120px;" /><br /> 
-        <img id="weather" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="weather_{{ weather_id }}" style="margin-right:100px;" /><br />
+        <img id="month" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." style="margin-right:120px;" /><br /> 
+        <img id="weather" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" style="margin-right:100px;" /><br />
         <div id="header_farm_points" class="bold" style="margin-right:10px;margin-top:5px">Farmpunkte: {{ player_fame }}</div>
     </div>
       <div style="clear: both;"></div>

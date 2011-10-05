@@ -381,17 +381,17 @@ function unit_Movement($caveID, &$ownCave) {
     }
   }
 
-    $template->addVars(array(
-      'ownMovement' => $ownMovement,
-      'oppMovement' => $oppMovement,
-    ));
-  
+  $template->addVars(array(
+    'ownMovement' => $ownMovement,
+    'oppMovement' => $oppMovement,
+  ));
+
   // artefakte
   if (sizeof($myartefacts) != 0) {
     //tmpl_set($template, '/ARTEFACTS/ARTEFACT', $myartefacts); 
     $template->addVar('artefact', $myartefacts);
   }
-  
+
   // hero
   if ($details['hero'] != 0) {
     $template->addVar('hero', true);

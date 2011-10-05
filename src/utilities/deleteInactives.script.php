@@ -65,10 +65,10 @@ $db_game  = DbConnect();
 inactives_deleteInconsistentPlayerSession($db_game);
 
 // create missing Session-Records
-// FIXME (slavomir) Das dürfte eigentlich nicht notwendig sein. Es gibt nur zwei
-//                  Gründe, warum die fehlen könnten. Entweder der Spieler hat
-//                  sich noch nie eingeloggt, oder der Eintrag wurde gelöscht.
-//                  In beiden Fällen ist ein Löschen nicht unbedingt anzuraten.
+// FIXME (slavomir) Das dÃ¼rfte eigentlich nicht notwendig sein. Es gibt nur zwei
+//                  GrÃ¼nde, warum die fehlen kÃ¶nnten. Entweder der Spieler hat
+//                  sich noch nie eingeloggt, oder der Eintrag wurde gelÃ¶scht.
+//                  In beiden FÃ¤llen ist ein LÃ¶schen nicht unbedingt anzuraten.
 
 // get inactive players
 $players = inactives_getInactives($db_game);

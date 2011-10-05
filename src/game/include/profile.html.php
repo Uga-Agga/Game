@@ -21,40 +21,44 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function profile_main() {
   global $config, $template;
 
-  // initialize return value
-  $result = '';
-
-  // get current task
-  $task = request_var('task', "");
-
   // connect to login db
   if (!($db_login = DbConnect($config->DB_LOGIN_HOST, $config->DB_LOGIN_USER, $config->DB_LOGIN_PWD, $config->DB_LOGIN_NAME))) {
     $template->throwError('Datenbankverbindungsfehler. Bitte wende dich an einen Administrator.');
     return;
   }
 
-  switch ($task) {
-
-    // show main page
-    default:
-      $result = profile_show($db_login);
-      break;
-
+  $action = request_var('action', '');
+  switch ($action) {
     // change cave page
     case 'change':
-      $result = profile_change($db_login);
-      break;
+      // proccess form data
+      $message = profile_update($db_login);
+
+      // update player's data
+      page_refreshUserData();
+    break;
+
+    // change cave page
+    case 'delete':
+      if (isset($_POST['cancelOrderConfirm'])) {
+        if (profile_processDeleteAccount($db_login, $_SESSION['player']->playerID)) {
+          session_destroy();
+
+          $message = array('type' => 'success', 'message' => _('Ihr Account wurde zur Löschung vorgemerkt. Sie sind jetzt ausgeloggt und können das Fenster schließen.'));
+        } else {
+          $message = array('type' => 'error', 'message' => _('Das löschen Ihres Accounts ist fehlgeschlagen. Bitte wenden Sie sich an das Support Team.'));
+        }
+      } else {
+        $template->addVars(array(
+          'cancelOrder_box' => true,
+          'confirm_action'  => 'delete',
+          'confirm_id'      => $_SESSION['player']->playerID,
+          'confirm_mode'    => USER_PROFILE,
+          'confirm_msg'     => _('Möchtest du deinen Account wirklich löschen?'),
+        ));
+      }
+    break;
   }
-
-  return $result;
-}
-
-
-################################################################################
-
-
-function profile_show($db_login, $feedback = NULL) {
-  global $template;
 
   // open template
   $template->setFile('profile.tmpl');
@@ -67,36 +71,31 @@ function profile_show($db_login, $feedback = NULL) {
   }
 
   // show message
-  if ($feedback) {
-    $template->addVar('status_msg', $feedback);
+  if (isset($message) && !empty($message)) {
+    $template->addVar('status_msg', $message);
   }
 
   // show the profile's data
   profile_fillUserData($template, $playerData);
 }
 
-
-################################################################################
-
-
-/** This function gets the players data out of the game and login
- *  database.
+/** This function deletes the account. The account isn't deleted directly,
+ *  but marked with a specialtag. It'll be deleted by a special script,
+ *  that runs on a given time...
  */
-function profile_change($db_login) {
+function profile_processDeleteAccount($db_login, $playerID) {
+  $sql = $db_login->prepare("UPDATE Login 
+                             SET deleted = 1,
+                               email = CONCAT(email, '_del')
+                             WHERE LoginID = :playerID");
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+  print_r($sql->errorInfo());
+    return false;
+  }
 
-  // proccess form data
-  $message = profile_update($db_login);
-
-  // update player's data
-  page_refreshUserData();
-
-  // show new data
-  return profile_show($db_login, $message);
+  return true;
 }
-
-
-################################################################################
-
 
 /** This function gets the players data out of the game and login
  *  database.
