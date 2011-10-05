@@ -57,6 +57,12 @@
         myHead.style.display = "";
       }
     }
+
+    function serverTime() { 
+      var time = null; 
+      time = new Date("{{ countdown_time }}"); 
+      return time; 
+    }
     </script>
   {% endblock %}
 </head>

@@ -457,6 +457,9 @@ $region = $regions[$ownCaves[$caveID]['regionID']];
 // init vote
 vote_main();
 
+// init date for countdown
+$now = new DateTime(); 
+
 // fill it
 $template->addVars(array(
   'showads'       => ($showads) ? true : false,
@@ -475,6 +478,7 @@ $template->addVars(array(
   'weather_name'  => $weatherTypeList[$region['weather']]->name,
   'gfx'           => ($_SESSION['nogfx']) ? DEFAULT_GFX_PATH : $_SESSION['player']->gfxpath,
   'show_hero_link' => ($ownCaves[$caveID][HERO_DB_FIELD] > 0) ? true : false,
+  'countdown_time' => $now->format("M j, Y H:i:s O"),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],
