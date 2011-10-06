@@ -124,12 +124,12 @@ function statistic_getContent() {
   /*
    * show unit details
    */
-  if ((request_var('show', "") == "unit_detail" && request_var('unit', "")) && request_var('show', "") != "all") {
-    $Unit = request_var('unit', "");
-
+  $show = request_var('show', '');
+  $Unit = request_var('unit', "");
+  if ($show == "unit_detail" && !empty($Unit) && $Unit != "all") {
     $template->addVars(array(
-                             'showUnitDetails' => true, 
-                             'unitName' => $UnitFieldsName[$Unit]
+      'showUnitDetails' => true, 
+      'unitName' => $UnitFieldsName[$Unit]
     ));
 //    tmpl_set($template, 'UNITDETAILS/title', 'Einheiten Statistik');
 

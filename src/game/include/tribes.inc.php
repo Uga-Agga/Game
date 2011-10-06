@@ -121,9 +121,9 @@ function government_getGovernmentForTribe($tag) {
 function government_setGovernment($tag, $governmentID) {
   global $db;
 
-  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . " 
-                       SET governmentID = :governmentID, 
-                         duration = (NOW() + INTERVAL ".GOVERNMENT_CHANGE_TIME_HOURS." HOUR)+0 
+  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                       SET governmentID = :governmentID,
+                         duration = (NOW() + INTERVAL ".GOVERNMENT_CHANGE_TIME_HOURS." HOUR)+0
                        WHERE tag LIKE :tag");
   $sql->bindValue('governmentID', $governmentID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);

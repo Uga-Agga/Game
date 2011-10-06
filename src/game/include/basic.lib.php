@@ -275,7 +275,7 @@ function db_makeSetStatementSecure($data, $fields) {
 
   $count = 0;
   $statement = "";
-  
+
   foreach($fields as $field) {
     if (array_key_exists($field, $data)) {
       $count++;

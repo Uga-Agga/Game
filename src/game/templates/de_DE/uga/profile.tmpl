@@ -46,7 +46,7 @@
             <tr>          
               <td>&nbsp;</td>
               <td>{{ item_memo.name|raw }}:</td>
-              <td><textarea name="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" cols="{{ item_memo.cols }}" rows="{{ item_memo.rows }}">{{ item_memo.value }}</textarea></td>
+              <td><textarea name="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" cols="{{ item_memo.cols }}" rows="{{ item_memo.rows }}">{{ item_memo.value|raw }}</textarea></td>
             </tr>        
           {% endfor %}
         {% endif %}

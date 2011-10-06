@@ -138,8 +138,6 @@ function profile_getPlayerData($db_login){
     return NULL;
   }
 
-  $game['description'] = str_replace("<br />", "", $game['description']);
-
   return array("game" => $game, "login" => $login);
 }
 
@@ -213,16 +211,14 @@ function profile_update($db_login) {
   $data     = request_var('data', array('' => ''));
   $password = request_var('password', array('' => ''));
 
-  $data['description'] = cleanSafeBracket($_POST['data']['description']);
-
-  // list of fields, that should be inserted into the player record
-  $fields = array("origin", "icq", "avatar", "description", "template", "language", "gfxpath", "email2");
+  $data['description'] = $_POST['data']['description'];
 
   // validate language code
   $uaLanguageNames = LanguageNames::getLanguageNames();
-  if (!array_key_exists($data['language'], $uaLanguageNames))
+  if (!array_key_exists($data['language'], $uaLanguageNames)) {
     unset($data['language']);
-  
+  }
+
   // check if avatar is a image
   if (array_key_exists('avatar', $data)) {
     if (($data['avatar'] !== '') && !getimagesize($data['avatar'])) {
@@ -231,10 +227,28 @@ function profile_update($db_login) {
     }
   }
 
-  if ($set = db_makeSetStatementSecure($data, $fields)) {
-    $query = sprintf("UPDATE ". PLAYER_TABLE ." SET %s WHERE playerID = %d", $set, $playerID);
-    if (!$db->query($query))
-      return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
+  $sql = $db->prepare("UPDATE " . PLAYER_TABLE . " 
+                       SET origin = :origin, 
+                         icq = :icq,
+                         avatar = :avatar,
+                         description = :description,
+                         template = :template,
+                         language = :language,
+                         gfxpath = :gfxpath,
+                         email2 = :email2,
+                         avatar = :avatar
+                       WHERE playerID = :playerID");
+  $sql->bindValue('origin', $data['origin'], PDO::PARAM_STR);
+  $sql->bindValue('icq', $data['icq'], PDO::PARAM_INT);
+  $sql->bindValue('description', $data['description'], PDO::PARAM_STR);
+  $sql->bindValue('template', $data['template'], PDO::PARAM_INT);
+  $sql->bindValue('language', $data['language'], PDO::PARAM_STR);
+  $sql->bindValue('gfxpath', $data['gfxpath'], PDO::PARAM_STR);
+  $sql->bindValue('email2', $data['email2'], PDO::PARAM_STR);
+  $sql->bindValue('avatar', $data['avatar'], PDO::PARAM_STR);
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
   }
 
   // ***** now update the password, if it is set **** **************************

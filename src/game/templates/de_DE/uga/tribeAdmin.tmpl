@@ -123,7 +123,7 @@
         </tr>
         {% for item in tribe_members %}
         <tr>
-          <td class="text-left"><a href="main.php?{{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
+          <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
           <td class="text-center">{{ item.lastAction }}</td>
           <td class="text-right">{% if is_leader %}<a href="main.php?modus={{ tribe_admin_link }}&amp;action=kick&amp;playerID={{ item.playerID }}">Rauswerfen</a>{% endif %}</td>
         </tr>
