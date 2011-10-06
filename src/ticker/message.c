@@ -1142,7 +1142,7 @@ static char* spy_report_xml(db_t *database,
   mxml_node_t *xml;
   mxml_node_t *spyreport;
   mxml_node_t *curtime;
-  mxml_node_t *player, *tribe;
+  mxml_node_t *source, *target, *player, *tribe;
   mxml_node_t *caveName, *xCoord, *yCoord;
   mxml_node_t *Units, *Unit, *name, *value;
   mxml_node_t *DefenseSystems, *DefenseSystem, *Resources, *Resource,
@@ -1156,17 +1156,29 @@ static char* spy_report_xml(db_t *database,
   curtime = mxmlNewElement(spyreport, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
 
-  player = mxmlNewElement(spyreport, "playerName");
-    mxmlNewText(player, 0, (char*) player1->name);
-  tribe = mxmlNewElement(spyreport, "tribe");
-    mxmlNewText(tribe, 0, (char*) player1->tribe);
+  source = mxmlNewElement(spyreport, "source");
+      player = mxmlNewElement(source, "playerName");
+        mxmlNewText(player, 0, (char*) player1->name);
+      tribe = mxmlNewElement(source, "tribe");
+        mxmlNewText(tribe, 0, (char*) player1->tribe);
+      caveName = mxmlNewElement(source, "caveName");
+        mxmlNewText(caveName, 0, (char*) cave1->name);
+      xCoord = mxmlNewElement(source, "xCoord");
+        mxmlNewInteger(xCoord, (int) cave1->xpos);
+      yCoord = mxmlNewElement(source, "yCoord");
+        mxmlNewInteger(yCoord, (int) cave1->ypos);
 
-  caveName = mxmlNewElement(spyreport, "caveName");
-    mxmlNewText(caveName, 0, (char*) cave1->name);
-  xCoord = mxmlNewElement(spyreport, "xCoord");
-    mxmlNewInteger(xCoord, (int) cave1->xpos);
-  yCoord = mxmlNewElement(spyreport, "yCoord");
-    mxmlNewInteger(yCoord, (int) cave1->ypos);
+  target = mxmlNewElement(spyreport, "target");
+      player = mxmlNewElement(target, "playerName");
+        mxmlNewText(player, 0, (char*) player1->name);
+      tribe = mxmlNewElement(target, "tribe");
+        mxmlNewText(tribe, 0, (char*) player1->tribe);
+      caveName = mxmlNewElement(target, "caveName");
+        mxmlNewText(caveName, 0, (char*) cave1->name);
+      xCoord = mxmlNewElement(target, "xCoord");
+        mxmlNewInteger(xCoord, (int) cave1->xpos);
+      yCoord = mxmlNewElement(target, "yCoord");
+        mxmlNewInteger(yCoord, (int) cave1->ypos);
 
   //defenseSystems
   if (spyTypes[0] == 1) {
