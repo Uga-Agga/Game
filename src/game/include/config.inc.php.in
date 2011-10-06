@@ -67,6 +67,7 @@ define("CAVE_SIZE_DB_FIELD", "@CAVE_SIZE_DB_FIELD@");
 
 define("BOX_INCOMING", 0x01);
 define("BOX_OUTGOING", 0x02);
+define("BOX_TRASH",    0x03);
 define("MSG_PAGE_COUNT", 30);
 
 define("DEFAULT_GFX_PATH", "@GFX_URL@");

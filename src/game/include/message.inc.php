@@ -122,6 +122,38 @@ class Messages extends Parser {
   /**
    *
    */
+  public function getTrashMessagesCount($messageClass = -2) {
+    global $db;
+
+    if ($messageClass >= 0) {
+      $sql = $db->prepare("SELECT COUNT(*) as num
+                           FROM ". MESSAGE_TABLE ."
+                           WHERE recipientID = :playerID
+                             AND recipientDeleted = 1
+                             AND messageClass = :messageClass");
+      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
+      
+    } else {
+      $sql = $db->prepare("SELECT COUNT(*) as num
+                           FROM ". MESSAGE_TABLE ."
+                           WHERE recipientID = :playerID
+                             AND recipientDeleted = 1");
+      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    }
+
+    if (!$sql->execute()) {
+      return 0;
+    }
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    return $row['num'];
+  }
+
+  /**
+   *
+   */
   public function getMessagesCount() {
     global $db;
 
@@ -210,7 +242,47 @@ class Messages extends Parser {
     $i=0;
     $messageIDList = array();
     while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $messageIDList[$i]=$row['messageID'];
+      $messageIDList[$i] = $row['messageID'];
+      $i++;
+    }
+    $sql->closeCursor();
+
+    return $messageIDList;
+  }
+
+  /**
+   * returns list of incoming massage IDs
+   */
+  public function getTrashIdList($messageClass = -2) {
+    global $db;
+
+    if ($messageClass >= 0) {
+      $sql = $db->prepare("SELECT messageID
+                           FROM ". MESSAGE_TABLE . "
+                           WHERE recipientID = :playerID
+                             AND recipientDeleted = 1
+                             AND messageClass = :messageClass
+                           ORDER BY messageID DESC");
+      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
+      
+    } else {
+      $sql = $db->prepare("SELECT messageID
+                           FROM ". MESSAGE_TABLE . "
+                           WHERE recipientID = :playerID
+                             AND recipientDeleted = 1
+                           ORDER BY messageID DESC");
+      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    }
+
+    if (!$sql->execute()) {
+      return array();
+    }
+
+    $i=0;
+    $messageIDList = array();
+    while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $messageIDList[$i] = $row['messageID'];
       $i++;
     }
     $sql->closeCursor();
@@ -233,7 +305,6 @@ class Messages extends Parser {
                              ON p.playerID = m.senderID 
                          WHERE messageClass = 1001 
                          ORDER BY m.messageTime DESC, m.messageID DESC");
-
     if (!$sql->execute()) {
       return array();
     }
@@ -388,6 +459,67 @@ class Messages extends Parser {
   /**
    *
    */
+  public function getTrashMessages($offset, $row_count, $messageClass = -2) {
+    global $db, $config;
+
+    $nachrichten = array();
+
+    // get user messages
+    if ($messageClass >= 0) {
+      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS betreff,  m.messageTime, SIGN(m.read) as `read`
+                           FROM ". MESSAGE_TABLE . " m 
+                             LEFT JOIN ". PLAYER_TABLE ." p 
+                               ON p.playerID = m.senderID 
+                           WHERE recipientID = :playerID
+                             AND recipientDeleted = 1 
+                             AND messageClass = :messageClass
+                           ORDER BY m.messageTime DESC, m.messageID DESC 
+                           LIMIT :offset, :rowCount");
+      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
+      $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
+      $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
+    } else {
+      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS betreff, m.messageTime, SIGN(m.read) as `read`
+                           FROM ". MESSAGE_TABLE . " m 
+                             LEFT JOIN ". PLAYER_TABLE ." p 
+                               ON p.playerID = m.senderID 
+                           WHERE recipientID = :playerID
+                             AND recipientDeleted = 1 
+                           ORDER BY m.messageTime DESC, m.messageID DESC 
+                           LIMIT :offset, :rowCount");
+      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
+      $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
+    }
+
+    if (!$sql->execute()) {
+      return array();
+    }
+
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $row['absender_empfaenger'] = empty($row['name']) ? _('System') : $row['name'];
+      $t = $row['messageTime'];
+      $row['datum'] = $t{6}.$t{7}  .".".
+                      $t{4}.$t{5}  .".".
+                      $t{2}.$t{3}  ." ".
+                      $t{8}.$t{9}  .":".
+                      $t{10}.$t{11}.":".
+                      $t{12}.$t{13};
+      $row['nachrichtenart'] = isset($this->MessageClass[$row['messageClass']]) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
+      $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_TRASH . '&amp;filter='. $messageClass;
+      $row[($row['flag'] ? 'FLAGGED' : 'UNFLAGGED') . '/id'] = $row['messageID'];
+      $row['read'] = 1;
+      $nachrichten[] = $row;
+    }
+    $sql->closeCursor();
+
+    return $nachrichten;
+  }
+
+  /**
+   *
+   */
   public function deleteMessages($messageIDs) {
     global $db;
 
@@ -413,6 +545,37 @@ class Messages extends Parser {
     }
 
     return $deleted;
+  }
+
+  /**
+   *
+   */
+  public function recoverMessages($messageIDs) {
+    global $db;
+
+    // delete all those IDs
+    $sql = $db->prepare("UPDATE ". MESSAGE_TABLE."
+                         SET senderDeleted = IF(senderID = :playerID, 0, senderDeleted),
+                           recipientDeleted = IF(recipientID = :playerID, 0, recipientDeleted),
+                           `read` = 0
+                         WHERE messageID = :ID
+                           AND messageClass != 1001");
+    $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    $recover = 0;
+
+    if(is_array($messageIDs)) {
+      foreach ($messageIDs as $ID) {
+        $sql->bindValue('ID', $ID, PDO::PARAM_INT);
+        $sql->execute();
+        $recover++;
+      }
+    } else {
+        $sql->bindValue('ID', $messageIDs, PDO::PARAM_INT);
+        $sql->execute();
+        $recover++;
+    }
+
+    return $recover;
   }
 
   /**

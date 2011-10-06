@@ -34,32 +34,42 @@ function checkall(){
   <div class="box-header">&nbsp;</div>
   <div class="box-content success inner">
 
-    <div style="width: 33%; float: left; text-align: left; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a></div>
-    <div style="width: 34%; float: left; text-align: center; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a></div>
-    <div style="width: 33%; float: right; text-align: right; margin: 5px 0;"><a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a></div>
+    <div style="width: 25%; float: left; text-align: left; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a></div>
+    <div style="width: 25%; float: left; text-align: center; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a></div>
+    <div style="width: 25%; float: left; text-align: center; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=3"><img src="{{ gfx }}/de_DE/t_uga/messages/trash.png" class="noborder" alt="Papierkorb" title="Papierkorb" /></a></div>
+    <div style="width: 25%; float: right; text-align: right; margin: 5px 0;"><a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a></div>
     <div style="clear: both;"></div>
 
-    <div style="width: 40%; float: left; text-align: left; margin: 5px;">
-      Markierte:
-      <select name="mark_action_value">
-        <option value="0">Bitte auswählen</option>
-        <option value="mail_and_delete">E-mail &amp; löschen</option>
-        <option value="delete">löschen</option>
-        <option value="mark_as_read">Als gelesen markieren</option>
-      </select>
-      <input type="submit" name="mark_action" value="Go" />
-    </div>
-    <div style="width: 40%; float: right; text-align: right; margin: 5px;">
-      <select name="messageClass">
-        <option value="-1">Alle</option>
-        {% for item in message_classes %}
-          <option value="{{ item.id }}" {{ item.selected }}>{{ item.text }}</option>
-        {% endfor %}
-      </select>
-      <input type="submit" name="filter" value="Filtern" />
-      <input type="submit" name="delete_all" value=" Alle Löschen" onclick="return confirm('Wollen Sie die Nachrichten wirklich löschen?');" />
-    </div>
-    <div style="clear: both;"></div>
+    {% if not recover %}
+      <div style="width: 40%; float: left; text-align: left; margin: 5px;">
+        Markierte:
+        <select name="mark_action_value">
+          <option value="0">Bitte auswählen</option>
+          <option value="mail_and_delete">E-mail &amp; löschen</option>
+          <option value="delete">löschen</option>
+          <option value="mark_as_read">Als gelesen markieren</option>
+        </select>
+        <input type="submit" name="mark_action" value="Go" />
+      </div>
+      <div style="width: 40%; float: right; text-align: right; margin: 5px;">
+        <select name="messageClass">
+          <option value="-1">Alle</option>
+          {% for item in message_classes %}
+            <option value="{{ item.id }}" {{ item.selected }}>{{ item.text }}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" name="filter" value="Filtern" />
+        <input type="submit" name="delete_all" value=" Alle Löschen" onclick="return confirm('Wollen Sie die Nachrichten wirklich löschen?');" />
+      </div>
+      <div style="clear: both;"></div>
+    {% else %}
+      <div style="width: 40%; float: left; text-align: left; margin: 5px;">
+        Markierte:
+        <input type="hidden" name="mark_action_value" value="recover" />
+        <input type="submit" name="mark_action" value="Wiederherstellen" />
+      </div>
+      <div style="clear: both;"></div>
+    {% endif %}
   </div>
 </div>
 

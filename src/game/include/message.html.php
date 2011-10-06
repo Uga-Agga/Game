@@ -55,6 +55,12 @@ function messages_getMessages($caveID, $deletebox, $box) {
         $marked_as_read = $messagesClass->markAsRead($deletebox);
         $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) als gelesen markiert.'), $deleted));
       break;
+
+      // recover messages
+      case 'recover':
+        $recover = $messagesClass->recoverMessages($deletebox);
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) wurden wiederhergestellt.'), $recover));
+      break;
     }
   }
 
@@ -80,6 +86,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
   $boxes = array(
     BOX_INCOMING => array('boxname' => _('Posteingang'), 'from_to' => _('Absender')),
     BOX_OUTGOING => array('boxname' => _('Postausgang'), 'from_to' => _('Empfänger')),
+    BOX_TRASH    => array('boxname' => _('Papierkorb'), 'from_to' => _('Absender')),
   );
 
   $classes = array();
@@ -107,6 +114,9 @@ function messages_getMessages($caveID, $deletebox, $box) {
     case BOX_OUTGOING:
       $message_count = $messagesClass->getOutgoingMessagesCount($messageClass);
       break;
+    case BOX_TRASH:
+      $message_count = $messagesClass->getTrashMessagesCount($messageClass);
+      break;
   }
 
   // offset "normalisieren"
@@ -127,6 +137,9 @@ function messages_getMessages($caveID, $deletebox, $box) {
       break;
     case BOX_OUTGOING:
       $messages = $messagesClass->getOutgoingMessages($offset, MSG_PAGE_COUNT, $messageClass);
+      break;
+    case BOX_TRASH:
+      $messages = $messagesClass->getTrashMessages($offset, MSG_PAGE_COUNT, $messageClass);
       break;
   }
 
@@ -164,6 +177,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
     'message_prev'    => $message_prev,
     'message_next'    => $message_next,
     'status_msg'      => (isset($statusMsg)) ? $statusMsg : '',
+    'recover'         => ($box == BOX_TRASH) ? true : false,
   ));
 }
 
@@ -196,14 +210,29 @@ function messages_showMessage($caveID, $messageID, $box) {
       ));
       //$contacts = array('contact' => $message['sender']);
     }
-    if ($message['nachrichtenart'] != 1001)
+    if ($message['nachrichtenart'] != 1001 && $box != BOX_TRASH) {
       $template->addVars(array(
         'delete' => array(
-          array('arg' => "box", 'value' => $box),
-          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
-          array('arg' => "mark_action_value", 'value' => 'delete'),
+          'name' => 'Löschen',
+          'item' => array(
+            array('arg' => "box", 'value' => $box),
+            array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+            array('arg' => "mark_action_value", 'value' => 'delete'),
+          )
         )
       ));
+    } else if ($box == BOX_TRASH) {
+      $template->addVars(array(
+        'delete' => array(
+          'name' => 'Wiederherstellen',
+          'item' => array(
+            array('arg' => "box", 'value' => $box),
+            array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+            array('arg' => "mark_action_value", 'value' => 'recover'),
+          )
+        )
+      ));
+    }
   }
 
   // get next and privious messageID
@@ -217,6 +246,9 @@ function messages_showMessage($caveID, $messageID, $box) {
       break;
     case BOX_OUTGOING:
       $messageIdList = $messagesClass->getOutgoingIdList($messageClass);
+      break;
+    case BOX_TRASH:
+      $messageIdList = $messagesClass->getTrashIdList($messageClass);
       break;
   }
 
