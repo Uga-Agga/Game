@@ -1170,15 +1170,15 @@ static char* spy_report_xml(db_t *database,
 
   target = mxmlNewElement(spyreport, "target");
       player = mxmlNewElement(target, "playerName");
-        mxmlNewText(player, 0, (char*) player1->name);
+        mxmlNewText(player, 0, (char*) player2->name);
       tribe = mxmlNewElement(target, "tribe");
-        mxmlNewText(tribe, 0, (char*) player1->tribe);
+        mxmlNewText(tribe, 0, (char*) player2->tribe);
       caveName = mxmlNewElement(target, "caveName");
-        mxmlNewText(caveName, 0, (char*) cave1->name);
+        mxmlNewText(caveName, 0, (char*) cave2->name);
       xCoord = mxmlNewElement(target, "xCoord");
-        mxmlNewInteger(xCoord, (int) cave1->xpos);
+        mxmlNewInteger(xCoord, (int) cave2->xpos);
       yCoord = mxmlNewElement(target, "yCoord");
-        mxmlNewInteger(yCoord, (int) cave1->ypos);
+        mxmlNewInteger(yCoord, (int) cave2->ypos);
 
   //defenseSystems
   if (spyTypes[0] == 1) {
