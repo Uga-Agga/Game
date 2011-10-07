@@ -177,7 +177,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
     'message_prev'    => $message_prev,
     'message_next'    => $message_next,
     'status_msg'      => (isset($statusMsg)) ? $statusMsg : '',
-    'recover'         => ($box == BOX_TRASH) ? true : false,
+    'trash'           => ($box == BOX_TRASH) ? true : false,
   ));
 }
 

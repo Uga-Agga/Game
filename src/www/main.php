@@ -29,10 +29,15 @@ date_default_timezone_set('Europe/Berlin'); // slange: added to fix warning in P
 page_start();
 
 // session expired?
-if (page_sessionExpired())
-  page_error403("Sie waren fuer " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv. Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction'] . " Uhr."));
-else
+if (page_sessionExpired()) {
+  $timeoutMsg = "Sie waren fuer " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv.";
+  if (isset($_SESSION['lastAction'])) {
+   $timeoutMsg .= "Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction']) . " Uhr.";
+  }
+  page_error403($timeoutMsg);
+} else {
   $_SESSION['lastAction'] = time();
+}
 
 // session valid?
 if (!page_sessionValidate())

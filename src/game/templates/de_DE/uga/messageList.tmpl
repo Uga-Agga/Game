@@ -29,6 +29,8 @@ function checkall(){
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
+{% if trash %}<div class="info">Du befindest dich gerade im Papierkorb. Hier kannst du gelösche Nachrichten wiederherstellen.<br />Achtung: Die Nachrichten hier werden automatisch gelöscht!</div>{% endif %}
+
 <form id="deletemessages" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}&amp;box={{ message_box }}">
 <div class="box">
   <div class="box-header">&nbsp;</div>
@@ -40,7 +42,7 @@ function checkall(){
     <div style="width: 25%; float: right; text-align: right; margin: 5px 0;"><a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a></div>
     <div style="clear: both;"></div>
 
-    {% if not recover %}
+    {% if not trash %}
       <div style="width: 40%; float: left; text-align: left; margin: 5px;">
         Markierte:
         <select name="mark_action_value">

@@ -69,14 +69,16 @@ function tribe_getContent($playerID, $tribe) {
     break;
 
     case TRIBE_ACTION_MESSAGE:
-      $msgTxt = request_var('messageText', '');
-      $msgTxt = (!empty($msgTxt)) ? $msgTxt : '';
+      if (!isset($_POST['messageText']) || empty($_POST['messageText'])) {
+        $messageID = -9;
+        break;
+      }
       $ingame = (isset($_POST['ingame'])) ? true : false;
 
-      if ($msgTxt && $ingame){
-        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $msgTxt);
-      } else if ($msgTxt && !$ingame){
-        $messageID = tribe_processSendTribeMessage($playerID, $tribe, $msgTxt);
+      if ($ingame){
+        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $_POST['messageText']);
+      } else {
+        $messageID = tribe_processSendTribeMessage($playerID, $tribe, $_POST['messageText']);
       }
     break;
   }

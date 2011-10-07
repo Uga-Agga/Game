@@ -61,8 +61,9 @@ class EventReports_Movements_Controller extends Controller {
                       'sum'         => $sum);
 
         // foreach cave..
-        foreach ($caves as $caveID => $cave)
+        foreach ($caves as $caveID => $cave) {
           $unit['cave'][] = array('amount' => intval($moves[$unitType->dbFieldName][$caveID]));
+        }
 
         $category['unit'][] = $unit;
       }

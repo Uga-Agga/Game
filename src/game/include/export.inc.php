@@ -444,6 +444,7 @@ function export_movement_bb ($movementID) {
     $resources = "transportierte Rohstoffe: \n" . $resources; 
   
   // Artefact
+  $artefact = "";
   if ($move['artefactID'] != 0) {
     $artefact = "transportierte Artefakte: \n" . $artefactData['name'] . "\n";
   }
