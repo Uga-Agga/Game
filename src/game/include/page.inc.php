@@ -28,7 +28,7 @@ function page_error403($message) {
 function page_dberror() {
   global $config;
 
-  Header("Location: ".$config->DBERROR_URL);
+  header("Location: finish.php?id=db");
   exit;
 }
 

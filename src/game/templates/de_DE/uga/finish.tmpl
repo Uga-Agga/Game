@@ -1,0 +1,155 @@
+{#
+/* error.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="de" xml:lang="de">
+<head>
+  {% block head %}
+    <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+
+    <link rel="shortcut icon" href="./images/favicon.ico" />
+    <link href="mapstyle.php" rel="stylesheet" type="text/css" />
+    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/base.css" rel="stylesheet" />
+    <!--[if lte IE 7]><link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/ie.css" rel="stylesheet" /><![endif]-->
+
+    <style type="text/css">
+    #overlay {
+       position: fixed;
+       z-index:199;
+       top: 0px;
+       left: 0px;
+       height:100%;
+       width:100%;
+    }
+    .overlayBG {
+       background-color:#FFFFFF;
+       -ms-filter: "Alpha(Opacity=50)"; /* IE 8 */
+       filter:alpha(opacity=50); /* IE5-7 */
+       -moz-opacity: 0.5; /* Mozilla */
+       opacity: 0.5;
+    }
+
+    #lightBox {
+       position:fixed;
+       top: 200px;
+       left: 14%;
+       z-index: 200;
+       width: 70%;
+       text-align:center;
+       -webkit-border-radius: 10px;
+       -khtml-border-radius: 10px;
+       -moz-border-radius: 10px;
+       border-radius: 10px;
+       behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);
+       background:#fbe3e4;
+       color: #000000;
+       border-color:#fbc2c4;
+       padding: 0.8em;
+       margin-bottom: 1em;
+       border: 2px solid #fbc2c4 
+       font-weight: bold;
+    }
+
+    #lightBox a, a.hover, a.visited {color: #000000;}
+    </style>
+
+    <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
+    <script type='text/javascript' src='js/jquery.jqDock.min.js'></script>
+    <script type='text/javascript' src='js/jquery.countdown.min.js'></script>
+    <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="js/ua.js"></script>
+  {% endblock %}
+</head>
+<body>
+  <div id="overlay" class="overlayBG">&nbsp;</div>
+
+  <div id="lightBox">
+    <div style="float: left; width: 25%;"><img src="{{ gfx }}/de_DE/t_uga/icon_error_page.png" alt ="" title="" width="150px" height="150px" /></div>
+    <div style="float: left; width: 75%;">
+      {{ status_msg|raw }}<br /><br />
+      <a href="{{ login_path }}">Hier gehts weiter zum Portal</a>
+    </div>
+    <div style="clear: both;"></div>
+  </div>
+
+  <div id="page">
+    <div id="header">
+      <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
+        <div id="header-menu">
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' />
+          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' />
+        </div>
+        <img id="header_round_name" src="./images/round_name.png" style="margin-top: 90px" alt="" />
+      </div>
+      <div id="header-left" style="background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat;">&nbsp;</div>
+      <div id="header-right" style="background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;text-align:right;">&nbsp;</div>
+      <div style="clear: both;"></div>
+    </div>
+
+    <div id="content-left">
+      <ul id="ul-menu-left">
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
+      </ul>
+    </div>
+
+    <div id="content">&nbsp;</div>
+
+    <div id="content-right">
+      <ul id="ul-menu-right">
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></li>
+        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
+      </ul>
+    </div>
+    <div style="clear: both;"></div>
+
+    {% block footer %}
+    <div id="bottom" style="margin-top: 10px;">
+      <div id="bottom-left">Serverzeit: {{ time }}</div>
+      <div id="bottom-middle">&nbsp;</div>
+      <div id="bottom-right"><a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a></div>
+      <div style="clear: both;"></div>
+    </div>
+    {% endblock %}
+  </div>
+  {% include "extendsFooter.tmpl" %}
+</body>
+</html>

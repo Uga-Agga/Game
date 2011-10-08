@@ -74,38 +74,37 @@ function formula_parseToReadable($formula){
 function formula_parseBasic($formula){
   global $FORMULA_SYMBOLS, $FORMULA_PHP_FUNCTIONS;
 
-  foreach($FORMULA_PHP_FUNCTIONS as $key => $value)
+  foreach($FORMULA_PHP_FUNCTIONS as $key => $value) {
     $formula = str_replace($key, $value, $formula);
+  }
 
+  $sql = '';
   // parse symbols
-  for ($i = 0; $i < strlen($formula); $i++){
-
+  for ($i = 0; $i < strlen($formula); $i++) {
     // opening brace
-    if ($formula{$i} == '['){
+    if ($formula{$i} == '[') {
 
       $symbol = $formula{++$i};
       $index = 0;
 
-      while($formula{++$i} != '.')
+      while($formula{++$i} != '.') {
         $index = $index * 10 + ($formula{$i} + 0);
+      }
 
       $field  = substr($formula, ++$i, 3);
 
       // 'ACT]' or 'MAX]'
       $i += 3;
-
-      if (strncasecmp($field, "ACT", 3) == 0)
+      if (strncasecmp($field, "ACT", 3) == 0) {
         $sql .= "0";
-
-
-
-      else if (strncasecmp($field, "MAX", 3) == 0)
+      } else if (strncasecmp($field, "MAX", 3) == 0) {
         $sql .= formula_parseBasic($FORMULA_SYMBOLS[$symbol][$index]->maxLevel);
-
+      }
     } else {
       $sql .= $formula{$i};
     }
   }
+
   return $sql;
 }
 

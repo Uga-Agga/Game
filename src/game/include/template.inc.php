@@ -20,8 +20,12 @@ class Template {
   private $twig;
   private $template;
 
-  public function __construct() {
+  public function __construct($path='') {
     global $config;
+
+    if (empty($path)) {
+      $path = $_SESSION['player']->getTemplatePath();
+    }
 
     // include and register Twig auto-loader
     include 'Twig/Autoloader.php';
@@ -29,11 +33,11 @@ class Template {
 
     try {
       // specify where to look for templates
-      $loader = new Twig_Loader_Filesystem($_SESSION['player']->getTemplatePath());
+      $loader = new Twig_Loader_Filesystem($path);
 
       // initialize Twig environment
       $this->twig = new Twig_Environment($loader, array(
-//        'cache'       => (TEMPLATE_CACHE) ? $_SESSION['player']->getTemplatePath() . 'cache' : false,
+//        'cache'       => (TEMPLATE_CACHE) ? $path . 'cache' : false,
         'auto_reload' => TEMPLATE_RELOAD,
         'debug'       => DEBUG
       ));
