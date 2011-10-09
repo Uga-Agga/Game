@@ -37,7 +37,7 @@ class Template {
 
       // initialize Twig environment
       $this->twig = new Twig_Environment($loader, array(
-//        'cache'       => (TEMPLATE_CACHE) ? $path . 'cache' : false,
+        'cache'       => (TEMPLATE_CACHE) ? $path . 'cache' : false,
         'auto_reload' => TEMPLATE_RELOAD,
         'debug'       => DEBUG
       ));

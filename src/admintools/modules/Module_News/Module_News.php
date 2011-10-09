@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Module_News.php - 
  * Copyright (c) 2004  Marcus Lunzenauer

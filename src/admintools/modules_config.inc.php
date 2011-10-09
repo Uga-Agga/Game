@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * modules_config.inc.php -
  * Copyright (c) 2004  Marcus Lunzenauer

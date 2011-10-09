@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Menu.lib.php -
  * Copyright (c) 2004  Marcus Lunzenauer

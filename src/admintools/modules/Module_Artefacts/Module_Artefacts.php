@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Module_Artefacts.php -
  * Copyright (c) 2004  Marcus Lunzenauer

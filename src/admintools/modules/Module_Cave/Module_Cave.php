@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Module_Cave.php - 
  * Copyright (c) 2007  David Unger

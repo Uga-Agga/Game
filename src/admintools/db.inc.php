@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * db.inc.php -
  * Copyright (c) 2004  ogp team@uga-agga.de

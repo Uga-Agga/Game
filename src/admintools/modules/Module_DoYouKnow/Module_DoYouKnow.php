@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Module_DoYouKnow.php - 
  * Copyright (c) 2009  David Unger

@@ -122,7 +122,7 @@ function science_getScienceDetail($caveID, &$details){
 
       // show the building link ?!
       if ($queue) {
-        $sciences[$science->scienceID]['no_build_msg'] = _('Ausbau im Gange');
+        $sciences[$science->scienceID]['no_build_msg'] = _('Erforschung im Gange');
       } else if ($sciences[$science->scienceID]['notenough'] && $maxLevel > $details[$science->dbFieldName]) {
         $sciences[$science->scienceID]['no_build_msg'] = _('Zu wenig Rohstoffe');
       } else if ($maxLevel > $details[$science->dbFieldName]) {

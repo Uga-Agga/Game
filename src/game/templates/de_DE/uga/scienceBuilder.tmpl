@@ -49,7 +49,7 @@
             <td class="td-size">Stufe: {{ item.currentlevel }}</td>
             <td class="td-button-single text-right">
               {% if item.build_link %}
-                <a href="main.php?modus={{ science_link }}&amp;action=build&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
+                <a href="main.php?modus={{ science_link }}&amp;action=build&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Erforschen" title="Erforschen" /></a>
               {% else %}
                 <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
               {% endif %}

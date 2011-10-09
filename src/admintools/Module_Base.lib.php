@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Module_Base.lib.php -
  * Copyright (c) 2004  Marcus Lunzenauer

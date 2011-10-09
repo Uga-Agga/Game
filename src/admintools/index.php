@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * index.php -
  * Copyright (c) 2004  Marcus Lunzenauer

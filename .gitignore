@@ -1,4 +1,5 @@
 src/Makefile
+src/admintools/config.inc.php
 src/config/*.xml
 src/config/*.tmp
 src/dbs/db-util

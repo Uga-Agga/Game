@@ -25,8 +25,8 @@ rules_url		http://www.uga-agga.de/rules/
 
 # various game settings
 
-# value in seconds, default: 45min
-session_timeout		2700
+# value in seconds, default: 60min
+session_timeout		3600
 
 # values in seconds, default: 60s
 building_time_base	40
