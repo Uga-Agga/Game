@@ -533,6 +533,7 @@ function export_movement_irc ($movementID) {
   }
   
   // Artefacts
+  $artefact = '';
   if ($move['artefactID'] != 0) {
     $artefact = "transportierte Artefakte: " . $artefactData['name'];
   }

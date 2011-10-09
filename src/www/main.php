@@ -30,11 +30,8 @@ page_start();
 
 // session expired?
 if (page_sessionExpired()) {
-  $timeoutMsg = "Sie waren fuer " . ((int)(SESSION_MAX_LIFETIME/60)) . " Minuten oder mehr inaktiv.";
-  if (isset($_SESSION['lastAction'])) {
-   $timeoutMsg .= "Letzte Aktion um " . date("H:i:s", $_SESSION['lastAction']) . " Uhr.";
-  }
-  page_error403($timeoutMsg);
+  header("Location: finish.php?id=inaktiv");
+  exit;
 } else {
   $_SESSION['lastAction'] = time();
 }
@@ -406,8 +403,8 @@ switch ($modus) {
   break;
 
   case LOGOUT:
-    session_destroy();
-    Header("Location: logout.php");
+    header("Location: finish.php?id=logout");
+    exit;
     break;
 
   /////////////////////////////////////////////////////////////////////////////
