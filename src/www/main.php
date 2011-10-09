@@ -347,7 +347,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case AWARD_DETAIL:
-    award_getAwardDetail(request_var('award', 0));
+    award_getAwardDetail(request_var('award', ''));
     $requestKeys = array('award');
     break;
 

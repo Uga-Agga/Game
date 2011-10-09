@@ -84,7 +84,7 @@ function swapImage(){
           <td>{{ item.members }}</td>
           <td>{{ item.caves }}</td>
           <td>{{ item.war_won }} / {{ item.war_lost }}</td>
-          <td>&nbsp;{% for award in item.award %}<a href="main.php?modus={{ award_info_link }}&amp;award={{ award.tag }}"><img src="images/awards/{{ award.tag }}.png" class="noborder" width="15" height="15" hspace="1" /></a>{% endfor %}</td>
+          <td>&nbsp;{% for award in item.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ award.tag }}"><img src="images/awards/{{ award.tag }}.png" class="noborder" width="15" height="15" hspace="1" /></a>{% endfor %}</td>
         </tr>
       {% endfor %}
     </table>

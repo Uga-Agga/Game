@@ -64,8 +64,7 @@ class Db{
     if (!(mysql_select_db($name, $this->con)))
       exit('could not select');
 
-    mysql_query("SET NAMES 'latin1'", $this->con);
-    mysql_query("SET CHARACTER SET 'latin_swedish_ci'", $this->con);
+    mysql_query("SET NAMES 'UTF8'", $this->con);
 
     return $this;
   }

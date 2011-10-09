@@ -17,34 +17,22 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  *  @param tag       the current award's tag
  */
 function award_getAwardDetail($tag) {
-  global $db;
+  global $db, $template;
+
+  // open template
+  $template->setFile('awardDetail.tmpl');
 
   $msgs = array();
 
   $sql = $db->prepare("SELECT * FROM ". AWARDS_TABLE ." WHERE tag = :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
-  if (($sql->rowCountSelect() == 0) || !$sql->execute()) {
-    $msgs[] = sprintf(_('Dieser Orden existiert nicht: "%s".'), $tag);
-    $row    = array();
-  } else {
-    $row = $sql->fetch(PDO::FETCH_ASSOC);
+  if (!$sql->execute()) {
+    $template->addVar('no_award', true);
+    return;
   }
 
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'award_detail.ihtml');
-
-  if (sizeof($msgs)) {
-    foreach ($msgs AS $msg) {
-      tmpl_iterate($template, "MESSAGE");
-      tmpl_set($template, "MESSAGE/message", $msg);
-    }
-  }
-
-  if (sizeof($row)){
-    tmpl_set($template, 'AWARD', $row);
-  }
-
-  return tmpl_parse($template);
+  $award = $sql->fetch(PDO::FETCH_ASSOC);
+  $template->addVar('award', $award);
 }
 
 ?>

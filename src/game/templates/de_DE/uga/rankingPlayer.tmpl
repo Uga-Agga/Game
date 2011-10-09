@@ -82,7 +82,7 @@ function swapImage(){
           <td><img src="{{ gfx }}/de_DE/t_uga/ranking/leader{{ item.is_leader }}.gif" class="noborder" width="15" height="15" alt="" title=""/></td>
           <td><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
           <td>{{ item.caves }}</td>
-          <td>&nbsp;{% for award in item.award %}<a href="main.php?modus={{ award_info_link }}&amp;award={{ award.tag|url_encode }}"><img src="images/awards/{{ award.tag }}.png" class="noborder" width="15" height="15" hspace="1" /></a>{% endfor %}</td>
+          <td>&nbsp;{% for award in item.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ award.tag|url_encode }}"><img src="images/awards/{{ award.tag }}.png" class="noborder" width="15" height="15" hspace="1" /></a>{% endfor %}</td>
         </tr>
       {% endfor %}
     </table>
