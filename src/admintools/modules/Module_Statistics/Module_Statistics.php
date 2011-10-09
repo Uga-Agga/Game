@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Module_Statistics.php - 
  * Copyright (c) 2011 Sascha Lange
