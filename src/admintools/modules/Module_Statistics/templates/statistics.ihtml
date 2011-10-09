@@ -1,0 +1,11 @@
+<h1>Statistics</h1>
+
+<h2>Unique Logins per Day (unique users, unique users day / month)</h2>
+<tmpl:dailyLogins> {date}: {playersPerDay} - {quotient} <br /> </tmpl:dailyLogins>
+
+<h2>Unique Logins (unique users, average logins per user)</h2> 
+
+Last hour: {playersLastHour} / {lpuLastHour}  <br />
+Last 24h:  {playersLastDay}  / {lpuLastDay} <br />
+Last 7d:   {playersLastWeek} / {lpuLastWeek}<br />
+Last 30d:  {playersLastMonth} / {lpuLastMonth}<br />
