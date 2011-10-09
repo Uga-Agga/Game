@@ -20,6 +20,7 @@ $module_cfg['modules'] = array("Module_Artefacts",
                                "Module_Suggestion",
                                "Module_Cave",
                                "Module_DoYouKnow",
-                               "Module_Multihunter");
+                               "Module_Multihunter",
+                               "Module_Statistics");
 
 ?>
