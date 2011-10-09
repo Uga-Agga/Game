@@ -9,7 +9,7 @@
  * the License, or (at your option) any later version.
  */
 
-$cfg['cfgpath']   = "/srv/git/Game/src/game/";
+$cfg['cfgpath']   = "/usr/local/ugaagga/include/";
 $cfg['gfxpath']   = "http://gfx.uga-agga.de";
 
 $cfg['news']['categories'] = array('note', 'design', 'rules', 'story');

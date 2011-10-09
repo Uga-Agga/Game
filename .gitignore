@@ -1,5 +1,6 @@
 src/Makefile
-src/admintools/db.inc.php
+src/admintools/config.inc.php
+src/admintools/dbconfig.inc.php
 src/config/*.xml
 src/config/*.tmp
 src/dbs/db-util
