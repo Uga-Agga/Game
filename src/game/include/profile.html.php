@@ -266,7 +266,7 @@ function profile_update($db_login) {
     // set password
     $sql = $db_login->prepare("UPDATE Login SET password = :password WHERE LoginID = :loginID");
     $sql->bindValue('password', $password['password1'], PDO::PARAM_STR); 
-    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    $sql->bindValue('loginID', $playerID, PDO::PARAM_INT);
 
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
