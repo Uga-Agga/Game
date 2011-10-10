@@ -705,9 +705,12 @@ function export_messages_xml($messageID) {
 
   $message_data = $sql->fetch(PDO::FETCH_ASSOC);
 
-  if ($message_data['senderID'] !== $_SESSION['player']->playerID &&
-      $message_data['recipientID'] !== $_SESSION['player']->playerID) {
-        return "Sie können nur auf eigene Nachrichten zugreifen!";
+  if ($message_data['senderID'] != $_SESSION['player']->playerID && $message_data['recipientID'] != $_SESSION['player']->playerID) {
+    return "Sie können nur auf eigene Nachrichten zugreifen!";
+  }
+
+  if (empty($message_data['messageXML'])) {
+    return "Es konnte keine Nachricht geladen werden.";
   }
 
   $xml = simplexml_load_string($message_data['messageXML'], 'mySimpleXML');

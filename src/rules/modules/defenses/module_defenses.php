@@ -1,5 +1,5 @@
-<?
-function &defenses_getSelector(){
+<?php
+function defenses_getSelector(){
 
   global $params, $defenseSystemTypeList;
 
@@ -15,7 +15,7 @@ function &defenses_getSelector(){
   return $defenseSystems;
 }
 
-function &defenses_getContent(){
+function defenses_getContent(){
 
   global $params, $defenseSystemTypeList, $resourceTypeList, $unitTypeList;
 

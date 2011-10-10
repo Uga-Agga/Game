@@ -20,6 +20,8 @@ require_once("include/page.inc.php");
 
 page_start();
 
+header("Content-type: text/css");
+
 if (!empty($_SESSION['player']->tribe)) {
   $stylesheet = "./images/temp/tribe_".$_SESSION['player']->tribe.".css";
 
@@ -27,7 +29,6 @@ if (!empty($_SESSION['player']->tribe)) {
     tribe_generateMapStylesheet();
 
   // output the file; readfile wraps it in HTML, header() is too obvious where files are located
-  header("Content-type: text/css");
   $file = @file_get_contents($stylesheet);
   echo $file;
 }

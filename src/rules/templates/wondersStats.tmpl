@@ -1,0 +1,43 @@
+{#
+/* wondersStats.tmpl -
+ * Copyright (c) 2011 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Wunderübersicht{% endblock %}
+{% block content %}
+<table cellpadding="3" cellspacing="0" class="box">
+<colgroup>
+    <col />
+    <col span="3" width="100" />
+ </colgroup>
+  <tr>
+    <th align="left">Name</th>
+    <th>Basiswahrsch.</th>
+    <th>Zielhöhle</th>
+    <th>Art*</th>
+    <th>Wirkung</th>
+  </tr>
+  {% for wonder in wonders_list %}
+  {% set bgID = (bgID+1)%2 %}
+  <tr align="left"  class="row{{ bgID }}">
+    <td><a href="index.php?modus=wonders&amp;wondersID={{ wonder.id }}">{{ wonder.name }}</a></td>
+    <td align="center">{{ wonder.chance }}</td>
+    <td align="center">{{ wonder.target }}</td>
+    <td align="center">{{ wonder.offensiveness }}</td>
+    <td align="left">{{ wonder.remark }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<p><strong>
+  * defensiv = verstärkendes positives Wunder<br />
+  * offensiv = verschlechterndes negatives Wunder
+</strong></p>
+
+{% endblock %}

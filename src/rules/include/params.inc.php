@@ -1,7 +1,7 @@
 <?php
 /*
  * params.inc.php -
- * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -12,19 +12,9 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function cleanSafeBracket($string) {
-  $string = preg_replace("/(<)/", "_THIS_MUST_BE_LOWER_THEN_", $string);
-  $string = preg_replace("/(>)/", "_THIS_MUST_BE_GREATER_THEN_", $string);
-  $string = clean($string);
-  $string = preg_replace("/(_THIS_MUST_BE_LOWER_THEN_)/", "&lt;", $string);
-  $string = preg_replace("/_THIS_MUST_BE_GREATER_THEN_/", "&gt;", $string);
-
-  return $string;
-}
-
-function clean($string){
-  return trim(htmlentities(strip_tags($string), ENT_QUOTES));
-}
+/*
+ * ORGINAL FUNCTION FROM http://www.phpbb.com/
+ */
 
 /**
 * set_var
@@ -42,7 +32,6 @@ function set_var(&$result, $var, $type, $multibyte = false)
   {
     $result = trim(htmlspecialchars(str_replace(array("\r\n", "\r", "\0"), array("\n", "\n", ''), $result), ENT_COMPAT));
 
-    /* No UTF-8!
     if (!empty($result))
     {
       // Make sure multibyte characters are wellformed
@@ -58,7 +47,7 @@ function set_var(&$result, $var, $type, $multibyte = false)
         // no multibyte, allow only ASCII (0-127)
         $result = preg_replace('/[\x80-\xFF]/', '?', $result);
       }
-    }*/
+    }
 
     $result = (true) ? stripslashes($result) : $result;
   }

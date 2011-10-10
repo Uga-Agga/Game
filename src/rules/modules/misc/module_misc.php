@@ -1,6 +1,16 @@
-<?
-function &misc_getMenu(){
+<?php
+/*
+ * module_mist.php -
+ * Copyright (c) 2003  OGP-Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
 
+function misc_getMenu() {
   $result[] = array('link' => "?modus=misc&amp;miscID=6", 'content' => "Rohstoffe");
   $result[] = array('link' => "?modus=misc&amp;miscID=1", 'content' => "Einheiten");
   $result[] = array('link' => "?modus=misc&amp;miscID=2", 'content' => "Verteidigungsanlagen");
@@ -11,16 +21,15 @@ function &misc_getMenu(){
   return $result;
 }
 
-function &misc_getContent(){
+function misc_getContent(){
 
   global $params;
 
-  $miscID = (isset($params->miscID)) ? $params->miscID : 1;
-  switch ($miscID){
+  $miscID = request_var('miscID', 1);
+  switch ($miscID) {
     case 1:
     default: $result = getUnitStats();
              break;
-
     case 2:  $result = getDefenseStats();
              break;
     case 3:  $result = getUnitsEncumbrance();
@@ -35,191 +44,201 @@ function &misc_getContent(){
   return $result;
 }
 
-function &getUnitStats(){
+function getUnitStats(){
+ global $template, $unitTypeList;
 
- global $unitTypeList;
+  // open template
+  $template->setFile('unitStats.tmpl');
 
   // get a copy of the unitTypeList
-  $copy = $unitTypeList;
-  // sort that copy by names
-  usort($copy, "nameCompare");
+  $unitList = $unitTypeList;
 
-  $i=0;
-  $template = @tmpl_open("templates/unitstats.ihtml");
-  foreach ($copy AS $value)
-    if (!$value->nodocumentation){
-      tmpl_iterate($template, 'UNIT');
-      tmpl_set($template, 'UNIT',
-               array('id'          => $value->unitID,
-                     'name'        => $value->name,
-                     'ranking'     => $value->ranking,
-                     'attackRange' => $value->attackRange,
-                     'attackAreal' => $value->attackAreal,
-                     'attackRate'  => $value->attackRate,
-                     'defenseRate' => $value->defenseRate,
-                     'RDResist'    => $value->rangedDamageResistance,
-                     'hitPoints'   => $value->hitPoints,
-                     'warpoints'   => $value->warpoints,
-                     'foodCost'    => $value->foodCost,
-                     'wayCost'     => $value->wayCost,
-                     'iterator'    => $i++ %2));
-      if ($value->visible == 0){
-        tmpl_iterate($template, 'UNIT/REMARK');
-        tmpl_set($template, 'UNIT/REMARK/remark', "unsichtbar");
-      }
+  // sort that units by names
+  usort($unitList, "nameCompare");
+
+  $units = array();
+  foreach ($unitList AS $value) {
+    if (!$value->nodocumentation) {
+      $units[] = array(
+        'id'          => $value->unitID,
+        'name'        => $value->name,
+        'ranking'     => $value->ranking,
+        'attackRange' => $value->attackRange,
+        'attackAreal' => $value->attackAreal,
+        'attackRate'  => $value->attackRate,
+        'defenseRate' => $value->defenseRate,
+        'RDResist'    => $value->rangedDamageResistance,
+        'hitPoints'   => $value->hitPoints,
+        'warpoints'   => $value->warpoints,
+        'foodCost'    => $value->foodCost,
+        'wayCost'     => $value->wayCost,
+        'visible'     => $value->visible,
+      );
     }
-  return @tmpl_parse($template);
+  }
+
+  $template->addVar('unit_list', $units);
 }
 
-function &getDefenseStats(){
+function getDefenseStats(){
+  global $template, $defenseSystemTypeList;
 
- global $defenseSystemTypeList;
+  // open template
+  $template->setFile('defensesStats.tmpl');
 
   // get a copy of the defenseSystemTypeList
-  $copy = $defenseSystemTypeList;
+  $defensesList = $defenseSystemTypeList;
+
   // sort that copy by names
-  usort($copy, "nameCompare");
+  usort($defensesList, "nameCompare");
 
-  $i=0;
-  $template = @tmpl_open("templates/defensestats.ihtml");
-
-  foreach ($copy AS $value)
-    if (!$value->nodocumentation){
-      tmpl_iterate($template, 'DEFENSE');
-      tmpl_set($template, 'DEFENSE',
-               array('id'          => $value->defenseSystemID,
-                     'name'        => $value->name,
-                     'attackRange' => $value->attackRange,
-                     'attackRate'  => $value->attackRate,
-                     'warpoints'   => $value->warPoints,
-                     'defenseRate' => $value->defenseRate,
-                     'hitPoints'   => $value->hitPoints,
-					 'remark' 	   => $value->remark,
-                     'iterator'    => $i++ %2));
-    }
-  return tmpl_parse($template);
-}
-
-function &getUnitsEncumbrance(){
-
- global $resourceTypeList, $unitTypeList;
-
-  // get a copy of the unitTypeList
-  $copy = $unitTypeList;
-  // sort that copy by unit names
-  usort($copy, "nameCompare");
-
-  $i=0;
-  $template = @tmpl_open("templates/unitsencumbrance.ihtml");
-
-  foreach ($resourceTypeList AS $resource){
-    if (!$resource->nodocumentation) {
-      tmpl_iterate($template, 'HEADER_RESOURCES');
-      tmpl_set($template, 'HEADER_RESOURCES',
-               array('name'        => $resource->name,
-                     'dbFieldName' => $resource->dbFieldName));
+  $defenses = array();
+  foreach ($defensesList AS $value) {
+    if (!$value->nodocumentation) {
+      $defenses[] = array(
+        'id'          => $value->defenseSystemID,
+        'name'        => $value->name,
+        'attackRange' => $value->attackRange,
+        'attackRate'  => $value->attackRate,
+        'warpoints'   => $value->warPoints,
+        'defenseRate' => $value->defenseRate,
+        'hitPoints'   => $value->hitPoints,
+        'remark'      => $value->remark,
+      );
     }
   }
 
-  foreach ($copy AS $unit){
-    if (!$unit->nodocumentation){
-
-      $encumbrances = array();
-      foreach ($resourceTypeList AS $resource){
-        if (!$resource->nodocumentation)
-          $encumbrances[] = array('value' => (isset($unit->encumbranceList[$resource->resourceID])) ? intval($unit->encumbranceList[$resource->resourceID]) : 0);
-      }
-
-      tmpl_iterate($template, 'UNIT');
-      tmpl_set($template, 'UNIT',
-               array('unitID'      => $unit->unitID,
-                     'name'        => $unit->name,
-                     'ENCUMBRANCE' => $encumbrances,
-                     'iterator'    => $i++ %2));
-    }
-  }
-
-  return tmpl_parse($template);
+  $template->addVar('defenses_list', $defenses);
 }
 
-function &getWondersStats(){
+function getWondersStats() {
+  global $template, $wonderTypeList, $cfg;
 
- global $wonderTypeList, $cfg;
-
-  require_once($cfg['cfgpath']."wonder.inc.php");
-
+  require_once('wonder.inc.php');
   $uaWonderTargetText = WonderTarget::getWonderTargets();
 
+  // open template
+  $template->setFile('wondersStats.tmpl');
+
   // get a copy of the wonderTypeList
-  $copy = $wonderTypeList;
+  $wondersList = $wonderTypeList;
+
   // sort that copy by names
-  usort($copy, "nameCompare");
+  usort($wondersList, "nameCompare");
 
-  $i = 0;
-  $template = @tmpl_open("templates/wondersstats.ihtml");
-
-  foreach ($copy AS $value)
-    if (!$value->nodocumentation){
-      tmpl_iterate($template, 'WONDERS');
-      tmpl_set($template, 'WONDERS',
-               array('id'            => $value->wonderID,
-                     'name'          => $value->name,
-                     'offensiveness' => lib_translate($value->offensiveness),
-                     'chance'        => round(eval('return '.formula_parseBasic($value->chance).';'), 3),
-                     'target'        => $uaWonderTargetText[$value->target],
-					 'remark'		 => $value->remark,
-                     'iterator'      => $i++ %2));
+  $wonders = array();
+  foreach ($wondersList AS $value) {
+    if (!$value->nodocumentation) {
+      $wonders[] = array(
+        'id'            => $value->wonderID,
+        'name'          => $value->name,
+        'offensiveness' => $value->offensiveness,
+        'chance'        => round(eval('return '.formula_parseBasic($value->chance).';'), 3),
+        'target'        => $uaWonderTargetText[$value->target],
+        'remark'        => $value->remark,
+      );
     }
-  return tmpl_parse($template);
+  }
+
+  $template->addVar('wonders_list', $wonders);
 }
 
-function &getBuildingsStats(){
+function getBuildingsStats(){
+  global $template, $buildingTypeList;
 
- global $buildingTypeList, $cfg;
+  // open template
+  $template->setFile('buildingsStats.tmpl');
 
   // get a copy of the buildingTypeList
-  $copy = $buildingTypeList;
+  $buildingsList = $buildingTypeList;
+
   // sort that copy by names
-  usort($copy, "nameCompare");
+  usort($buildingsList, "nameCompare");
 
-  $i=0;
-  $template = @tmpl_open("templates/buildingstats.ihtml");
-
-  foreach ($copy AS $value)
-    if (!$value->nodocumentation){
-      tmpl_iterate($template, 'BUILDINGS');
-      tmpl_set($template, 'BUILDINGS',
-               array('id'            => $value->buildingID,
-                     'name'          => $value->name,
-                     'points'        => $value->ratingValue,
-                     'remark'		 => $value->remark,
-                     'iterator'      => $i++ %2));
+  $buildings = array();
+  foreach ($buildingsList AS $value) {
+    if (!$value->nodocumentation) {
+      $buildings[] = array(
+        'id'      => $value->buildingID,
+        'name'    => $value->name,
+        'points'  => $value->ratingValue,
+        'remark'  => $value->remark
+      );
     }
-  return tmpl_parse($template);
+  }
+
+  $template->addVar('buildings_list', $buildings);
 }
 
-function &getResourcesStats(){
+function getResourcesStats(){
+  global $template, $resourceTypeList;
 
- global $resourceTypeList;
+  // open template
+  $template->setFile('resourcesStats.tmpl');
 
   // get a copy of the $resourceTypeList
-  $copy = $resourceTypeList;
+  $resourcesList = $resourceTypeList;
+
   // sort that copy by names
-  usort($copy, "nameCompare");
+  usort($resourcesList, "nameCompare");
 
-  $i=0;
-  $template = @tmpl_open("templates/resourcestats.ihtml");
-
-  foreach ($copy AS $value)
+  $resources = array();
+  foreach ($resourcesList AS $value) {
     if (!$value->nodocumentation){
-      tmpl_iterate($template, 'RESOURCES');
-      tmpl_set($template, 'RESOURCES',
-               array('id'            => $value->resourceID,
-                     'name'          => $value->name,
-					 'dbFieldName'	 => $value->dbFieldName,
-					 'remark'		 => $value->remark,
-                     'iterator'      => $i++ %2));
+      $resources[] = array(
+        'id'         => $value->resourceID,
+        'name'       => $value->name,
+        'dbFieldName' => $value->dbFieldName,
+        'remark'     => $value->remark,
+      );
     }
-  return tmpl_parse($template);
+  }
+
+  $template->addVar('resources_list', $resources);
+}
+
+
+function getUnitsEncumbrance(){
+  global $template, $resourceTypeList, $unitTypeList;
+
+  // open template
+  $template->setFile('unitsEncumbrance.tmpl');
+
+  // get a copy of the unitTypeList
+  $unitsList = $unitTypeList;
+
+  // sort that copy by unit names
+  usort($unitsList, "nameCompare");
+
+  $resources = array();
+  foreach ($resourceTypeList AS $resource){
+    if (!$resource->nodocumentation) {
+      $resources[] = array(
+        'name'        => $resource->name,
+        'dbFieldName' => $resource->dbFieldName
+      );
+    }
+  }
+  $template->addVar('header_resource', $resources);
+
+  $units = array();
+  foreach ($unitsList AS $unit) {
+    if (!$unit->nodocumentation ){
+      $encumbrances = array();
+      foreach ($resourceTypeList AS $resource) {
+        if (!$resource->nodocumentation) {
+          $encumbrances[] = array('value' => (isset($unit->encumbranceList[$resource->resourceID])) ? intval($unit->encumbranceList[$resource->resourceID]) : 0);
+        }
+      }
+
+      $units[] = array(
+        'unitID'      => $unit->unitID,
+        'name'        => $unit->name,
+        'encumbrances' => $encumbrances,
+      );
+    }
+  }
+
+  $template->addVar('units_list', $units);
 }
 ?>

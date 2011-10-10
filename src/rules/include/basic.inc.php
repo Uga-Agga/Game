@@ -1,29 +1,18 @@
-<?
-function descriptionCompare($a, $b){
-  return strcmp($a['description'], $b['description']);
-}
+<?php
+/*
+ * template.inc.php -
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
 
-function nameCompare($a, $b){
-  return strcmp($a->name, $b->name);
-}
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function lib_checkModus(){
-
-  global $module_cfg, $params;
-
-  if (isset($params->modus) && array_key_exists($params->modus, $module_cfg['modules']))
-    $modus = $params->modus;
-
-  // get default modus
-  else
-    $modus = $module_cfg['default_module'];
-
-  return $modus;
-}
-
-
-function &lib_getActiveModules(){
-
+function lib_getActiveModules() {
   global $module_cfg;
 
   // filter active modules
@@ -55,16 +44,12 @@ function lib_unhtmlentities($string){
   return strtr ($string, $trans_tbl);
 }
 
-function lib_translate ($string){
-  $glossar = array(
-    'all'       => 'alle',
-    'own'       => 'eigene',
-    'other'     => 'fremde',
-    'offensive' => 'offensiv',
-    'defensive' => 'defensiv'
-  );
-  return $glossar["$string"];
+function descriptionCompare($a, $b){
+  return strcmp($a['description'], $b['description']);
 }
 
+function nameCompare($a, $b){
+  return strcmp($a->name, $b->name);
+}
 
 ?>

@@ -1,10 +1,10 @@
-<?
+<?php
 global $cfg;
 require_once($cfg['cfgpath']."wonder.rules.php");
 require_once($cfg['cfgpath']."wonder.inc.php");
 init_wonders();
 
-function &wonders_getSelector(){
+function wonders_getSelector(){
 
   global $params, $wonderTypeList;
 
@@ -19,7 +19,7 @@ function &wonders_getSelector(){
   return $wonders;
 }
 
-function &wonders_getContent(){
+function wonders_getContent(){
  global $params, $scienceTypeList, $resourceTypeList, $unitTypeList, $wonderTypeList;
 
   $id = $params->wondersID;

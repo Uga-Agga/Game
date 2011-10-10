@@ -1,5 +1,5 @@
-<?
-function &resources_getSelector(){
+<?php
+function resources_getSelector(){
   
   global $params, $resourceTypeList;
   
@@ -14,7 +14,7 @@ function &resources_getSelector(){
   return $resources;
 }
 
-function &resources_getContent(){
+function resources_getContent(){
 
   global $params, $resourceTypeList;
   
@@ -28,7 +28,7 @@ function &resources_getContent(){
   $template = @tmpl_open("templates/resource.ihtml");
 
   tmpl_set($template, array('name'         => $resource->name,
-                            'description'  => $resource->description,
+                            'description'  => '', //$resource->description,
                             'production'   => formula_parseToReadable($resource->resProdFunction),
                             'max_storage'  => formula_parseToReadable($resource->maxLevel),
                             'dbFieldName'  => $resource->dbFieldName,

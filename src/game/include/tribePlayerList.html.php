@@ -35,7 +35,7 @@ function tribePlayerList_getContent($caveID, $tribe) {
       $playerData['awards'] = explode('|', $playerData['awards']);
 
       $awards = array();
-      foreach ($tmp AS $tag) {
+      foreach ($playerData['awards'] AS $tag) {
         $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
       }
 

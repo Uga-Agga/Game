@@ -1,5 +1,5 @@
-<?
-function &sciences_getSelector(){
+<?php
+function sciences_getSelector(){
 
   global $params, $scienceTypeList;
 
@@ -14,7 +14,7 @@ function &sciences_getSelector(){
   return $sciences;
 }
 
-function &sciences_getContent(){
+function sciences_getContent(){
  global $params, $scienceTypeList, $resourceTypeList, $unitTypeList;
 
   $id = $params->sciencesID;

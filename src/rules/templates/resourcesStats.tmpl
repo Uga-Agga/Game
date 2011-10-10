@@ -1,0 +1,30 @@
+{#
+/* resourcesStats.tmpl -
+ * Copyright (c) 2011 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Ressourcenübersicht{% endblock %}
+{% block content %}
+<table cellpadding="3" cellspacing="0" class="box">
+  <tr>
+    <th align="left">Name</th>
+    <th>Icon</th>
+    <th>Gebäude/externe Gebäude</th>
+  </tr>
+  {% for resource in resources_list %}
+  {% set bgID = (bgID+1)%2 %}
+  <tr align="left"  class="row{{ bgID }}">
+    <td><a href="index.php?modus=resources&amp;resourcesID={{ resource.id }}">{{ resource.name }}</a></td>
+    <td><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" alt="{{ resource.name }}" width="20" height="20" title="{{ resource.name }}" /></td>
+    <td align="left">{{ resource.remark }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

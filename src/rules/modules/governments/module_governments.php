@@ -1,15 +1,15 @@
-<?
+<?php
 global $cfg;
 global $leaderDeterminationList, $governmentList;
 require_once($cfg['cfgpath']."government.rules.php");
 
-function &governments_getMenu(){
+function governments_getMenu(){
 
   $result[] = array('link' => "?modus=governments", 'content' => "Regierungen");
   return $result;
 }
 
-function &governments_getContent(){
+function governments_getContent(){
 
   global $governmentList, $leaderDeterminationList;
   $i=0;

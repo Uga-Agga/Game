@@ -18,10 +18,10 @@ class WonderTarget {
     static $result = NULL;
 
     if ($result === NULL) {
-      $result = array("same"  => _('Wirkungsh&ouml;hle'),
-                      "own"   => _('eigene H&ouml;hlen'),
-                      "other" => _('fremde H&ouml;hlen'),
-                      "all"   => _('jede H&ouml;hle'));
+      $result = array("same"  => _('Wirkungshöle'),
+                      "own"   => _('eigene Höhlen'),
+                      "other" => _('fremde Höhlen'),
+                      "all"   => _('jede Höhle'));
     }
 
     return $result;
@@ -153,7 +153,7 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
 
   // if this wonder is offensive
   // calculate the wonder resistance and evaluate into $resistance
-  // TODO: Wertebereich der Resistenz ist derzeit 0 - 1, also je h�her desto resistenter
+  // TODO: Wertebereich der Resistenz ist derzeit 0 - 1, also je höher desto resistenter
   if ($wonderTypeList[$wonderID]->offensiveness == "offensive"){
     $resistance_eval_formula = formula_parseToPHP($WONDERRESISTANCE, '$targetData');
     $resistance_eval_formula = "\$resistance=$resistance_eval_formula;";

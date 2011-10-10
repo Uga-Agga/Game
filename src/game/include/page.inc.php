@@ -21,7 +21,7 @@ function page_error403($message) {
   global $config;
 
   @session_destroy();
-  Header("Location: ".$config->ERROR403_URL."?message=".urlencode($message));
+  header("Location: finish.php?id=".urlencode($message));
   exit;
 }
 
@@ -62,18 +62,17 @@ function page_start() {
   // start session
   session_start();
 
-  // get request params
-  $params = new Params();
-
   // check for valid session
   // FIXME german string..
   if (!isset($_SESSION['player']) || !$_SESSION['player']->playerID) {
-    page_error403(sprintf('Sie waren für %d Minuten oder mehr inaktiv.', date("i", ini_get("session.gc_maxlifetime"))));
+    header("Location: finish.php?id=inaktiv");
+    exit;
   }
 
   // connect to database
   if (!($db = DbConnect())) {
-    page_dberror();
+    header("Location: finish.php?id=db");
+    exit;
   }
 
   // init I18n

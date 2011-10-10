@@ -50,9 +50,7 @@ class EventReports_Movements_Controller extends Controller {
       foreach ($unitTypeList as $unitType) {
 
         // get sum
-        $sum = isset($moves[$unitType->dbFieldName])
-               ? array_sum($moves[$unitType->dbFieldName])
-               : 0;
+        $sum = isset($moves[$unitType->dbFieldName]) ? array_sum($moves[$unitType->dbFieldName]) : 0;
         if (!$sum) continue;
 
         // set name and sum
@@ -62,6 +60,10 @@ class EventReports_Movements_Controller extends Controller {
 
         // foreach cave..
         foreach ($caves as $caveID => $cave) {
+         if (!isset($moves[$unitType->dbFieldName][$caveID])) {
+           continue;
+         }
+
           $unit['cave'][] = array('amount' => intval($moves[$unitType->dbFieldName][$caveID]));
         }
 

@@ -1,5 +1,5 @@
-<?
-function &units_getSelector(){
+<?php
+function units_getSelector(){
 
   global $params, $unitTypeList;
 
@@ -14,7 +14,7 @@ function &units_getSelector(){
   return $units;
 }
 
-function &units_getContent(){
+function units_getContent(){
 
   global $params, $unitTypeList, $resourceTypeList;
 

@@ -1,49 +1,74 @@
-<?
+<?php
+/*
+ * index.php -
+ * Copyright (c) 2003  OGP-Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
+
 /***** include required files **************************************/
-require_once("config.inc.php");
-require_once("formula_parser.inc.php");
-require_once("lib.inc.php");
-require_once("modules_config.inc.php");
-require_once("params.inc.php");
-
-global $cfg, $module_cfg;
-
-ini_set('display_errors', 0);
+require_once('config.inc.php');
+require_once('include/template.inc.php');
+require_once('include/params.inc.php');
+require_once('include/basic.inc.php');
+require_once('include/parser.inc.php');
+require_once('include/modules.inc.php');
 
 /***** INITIALIZE GLOBALS ******************************************/
 
-// get cleaned POST, GET and SESSION parameters
-$params = new Params();
+/***** GET TEMPLATE *************************************************/
+$template = new template();
 
 /***** GET MODUS ***************************************************/
-$modus = lib_checkModus();
+$modus = request_var('modus', '');
+if (!array_key_exists($modus, $module_cfg['modules'])) {
+  $modus = $module_cfg['default_module'];
+}
 
 /***** LOAD ACTIVE MODULES *****************************************/
-$active_modules =& lib_getActiveModules();
+$active_modules = lib_getActiveModules();
 
 /***** GET CONTENT *************************************************/
 $modus_function = $modus . "_getContent";
-$content = $modus_function();
+if (function_exists($modus_function)) {
+  $content = $modus_function();
+} else {
+  die('Unbekannter Modus');
+}
 
 /***** GET MENU *************************************************/
+$menu = array();
 foreach ($active_modules AS $module){
   $menu_function = $module['modus'] . "_getMenu";
   if (function_exists("$menu_function"))
-    $menu[] = $menu_function();
+    $menu = $menu_function();
 }
+$template->addVar('left_menu', $menu);
 
 /***** GET SELECTORS ***********************************************/
+$selectors = array();
 foreach ($active_modules AS $module){
   $selector_function = $module['modus'] . "_getSelector";
   if (function_exists("$selector_function"))
-    $selectors[] = array('modus' => $module['modus'], 'OPTION' => $selector_function());
+    $selectors[] = array(
+      'modus' => $module['modus'],
+      'item' => $selector_function()
+    );
+}
+
+if (sizeof($selectors)) {
+  $template->addVar('selectors', $selectors);
 }
 
 /***** FILL TEMPLATE ***********************************************/
-$template = @tmpl_open("templates/framework.ihtml");
-tmpl_set($template, array('content'  => str_replace('%gfx%', $cfg['gfxpath'], $content),
-                          'MENU'     => $menu,
-                          'SELECTOR' => $selectors));
+$template->addVars(array(
+  'gfx' => GFX_PATH,
+));
 
-echo tmpl_parse($template);
+$template->render();
+
 ?>

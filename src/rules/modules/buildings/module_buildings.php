@@ -1,5 +1,5 @@
-<?
-function &buildings_getSelector(){
+<?php
+function buildings_getSelector(){
 
   global $params, $buildingTypeList;
 
@@ -15,7 +15,7 @@ function &buildings_getSelector(){
   return $buildings;
 }
 
-function &buildings_getContent(){
+function buildings_getContent(){
 
  global $params, $buildingTypeList, $resourceTypeList, $unitTypeList;
 
