@@ -133,7 +133,44 @@
     <td>&nbsp;</td>
    </tr>
   </table>
-  <br /> {% if skills %}
+  <br /> 
+  {% if isConstructor %}
+  <div class="box small">
+    <div class="box-header">Rohstoffe opfern</div>
+    <div class="boxcontent smallinner success inner">
+     <table class="table">
+       <tr class="bg2 nohover">
+        <td colspan="3"><div class="notice" style="text-align:center">
+        Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln <br/><br />
+        
+        Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!</div>
+       </tr>
+       <tr class="bg2 nohover">
+         <th class="bg2 nohover">Rohstoff</th>
+         <th class="bg2 nohover">Menge</th>
+         <th class="bg2 nohover">&nbsp;</th>
+       </tr>
+       {% for resource in resourceTypeList %}
+       {% if resource.takeoverValue > 0 %}
+       {% set bgID = (bgID+1)%2 %}
+       <tr class="bg{{ bgID }}">
+        <td>{{ resource.name }}</td>
+        <form action="main.php?modus=hero_detail"
+        id="immolation" method="post">
+        <input type="hidden" name="action" value="immolateResources"/>
+        <input type="hidden" name="resourceID" value="{{ resource.resourceID}}"/>
+        <td><input name="value" type="text" size="10" /> x{{ resource.takeoverValue }}</td>
+        <td><input name="submitImmolation" value="Ugh!" type="submit" /></td>
+        </form>
+       </tr>
+       {% endif %}
+       {% endfor %}
+     </table>
+    </div>
+  </div>
+  
+  {% endif %}
+  {% if skills %}
   <div class="notice small" style="width: 660px;">
    <p style="text-align: left; margin-left: 10px; font-weight: bold;">Spezielle Fähigkeiten</p>
    <br />
@@ -154,7 +191,7 @@
      <td>{{ skill.requiredLevel }}</td>
      <td>{{ skill.costTP }}</td>
      <td style="text-align: right;"><img
-      src="{{gfx }}/de_DE/t_uga/skills/{{ skill.id }}.jpg" width="20" hight="20"
+      src="{{gfx }}/de_DE/t_uga/skills/{{ skill.id }}.jpg" width="20" height="20"
       style="vertical-align: middle;" />
      </td>
     </tr>
@@ -162,17 +199,18 @@
    </table>
   </div>
   {% endif %} <br />
+  {% if potions %}
   <div class="box small">
    <div class="box-header">Tränke</div>
-   <div class="box content smallinner success inner">
+   <div class="boxcontent smallinner success inner">
     <table class="table" rules="rows">
-     <tr style="background-color: #c6d880;">
-      <th>&nbsp;</th>
-      <th>Name</th>
-      <th style="text-align: center;">Bestand</th>
-      <th style="text-align: center;">Benötigtes Level</th>
-      <th>&nbsp;</th>
-      <th>&nbsp;</th>
+     <tr class="bg2 nohover">
+      <th class="bg2 nohover">Trank</th>
+      <th class="bg2 nohover">Name</th>
+      <th class="bg2 nohover" style="text-align: center;">Bestand</th>
+      <th class="bg2 nohover" style="text-align: center;">Benötigtes Level</th>
+      <th class="bg2 nohover">&nbsp;</th>
+      <th class="bg2 nohover">&nbsp;</th>
      </tr>
      {% for potion in potions %} 
      {% set bgID = (bgID+1)%2 %}
@@ -204,6 +242,7 @@
     </table>
    </div>
   </div>
+  {% endif %}
   <br />
   <div class="info" style="width: 660px; margin: 0 auto;">
    {% if quene_show %}

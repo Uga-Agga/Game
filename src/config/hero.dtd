@@ -6,7 +6,7 @@
 <!ATTLIST HeroType
   id CDATA #REQUIRED
 >
-<!ELEMENT HeroSkills (HeroSkill+)>
+<!ELEMENT HeroSkills (HeroSkill*)>
 <!ELEMENT HeroSkill (Name+, Description+, CostTP, RequiredLevel*)>
 <!ATTLIST HeroSkill
   id CDATA #REQUIRED
