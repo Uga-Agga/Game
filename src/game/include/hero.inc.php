@@ -436,6 +436,7 @@ function hero_levelUp($hero) {
   
   $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
                        lvl = lvl +1,
+                       tpFree = tpFree +1;
                        exp = exp - :levelUp
                        WHERE playerID = :playerID");
   $sql->bindValue('levelUp', $hero['lvlUp'], PDO::PARAM_INT);
@@ -445,6 +446,61 @@ function hero_levelUp($hero) {
     return false;
     
   return true;
+}
+
+function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
+  global $db, $resourceTypeList;
+  
+  if ($resourceID < 0 || $value == 0)
+    return array('messageID'=>-13, 'value'=>0);
+  
+  if (array_key_exists($resourceID, $resourceTypeList)) {
+    
+    $resource = $resourceTypeList[$resourceID];
+    $playerID = $_SESSION['player']->playerID;
+    
+    // not enough resources in cave
+    if ($ownCaves[$caveID][$resource->dbFieldName] < $value)
+      return array('messageID' => -14, 'value'=>0);
+    
+    // take resource from cave
+    $sql = $db->prepare("UPDATE " . CAVE_TABLE . " SET ".
+                         $resource->dbFieldName . " = " . $resource->dbFieldName . " - :value
+                         WHERE playerID = :playerID");
+    $sql->bindValue('value', $value, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    
+    if (!$sql->execute() || $sql->rowCount() == 0)
+      return array('messageID' =>-15, 'value'=> 0);
+    
+    // add experience points
+    $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET 
+                         exp = exp + :expValue
+                         WHERE playerID = :playerID");
+    $sql->bindValue('expValue', $value*$resource->takeoverValue, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      
+      // return resource to cave
+      $sql_setback = $db->prepare("UPDATE " . CAVE_TABLE . " SET ".
+                           $resource->dbFieldName . " = " . $resource->dbFieldName . " + :value
+                           WHERE playerID = :playerID");
+      $sql_setback->bindValue('value', $value, PDO::PARAM_INT);
+      $sql_setback->bindValue('playerID', $playerID, PDO::PARAM_INT);
+      
+      $sql_setback->execute();
+      
+      return array('messageID' =>-16, 'value'=> 0);
+    }
+    return array('messageID' => 8, 'value' => $value*$resource->takeoverValue);
+    
+  } else {
+    return array('messageID'=>-13, 'value'=> 0);
+  }
+  
+  
+  
 }
 
 

@@ -51,7 +51,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
 
   $messageText = array(
-  -12 => array('type' => 'error', 'message' => _('Fehler beim Erhöhen des Levels')),
+  -16 => array('type' => 'error', 'message' => _('Fehler beim Eintragen der Erfahrungspunkte nach der Opferung!')),
+  -15 => array('type' => 'error', 'message' => _('Fehler beim Abziehen der geopferten Rohstoffe!')),
+  -14 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Opfern vorhanden!')),
+  -13 => array('type' => 'error', 'message' => _('Fehler beim Holen der Opferwerte!')),
+  -12 => array('type' => 'error', 'message' => _('Fehler beim Erhöhen des Levels!')),
   -11 => array('type' => 'error', 'message' => _('Nicht genug Talentpunkte vorhanden!')),
   -10 => array('type' => 'error', 'message' => _('Ihr Held ist noch nicht erfahren genug, diesen Trank zu nutzen!')),
   -9 => array('type' => 'error', 'message' => _('Nicht genug Tränke vorhanden!')),
@@ -70,7 +74,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.')), 
   5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')), 
   6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
-  7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!'))
+  7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
+  8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.'))
   );
   
   // create new hero
@@ -200,6 +205,20 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           }
         break;
         
+        case 'immolateResources':
+          $resultArray = hero_immolateResources(
+                request_var('resourceID', -1), 
+                request_var('value', 0)+0,
+                $caveID,
+                $ownCaves);
+          $messageID = $resultArray['messageID'];
+          // set exp value in message
+          if ($resultArray['value']>0) {
+            $messageText[$messageID]['message'] = str_replace('expValue', $resultArray['value'], $messageText[$messageID]['message']);
+          }
+          
+        break;
+        
         case 'usePotion':
           if (($potionID = request_var('potionID', -1)) == -1) {
             $messageID = -8; 
@@ -264,6 +283,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     'delay'              => time_formatDuration($ritual['duration']),
     'ritual'             => $ritual,
     'resource'           => $resource,
+    'resourceTypeList'   => $resourceTypeList,
+    'isConstructor'      => ($heroTypesList[$hero['heroTypeID']]['id'] == 'Constructor') ? true : false,
     ));
   }
   

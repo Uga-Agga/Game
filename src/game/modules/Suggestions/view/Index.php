@@ -38,7 +38,7 @@ echo $this->error;
     }
 
     $template->addVars(array(
-      'count'          => $count,
+      'count'          => $count+1,
       'max_count'      => SUGGESTIONS_MAX,
       'no_suggestions' => ($count < SUGGESTIONS_MAX) ? false : true,
     ));
