@@ -41,7 +41,7 @@
     <td align="center">{{ unit.foodCost }}</td>
     <td align="center">{{ unit.wayCost }}</td>
     <td align="center">{{ unit.warpoints }}</td>
-    <td align="center">{{ unit.remark }}</td>
+    <td align="center">{% if not unit.visible %}unsichtbar{% endif %}</td>
   </tr>
   {% endfor %}
 </table>
