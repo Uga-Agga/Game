@@ -31,7 +31,7 @@ $module_cfg['modules']['resources']['weight']       = 1000;
 
 $module_cfg['modules']['buildings']['modus']        = "buildings";
 $module_cfg['modules']['buildings']['custom_title'] = "Erweiterungen";
-$module_cfg['modules']['buildings']['active']       = 0;
+$module_cfg['modules']['buildings']['active']       = 1;
 $module_cfg['modules']['buildings']['view']         = 1;
 $module_cfg['modules']['buildings']['showSelector'] = 1;
 $module_cfg['modules']['buildings']['weight']       = 900;

@@ -76,7 +76,7 @@ if (!$ownCaves) {
 }
 
 // include required files
-if (is_array($require_files[$modus])) {
+if (isset($require_files[$modus]) && is_array($require_files[$modus])) {
   foreach($require_files[$modus] as $file) {
     require_once('include/' . $file);
   }

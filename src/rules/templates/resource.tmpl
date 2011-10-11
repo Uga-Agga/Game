@@ -1,0 +1,40 @@
+{#
+/* resource.tmpl -
+ * Copyright (c) 2011 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Ressourcen Information{% endblock %}
+{% block content %}
+<table width="100%" border="0" cellspacing="0" cellpadding="1">
+  <tr>
+    <td colspan="2" valign="top" class="title"><strong>{{ name }}</strong><br />&nbsp;</td>
+  </tr>
+  
+  <tr>
+    <td valign="top">
+      <fieldset>
+      <legend>Beschreibung</legend>
+      <p>{{ description|raw }}&nbsp;</p>
+      </fieldset>
+           
+      <fieldset>
+      <legend>Ertrag</legend>
+      <textarea cols="100" rows="10">{{ production }}</textarea>
+      </fieldset>
+      
+      <fieldset>
+      <legend>maximale Lagermenge</legend>
+      <textarea cols="100" rows="10">{{ max_storage }}</textarea>
+      </fieldset>
+    </td>
+    <td valign="top" align="center"><img src="{{ gfx }}/resources/{{ dbFieldName }}_icon.gif" alt="{{ name }}" title="{{ name }}" /></td>
+  </tr>
+</table>
+
+{% endblock %}

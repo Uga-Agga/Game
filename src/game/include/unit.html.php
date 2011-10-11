@@ -25,7 +25,7 @@ function unit_getUnitDetail($caveID, &$details) {
     2 => array('type' => 'error', 'message' => _('Der Auftrag konnte nicht erteilt werden. Es fehlen die notwendigen Voraussetzungen.')),
     3 => array('type' => 'success', 'message' => _('Der Auftrag wurde erteilt')),
     4 => array('type' => 'info', 'message' => sprintf(_('Bitte korrekte Anzahl der Einheiten Angeben (1 ... %d)'), MAX_SIMULTAN_BUILDED_UNITS)),
-    5 => array('type' => 'error', 'message' =>_('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im gange.')),
+    5 => array('type' => 'error', 'message' =>_('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im Gange.')),
   );
 
   // get this cave's queue

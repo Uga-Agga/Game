@@ -28,7 +28,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
     6 => array('type' => 'error', 'message' => _('Das Gebäude konnte nicht abgerissen werden.')),
     7 => array('type' => 'error', 'message' => _('Sie haben von der Sorte gar keine Gebäude.')),
     8 => array('type' => 'error', 'message' => sprintf(_('Sie können derzeit kein Gebäude oder Verteidigungen abreißen, weil erst vor Kurzem etwas in dieser Höhle abgerissen wurde. Generell muss zwischen zwei Abrissen eine Zeitspanne von %d Minuten liegen.'), TORE_DOWN_TIMEOUT)),
-    9 => array('type' => 'error', 'message' => _('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im gange.'))
+    9 => array('type' => 'error', 'message' => _('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im Gange.'))
   );
 
   // get this cave's queue

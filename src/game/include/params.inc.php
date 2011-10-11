@@ -42,8 +42,7 @@ function set_var(&$result, $var, $type, $multibyte = false)
   {
     $result = trim(htmlspecialchars(str_replace(array("\r\n", "\r", "\0"), array("\n", "\n", ''), $result), ENT_COMPAT));
 
-    /* No UTF-8!
-    if (!empty($result))
+    /*if (!empty($result))
     {
       // Make sure multibyte characters are wellformed
       if ($multibyte)

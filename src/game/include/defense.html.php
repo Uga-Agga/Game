@@ -35,7 +35,7 @@ function defense_builder($caveID, &$details) {
     5 => array('type' => 'success', 'message' => _('Das Gebäude wurde erfolgreich abgerissen.')),
     6 => array('type' => 'error', 'message' => _('Der Auftrag konnte nicht erteilt werden. Es fehlen die notwendigen Voraussetzungen.')),
     7 => array('type' => 'success', 'message' => _('Der Arbeitsauftrag wurde erteilt.')),
-    8 => array('type' => 'error', 'message' => _('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im gange.')),
+    8 => array('type' => 'error', 'message' => _('Der Arbeitsauftrag konnte nicht erteilt werden. Ein Arbeitsauftrag ist schon im Gange.')),
   );
 
   // get this cave's queue

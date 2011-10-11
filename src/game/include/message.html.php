@@ -316,8 +316,8 @@ function messages_sendMessage($caveID) {
 
   $zeichen = 16384;
 
-  $betreff = $_POST['betreff'];
-  $nachricht = $_POST['nachricht'];
+  $betreff = (isset($_POST['betreff']) && !empty($_POST['betreff'])) ? $_POST['betreff'] : _('Kein Betreff');
+  $nachricht = (isset($_POST['nachricht']) && !empty($_POST['nachricht'])) ? $_POST['nachricht'] : '';
 
   // **** get recipient ****
   $contactID = request_var('contactID', 0);
@@ -335,14 +335,12 @@ function messages_sendMessage($caveID) {
     $empfaenger = request_var('empfaenger', "");
   }
 
-  if ($betreff == "") $betreff = _('Kein Betreff');
-
   // open template
   $template->setFile('messageDialogue.tmpl');
   $template->setShowRresource(false);
 
-  if (strlen($nachricht) > $zeichen) {
-    $message = array('type' => 'error', 'message' => sprintf(_('Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass die Nachricht nicht länger als %d Zeichen ist.'), $zeichen));
+  if ((strlen($nachricht) > $zeichen) || empty($nachricht)) {
+    $message = array('type' => 'error', 'message' => sprintf(_('Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass die Nachricht nicht länger als %d Zeichen oder leer ist.'), $zeichen));
 
     $template->addVars(array(
       'box'        => request_var('box', BOX_INCOMING),
@@ -358,6 +356,8 @@ function messages_sendMessage($caveID) {
         array('arg' => "modus",  'value' => NEW_MESSAGE_RESPONSE)
       ),
     ));
+
+    return;
   }
 
   if ($messagesClass->insertMessageIntoDB($empfaenger, $betreff, $nachricht)) {

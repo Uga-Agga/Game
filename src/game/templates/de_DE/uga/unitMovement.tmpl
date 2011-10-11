@@ -238,7 +238,6 @@ function hideWMTT() {
         <td>&nbsp;</td>
       </tr>
       <tr>
-        <td>&nbsp;</td>
         <td class="bg2 nohover" style="width:200px;"><strong>Einheit</strong></td>
         <td class="bg2 nohover" style="width:75px;"><strong>Menge</strong></td>
         <td class="bg2 nohover" style="width:50px;"><strong>Max</strong></td>
@@ -248,21 +247,17 @@ function hideWMTT() {
       {% for item in unit_list %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td>&nbsp;</td>
           <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
           <td><input id="unit_{{ item.warrior_id }}" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();" onclick="dur();getMaxLoad();" onchange="dur();getMaxLoad();" onkeyup="dur();getMaxLoad();" /></td>
           <td>{{ item.max_warrior_count }}</td>
           {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
-          <td>&nbsp;</td>
         </tr>
       {% endfor %}
       <tr>
-        <td>&nbsp;</td>
         <td><label for="all">Alle Auswählen</label></td>
         <td><input name="all" id="all" type="checkbox" value="check all" onclick="checkall();" /></td>
         <td>&nbsp;</td>
         {% for item in resource %}<td style="width:30px;" align="center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
-        <td>&nbsp;</td>
       </tr>
       </table>
       </td>
@@ -272,7 +267,6 @@ function hideWMTT() {
       <td>
       <table class="table">
       <tr>
-      <td>&nbsp;</td>
       <td style="width:190px;">
         <ul class="clean_list" style="padding-left: 3px;">
           <li class="bold"><a href="{{ rules_path }}?modus=misc&amp;miscID=3" onclick="window.open(this.href); return false;"><strong>Ressourcen mitnehmen:</strong></a></li>
@@ -304,7 +298,7 @@ function hideWMTT() {
           {% endif %}
         </ul>
       </td>
-      <td style="width:300px;">
+      <td style="width: 258px;">
         <ul class="clean_list">
           <li>
             <ul class="clean_list" style="padding-left: 3px;">
@@ -327,22 +321,22 @@ function hideWMTT() {
           <li class="border_top" style="height: 10px;">&nbsp;</li>
           <li>
             <div style="width: 115px; height: 25px; float: left;">Bewegungsdauer:</div>
-            <div style="width: 150px; height: 25px; float: left;" id="duration">- Min</div>
+            <div style="width: 130px; height: 25px; float: left;" id="duration">- Min</div>
             <div style="clear: both;"></div>
           </li>
           <li>
-            <div style="width: 130px; height: 25px; float: left;">Nahrungsverbrauch:</div>
-            <div style="width: 132px; height: 25px; float: left;" id="food">- Nahrung</div>
+            <div style="width: 120px; height: 25px; float: left;">Nahrungsverbrauch:</div>
+            <div style="width: 125px; height: 25px; float: left;" id="food">- Nahrung</div>
             <div style="clear: both;"></div>
           </li>
           <li>
             <div style="width: 176px; height: 25px; float: left;">Bewegungsgeschwindigkeit:</div>
-            <div style="width: 85px; height: 25px; float: left;" id="movementspeed">0</div>
+            <div style="width: 69px; height: 25px; float: left;" id="movementspeed">0</div>
             <div style="clear: both;"></div>
           </li>
         </ul>
       </td>
-      <td style="width:250px;">
+      <td style="width: 250px;">
         <ul class="clean_list">
           <li>
             <ul class="clean_list" style="padding-left: 3px;">
@@ -384,13 +378,11 @@ function hideWMTT() {
             </ul>
           </li>
         </ul>
-      
-      <div style="float: left;">
-        {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
-        <input type="submit" value="und los geht's. UGH?" />
-      </div>
+        <div style="float: left;">
+          {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
+          <input type="submit" value="und los geht's. UGH?" />
+        </div>
       </td>
-      <td>&nbsp;</td>
       </tr>
       </table>
       </td>
