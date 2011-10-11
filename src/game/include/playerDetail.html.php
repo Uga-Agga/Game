@@ -29,12 +29,12 @@ function player_getContent($caveID, $playerID) {
   }
 
   if ($playerDetails['avatar']) {
-    $size = getimagesize($playerDetails['avatar']);
+    $playerDetails['avatar'] = unserialize($playerDetails['avatar']);
 
     $template->addVars(array(
-      'player_avatar'        => $playerDetails['avatar'],
-      'player_avatar_width'  => ($size[0] <= MAX_AVATAR_WIDTH) ? $size[0] : MAX_AVATAR_WIDTH,
-      'player_avatar_height' => ($size[1] <= MAX_AVATAR_HEIGHT) ? $size[1] : MAX_AVATAR_HEIGHT,
+      'player_avatar'        => $playerDetails['avatar']['path'],
+      'player_avatar_width'  => $playerDetails['avatar']['width'],
+      'player_avatar_height' => $playerDetails['avatar']['height'],
     ));
   }
 
@@ -59,7 +59,7 @@ function player_getContent($caveID, $playerID) {
   $timediff = getUgaAggaTimeDiff(time_fromDatetime($playerDetails['created']), time());
   $playerDetails['age'] = 18 + $timediff['year'];
 
-    // init messages class
+  // init messages class
   $parser = new parser;
   $playerDetails['description'] = $parser->p($playerDetails['description']);
 

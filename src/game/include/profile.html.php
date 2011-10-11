@@ -153,6 +153,8 @@ function profile_fillUserData($template, $playerData) {
 
   $profileData = array();
 
+  $playerData['game']['avatar'] = @unserialize($playerData['game']['avatar']);
+
   ////////////// user data //////////////////////
   $p = new ProfileDataGroup(_('Benutzerdaten'));
   $p->add(new ProfileElementInfo(_('Name'), $playerData['game']['name']));
@@ -161,7 +163,7 @@ function profile_fillUserData($template, $playerData) {
   $p->add(new ProfileElementInput(_('Email 2'), $playerData['game']['email2'], 'data', 'email2', 30, 90));
   $p->add(new ProfileElementInput(_('Herkunft'), $playerData['game']['origin'], 'data', 'origin', 30, 30));
   $p->add(new ProfileElementInput(_('ICQ#'), $playerData['game']['icq'], 'data', 'icq', 15, 15));
-  $p->add(new ProfileElementInput(_('Avatar URL <br /><small>(max. Breite: '.MAX_AVATAR_WIDTH.', max. Höhe: '.MAX_AVATAR_HEIGHT .')</small>'), $playerData['game']['avatar'], 'data', 'avatar', 60, 200));
+  $p->add(new ProfileElementInput(_('Avatar URL <br /><small>(max. Breite: '.MAX_AVATAR_WIDTH.', max. Höhe: '.MAX_AVATAR_HEIGHT .')</small>'), $playerData['game']['avatar']['path'], 'data', 'avatar', 60, 200));
   $p->add(new ProfileElementMemo(_('Beschreibung'), $playerData['game']['description'], 'data', 'description', 25, 8));
   $profileData[] = $p->getTmplData();
 
@@ -220,11 +222,15 @@ function profile_update($db_login) {
   }
 
   // check if avatar is a image
-  if (array_key_exists('avatar', $data)) {
-    if (($data['avatar'] !== '') && !getimagesize($data['avatar'])) {
-      $data['avatar'] = '';
+  if (array_key_exists('avatar', $data) && !empty($data['avatar'])) {
+    $avatarInfo = checkAvatar($data['avatar']);
+    if (!$avatarInfo) {
       return array('type' => 'error', 'message' => ('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!'));
+    } else {
+      $data['avatar'] = $avatarInfo;
     }
+  } else {
+    $data['avatar'] = '';
   }
 
   $sql = $db->prepare("UPDATE " . PLAYER_TABLE . " 

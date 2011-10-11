@@ -668,4 +668,49 @@ function createRequestString($requestKeys) {
   return implode('&amp;', $requestAry);
 }
 
+function checkAvatar($url) {
+  if (empty($url)) {
+    return false;
+  }
+
+  $contentTypes = array('image/gif', 'image/png', 'image/jpeg');
+
+  // curl mit Url initialisieren
+  $ch = curl_init($url);
+
+  // optionen setzen: nur header zurückliefern
+  curl_setopt_array($ch, array(
+    CURLOPT_HEADER         => true,
+    CURLOPT_NOBODY         => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_CONNECTTIMEOUT => 5
+  ));
+
+  curl_exec($ch);
+
+  // prüfe ob der Content-Type einer der geforderten ist
+  if (eregi('^('. implode('|', $contentTypes). ')', curl_getinfo($ch, CURLINFO_CONTENT_TYPE))) {
+    // bild infos holen
+    $imageInfo = getimagesize($url);
+
+    // Bild zu groß?
+    if ($imageInfo[0] > MAX_AVATAR_WIDTH || $imageInfo[1] > MAX_AVATAR_HEIGHT) {
+      return false;
+    }
+
+    $return = serialize(array(
+      'path'   => $url,
+      'width'  => $imageInfo[0],
+      'height' => $imageInfo[1],
+    ));
+  } else {
+    $return = false;
+  }
+
+  // curl Hadle schliessen
+  curl_close($ch);
+
+  return $return;
+}
+
 ?>
