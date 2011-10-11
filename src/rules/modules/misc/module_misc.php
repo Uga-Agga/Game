@@ -23,8 +23,6 @@ function misc_getMenu() {
 
 function misc_getContent(){
 
-  global $params;
-
   $miscID = request_var('miscID', 1);
   switch ($miscID) {
     case 1:
@@ -45,7 +43,7 @@ function misc_getContent(){
 }
 
 function getUnitStats(){
- global $template, $unitTypeList;
+  global $template, $unitTypeList;
 
   // open template
   $template->setFile('unitStats.tmpl');
@@ -112,7 +110,7 @@ function getDefenseStats(){
 }
 
 function getWondersStats() {
-  global $template, $wonderTypeList, $cfg;
+  global $template, $wonderTypeList;
 
   require_once('wonder.inc.php');
   $uaWonderTargetText = WonderTarget::getWonderTargets();

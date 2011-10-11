@@ -1,32 +1,33 @@
 <?php
-global $cfg;
-global $leaderDeterminationList, $governmentList;
-require_once($cfg['cfgpath']."government.rules.php");
+/*
+ * module_goverments.php - 
+ * Copyright (c) 2003  OGP-Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
 
-function governments_getMenu(){
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
+function governments_getMenu() {
   $result[] = array('link' => "?modus=governments", 'content' => "Regierungen");
   return $result;
 }
 
 function governments_getContent(){
+  global $template, $governmentList, $leaderDeterminationList;
 
-  global $governmentList, $leaderDeterminationList;
-  $i=0;
-  $template = @tmpl_open("templates/governments.ihtml");
+  // open template
+  $template->setFile('governments.tmpl');
+  $template->addVar('leaderDeterminationList', $leaderDeterminationList);
 
-  foreach($leaderDeterminationList AS $leaderDeterminationData){
-   	$leaderDeterminationData['iterator'] = $i++ % 2;
-    tmpl_iterate($template, 'LEADERDETERMINATION');
-    tmpl_set($template, 'LEADERDETERMINATION', $leaderDeterminationData);
+  foreach($governmentList as $governmentData) {
+    $governmentList[$governmentData['leaderDeterminationID']]['leaderDetermination'] = $leaderDeterminationList[$governmentData['leaderDeterminationID']]['name'];
   }
-  $j=0;
-  foreach($governmentList AS $governmentData){
-  $governmentData['iterator'] = $j++ % 2;
-    tmpl_iterate($template, 'GOVERNMENT');
-    $governmentData['leaderDetermination'] = $leaderDeterminationList[$governmentData['leaderDeterminationID']]['name'];
-    tmpl_set($template, 'GOVERNMENT', $governmentData);
-  }
-  return tmpl_parse($template);
+  $template->addVar('government_data', $governmentList);
 }
 ?>

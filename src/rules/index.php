@@ -45,7 +45,7 @@ $menu = array();
 foreach ($active_modules AS $module){
   $menu_function = $module['modus'] . "_getMenu";
   if (function_exists("$menu_function"))
-    $menu = $menu_function();
+    $menu = array_merge($menu, $menu_function());
 }
 $template->addVar('left_menu', $menu);
 

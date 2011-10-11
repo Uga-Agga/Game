@@ -37,7 +37,7 @@ function tribeRelationList_getContent($tribe) {
       $relationsData[$target] = array (
         'tribe'         => $relationData['tribe_target'],
         'relation_to'   => $relationList[$relationData['relationType']]['name'],
-        'relation_from' => ($relations['other'][$target] ? $relationList[$relations['other'][$target]['relationType']]['name'] : $relationList[0]['name']),
+        'relation_from' => (isset($relations['other'][$target]) && $relations['other'][$target]) ? $relationList[$relations['other'][$target]['relationType']]['name'] : $relationList[0]['name'],
       );
     }
   }

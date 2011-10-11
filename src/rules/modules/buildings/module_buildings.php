@@ -1,6 +1,6 @@
 <?php
 /*
- * modules.inc.php - configure the rules modules
+ * module_building.php - 
  * Copyright (c) 2003  OGP-Team
  * Copyright (c) 2011  David Unger
  *
@@ -14,19 +14,19 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function buildings_getSelector() {
-  global $params, $buildingTypeList;
+  global $buildingTypeList;
 
   $buildings = array();
   foreach ($buildingTypeList AS $key => $value) {
     if (!$value->nodocumentation) {
-      $buildingID = request_var('buildingID', 0);
+      $buildingID = request_var('buildingsID', 0);
 
       $temp = array(
         'value'       => $value->buildingID,
         'description' => lib_shorten_html($value->name, 20)
       );
 
-      if (isset($_REQUEST['buildingID']) && $buildingID == $value->buildingID) {
+      if (isset($_REQUEST['buildingsID']) && $buildingID == $value->buildingID) {
         $temp['selected'] = 'selected="selected"';
       }
 
@@ -39,14 +39,13 @@ function buildings_getSelector() {
 }
 
 function buildings_getContent() {
- global $template, $buildingTypeList, $resourceTypeList, $unitTypeList;
+  global $template, $buildingTypeList, $resourceTypeList, $unitTypeList;
 
   // open template
   $template->setFile('building.tmpl');
 
   $id = request_var('buildingsID', 0);
-
-  if (!isset($buildingTypeList[$id]) || $buildingTypeList[$id]->nodocumentation){
+  if (!isset($buildingTypeList[$id]) || $buildingTypeList[$id]->nodocumentation) {
     $building = $buildingTypeList[0];
   } else {
     $building = $buildingTypeList[$id];

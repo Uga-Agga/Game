@@ -1,6 +1,6 @@
 <?php
 /*
- * modules.inc.php - configure the rules modules
+ * module_resources.php -
  * Copyright (c) 2003  OGP-Team
  * Copyright (c) 2011  David Unger
  *
@@ -15,18 +15,18 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function resources_getSelector() {
   global $resourceTypeList;
-  
+
   $resources = array();
   foreach ($resourceTypeList AS $key => $value) {
     if (!$value->nodocumentation) {
-      $resourceID = request_var('resourceID', 0);
+      $resourceID = request_var('resourcesID', 0);
 
       $temp = array(
         'value'       => $value->resourceID,
         'description' => lib_shorten_html($value->name, 20)
       );
 
-      if (isset($_REQUEST['resourceID']) && $resourceID == $value->resourceID) {
+      if (isset($_REQUEST['resourcesID']) && $resourceID == $value->resourceID) {
         $temp['selected'] = 'selected="selected"';
       }
 
@@ -45,7 +45,7 @@ function resources_getContent(){
   $template->setFile('resource.tmpl');
 
   $id = request_var('resourcesID', 0);
-  if (!isset($resourceTypeList[$id]) || $resourceTypeList[$id]->nodocumentation){
+  if (!isset($resourceTypeList[$id]) || $resourceTypeList[$id]->nodocumentation) {
     $resource = $resourceTypeList[0];
   } else {
     $resource = $resourceTypeList[$id];

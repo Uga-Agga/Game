@@ -1,31 +1,37 @@
 <?php
-global $cfg;
-global $relationList;
-require_once($cfg['cfgpath']."relation_list.php");
+/*
+ * module_relations.php - 
+ * Copyright (c) 2003  OGP-Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
 
-function relations_getMenu(){
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
+function relations_getMenu() {
   $result[] = array('link' => "?modus=relations", 'content' => "Beziehungen");
   return $result;
 }
 
-function relations_getContent(){
+function relations_getContent() {
+  global $template, $relationList;
 
-  global $relationList;
+  // open template
+  $template->setFile('relations.tmpl');
 
-  $template = @tmpl_open("templates/relations.ihtml");
-  $i=0;
-
-  foreach($relationList AS $relationData){
-    $relationData['iterator'] = $i++ % 2;
-    tmpl_iterate($template, 'ROWS');
-    $relationData['otherSideToName'] = ($relationData['otherSideTo'] && isset($relationList[$relationData['otherSideTo']]['name'])) ? $relationList[$relationData['otherSideTo']]['name'] : "";
-    foreach($relationData['transitions'] AS $relationID => $v){
+  foreach($relationList as $relationData) {
+    $relationData['otherSideToName'] = (isset($relationList[$relationData['otherSideTo']]['name']) && $relationData['otherSideTo']) ? $relationList[$relationData['otherSideTo']]['name'] : '';
+    foreach($relationData['transitions'] as $relationID => $v) {
       $relationData['transitions'][$relationID]['name'] = $relationList[$relationID]['name'];
     }
-
-    tmpl_set($template, 'ROWS/ROW', $relationData);
+    $relations[] = $relationData;
   }
-  return tmpl_parse($template);
+
+  $template->addVar('relation_data', $relations);
 }
 ?>

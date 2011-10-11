@@ -1,0 +1,58 @@
+{#
+/* govermennts.tmpl -
+ * Copyright (c) 2011 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Regierungen{% endblock %}
+{% block content %}
+<table width="700" cellpadding="3" cellspacing="0" class="box">
+  <tr>
+    <td>
+      <div><h2>Wie kann der Stammesführer bestimmt werden?</h2></div>
+    </td>
+  </tr>
+  {% for item in leaderDeterminationList %}
+  {% set bgID = (bgID+1)%2 %}
+  <tr class="row{{ bgID }}">
+    <td>
+      <div class="left"><strong>{{ item.name }}</strong></div>
+      <div>{{ item.description|raw }}</div>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br />
+
+<table width="700" cellspacing="0" cellpadding="3" class="box">
+  <tr>
+    <td>
+      <div><h2>Regierungsformen</h2></div>
+    </td>
+  </tr>
+  {% for item in government_data %}
+  {% set bgID = (bgID+1)%2 %}
+  <tr class="row{{ bgID }}">
+    <td>
+      <div class="left"><strong>{{ item.name }}</strong></div>
+      <div>{{ item.description|raw }}</div><br />
+      <div class="small"><i>Wie wird der Stammesführer bestimmt?</i></div>
+      <div class="small">{{ item.leaderDetermination }}</div><br />
+
+      {% for effect in item.effects %}
+        <div align="justify">
+          {{ effect.effects }}<br />
+        </div><br />
+      {% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

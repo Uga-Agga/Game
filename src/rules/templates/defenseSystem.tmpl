@@ -1,6 +1,19 @@
+{#
+/* defemseSystem.tmpl -
+ * Copyright (c) 2011 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Gebäuden Information{% endblock %}
+{% block content %}
 <table width="100%" border="0" cellspacing="0" cellpadding="1">
   <tr>
-    <td colspan="2" valign="top" class="title"><strong>{name}</strong><br />&nbsp;</td>
+    <td colspan="2" valign="top" class="title"><strong>{{ name }}</strong><br />&nbsp;</td>
   </tr>
 
   <tr>
@@ -10,7 +23,7 @@
         <legend>Beschreibung</legend>
         <table border="0" cellspacing="0" cellpadding="3">
           <tr>
-            <td>{description}&nbsp;</td>
+            <td>{{ description|raw }}&nbsp;</td>
           </tr>
         </table>
       </fieldset>
@@ -21,7 +34,7 @@
         <legend>Maximale Stufe</legend>
         <table border="0" cellspacing="0" cellpadding="3">
           <tr>
-            <td>{maximum}&nbsp;</td>
+            <td>{{ maximum }}&nbsp;</td>
           </tr>
         </table>
       </fieldset>
@@ -31,26 +44,26 @@
       <fieldset>
         <legend>Kosten</legend>
         <table border="0" cellspacing="0" cellpadding="5">
-          <tmpl:RESOURCECOST>
-           <tr><td><img src="%gfx%/resources/{dbFieldName}_icon.gif" alt="{name}" width="20" height="20" title="{name}" /> {amount} </td></tr>
-          </tmpl:RESOURCECOST>
+          {% for item in resource_cost %}
+           <tr><td><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" width="20" height="20" title="{{ item.name }}" /> {{ item.amount }} </td></tr>
+          {% endfor %}
         </table>
 
         <br />
 
-        <tmpl:MORECOSTS>
+        {% if more_cost %}
           <table border="0" cellspacing="0" cellpadding="5">
-            <tmpl:MORECOST>
-              <tr><td>{name}</td><td>{amount}</td></tr>
-            </tmpl:MORECOST>
+            {% for item in more_cost %}
+              <tr><td>{{ item.name }}</td><td>{{ item.amount }}</td></tr>
+            {% endfor %}
           </table>
         <br />
-        </tmpl:MORECOSTS>
+        {% endif %}
 
         <table>
           <tr>
             <td><img src="templates/images/hourglass.gif" width="20" height="20" alt="" /></td>
-            <td>{productionTime}</td>
+            <td>{{ productionTime }}</td>
           </tr>
         </table>
 
@@ -63,23 +76,23 @@
         <table border="0" cellspacing="0" cellpadding="3">
           <tr>
             <td>Fernangriffsschaden</td>
-            <td>{rangeAttack}</td>
+            <td>{{ rangeAttack }}</td>
           </tr>
           <tr>
-           <td>Get&uuml;mmelschaden</td>
-           <td>{attackRate}</td>
+           <td>Getümmelschaden</td>
+           <td>{{ attackRate }}</td>
           </tr>
           <tr>
            <td>Widerstandspunkte </td>
-           <td>{defenseRate}</td>
+           <td>{{ defenseRate }}</td>
           </tr>
           <tr>
-           <td>Gr&ouml;&szlig;e</td>
-           <td>{size}</td>
+           <td>Größe</td>
+           <td>{{ size }}</td>
           </tr>
           <tr>
            <td>Kn&uuml;ppelpunkte</td>
-           <td>{warpoints}</td>
+           <td>{{ warpoints }}</td>
           </tr>
         </table>
       </fieldset>
@@ -91,7 +104,7 @@
         <table border="0" cellspacing="0" cellpadding="3">
           <tr>
             <td>Spionageabwehr</td>
-            <td>{antiSpyChance}</td>
+            <td>{{ antiSpyChance }}</td>
           </tr>
         </table>
       </fieldset>
@@ -101,16 +114,18 @@
       <fieldset>
         <legend>Vorraussetzungen</legend>
         <table border="0" cellspacing="0" cellpadding="3">
-          <tmpl:DEPENDENCIES>
+          {% for item in dependencies %}
           <tr>
-            <td><a href="index.php?modus={category}&amp;{category}ID={id}">{name}</a></td>
-            <td>{level}</td>
+            <td><a href="index.php?modus={{ item.category }}&amp;{{ item.category }}ID={{ item.id }}">{{ item.name }}</a></td>
+            <td>{{ item.level|raw }}</td>
           </tr>
-          </tmpl:DEPENDENCIES>
+          {% endfor %}
         </table>
         &nbsp;
       </fieldset>
     </td>
-    <td valign="top"><img src="%gfx%/externals/{dbFieldName}_large.gif" alt="{name}" title="{name}" /></td>
+    <td valign="top"><img src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" /></td>
   </tr>
 </table>
+
+{% endblock %}

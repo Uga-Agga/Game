@@ -1,6 +1,6 @@
 <?php
 /*
- * template.inc.php -
+ * basic.inc.php -
  * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
@@ -27,14 +27,15 @@ function lib_getActiveModules() {
   return $modules;
 }
 
-function lib_shorten_html($string, $length){
-  $temp = lib_unhtmlentities($string);
-  if (strlen($temp) > $length)
-    return htmlentities(substr($temp, 0, $length)) . "..";
+function lib_shorten_html($string, $length) {
+  if (strlen($string) > $length) {
+    return substr($string, 0, $length) . "..";
+  }
+
   return $string;
 }
 
-function lib_unhtmlentities($string){
+function lib_unhtmlentities($string) {
   static $trans_tbl;
 
   if (empty($trans_tbl)){
@@ -44,11 +45,11 @@ function lib_unhtmlentities($string){
   return strtr ($string, $trans_tbl);
 }
 
-function descriptionCompare($a, $b){
+function descriptionCompare($a, $b) {
   return strcmp($a['description'], $b['description']);
 }
 
-function nameCompare($a, $b){
+function nameCompare($a, $b) {
   return strcmp($a->name, $b->name);
 }
 
