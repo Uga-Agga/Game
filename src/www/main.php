@@ -54,24 +54,34 @@ $ownCaves = getCaves($_SESSION['player']->playerID);
 
 // no caves left
 if (!$ownCaves) {
-  if (!in_array($modus, $config->noCaveModusInclude))
+  if (!in_array($modus, $config->noCaveModusInclude)) {
     $modus = NO_CAVE_LEFT;
-} else {
-  // caveID is not sent
-  if (!$caveID = request_var('caveID', 0)) {
-    if (!isset($_SESSION['caveID'])) {
-      $temp = current($ownCaves);
-      $caveID = $temp['caveID'];
-    } else {
-      $caveID = $_SESSION['caveID'];
-    }
   }
-  $_SESSION['caveID'] = $caveID;
+} else {
+  $caveID =  request_var('caveID', 0);
 
-  // my cave?
-  if (!array_key_exists($caveID, $ownCaves)) {
-    $modus = NOT_MY_CAVE;
-    $_SESSION['caveID'] = NULL;
+  // Keine neue Höhle ausgewählt.
+  if ($caveID == 0) {
+    // Bereits eine Höhle mal ausgewählt?
+    if (isset($_SESSION['caveID']) && array_key_exists($_SESSION['caveID'], $ownCaves)) {
+      $caveID = $_SESSION['caveID'];
+    // erste Höhle nehmen
+    } else {
+      $temp = current($ownCaves);
+      $caveID = $_SESSION['caveID'] = $temp['caveID'];
+    }
+  // Neue Höhle nehmen
+  } else {
+    // Höhle im eigenen besitz?
+    if (array_key_exists($caveID, $ownCaves)) {
+      $_SESSION['caveID'] = $caveID;
+    // nein? erste Höhle nehmen!
+    } else {
+      $modus = NOT_MY_CAVE;
+
+      $temp = current($ownCaves);
+      $caveID = $_SESSION['caveID'] = $temp['caveID'];
+    }
   }
 }
 
@@ -104,7 +114,7 @@ switch ($modus) {
     break;
 
   case NOT_MY_CAVE:
-    $template->throwError("Diese Höhle gehört nicht ihnen.");
+    $template->throwError("Diese Höhle gehörte nicht ihnen!");
     break;
 
   case CAVE_DETAIL:

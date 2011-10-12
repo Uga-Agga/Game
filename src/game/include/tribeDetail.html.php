@@ -58,13 +58,16 @@ function tribe_getContent($caveID, $tag) {
   }
 
   if ($row['avatar']) {
-    $size = getimagesize($row['avatar']);
-    $row['avatar_width'] = ($size[0] <= MAX_AVATAR_WIDTH) ? $size[0] : MAX_AVATAR_WIDTH;
-    $row['avatar_heigt'] = ($size[1] <= MAX_AVATAR_HEIGHT) ? $size[1] : MAX_AVATAR_HEIGHT;
+    $row['avatar'] = @unserialize($row['avatar']);
+    $row['avatar_path'] = $row['avatar']['path'];
+    $row['avatar_width'] = $row['avatar']['width'];
+    $row['avatar_height'] = $row['avatar']['height'];
   }
 
   foreach($row as $k => $v) {
-    if (!$v) $row[$k] = "k.A.";
+    if (!$v && $k != 'avatar') {
+      $row[$k] = "k.A.";
+    }
   }
 
   $row['junior_leader_name'] = $JuniorAdmin->name;

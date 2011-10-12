@@ -691,7 +691,7 @@ function checkAvatar($url) {
   // prüfe ob der Content-Type einer der geforderten ist
   if (eregi('^('. implode('|', $contentTypes). ')', curl_getinfo($ch, CURLINFO_CONTENT_TYPE))) {
     // bild infos holen
-    $imageInfo = getimagesize($url);
+    $imageInfo = @getimagesize($url);
 
     // Bild zu groß?
     if ($imageInfo[0] > MAX_AVATAR_WIDTH || $imageInfo[1] > MAX_AVATAR_HEIGHT) {

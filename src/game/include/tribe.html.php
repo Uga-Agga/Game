@@ -173,7 +173,6 @@ function tribe_getContent($playerID, $tribe) {
     // init messages class
     $messagesClass = new Messages;
 
-    $alternate=0;
     $messageAry = array();
     $messages = tribe_getTribeMessages($tribe);
     if (sizeof($messages)) {

@@ -29,7 +29,7 @@ function player_getContent($caveID, $playerID) {
   }
 
   if ($playerDetails['avatar']) {
-    $playerDetails['avatar'] = unserialize($playerDetails['avatar']);
+    $playerDetails['avatar'] = @unserialize($playerDetails['avatar']);
 
     $template->addVars(array(
       'player_avatar'        => $playerDetails['avatar']['path'],

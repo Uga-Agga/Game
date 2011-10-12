@@ -72,6 +72,8 @@ function tribeAdmin_getContent($playerID, $tag) {
     return;
   }
   $tribeData['description'] = str_replace('<br />', '\n', $tribeData['description']);
+  $avatar = @unserialize($tribeData['avatar']);
+  $tribeData['avatar'] = $avatar['path'];
   $template->addVar('tribe_data', $tribeData);
 
   //get Member Data

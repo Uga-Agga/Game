@@ -928,9 +928,13 @@ function tribe_processAdminUpdate($leaderID, $tag, $data) {
   }
 
   // check if avatar is a image
-  if (($data['avatar'] !== '') && !getimagesize($data['avatar'])) {
-    $data['avatar'] = ''; 
-    return -28;
+  if (!empty($data['avatar'])) {
+    $avatarInfo = checkAvatar($data['avatar']);
+    if (!$avatarInfo) {
+      return -28;
+    } else {
+      $data['avatar'] = $avatarInfo;
+    }
   }
 
   $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
