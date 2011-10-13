@@ -17,6 +17,7 @@
 #define HERO_REINCARNATING -1
 #define HERO_DEAD  0
 #define HERO_ALIVE  1
+#define CONSTRUCTOR_ID 2
 
 typedef struct Hero
 {
@@ -27,6 +28,8 @@ typedef struct Hero
     int healPoints;
     int maxHealPoints;
     int isMoving;
+    int exp;
+    int type;
     float effect[MAX_EFFECT];
 } Hero;
 

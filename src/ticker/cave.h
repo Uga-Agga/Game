@@ -38,6 +38,7 @@ struct Cave
     int takeoverable;
     int artefacts;
     int monster_id;
+    int heroID;
     int secure;
     time_t protect_end;
     int resource[MAX_RESOURCE];

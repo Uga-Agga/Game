@@ -77,18 +77,14 @@ typedef struct Army
   int acc_melee;
 
   float effect_rangeattack_factor;
-
   float effect_arealattack_factor;
-
   float effect_attackrate_factor;
-
   float effect_size_factor;
-
   float effect_defenserate_factor;
-
   float effect_ranged_damage_resistance_factor;
-
   float relationMultiplicator;
+
+  int heroFights;
 
 } Army;
 

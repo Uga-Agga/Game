@@ -429,22 +429,32 @@ function hero_usePotion ($potionID, $value) {
 }
 
 function hero_levelUp($hero) {
-  global $db;
+  global $db, $effectTypeList, $heroTypesList;
   
   if ($hero['exp'] < $hero['lvlUp'])
     return false;
   
+// update effects
+  $fields = array();
+  foreach ($effectTypeList as $effect) {
+    if (array_key_exists($effect->dbFieldName, $heroTypesList[$hero['heroTypeID']]['effects'])) {
+      array_push($fields, $effect->dbFieldName . " = ".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['absolute'].
+      "+" . $effect->dbFieldName."*(1+".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
+    }
+  }
+  
   $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
                        lvl = lvl +1,
-                       tpFree = tpFree +1;
-                       exp = exp - :levelUp
+                       tpFree = tpFree +1,
+                       exp = exp - :levelUp,
+                       ".implode(", ", $fields)."
                        WHERE playerID = :playerID");
   $sql->bindValue('levelUp', $hero['lvlUp'], PDO::PARAM_INT);
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
   
   if (!$sql->execute())
     return false;
-    
+
   return true;
 }
 

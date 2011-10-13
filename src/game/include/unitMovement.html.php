@@ -173,6 +173,21 @@ function unit_Movement($caveID, &$ownCave) {
         $denymovement_targetwar =  $targetTribeAtWar && !$TribesMayTrade;
       }
     }
+    
+    // check if army is small enough for hero
+    $denymovement_hero = false;
+    if ($moveHero && (request_var('movementID', 0) == 3 || request_var('movementID', 0) == 6)) {
+      $hero = getHeroByPlayer($_SESSION['player']->playerID);
+      //calculate size of army
+      $armySize = 0;
+      foreach ($unit as $unitID => $value) {
+        $armySize += $unitTypeList[$unitID]->hitPoints*$value;
+      }
+      
+      if ($armySize > $hero['exp']) {
+        $denymovement_hero = true;
+      }
+    }
 
     if (request_var('movementID', 0) == 0)
       $msg = array('type' => 'error', 'message' => _('Bitte Bewegungsart auswählen!'));
@@ -203,6 +218,9 @@ function unit_Movement($caveID, &$ownCave) {
 
     else if ($denymovement_targetwar)
       $msg = array('type' => 'error', 'message' => _('Sie können keine Einheiten zu kriegführenden Stämmen verschieben, wenn Sie unbeteiligt sind.'));
+      
+    else if ($denymovement_hero)
+      $msg = array('type' => 'error', 'message' => _('Die Armee ist zu groß um vom Helden unterstützt zu werden!'));
 
     //  Einheiten bewegen!
     else {

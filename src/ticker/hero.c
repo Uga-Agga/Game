@@ -21,22 +21,39 @@
  */
 void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
 {
-  db_result_t *result = db_query(database, "SELECT * FROM " DB_TABLE_HERO " WHERE heroID = %d", heroID);
 
-//  /* Bedingung: Held muss vorhanden sein */
-  if (db_result_num_rows(result) != 1)
-    throw(SQL_EXCEPTION, "get_hero_by_id: no such heroID");
+  if (heroID == 0) {
+    hero->heroID      = 0;
+    hero->caveID      = 0;
+    hero->isAlive     = 0;
+    hero->playerID    = 0;
+    hero->healPoints  = 0;
+    hero->maxHealPoints = 0;
+    hero->isMoving    = 0;
+    hero->exp         = 0;
+    hero->type        = 0;
+  }
+  else
+  {
+    db_result_t *result = db_query(database, "SELECT * FROM " DB_TABLE_HERO " WHERE heroID = %d", heroID);
 
-  db_result_next_row(result);
+    //  /* Bedingung: Held muss vorhanden sein */
+    if (db_result_num_rows(result) != 1)
+      throw(SQL_EXCEPTION, "get_hero_by_id: no such heroID");
 
-  hero->heroID      = heroID;
-  hero->caveID      = db_result_get_int(result, "caveID");
-  hero->isAlive     = db_result_get_int(result, "isAlive");
-  hero->playerID    = db_result_get_int(result, "playerID");
-  hero->healPoints  = db_result_get_int(result, "healPoints");
-  hero->maxHealPoints = db_result_get_int(result, "maxHealPoints");
-  hero->isMoving    = db_result_get_int(result, "isMoving");
-  get_effect_list(result, hero->effect);
+      db_result_next_row(result);
+
+    hero->heroID      = heroID;
+    hero->caveID      = db_result_get_int(result, "caveID");
+    hero->isAlive     = db_result_get_int(result, "isAlive");
+    hero->playerID    = db_result_get_int(result, "playerID");
+    hero->healPoints  = db_result_get_int(result, "healPoints");
+    hero->maxHealPoints = db_result_get_int(result, "maxHealPoints");
+    hero->isMoving    = db_result_get_int(result, "isMoving");
+    hero->exp         = db_result_get_int(result, "exp");
+    hero->type        = db_result_get_int(result, "heroTypeID");
+    get_effect_list(result, hero->effect);
+  }
 }
 
 
@@ -148,6 +165,10 @@ void apply_hero_effects_to_cave (db_t *database, int heroID)
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
 
+  /* apply effects only if constructor type */
+  if (hero.type != CONSTRUCTOR_ID)
+    return;
+
   /* Bedingung: Held muss lebendig sein */
   if (hero.isAlive != HERO_ALIVE)
     throw(BAD_ARGUMENT_EXCEPTION, "apply_hero_effects_to_cave: hero is not alive");
@@ -175,6 +196,10 @@ void remove_hero_effects_from_cave (db_t *database, int heroID)
 
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
+
+  /* remove effects only, if constructor type*/
+  if (hero.type != CONSTRUCTOR_ID)
+    return;
 
   /* Bedingung: muss tot sein */
   if (hero.isAlive != HERO_DEAD)

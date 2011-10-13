@@ -284,7 +284,6 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     'ritual'             => $ritual,
     'resource'           => $resource,
     'resourceTypeList'   => $resourceTypeList,
-    'isConstructor'      => ($heroTypesList[$hero['heroTypeID']]['id'] == 'Constructor') ? true : false,
     ));
   }
   

@@ -116,6 +116,7 @@ static void army_init (Army *army)
   army->effect_size_factor        =
   army->effect_ranged_damage_resistance_factor =
   army->relationMultiplicator     = 1;
+  army->heroFights = 0;
 
   /////////////////////////// create unit arrays /////////////////////////////
 

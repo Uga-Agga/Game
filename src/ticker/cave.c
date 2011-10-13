@@ -107,6 +107,7 @@ void get_cave_info (db_t *database, int cave_id, struct Cave *cave)
   cave->terrain = db_result_get_int(result, "terrain");
   cave->takeoverable = db_result_get_int(result, "takeoverable");
   cave->artefacts = db_result_get_int(result, "artefacts");
+  cave->heroID = db_result_get_int(result, "hero");
   cave->monster_id = db_result_get_int(result, "monsterID");
   cave->secure = db_result_get_int(result, "secureCave");
   cave->protect_end = db_result_get_time(result, "protection_end");

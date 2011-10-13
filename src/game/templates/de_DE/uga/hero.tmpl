@@ -134,11 +134,10 @@
    </tr>
   </table>
   <br /> 
-  {% if isConstructor %}
   <div class="box small">
     <div class="box-header">Rohstoffe opfern</div>
     <div class="boxcontent smallinner success inner">
-     <table class="table">
+     <table class="table" rules="rows">
        <tr class="bg2 nohover">
         <td colspan="3"><div class="notice" style="text-align:center">
         Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln <br/><br />
@@ -168,8 +167,6 @@
      </table>
     </div>
   </div>
-  
-  {% endif %}
   {% if skills %}
   <div class="notice small" style="width: 660px;">
    <p style="text-align: left; margin-left: 10px; font-weight: bold;">Spezielle Fähigkeiten</p>
