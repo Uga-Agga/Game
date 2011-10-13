@@ -349,7 +349,6 @@ function messages_sendMessage($caveID) {
       'empfaenger' => $empfaenger,
       'betreff'    => $betreff,
       'nachricht'  => $nachricht,
-      'contacts'   => $contacts,
       'hidden'     => array(
         array('arg' => "box",    'value' => request_var('box', BOX_INCOMING)),
         array('arg' => "caveID", 'value' => $caveID),
@@ -374,7 +373,6 @@ function messages_sendMessage($caveID) {
       'empfaenger' => $empfaenger,
       'betreff'    => $betreff,
       'nachricht'  => $nachricht,
-      'contacts'   => $contacts,
       'hidden'     => array(
         array('arg' => "box",    'value' => request_var('box', BOX_INCOMING)),
         array('arg' => "caveID", 'value' => $caveID),
