@@ -247,6 +247,18 @@ foreach ($result AS $row) {
   }
   else
     echo "SUCCESS\n";
+    
+  
+  echo "DELETE PLAYER $playerID: Delete hero event ";
+  $sql = $db_game->prepare("DELETE FROM ". EVENT_HERO_TABLE ."
+                            WHERE caveID = :caveID");
+  $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
+  
+  if (!$sql->execute()) {
+    echo "FAILURE\n";
+  }
+  else
+    echo "SUCCESS\n";
 
 }  
 
@@ -262,6 +274,18 @@ $sql2 = $db_game->prepare("UPDATE ". MESSAGE_TABLE ."
 $sql2->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
 if (!$sql1->execute() || !$sql2->execute()) {
+  echo "FAILURE\n";
+}
+else {
+  echo "SUCCESS\n";
+}
+
+echo "DELETE PLAYER $playerID: Delete hero";
+$sql = $db_game->prepare("DELETE FROM " . HERO_TABLE ."
+                          WHERE playerID = :playerID");
+$sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+
+if (!$sql->execute()) {
   echo "FAILURE\n";
 }
 else {

@@ -71,6 +71,20 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
     } // end iterating through active wonders
   }
 
+  //hero effects
+  $hero = hero_getHeroDataByPlayerID($_SESSION['player']->playerID);
+  
+  $heroData = array();
+  if ($hero) {
+    foreach ($effectTypeList AS $effect) {
+      $value = $hero[$effect->dbFieldName]+0;
+      if ($value) {
+        $heroData[] = array('name'  => $effect->name, 
+                            'value' => $value); 
+      }
+    }
+  }
+  
   $effectsData = array();
   foreach ($effectTypeList AS $data) {
     $value = $caveData[$data->dbFieldName] + 0;
@@ -82,6 +96,7 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   $data = array();
   $data['wonder'] = $wondersData;
   $data['effect'] = $effectsData;
+  $data['hero'] = $heroData;
   $data['farmpoints'] = $_SESSION['player']->fame;
 
   $template->addVars($data);

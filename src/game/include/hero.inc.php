@@ -19,6 +19,28 @@ init_heroTypes();
 init_heroSkills();
 
 
+function hero_getHeroDataByPlayerID ($playerID) {
+  global $db;
+  
+  // set database query with playerID
+  $sql = $db->prepare("SELECT *
+                       FROM ". HERO_TABLE ." 
+                         WHERE playerID = :playerID");
+  $sql->bindValue('playerID', $playerID);
+
+  // if not successful
+  if (!$sql->execute() || !($result = $sql->fetch(PDO::FETCH_ASSOC))) {
+    $sql->closeCursor();
+    return null;
+  }
+  //otherwise
+
+  if (empty($result))
+    return null;
+  
+  return $result;
+}
+
 function getHeroByPlayer($playerID) {
   global $db, $heroTypesList;
 

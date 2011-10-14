@@ -44,9 +44,28 @@
       </table>
     </div>
   {% else %}
-    <div class="notice" style="margin-bottom: 0px">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
+    <div class="success" style="margin-bottom: 0px">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
   {% endif %}
 </div>
+
+{% if hero %}
+<div class="box small">
+  <div class="box-header">Effekte des Helden</div>
+    <div class="box-content success inner">
+      <table class="table nohover">
+      <tr>
+        <td colspan="2"><div class="notice" style="margin-bottom: 0px;">Die Effekte wirken nur, wenn die Bedingungen erfüllt sind (Held am Leben, usw.)!</div></td>
+      </tr>
+        {% for item in hero %}
+          <tr>
+            <td style="valign: top; float: left;">{{ item.name }}:</td>
+            <td style="valign: top; float: left; width: 70px;">{{ item.value }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+</div>
+{% endif %}
 
 <div class="box small">
   <div class="box-header">Aktuelle Farmpunkte</div>
