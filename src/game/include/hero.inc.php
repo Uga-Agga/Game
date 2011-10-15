@@ -67,6 +67,7 @@ function getHeroByPlayer($playerID) {
       'playerID'      => $result['playerID'],
       'name'          => $result['name'],
       'heroTypeID'    => $result['heroTypeID'],
+      'id'            => $heroTypesList[$result['heroTypeID']]['id'],
       'lvl'           => $result['lvl'],
       'exp'           => $result['exp'],
       'caveID'        => $result['caveID'],

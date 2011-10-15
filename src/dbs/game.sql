@@ -479,7 +479,7 @@ CREATE TABLE IF NOT EXISTS `Hero_new` (
   `healPoints` int(11) unsigned NOT NULL DEFAULT '0',
   `maxHealPoints` int(11) unsigned NOT NULL DEFAULT '0',
   `caveID` int(11) unsigned NOT NULL DEFAULT '0',
-  `isAlive` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `isAlive` tinyint(1) NOT NULL DEFAULT '0',
   `isMoving` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `tpFree` int(11) unsigned NOT NULL DEFAULT '0',
   `maxHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
