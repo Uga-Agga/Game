@@ -473,7 +473,7 @@ CREATE TABLE IF NOT EXISTS `Hero_new` (
   `heroID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `heroTypID` int(11) unsigned NOT NULL DEFAULT '0',
+  `heroTypeID` int(11) unsigned NOT NULL DEFAULT '0',
   `exp` int(11) unsigned NOT NULL DEFAULT '0',
   `lvl` int(11) unsigned NOT NULL DEFAULT '0',
   `healPoints` int(11) unsigned NOT NULL DEFAULT '0',
@@ -486,7 +486,7 @@ CREATE TABLE IF NOT EXISTS `Hero_new` (
   `forceLvl` int(11) unsigned NOT NULL DEFAULT '0',
   `force` varchar(11) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `regHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
-  `regHp` int(11) unsigned NOT NULL DEFAULT '0',
+  `regHP` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`heroID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 

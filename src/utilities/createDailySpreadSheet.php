@@ -29,8 +29,10 @@ if (!$sql->execute()) {
   die("Fehler beim Auslesen.");
 }
 
-while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-  echo implode($row, "\t") . "\n";
+$row = $sql->fetchAll(PDO::FETCH_ASSOC);
+echo count($row) . "\t" . time() . "\n";
+foreach ($row as $data) {
+  echo implode($data, "\t") . "\n";
 }
 
 ?>

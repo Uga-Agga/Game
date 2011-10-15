@@ -380,7 +380,7 @@ function digest_getAppointments($ownCaves){
       'cave_id'            => $row['caveID'],
       'category'           => 'hero',
       'modus'              => HERO_DETAIL,
-      'event_id'           => $row['event_scienceID'],
+      'event_id'           => $row['event_heroID'],
       'event_start'        => time_fromDatetime($row['start']),
       'event_end'          => time_fromDatetime($row['end']),
       'event_end_date'     => time_formatDatetime($row['end']),
