@@ -174,16 +174,26 @@ function getHeroQueue($playerID) {
 
 
 function skillForce($playerID, $hero) {
-  global $db, $heroTypesList;
+  global $db, $heroTypesList, $effectTypeList;
 
   $hero['forceLvl'] = $hero['forceLvl']++;
   $force = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force_formula']) . ";");
+  
+// update effects
+  $fields = array();
+  foreach ($effectTypeList as $effect) {
+    if (array_key_exists($effect->dbFieldName, $heroTypesList[$hero['heroTypeID']]['effects'])) {
+      array_push($fields, $effect->dbFieldName . " = ".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['absolute'].
+      "+" . $effect->dbFieldName."*(1+".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
+    }
+  }
   
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET forceLvl = forceLvl + 1,
                        tpFree = tpFree - 1, 
-                       `force` = :force
+                       `force` = :force,
+                       ".implode(", ", $fields)."
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('force', $force, PDO::PARAM_STR);
@@ -469,8 +479,7 @@ function hero_levelUp($hero) {
   $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
                        lvl = lvl +1,
                        tpFree = tpFree +1,
-                       exp = exp - :levelUp,
-                       ".implode(", ", $fields)."
+                       exp = exp - :levelUp 
                        WHERE playerID = :playerID");
   $sql->bindValue('levelUp', $hero['lvlUp'], PDO::PARAM_INT);
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);

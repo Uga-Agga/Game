@@ -33,11 +33,11 @@ init_heroSkills();
 
 
 function hero_getHeroDetail($caveID, &$ownCaves) {
-if($_SESSION['player']->playerID!=1) {
+/*if($_SESSION['player']->playerID!=1) {
 global $template;
 $template->throwError('Die Helden werden gerade überarbeitet. Bitte habe etwas Geduld');
 return;
-}
+}*/
   // get configuration settings
   global $config;
 
