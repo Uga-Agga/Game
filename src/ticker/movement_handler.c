@@ -1392,7 +1392,7 @@ void movement_handler (db_t *database, db_result_t *result)
           war_points_attacker += WAR_POINTS_FOR_TAKEOVER;
         }
       } else { /* send survivors back */
-        debug(DEBUG_TAKEOVER, "send back attacker's suvivors");
+        debug(DEBUG_TAKEOVER, "send back attacker's survivors");
         after_battle_attacker_update(database, player1.player_id, battle,
              source_caveID, target_caveID, speed_factor,
              return_start, return_end, artefact, heroID,
