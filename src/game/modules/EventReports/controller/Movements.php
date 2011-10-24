@@ -61,6 +61,7 @@ class EventReports_Movements_Controller extends Controller {
         // foreach cave..
         foreach ($caves as $caveID => $cave) {
          if (!isset($moves[$unitType->dbFieldName][$caveID])) {
+           $unit['cave'][] = array('amount' => 0);
            continue;
          }
 
