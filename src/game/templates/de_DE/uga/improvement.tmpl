@@ -121,7 +121,7 @@
           </dl>
         </td>
         <td class="td-size">Stufe: {{ item.currentlevel }}</td>
-        <td class="td-button-single text-right"><a href="main.php?modus={{ item.modus }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abrei&szlig;en" title="Abrei&szlig;en" /></a></td>
+        <td class="td-button-single text-right"><a href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
       </tr>
       <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display:none"><td>&nbsp;</td>
         <td colspan="6" class="object-details">

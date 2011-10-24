@@ -119,7 +119,7 @@
             </dl>
           </td>
           <td class="td-size">Stufe: {{ item.currentlevel }}</td>
-          <td class="td-button-single text-right"><a href="main.php?modus=defense_demolish&amp;defenseID={{ item.defense_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
+          <td class="td-button-single text-right"><a href="main.php?modus={{ defense_link }}&amp;action=demolishing&amp;id={{ item.defense_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
         </tr>
         <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
           <td colspan="6" class="object-details">

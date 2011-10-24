@@ -905,6 +905,7 @@ CREATE TABLE IF NOT EXISTS `Ranking` (
   `fame` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
   KEY `rank` (`rank`)
+  KEY `name` (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
