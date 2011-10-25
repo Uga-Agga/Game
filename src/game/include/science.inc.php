@@ -74,6 +74,7 @@ function science_processOrder($scienceID, $caveID, $cave) {
 
   // check for scienceMaxDeps in Event_Handler
   $dep_count = 0;
+  $deps = '';
   foreach ($science->maxScienceDepList as $key => $value) {
     if ($value != -1 && $cave[$scienceTypeList[$key]->dbFieldName] > $value - 1) {
       if ($dep_count)
