@@ -428,7 +428,7 @@ function hero_usePotion ($potionID, $value) {
   // apply potion effects
   $newHealPoints = $hero['healPoints'];
   for ($i = 0; $i< $value; $i ++) {
-    $newHealPoints += floor($hero['maxHP'] * $potion->hp_prozentual_increase/100) + 
+    $newHealPoints += floor($hero['maxHealPoints'] * $potion->hp_prozentual_increase/100) + 
                    $potion->hp_increase;
   }
   if ($hero['maxHealPoints'] < $newHealPoints)
@@ -535,6 +535,7 @@ function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
       
       return array('messageID' =>-16, 'value'=> 0);
     }
+    $ownCaves = getCaves($playerID);
     return array('messageID' => 8, 'value' => $value*$resource->takeoverValue);
     
   } else {

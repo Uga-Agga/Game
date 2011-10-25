@@ -214,18 +214,18 @@ static void army_setup (db_t *database,
   /* fill effects */
   /* XXX should this be effect_factor(... + takeover_multiplier)? */
   if (army->heroFights) {
-    army->effect_rangeattack_factor = effect_factor(cave->effect[14])
-      + takeover_multiplier + effect_factor(hero.effect[14]);
-    army->effect_arealattack_factor = effect_factor(cave->effect[15])
-      + takeover_multiplier + effect_factor(hero.effect[15]);
-    army->effect_attackrate_factor  = effect_factor(cave->effect[16])
-      + takeover_multiplier + effect_factor(hero.effect[16]);
-    army->effect_defenserate_factor = effect_factor(cave->effect[17])
-      + takeover_multiplier + effect_factor(hero.effect[17]);
-    army->effect_size_factor        = effect_factor(cave->effect[18])
-      + takeover_multiplier + effect_factor(hero.effect[18]);
-    army->effect_ranged_damage_resistance_factor = effect_factor(cave->effect[19])
-      + takeover_multiplier + effect_factor(hero.effect[19]);
+    army->effect_rangeattack_factor = effect_factor(cave->effect[14]+hero.effect[14])
+      + takeover_multiplier;
+    army->effect_arealattack_factor = effect_factor(cave->effect[15]+hero.effect[15])
+      + takeover_multiplier;
+    army->effect_attackrate_factor  = effect_factor(cave->effect[16]+hero.effect[16])
+      + takeover_multiplier;
+    army->effect_defenserate_factor = effect_factor(cave->effect[17]+hero.effect[17])
+      + takeover_multiplier;
+    army->effect_size_factor        = effect_factor(cave->effect[18]+hero.effect[18])
+      + takeover_multiplier;
+    army->effect_ranged_damage_resistance_factor = effect_factor(cave->effect[19]+hero.effect[19])
+      + takeover_multiplier;
   } else {
     army->effect_rangeattack_factor = effect_factor(cave->effect[14])
       + takeover_multiplier;

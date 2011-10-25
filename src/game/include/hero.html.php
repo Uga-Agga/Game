@@ -243,6 +243,7 @@ return;
 
     $queue=getHeroQueue($playerID);
     
+    $player = getPlayerByID($playerID);
     $potions = array();
     foreach ($potionTypeList AS $potionID => $potion) {
       if ($player[$potion->dbFieldName] > 0) {

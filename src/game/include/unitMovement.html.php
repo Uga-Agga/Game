@@ -219,8 +219,10 @@ function unit_Movement($caveID, &$ownCave) {
     else if ($denymovement_targetwar)
       $msg = array('type' => 'error', 'message' => _('Sie können keine Einheiten zu kriegführenden Stämmen verschieben, wenn Sie unbeteiligt sind.'));
       
-    else if ($denymovement_hero)
+    else if ($denymovement_hero) {
       $msg = array('type' => 'error', 'message' => _('Die Armee ist zu groß um vom Helden unterstützt zu werden!'));
+      $moveHero = 0;
+    }
 
     //  Einheiten bewegen!
     else {
