@@ -91,7 +91,7 @@ function takeover_main($caveID, $ownCaves) {
   // don't show page, if maxcaves reached
   if (sizeof($ownCaves) >= $maxcaves) {
     $template->addVars(array(
-      'status_msg'  => array('type' => 'info', $message => sprintf(_('Sie haben bereits die maximale Anzahl von %d Höhlen erreicht.'), $maxcaves)),
+      'status_msg'  => array('type' => 'info', 'message' => sprintf(_('Sie haben bereits die maximale Anzahl von %d Höhlen erreicht.'), $maxcaves)),
       'show_page' => false,
     ));
 
@@ -246,7 +246,7 @@ function takeover_getBidding($caveCount=0) {
   if (sizeof($resources)) {
     $bidding['resource'] = $resources;
     $bidding['sum'] = $sum;
-    $bidding['proportion'] = ($sum > 0) ? round(($sum / (200 * pow($caveCount, 2))), 3) : 0;
+    $bidding['proportion'] = ($sum > 0 && $caveCount > 0) ? round(($sum / (200 * pow($caveCount, 2))), 3) : 0;
   }
 
   // get other bidders

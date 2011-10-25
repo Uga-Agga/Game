@@ -83,7 +83,7 @@ $_SESSION['logintime'] = date("YmdHis");
 // initiate Session messages
 $_SESSION['messages'] = array();
 
-// go to ugastart.php
+// go to start url
 header("Location: $config->GAME_START_URL");
 exit;
 

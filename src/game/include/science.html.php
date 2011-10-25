@@ -86,7 +86,7 @@ function science_getScienceDetail($caveID, &$details){
           'confirm_action'  => 'cancelOrder',
           'confirm_id'      => $eventID,
           'confirm_mode'    => SCIENCE_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest die Forschung von <span class="bold">%s</span> abbrechen?'), $scienceTypeList[$queue['event_scienceID']]->name),
+          'confirm_msg'     => sprintf(_('Möchtest die Forschung von <span class="bold">%s</span> abbrechen?'), $scienceTypeList[$queue['scienceID']]->name),
         ));
       }
     break;

@@ -293,41 +293,45 @@ function export_thisCave_xml($caveID) {
 
 function export_movement_xml($movementID) {
   global $resourceTypeList, $unitTypeList, $db;
-  
+
   require_once('lib/Movement.php');
   require_once('include/digest.inc.php');
-  
+
   // gather data
   $ua_movements = Movement::getMovements();
-  
+
   $move = export_getSingleMovement($movementID);
-  
+  if (!sizeof($move)) {
+    return 'Es wurde keine Bewegung gefunden!';
+  }
+
   // get Cave data
   $sourceCaveData = getCaveNameAndOwnerByCaveID($move['source_caveID']);
   $targetCaveData = getCaveNameAndOwnerByCaveID($move['target_caveID']);
   
   // check if it's a player related movement
-  if (($sourceCaveData['player_name'] !== $_SESSION['player']->name) && ($targetCaveData['player_name'] !== $_SESSION['player']->name))
+  if (($sourceCaveData['player_name'] !== $_SESSION['player']->name) && ($targetCaveData['player_name'] !== $_SESSION['player']->name)) {
     return 'Nur eigene Bewegungen erlaubt!';
-  
+  }
+
   // artefact data
   $artefactData = array();
   if ($move['artefactID'] != 0) {
     $artefactData = artefact_getArtefactByID($move['artefactID']);
   }
-  
+
   // form xml-object
   $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><movement></movement>");
-  
+
   $movement = $xml;
-  
+
   $source = $movement->addChild('source');
   $source->addChild('sourcePlayerName', $sourceCaveData['player_name']);
   $source->addChild('sourcePlayerTribe', $sourceCaveData['player_tribe']);
   $source->addChild('sourceCaveName', $sourceCaveData['cave_name']);
   $source->addChild('source_xCoord', $sourceCaveData['xCoord']);
   $source->addChild('source_yCoord', $sourceCaveData['yCoord']);
-  
+
   $target = $movement->addChild('target');
   $target->addChild('targetPlayerName', $targetCaveData['player_name']);
   $target->addChild('targetPlayerTribe', $targetCaveData['player_tribe']);
@@ -351,7 +355,7 @@ function export_movement_xml($movementID) {
        }
      }
    }
-  
+
   // Resources
   $resources = $movement->addChild('resources');
   foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
@@ -362,14 +366,13 @@ function export_movement_xml($movementID) {
       $resource->addChild('value', (($ua_movements[$move['movementID']]->fogResource && !$move['isOwnMovement']) ? calcFogResource($move[$resourceDetail->dbFieldName]) : $move[$resourceDetail->dbFieldName]));
     }
   }
-  
+
   // Artefact
   if ($move['artefactID'] != 0) {
     $artefact = $movement->addChild('artefact');
     $artefact->addChild('name', $artefactData['name']);
   }
-  
-  
+
   return $xml->asPrettyXML();
 }
 
@@ -386,26 +389,30 @@ function export_movement_bb ($movementID) {
   $ua_movements = Movement::getMovements();
   
   $move = export_getSingleMovement($movementID);
-      
+  if (!sizeof($move)) {
+    return 'Es wurde keine Bewegung gefunden!';
+  }
+
   // get Cave data
   $sourceCaveData = getCaveNameAndOwnerByCaveID($move['source_caveID']);
   $targetCaveData = getCaveNameAndOwnerByCaveID($move['target_caveID']);
-  
+
   // check if it's a player related movement
-  if (($sourceCaveData['player_name'] !== $_SESSION['player']->name) && ($targetCaveData['player_name'] !== $_SESSION['player']->name))
+  if (($sourceCaveData['player_name'] !== $_SESSION['player']->name) && ($targetCaveData['player_name'] !== $_SESSION['player']->name)) {
     return 'Nur eigene Bewegungen erlaubt!';
-  
+  }
+
   // artefact data
   $artefactData = array();
   if ($move['artefactID'] != 0) {
     $artefactData = artefact_getArtefactByID($move['artefactID']);
   }
-  
+
   // header
   $header = "Bewegungsart: " . $ua_movements[$move['movementID']]->description ."\n";
   $header .= "Startzeitpunkt: " . time_formatDatetime($move['start']) ."\n";
   $header .= "Endzeitpunkt: " . time_formatDatetime($move['end'])."\n";
-  
+
   // movement source
   $source = "Starthöhle: " .  $sourceCaveData['cave_name'];
   $source .=" (". $sourceCaveData['xCoord'] ."|". $sourceCaveData['yCoord'] .") ";
@@ -414,7 +421,7 @@ function export_movement_bb ($movementID) {
     $source .= "aus dem Stamme " .$sourceCaveData['player_tribe']." ";
   }
   $source .= "\n";
-  
+
   // movement target
   $target = "Zielhöhle: " .  $targetCaveData['cave_name'];
   $target .=" (". $targetCaveData['xCoord'] ."|". $targetCaveData['yCoord'] .") ";
@@ -423,7 +430,7 @@ function export_movement_bb ($movementID) {
     $target .= "aus dem Stamme " .$targetCaveData['player_tribe']." ";
   }
   $target .= "\n";
-  
+
   // units
   $units = "Einheiten: \n";
   foreach ($unitTypeList AS $unitsID => $unitDetail) {
@@ -442,13 +449,13 @@ function export_movement_bb ($movementID) {
     }
   if ($resources !== "") 
     $resources = "transportierte Rohstoffe: \n" . $resources; 
-  
+
   // Artefact
   $artefact = "";
   if ($move['artefactID'] != 0) {
     $artefact = "transportierte Artefakte: \n" . $artefactData['name'] . "\n";
   }
-  
+
   $bb = "";
   $bb .= $header . "\n";
   $bb .= $source;
@@ -456,7 +463,7 @@ function export_movement_bb ($movementID) {
   $bb .= $units . "\n";
   $bb .= $resources ."\n";
   $bb .= $artefact . "\n";
-  
+
   return $bb;
 }
 
@@ -468,31 +475,35 @@ function export_movement_irc ($movementID) {
   
   require_once('lib/Movement.php');
   require_once('include/digest.inc.php');
-  
+
   // gather data
   $ua_movements = Movement::getMovements();
-  
+
   $move = export_getSingleMovement($movementID);
-  
+  if (!sizeof($move)) {
+    return 'Es wurde keine Bewegung gefunden!';
+  }
+
   // get Cave data
   $sourceCaveData = getCaveNameAndOwnerByCaveID($move['source_caveID']);
   $targetCaveData = getCaveNameAndOwnerByCaveID($move['target_caveID']);
   
   // check if it's a player related movement
-  if (($sourceCaveData['player_name'] !== $_SESSION['player']->name) && ($targetCaveData['player_name'] !== $_SESSION['player']->name))
+  if (($sourceCaveData['player_name'] !== $_SESSION['player']->name) && ($targetCaveData['player_name'] !== $_SESSION['player']->name)) {
     return 'Nur eigene Bewegungen erlaubt!';
-  
+  }
+
   // artefact data
   $artefactData = array();
   if ($move['artefactID'] != 0) {
     $artefactData = artefact_getArtefactByID($move['artefactID']);
   }
-  
+
   // header
   $header = "Bewegungsart: 4" . $ua_movements[$move['movementID']]->description ."\n";
   $header .= "Startzeitpunkt:4 " . time_formatDatetime($move['start']) ."\n";
   $header .= "Endzeitpunkt:4 " .time_formatDatetime($move['end'])."\n";
-  
+
   // movement source
   $source = "Starthöhle: 4" .  $sourceCaveData['cave_name'] ." ";
   $source .=" (". $sourceCaveData['xCoord'] ."|". $sourceCaveData['yCoord'] .") ";
@@ -501,7 +512,7 @@ function export_movement_irc ($movementID) {
     $source .= "aus dem Stamme 4" .$sourceCaveData['player_tribe']." ";
   }
   $source .= "\n";
-  
+
   // movement target
   $target = "Zielhöhle: 4" .  $targetCaveData['cave_name'];
   $target .=" (". $targetCaveData['xCoord'] ."|". $targetCaveData['yCoord'] .") ";
@@ -510,7 +521,7 @@ function export_movement_irc ($movementID) {
     $target .= "aus dem Stamme 4" .$targetCaveData['player_tribe']." ";
   }
   $target .= "\n";
-  
+
   // units
   $units = "Einheiten: ";
   foreach ($unitTypeList AS $unitsID => $unitDetail) {
@@ -520,7 +531,7 @@ function export_movement_irc ($movementID) {
     }
   }
   $units = substr($units, 0, -2);
-  
+
   // resources
   $resources = "";
   foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
@@ -531,13 +542,13 @@ function export_movement_irc ($movementID) {
     $resources = "transportierte Rohstoffe: " . $resources;
     $resources = substr($resources, 0, -2); 
   }
-  
+
   // Artefacts
   $artefact = '';
   if ($move['artefactID'] != 0) {
     $artefact = "transportierte Artefakte: " . $artefactData['name'];
   }
-  
+
   $irc = "";
   $irc .= $header;
   $irc .= $source;
@@ -545,8 +556,7 @@ function export_movement_irc ($movementID) {
   $irc .= $units . "\n";
   $irc .= $resources ."\n";
   $irc .= $artefact . "\n";
-  
-  
+
   return $irc;
 }
 
@@ -722,16 +732,22 @@ function export_messages_xml($messageID) {
 ###  common functions                   ################
 ########################################################
 
-function export_getSingleMovement ($movementID) {
+function export_getSingleMovement($movementID) {
   global $db;
 
   $sql = $db->prepare("SELECT * FROM ". EVENT_MOVEMENT_TABLE ." WHERE event_movementID = :movementID");
   $sql->bindValue('movementID', $movementID, PDO::PARAM_INT);
 
   if ($sql->execute()) {
-      $move = $sql->fetch(PDO::FETCH_ASSOC);
-  } else return 'Datenbankfehler!';
+    $move = $sql->fetch(PDO::FETCH_ASSOC);
+  } else {
+    return array();
+  }
   $sql->closeCursor();
+
+  if (!sizeof($move) || empty($move)) {
+    return array();
+  }
 
   // check if it's own movement
   $meineHoehlen = getCaves($_SESSION['player']->playerID);
