@@ -184,7 +184,7 @@ function unit_Movement($caveID, &$ownCave) {
         $armySize += $unitTypeList[$unitID]->hitPoints*$value;
       }
       
-      if ($armySize > $hero['exp']) {
+      if ($armySize > $hero['healPoints']) {
         $denymovement_hero = true;
       }
     }

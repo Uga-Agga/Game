@@ -714,7 +714,7 @@ void trade_report (db_t *database,
 void return_report (db_t *database,
         const struct Cave *cave1, const struct Player *player1,
         const struct Cave *cave2, const struct Player *player2,
-        const int resources[], const int units[], int artefact)
+        const int resources[], const int units[], int artefact, int heroID)
 {
   template_t *tmpl_return = message_template(player2, "return");
   const char *subject = message_subject(tmpl_return, "TITLE", cave2);
@@ -728,6 +728,10 @@ void return_report (db_t *database,
   if (artefact)
     template_set(tmpl_return, "ARTEFACT/artefact",
        artefact_name(database, artefact));
+
+  if (heroID>0) {
+    template_set(tmpl_return, "HERO/show", "");
+  }
 
   message_new(database, MSG_CLASS_RETURN,
       cave2->player_id, subject, template_eval(tmpl_return), xml);
