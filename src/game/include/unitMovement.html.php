@@ -184,7 +184,7 @@ function unit_Movement($caveID, &$ownCave) {
         $armySize += $unitTypeList[$unitID]->hitPoints*$value;
       }
       
-      if ($armySize > $hero['healPoints']) {
+      if ($armySize > $hero['exp']) {
         $denymovement_hero = true;
       }
     }
@@ -368,7 +368,8 @@ function unit_Movement($caveID, &$ownCave) {
       'max_warrior_count' => $details[$unitTypeList[$i]->dbFieldName],
       // ?? warum -> ?? $i gegen namen ersetzen!!! TODO
       'warrior_id'        => $i,
-      'encumbrance'       => $encumbrance
+      'encumbrance'       => $encumbrance,
+      'hitPoints'         => $unitTypeList[$i]->hitPoints
     );
   }
   $template->addVar('unit_list', $units);
@@ -414,7 +415,7 @@ function unit_Movement($caveID, &$ownCave) {
 
   // hero
   if ($details['hero'] != 0) {
-    $template->addVar('hero', true);
+    $template->addVar('hero', getHeroByPlayer($_SESSION['player']->playerID));
   }
 
   // Module "CaveBookmarks" Integration

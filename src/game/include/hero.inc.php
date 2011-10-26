@@ -68,6 +68,7 @@ function getHeroByPlayer($playerID) {
       'name'          => $result['name'],
       'heroTypeID'    => $result['heroTypeID'],
       'id'            => $heroTypesList[$result['heroTypeID']]['id'],
+      'typeName'      => $heroTypesList[$result['heroTypeID']]['name'],
       'lvl'           => $result['lvl'],
       'exp'           => $result['exp'],
       'caveID'        => $result['caveID'],
@@ -220,7 +221,7 @@ function skillMaxHp($playerID, $hero) {
 function skillRegHp($playerID, $hero) {
   global $db, $heroTypesList;
   
-  $hero['regHpLvl'] = $hero['regHpLvl']++;
+  $hero['regHpLvl'] = ++$hero['regHpLvl'];
   $regHP = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP_formula']) . ";");
 
   // set database query with playerID
@@ -333,13 +334,13 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
                      VALUES (
              :caveID, :playerID, :heroTypeID, :name, :exp, 
              :healPoints, :maxHealPoints, :isAlive)");
-    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+    $sql->bindValue('caveID', 0, PDO::PARAM_INT);
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     $sql->bindValue('heroTypeID', $heroTypeID, PDO::PARAM_INT);
     $sql->bindValue('name', $player['name'], PDO::PARAM_INT);
-    $sql->bindValue('exp', 100, PDO::PARAM_INT);
+    $sql->bindValue('exp', 0, PDO::PARAM_INT);
     $sql->bindValue('healPoints', 0, PDO::PARAM_INT);
-    $sql->bindValue('maxHealPoints', 100, PDO::PARAM_INT);
+    $sql->bindValue('maxHealPoints', eval("return " . hero_parseFormulas($heroTypesList[$heroTypeID]['maxHP_formula']) . ";"), PDO::PARAM_INT);
     $sql->bindValue('isAlive', 0, PDO::PARAM_INT);
 
     if (!$sql->execute()) {
@@ -467,21 +468,10 @@ function hero_levelUp($hero) {
   if ($hero['exp'] < $hero['lvlUp'])
     return false;
   
-// update effects
-  $fields = array();
-  foreach ($effectTypeList as $effect) {
-    if (array_key_exists($effect->dbFieldName, $heroTypesList[$hero['heroTypeID']]['effects'])) {
-      array_push($fields, $effect->dbFieldName . " = ".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['absolute'].
-      "+" . $effect->dbFieldName."*(1+".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
-    }
-  }
-  
   $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
                        lvl = lvl +1,
-                       tpFree = tpFree +1,
-                       exp = exp - :levelUp 
+                       tpFree = tpFree +1 
                        WHERE playerID = :playerID");
-  $sql->bindValue('levelUp', $hero['lvlUp'], PDO::PARAM_INT);
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
   
   if (!$sql->execute())

@@ -108,9 +108,6 @@ return;
       $disabled = '';
     }
     
-    if ($hero['expLeft'] <= 0) {
-      $showLevelUp = true;
-    }
     
     $ritual = getRitualByLvl($hero['lvl']);
     $resource['duration'] = $ritual['duration'];
@@ -198,8 +195,8 @@ return;
               $messageID=-5;
               break;
           }
-          break;
         }
+        break;
         
         case 'lvlUp':
           if (hero_levelUp ($hero)) {
@@ -243,6 +240,7 @@ return;
 
     $queue=getHeroQueue($playerID);
     
+    
     $player = getPlayerByID($playerID);
     $potions = array();
     foreach ($potionTypeList AS $potionID => $potion) {
@@ -281,6 +279,11 @@ return;
 
   if ($hero) {
     $hero = getHeroByPlayer($playerID);
+    
+  if ($hero['expLeft'] <= 0) {
+      $showLevelUp = true;
+  }
+    
     $template->addVars(array(
     'hero'               => $hero,
     'disabled'           => (isset($disabled)) ? $disabled : '',
