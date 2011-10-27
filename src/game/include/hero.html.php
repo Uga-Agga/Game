@@ -99,14 +99,9 @@ return;
   
   if($hero!= null) {
 
-    $disabled = 'disabled=disabled';
     $showLevelUp = false;
     
     $eventHero=getEventHero($playerID);
-    
-    if (!$eventHero || !$hero['isAlive']) {
-      $disabled = '';
-    }
     
     
     $ritual = getRitualByLvl($hero['lvl']);
@@ -138,7 +133,6 @@ return;
         if ($eventHero === true) {
           $messageID = createRitual($caveID, $playerID, $resource, $hero, $ownCaves);
           if ($messageID === 2) {
-            $disabled = 'disabled=disabled';
           }
           break;
         }
@@ -151,7 +145,6 @@ return;
                        WHERE playerID = :playerID ");
           $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
           $sql->execute();
-          $disabled = '';
           $messageID = -4;
         }
         break;
@@ -286,7 +279,6 @@ return;
     
     $template->addVars(array(
     'hero'               => $hero,
-    'disabled'           => (isset($disabled)) ? $disabled : '',
     'showLevelUp'        => (isset ($showLevelUp)) ? $showLevelUp : '',
     'delay'              => time_formatDuration($ritual['duration']),
     'ritual'             => $ritual,

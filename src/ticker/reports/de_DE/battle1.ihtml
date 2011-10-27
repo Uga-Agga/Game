@@ -143,6 +143,7 @@ Der Kampf brachte dir {PointsOwn} und dem Gegner {PointsOther} Kriegspunkte.
 <br />
 <p>
 {if hero_dead}
+{hero_dead}
 Mutig hat der Held sich mit deinen Kämpfern in die Schlacht gestürtzt. Leider hat er das Gemetzel nicht überlebt. 
 {else}
 Ruhmreich hat dein Held in der Schlacht gekämpft und kehrt mit den Überlebenden zurück.

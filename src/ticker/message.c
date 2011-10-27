@@ -1116,14 +1116,20 @@ void battle_report (db_t *database,
 
   // hero attacker message
   if (result->attackers->heroFights) {
-    template_set_fmt(template1, "HERO/hero_dead", "%d", result->attackers_hero_died);
+    if (result->attackers_hero_died != 0) {
+      template_set(template1, "HERO/hero_dead", "");
+    }
+
     template_set_fmt(template1, "HERO/hero_points_attacker", "%d", hero_points_attacker);
     template_set_fmt(template1, "HERO/healPoints_attacker", "%d", abs(result->attackers_acc_hitpoints_units_before - result->attackers_acc_hitpoints_units));
   }
 
   // hero defender message
   if (result->defenders->heroFights) {
-    template_set_fmt(template2, "HERO/hero_dead", "%d", result->defenders_hero_died);
+    if (result->defenders_hero_died != 0) {
+      template_set(template1, "HERO/hero_dead", "");
+    }
+
     template_set_fmt(template2, "HERO/hero_points_defender", "%d", hero_points_defender);
     template_set_fmt(template2, "HERO/healPoints_defender", "%d", abs(result->defenders_acc_hitpoints_units_before - result->defenders_acc_hitpoints_units));
   }
@@ -1432,7 +1438,7 @@ void hero_report (db_t *database,
   template_context(tmpl_hero, "MSG");
   template_set(tmpl_hero, "cave", cave->name);
 
-  message_new(database, MSG_CLASS_ARTEFACT,
+  message_new(database, MSG_CLASS_HERO,
       player->player_id, subject, template_eval(tmpl_hero), xml);
 }
 
