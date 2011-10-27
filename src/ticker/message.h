@@ -61,7 +61,8 @@ extern void battle_report (db_t *database,
                     int change_owner, int takeover_multiplier,
                     const struct Relation *relation1,
                     const struct Relation *relation2,
-                    int show_warpoints, int attacker_warpoints, int defender_warpoints);
+                    int show_warpoints, int attacker_warpoints, int defender_warpoints,
+                    int heroID, int hero_points_attacker, int hero_points_defender);
 
 extern void protected_report (db_t *database,
 	const struct Cave *cave1, const struct Player *player1,

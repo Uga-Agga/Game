@@ -1,6 +1,5 @@
-<tmpl:TITLE_WIN>Sieg bei Höhle {cave} ({xpos}/{ypos})
-</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Niederlage bei Höhle {cave} ({xpos}/{ypos})
-</tmpl:TITLE_LOSE>
+<tmpl:TITLE_WIN>Sieg bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE_WIN>
+<tmpl:TITLE_LOSE>Niederlage bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE_LOSE>
 
 <tmpl:MSG>
 <p>
@@ -133,6 +132,18 @@ verstecken, trotzdem hat er folgende Ressourcen erbeutet:
 <br><br>
 Der Kampf brachte dir {PointsOwn} und dem Gegner {PointsOther} Kriegspunkte.
 </tmpl:WARPOINTS>
+
+<tmpl:HERO>
+<br />
+<p>
+{if hero_dead}
+Mutig hat der Held bei der Verteidigung der Höhle mitgeholfen. Leider hat er das Gemetzel nicht überlebt. 
+{else}
+Ruhmreich hat dein Held in der Schlacht gekämpft und bei der Verteidigung geholfen.
+{/if}
+<p>Dein Held bekommt für die Verteidigung {hero_points_defender} Erfahrungspunkte und verliert {healPoints_defender} Lebenspunkte.</p>
+</p>
+</tmpl:HERO>
 
 
 <tmpl:ARTEFACT>

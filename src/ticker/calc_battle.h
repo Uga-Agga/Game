@@ -116,7 +116,7 @@ typedef struct Battle
   int defenders_acc_units_points;		// Einheitenpunkte in der gesamten Armee
   int defenders_acc_defense_points;		// Def.Sys.punkte in der gesamten Armee
 
-  // starting values remebered for the battle report.
+  // starting values remembered for the battle report.
 
   int size_defenders_before;
   int size_attackers_before;
@@ -141,6 +141,9 @@ typedef struct Battle
   int defenders_acc_defense_points_before;		// Def.Sys.punkte in der gesamten Armee
 
   int winner;
+
+  int attackers_hero_died;
+  int defenders_hero_died;
 
   int isWar;
 } Battle;
