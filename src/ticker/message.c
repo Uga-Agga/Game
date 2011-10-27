@@ -21,6 +21,7 @@
 #include "memory.h"
 #include "message.h"
 #include "template.h"
+#include "hero.h"
 
 #define SPY_DEFENSE  0  /*  1 */
 #define SPY_UNIT  1  /*  2 */
@@ -977,7 +978,8 @@ void battle_report (db_t *database,
         int change_owner, int takeover_multiplier,
         const struct Relation *relation1,
         const struct Relation *relation2,
-        int show_warpoints, int attacker_warpoints, int defender_warpoints)
+        int show_warpoints, int attacker_warpoints, int defender_warpoints,
+        int heroID, int hero_points_attacker, int hero_points_defender)
 {
   template_t *template1, *template2;
   const char *subject1, *subject2;
@@ -1110,6 +1112,14 @@ void battle_report (db_t *database,
         template_set(template1, "ARTEFACT_LOST/artefact", name);
         template_set(template2, "ARTEFACT_LOST/artefact", name);
     }
+  }
+
+  // hero attacker message
+  if (result->attackers->heroFights) {
+    template_set_fmt(template1, "HERO/hero_dead", "%d", result->attackers_hero_died);
+    template_set_fmt(template1, "HERO/hero_points_attacker", "%d", hero_points_attacker);
+    template_set_fmt(template1, "HERO/healPoints_attacker", "%d", abs(result->attackers_acc_hitpoints_units_before - result->attackers_acc_hitpoints_units));
+
   }
 
   message_new(database, msg_class1, cave1->player_id,
