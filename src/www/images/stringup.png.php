@@ -2,6 +2,7 @@
 /*
  * stringup.png.php - 
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,33 +20,45 @@ require_once("include/db.inc.php");
 require_once("include/basic.lib.php");
 
 $caveID = request_var('cave_id', 0);
+if ($caveID == 0) exit(1);
+
 $filename = "temp/$caveID.png";
 
 if (!file_exists($filename)){
-  define("NAME_LENGTH", 17);
+  define("NAME_LENGTH", 21);
 
   $config = new Config();
   $db     = DbConnect();
 
-  $cave = getCaveByID($caveID);    
+  $cave = getCaveByID($caveID);
   if ($cave === 0) exit(1);
-  
-  $name = unhtmlentities($cave['name']);
-  
-  if (strlen($name) > NAME_LENGTH)
-    $name = substr($name, 0, NAME_LENGTH-2) . "..";
-  
-  $im = imagecreate(40, 135);
-  $white = imagecolorallocate($im, 255, 55, 255);
-  $black = imagecolorallocate($im, 0, 0, 0);
 
-  
-  imagecolortransparent($im, $white);
-  imagestringup($im, 3,  5, 130, $name, 1);
-  imagestringup($im, 2, 25, 130, "({$cave['xCoord']}|{$cave['yCoord']})", 1);
-  header("Content-type: image/png");
-  imagepng($im, "temp/$caveID.png");
-  imagedestroy($im);
+  $name = unhtmlentities($cave['name']);
+
+  if (strlen($cave['name']) > NAME_LENGTH) {
+    $cave['name'] = substr($cave['name'], 0, NAME_LENGTH-2) . "..";
+  }
+
+  /* Create imagickdraw object */
+  $draw = new ImagickDraw();
+
+  /* Annotate some text */
+  $draw->setFontSize(13);
+  $draw->annotation(5, 20, "{$cave['name']}");
+  $draw->setFontSize(10);
+  $draw->annotation(5, 33, "({$cave['xCoord']}|{$cave['yCoord']})");
+
+  /* Create a new imagick object */
+  $im = new Imagick();
+
+  /* Create new image. This will be used as fill pattern */
+  $im->newImage(120, 40, new ImagickPixel('none'));
+  $im->setImageFormat('png');
+
+  /* Draw the ImagickDraw on to the canvas */
+  $im->drawImage($draw);
+  $im->rotateImage(new ImagickPixel('none'), -90);
+  $im->writeImage($filename);
 }
 header("Location: $filename");
 
