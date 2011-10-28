@@ -57,10 +57,10 @@
           <td>
             {% if item.protected %}Anfängerschutz aktiv{% endif %}&nbsp;
             {% if item.secureCave %}Übernehmbar{% endif %}&nbsp;
-            {% if item.artefact %}<a href="main.php{{ artefact_list_link }}">Artefakte!!</a>{% endif %}
+            {% if item.artefact %}<a href="main.php?modus={{ artefact_list_link }}">Artefakte!!</a>{% endif %}
           </td>
           <td><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}">dorthin bewegen!</a></td>
-          <td><a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">zur Höhlenliste hinzufügen!</a></td>
+          <td><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">zur Höhlenliste hinzufügen!</a></td>
         </tr>
       {% endfor %}
     </table>

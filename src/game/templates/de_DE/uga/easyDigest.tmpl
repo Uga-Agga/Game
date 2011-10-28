@@ -166,39 +166,36 @@
   </div>
 {% endif %}
 
-<!--
+
 {% if initiations %}
   <div class="box">
-    <div class="box-header" style="font-weight:bold;">	
-     <img src="{{ gfx }}/de_DE/t_uga/icon_minus.png" style="margin:-3px" width="16" height="16" alt="Minus" title="Minus" onclick="moreinfo('arte', this)" />&nbsp;&nbsp;Artefakte 
-    </div>
-    <div class = "box-content" id="initiations">
+    <div class="box-header">Artefakte - Einweihungen</div>
+    <div class = "box-content success inner" id="initiations">
       <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      <tmpl:INITIATION>
+      {% for item in initiations %}
         <tr class="digest-artefact">
-          <td>{artefactName}</td>
-          <td>{name}</td>
-          <td class="date-td">{event_end_date}</td>
+          <td>{{ item.artefactName }}</td>
+          <td>{{ item.name }}</td>
+          <td class="date-td">{{ item.event_end_date }}</td>
           <td class="time-bar-td text-right">
             <script type="text/javascript">
               // <![CDATA[
               $(function () {
-                  var timer_artefact_{event_id }} = new Date();
-                  timer_artefact_{event_id }}.setTime ({event_end} * 1000);
-                  $('#timer_artefact_{event_id }}').countdown({until: timer_artefact_{event_id }}, compact: true, description: ''});
+                  var timer_artefact_{{ item.event_id }} = new Date();
+                  timer_artefact_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
+                  $('#timer_artefact_{{ item.event_id }}').countdown({until: timer_artefact_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
               });
               // ]]>
             </script>
-            <div id="timer_artefact_{event_id }}"></div>
+            <div id="timer_artefact_{{ item.event_id }}"></div>
           </td>
         </tr>
-      </tmpl:INITIATION>
+      {% endfor %}
       </table>
     </div>
   </div>
 <br />
 {% endif %}
--->
 
 <div class="box">
   <div class="box-header">Ausstehende Termine</div>

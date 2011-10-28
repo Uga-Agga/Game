@@ -253,13 +253,13 @@ function artefact_beginInitiation($artefact) {
 
   // Artefakt muss einweihbar sein
   if ($artefact['initiated'] != ARTEFACT_UNINITIATED) {
-    return _('Dieses Artefakt kann nicht noch einmal eingeweiht werden.');
+    return -5;
   }
 
   // Hol das Einweihungsritual
   $ritual = artefact_getRitualByID($artefact['initiationID']);
   if ($ritual === FALSE)
-    return _('Fehler: Ritual nicht gefunden.');
+    return -1;
 
   // get initiation costs
   $costs = array();
@@ -297,7 +297,7 @@ function artefact_beginInitiation($artefact) {
 
   //echo "try to substract costs:<br>" . $set.$where . "<br><br>";
   if (!($result = $db->query($set.$where)) || !($result->rowCount() == 1)) {
-    return _('Es fehlen die notwendigen Voraussetzungen.');
+    return -2;
   }
 
   // register event
@@ -312,7 +312,7 @@ function artefact_beginInitiation($artefact) {
 
   if (!$sql->execute()) {
     $db->query($setBack);
-    return _('Sie weihen bereits ein anderes Artefakt ein.');
+    return -3;
   }
 
   // finally set status to initiating
@@ -320,8 +320,8 @@ function artefact_beginInitiation($artefact) {
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefact['artefactID'], PDO::PARAM_INT);
 
-  if (!$sql->execute()) return _('Fehler: Artefakt konnte nicht auf ARTEFACT_INITIATING gestellt werden.');
-  return _('erfolgreich eingeweiht');
+  if (!$sql->execute()) return -4;
+  return 1;
 }
 
 /** initiating finished. now set the status of the artefact to ARTEFACT_INITIATED.

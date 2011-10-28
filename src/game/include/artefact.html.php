@@ -16,106 +16,123 @@ function artefact_getDetail($caveID, &$myCaves) {
   global $config, $template;
   global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
   
-  $template->throwError('Diese Seite wird noch überarbeitet.');
-  return;
-
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'artefactdetail.ihtml');
+  $messageText = array(
+  -5 => array('type' => 'error', 'message' => _('Dieses Artefakt kann nicht noch einmal eingeweiht werden.')),
+  -4 => array('type' => 'error', 'message' => _('Fehler: Artefakt konnte nicht auf ARTEFACT_INITIATING gestellt werden.')),
+  -3 => array('type' => 'error', 'message' => _('Sie weihen bereits ein anderes Artefakt ein.')),
+  -2 => array('type' => 'error', 'message' => _('Es fehlen die notwendigen Voraussetzungen.')),
+  -1 => array('type' => 'error', 'message' => _('Fehler: Ritual nicht gefunden.')),
+   0 => array('type' => 'notice', 'message' => _('Über dieses Artefakt weiß man nichts!')),
+   1 => array('type' => 'success', 'message' => _('Die Einweihung des Artefakts wurde gestartet!'))
+  );
+  
+  // open template
+  $template->setFile('artefactDetail.tmpl');
 
   $show_artefact = TRUE;
 
   $artefactID = request_var('artefactID', 0);
   $artefact = artefact_getArtefactByID($artefactID);
-
-  $description_initiated = $artefact['description_initiated'];
-  unset($artefact['description_initiated']);
-
-  // Gott oder nicht?
-  if ($_SESSION['player']->tribe != GOD_ALLY) {
-    // gibts nicht oder nicht in einer Höhle
-    if (!$artefact['caveID']) {
-      $show_artefact = FALSE;
-
-    } else {
-
-      $cave = getCaveByID($artefact['caveID']);
-
-      // leere Höhle
-      if (!$cave['playerID']) {
+  
+  if (!count($artefact)) {
+    $messageID = 0;
+  } else {
+    
+    $description_initiated = $artefact['description_initiated'];
+    unset($artefact['description_initiated']);
+  
+    // Gott oder nicht?
+    if ($_SESSION['player']->tribe != GOD_ALLY) {
+      // gibts nicht oder nicht in einer Höhle
+      if (!$artefact['caveID']) {
         $show_artefact = FALSE;
-
+  
       } else {
-
-        $owner = getPlayerByID($cave['playerID']);
-        // Besitzer ist ein Gott
-        if ($owner['tribe'] == GOD_ALLY){
+  
+        $cave = getCaveByID($artefact['caveID']);
+  
+        // leere Höhle
+        if (!$cave['playerID']) {
           $show_artefact = FALSE;
+  
+        } else {
+  
+          $owner = getPlayerByID($cave['playerID']);
+          // Besitzer ist ein Gott
+          if ($owner['tribe'] == GOD_ALLY){
+            $show_artefact = FALSE;
+          }
         }
       }
     }
-  }
+  
+    $showRitual = 0;
+    $template->addVars(array('show_artefact' => $show_artefact));
+    if ($show_artefact) {
+  
+      // eigene Höhle ...
+      if (array_key_exists($artefact['caveID'], $myCaves)) {
+  
+        // Ritual ausführen?
+        if (isset($_POST['initiate'])) {
+          $messageID = artefact_beginInitiation($artefact);
+  
+          // reload
+          $myCaves = getCaves($_SESSION['player']->playerID);
+        }
+  
+        // wenn noch uneingeweiht und in der "richtigen" Höhle, ritual zeigen
+        else if ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_UNINITIATED) {
 
-  if ($show_artefact) {
-
-    // eigene Höhle ...
-    if (array_key_exists($artefact['caveID'], $myCaves)) {
-
-      // Ritual ausführen?
-      if (isset($_POST['initiate'])) {
-        $message = artefact_beginInitiation($artefact);
-        tmpl_set($template, 'message', $message);
-
-        // reload
-        $myCaves = getCaves($_SESSION['player']->playerID);
-      }
-
-      // wenn noch uneingeweiht und in der "richtigen" Höhle, ritual zeigen
-      else if ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_UNINITIATED) {
-
-        // Check, ob bereits eingeweiht wird.
-        if (sizeof(artefact_getArtefactInitiationsForCave($caveID)) == 0) {
-
-          // Hol das Einweihungsritual
-          $ritual = artefact_getRitualByID($artefact['initiationID']);
-
-          // Hol die Kosten und beurteile ob genug da ist
-          $merged_game_rules = array_merge($resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList);
-
-          $cost = array();
-          foreach($merged_game_rules as $val) {
-            if (array_key_exists($val->dbFieldName, $ritual)) {
-              if ($ritual[$val->dbFieldName]) {
-                $object_context = (ceil($ritual[$val->dbFieldName]) > floor($myCaves[$artefact['caveID']][$val->dbFieldName])) ?
-                                  'LESS' : 'ENOUGH';
-                array_push($cost, array('object' => $val->name, $object_context.'/amount' => $ritual[$val->dbFieldName]));
+          // Check, ob bereits eingeweiht wird.
+          if (sizeof(artefact_getArtefactInitiationsForCave($caveID)) == 0) {
+            
+            $showRitual = 1;
+            
+            // Hol das Einweihungsritual
+            $ritual = artefact_getRitualByID($artefact['initiationID']);
+  
+            // Hol die Kosten und beurteile ob genug da ist
+            $merged_game_rules = array_merge($resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList);
+  
+            $cost = array();
+            foreach($merged_game_rules as $val) {
+              if (array_key_exists($val->dbFieldName, $ritual)) {
+                if ($ritual[$val->dbFieldName]) {
+                  $object_context = (ceil($ritual[$val->dbFieldName]) > floor($myCaves[$artefact['caveID']][$val->dbFieldName])) ?
+                                    'less-' : 'enough ';
+                  array_push($cost, array('object' => $val->name, 'amount' => $ritual[$val->dbFieldName], 'class' => $object_context));
+                }
               }
             }
+  
+            $artefact['initiation'] = array('cost'        => $cost,
+                                            'name'        => $ritual['name'],
+                                            'description' => $ritual['description'],
+                                            'duration'    => time_formatDuration($ritual['duration']),
+                                            'initiate'    => 1);
+          } else {
+            $showRitual = -1;
           }
-
-          $artefact['INITIATION'] = array('COST'        => $cost,
-                                          'name'        => $ritual['name'],
-                                          'description' => $ritual['description'],
-                                          'duration'    => time_formatDuration($ritual['duration']),
-                                          'HIDDEN'      => array(array('name' => "artefactID", 'value' => $artefact['artefactID']),
-                                                                 array('name' => "modus",      'value' => ARTEFACT_DETAIL),
-                                                                 array('name' => "initiate",   'value' => 1)));
+        } elseif ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_INITIATING) {
+            // Arte wird gerade eingeweiht
+            $showRitual = -1;
         }
-
-        // es wird bereits in dieser Höhle eingeweiht...
-        else {
-          tmpl_iterate($template, 'ARTEFACT/NO_INITIATION');
-        }
+        
+        // "geheime" Beschreibung nur zeigen, wenn eingeweiht
+        if ($artefact['initiated'] == ARTEFACT_INITIATED)
+          $artefact['description_initiated'] = $description_initiated;
       }
-      // "geheime" Beschreibung nur zeigen, wenn eingeweiht
-      if ($artefact['initiated'] == ARTEFACT_INITIATED)
-        $artefact['description_initiated'] = $description_initiated;
+      $template->addVars(array('artefact' => $artefact));
+      $template->addVars(array('showRitual' => $showRitual));
+      
+    } else {
+      // über dieses Artefakt weiß man nichts!
+      $messageID = 0;
     }
-
-    tmpl_set($template, 'ARTEFACT', $artefact);
-  } else {
-    tmpl_set($template, 'message', _('Über dieses Artefakt weiß man nichts.'));
   }
-
-  return tmpl_parse($template);
+  
+  $template->addVar('status_msg', (isset($messageID)) ? $messageText[$messageID] : '');
 }
 
 function artefact_getList($caveID, $ownCaves) {
