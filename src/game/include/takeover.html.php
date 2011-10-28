@@ -180,7 +180,7 @@ function takeover_withdrawal() {
   $withdrawal_check = request_var('withdrawal_check', 0);
 
   // verify $check
-  if ($withdrawal_check != $_SESSION['withdrawal_check']) {
+  if (!isset($_SESSION['withdrawal_check']) || $withdrawal_check != $_SESSION['withdrawal_check']) {
     return array('type' => 'error', 'message' => _('Sie konnten ihr Angebot nicht zurückziehen.'));
   }
 

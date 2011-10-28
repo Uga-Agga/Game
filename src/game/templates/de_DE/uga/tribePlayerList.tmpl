@@ -35,7 +35,7 @@
         <tr>
           <td><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ item.rank }}">{{ item.rank }}</a></td>
           <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
-          <td>{% if item.religion %}<img src="%gfx%/de_DE/t_slimfast/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
+          <td>{% if item.religion %}<img src="{{ gfx }}/de_DE/t_uga/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
           <td>{{ item.points }}</td>
           <td>{{ item.kp }}</td>
           <td>{{ item.caves }}</td>
