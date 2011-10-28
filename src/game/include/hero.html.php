@@ -99,18 +99,10 @@ return;
   
   if($hero!= null) {
 
-    $disabled = 'disabled=disabled';
     $showLevelUp = false;
     
     $eventHero=getEventHero($playerID);
     
-    if (!$eventHero || !$hero['isAlive']) {
-      $disabled = '';
-    }
-    
-    if ($hero['expLeft'] <= 0) {
-      $showLevelUp = true;
-    }
     
     $ritual = getRitualByLvl($hero['lvl']);
     $resource['duration'] = $ritual['duration'];
@@ -141,7 +133,6 @@ return;
         if ($eventHero === true) {
           $messageID = createRitual($caveID, $playerID, $resource, $hero, $ownCaves);
           if ($messageID === 2) {
-            $disabled = 'disabled=disabled';
           }
           break;
         }
@@ -154,7 +145,6 @@ return;
                        WHERE playerID = :playerID ");
           $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
           $sql->execute();
-          $disabled = '';
           $messageID = -4;
         }
         break;
@@ -198,8 +188,8 @@ return;
               $messageID=-5;
               break;
           }
-          break;
         }
+        break;
         
         case 'lvlUp':
           if (hero_levelUp ($hero)) {
@@ -243,6 +233,8 @@ return;
 
     $queue=getHeroQueue($playerID);
     
+    
+    $player = getPlayerByID($playerID);
     $potions = array();
     foreach ($potionTypeList AS $potionID => $potion) {
       if ($player[$potion->dbFieldName] > 0) {
@@ -280,9 +272,13 @@ return;
 
   if ($hero) {
     $hero = getHeroByPlayer($playerID);
+    
+  if ($hero['expLeft'] <= 0) {
+      $showLevelUp = true;
+  }
+    
     $template->addVars(array(
     'hero'               => $hero,
-    'disabled'           => (isset($disabled)) ? $disabled : '',
     'showLevelUp'        => (isset ($showLevelUp)) ? $showLevelUp : '',
     'delay'              => time_formatDuration($ritual['duration']),
     'ritual'             => $ritual,

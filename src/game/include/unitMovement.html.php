@@ -219,8 +219,10 @@ function unit_Movement($caveID, &$ownCave) {
     else if ($denymovement_targetwar)
       $msg = array('type' => 'error', 'message' => _('Sie können keine Einheiten zu kriegführenden Stämmen verschieben, wenn Sie unbeteiligt sind.'));
       
-    else if ($denymovement_hero)
+    else if ($denymovement_hero) {
       $msg = array('type' => 'error', 'message' => _('Die Armee ist zu groß um vom Helden unterstützt zu werden!'));
+      $moveHero = 0;
+    }
 
     //  Einheiten bewegen!
     else {
@@ -366,7 +368,8 @@ function unit_Movement($caveID, &$ownCave) {
       'max_warrior_count' => $details[$unitTypeList[$i]->dbFieldName],
       // ?? warum -> ?? $i gegen namen ersetzen!!! TODO
       'warrior_id'        => $i,
-      'encumbrance'       => $encumbrance
+      'encumbrance'       => $encumbrance,
+      'hitPoints'         => $unitTypeList[$i]->hitPoints
     );
   }
   $template->addVar('unit_list', $units);
@@ -412,7 +415,7 @@ function unit_Movement($caveID, &$ownCave) {
 
   // hero
   if ($details['hero'] != 0) {
-    $template->addVar('hero', true);
+    $template->addVar('hero', getHeroByPlayer($_SESSION['player']->playerID));
   }
 
   // Module "CaveBookmarks" Integration

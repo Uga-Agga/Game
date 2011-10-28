@@ -21,6 +21,7 @@
 #include "memory.h"
 #include "message.h"
 #include "template.h"
+#include "hero.h"
 
 #define SPY_DEFENSE  0  /*  1 */
 #define SPY_UNIT  1  /*  2 */
@@ -714,7 +715,7 @@ void trade_report (db_t *database,
 void return_report (db_t *database,
         const struct Cave *cave1, const struct Player *player1,
         const struct Cave *cave2, const struct Player *player2,
-        const int resources[], const int units[], int artefact)
+        const int resources[], const int units[], int artefact, int heroID)
 {
   template_t *tmpl_return = message_template(player2, "return");
   const char *subject = message_subject(tmpl_return, "TITLE", cave2);
@@ -728,6 +729,10 @@ void return_report (db_t *database,
   if (artefact)
     template_set(tmpl_return, "ARTEFACT/artefact",
        artefact_name(database, artefact));
+
+  if (heroID>0) {
+    template_set(tmpl_return, "HERO/show", "");
+  }
 
   message_new(database, MSG_CLASS_RETURN,
       cave2->player_id, subject, template_eval(tmpl_return), xml);
@@ -973,7 +978,8 @@ void battle_report (db_t *database,
         int change_owner, int takeover_multiplier,
         const struct Relation *relation1,
         const struct Relation *relation2,
-        int show_warpoints, int attacker_warpoints, int defender_warpoints)
+        int show_warpoints, int attacker_warpoints, int defender_warpoints,
+        int heroID, int hero_points_attacker, int hero_points_defender)
 {
   template_t *template1, *template2;
   const char *subject1, *subject2;
@@ -1106,6 +1112,26 @@ void battle_report (db_t *database,
         template_set(template1, "ARTEFACT_LOST/artefact", name);
         template_set(template2, "ARTEFACT_LOST/artefact", name);
     }
+  }
+
+  // hero attacker message
+  if (result->attackers->heroFights) {
+    if (result->attackers_hero_died != 0) {
+      template_set(template1, "HERO/hero_dead", "");
+    }
+
+    template_set_fmt(template1, "HERO/hero_points_attacker", "%d", hero_points_attacker);
+    template_set_fmt(template1, "HERO/healPoints_attacker", "%d", abs(result->attackers_acc_hitpoints_units_before - result->attackers_acc_hitpoints_units));
+  }
+
+  // hero defender message
+  if (result->defenders->heroFights) {
+    if (result->defenders_hero_died != 0) {
+      template_set(template1, "HERO/hero_dead", "");
+    }
+
+    template_set_fmt(template2, "HERO/hero_points_defender", "%d", hero_points_defender);
+    template_set_fmt(template2, "HERO/healPoints_defender", "%d", abs(result->defenders_acc_hitpoints_units_before - result->defenders_acc_hitpoints_units));
   }
 
   message_new(database, msg_class1, cave1->player_id,
@@ -1412,7 +1438,7 @@ void hero_report (db_t *database,
   template_context(tmpl_hero, "MSG");
   template_set(tmpl_hero, "cave", cave->name);
 
-  message_new(database, MSG_CLASS_ARTEFACT,
+  message_new(database, MSG_CLASS_HERO,
       player->player_id, subject, template_eval(tmpl_hero), xml);
 }
 

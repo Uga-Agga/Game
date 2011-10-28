@@ -1,6 +1,5 @@
-<tmpl:TITLE_WIN>Sieg bei Höhle {cave} ({xpos}/{ypos})
-</tmpl:TITLE_WIN><tmpl:TITLE_LOSE>Niederlage bei Höhle {cave} ({xpos}/{ypos})
-</tmpl:TITLE_LOSE>
+<tmpl:TITLE_WIN>Sieg bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE_WIN>
+<tmpl:TITLE_LOSE>Niederlage bei Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE_LOSE>
 
 <tmpl:MSG>
 <p>Dein Oberkeulenschwinger berichtet direkt vom Schlachtfeld:</p>
@@ -139,6 +138,19 @@ ungefähr {size} Größenpunkte schätzt.
 Der Kampf brachte dir {PointsOwn} und dem Gegner {PointsOther} Kriegspunkte.
 </tmpl:WARPOINTS>
 
+
+<tmpl:HERO>
+<br />
+<p>
+{if hero_dead}
+{hero_dead}
+Mutig hat der Held sich mit deinen Kämpfern in die Schlacht gestürtzt. Leider hat er das Gemetzel nicht überlebt. 
+{else}
+Ruhmreich hat dein Held in der Schlacht gekämpft und kehrt mit den Überlebenden zurück.
+{/if}
+<p>Dein Held bekommt für den Angriff {hero_points_attacker} Erfahrungspunkte und verliert {healPoints_attacker} Lebenspunkte.</p>
+</p>
+</tmpl:HERO>
 
 <tmpl:ARTEFACT>
 <p>

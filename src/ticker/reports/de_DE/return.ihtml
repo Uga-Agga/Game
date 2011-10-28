@@ -28,4 +28,9 @@ wieder zurückgekehrt.
 <tmpl:ARTEFACT>
 <p>Du hast ein neues Artefakt "{artefact}" bekommen!</p>
 </tmpl:ARTEFACT>
+
+<tmpl:HERO>
+{if show}<p>Dein Held ist in die Höhle zurückgekehrt!</p>{/if}
+</tmpl:HERO>
+
 </tmpl:MSG>

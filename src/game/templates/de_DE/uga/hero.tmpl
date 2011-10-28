@@ -24,10 +24,10 @@
     <td>&nbsp;</td>
     <td style="width: 300px"><img
      src="{{ gfx }}/heroes/{{ hero.path }}"
-     style="width: 250px; hight: 250px; border: none" alt="Held" />
+     style="width: 250px; height: 250px; border: none" alt="Held" />
     </td>
-    <td style="width: 220px;"><br />
-     <div class="notice" style="width: 200px;">
+    <td style="width: 320px;"><br />
+     <div class="notice" style="width: 320px;">
       <p style="text-align: left; margin-left: 10px; font-weight: bold;">Statuswerte</p>
       <br />
       <table class="table">
@@ -37,24 +37,28 @@
         <td class="text-right">{{ hero.name }}</td>
        </tr>
        <tr>
+        <td><strong>Typ:</strong></td>
+        <td class="text-right">{{ hero.typeName }}</td>
+       </tr>
+       <tr>
         <td><strong>Level: </strong>
         </td>
         <td class="text-right">{{ hero.lvl }}</td>
        </tr>
        <tr>
-        <td style="vertical-align: top;"><strong>Exp: </strong>
+        <td style="vertical-align: top;"><strong>Erfahrung (Exp): </strong>
         </td>
         <td class="text-right">{{ hero.exp }}
          <div style="font-size: x-small;">({{ hero.expLeft }} Exp bis Lvlup)</div>
         </td>
        </tr>
-       {% if showLevelUp %}
+       {% if showLevelUp and hero.isAlive>0 %}
        <tr>
         <td><strong>Levelup: </strong></td>
         <td class="text-right">
            <a href="main.php?modus=hero_detail&amp;action=lvlUp">
            <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
-             style="width: 16px; hight: 16px; vertical-align: middle; border: none"
+             style="width: 16px; height: 16px; vertical-align: middle; border: none"
              alt="Plus" />
            </a>
            </td>
@@ -67,7 +71,7 @@
         <td class="text-right">{{ hero.location }}
        </tr>
        <tr>
-        <td><strong>HP: </strong>
+        <td><strong>Lebenspunkte (HP): </strong>
         </td>
         <td style="text-align: center;"><div
           class="{{ hero.HPbar }} inner">{{ hero.healPoints }} / {{ hero.maxHealPoints }}</div>
@@ -77,70 +81,84 @@
         <td>&nbsp;</td>
        </tr>
        <tr>
-        <td><strong>&nbsp;TP frei: </strong>
-        </td>
-        <td class="text-right" style="padding-right: 7px">{{ hero.tpFree }}</td>
-       </tr>
-       <tr>
         <td colspan="2">
          <table class="table">
           <tr>
-           <td><strong>Kraft: </strong>
+           <td><strong>freie Talentpunkte: </strong>
+           </td>
+           <td class="text-right" colspan="3">{{ hero.tpFree }}</td>
+          </tr>
+          <tr>
+           <td><strong>Stärke der Fertigkeit: </strong>
            </td>
            <td class="text-right">{{ hero.force }}</td>
-           <td class="text-right">Lvl <strong>{{ hero.forceLvl }}</strong>
+           <td class="text-right">Level <strong>{{ hero.forceLvl }}</strong>
            </td>
            <td class="text-right">
-           <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=force">
-            <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
-             style="width: 16px; hight: 16px; vertical-align: middle; border: none"
-             alt="Plus" />
-           </a>
+           {% if hero.tpFree>0 and hero.isAlive>0 %}
+            <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=force">
+             <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
+              style="width: 16px; height: 16px; vertical-align: middle; border: none"
+              alt="Erhöhen" />
+            </a>
+           {% else %}
+             &nbsp;
+           {% endif %}
            </td>
           </tr>
           <tr>
-           <td><strong>Max-HP: </strong>
+           <td><strong>Maximale Lebenspunkte: </strong>
            </td>
            <td class="text-right">{{ hero.maxHealPoints }}</td>
-           <td class="text-right">Lvl <strong>{{ hero.maxHpLvl }}</strong>
+           <td class="text-right">Level <strong>{{ hero.maxHpLvl }}</strong>
            </td>
            <td class="text-right">
-           <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=maxHP">
-            <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
-             style="width: 16px; hight: 16px; vertical-align: middle; border: none"
-             alt="Plus" />
-           </a>
+           {% if hero.tpFree>0 and hero.isAlive>0 %}
+            <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=maxHP">
+             <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
+              style="width: 16px; height: 16px; vertical-align: middle; border: none"
+              alt="Erhöhen" />
+            </a>
+           {% else %}
+             &nbsp;
+           {% endif %}
            </td>
           </tr>
           <tr>
-           <td><strong>HP-Reg: </strong>
+           <td><strong>Lebenspunkte Regeneration: </strong>
            </td>
-           <td class="text-right">+{{ hero.regHP }}</td>
+           <td class="text-right">{% if hero.regHP>0 %}+{% endif %}{{ hero.regHP }}</td>
            <td class="text-right">Lvl <strong>{{ hero.regHpLvl }}</strong>
            </td>
            <td class="text-right">
-           <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=regHP">
-           <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
-             style="width: 16px; hight: 16px; vertical-align: middle; border: none"
-             alt="Plus" />
-           </a>
+           {% if hero.tpFree>0 and hero.isAlive>0 %}
+            <a href="main.php?modus=hero_detail&amp;action=skill&amp;skill=regHP">
+            <img src="{{ gfx }}/de_DE/t_uga/icon_open.png"
+              style="width: 16px; height: 16px; vertical-align: middle; border: none"
+              alt="Erhöhen" />
+            </a>
+           {% else %}
+             &nbsp;
+           {% endif %}
            </td>
           </tr>
          </table></td>
        </tr>
       </table>
-     </div></td>
+     </div>
+     </td>
     <td>&nbsp;</td>
    </tr>
   </table>
   <br /> 
+  {% if hero.isAlive>0 %}
   <div class="box small">
     <div class="box-header">Rohstoffe opfern</div>
     <div class="boxcontent smallinner success inner">
      <table class="table" rules="rows">
        <tr class="bg2 nohover">
         <td colspan="3"><div class="notice" style="text-align:center">
-        Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln <br/><br />
+        Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln. <br/><br />
         
         Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!</div>
        </tr>
@@ -240,6 +258,7 @@
    </div>
   </div>
   {% endif %}
+  {% endif %} {# end of hero.isAlive #}
   <br />
   <div class="info" style="width: 660px; margin: 0 auto;">
    {% if quene_show %}
@@ -261,7 +280,7 @@
    <table class="table nohover">
     <tr>
      <td><img src="{{ gfx }}/heroes/altar_large.gif"
-      style="width: 225px; hight: 140px;" alt="Altar der Auferstehung" />
+      style="width: 225px; height: 140px;" alt="Altar der Auferstehung" />
      </td>
      <td>
       <p
@@ -291,14 +310,14 @@
          {% endif %} 
          {% endfor %}</td>
         <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif"
-         style="width: 16px; hight: 16px; vertical-align: bottom" />{{ delay }}</td>
+         style="width: 16px; height: 16px; vertical-align: bottom" />{{ delay }}</td>
        </tr>
       </table>
       <br />
      <br />
       <form action="main.php?modus=hero_detail" id="newhero"
        method="post">
-       <input type="submit" name="action" value="Wiederbeleben" {{ disabled }} />
+       <input type="submit" name="action" value="Wiederbeleben" {% if hero.isAlive %} disabled="disabled" {% endif %} />
       </form></td>
     </tr>
    </table>
