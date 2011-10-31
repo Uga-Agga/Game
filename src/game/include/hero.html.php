@@ -67,7 +67,7 @@ return;
   -7 => array('type' => 'error', 'message' => _('Fehler beim Schreiben in die Datenbank.')),
   -6 => array('type' => 'error', 'message' => _('Der Held existiert bereits.')),
   -5 => array('type' => 'error', 'message' => _('Maximallevel des Skills erreicht.')),
-  -4 => array('type' => 'notice', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.')),
+  -4 => array('type' => 'notice', 'message' => _('Fehler beim Abbrechen der Wiederbelebung.')),
   -3 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Wiederbeleben.')),
   -2 => array('type' => 'error', 'message' => _('Der Held wird bereits wiederbelebt.')),
   -1 => array('type' => 'error', 'message' => _('Dafür sind nicht genug Talentpunkte vorhanden.')),
@@ -79,7 +79,8 @@ return;
   5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')), 
   6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
   7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
-  8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.'))
+  8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.')),
+  9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.'))
   );
   
   // create new hero
@@ -141,11 +142,8 @@ return;
 
       case 'cancelOrder':
         if ($eventHero === false) {
-          $sql = $db->prepare("DELETE FROM " . EVENT_HERO_TABLE . "
-                       WHERE playerID = :playerID ");
-          $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-          $sql->execute();
-          $messageID = -4;
+          
+          $messageID = hero_cancelOrder();
         }
         break;
 
