@@ -189,35 +189,53 @@ function unit_Movement($caveID, &$ownCave) {
       }
     }
 
-    if (request_var('movementID', 0) == 0)
+    if (request_var('movementID', 0) == 0) {
       $msg = array('type' => 'error', 'message' => _('Bitte Bewegungsart auswählen!'));
+      $moveHero = 0;
+    }
 
-    else if (!sizeof($unit))
+    else if (!sizeof($unit)) {
       $msg = array('type' => 'error', 'message' => _('Es sind keine Einheiten ausgewählt!'));
+      $moveHero = 0;
+    }
 
-    else if ((($targetXCoord == 0) || ($targetYCoord == 0)) && ($targetCaveName == ""))
+    else if ((($targetXCoord == 0) || ($targetYCoord == 0)) && ($targetCaveName == "")) {
       $msg = array('type' => 'error', 'message' => _('Es fehlt eine Zielkoordinate oder ein Zielhöhlenname!'));
+      $moveHero = 0;
+    }
 
-    else if ((($targetXCoord == 0) || ($targetYCoord == 0)) && !($targetCaveName == "") && $validCaveName === FALSE)
+    else if ((($targetXCoord == 0) || ($targetYCoord == 0)) && !($targetCaveName == "") && $validCaveName === FALSE) {
       $msg = array('type' => 'error', 'message' => sprintf(_('Es gibt keine Höhle mit dem Namen "%s"!'), $targetCaveName));
+      $moveHero = 0;
+    }
 
-    else if ($overloaded)
+    else if ($overloaded) {
       $msg = array('type' => 'error', 'message' => _('Deine Krieger können die Menge an Ressourcen nicht tragen!!'));
+      $moveHero = 0;
+    }
 
-    else if (beginner_isCaveProtectedByCoord($targetXCoord, $targetYCoord))
+    else if (beginner_isCaveProtectedByCoord($targetXCoord, $targetYCoord)) {
       $msg = array('type' => 'error', 'message' => _('Die Zielhöhle steht unter Anfängerschutz.'));
+      $moveHero = 0;
+    }
 
-    else if (beginner_isCaveProtectedByID($caveID))
+    else if (beginner_isCaveProtectedByID($caveID)) {
       $msg = array('type' => 'error', 'message' => _('Ihre Höhle steht unter Anfängerschutz. Sie können den Schutz sofort unter dem Punkt <a href="?modus=cave_detail">Bericht über diese Höhle</a> beenden'));
+      $moveHero = 0;
+    }
 
-    else if (request_var('movementID', 0) == 6 && cave_isCaveSecureByCoord($targetXCoord, $targetYCoord))
+    else if (request_var('movementID', 0) == 6 && cave_isCaveSecureByCoord($targetXCoord, $targetYCoord)) {
       $msg = array('type' => 'error', 'message' => _('Sie können diese Höhle nicht übernehmen. Sie ist gegen übernahmen geschützt.'));
+      $moveHero = 0;
+    }
 
     else if ($denymovement_nonenemy)
       $msg = array('type' => 'error', 'message' => _('Sie können im Krieg keine Einheiten zu unbeteiligten Parteien verschieben!'));
 
-    else if ($denymovement_targetwar)
+    else if ($denymovement_targetwar) {
       $msg = array('type' => 'error', 'message' => _('Sie können keine Einheiten zu kriegführenden Stämmen verschieben, wenn Sie unbeteiligt sind.'));
+      $moveHero = 0;
+    }
       
     else if ($denymovement_hero) {
       $msg = array('type' => 'error', 'message' => _('Die Armee ist zu groß um vom Helden unterstützt zu werden!'));
@@ -270,10 +288,14 @@ function unit_Movement($caveID, &$ownCave) {
           case 0: $msg = array('type' => 'success', 'message' => sprintf(_('Die Krieger wurden losgeschickt und haben %d Nahrung mitgenommen!'), $reqFood));
                   break;
           case 1: $msg = array('type' => 'error', 'message' => _('In diesen Koordinaten liegt keine Höhle!'));
+                  $moveHero = 0;
                   break;
           case 2: $msg = array('type' => 'error', 'message' => _('Für diese Bewegung sind nicht genügend Einheiten/Rohstoffe verfügbar!'));
+                  $moveHero = 0;
                   break;
           case 3: $msg = array('type' => 'error', 'message' => _('Schwerer Fehler: Bitte Admin kontaktieren!'));
+                  $moveHero = 0;
+                  break;
         }
       }
     }

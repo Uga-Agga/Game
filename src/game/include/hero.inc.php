@@ -73,6 +73,7 @@ function getHeroByPlayer($playerID) {
       'exp'           => $result['exp'],
       'caveID'        => $result['caveID'],
       'isAlive'       => $result['isAlive'],
+      'isMoving'      => $result['isMoving'],
       'tpFree'        => $result['tpFree'],
       'healPoints'    => $result['healPoints'],
       'forceLvl'      => $result['forceLvl'],
