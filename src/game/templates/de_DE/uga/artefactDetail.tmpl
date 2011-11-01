@@ -1,0 +1,80 @@
+{#
+/* hero.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>, Georg Pitterle
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %} 
+{% block title %}Artefakt Details{% endblock %} 
+{% block content %} 
+
+{% if status_msg %}<div  class="{{ status_msg.type }}" style="width: 800px; margin: 15px auto;">{{ status_msg.message|raw }}</div>{% endif %}
+
+<p><a href="main.php?modus={{ artefact_list_link }}">Zur Artefaktliste</a></p>
+{% if show_artefact %}
+<div class="box">
+  <div class="box-header"><strong>{{ artefact.name }}</strong></div>
+  <div class="box-content success inner nohover">
+    <table class="table nohover" >
+      <tr> 
+        <td><img src="images/artefacts/{{artefact.resref }}.gif" alt="{{ artefact.name }}" title="{{ artefact.name }}"></td>
+        <td valign="top">
+          <div class="notice small">
+          <p style="text-align: left; font-weight: bold;">Beschreibung: </p>
+          <br />
+          {% if artefact.description_initiated %}
+          <p style="text-align: left;">Status: eingeweiht! </p>
+          <br />
+          <div align="justify" class="small">{{ artefact.description_initiated|raw }}</div><br>
+          {% else %}
+          <p style="text-align: left;">Status: <strong>nicht</strong> eingeweiht! </p>
+          <br />
+          <div align="justify" class="small">{{ artefact.description|raw }}</div><br>
+          {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% if showRitual>0 %}
+      <tr><td>&nbsp;</td><td>
+      <div class="info small">
+        <p style="text-align: left; font-weight: bold;">Ritual: </p>
+        <br />
+        <table class="table" cellspacing="0" cellpadding="2">
+          <tr>
+            <td>{{ artefact.initiation.description |raw }}</td>
+            <td>
+              <form name="initiateArtefact" action="main.php?modus={{ artefact_detail_link }}" method="post">
+                {% for item in artefact.initiation.cost %}
+                  {{ item.object }}:
+                  <span class="{{ item.class }}small">{{ item.amount }}</span>
+                  <br>
+                {% endfor %}
+                Dauer: {{ artefact.initiation.duration }}<br>
+                <input type="hidden" name="artefactID" value="{{ artefact.artefactID }}"/>
+                <input type="hidden" name="initiate" value="{{ artefact.initiation.initiate }}"/>
+                <input type="submit" value="Ritual durchf&uuml;hren">
+              </form>
+            </td>
+          </tr>
+        </table>
+      </div>
+      </td></tr>
+      {% elseif showRitual==0 %}
+      &nbsp;
+      {% else %}
+      <tr> 
+        <td>&nbsp;</td><td><div class="info small">in dieser H&ouml;hle wird bereits ein Artefakt eingeweiht!</div></td>
+      </tr>
+      {% endif %}
+    </table>
+  </div>
+</div>
+{% endif %}
+
+
+{% endblock %}

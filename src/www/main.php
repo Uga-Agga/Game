@@ -138,7 +138,8 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case ARTEFACT_DETAIL:
-    $artefact_getDetail($caveID, $ownCaves);
+    artefact_getDetail($caveID, $ownCaves);
+    $requestKeys = array('artefactID');
     break;
   case ARTEFACT_LIST:
     artefact_getList($caveID, $ownCaves);

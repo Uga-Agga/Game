@@ -73,6 +73,7 @@ function getHeroByPlayer($playerID) {
       'exp'           => $result['exp'],
       'caveID'        => $result['caveID'],
       'isAlive'       => $result['isAlive'],
+      'isMoving'      => $result['isMoving'],
       'tpFree'        => $result['tpFree'],
       'healPoints'    => $result['healPoints'],
       'forceLvl'      => $result['forceLvl'],
@@ -97,7 +98,7 @@ function getHeroByPlayer($playerID) {
   if ($hero['healPoints'] == 0 || $hero['isAlive'] == false) {
       $hero['location'] = _('tot');
       $hero['path'] = _('hero_death.gif');
-  } elseif($hero['caveID'] == 0 && $hero['isAlive'] == true) {
+  } elseif($hero['isMoving']) {
       $hero['location'] = _('in Bewegung');
   } else {
     $cave = getCaveByID($hero['caveID']);
@@ -531,9 +532,27 @@ function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
   } else {
     return array('messageID'=>-13, 'value'=> 0);
   }
+}
+
+function hero_cancelOrder () {
+  global $db;
   
+  $sql = $db->prepare("DELETE FROM " . EVENT_HERO_TABLE . "
+                       WHERE playerID = :playerID ");
+  $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   
+  if (!$sql->execute())
+   return -4;
   
+  $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET 
+                       isAlive = 0, caveID = 0, healPoints = 0, isMoving = 0 
+                       WHERE playerID = :playerID");
+  $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  
+  if (!$sql->execute())
+    return -4;
+    
+  return 9;
 }
 
 

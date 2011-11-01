@@ -13,10 +13,10 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 /**
- * Diese Funktion stellt alle Daten f�r den Terminkalender zusammen und parsed
+ * Diese Funktion stellt alle Daten für den Terminkalender zusammen und parsed
  * sie danach in das Template.
  *
- * @param  meineHoehlen  Enth�lt die Records aller eigenen H�hlen.
+ * @param  meineHoehlen  Enthält die Records aller eigenen Höhlen.
  */
 
 function digest_getDigest($ownCaves) {

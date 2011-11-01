@@ -30,7 +30,7 @@
       <td><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ artefact.caveID }}">{{ artefact.cavename }} ({{ artefact.xCoord }}|{{ artefact.yCoord }})</a></td>
       <td>
         {% if artefact.initiation_possible %}
-        <a href="main.php?modus={{ artefact.modus_artefact_detail }}&amp;artefactID={{ artefact.artefactID }}">uneingeweiht</a>
+        <a href="main.php?modus={{ artefact_detail_link }}&amp;artefactID={{ artefact.artefactID }}">uneingeweiht</a>
         {% elseif artefact.initiation_not_possible %}
         {{ artefact.initiation_not_possible.status }}
         {% endif %}
