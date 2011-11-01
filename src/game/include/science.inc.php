@@ -61,16 +61,15 @@ function science_processOrder($scienceID, $caveID, $cave) {
 
   // check, that this science isn't researched in an other cave at the
   // same time
-  $sql = $db->prepare("SELECT event_scienceID FROM ". EVENT_SCIENCE_TABLE ." " .
-                       "WHERE playerID = :playerID 
-                       AND scienceID = :scienceID");
+  $sql = $db->prepare("SELECT event_scienceID
+                       FROM ". EVENT_SCIENCE_TABLE ."
+                       WHERE playerID = :playerID 
+                         AND scienceID = :scienceID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('scienceID', $scienceID, PDO::PARAM_INT);
-
-  if (!($sql->execute())) page_dberror();
-  $sql->closeCursor();
-  if ($sql->rowCountSelect() != 0)
+  if ($sql->rowCountSelect() != 0) {
     return 4;
+  }
 
   // check for scienceMaxDeps in Event_Handler
   $dep_count = 0;
@@ -86,13 +85,12 @@ function science_processOrder($scienceID, $caveID, $cave) {
   }
 
   if ($dep_count) {
-    $sql = $db->prepare("SELECT event_scienceID FROM ". EVENT_SCIENCE_TABLE ." " .
-             "WHERE playerID = :playerID AND scienceID IN ($deps)");
+    $sql = $db->prepare("SELECT event_scienceID
+                         FROM ". EVENT_SCIENCE_TABLE ."
+                         WHERE playerID = :playerID
+                           AND scienceID IN ($deps)");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-    
-    if (!($r = $sql->execute())) page_dberror();
-    $sql->closeCursor();
-    if (!$r) {
+    if ($sql->rowCountSelect() != 0) {
       return 5;
     }
   }
