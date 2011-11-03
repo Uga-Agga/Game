@@ -29,6 +29,9 @@ function DbConnect($host=0, $user=0, $pwd=0, $name=0) {
     return false;
   }
 
+  // Fix mysql5.5 Bug
+  $db->query("SET sql_mode = 'NO_UNSIGNED_SUBTRACTION'");
+
   return $db;
 }
 
