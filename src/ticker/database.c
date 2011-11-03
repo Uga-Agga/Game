@@ -178,6 +178,9 @@ db_t *db_connect (const char *host, const char *user, const char *passwd,
     if (!mysql_real_connect(MYSQL(db), host, user, passwd, dbname, 0, NULL, 0))
 	throwf(DB_EXCEPTION, "db_connect: %s", mysql_error(MYSQL(db)));
 
+    mysql_query(MYSQL(db), "SET sql_mode = 'NO_UNSIGNED_SUBTRACTION'");
+
+
     return db;
 }
 

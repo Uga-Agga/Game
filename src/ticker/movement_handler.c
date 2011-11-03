@@ -933,7 +933,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, NULL, artefact);
+       resources, NULL, artefact, 0);
       break;
 
     /**********************************************************************/
@@ -948,16 +948,16 @@ void movement_handler (db_t *database, db_result_t *result)
       /* send remaining units back */
       ds = dstring_new("INSERT INTO Event_movement"
       " (caveID, target_caveID, source_caveID, movementID,"
-      " speedFactor, start, end, artefactID");
+      " speedFactor, start, end, artefactID, heroID");
 
       for (i = 0; i < MAX_RESOURCE; ++i)
         dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
       for (i = 0; i < MAX_UNIT; ++i)
         dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d",
+      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
       source_caveID, source_caveID, target_caveID, RUECKKEHR,
-      speed_factor, return_start, return_end, artefact);
+      speed_factor, return_start, return_end, artefact, heroID);
 
       for (i = 0; i < MAX_RESOURCE; ++i)
         dstring_append(ds, ",%d", resources[i]);
@@ -1014,6 +1014,7 @@ void movement_handler (db_t *database, db_result_t *result)
       {
         if (cave1.player_id != cave2.player_id) {
           kill_hero(database, heroID);
+          heroID = -1;
         } else {
             remove_hero_effects_from_cave (database, heroID);
             put_hero_into_cave(database, heroID, target_caveID);
@@ -1024,7 +1025,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, units, artefact);
+       resources, units, artefact, heroID);
       break;
 
     /**********************************************************************/

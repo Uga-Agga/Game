@@ -2,6 +2,7 @@
 /*
  * hero.inc.php - basic hero system
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -553,6 +554,68 @@ function hero_cancelOrder () {
     return -4;
     
   return 9;
+}
+
+function hero_killHero ($playerID) {
+  global $db;
+  
+  $hero = getHeroByPlayer($playerID);
+  
+  // reset hero
+  $sql = $db->prepare("UPDATE " . HERO_TABLE. " SET 
+                       isAlive = 0, 
+                       caveID = 0, 
+                       healPoints = 0, 
+                       isMoving = 0 
+                  WHERE playerID = :playerID");
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  
+  $sql->execute();
+
+  // cancel all events
+  $sql = $db->prepare("DELETE FROM ". EVENT_HERO_TABLE ." WHERE heroID = :heroID");
+  $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
+  
+  $sql->execute();
+
+  // remove effects from cave
+  hero_removeHeroEffectsFromCave($playerID);
+}
+
+function hero_removeHeroEffectsFromCave($playerID) {
+  global $db, $heroTypesList, $effectTypeList;
+  
+  $hero = getHeroByPlayer($playerID);
+  
+  // if hero is dead, effects should not exist
+  //"<1" because while reincarnating status is "-1"
+  if ($hero['isAlive']<1) {
+    return true;
+  }
+  
+  // remove effects only for constructor type
+  if ($hero['typeName' != 'Constructor']) {
+    return true;
+  }
+  
+  // removing hero effects from cave is only needed, if resource factors are involved
+  $effectArray = array();
+  foreach($effectTypeList as $effect) {
+    if (array_key_exists($effect->dbFieldName, $heroTypesList[$hero['heroTypeID']]['effects'])) {
+      array_push($effectArray, $effect->dbFieldName . " = " . $effect->dbFieldName . " - " . $hero[$effect->dbFieldName]);
+    }
+  }
+  
+  $sql = $db->prepare("UPDATE " . CAVE_TABLE . " SET " . 
+                       implode(", ", $effectArray) ."
+                       WHERE caveID = :caveID");
+  $sql->bindValue('caveID', $hero['caveID'], PDO::PARAM_INT);
+  
+  if (!$sql->execute()) {
+    return false;
+  }
+  
+  return true;
 }
 
 

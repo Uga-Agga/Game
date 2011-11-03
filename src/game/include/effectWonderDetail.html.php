@@ -75,7 +75,7 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   $hero = hero_getHeroDataByPlayerID($_SESSION['player']->playerID);
   
   $heroData = array();
-  if ($hero) {
+  if ($hero && $hero['caveID'] == $caveID) {
     foreach ($effectTypeList AS $effect) {
       $value = $hero[$effect->dbFieldName]+0;
       if ($value) {

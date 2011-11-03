@@ -671,7 +671,7 @@ static char* trade_report_xml(db_t *database,
 void trade_report (db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
-       const int resources[], const int units[], int artefact)
+       const int resources[], const int units[], int artefact, int heroID)
 {
   template_t *tmpl_trade1 = message_template(player1, "trade1");
   template_t *tmpl_trade2 = message_template(player2, "trade2");
@@ -704,12 +704,22 @@ void trade_report (db_t *database,
        cave2, player2,
        resources, units, artefact);
 
+  // hero: heroID = -1 --> hero was killed
+  if (heroID>0) {
+    template_set(tmpl_trade2, "HERO/show", "");
+  }
+
+  if (heroID<0) {
+    template_set(tmpl_trade2, "HERO_DEAD/show", "");
+  }
+
   message_new(database, MSG_CLASS_TRADE,
   cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
 
-  if (cave1->player_id != cave2->player_id)
+  if (cave1->player_id != cave2->player_id) {
     message_new(database, MSG_CLASS_TRADE,
       cave1->player_id, subject1, template_eval(tmpl_trade1), xml);
+  }
 }
 
 void return_report (db_t *database,

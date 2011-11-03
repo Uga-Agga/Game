@@ -325,6 +325,7 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
   $db->query("DELETE FROM ". EVENT_EXPANSION_TABLE ." WHERE caveID = '$caveID'");
   $db->query("DELETE FROM ". EVENT_SCIENCE_TABLE ." WHERE caveID = '$caveID'");
   $db->query("DELETE FROM ". EVENT_UNIT_TABLE ." WHERE caveID = '$caveID'");
+  $db->query("DELETE FROM ". EVENT_HERO_TABLE ." WHERE caveID = '$caveID'");
 
   if ($tribe!='') {
     $ownRelations = relation_getRelationsForTribe($tribe);
@@ -347,6 +348,9 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
       }
     }
   }
+  
+  // delete hero
+  hero_killHero($playerID);
 
   return 1;
 }
