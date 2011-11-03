@@ -23,11 +23,10 @@
     <table class="nohover" style="width: 100%;">
       <tr>
         <td style="width: 30%; text-align: left;">
-          <form id="searchCoords" method="post" action="main.php">
+          <form id="searchCoords" method="post" action="main.php?modus={{modus}}">
             <p>(X/Y):
               <input type="text" name="xCoord" size="4" maxlength="4" />
               <input type="text" name="yCoord" size="4" maxlength="4" />
-              <input type="hidden" name="modus" value="{{modus}}" />
               <input type="hidden" name="caveID" value="{{caveID}}" />
               <input type="submit" value="go" />
             </p>
@@ -35,23 +34,21 @@
         </td>
 
         <td style="text-align: center;">
-          <form id="searchID" method="post" action="main.php">
+          <form id="searchID" method="post" action="main.php?modus=map">
             <p><a href="?modus=CaveBookmarks&amp;task=Show">Höhlenliste:</a>
             <select name="targetCaveID" id="targetCaveID">
               <option value="-1">Bitte wählen</option>
               {% for bookmark in caveBookmarks %}
               <option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>
               {% endfor  %}
-            </select>
-            <input type="hidden" name="modus" value="map" /></p>
+            </select></p>
           </form>
         </td>
 
         <td style="width: 30%; text-align: right;">
-          <form id="searchName" method="post" action="main.php">
+          <form id="searchName" method="post" action="main.php?modus={{modus}}">
             <p>Name:
               <input type="text" name="caveName" size="16" maxlength="50" />
-              <input type="hidden" name="modus" value="{{modus}}" />
               <input type="hidden" name="caveID" value="{{caveID}}" />
               <input type="submit" value="go" />
             </p>
@@ -201,8 +198,9 @@
       var caveName = $(this).find(':text[name=caveName]').val();
       
       if (caveName === '') return false;
-      
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveName);
+
+      caveNameEncode = encodeURIComponent(caveName);
+      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveNameEncode);
       return false;
     });
     
