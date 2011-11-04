@@ -8,7 +8,7 @@ der Höhle {cave} {if player}des Spielers {player}{/if}
 {/if}
 eingetroffen:
 </p>
-
+trade1
 <tmpl:UNITS>
 <p>Einheiten:</p>
 <table><col><col align="right">
@@ -28,4 +28,17 @@ eingetroffen:
 <tmpl:ARTEFACT>
 <p>Das Artefakt "{artefact}" ist sicher angekommen.</p>
 </tmpl:ARTEFACT>
+
+<tmpl:HERO>
+{if show}
+<p>Dein Held ist in der Höhle eingetroffen.</p>
+{/if}
+</tmpl:HERO>
+
+<tmpl:HERO_DEAD>
+{if show}
+<p>Die Schmach die dein Held ertragen musste, da du ihn aus deinen Höhlen weggeschickt hast, war unerträglich.</p>
+<p>Dein Held hat sich daher zu den Göttern begeben.</p>
+{/if}
+</tmpl:HERO_DEAD>
 </tmpl:MSG>

@@ -710,7 +710,7 @@ void trade_report (db_t *database,
   }
 
   if (heroID<0) {
-    template_set(tmpl_trade2, "HERO_DEAD/show", "");
+    template_set(tmpl_trade1, "HERO_DEAD/show", "");
   }
 
   message_new(database, MSG_CLASS_TRADE,
