@@ -239,7 +239,7 @@ function artefact_getList($caveID, $ownCaves) {
         else {
 
           // A. wird bewegt?
-          $move = $movements[$artefact['artefactID']];
+          $move = isset($movements[$artefact['artefactID']]);
 
           // nein. Limbusartefakt!
           if (!$move) {
