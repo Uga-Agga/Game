@@ -8,7 +8,6 @@ der Höhle {cave} {if player}des Spielers {player}{/if}
 {/if}
 eingetroffen:
 </p>
-trade1
 <tmpl:UNITS>
 <p>Einheiten:</p>
 <table><col><col align="right">

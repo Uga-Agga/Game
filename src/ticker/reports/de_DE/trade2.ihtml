@@ -8,7 +8,6 @@ der Höhle {orig} {if sender}des Spielers {sender}{/if}
 {/if}
 ist ein Transport eingetroffen:
 </p>
-trade2
 <tmpl:UNITS>
 <p>Einheiten:</p>
 <table><col><col align="right">
