@@ -13,37 +13,38 @@
 {% block title %}Artefakt Details{% endblock %} 
 {% block content %} 
 
-{% if status_msg %}<div  class="{{ status_msg.type }}" style="width: 800px; margin: 15px auto;">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
 <p><a href="main.php?modus={{ artefact_list_link }}">Zur Artefaktliste</a></p>
 {% if show_artefact %}
 <div class="box">
-  <div class="box-header"><strong>{{ artefact.name }}</strong></div>
-  <div class="box-content success inner nohover">
-    <table class="table nohover" >
-      <tr> 
-        <td><img src="images/artefacts/{{artefact.resref }}.gif" alt="{{ artefact.name }}" title="{{ artefact.name }}"></td>
-        <td valign="top">
-          <div class="notice small">
-          <p style="text-align: left; font-weight: bold;">Beschreibung: </p>
-          <br />
+  <div class="box-header">{{ artefact.name }}</div>
+  <div class="box-content success inner">
+    <div style="float: left; width: 19%">
+      <img src="images/artefacts/{{ artefact.resref }}.gif" width="100px" height="100px" alt="{{ artefact.name }}" title="{{ artefact.name }}" />
+    </div>
+    <div style="float: left; width: 81%">
+      <div  class="notice">
+        <ul>
+          <li class="bold">Beschreibung:</li>
+          <li>&nbsp;</li>
           {% if artefact.description_initiated %}
-          <p style="text-align: left;">Status: eingeweiht! </p>
-          <br />
-          <div align="justify" class="small">{{ artefact.description_initiated|raw }}</div><br>
+            <li>&nbsp;</li>
+            <li>Status: eingeweiht!</li>
+            <li>{{ artefact.description_initiated|raw }}</li>
           {% else %}
-          {% if showStatus %}
-          <p style="text-align: left;">Status: <strong>nicht</strong> eingeweiht! </p>
-          {% endif %}
-          <br />
-          <div align="justify" class="small">{{ artefact.description|raw }}</div><br>
+            {% if showStatus %}<li>Status: <span class="bold">nicht</span> eingeweiht!:</li>{% endif %}
+            <li>&nbsp;</li>
+            <li>{{ artefact.description|raw }}</li>
           {% endif %}
           </div>
-        </td>
-      </tr>
+        </ul>
+    </div>
+    <div style="clear: both;"></div>
+    <table class="table nohover" >
       {% if showRitual>0 %}
       <tr><td>&nbsp;</td><td>
-      <div class="info small">
+      <div class="info">
         <p style="text-align: left; font-weight: bold;">Ritual: </p>
         <br />
         <table class="table" cellspacing="0" cellpadding="2">
@@ -54,12 +55,12 @@
                 {% for item in artefact.initiation.cost %}
                   {{ item.object }}:
                   <span class="{{ item.class }}small">{{ item.amount }}</span>
-                  <br>
+                  <br />
                 {% endfor %}
-                Dauer: {{ artefact.initiation.duration }}<br>
+                Dauer: {{ artefact.initiation.duration }}<br />
                 <input type="hidden" name="artefactID" value="{{ artefact.artefactID }}"/>
                 <input type="hidden" name="initiate" value="{{ artefact.initiation.initiate }}"/>
-                <input type="submit" value="Ritual durchf&uuml;hren">
+                <input type="submit" value="Ritual durchführen">
               </form>
             </td>
           </tr>
@@ -67,10 +68,9 @@
       </div>
       </td></tr>
       {% elseif showRitual==0 %}
-      &nbsp;
       {% else %}
       <tr> 
-        <td>&nbsp;</td><td><div class="info small">in dieser H&ouml;hle wird bereits ein Artefakt eingeweiht!</div></td>
+        <td>&nbsp;</td><td><div class="info small">in dieser Höhle wird bereits ein Artefakt eingeweiht!</div></td>
       </tr>
       {% endif %}
     </table>
