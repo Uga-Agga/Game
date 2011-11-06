@@ -32,7 +32,9 @@
           <br />
           <div align="justify" class="small">{{ artefact.description_initiated|raw }}</div><br>
           {% else %}
+          {% if showStatus %}
           <p style="text-align: left;">Status: <strong>nicht</strong> eingeweiht! </p>
+          {% endif %}
           <br />
           <div align="justify" class="small">{{ artefact.description|raw }}</div><br>
           {% endif %}

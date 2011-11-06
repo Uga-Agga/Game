@@ -67,11 +67,14 @@ function artefact_getDetail($caveID, &$myCaves) {
     }
   
     $showRitual = 0;
+    $showStatus = 0;
     $template->addVars(array('show_artefact' => $show_artefact));
     if ($show_artefact) {
   
       // eigene Höhle ...
       if (array_key_exists($artefact['caveID'], $myCaves)) {
+        
+        $showStatus = 1;
   
         // Ritual ausführen?
         if (isset($_POST['initiate'])) {
@@ -125,6 +128,7 @@ function artefact_getDetail($caveID, &$myCaves) {
       }
       $template->addVars(array('artefact' => $artefact));
       $template->addVars(array('showRitual' => $showRitual));
+      $template->addVars(array('showStatus' => $showStatus));
       
     } else {
       // über dieses Artefakt weiß man nichts!
@@ -192,7 +196,8 @@ function artefact_getList($caveID, $ownCaves) {
         if ($artefact['caveID'] != 0) {
 
           // A. in Einöden und von Göttern sind Tabu
-          if ($artefact['playerID'] == 0 || $artefact['tribe'] == GOD_ALLY) continue;
+          if ($artefact['playerID'] == 0 || $artefact['tribe'] == GOD_ALLY) 
+            continue;
 
           $artefact['isOwnArtefact'] = false;
           $otherArtefactsList[] = $artefact;
@@ -202,7 +207,7 @@ function artefact_getList($caveID, $ownCaves) {
         else {
 
           // A. wird bewegt?
-          $move = $movements[$artefact['artefactID']];
+          $move = (isset($movements[$artefact['artefactID']])) ? $movements[$artefact['artefactID']] : false;
 
           // nein. Limbusartefakt!
           if (!$move)
@@ -239,7 +244,7 @@ function artefact_getList($caveID, $ownCaves) {
         else {
 
           // A. wird bewegt?
-          $move = isset($movements[$artefact['artefactID']]);
+          $move = (isset($movements[$artefact['artefactID']])) ? $movements[$artefact['artefactID']] : false;
 
           // nein. Limbusartefakt!
           if (!$move) {
