@@ -47,18 +47,16 @@ function unit_Movement($caveID, &$ownCave) {
   if ($details['artefacts'] > 0) {
     // get artefacts
     $myartefacts = artefact_getArtefactsReadyForMovement($caveID);
-  
+    $moveArtefactID = request_var('myartefacts', 0);
+
     // was an artefact chosen?
-    if (request_var('myartefacts', 0) > 0) {
-
-      $tempID = request_var('myartefacts', 0);
-
+    if ($moveArtefactID > 0) {
       // now check, whether this artefactID belongs to this cave
       foreach ($myartefacts as $key => $value) {
 
         // if found, set it
-        if ($tempID == $value['artefactID']) {
-          $moveArtefact = $tempID;
+        if ($moveArtefactID == $value['artefactID']) {
+          $moveArtefact = $moveArtefactID;
           break;
         }
       }
@@ -311,9 +309,10 @@ function unit_Movement($caveID, &$ownCave) {
   $temp = getCaveSecure($caveID, $_SESSION['player']->playerID);
   $ownCave[$caveID] = $details = $temp;
   // make sure that bagged artefacts are not shown again
-  if ($moveArtefact != 0)
+  if ($moveArtefact != 0) {
     $myartefacts = artefact_getArtefactsReadyForMovement($caveID);
-    
+  }
+
   // make sure that moved hero is not shown again
   if ($moveHero != 0)
     $details['hero'] = 0;

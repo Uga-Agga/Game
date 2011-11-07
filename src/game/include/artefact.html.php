@@ -15,17 +15,17 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function artefact_getDetail($caveID, &$myCaves) {
   global $config, $template;
   global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
-  
+
   $messageText = array(
-  -5 => array('type' => 'error', 'message' => _('Dieses Artefakt kann nicht noch einmal eingeweiht werden.')),
-  -4 => array('type' => 'error', 'message' => _('Fehler: Artefakt konnte nicht auf ARTEFACT_INITIATING gestellt werden.')),
-  -3 => array('type' => 'error', 'message' => _('Sie weihen bereits ein anderes Artefakt ein.')),
-  -2 => array('type' => 'error', 'message' => _('Es fehlen die notwendigen Voraussetzungen.')),
-  -1 => array('type' => 'error', 'message' => _('Fehler: Ritual nicht gefunden.')),
-   0 => array('type' => 'notice', 'message' => _('Über dieses Artefakt weiß man nichts!')),
-   1 => array('type' => 'success', 'message' => _('Die Einweihung des Artefakts wurde gestartet!'))
+    -5 => array('type' => 'error', 'message' => _('Dieses Artefakt kann nicht noch einmal eingeweiht werden.')),
+    -4 => array('type' => 'error', 'message' => _('Fehler: Artefakt konnte nicht auf ARTEFACT_INITIATING gestellt werden.')),
+    -3 => array('type' => 'error', 'message' => _('Sie weihen bereits ein anderes Artefakt ein.')),
+    -2 => array('type' => 'error', 'message' => _('Es fehlen die notwendigen Voraussetzungen.')),
+    -1 => array('type' => 'error', 'message' => _('Fehler: Ritual nicht gefunden.')),
+     0 => array('type' => 'notice', 'message' => _('Über dieses Artefakt weiß man nichts!')),
+     1 => array('type' => 'success', 'message' => _('Die Einweihung des Artefakts wurde gestartet!'))
   );
-  
+
   // open template
   $template->setFile('artefactDetail.tmpl');
 
@@ -33,71 +33,62 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   $artefactID = request_var('artefactID', 0);
   $artefact = artefact_getArtefactByID($artefactID);
-  
-  if (!count($artefact)) {
+
+  if (empty($artefact)) {
     $messageID = 0;
   } else {
-    
     $description_initiated = $artefact['description_initiated'];
     unset($artefact['description_initiated']);
-  
+
     // Gott oder nicht?
     if ($_SESSION['player']->tribe != GOD_ALLY) {
       // gibts nicht oder nicht in einer Höhle
       if (!$artefact['caveID']) {
         $show_artefact = FALSE;
-  
       } else {
-  
         $cave = getCaveByID($artefact['caveID']);
-  
+
         // leere Höhle
         if (!$cave['playerID']) {
           $show_artefact = FALSE;
-  
         } else {
-  
           $owner = getPlayerByID($cave['playerID']);
           // Besitzer ist ein Gott
-          if ($owner['tribe'] == GOD_ALLY){
+          if ($owner['tribe'] == GOD_ALLY) {
             $show_artefact = FALSE;
           }
         }
       }
     }
-  
+
     $showRitual = 0;
     $showStatus = 0;
     $template->addVars(array('show_artefact' => $show_artefact));
     if ($show_artefact) {
-  
       // eigene Höhle ...
       if (array_key_exists($artefact['caveID'], $myCaves)) {
-        
         $showStatus = 1;
-  
+
         // Ritual ausführen?
         if (isset($_POST['initiate'])) {
           $messageID = artefact_beginInitiation($artefact);
-  
+
           // reload
           $myCaves = getCaves($_SESSION['player']->playerID);
         }
-  
+
         // wenn noch uneingeweiht und in der "richtigen" Höhle, ritual zeigen
         else if ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_UNINITIATED) {
-
           // Check, ob bereits eingeweiht wird.
           if (sizeof(artefact_getArtefactInitiationsForCave($caveID)) == 0) {
-            
             $showRitual = 1;
-            
+
             // Hol das Einweihungsritual
             $ritual = artefact_getRitualByID($artefact['initiationID']);
-  
+
             // Hol die Kosten und beurteile ob genug da ist
             $merged_game_rules = array_merge($resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList);
-  
+
             $cost = array();
             foreach($merged_game_rules as $val) {
               if (array_key_exists($val->dbFieldName, $ritual)) {
@@ -108,12 +99,14 @@ function artefact_getDetail($caveID, &$myCaves) {
                 }
               }
             }
-  
-            $artefact['initiation'] = array('cost'        => $cost,
-                                            'name'        => $ritual['name'],
-                                            'description' => $ritual['description'],
-                                            'duration'    => time_formatDuration($ritual['duration']),
-                                            'initiate'    => 1);
+
+            $artefact['initiation'] = array(
+              'cost'        => $cost,
+              'name'        => $ritual['name'],
+              'description' => $ritual['description'],
+              'duration'    => time_formatDuration($ritual['duration']),
+              'initiate'    => 1
+            );
           } else {
             $showRitual = -1;
           }
@@ -121,21 +114,21 @@ function artefact_getDetail($caveID, &$myCaves) {
             // Arte wird gerade eingeweiht
             $showRitual = -1;
         }
-        
+
         // "geheime" Beschreibung nur zeigen, wenn eingeweiht
-        if ($artefact['initiated'] == ARTEFACT_INITIATED)
+        if ($artefact['initiated'] == ARTEFACT_INITIATED) {
           $artefact['description_initiated'] = $description_initiated;
+        }
       }
       $template->addVars(array('artefact' => $artefact));
       $template->addVars(array('showRitual' => $showRitual));
       $template->addVars(array('showStatus' => $showStatus));
-      
     } else {
       // über dieses Artefakt weiß man nichts!
       $messageID = 0;
     }
   }
-  
+
   $template->addVar('status_msg', (isset($messageID)) ? $messageText[$messageID] : '');
 }
 
@@ -155,12 +148,9 @@ function artefact_getList($caveID, $ownCaves) {
   $movedArtefactsList = array();
   
   foreach ($artefacts AS $artefact) { 
-    
     // eigenes Artefakt
     if (array_key_exists($artefact['caveID'], $ownCaves)) {
-
       switch ($artefact['initiated']) {
-
         case ARTEFACT_UNINITIATED: 
           if ($artefact['caveID'] == $caveID) {
             $artefact['initiation_possible'] = array('artefactID' => $artefact['artefactID']);
@@ -168,36 +158,34 @@ function artefact_getList($caveID, $ownCaves) {
           else {
             $artefact['initiation_not_possible'] = array('status' => _('uneingeweiht'));
           }
-          break;
-          
+        break;
+
         case ARTEFACT_INITIATING:
           $artefact['initiation_not_possible'] = array('status' => _('wird gerade eingeweiht'));
-          break;
-          
+        break;
+
         case ARTEFACT_INITIATED:
           $artefact['initiation_not_possible'] = array('status' => _('eingeweiht'));
-          break;
-          
+        break;
+
         default:
           $artefact['initiation_not_possible'] = array('status' => _('Fehler'));
-          break;
+        break;
       }
-      
+
       $ownArtefactsList[] = $artefact;
     // fremdes Artefakt
     } else {
-
       // Berechtigung prüfen
 
       // ***** kein Gott! *****************************************************
       if ($_SESSION['player']->tribe != GOD_ALLY) {
-
         // Artefakt liegt in einer Höhle
         if ($artefact['caveID'] != 0) {
-
           // A. in Einöden und von Göttern sind Tabu
-          if ($artefact['playerID'] == 0 || $artefact['tribe'] == GOD_ALLY) 
+          if ($artefact['playerID'] == 0 || $artefact['tribe'] == GOD_ALLY) {
             continue;
+          }
 
           $artefact['isOwnArtefact'] = false;
           $otherArtefactsList[] = $artefact;
@@ -205,14 +193,14 @@ function artefact_getList($caveID, $ownCaves) {
 
         // Artefakt liegt nicht in einer Höhle
         else {
-
           // A. wird bewegt?
           $move = (isset($movements[$artefact['artefactID']])) ? $movements[$artefact['artefactID']] : false;
 
           // nein. Limbusartefakt!
-          if (!$move)
+          if (!$move) {
             continue;
-          
+          }
+
           // A. wird bewegt!
           $artefact['showEndTime'] = true;
           $artefact += $move;
@@ -222,11 +210,8 @@ function artefact_getList($caveID, $ownCaves) {
 
       // ***** Gott! *****************************************************+++++
       else {
-
         // Artefakt liegt in einer Höhle
         if ($artefact['caveID'] != 0) {
-
-
           // A. liegt in Einöde.
           if ($artefact['playerID'] == 0) {
             $artefact['hideArtefact'] = true;
@@ -242,7 +227,6 @@ function artefact_getList($caveID, $ownCaves) {
 
         // Artefakt liegt nicht in einer Höhle
         else {
-
           // A. wird bewegt?
           $move = (isset($movements[$artefact['artefactID']])) ? $movements[$artefact['artefactID']] : false;
 
@@ -262,10 +246,11 @@ function artefact_getList($caveID, $ownCaves) {
     } // fremdes Artefakt
   } // foreach
   
-  $template->addVars(array('ownArtefactsList' => $ownArtefactsList, 
-                           'otherArtefactsList' => $otherArtefactsList,
-                           'movedArtefactsList' => $movedArtefactsList));
-  //print_r($template);
+  $template->addVars(array(
+    'ownArtefactsList' => $ownArtefactsList, 
+    'otherArtefactsList' => $otherArtefactsList,
+    'movedArtefactsList' => $movedArtefactsList
+  ));
 }
 
 ?>

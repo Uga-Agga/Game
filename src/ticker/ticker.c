@@ -232,7 +232,7 @@ static void run_ticker (db_t *database)
 	  /* call handler and delete event */
 	  eventTableList[next_eventType].handler(database, next_result);
 
-	  debug(DEBUG_EVENTS, "delete event: %s", next_db_eventID);
+	  debug(DEBUG_EVENTS_DELETE, "delete event: %s", next_db_eventID);
 
 	  db_query(database, "DELETE FROM %s WHERE %s = %s",
 			  eventTableList[next_eventType].table,

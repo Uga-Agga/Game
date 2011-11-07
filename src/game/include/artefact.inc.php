@@ -19,9 +19,11 @@ define("ARTEFACT_INITIATED",    1);
 function artefact_getArtefactsReadyForMovement($caveID) {
   global $db;
 
-  $sql = $db->prepare("SELECT * FROM ". ARTEFACT_TABLE ." a 
-         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID 
-         WHERE caveID = :caveID AND initiated = ". ARTEFACT_INITIATED);
+  $sql = $db->prepare("SELECT *
+                       FROM ". ARTEFACT_TABLE ." a 
+                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID 
+                       WHERE caveID = :caveID
+                         AND initiated = ". ARTEFACT_INITIATED);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
 
   if (!$sql->execute()) {
@@ -294,9 +296,8 @@ function artefact_beginInitiation($artefact) {
   $where   = implode(" AND ", $where);
 
   // substract costs
-
   //echo "try to substract costs:<br>" . $set.$where . "<br><br>";
-  if (!($result = $db->query($set.$where)) || !($result->rowCount() == 1)) {
+  if (!$db->exec($set.$where)) {
     return -2;
   }
 
