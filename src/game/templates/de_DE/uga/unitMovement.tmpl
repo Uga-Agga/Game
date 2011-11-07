@@ -297,10 +297,12 @@ function hideWMTT() {
           {% endfor %}
           {% if artefact %}
             <li class="bold">Ein Artefact mitnehmen</li>
+            <li>
             {% for item in artefact %}
-              <input type="radio" name="myartefacts" id="myartefacts{{ item.artefactID }}" value="{{ item.artefactID }}"><label>{{ item.name }}</label><br />
+              <div><input type="radio" name="myartefacts" id="myartefacts{{ item.artefactID }}" value="{{ item.artefactID }}" /><label for="myartefacts{{ item.artefactID }}">{{ item.name }}</label></div>
             {% endfor %}
-            <input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked><label for="myartefactsnone">keines</label>
+            <div><input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked="checked" /><label for="myartefactsnone">keines</label></div>
+            </li>
           {% endif %}
         </ul>
       </td>
