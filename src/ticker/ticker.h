@@ -18,6 +18,7 @@
 #define DEBUG_TAKEOVER		(1 << 4)
 #define DEBUG_FAME		(1 << 5)
 #define DEBUG_SQL		(1 << 6)
+#define DEBUG_ARTEFACT (1 << 7)
 
 #define DB_TABLE_ARTEFACT	"Artefact"
 #define DB_TABLE_CAVE		"Cave"

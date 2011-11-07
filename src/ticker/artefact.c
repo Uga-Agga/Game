@@ -9,7 +9,7 @@
  */
 
 #include "artefact.h"     /* artefact/artefact_class typedefs */
-#include "cave.h"	  /* get_effect_list */
+#include "cave.h"    /* get_effect_list */
 #include "database.h"     /* db_result_get_int etc. */
 #include "except.h"       /* exception handling */
 #include "logging.h"      /* debug function */
@@ -20,11 +20,16 @@
  * Retrieve artefact for the given id.
  */
 void get_artefact_by_id (db_t *database, int artefactID,
-			 struct Artefact *artefact)
+       struct Artefact *artefact)
 {
-  db_result_t *result =
-    db_query(database, "SELECT * FROM " DB_TABLE_ARTEFACT
-		       " WHERE artefactID = %d", artefactID);
+  dstring_t *ds;
+  db_result_t *result;
+
+  ds = dstring_new("SELECT * FROM " DB_TABLE_ARTEFACT
+           " WHERE artefactID = %d", artefactID);
+  result = db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "get_artefact_by_id: %s", dstring_str(ds));
 
   /* Bedingung: Artefakt muss vorhanden sein */
   if (db_result_num_rows(result) != 1)
@@ -42,11 +47,15 @@ void get_artefact_by_id (db_t *database, int artefactID,
  * Retrieve artefact_class for the given id.
  */
 void get_artefact_class_by_id (db_t *database, int artefactClassID,
-			       struct Artefact_class *artefact_class)
+             struct Artefact_class *artefact_class)
 {
-  db_result_t *result =
-    db_query(database, "SELECT * FROM Artefact_class"
-		       " WHERE artefactClassID = %d", artefactClassID);
+  db_result_t *result;
+  dstring_t *ds;
+
+  ds = dstring_new("SELECT * FROM Artefact_class"
+           " WHERE artefactClassID = %d", artefactClassID);
+  result = db_query_dstring(database, ds);
+  debug(DEBUG_ARTEFACT, "get_artefact_class_by_id: %s", dstring_str(ds));
 
   /* Bedingung: Artefaktklasse muss vorhanden sein */
   if (db_result_num_rows(result) != 1)
@@ -68,22 +77,30 @@ void get_artefact_class_by_id (db_t *database, int artefactClassID,
  */
 void put_artefact_into_cave (db_t *database, int artefactID, int caveID)
 {
-  db_query(database, "UPDATE " DB_TABLE_ARTEFACT " SET caveID = %d "
-		     "WHERE artefactID = %d "
-		     "AND caveID = 0 "
-		     "AND initiated = %d",
-	   caveID, artefactID, ARTEFACT_UNINITIATED);
+  dstring_t *ds;
 
-  /* Bedingung: Artefakt muss vorhanden sein; darf in keiner anderen Höhle liegen; */
+  ds = dstring_new("UPDATE " DB_TABLE_ARTEFACT " SET caveID = %d "
+         "WHERE artefactID = %d "
+         "AND caveID = 0 "
+         "AND initiated = %d",
+     caveID, artefactID, ARTEFACT_UNINITIATED);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "put_artefact_into_cave: %s", dstring_str(ds));
+
+  /* Bedingung: Artefakt muss vorhanden sein; darf in keiner anderen HÃ¶hle liegen; */
   /*   muss uninitialisiert sein */
   if (db_affected_rows(database) != 1)
     throw(BAD_ARGUMENT_EXCEPTION, "put_artefact_into_cave: no such artefactID or "
                              "artefact already in another cave or not uninitiated");
 
-  db_query(database, "UPDATE Cave SET artefacts = artefacts + 1 "
-		     "WHERE caveID = %d", caveID);
+  ds = dstring_new("UPDATE Cave SET artefacts = artefacts + 1 "
+         "WHERE caveID = %d", caveID);
+  db_query_dstring(database, ds);
 
-  /* Bedingung: Höhle muss vorhanden sein */
+  debug(DEBUG_ARTEFACT, "put_artefact_into_cave: %s", dstring_str(ds));
+
+  /* Bedingung: HÃ¶hle muss vorhanden sein */
   if (db_affected_rows(database) != 1)
     throw(SQL_EXCEPTION, "put_artefact_into_cave: no such caveID");
 }
@@ -95,17 +112,24 @@ void put_artefact_into_cave (db_t *database, int artefactID, int caveID)
 void remove_artefact_from_cave (db_t *database, int artefactID)
 {
   struct Artefact artefact;
+  dstring_t *ds;
 
   /* save artefact values; throws exception, if that artefact is missing */
   get_artefact_by_id(database, artefactID, &artefact);
 
-  db_query(database, "UPDATE " DB_TABLE_ARTEFACT " SET caveID = 0 "
-		     "WHERE artefactID = %d", artefactID);
+  ds = dstring_new("UPDATE " DB_TABLE_ARTEFACT " SET caveID = 0 "
+         "WHERE artefactID = %d", artefactID);
+  db_query_dstring(database, ds);
 
-  db_query(database, "UPDATE Cave SET artefacts = artefacts - 1 "
-		     "WHERE caveID = %d", artefact.caveID);
+  debug(DEBUG_ARTEFACT, "remove_artefact_from_cave: %s", dstring_str(ds));
 
-  /* Bedingung: Höhle muss vorhanden sein */
+  ds = dstring_new("UPDATE Cave SET artefacts = artefacts - 1 "
+         "WHERE caveID = %d", artefact.caveID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "remove_artefact_from_cave: %s", dstring_str(ds));
+
+  /* Bedingung: HÃ¶hle muss vorhanden sein */
   if (db_affected_rows(database) != 1)
     throw(SQL_EXCEPTION, "remove_artefact_from_cave: no such caveID");
 }
@@ -117,6 +141,7 @@ void remove_artefact_from_cave (db_t *database, int artefactID)
 void initiate_artefact (db_t *database, int artefactID)
 {
   struct Artefact artefact;
+  dstring_t *ds;
 
   /* get artefact values; throws exception, if that artefact is missing */
   get_artefact_by_id(database, artefactID, &artefact);
@@ -125,15 +150,17 @@ void initiate_artefact (db_t *database, int artefactID)
   if (artefact.initiated != ARTEFACT_INITIATING)
     throw(BAD_ARGUMENT_EXCEPTION, "initiate_artefact: artefact was not initiating");
 
-  /* Bedingung: muss in einer Höhle liegen */
+  /* Bedingung: muss in einer HÃ¶hle liegen */
   if (artefact.caveID == 0)
     throw(BAD_ARGUMENT_EXCEPTION, "initiate_artefact: artefact was not in a cave");
 
-  db_query(database, "UPDATE " DB_TABLE_ARTEFACT " SET initiated = %d "
-		     "WHERE artefactID = %d AND caveID = %d",
-	   ARTEFACT_INITIATED, artefact.artefactID, artefact.caveID);
+  ds = dstring_new("UPDATE " DB_TABLE_ARTEFACT " SET initiated = %d WHERE artefactID = %d AND caveID = %d",
+     ARTEFACT_INITIATED, artefact.artefactID, artefact.caveID);
+  db_query_dstring(database, ds);
 
-  /* Bedingung: Artefakt und Höhle müssen existieren */
+  debug(DEBUG_ARTEFACT, "initiate_artefact: %s", dstring_str(ds));
+
+  /* Bedingung: Artefakt und HÃ¶hle mÃ¼ssen existieren */
   if (db_affected_rows(database) != 1)
     throw(SQL_EXCEPTION, "initiate_artefact: no such artefactID or caveID");
 }
@@ -144,12 +171,20 @@ void initiate_artefact (db_t *database, int artefactID)
  */
 void uninitiate_artefact (db_t *database, int artefactID)
 {
-  db_query(database, "UPDATE " DB_TABLE_ARTEFACT " SET initiated = %d "
-		     "WHERE artefactID = %d",
-	   ARTEFACT_UNINITIATED, artefactID);
+  dstring_t *ds;
 
-  db_query(database, "DELETE FROM Event_artefact WHERE artefactID = %d",
-	   artefactID);
+  ds = dstring_new("UPDATE " DB_TABLE_ARTEFACT " SET initiated = %d "
+         "WHERE artefactID = %d",
+     ARTEFACT_UNINITIATED, artefactID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "uninitiate_artefact: %s", dstring_str(ds));
+
+  ds = dstring_new("DELETE FROM Event_artefact WHERE artefactID = %d",
+     artefactID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "uninitiate_artefact: %s", dstring_str(ds));
 }
 
 /*
@@ -181,6 +216,8 @@ void apply_effects_to_cave (db_t *database, int artefactID)
   dstring_append(ds, " WHERE caveID = %d", artefact.caveID);
 
   db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "apply_effects_to_cave: %s", dstring_str(ds));
 }
 
 /*
@@ -200,7 +237,7 @@ void remove_effects_from_cave (db_t *database, int artefactID)
   /* get artefactClass; throws exception, if that artefactClass is missing */
   get_artefact_class_by_id(database, artefact.artefactClassID, &artefact_class);
 
-  /* Wenn das Artefakt nicht mehr eingeweiht ist, müssen die Effekte nicht mehr entfernt werden. */
+  /* Wenn das Artefakt nicht mehr eingeweiht ist, mï¿½ssen die Effekte nicht mehr entfernt werden. */
   if (artefact.initiated != ARTEFACT_INITIATED) return;
 
   for (i = 0; i < MAX_EFFECT; ++i)
@@ -213,23 +250,31 @@ void remove_effects_from_cave (db_t *database, int artefactID)
   dstring_append(ds, " WHERE caveID = %d", artefact.caveID);
 
   db_query_dstring(database, ds);
+  debug(DEBUG_ARTEFACT, "remove_effects_from_cave: %s", dstring_str(ds));
 }
 
 int new_artefact (db_t *database, int artefactClassID)
 {
   db_result_t *result;
+  dstring_t *ds;
 
   /* get artefact class */
-  result = db_query(database, "SELECT * FROM Artefact_class "
-			      "WHERE artefactClassID = %d", artefactClassID);
+  ds = dstring_new("SELECT * FROM Artefact_class "
+            "WHERE artefactClassID = %d", artefactClassID);
+  result = db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "new_artefact: %s", dstring_str(ds));
 
   /* no such class */
   if (db_affected_rows(database) != 1)
     throw(SQL_EXCEPTION, "new_artefact: no such artefact class");
 
-  db_query(database, "INSERT INTO " DB_TABLE_ARTEFACT
-		     " (artefactClassID, caveID, initiated)"
-		     " VALUES (%d, 0, 0)", artefactClassID);
+  ds = dstring_new("INSERT INTO " DB_TABLE_ARTEFACT
+         " (artefactClassID, caveID, initiated)"
+         " VALUES (%d, 0, 0)", artefactClassID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "new_artefact: %s", dstring_str(ds));
 
   /* successfully inserted? */
   if (db_affected_rows(database) != 1)
@@ -244,7 +289,7 @@ int new_artefact (db_t *database, int artefactClassID)
  * Throws exception if needed conditions are not as they should have been.
  */
 void merge_artefacts (db_t *database, int caveID, int keyArtefactID,
-		      int lockArtefactID, int resultArtefactID)
+          int lockArtefactID, int resultArtefactID)
 {
   /* first remove the key */
   remove_effects_from_cave(database,  keyArtefactID);
@@ -284,17 +329,21 @@ void merge_artefacts (db_t *database, int caveID, int keyArtefactID,
  * Throws exception if needed conditions are not as they should have been.
  */
 int merge_artefacts_special (db_t *database,
-			     const struct Artefact *key_artefact,
-			     struct Artefact *lock_artefact,
-			     struct Artefact *result_artefact)
+           const struct Artefact *key_artefact,
+           struct Artefact *lock_artefact,
+           struct Artefact *result_artefact)
 {
   db_result_t *result;
   db_result_t *temp_result;
   int row;
+  dstring_t *ds;
 
   /* get merging formulas */
-  result = db_query(database, "SELECT * FROM Artefact_merge_special "
-			      "WHERE keyID = %d", key_artefact->artefactID);
+  ds = dstring_new("SELECT * FROM Artefact_merge_special "
+            "WHERE keyID = %d", key_artefact->artefactID);
+  result = db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "merge_artefact_special: %s", dstring_str(ds));
 
   /* check for a suitable merging formula */
   while ((row = db_result_next_row(result)))
@@ -313,7 +362,7 @@ int merge_artefacts_special (db_t *database,
 
     /* special cases: lockID == 0 || keyID == lockID (no lock required) */
     if (lock_artefact->artefactID == 0 ||
-	lock_artefact->artefactID == key_artefact->artefactID)
+  lock_artefact->artefactID == key_artefact->artefactID)
       break;
 
     /* get lock_artefact */
@@ -322,7 +371,7 @@ int merge_artefacts_special (db_t *database,
 
     /* check: key and lock have to be in the same cave and initiated */
     if (lock_artefact->caveID == key_artefact->caveID &&
-	lock_artefact->initiated == ARTEFACT_INITIATED)
+  lock_artefact->initiated == ARTEFACT_INITIATED)
       break;
   }
 
@@ -341,17 +390,17 @@ int merge_artefacts_special (db_t *database,
       /* check: result_artefact must not be in any cave */
       if (result_artefact->caveID != 0)
         throwf(BAD_ARGUMENT_EXCEPTION,
-	       "merge_artefacts_special: result artefact %d is in cave %d",
+         "merge_artefacts_special: result artefact %d is in cave %d",
                result_artefact->artefactID, result_artefact->caveID);
 
       /* result_artefact must not be in any movement */
       temp_result = db_query(database, "SELECT * FROM Event_movement"
-				       " WHERE artefactID = %d",
-			     result_artefact->artefactID);
+               " WHERE artefactID = %d",
+           result_artefact->artefactID);
 
       if (db_result_num_rows(temp_result) != 0)
         throwf(BAD_ARGUMENT_EXCEPTION,
-	       "merge_artefacts_special: result artefact %d is moving",
+         "merge_artefacts_special: result artefact %d is moving",
                result_artefact->artefactID);
 
       /* check: result_artefact has to be uninitiated */
@@ -377,18 +426,22 @@ int merge_artefacts_special (db_t *database,
  * Throws exception if needed conditions are not as they should have been.
  */
 int merge_artefacts_general (db_t *database,
-			     const struct Artefact *key_artefact,
-			     struct Artefact *lock_artefact,
-			     struct Artefact *result_artefact)
+           const struct Artefact *key_artefact,
+           struct Artefact *lock_artefact,
+           struct Artefact *result_artefact)
 {
   db_result_t *result;
   db_result_t *temp_result;
   int row;
+  dstring_t *ds;
 
   /* now get possible merging formulas */
-  result = db_query(database, "SELECT * FROM Artefact_merge_general "
-			      "WHERE keyClassID = %d",
-		    key_artefact->artefactClassID);
+  ds = dstring_new("SELECT * FROM Artefact_merge_general "
+            "WHERE keyClassID = %d",
+        key_artefact->artefactClassID);
+  result = db_query_dstring(database, ds);
+
+  debug(DEBUG_ARTEFACT, "merge_artefact_general: %s", dstring_str(ds));
 
   /* check for a suitable merging */
   while ((row = db_result_next_row(result)))
@@ -408,7 +461,7 @@ int merge_artefacts_general (db_t *database,
 
     /* lock artefact */
     lock_artefact->artefactClassID =
-	db_result_get_int(result, "lockClassID");
+  db_result_get_int(result, "lockClassID");
 
     if (lock_artefact->artefactClassID == 0)
       break;
@@ -419,15 +472,18 @@ int merge_artefacts_general (db_t *database,
      * - lock artefact has to be initiated
      * - lock artefact has be of the specified class
      */
-    temp_result = db_query(database, "SELECT artefactID FROM " DB_TABLE_ARTEFACT
-				     " WHERE artefactID != %d"
-				     " AND artefactClassID = %d"
-				     " AND caveID = %d"
-				     " AND initiated = %d",
-			   key_artefact->artefactID,
-			   lock_artefact->artefactClassID,
-			   key_artefact->caveID,
-			   ARTEFACT_INITIATED);
+    ds = dstring_new("SELECT artefactID FROM " DB_TABLE_ARTEFACT
+             " WHERE artefactID != %d"
+             " AND artefactClassID = %d"
+             " AND caveID = %d"
+             " AND initiated = %d",
+         key_artefact->artefactID,
+         lock_artefact->artefactClassID,
+         key_artefact->caveID,
+         ARTEFACT_INITIATED);
+    temp_result = db_query_dstring(database, ds);
+
+    debug(DEBUG_ARTEFACT, "merge_artefact_general: %s", dstring_str(ds));
 
     /* is there a suitable lock artefact? */
     if (db_result_next_row(temp_result))
@@ -443,11 +499,11 @@ int merge_artefacts_general (db_t *database,
   {
     /* result artefact */
     result_artefact->artefactClassID =
-	db_result_get_int(result, "resultClassID");
+  db_result_get_int(result, "resultClassID");
 
     if (result_artefact->artefactClassID != 0)
       result_artefact->artefactID =
-	  new_artefact(database, result_artefact->artefactClassID);
+    new_artefact(database, result_artefact->artefactClassID);
 
     /* now merge them */
     merge_artefacts(database,
