@@ -16,9 +16,11 @@
 <div class="box small">
   <div class="box-header nohover">Spieler: {{ player_details.name }}</div>
   <div class="box-content success inner">
-    <div class="notice text-center" style="text-align: center; margin: 10px;">
-      {% if player_avatar %}<img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" alt="Spielerbanner" />{% else %}Kein Avatar ausgewählt{% endif %}
-    </div>
+    {% if player_avatar %}
+  	  <div class="smallinner notice nohover" style="text-align: center; margin: 10px;">
+			  <img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" alt="Spielerbanner" />
+		  </div>
+	  {% endif %}
 
     <div class="notice" style="width: 290px; float: left; margin-left: 10px;">
       <ul>
