@@ -53,7 +53,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
       // mark as read
       case 'mark_as_read':
         $marked_as_read = $messagesClass->markAsRead($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) als gelesen markiert.'), $deleted));
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) als gelesen markiert.'), $marked_as_read));
       break;
 
       // recover messages
