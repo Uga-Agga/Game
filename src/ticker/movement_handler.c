@@ -705,7 +705,7 @@ static void after_takeover_attacker_update(db_t *database,
   }
 }
 
-void hero_update_after_battle(db_t *database,
+struct Battle *hero_update_after_battle(db_t *database,
     Battle *battle,
     int heroID,
     struct Cave *defender_cave,
@@ -724,7 +724,7 @@ void hero_update_after_battle(db_t *database,
           abs(battle->attackers_acc_hitpoints_units_before - battle->attackers_acc_hitpoints_units), hero.maxHealPoints, war_points_attacker);
       dstring_append(ds, " WHERE heroID = %d", heroID);
 
-      debug(DEBUG_SQL, "%s", dstring_str(ds));
+      debug(DEBUG_HERO, "hero_update_after_battle: %s", dstring_str(ds));
       db_query_dstring(database, ds);
 
       /*check if hero is alive*/
@@ -754,7 +754,7 @@ void hero_update_after_battle(db_t *database,
           abs(battle->defenders_acc_hitpoints_units_before - battle->defenders_acc_hitpoints_units), hero.maxHealPoints, war_points_defender);
       dstring_append(ds, " WHERE heroID = %d", heroID);
 
-      debug(DEBUG_SQL, "%s", dstring_str(ds));
+      debug(DEBUG_HERO, "%s", dstring_str(ds));
       db_query_dstring(database, ds);
 
       /*check if hero is alive*/
@@ -765,6 +765,8 @@ void hero_update_after_battle(db_t *database,
       }
     }
   }
+
+  return battle;
 }
 
 
@@ -1202,7 +1204,7 @@ void movement_handler (db_t *database, db_result_t *result)
       hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
 
       /* update hero */
-      hero_update_after_battle(database, battle, heroID, &cave2,
+      battle = hero_update_after_battle(database, battle, heroID, &cave2,
           hero_points_attacker, hero_points_defender);
 
       /* create and send reports */
@@ -1404,7 +1406,7 @@ void movement_handler (db_t *database, db_result_t *result)
       hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
 
       /* update hero */
-      hero_update_after_battle(database, battle, heroID, &cave2,
+      battle = hero_update_after_battle(database, battle, heroID, &cave2,
           hero_points_attacker, hero_points_defender);
 
       if (change_owner){

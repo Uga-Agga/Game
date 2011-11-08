@@ -272,7 +272,7 @@ int main (int argc, char *argv[])
   db_t *database;
   int opt;
 
-  log_debug_flags = DEBUG_TICKER | DEBUG_TAKEOVER | DEBUG_FAME;
+  log_debug_flags = DEBUG_TICKER | DEBUG_TAKEOVER | DEBUG_FAME | DEBUG_HERO;
 
   while ((opt = getopt(argc, argv, "C:V")) >= 0)
   {

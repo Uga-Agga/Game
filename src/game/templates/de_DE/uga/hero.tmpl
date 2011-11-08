@@ -15,7 +15,6 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }}" style="width: 800px; margin: 15px auto;">{{ status_msg.message|raw }}</div>{% endif %} 
 
-<p><a href="http://faq.uga-agga.de/content/1/41/de/neu-in-hr12-%7C-heldentum.html" target="_blank">Helden-Tutorial</a></p>
 {% if hero %}
 <div class="box" style="width: 800px; margin: 15px auto;">
  <div class="box-header">Held von {{ hero.name }}</div>
@@ -150,6 +149,7 @@
    </tr>
   </table>
   <br /> 
+  <p><a href="http://faq.uga-agga.de/content/1/41/de/neu-in-hr12-%7C-heldentum.html" target="_blank">Alles rund um Helden!</a></p>
   {% if hero.isAlive>0 %}
   <div class="box small">
     <div class="box-header">Rohstoffe opfern</div>

@@ -201,7 +201,22 @@ function skillForce($playerID, $hero) {
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('force', $force, PDO::PARAM_STR);
   
-  return $sql->execute();
+  if (!$sql->execute())
+    return false;
+    
+  // update cave-effect if constructor
+  if ($hero['typeName'] = 'Constructor') {
+    $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
+                         SET " . implode(", ", $fields). "
+                         WHERE caveID = :caveID");
+    $sql->bindValue('caveID', $hero['caveID'], PDO::PARAM_INT);
+    
+    if (!$sql->execute())
+      return false;
+    
+  }
+  
+  return true;
 }
 
 
@@ -351,6 +366,7 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
       return -6;
     }
 
+    /* no effects while creating
     // effects
     foreach ($heroTypesList[$heroTypeID]['effects'] AS $key => $value) {
       $sql = $db->prepare("UPDATE " .HERO_TABLE . "
@@ -359,10 +375,10 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
       
       if (!$sql->execute()) {
         $sql->closeCursor();
-        echo $sql->errorInfo();
         return -6;
       }
     }
+    */
     
     return 3;
   }

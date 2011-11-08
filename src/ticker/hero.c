@@ -21,6 +21,8 @@
  */
 void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
 {
+  dstring_t *ds;
+  db_result_t *result;
 
   if (heroID == 0) {
     hero->heroID      = 0;
@@ -35,7 +37,9 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
   }
   else
   {
-    db_result_t *result = db_query(database, "SELECT * FROM " DB_TABLE_HERO " WHERE heroID = %d", heroID);
+    ds = dstring_new("SELECT * FROM " DB_TABLE_HERO " WHERE heroID = %d", heroID);
+    result = db_query_dstring(database, ds);
+    debug(DEBUG_HERO, "get_hero_by_id: %s", dstring_str(ds));
 
     //  /* Bedingung: Held muss vorhanden sein */
     if (db_result_num_rows(result) != 1)
@@ -62,14 +66,21 @@ void get_hero_by_id (db_t *database, int heroID, struct Hero *hero)
  */
 void put_hero_into_cave (db_t *database, int heroID, int caveID)
 {
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET caveID = %d, isMoving = 0 "
+  dstring_t *ds;
+
+  ds = dstring_new("UPDATE " DB_TABLE_HERO " SET caveID = %d, isMoving = 0 "
          "WHERE heroID = %d", caveID, heroID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_HERO, "put_hero_into_cave: %s", dstring_str(ds));
 
   //if (db_affected_rows(database) != 1)
   //  throw(BAD_ARGUMENT_EXCEPTION, "put_hero_into_cave: hero could not be placed in cave.");
 
-  db_query(database, "UPDATE Cave SET hero = %d "
-         " WHERE caveID = %d", heroID, caveID);
+  ds = dstring_new("UPDATE Cave SET hero = %d WHERE caveID = %d", heroID, caveID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_HERO, "put_hero_into_cave: %s", dstring_str(ds));
 
   /* Bedingung: Höhle muss vorhanden sein */
   //if (db_affected_rows(database) != 1)
@@ -82,15 +93,21 @@ void put_hero_into_cave (db_t *database, int heroID, int caveID)
 void remove_hero_from_cave (db_t *database, int heroID)
 {
   struct Hero hero;
+  dstring_t *ds;
 
   /* save hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET caveID = 0 "
+  ds = dstring_new("UPDATE " DB_TABLE_HERO " SET caveID = 0 "
          "WHERE heroID = %d", heroID);
+  db_query_dstring(database, ds);
 
-  db_query(database, "UPDATE Cave SET hero = 0 "
+  debug(DEBUG_HERO, "remove_hero_from_cave: %s", dstring_str(ds));
+
+  ds = dstring_new("UPDATE Cave SET hero = 0 "
          "WHERE caveID = %d", hero.caveID);
+  db_query_dstring(database, ds);
+  debug(DEBUG_HERO, "remove_hero_from_cave: %s", dstring_str(ds));
 
 //  /* Bedingung: Höhle muss vorhanden sein */
 //  if (db_affected_rows(database) != 1)
@@ -103,8 +120,7 @@ void remove_hero_from_cave (db_t *database, int heroID)
 void reincarnate_hero (db_t *database, int heroID)
 {
   struct Hero hero;
-  struct Cave cave;
-  struct Player player;
+  dstring_t *ds;
 
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
@@ -123,9 +139,12 @@ void reincarnate_hero (db_t *database, int heroID)
   if (db_affected_rows(database) != 1)
     throw(SQL_EXCEPTION, "initiate_hero: no such heroID or caveID");
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, healPoints = %d "
+  ds = dstring_new("UPDATE " DB_TABLE_HERO " SET isAlive = %d, healPoints = %d "
          " WHERE heroID = %d AND caveID = %d",
-	   HERO_ALIVE, hero.maxHealPoints/2, hero.heroID, hero.caveID);
+     HERO_ALIVE, hero.maxHealPoints/2, hero.heroID, hero.caveID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_HERO, "reincarnate_hero: %s", dstring_str(ds));
 
   // apply effects
   apply_hero_effects_to_cave(database, heroID);
@@ -139,15 +158,20 @@ void reincarnate_hero (db_t *database, int heroID)
 void kill_hero (db_t *database, int heroID)
 {
   struct Hero hero;
+  dstring_t *ds;
 
   get_hero_by_id(database, heroID, &hero);
 
-  db_query(database, "UPDATE " DB_TABLE_HERO " SET isAlive = %d, caveID = 0, healPoints = 0, isMoving = 0 "
-         " WHERE heroID = %d",
-     HERO_DEAD, heroID);
+  ds = dstring_new("UPDATE " DB_TABLE_HERO " SET isAlive = %d, healPoints = 0, isMoving = 0 "
+         " WHERE heroID = %d", HERO_DEAD, heroID);
+  db_query_dstring(database, ds);
 
-  db_query(database, "DELETE FROM Event_hero WHERE heroID = %d",
-     heroID);
+  debug(DEBUG_HERO, "kill_hero: %s", dstring_str(ds));
+
+  ds = dstring_new("DELETE FROM Event_hero WHERE heroID = %d", heroID);
+  db_query_dstring(database, ds);
+
+  debug(DEBUG_HERO, "kill_hero: %s", dstring_str(ds));
 
   remove_hero_effects_from_cave(database, heroID);
   remove_hero_from_cave(database, heroID);
@@ -182,6 +206,8 @@ void apply_hero_effects_to_cave (db_t *database, int heroID)
 
   dstring_append(ds, " WHERE caveID = %d", hero.caveID);
   db_query_dstring(database, ds);
+
+  debug(DEBUG_HERO, "apply_hero_effects_to_cave: %s", dstring_str(ds));
 }
 
 /*
@@ -217,4 +243,6 @@ void remove_hero_effects_from_cave (db_t *database, int heroID)
 
   dstring_append(ds, " WHERE caveID = %d", hero.caveID);
   db_query_dstring(database, ds);
+
+  debug(DEBUG_HERO, "remove_hero_effects_from_cave: %s", dstring_str(ds));
 }
