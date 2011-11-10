@@ -111,7 +111,11 @@ function checkall(){
             <td><input type="checkbox" name="deletebox[{{ item.messageID }}]" value="{{ item.messageID }}" /></td>
             <td>{{ item.absender_empfaenger }}</td>
             <td>{{ item.nachrichtenart }}</td>
-            <td><a href="main.php{{ item.linkparams|raw }}">{{ item.betreff }}</a></td>
+            <td>{% if item.read == 0 %}
+                 <img src="{{ gfx }}/de_DE/t_uga/messages/mail.gif" class="noborder"" alt="" />
+                {% endif %}
+                <a href="main.php{{ item.linkparams|raw }}">{{ item.betreff }}</a>
+            </td>
             <td class="text-right">{{ item.datum }}</td>
           </tr>
         {% endfor %}
