@@ -178,7 +178,12 @@ static void army_setup (db_t *database,
 {
   int type;
   struct Hero hero;
-  int armySize;
+  int armySize, isDef = 0;
+
+  if (defense_system)
+  {
+    isDef = 1;
+  }
 
   if (heroID > 0) {
     get_hero_by_id(database, heroID, &hero);
@@ -207,9 +212,10 @@ static void army_setup (db_t *database,
   /* apply hero effects only if
   * - hero is alive
   * - armySize >= hero experience
-  * - hero is not of constructor type
   */
-  army->heroFights = heroID > 0 && hero.exp >= armySize && hero.isAlive == 1 && hero.type != CONSTRUCTOR_ID;
+  army->heroFights = heroID > 0 &&
+      hero.exp >= armySize &&
+      hero.isAlive == 1;
 
   /* fill effects */
   /* XXX should this be effect_factor(... + takeover_multiplier)? */
