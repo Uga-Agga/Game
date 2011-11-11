@@ -210,9 +210,14 @@ function tribeAdmin_getContent($playerID, $tag) {
 ****************************************************************************************************/
     case 'updateRelation':
       $relationData = request_var('relationData', array('' => ''));
-
-      $messageID = relation_processRelationUpdate($tag, $relationData);
-      $tribeRelations = relation_getRelationsForTribe($tag);
+      if (isset($_POST['forceSurrender'])) {
+        $messageID = relation_forceSurrender($tag, $relationData);
+        $tribeRelations = relation_getRelationsForTribe($tag);
+        $tribeWarTargets = relation_getWarTargetsAndFame($tag);
+      } else {
+        $messageID = relation_processRelationUpdate($tag, $relationData);
+        $tribeRelations = relation_getRelationsForTribe($tag);
+      }
     break;
   }
 
@@ -279,7 +284,7 @@ function tribeAdmin_getContent($playerID, $tag) {
       );
 
       // war?
-      if(array_key_exists($target, $tribeWarTargets)) {
+      if (array_key_exists($target, $tribeWarTargets)) {
         $relation_info[$target]['war'] = true;
         $relation_info[$target]['fame_own'] = $tribeWarTargets[$target]['fame_own'];
         $relation_info[$target]['fame_target'] = $tribeWarTargets[$target]['fame_target'];
@@ -296,11 +301,13 @@ function tribeAdmin_getContent($playerID, $tag) {
 
       if (isset($tribeWarTargets[$target])) {
         $wartarget = $tribeWarTargets[$target];  
+        $relations[$target]['war']            = true;
         $relations[$target]['fame_own']       = $wartarget['fame_own'];
         $relations[$target]['fame_target']    = $wartarget['fame_target'];
         $relations[$target]['percent_actual'] = $wartarget['percent_actual'];
 
         if ($wartarget['isForcedSurrenderTheoreticallyPossible']) {
+          $relations[$target]['isForcePossible'] = true;
           $relation["WAR/FORCEDSURRENDER/percent_estimated"] = $wartarget["percent_estimated"];
           if($wartarget["isForcedSurrenderPracticallyPossible"]){
             $relation["WAR/FORCEDSURRENDER/class"] = "enough";

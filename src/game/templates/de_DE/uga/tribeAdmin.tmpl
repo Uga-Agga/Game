@@ -171,6 +171,9 @@
                 {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
               </select>
               <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
+              {% if item.isForcePossible %}
+                <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
+              {% endif %}
             </form>
           </td>
         </tr>
