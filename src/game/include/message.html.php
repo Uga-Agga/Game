@@ -149,7 +149,8 @@ function messages_getMessages($caveID, $deletebox, $box) {
     $message_prev = array(
       'offset' => $offset - MSG_PAGE_COUNT,
       'box'    => $box,
-      'modus'  => MESSAGES_LIST
+      'modus'  => MESSAGES_LIST,
+      'message_class' => $messageClass
     );
   }
 
@@ -157,7 +158,8 @@ function messages_getMessages($caveID, $deletebox, $box) {
     $message_next = array(
       'offset' => $offset + MSG_PAGE_COUNT,
       'box'    => $box,
-      'modus'  => MESSAGES_LIST
+      'modus'  => MESSAGES_LIST,
+      'message_class' => $messageClass
     );
   }
 

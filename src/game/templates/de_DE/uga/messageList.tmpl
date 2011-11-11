@@ -93,13 +93,13 @@ function checkall(){
         <td colspan="2" class="text-right">
           Nachrichten {{ message_min }} - {{ message_max }} von {{ message_count }} &nbsp; 
           {% if message_prev %}
-            <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}">&lt;&lt;&lt; zurück</a>
+            <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}&amp;messageClass={{ message_prev.message_class }}">&lt;&lt;&lt; zurück</a>
           {% else %}
             &lt;&lt;&lt; zurück
           {% endif %}
           &nbsp;|&nbsp;
           {% if message_next %}
-           <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}">weiter &gt;&gt;&gt;</a></tmpl:NEXT>
+           <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}&amp;messageClass={{ message_next.message_class }}">weiter &gt;&gt;&gt;</a></tmpl:NEXT>
           {% else %}
             weiter &gt;&gt;&gt;
           {% endif %}
