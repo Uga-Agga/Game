@@ -2083,7 +2083,7 @@ function ranking_calculateElo($winnertag, $winnerpoints, $losertag, $loserpoints
   $faktor = 2;
   
   //k faktor bestimmen
-  echo($winnertag. " ". $winnerpoints." ". $loser." ". $loserpoints);
+  //echo($winnertag. " ". $winnerpoints." ". $loser." ". $loserpoints);
   $k = 10;
   if($winnerpoints < 2400){
     $query = 
