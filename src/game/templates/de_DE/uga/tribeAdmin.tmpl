@@ -131,6 +131,7 @@
       </table>
     </div>
 
+    {% if relations_info or relations %}
     <div class="notice nohover" style="margin-left: 5px; margin-right: 5px;">
       <div class="text-center bold">Beziehungen</div>
       <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
@@ -180,6 +181,7 @@
         {% endfor %}
       </table>
     </div>
+    {% endif %}
   </div>
 </div>
 {% endif %}

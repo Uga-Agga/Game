@@ -2083,7 +2083,7 @@ function ranking_calculateElo($winnertag, $winnerpoints, $losertag, $loserpoints
   $faktor = 2;
   
   //k faktor bestimmen
-  //echo($winnertag. " ". $winnerpoints." ". $loser." ". $loserpoints);
+  echo($winnertag. " ". $winnerpoints." ". $loser." ". $loserpoints);
   $k = 10;
   if($winnerpoints < 2400){
     $query = 
@@ -2098,11 +2098,17 @@ function ranking_calculateElo($winnertag, $winnerpoints, $losertag, $loserpoints
       $k = 25;
   }
   $eloneu = $winnerpoints_actual + max(2,$k * $faktor * (1 - (1/(1+pow(10, ($loserpoints - $winnerpoints)/400)))));
-  $query = 
-    "UPDATE ". RANKING_TRIBE_TABLE ." SET points_rank=".(int) $eloneu.", calculateTime = calculateTime+1 WHERE tribe like '$winnertag'";
-  if(!$db->query($query))
+  $sql = $db->prepare("UPDATE ". RANKING_TRIBE_TABLE ." SET 
+                        points_rank = :points_rank, 
+                        calculateTime = calculateTime+1 
+                      WHERE tribe like :winnertag");
+  $sql->bindValue('points_rank', $eloneu, PDO::PARAM_INT);
+  $sql->bindValue('winnertag', $winnertag, PDO::PARAM_STR);
+  
+  if(!$sql->execute())
     return 0;
-  $k = 10;
+  
+    $k = 10;
   if($loserpoints < 2400){
     $query =
       "SELECT calculateTime FROM ". RANKING_TRIBE_TABLE ." WHERE tribe LIKE '$losertag'";
@@ -2118,9 +2124,9 @@ function ranking_calculateElo($winnertag, $winnerpoints, $losertag, $loserpoints
   $eloneu = $loserpoints_actual + min(-2,$k * $faktor * (0 - (1/(1+pow(10, ($winnerpoints - $loserpoints)/400)))));
 
   $sql = $db->prepare("UPDATE " . RANKING_TRIBE_TABLE . "
-                       SET points_rank = :points_rank
+                       SET points_rank = :points_rank,
                          calculateTime = calculateTime + 1
-                       WHERE tag LIKE :tag");
+                       WHERE tribe LIKE :tag");
   $sql->bindValue('points_rank', $eloneu, PDO::PARAM_INT);
   $sql->bindValue('tag', $losertag, PDO::PARAM_STR);
   if (!$sql->execute() || $sql->rowCount() == 0) {
