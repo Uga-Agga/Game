@@ -328,13 +328,13 @@
 {% if newhero %}
 <div class="box small">
  <div class="box-header">Art des Helden wählen:</div>
- <div class="box-content success small inner">
+ <div class="box-content success smallinner">
   <table class="table" rules="rows">
    {% for item in heroTypesList %} 
    {% set bgID = (bgID+1)%2 %}
    <tr class="bg{{ bgID }}">
     <td><strong>{{ item.name }}</strong><br />
-     <div style="font-size: x-small;">{{ item.description|raw }}</div>
+     <div>{{ item.description|raw }}</div>
     </td>
     <td style="text-align: right;"><a
      href="main.php?modus=hero_detail&amp;action=createHero&amp;ID={{ item.heroTypeID }}">
