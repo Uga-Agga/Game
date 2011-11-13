@@ -190,7 +190,7 @@ function skillForce($playerID, $hero) {
       "+" . $effect->dbFieldName."*(1+".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
     }
   }
-  
+  print_r($fields);
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET forceLvl = forceLvl + 1,
@@ -516,9 +516,9 @@ function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
     // take resource from cave
     $sql = $db->prepare("UPDATE " . CAVE_TABLE . " SET ".
                          $resource->dbFieldName . " = " . $resource->dbFieldName . " - :value
-                         WHERE playerID = :playerID");
+                         WHERE caveID = :caveID");
     $sql->bindValue('value', $value, PDO::PARAM_INT);
-    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
     
     if (!$sql->execute() || $sql->rowCount() == 0)
       return array('messageID' =>-15, 'value'=> 0);
@@ -535,9 +535,9 @@ function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
       // return resource to cave
       $sql_setback = $db->prepare("UPDATE " . CAVE_TABLE . " SET ".
                            $resource->dbFieldName . " = " . $resource->dbFieldName . " + :value
-                           WHERE playerID = :playerID");
+                           WHERE caveID = :caveID");
       $sql_setback->bindValue('value', $value, PDO::PARAM_INT);
-      $sql_setback->bindValue('playerID', $playerID, PDO::PARAM_INT);
+      $sql_setback->bindValue('caveID', $caveID, PDO::PARAM_INT);
       
       $sql_setback->execute();
       
