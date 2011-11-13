@@ -190,7 +190,7 @@ function skillForce($playerID, $hero) {
       "+" . $effect->dbFieldName."*(1+".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
     }
   }
-  print_r($fields);
+
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET forceLvl = forceLvl + 1,
@@ -362,7 +362,6 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
 
     if (!$sql->execute()) {
       $sql->closeCursor();
-      echo $sql->errorInfo();
       return -6;
     }
 
