@@ -33,21 +33,13 @@ init_heroSkills();
 
 
 function hero_getHeroDetail($caveID, &$ownCaves) {
-/*if($_SESSION['player']->playerID!=1) {
-global $template;
-$template->throwError('Die Helden werden gerade überarbeitet. Bitte habe etwas Geduld');
-return;
-}*/
   // get configuration settings
-  global $config;
-
-  // get db link
-  global $db;
+  global $config, $db,$template ;
   global $potionTypeList, $heroTypesList, $heroSkillTypeList, $resourceTypeList;
-  global $template;
+
   // open template
   $template->setFile('hero.tmpl');
-  
+
   // get current playerID by user
   $playerID = $_SESSION['player']->playerID;
   $player = getPlayerByID($playerID);
@@ -55,34 +47,34 @@ return;
   $newhero = false;
 
   $messageText = array(
-  -16 => array('type' => 'error', 'message' => _('Fehler beim Eintragen der Erfahrungspunkte nach der Opferung!')),
-  -15 => array('type' => 'error', 'message' => _('Fehler beim Abziehen der geopferten Rohstoffe!')),
-  -14 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Opfern vorhanden!')),
-  -13 => array('type' => 'error', 'message' => _('Fehler beim Holen der Opferwerte!')),
-  -12 => array('type' => 'error', 'message' => _('Fehler beim Erhöhen des Levels!')),
-  -11 => array('type' => 'error', 'message' => _('Nicht genug Talentpunkte vorhanden!')),
-  -10 => array('type' => 'error', 'message' => _('Ihr Held ist noch nicht erfahren genug, diesen Trank zu nutzen!')),
-  -9 => array('type' => 'error', 'message' => _('Nicht genug Tränke vorhanden!')),
-  -8 => array('type' => 'error', 'message' => _('Fehler beim Anwenden des Trankes!')),
-  -7 => array('type' => 'error', 'message' => _('Fehler beim Schreiben in die Datenbank.')),
-  -6 => array('type' => 'error', 'message' => _('Der Held existiert bereits.')),
-  -5 => array('type' => 'error', 'message' => _('Maximallevel des Skills erreicht.')),
-  -4 => array('type' => 'notice', 'message' => _('Fehler beim Abbrechen der Wiederbelebung.')),
-  -3 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Wiederbeleben.')),
-  -2 => array('type' => 'error', 'message' => _('Der Held wird bereits wiederbelebt.')),
-  -1 => array('type' => 'error', 'message' => _('Dafür sind nicht genug Talentpunkte vorhanden.')),
-  0 => array('type' => 'error', 'message' => _('Euch steht noch kein Held zur Verfügung.')),
-  1 => array('type' => 'success', 'message' => _('Euer Held hat eine neue Fähigkeit erlernt.')),
-  2 => array('type' => 'notice', 'message' => _('Die Wiederbelebung eures Helden hat begonnen.')),
-  3 => array('type' => 'success', 'message' => _('Euer Held wurde erstellt.')),
-  4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.')), 
-  5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')), 
-  6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
-  7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
-  8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.')),
-  9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.'))
+    -16 => array('type' => 'error', 'message' => _('Fehler beim Eintragen der Erfahrungspunkte nach der Opferung!')),
+    -15 => array('type' => 'error', 'message' => _('Fehler beim Abziehen der geopferten Rohstoffe!')),
+    -14 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Opfern vorhanden!')),
+    -13 => array('type' => 'error', 'message' => _('Fehler beim Holen der Opferwerte!')),
+    -12 => array('type' => 'error', 'message' => _('Fehler beim Erhöhen des Levels!')),
+    -11 => array('type' => 'error', 'message' => _('Nicht genug Talentpunkte vorhanden!')),
+    -10 => array('type' => 'error', 'message' => _('Ihr Held ist noch nicht erfahren genug, diesen Trank zu nutzen!')),
+    -9 => array('type' => 'error', 'message' => _('Nicht genug Tränke vorhanden!')),
+    -8 => array('type' => 'error', 'message' => _('Fehler beim Anwenden des Trankes!')),
+    -7 => array('type' => 'error', 'message' => _('Fehler beim Schreiben in die Datenbank.')),
+    -6 => array('type' => 'error', 'message' => _('Der Held existiert bereits.')),
+    -5 => array('type' => 'error', 'message' => _('Maximallevel des Skills erreicht.')),
+    -4 => array('type' => 'notice', 'message' => _('Fehler beim Abbrechen der Wiederbelebung.')),
+    -3 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Wiederbeleben.')),
+    -2 => array('type' => 'error', 'message' => _('Der Held wird bereits wiederbelebt.')),
+    -1 => array('type' => 'error', 'message' => _('Dafür sind nicht genug Talentpunkte vorhanden.')),
+    0 => array('type' => 'error', 'message' => _('Euch steht noch kein Held zur Verfügung.')),
+    1 => array('type' => 'success', 'message' => _('Euer Held hat eine neue Fähigkeit erlernt.')),
+    2 => array('type' => 'notice', 'message' => _('Die Wiederbelebung eures Helden hat begonnen.')),
+    3 => array('type' => 'success', 'message' => _('Euer Held wurde erstellt.')),
+    4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.')), 
+    5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')), 
+    6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
+    7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
+    8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.')),
+    9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.'))
   );
-  
+
   // create new hero
   $action = request_var('action', '');
   $newHeroID = request_var('ID', '');
@@ -93,59 +85,51 @@ return;
         break;
       }
     }
-    
   }
 
   $hero = getHeroByPlayer($playerID);
-  
-  if($hero!= null) {
 
+  if($hero!= null) {
     $showLevelUp = false;
-    
-    $eventHero=getEventHero($playerID);
-    
-    
+
     $ritual = getRitualByLvl($hero['lvl']);
     $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
-    foreach ($resourceTypeList as $key){
+
+    foreach ($resourceTypeList as $key) {
       $dbFieldName = $key->dbFieldName;
       $enough = ($ritual[$dbFieldName]<=$cave[$dbFieldName]);
       $tmp = array(
-      'enough'      => $enough,
-      'value'       => $ritual["$dbFieldName"],
-      'missing'     => $ritual["$dbFieldName"]-$cave["$dbFieldName"],
-      'dbFieldName' => $dbFieldName,
-      'name'        => $key->name,
+        'enough'      => $enough,
+        'value'       => $ritual["$dbFieldName"],
+        'missing'     => $ritual["$dbFieldName"]-$cave["$dbFieldName"],
+        'dbFieldName' => $dbFieldName,
+        'name'        => $key->name,
       );
       $resource[$key->dbFieldName]= $tmp;
     }
-    
-    if($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
+
+    if ($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
       $hero['HPbar']='error';
-    }
-    else {
+    } else {
       $hero['HPbar']='success';
     }
 
     $action = request_var('action', '');
     switch ($action) {
-      case 'Wiederbeleben':
-        if ($eventHero === true) {
+      case 'revive':
+        if (checkEventHeroExists($playerID)) {
+          $messageID = -2;
+        } else {
           $messageID = createRitual($caveID, $playerID, $resource, $hero, $ownCaves);
-          if ($messageID === 2) {
-          }
-          break;
         }
-        $messageID = -2;
-        break;
+      break;
 
       case 'cancelOrder':
-        if ($eventHero === false) {
-          
+        if (checkEventHeroExists($playerID)) {
           $messageID = hero_cancelOrder();
         }
-        break;
+      break;
 
       case 'skill':
         if ($hero['tpFree']>=1) {
@@ -188,15 +172,11 @@ return;
           }
         }
         break;
-        
+
         case 'lvlUp':
-          if (hero_levelUp ($hero)) {
-            $messageID = 7;
-          } else {
-            $messageID = -12;
-          }
+          $messageID = hero_levelUp($hero);
         break;
-        
+
         case 'immolateResources':
           $resultArray = hero_immolateResources(
                 request_var('resourceID', -1), 
@@ -208,7 +188,6 @@ return;
           if ($resultArray['value']>0) {
             $messageText[$messageID]['message'] = str_replace('expValue', $resultArray['value'], $messageText[$messageID]['message']);
           }
-          
         break;
         
         case 'usePotion':

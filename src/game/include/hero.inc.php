@@ -136,25 +136,23 @@ function hero_parseFormulas ($formula) {
   return $formula;
 }
 
-function getEventHero($playerID) {
+function checkEventHeroExists($playerID) {
   global $db;
 
   // set database query with playerID
   $sql = $db->prepare("SELECT *
                        FROM ". EVENT_HERO_TABLE ." 
-                         WHERE playerID = :playerID");
+                       WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID);
 
-  // if not successful
-  if (!$sql->execute() || !$sql->fetch(PDO::FETCH_ASSOC)) {
-    $sql->closeCursor();
-    return true;
+  // no event
+  if ($sql->rowCountSelect() == 0) {
+    return false;
   }
-  // otherwise
-  $sql->closeCursor();
-  return false;
 
+  return true;
 }
+
 function getHeroQueue($playerID) {
   global $db;
 
@@ -481,20 +479,22 @@ function hero_usePotion ($potionID, $value) {
 
 function hero_levelUp($hero) {
   global $db, $effectTypeList, $heroTypesList;
-  
-  if ($hero['exp'] < $hero['lvlUp'])
-    return false;
-  
+
+  if ($hero['exp'] < $hero['lvlUp']) {
+    return -12;
+  }
+
   $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
                        lvl = lvl +1,
                        tpFree = tpFree +1 
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
-  
-  if (!$sql->execute())
-    return false;
 
-  return true;
+  if (!$sql->execute()) {
+    return -12;
+  }
+
+  return 7;
 }
 
 function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
@@ -552,22 +552,27 @@ function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
 
 function hero_cancelOrder () {
   global $db;
-  
+
   $sql = $db->prepare("DELETE FROM " . EVENT_HERO_TABLE . "
                        WHERE playerID = :playerID ");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  
-  if (!$sql->execute())
-   return -4;
-  
-  $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET 
-                       isAlive = 0, caveID = 0, healPoints = 0, isMoving = 0 
+
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return -4;
+  }
+
+  $sql = $db->prepare("UPDATE " . HERO_TABLE ."
+                       SET isAlive = 0,
+                        caveID = 0,
+                        healPoints = 0,
+                        isMoving = 0 
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  
-  if (!$sql->execute())
+
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return -4;
-    
+  }
+
   return 9;
 }
 
