@@ -74,10 +74,10 @@ function unit_Movement($caveID, &$ownCave) {
    */
   
   $moveHero = 0;
-  
-  if ($details['hero'] != 0 && request_var('moveHero', false) == true)
+  if ($details['hero'] != 0 && request_var('moveHero', false) == true) {
     $moveHero = $details['hero'];
-  
+  }
+
   /**
    * END HERO MOVEMENTS
    */

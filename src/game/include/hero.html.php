@@ -14,7 +14,6 @@
 
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once("game_rules.php");
 require_once("hero.rules.php");
 //init Potions
 init_potions();
@@ -23,17 +22,12 @@ init_heroTypes();
 //init HeroSkills
 init_heroSkills();
 
-
 /** This function returns basic hero details
  *
  *  @param caveID       the current caveID
  *  @param meineHöhlen  all the data of all your caves
  */
-
-
-
 function hero_getHeroDetail($caveID, &$ownCaves) {
-  // get configuration settings
   global $config, $db,$template ;
   global $potionTypeList, $heroTypesList, $heroSkillTypeList, $resourceTypeList;
 
@@ -77,13 +71,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
   // create new hero
   $action = request_var('action', '');
-  $newHeroID = request_var('ID', '');
+  $newHeroID = request_var('id', '');
   if ($action =="createHero") {
-    foreach ($heroTypesList AS $typeName => $type) {
-      if ($newHeroID == $type['heroTypeID']) {
-        $messageID = createNewHero($heroTypesList[$typeName]['heroTypeID'], $playerID, $caveID);
-        break;
-      }
+    if (isset($heroTypesList[$newHeroID])) {
+      $messageID = createNewHero($heroTypesList[$newHeroID]['heroTypeID'], $playerID, $caveID);
     }
   }
 
@@ -117,7 +108,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
     $action = request_var('action', '');
     switch ($action) {
-      case 'revive':
+      case 'reincarnate':
         if (checkEventHeroExists($playerID)) {
           $messageID = -2;
         } else {
@@ -132,43 +123,48 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       break;
 
       case 'skill':
-        if ($hero['tpFree']>=1) {
+        if ($hero['tpFree'] >= 1) {
           $skill = request_var('skill', '');
           switch ($skill) {
             case 'force':
               //typ='force';
               if ($hero['forceLvl']<10) {
                 if (skillForce($playerID, $hero)) {
-                  $messageID=1;
+                  $messageID = 1;
                 }
                 break;
               }
-              $messageID=-5;
-              break;
+
+              $messageID = -5;
+            break;
+
             case 'maxHP':
               //typ='maxHP';
               if ($hero['maxHpLvl']<10) {
                 if (skillMaxHp($playerID, $hero)) {
-                  $messageID=1;
+                  $messageID = 1;
                 } else {
                   $messageID = -5;
                 }
                 break;
               }
-              $messageID=-5;
-              break;
+
+              $messageID = -5;
+            break;
+
             case 'regHP':
               //typ='regHP';
-              if ($hero['regHpLvl']<10) {
+              if ($hero['regHpLvl'] < 10) {
                 if (skillRegHp($playerID, $hero)) {
-                  $messageID=1;
+                  $messageID = 1;
                 } else {
                   $messageID = -5;
                 }
                 break;
               }
-              $messageID=-5;
-              break;
+
+              $messageID = -5;
+            break;
           }
         }
         break;
@@ -178,50 +174,47 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         break;
 
         case 'immolateResources':
-          $resultArray = hero_immolateResources(
-                request_var('resourceID', -1), 
-                request_var('value', 0)+0,
-                $caveID,
-                $ownCaves);
+          $resourceID = request_var('resourceID', -1);
+          $value = request_var('value', 0);
+
+          $resultArray = hero_immolateResources($resourceID, $value, $caveID, $ownCaves);
           $messageID = $resultArray['messageID'];
+
           // set exp value in message
           if ($resultArray['value']>0) {
             $messageText[$messageID]['message'] = str_replace('expValue', $resultArray['value'], $messageText[$messageID]['message']);
           }
         break;
-        
+
         case 'usePotion':
-          if (($potionID = request_var('potionID', -1)) == -1) {
+          $potionID = request_var('potionID', -1);
+          $value = request_var('value', 0);
+
+          if ($potionID == -1) {
             $messageID = -8; 
             break;
           }
-          
-          if (!$value = request_var('value', 0)) {
+
+          if ($value < 0) {
             $messageID = -8; 
             break;
           }
-          
+
           $messageID = hero_usePotion($potionID, $value);
-          break;
-            
-        $messageID=-1;
         break;
     }
 
     $queue=getHeroQueue($playerID);
-    
-    
+
     $player = getPlayerByID($playerID);
     $potions = array();
     foreach ($potionTypeList AS $potionID => $potion) {
       if ($player[$potion->dbFieldName] > 0) {
         $potion->value = $player[$potion->dbFieldName];
         $potions[] = $potion;
-        
       }
     }
   } else {
-    
     $player = getPlayerByID($playerID);
     if ($player['heroism'] >= 1){
       $messageID = 4;
@@ -237,30 +230,30 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
    *
    ****************************************************************************************************/
   $template->addVars(array(
-    'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
+    'status_msg' => (isset($messageID)) ? $messageText[$messageID] : '',
   ));
 
   if (isset($queue) && $queue) {
     $template->addVars(array(
-      'quene_show'      => true,
-      'quene_finish'    => time_formatDatetime($queue['end']),
+      'quene_show'   => true,
+      'quene_finish' => time_formatDatetime($queue['end']),
     ));
   }
 
   if ($hero) {
     $hero = getHeroByPlayer($playerID);
-    
-  if ($hero['expLeft'] <= 0) {
-      $showLevelUp = true;
-  }
-    
+
+    if ($hero['expLeft'] <= 0) {
+        $showLevelUp = true;
+    }
+
     $template->addVars(array(
-    'hero'               => $hero,
-    'showLevelUp'        => (isset ($showLevelUp)) ? $showLevelUp : '',
-    'delay'              => time_formatDuration($ritual['duration']),
-    'ritual'             => $ritual,
-    'resource'           => $resource,
-    'resourceTypeList'   => $resourceTypeList,
+      'hero'             => $hero,
+      'showLevelUp'      => (isset ($showLevelUp)) ? $showLevelUp : '',
+      'delay'            => time_formatDuration($ritual['duration']),
+      'ritual'           => $ritual,
+      'resource'         => $resource,
+      'resourceTypeList' => $resourceTypeList,
     ));
   }
   
@@ -272,15 +265,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   }
   
   if (isset($potions) && $potions) {
-    $template->addVars(array(
-      'potions'               => $potions,
-    ));
+    $template->addVar('potions', $potions);
   }
-  
-if ($heroSkillTypeList) {
-    $template->addVars(array(
-      'skills'               => $heroSkillTypeList,
-    ));
+
+  if ($heroSkillTypeList) {
+    $template->addVar('skills', $heroSkillTypeList);
   }
 }
 

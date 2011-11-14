@@ -250,7 +250,7 @@
           </table>
           <br /><br />
           <form action="main.php?modus={{ hero_link }}" id="newhero" method="post">
-            <input type="hidden" name="action" value="revive" />
+            <input type="hidden" name="action" value="reincarnate" />
             <input type="submit" value="Wiederbeleben"{% if hero.isAlive %} disabled="disabled"{% endif %} />
           </form>
         </td>
@@ -274,7 +274,7 @@
           {{ item.description|raw }}
         </td>
         <td style="text-align: right;">
-          <a href="main.php?modus={{ hero_link }}&amp;action=createHero&amp;ID={{ item.heroTypeID }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" /></a>
+          <a href="main.php?modus={{ hero_link }}&amp;action=createHero&amp;id={{ item.heroTypeID }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" /></a>
         </td>
       </tr>
       {% endfor %}

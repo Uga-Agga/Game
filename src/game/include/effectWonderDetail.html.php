@@ -72,7 +72,7 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   }
 
   //hero effects
-  $hero = hero_getHeroDataByPlayerID($_SESSION['player']->playerID);
+  $hero = getHeroByPlayer($_SESSION['player']->playerID);
   
   $heroData = array();
   if ($hero && $hero['caveID'] == $caveID) {
