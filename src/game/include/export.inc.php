@@ -372,6 +372,11 @@ function export_movement_xml($movementID) {
     $artefact = $movement->addChild('artefact');
     $artefact->addChild('name', $artefactData['name']);
   }
+  
+  // Hero
+  if ($move['heroID'] != 0) {
+    $movement->addChild('hero', 'true');
+  }
 
   return $xml->asPrettyXML();
 }
@@ -455,6 +460,12 @@ function export_movement_bb ($movementID) {
   if ($move['artefactID'] != 0) {
     $artefact = "transportierte Artefakte: \n" . $artefactData['name'] . "\n";
   }
+  
+  // Hero
+  $hero = "";
+  if ($move['heroID'] != 0) {
+    $hero = "Der Held läuft mit!";
+  }
 
   $bb = "";
   $bb .= $header . "\n";
@@ -463,6 +474,7 @@ function export_movement_bb ($movementID) {
   $bb .= $units . "\n";
   $bb .= $resources ."\n";
   $bb .= $artefact . "\n";
+  $bb .= $hero ."\n";
 
   return $bb;
 }
@@ -548,6 +560,12 @@ function export_movement_irc ($movementID) {
   if ($move['artefactID'] != 0) {
     $artefact = "transportierte Artefakte: " . $artefactData['name'];
   }
+  
+  // Hero
+  $hero = '';
+  if ($move['heroID'] != 0) {
+    $hero = "Held läuft mit!";
+  }
 
   $irc = "";
   $irc .= $header;
@@ -556,6 +574,7 @@ function export_movement_irc ($movementID) {
   $irc .= $units . "\n";
   $irc .= $resources ."\n";
   $irc .= $artefact . "\n";
+  $irc .= $hero . "\n";
 
   return $irc;
 }
