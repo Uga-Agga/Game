@@ -104,7 +104,7 @@ function getHeroQueue($playerID) {
   // set database query with playerID
   $sql = $db->prepare("SELECT *
                        FROM ". EVENT_HERO_TABLE ." 
-                         WHERE playerID = :playerID");
+                       WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID);
   if (!$sql->execute()) return NULL;
 
