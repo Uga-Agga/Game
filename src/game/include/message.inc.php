@@ -806,9 +806,9 @@ class Messages extends Parser {
     if ($result == 0) {
       return 'Re: ' . $subject;
     } else if (strlen($sub[1])) { // 'Re(x):'
-      return sprintf('Re(%d): %s', 1 + (int)$sub[2], $sub[3]);
+      return sprintf('Re(%d): %s', 1 + (int)$sub[2], trim($sub[3]));
     } else { // 'Re:'
-      return sprintf('Re(2): %s', $sub[3]);
+      return sprintf('Re(2): %s', trim($sub[3]));
     }
   }
 
