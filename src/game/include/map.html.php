@@ -399,6 +399,10 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
   $cave['terrain_img'] = $terrainList[$cave['terrain']]['img'];
   $region = getRegionByID($cave['regionID']);
 
+  if ($cave['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
+    $temp['artefact'] = true;
+  }
+
   $template->addVar('cave_details', $cave);
 
   if ($cave['playerID'] != 0) {

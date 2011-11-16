@@ -26,7 +26,7 @@
           </li>
         {% endif %}
         <li><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name|url_encode }}">Spieler zum Adressbuch hinzufügen</a></li>
-        {% if cave_details.artefacts %}<li>&nbsp;</li><li><span class="bold">In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</span></li>{% endif %}
+        {% if cave_details.artefact %}<li>&nbsp;</li><li><span class="bold">In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</span></li>{% endif %}
       {% else %}
         {% if takeoverable %}<li>Dieser Landstrich ist bewohnbar und kann <a class="bold" href="main.php?modus={{ takeover_link }}&amp;caveID={{ caveID }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}">missioniert</a> werden!</li><li>&nbsp;</li>{% endif %}
       {% endif %}
