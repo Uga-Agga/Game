@@ -22,7 +22,7 @@ require_once("include/basic.lib.php");
 require_once("include/vote.html.php");
 require_once("include/wonder.rules.php");
 require_once("modules/Messages/Messages.php");
-
+require_once("include/formula_parser.inc.php");
 
 date_default_timezone_set('Europe/Berlin'); // slange: added to fix warning in PHP5
 
@@ -473,14 +473,22 @@ vote_main();
 // init date for countdown
 $now = new DateTime(); 
 
+$terrainEffects = array();
+if ($_SESSION['player']->playerID == 1) {
+foreach ($terrainList[$ownCaves[$caveID]['terrain']]['effects'] as $id => $value) {
+  $terrainEffects[] = $resourceTypeList[$id]->name . ' ' . $value;
+}
+}
+
 // fill it
 $template->addVars(array(
-  'showads'       => ($showads) ? true : false,
-  'cave_id'       => $caveID,
-  'cave_name'     => $ownCaves[$caveID]['name'],
-  'cave_x_coord'  => $ownCaves[$caveID]['xCoord'],
-  'cave_y_coord'  => $ownCaves[$caveID]['yCoord'],
-  'cave_terrain'  => $ownCaves[$caveID]['terrain'],
+  'showads'           => ($showads) ? true : false,
+  'cave_id'           => $caveID,
+  'cave_name'         => $ownCaves[$caveID]['name'],
+  'cave_x_coord'      => $ownCaves[$caveID]['xCoord'],
+  'cave_y_coord'      => $ownCaves[$caveID]['yCoord'],
+  'cave_terrain'      => $ownCaves[$caveID]['terrain'],
+  'cave_terrain_desc' => $terrainList[$ownCaves[$caveID]['terrain']]['name'] . ' (' . implode(' | ', $terrainEffects) . ')',
   'time'          => date("d.m.Y H:i:s"),
   'bottom'        => vote_main(),
   'new_mail_link' => (!empty($newMessageCount)) ? '_new' : '',

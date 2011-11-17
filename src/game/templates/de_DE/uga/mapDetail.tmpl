@@ -49,7 +49,7 @@
       {% for item in player_caves %}
       {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td>{{ item.caveName }} ({{ item.xCoord }} | {{ item.yCoord }})</td>
+          <td class="text-left">{{ item.caveName }} ({{ item.xCoord }} | {{ item.yCoord }}){% if item.secureCave == false %}<br /><span class="text-small">(Übernehmbar)</span>{% endif %}</td>
           <td>{{ item.terrain }}</td>
           <td>{{ item.caveSize }}</td>
           <td>

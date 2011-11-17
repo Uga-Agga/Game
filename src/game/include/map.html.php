@@ -421,6 +421,7 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
         'yCoord'       => $value['yCoord'],
         'terrain'      => $terrainList[$value['terrain']]['name'],
         'caveSize'     => floor($value[CAVE_SIZE_DB_FIELD] / 50) + 1,
+        'secureCave'   => $value['secureCave'],
       );
 
       if ($value['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
