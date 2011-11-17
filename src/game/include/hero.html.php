@@ -41,6 +41,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
 
   $messageText = array(
+    -18 => array('type' => 'error', 'message' => _('Euer Held ist tot!')),
+    -17 => array('type' => 'error', 'message' => _('Euer Held ist gar nicht tot!')),
     -16 => array('type' => 'error', 'message' => _('Fehler beim Eintragen der Erfahrungspunkte nach der Opferung!')),
     -15 => array('type' => 'error', 'message' => _('Fehler beim Abziehen der geopferten Rohstoffe!')),
     -14 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe zum Opfern vorhanden!')),
@@ -80,7 +82,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
   $hero = getHeroByPlayer($playerID);
 
-  if($hero!= null) {
+  if($hero != null) {
     $showLevelUp = false;
 
     $ritual = getRitualByLvl($hero['lvl']);
@@ -103,6 +105,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $action = request_var('action', '');
     switch ($action) {
       case 'reincarnate':
+        if ($hero['isAlive'] == 1) {
+          $messageID = -17;
+          break;
+        }
+
         if (checkEventHeroExists($playerID)) {
           $messageID = -2;
         } else {
@@ -117,6 +124,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       break;
 
       case 'skill':
+        if ($hero['isAlive'] != 1) {
+          $messageID = -18;
+          break;
+        }
+
         if ($hero['tpFree'] >= 1) {
           $skill = request_var('skill', '');
           switch ($skill) {
@@ -161,41 +173,51 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
             break;
           }
         }
-        break;
+      break;
 
-        case 'lvlUp':
-          $messageID = hero_levelUp($hero);
-        break;
+      case 'lvlUp':
+        if ($hero['isAlive'] != 1) {
+          $messageID = -18;
+          break;
+        }
 
-        case 'immolateResources':
-          $resourceID = request_var('resourceID', -1);
-          $value = request_var('value', 0);
+        $messageID = hero_levelUp($hero);
+      break;
 
-          $resultArray = hero_immolateResources($resourceID, $value, $caveID, $ownCaves);
-          $messageID = $resultArray['messageID'];
+      case 'immolateResources':
+        $resourceID = request_var('resourceID', -1);
+        $value = request_var('value', 0);
 
-          // set exp value in message
-          if ($resultArray['value']>0) {
-            $messageText[$messageID]['message'] = str_replace('expValue', $resultArray['value'], $messageText[$messageID]['message']);
-          }
-        break;
+        $resultArray = hero_immolateResources($resourceID, $value, $caveID, $ownCaves);
+        $messageID = $resultArray['messageID'];
 
-        case 'usePotion':
-          $potionID = request_var('potionID', -1);
-          $value = request_var('value', 0);
+        // set exp value in message
+        if ($resultArray['value']>0) {
+          $messageText[$messageID]['message'] = str_replace('expValue', $resultArray['value'], $messageText[$messageID]['message']);
+        }
+      break;
 
-          if ($potionID == -1) {
-            $messageID = -8; 
-            break;
-          }
+      case 'usePotion':
+        if ($hero['isAlive'] != 1) {
+          $messageID = -18;
+          break;
+        }
 
-          if ($value < 0) {
-            $messageID = -8; 
-            break;
-          }
+        $potionID = request_var('potionID', -1);
+        $value = request_var('value', 0);
 
-          $messageID = hero_usePotion($potionID, $value);
-        break;
+        if ($potionID == -1) {
+          $messageID = -8; 
+          break;
+        }
+
+        if ($value < 0) {
+          $messageID = -8; 
+          break;
+        }
+
+        $messageID = hero_usePotion($potionID, $value);
+      break;
     }
 
     $queue=getHeroQueue($playerID);

@@ -203,7 +203,19 @@ function getRitualByLvl($lvl) {
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
+  // Kein Ritual auf dem eigenen lvl? letztes Ritual nehmen.
+  if (empty($ret)) {
+    $sql = $db->prepare("SELECT *
+                         FROM ". HERO_RITUAL_TABLE ." 
+                         ORDER BY ritualID DESC
+                         LIMIT 0,1");
+    if (!$sql->execute()) return NULL;
+
+    $ret = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+  }
+
   return (empty($ret)) ? null : $ret;
 }
 
