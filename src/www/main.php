@@ -474,10 +474,8 @@ vote_main();
 $now = new DateTime(); 
 
 $terrainEffects = array();
-if ($_SESSION['player']->playerID == 1) {
 foreach ($terrainList[$ownCaves[$caveID]['terrain']]['effects'] as $id => $value) {
   $terrainEffects[] = $resourceTypeList[$id]->name . ' ' . $value;
-}
 }
 
 // fill it
