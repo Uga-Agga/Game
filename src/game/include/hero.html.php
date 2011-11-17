@@ -100,12 +100,6 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       $resource[$key->dbFieldName]= $tmp;
     }
 
-    if ($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
-      $hero['HPbar']='error';
-    } else {
-      $hero['HPbar']='success';
-    }
-
     $action = request_var('action', '');
     switch ($action) {
       case 'reincarnate':
@@ -244,7 +238,14 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $hero = getHeroByPlayer($playerID);
 
     if ($hero['expLeft'] <= 0) {
-        $showLevelUp = true;
+      $showLevelUp = true;
+    }
+
+
+    if ($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
+      $hero['HPbar']='error';
+    } else {
+      $hero['HPbar']='success';
     }
 
     $template->addVars(array(
