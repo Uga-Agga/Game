@@ -144,7 +144,7 @@ function skillForce($playerID, $hero) {
   }
 
   // update cave-effect if constructor
-  if ($hero['typeName'] == 'Constructor') {
+  if ($hero['id'] == 'Constructor') {
     $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
                          SET " . implode(", ", $fields). "
                          WHERE caveID = :caveID");
@@ -562,7 +562,7 @@ function hero_removeHeroEffectsFromCave($playerID) {
   }
 
   // remove effects only for constructor type
-  if ($hero['typeName' != 'Constructor']) {
+  if ($hero['id'] != 'Constructor') {
     return true;
   }
 
