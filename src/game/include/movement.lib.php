@@ -81,6 +81,10 @@ function getMaxSpeedFactor($units){
 }
 
 function calcFogUnit($unitCount) {
+  if ($_SESSION['player']->tribe == GOD_ALLY) {
+    return $unitCount;
+  }
+
   if ($unitCount < 9) return 'eine Handvoll';
   else if ($unitCount < 17) return 'ein Dutzend';
   else if ($unitCount < 65) return 'eine Schar';
@@ -102,6 +106,10 @@ function calcFogUnit($unitCount) {
 }
 
 function calcFogResource($resourceCount) {
+  if ($_SESSION['player']->tribe == GOD_ALLY) {
+    return $resourceCount;
+  }
+
   if ($resourceCount < 257) return 'fast gar nichts';
   else if ($resourceCount < 1025) return 'ein winziger Haufen';
   else if ($resourceCount < 4097) return 'ein kleiner Haufen';
