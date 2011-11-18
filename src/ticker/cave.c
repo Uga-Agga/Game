@@ -257,7 +257,7 @@ int get_religion (const struct Cave *cave)
 {
 #if defined(ID_SCIENCE_UGA) && defined(ID_SCIENCE_AGGA)
   return cave->player_id == PLAYER_SYSTEM   ? RELIGION_NONE :
-	 //cave->science[ID_SCIENCE_ENZIO] > 0 ? RELIGION_ENZIO :
+	 cave->science[ID_SCIENCE_ENZIO] > 0 ? RELIGION_ENZIO :
 	 cave->science[ID_SCIENCE_AGGA] > 0 ? RELIGION_AGGA :
 	 cave->science[ID_SCIENCE_UGA]  > 0 ? RELIGION_UGA  : RELIGION_NONE;
 #else
