@@ -28,7 +28,7 @@ init_heroSkills();
  *  @param meineHöhlen  all the data of all your caves
  */
 function hero_getHeroDetail($caveID, &$ownCaves) {
-  global $config, $db,$template ;
+  global $config, $db, $template;
   global $potionTypeList, $heroTypesList, $heroSkillTypeList, $resourceTypeList;
 
   // open template
@@ -82,7 +82,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
   $hero = getHeroByPlayer($playerID);
 
-  if($hero != null) {
+  if ($hero != null) {
     $showLevelUp = false;
 
     $ritual = getRitualByLvl($hero['lvl']);
@@ -240,6 +240,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       $messageID = 0;
     }
   }
+
   /****************************************************************************************************
    *
    * Übergeben ans Template
@@ -256,13 +257,12 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     ));
   }
 
-  if ($hero) {
+  if ($hero != null) {
     $hero = getHeroByPlayer($playerID);
 
     if ($hero['expLeft'] <= 0) {
       $showLevelUp = true;
     }
-
 
     if ($hero['healPoints'] <= 0.2 * $hero['maxHealPoints']) {
       $hero['HPbar']='error';
@@ -279,14 +279,14 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       'resourceTypeList' => $resourceTypeList,
     ));
   }
-  
+
   if ($newhero) {
     $template->addVars(array(
-        'newhero'               => $newhero,
-        'heroTypesList'             => $heroTypesList
+        'newhero'       => $newhero,
+        'heroTypesList' => $heroTypesList
     ));
   }
-  
+
   if (isset($potions) && $potions) {
     $template->addVar('potions', $potions);
   }

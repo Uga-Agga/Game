@@ -475,7 +475,7 @@ $now = new DateTime();
 
 $terrainEffects = array();
 foreach ($terrainList[$ownCaves[$caveID]['terrain']]['effects'] as $id => $value) {
-  $terrainEffects[] = $resourceTypeList[$id]->name . ' ' . $value;
+  $terrainEffects[] = $effectTypeList[$id]->name . ' ' . $value;
 }
 
 // fill it
