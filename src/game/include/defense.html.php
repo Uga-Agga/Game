@@ -141,7 +141,7 @@ function defense_builder($caveID, &$details) {
 
     // if all requirements are met, but the maxLevel is 0, treat it like a non-buildable
     if ($maxLevel <= 0 && $result === TRUE) {
-      $result = ($details[$defense->dbFieldName]) ? _('Max. Stufe: 0') : false;
+      $result = (!$details[$defense->dbFieldName]) ? _('Max. Stufe: 0') : false;
     }
 
 /****************************************************************************************************
@@ -188,7 +188,7 @@ function defense_builder($caveID, &$details) {
         'cave_id'          => $caveID,
         'currentlevel'     => "0" + $details[$defense->dbFieldName],
 //        'duration_formula' => formula_parseToReadable($defense->productionTimeFunction),
-        'dependencies'     => ($result !== FALSE) ? $result : false
+        'dependencies'     => ($result !== false) ? $result : false
       );
 
 /****************************************************************************************************
@@ -196,7 +196,7 @@ function defense_builder($caveID, &$details) {
 * Verteidigungsanlage die nicht gebaut werden können.
 *
 ****************************************************************************************************/
-    } else if ($result !== FALSE && !$defense->nodocumentation){
+    } else if ($result !== false && !$defense->nodocumentation){
       $defenseSystemUnqualified[$defense->defenseSystemID] = array(
         'name'             => $defense->name,
         'dbFieldName'      => $defense->dbFieldName,
