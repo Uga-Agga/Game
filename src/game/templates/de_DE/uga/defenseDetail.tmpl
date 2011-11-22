@@ -16,79 +16,102 @@
 <div class="box"> 
   <div class="box-header"><strong>{{ name }}</strong></div>
   <div class="box-content success inner nohover">
-  <table class="table nohover" >
-   <tr>
-    <td rowspan="4" ><img src="{{ gfx }}/externals/{{ dbFieldName }}_large.gif" alt="{name}" title="{name}" style="width:250px; border:none;"/></td>
-    <td style="width: 550px" >{{ description|raw }}</td>
-   </tr>
-   <tr><td>&nbsp;</td></tr>
-   <tr><td><strong>Maximale Stufe:</strong> {{ maxlevel }} (derzeit: {{ currentlevel}})</td></tr>
-   <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td colspan="2">
-    {% if LEVELS %}
-      <strong>Kosten pro Stufe bei {{ LEVELS.population }} Leuten:</strong>
-      <table>
-      <tr><td>&nbsp;</td></tr>
-        <tr>
-         <td><i>Stufe</i></td>
-          <td style="text-align:left; padding-left: 14px;"><i>Kosten</i></td>
-        </tr>
-        {% for level in LEVELS['LEVEL'] %}
-        <tr>
-          <td style="text-align: right;">{{ level.level }}</td>
-          <td style="padding-left: 14px;">
-            {% for resource in level.RESOURCECOST %}
-              <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />
-              {{ resource.value }} &nbsp;
-            {% endfor %}
-            {% for unit in level.UNITCOST %}
-              <br />{{ unit.name }}: {{ unit.value }}
-            {% endfor %}
-            {% for building in level.BUILDINGCOST %}
-              <br />{{ building.name }}: {{ building.value }}
-            {% endfor %}
+    <div style="float: left; width: 39%; max-width: 256px;"><img src="{{ gfx }}/externals/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" /></div>
+    <div style="float: left; width: 61%;">
+      <ul>
+        <li>{{ description|raw }}</li>
+        <li>&nbsp;</li>
+        <li><span class="bold">Maximale Stufe:</span> {{ maxlevel }}</li>
+        <li>&nbsp;</li>
+        {% if levels %}
+        <li class="bold">Baukosten und -zeiten bei {{ LEVELS.population }} Einwohnern:</li>
+        <li>
+          <table>
+            {% for level in levels['LEVEL'] %}
+            <tr>
+              <td style="text-align: right;">Stufe {{ level.level }}:</td>
+              <td style="padding-left: 6px;">
+                {% for resource in level.RESOURCECOST %}
+                  <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
+                  {{ resource.value }} &nbsp;
+                {% endfor %}
+                {% for unit in level.UNITCOST %}
+                  <br />
+                  {{ unit.name }}: {{ unit.value }}
+                {% endfor %}
+                {% for building in level.BUILDINGCOST %}
+                  <br />
+                  {{ building.name }}: {{ building.value }}
+                {% endfor %}
+                {% for defense in level.DEFENSECOST %}
+                  <br />
+                  {{ defense.name }}: {{ defense.value }}
+                {% endfor %}
           </td>
-          {% for defense in level.DEFENSECOST %}
-            <br />{{ defense.name }}: {{ defense.value }}
-          {% endfor %}
-          <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" alt="Dauer:" />{{ level.time }}</td>
-        </tr>
-        {% endfor %}
-       </table>
-     {% endif %}
-    </td>
-   </tr>
-   <tr><td>&nbsp;</td></tr>
-   {% if DEPGROUP %}
-   <tr>
-    <td colspan="2">
-     <strong>Abh&auml;ngigkeiten: </strong>
-      <table>
-      {% for depGroup in DEPGROUP %}
-        <tr><td>&nbsp;</td></tr>
+          <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
+            </tr>
+            {% endfor %}
+           </table>
+         {% endif %}
+      </li>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div style="float: left; width: 39%; max-width: 256px; padding-top: 10px;">
+      <ul>
+        {% if depgroup %}
+          <li class="bold">Abhängigkeiten:</li>
+          <li>
+            <table class="table nohover" style="width: 256px;">
+              {% for item in depgroup %}
+                <tr class="bold"><td class="bold" colspan="2">{{ item.name }}:</td></tr>
+                {% for dependency in item.DEP %}
+                  <tr>
+                    <td>{{ dependency.name }}</td>
+                    <td>{{ dependency.level|raw }}</td>
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            </table>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+    <div style="float: left; width: 61%;">
+      <table class="table nohover" style="width: 256px;">
+        <tr class="bold"><td class="bold" colspan="2">Eigenschaften:</td></tr>
         <tr>
-          <td colspan="2">Diese Verteidigungsanlage h&auml;ngt von folgenden {{ depGroup.name}} ab:</td>
+          <td>Fernangriffsschaden</td>
+          <td>{{ rangeAttack }}</td>
         </tr>
         <tr>
-          <td><i>Name</i></td>
-          <td class="text-right"><i>Stufe</i></td>
+          <td>Getümmelschaden</td>
+          <td>{{ attackRate }}</td>
         </tr>
-        {% for dependency in depGroup.DEP %}
-          <tr>
-            <td>{{ dependency.name }}</td>
-            <td class="text-right">{{ dependency.level|raw }}</td>
-          </tr>
-        {% endfor %}
-      {% endfor %}
+        <tr>
+          <td>Widerstandspunkte</td>
+          <td>{{ defenseRate }}</td>
+        </tr>
+        <tr>
+          <td>Größe</td>
+          <td>{{ size }}</td>
+        </tr>
+        <tr>
+          <td>Knüppelpunkte</td>
+          <td>{{ warPoints }}</td>
+        </tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td class="bold" colspan="2">Spionage - Eigenschaften:</td></tr>
+        <tr>
+          <td>Spionageabwehr</td>
+          <td>{{ antiSpyChance }}</td>
+        </tr>
       </table>
-    </td>
-   </tr>
-   {% endif %}
-</table>
+    </div>
+    <div style="clear: both;"></div>
+  </div>
 </div>
-</div>
-<br />
+
 <div class="success"><a href="{rules_path}?modus=misc&amp;miscID=5" onclick="window.open(this.href); return false;">weitere Informationen zu allen Erweiterungen</a></div>
 
 

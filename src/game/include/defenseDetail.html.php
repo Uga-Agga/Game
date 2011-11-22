@@ -20,23 +20,15 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function defense_showProperties($defenseID, $cave, $method) {
-
-  global 
-    $buildingTypeList, 
-    $defenseSystemTypeList, 
-    $resourceTypeList, 
-    $scienceTypeList, 
-    $unitTypeList,
-    $template;
+  global $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
   // first check whether that defense should be displayed...
   $defense = $defenseSystemTypeList[$defenseID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$defense->maxLevel};", '$cave')));
   $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
 
-  if (!$defense || ($defense->nodocumentation &&
-                 !$cave[$defense->dbFieldName] &&
-                 rules_checkDependencies($defense, $cave) !== TRUE)) {
+  if (!$defense || ($defense->nodocumentation && !$cave[$defense->dbFieldName] && rules_checkDependencies($defense, $cave) !== TRUE)) {
     $defense = current($defenseSystemTypeList);
   }
 
@@ -54,24 +46,25 @@ function defense_showProperties($defenseID, $cave, $method) {
   $levels = array();
   for ($level = $cave[$defense->dbFieldName], $count = 0;
        $level < $maxLevel && $count < ($shortVersion ? 3 : 10);
-       ++$count, ++$level, ++$cave[$defense->dbFieldName]){
+       ++$count, ++$level, ++$cave[$defense->dbFieldName]) {
 
-    $duration = time_formatDuration(
-                  eval('return ' .
-                       formula_parseToPHP($defense->productionTimeFunction.";",'$cave'))
-                  * DEFENSESYSTEM_TIME_BASE_FACTOR);
+    $duration = time_formatDuration(eval('return ' . formula_parseToPHP($defense->productionTimeFunction.";",'$cave')) * DEFENSESYSTEM_TIME_BASE_FACTOR);
 
     // iterate ressourcecosts
     $resourcecost = array();
-    foreach ($defense->resourceProductionCost as $resourceID => $function){
+    foreach ($defense->resourceProductionCost as $resourceID => $function) {
 
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$cave')));
-      if ($cost)
-        array_push($resourcecost,
-                   array(
-                   'name'        => $resourceTypeList[$resourceID]->name,
-                   'dbFieldName' => $resourceTypeList[$resourceID]->dbFieldName,
-                   'value'       => $cost));
+      if ($cost) {
+        array_push(
+          $resourcecost,
+          array(
+           'name'        => $resourceTypeList[$resourceID]->name,
+           'dbFieldName' => $resourceTypeList[$resourceID]->dbFieldName,
+           'value'       => $cost
+          )
+        );
+      }
     }
     // iterate unitcosts
     $unitcost = array();
@@ -189,19 +182,21 @@ function defense_showProperties($defenseID, $cave, $method) {
     array_push($dependencies, array('name' => _('Einheiten'),
                                     'DEP'  => $unitdep));
 
-  $template->addVars(array('name'          => $defense->name,
-                                 'dbFieldName'   => $defense->dbFieldName,
-                                 'description'   => $defense->description,
-                                 'maxlevel'      => $maxLevel,
-                                 'currentlevel'  => $currentlevel,
-                                 'rangeAttack'   => $defense->attackRange,
-                                 'attackRate'    => $defense->attackRate,
-                                 'defenseRate'   => $defense->defenseRate,
-                                 'size'          => $defense->hitPoints,
-                                 'antiSpyChance' => $defense->antiSpyChance,
-                                 'LEVELS'        => $levels,
-                                 'DEPGROUP'      => $dependencies,
-                                 'rules_path'    => RULES_PATH));
+  $template->addVars(array(
+    'name'          => $defense->name,
+    'dbFieldName'   => $defense->dbFieldName,
+    'description'   => $defense->description,
+    'maxlevel'      => $maxLevel,
+    'currentlevel'  => $currentlevel,
+    'rangeAttack'   => $defense->attackRange,
+    'attackRate'    => $defense->attackRate,
+    'defenseRate'   => $defense->defenseRate,
+    'size'          => $defense->hitPoints,
+    'antiSpyChance' => $defense->antiSpyChance,
+    'warPoints'     => $defense->warPoints,
+    'levels'        => $levels,
+    'depgroup'      => $dependencies,
+    'rules_path'    => RULES_PATH));
 
 
 }

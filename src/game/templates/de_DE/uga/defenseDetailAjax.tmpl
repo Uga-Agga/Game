@@ -11,63 +11,97 @@
 #}
 {% spaceless %}
 
-<div style="float: left; width: 39%; max-width: 256px;">
-<img src="{{ gfx }}/externals/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
-</div>
+<div style="float: left; width: 39%; max-width: 256px;"><img src="{{ gfx }}/externals/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" /></div>
 <div style="float: left; width: 61%;">
-{{ description|raw }}
-<br/>
-<strong>Maximale Stufe:</strong> {{ maxlevel }}<br/>
-<br/>
-  
-{% if DEPGROUP %}
-  <strong>Abh&auml;ngigkeiten: </strong><br/>
-	{% for depGroup in DEPGROUP %}
-    <strong>{{ depGroup.name}}:</strong>
-    {% for dependency in depGroup.DEP %}
-      {{ dependency.name }} {{ dependency.level|raw }}
-    {% endfor %}	
-    <br/>			
-	{% endfor %}
-{% endif %}
-
-
-  
-	  {% if LEVELS %}
-	  <br/><strong>Baukosten und -zeiten bei {{ LEVELS.population }} Einwohnern:</strong>
+  <ul>
+    <li>{{ description|raw }}</li>
+    <li>&nbsp;</li>
+    <li><span class="bold">Maximale Stufe:</span> {{ maxlevel }}</li>
+    <li>&nbsp;</li>
+    {% if levels %}
+    <li class="bold">Baukosten und -zeiten bei {{ LEVELS.population }} Einwohnern:</li>
+    <li>
       <table>
-        {% for level in LEVELS['LEVEL'] %}
+        {% for level in levels['LEVEL'] %}
         <tr>
           <td style="text-align: right;">Stufe {{ level.level }}:</td>
-          <td style="padding-left: 6px;">		  
-        	{% for resource in level.RESOURCECOST %}
-            <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
-            {{ resource.value }} &nbsp;
+          <td style="padding-left: 6px;">
+            {% for resource in level.RESOURCECOST %}
+              <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
+              {{ resource.value }} &nbsp;
             {% endfor %}
-        	{% for unit in level.UNITCOST %}
+            {% for unit in level.UNITCOST %}
               <br />
               {{ unit.name }}: {{ unit.value }}
             {% endfor %}
-        	{% for building in level.BUILDINGCOST %}
+            {% for building in level.BUILDINGCOST %}
               <br />
               {{ building.name }}: {{ building.value }}
             {% endfor %}
-        	{% for defense in level.DEFENSECOST %}
+            {% for defense in level.DEFENSECOST %}
               <br />
               {{ defense.name }}: {{ defense.value }}
             {% endfor %}
-		  </td>
-            <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
-          
+      </td>
+      <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
         </tr>
         {% endfor %}
        </table>
      {% endif %}
-
-     
-
-
+  </li>
 </div>
 <div style="clear: both;"></div>
 
+<div style="float: left; width: 39%; max-width: 256px; padding-top: 10px;">
+  <ul>
+    {% if depgroup %}
+      <li class="bold">Abhängigkeiten:</li>
+      <li>
+        <table class="table nohover" style="width: 256px;">
+          {% for item in depgroup %}
+            <tr class="bold"><td class="bold" colspan="2">{{ item.name }}:</td></tr>
+            {% for dependency in item.DEP %}
+              <tr>
+                <td>{{ dependency.name }}</td>
+                <td>{{ dependency.level|raw }}</td>
+              </tr>
+            {% endfor %}
+          {% endfor %}
+        </table>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+<div style="float: left; width: 61%;">
+  <table class="table nohover" style="width: 256px;">
+    <tr class="bold"><td class="bold" colspan="2">Eigenschaften:</td></tr>
+    <tr>
+      <td>Fernangriffsschaden</td>
+      <td>{{ rangeAttack }}</td>
+    </tr>
+    <tr>
+      <td>Getümmelschaden</td>
+      <td>{{ attackRate }}</td>
+    </tr>
+    <tr>
+      <td>Widerstandspunkte</td>
+      <td>{{ defenseRate }}</td>
+    </tr>
+    <tr>
+      <td>Größe</td>
+      <td>{{ size }}</td>
+    </tr>
+    <tr>
+      <td>Knüppelpunkte</td>
+      <td>{{ warPoints }}</td>
+    </tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr><td class="bold" colspan="2">Spionage - Eigenschaften:</td></tr>
+    <tr>
+      <td>Spionageabwehr</td>
+      <td>{{ antiSpyChance }}</td>
+    </tr>
+  </table>
+</div>
+<div style="clear: both;"></div>
 {% endspaceless %}
