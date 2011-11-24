@@ -13,11 +13,9 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function doYouKnow_getContent() {
-  global $config;
-  global $db;
+  global $db, $config;
   
   $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'doYouKnow.ihtml');
-
 
   if (request_var('show', "") == "all") {
     $sql = $db->prepare("SELECT * FROM ". DO_YOU_KNOW_TABLE);

@@ -13,7 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function wonder_getWonderContent($caveID, &$details) {
-  global $wonderTypeList, $template;
+  global $wonderTypeList, $request, $template;
 
   // open template
   $template->setFile('wonder.tmpl');
@@ -28,7 +28,7 @@ function wonder_getWonderContent($caveID, &$details) {
      2 => array('type' => 'info', 'message' => _('Die Götter haben Ihr Flehen nicht erhört! Die eingesetzten Opfergaben sind natürlich dennoch verloren. Mehr Glück beim nächsten Mal!'))
   );
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -36,16 +36,19 @@ function wonder_getWonderContent($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'wonder':
-      $wonderID = request_var('wonderID', -1);
+      $wonderID = $request->getVar('wonderID', -1);
+      $caveName = $request->getVar('CaveName', '');
+      $xCoord = $request->getVar('xCoord', 0);
+      $yCoord = $request->getVar('yCoord', 0);
+
       if ($wonderID != -1) {
-        $caveName = request_var('CaveName', '');
         if (!empty($caveName)) {
-          $caveData = getCaveByName(request_var('CaveName', ""));
+          $caveData = getCaveByName($caveName);
           $xCoord = $caveData['xCoord'];
           $yCoord = $caveData['yCoord'];
-        } else {
-          $xCoord = request_var('xCoord', 0);
-          $yCoord = request_var('yCoord', 0);
+        } else if ($xCoord == 0 && $yCoord == 0) {
+          $messageID = -3;
+          break;
         }
       } else {
         $messageID = -1;

@@ -33,10 +33,13 @@ session_start();
 // init config
 $config = new Config();
 
+// init request class
+$request = new Request();
+
 // keine Variablen angegeben
-$sessionID = request_var('id', '');
-$playerID = request_var('userID', 0);
-$noGfx = request_var('nogfx', 0);
+$sessionID = $request->getVar('id', '');
+$playerID = $request->getVar('userID', 0);
+$noGfx = $request->getVar('nogfx', 0);
 
 if (!$sessionID || !$playerID) {
   page_error403("Fehlende Loginvariablen.");
@@ -44,7 +47,8 @@ if (!$sessionID || !$playerID) {
 
 // connect to database
 if (!($db = DbConnect())) {
-  page_dberror();
+  header("Location: finish.php?id=db");
+  exit;
 }
 
 //check user from Session-table with id
@@ -54,9 +58,13 @@ $sql = $db->prepare("SELECT *
                        AND playerID = :playerID");
 $sql->bindValue('s_id', $sessionID, PDO::PARAM_STR);
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-if (!$sql->execute()) page_error403("Falsche SessionID.");
+if (!$sql->execute()) {
+  header("Location: finish.php?id=wrongSessionID");
+  exit;
+}
 
-$session_row = $sql->fetch(PDO::FETCH_ASSOC);
+$sessionRow = $sql->fetch(PDO::FETCH_ASSOC);
+$sql->closeCursor();
 
 // sessionstart sollte nur einmal augerufen werden können
 $sql = $db->prepare("UPDATE " . SESSION_TABLE . "
@@ -66,18 +74,22 @@ $sql = $db->prepare("UPDATE " . SESSION_TABLE . "
                        AND s_id_used = 0");
 $sql->bindValue('s_id', $sessionID, PDO::PARAM_STR);
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-if (!$sql->execute() || $sql->rowCount() == 0)
-  page_error403("Ungültige SessionID.");
+if (!$sql->execute() || $sql->rowCount() == 0) {
+  header("Location: finish.php?id=wrongSessionID");
+  exit;
+}
 
 // get player by playerID for session
 $player = Player::getPlayer($playerID);
-if (!$player)
-  page_error403("Ungültige SpielerID.");
+if (!$player) {
+  header("Location: finish.php?id=wrongSessionID");
+  exit;
+}
 
 // put user, its session and nogfx flag into session
 $_SESSION['player']    = $player;
 $_SESSION['nogfx']     = ($noGfx == 1);
-$_SESSION['session']   = $session_row;
+$_SESSION['session']   = $sessionRow;
 $_SESSION['logintime'] = date("YmdHis");
 
 // initiate Session messages

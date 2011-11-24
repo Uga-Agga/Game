@@ -300,7 +300,7 @@ class Messages extends Parser {
     $nachrichten = array();
 
     // get announcements
-    $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS betreff, m.messageTime
+    $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime
                          FROM ". MESSAGE_TABLE ." m
                            LEFT JOIN ". PLAYER_TABLE ." p
                              ON p.playerID = m.senderID 
@@ -327,7 +327,7 @@ class Messages extends Parser {
 
     // get user messages
     if ($messageClass>= 0) {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS betreff,  m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -341,7 +341,7 @@ class Messages extends Parser {
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS betreff, m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -396,7 +396,7 @@ class Messages extends Parser {
                           ELSE \""._('unbekannte Nachrichtenart')."\"
                           END AS nachrichtenart, 
 
-                          m.messageSubject AS betreff, 
+                          m.messageSubject AS subject, 
                           DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum, 
                           SIGN(m.read) as `read` 
 
@@ -422,7 +422,7 @@ class Messages extends Parser {
                           ELSE \""._('unbekannte Nachrichtenart')."\"
                           END AS nachrichtenart, 
 
-                          m.messageSubject AS betreff, 
+                          m.messageSubject AS subject, 
                           DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum, 
                           SIGN(m.read) as `read` 
 
@@ -467,7 +467,7 @@ class Messages extends Parser {
 
     // get user messages
     if ($messageClass >= 0) {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS betreff,  m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -481,7 +481,7 @@ class Messages extends Parser {
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS betreff, m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -685,7 +685,7 @@ class Messages extends Parser {
     global $db;
 
     $sql = $db->prepare("SELECT 
-                           m.messageSubject AS betreff, 
+                           m.messageSubject AS subject, 
                            m.senderID AS senderID, 
                            m.recipientID AS empfaengerID, 
                            IFNULL(p.name, \"System\") AS dummy, 
@@ -736,7 +736,7 @@ class Messages extends Parser {
     return $row;
   }
 
-  public function insertMessageIntoDB($empfaenger, $betreff, $nachricht, $sender_delete=false) {
+  public function insertMessageIntoDB($empfaenger, $subject, $nachricht, $sender_delete=false) {
     global $db, $config;
 
     // get Empfaenger ID
@@ -771,7 +771,7 @@ class Messages extends Parser {
     $sql->bindValue('recipientID', $row['playerID'], PDO::PARAM_STR);
     $sql->bindValue('senderID', $this->selfPlayerID, PDO::PARAM_INT);
     $sql->bindValue('messageClass', 10, PDO::PARAM_INT);
-    $sql->bindValue('messageSubject', $betreff, PDO::PARAM_STR);
+    $sql->bindValue('messageSubject', $subject, PDO::PARAM_STR);
     $sql->bindValue('messageText', $nachricht, PDO::PARAM_STR);
     $sql->bindValue('senderDelete', $sender_delete, PDO::PARAM_BOOL);
     if (!$sql->execute()) {
@@ -781,7 +781,7 @@ class Messages extends Parser {
     return $sql->rowCount();
   }
 
-  public function sendSystemMessage($receiverID, $type, $betreff, $nachricht) {
+  public function sendSystemMessage($receiverID, $type, $subject, $nachricht) {
     global $db;
 
     $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ." (recipientID, messageClass, senderID, messageSubject, messageText, messageTime) " .
@@ -789,7 +789,7 @@ class Messages extends Parser {
     $sql->bindValue('receiverID', $receiverID, PDO::PARAM_INT);
     $sql->bindValue('type', $type, PDO::PARAM_INT);
     $sql->bindValue('senderID', (int) 0, PDO::PARAM_INT);
-    $sql->bindValue('subject', $betreff, PDO::PARAM_STR);
+    $sql->bindValue('subject', $subject, PDO::PARAM_STR);
     $sql->bindValue('message', $nachricht, PDO::PARAM_STR);
     if (!$sql->execute()) {
       return false;
@@ -938,7 +938,7 @@ class MessageExporter {
                        _('Absender'), $message->sender,
                        _('Empf&auml;nger'), $message->recipient,
                        _('Datum'), $message->time,
-                       _('Betreff'), $message->subject,
+                       _('subject'), $message->subject,
                        $message->text);
 
     // add headers

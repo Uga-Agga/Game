@@ -14,7 +14,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 class WonderTarget {
 
-  function getWonderTargets() {
+  static function getWonderTargets() {
     static $result = NULL;
 
     if ($result === NULL) {

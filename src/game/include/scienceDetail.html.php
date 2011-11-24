@@ -16,8 +16,6 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   global $template;
   global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
-  $no_resource_flag = 1;
-
   // first check whether that science should be displayed...
   $science = $scienceTypeList[$scienceID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$science->maxLevel};", '$caveData')));

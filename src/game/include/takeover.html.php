@@ -22,20 +22,21 @@ require_once('formula_parser.inc.php');
  */
 
 function takeover_main($caveID, $ownCaves) {
-  global $resourceTypeList, $TAKEOVERMAXPOPULARITYPOINTS, $TAKEOVERMINRESOURCEVALUE, $template;
+  global $request, $template;
+  global $resourceTypeList, $TAKEOVERMAXPOPULARITYPOINTS, $TAKEOVERMINRESOURCEVALUE;
 
   // open template
   $template->setFile('takeover.tmpl');
 
   $feedback = '';
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
     case 'withdrawal':
-      if (isset($_POST['abort_withdrawal'])) {
+      if ($request->isPost('abort_withdrawal')) {
         break;
       }
 
-      if (isset($_POST['confirm_withdrawal'])) {
+      if ($request->isPost('confirm_withdrawal')) {
         $feedback = takeover_withdrawal();
         break;
       }
@@ -46,13 +47,13 @@ function takeover_main($caveID, $ownCaves) {
     break;
 
     case 'change':
-      if (isset($_POST['abort_change'])) {
+      if ($request->isPost('abort_change')) {
         break;
       }
 
-      $bidding = takeover_getBidding();
-      $xCoord        = request_var('xCoord', 0);
-      $yCoord        = request_var('yCoord', 0);
+      $bidding       = takeover_getBidding();
+      $xCoord        = $request->getVar('xCoord', 0);
+      $yCoord        = $request->getVar('yCoord', 0);
       $currentYCoord = (isset($bidding['yCoord'])) ? $bidding['yCoord'] : 0;
       $currentXCoord = (isset($bidding['xCoord'])) ? $bidding['xCoord'] : 0;
 
@@ -66,7 +67,7 @@ function takeover_main($caveID, $ownCaves) {
         break;
       }
 
-      if (isset($_POST['confirm_change'])) {
+      if ($request->isPost('confirm_change')) {
         $feedback = takeover_change($xCoord, $yCoord);
         break;
       }
@@ -119,8 +120,8 @@ function takeover_main($caveID, $ownCaves) {
     $template->addVars(array(
       'popularity'       => $TAKEOVERMAXPOPULARITYPOINTS,
       'maxcaves'         => $maxcaves,
-      'target_x_coord'   => request_var('targetXCoord', 0),
-      'target_y_coord'   => request_var('targetYCoord', 0),
+      'target_x_coord'   => $request->getVar('targetXCoord', 0),
+      'target_y_coord'   => $request->getVar('targetYCoord', 0),
       'resource_ratings' => $ratings
     ));
 
@@ -148,9 +149,10 @@ function takeover_main($caveID, $ownCaves) {
  */
 
 function takeover_change($xCoord, $yCoord) {
+  global $request;
 
   // get check
-  $change_check = request_var('change_check', 0);
+  $change_check = $request->getVar('change_check', 0);
 
   // verify $check
   if ($change_check != $_SESSION['change_check']) {
@@ -174,10 +176,10 @@ function takeover_change($xCoord, $yCoord) {
  */
 
 function takeover_withdrawal() {
-  global $db;
+  global $db, $request;
 
   // get check
-  $withdrawal_check = request_var('withdrawal_check', 0);
+  $withdrawal_check = $request->getVar('withdrawal_check', 0);
 
   // verify $check
   if (!isset($_SESSION['withdrawal_check']) || $withdrawal_check != $_SESSION['withdrawal_check']) {
@@ -213,20 +215,23 @@ function takeover_getBidding($caveCount=0) {
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
   // return NULL on error or if recordSet is empty, as there is no bidding
-  if (!$sql->execute())
+  if (!$sql->execute()) {
     return NULL;
+  }
 
   // fetch row
   $row = $sql->fetch();
   if (!$row) return NULL;
 
   // fill return value
-  $bidding = array('caveID'      => $row['caveID'],
-                   'xCoord'      => $row['xCoord'],
-                   'yCoord'      => $row['yCoord'],
-                   'status'      => $row['status'],
-                   'caveName'    => $row['name'],
-                   'uh_caveName' => unhtmlentities($row['name']));
+  $bidding = array(
+    'caveID'      => $row['caveID'],
+    'xCoord'      => $row['xCoord'],
+    'yCoord'      => $row['yCoord'],
+    'status'      => $row['status'],
+    'caveName'    => $row['name'],
+    'uh_caveName' => unhtmlentities($row['name'])
+  );
 
   // get own status
   $bidding += takeover_getStatusPic($row['status']);
@@ -310,7 +315,6 @@ function changeCaveIfReasonable($xCoord, $yCoord) {
   if ($sql->execute()) {
     // this cave has no owner and may be taken over
     if ($row = $sql->fetch()) {
-
         // prepare statement
         $colNames = array();
         $values = array();

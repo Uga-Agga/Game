@@ -13,7 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeChooseLeader_getContent($playerID, $tribe) {
-  global $template, $governmentList, $leaderDeterminationList;
+  global $request, $template;
+  global $governmentList, $leaderDeterminationList;
 
   // open template
   $template->setFile('tribeChooseLeader.tmpl');
@@ -42,7 +43,7 @@ function tribeChooseLeader_getContent($playerID, $tribe) {
       'description' => $leaderDeterminationList[$id]['description'],
     ));
 
-    $data = request_var('data', array('' => ''));
+    $data = $request->getVar('data', array('' => ''));
     if ($data) {
       $messageID = leaderChoose_processChoiceUpdate($playerID, $data['playerID'], $tribe);
     }

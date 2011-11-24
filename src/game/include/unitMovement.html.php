@@ -16,7 +16,7 @@ require_once('lib/Movement.php');
 @include_once('modules/CaveBookmarks/model/CaveBookmarks.php');
 
 function unit_Movement($caveID, &$ownCave) {
-  global $config, $db, $template;
+  global $config, $db, $request, $template;
   global $MAX_RESOURCE, $MOVEMENTCOSTCONSTANT, $MOVEMENTSPEEDCONSTANT, $FUELRESOURCEID, $resourceTypeList, $unitTypeList;
 
   // get movements
@@ -47,7 +47,7 @@ function unit_Movement($caveID, &$ownCave) {
   if ($details['artefacts'] > 0) {
     // get artefacts
     $myartefacts = artefact_getArtefactsReadyForMovement($caveID);
-    $moveArtefactID = request_var('myartefacts', 0);
+    $moveArtefactID = $request->getVar('myartefacts', 0);
 
     // was an artefact chosen?
     if ($moveArtefactID > 0) {
@@ -74,7 +74,7 @@ function unit_Movement($caveID, &$ownCave) {
    */
   
   $moveHero = 0;
-  if ($details['hero'] != 0 && request_var('moveHero', false) == true) {
+  if ($details['hero'] != 0 && $request->getVar('moveHero', false) == true) {
     $moveHero = $details['hero'];
   }
 
@@ -94,15 +94,15 @@ function unit_Movement($caveID, &$ownCave) {
   $minutesPerCave = eval('return '. formula_parseToPHP($MOVEMENTSPEEDCONSTANT . ';', '$details'));
   $minutesPerCave *= MOVEMENT_TIME_BASE_FACTOR/60;
 
-  if (request_var('moveit', false) && sizeof(request_var('unit', array('' => '')))) {
-    $targetXCoord   = intval(request_var('targetXCoord', 0));
-    $targetYCoord   = intval(request_var('targetYCoord', 0));
-    $targetCaveName = request_var('targetCaveName', "");
-    $targetCaveID   = intval(request_var('targetCaveID', 0));
-    $movementID     = intval(request_var('movementID', 0));
+  if ($request->getVar('moveit', false) && sizeof($request->getVar('unit', array('' => '')))) {
+    $targetXCoord   = $request->getVar('targetXCoord', 0);
+    $targetYCoord   = $request->getVar('targetYCoord', 0);
+    $targetCaveName = $request->getVar('targetCaveName', '');
+    $targetCaveID   = $request->getVar('targetCaveID', 0);
+    $movementID     = $request->getVar('movementID', 0);
 
     // check for scripters
-    check_timestamp(request_var('tstamp', 0));
+    check_timestamp($request->getVar('tstamp', 0));
 
     $validCaveName = false;
 
@@ -132,9 +132,9 @@ function unit_Movement($caveID, &$ownCave) {
     }
 
     // Array von Nullwerten befreien
-    $unit     = array_filter(request_var('unit', array('' => '')), "filterZeros");
+    $unit     = array_filter($request->getVar('unit', array('' => '')), "filterZeros");
     $unit     = array_map("checkFormValues", $unit);
-    $resource = array_map("checkFormValues", request_var('rohstoff', array('' => '')));
+    $resource = array_map("checkFormValues", $request->getVar('rohstoff', array('' => '')));
 
     // Test, ob Einheitentragekapazität ausgelastet
     $overloaded = 0;
@@ -174,7 +174,7 @@ function unit_Movement($caveID, &$ownCave) {
     
     // check if army is small enough for hero
     $denymovement_hero = false;
-    if ($moveHero && (request_var('movementID', 0) == 3 || request_var('movementID', 0) == 6)) {
+    if ($moveHero && ($request->getVar('movementID', 0) == 3 || $request->getVar('movementID', 0) == 6)) {
       $hero = getHeroByPlayer($_SESSION['player']->playerID);
       //calculate size of army
       $armySize = 0;
@@ -187,7 +187,7 @@ function unit_Movement($caveID, &$ownCave) {
       }
     }
 
-    if (request_var('movementID', 0) == 0) {
+    if ($request->getVar('movementID', 0) == 0) {
       $msg = array('type' => 'error', 'message' => _('Bitte Bewegungsart auswählen!'));
       $moveHero = 0;
     }
@@ -222,7 +222,7 @@ function unit_Movement($caveID, &$ownCave) {
       $moveHero = 0;
     }
 
-    else if (request_var('movementID', 0) == 6 && cave_isCaveSecureByCoord($targetXCoord, $targetYCoord)) {
+    else if ($request->getVar('movementID', 0) == 6 && cave_isCaveSecureByCoord($targetXCoord, $targetYCoord)) {
       $msg = array('type' => 'error', 'message' => _('Sie können diese Höhle nicht übernehmen. Sie ist gegen übernahmen geschützt.'));
       $moveHero = 0;
     }
@@ -297,12 +297,14 @@ function unit_Movement($caveID, &$ownCave) {
         }
       }
     }
-  } else if ($eventID = request_var('eventID', 0)) {
+  } else if ($eventID = $request->getVar('eventID', 0)) {
     $msgID = reverseMovementEvent($caveID, $eventID);
     switch ($msgID) {
       case 0: $msg = array('type' => 'success', 'message' => _('Die Einheiten kehren zurück!')); break;
       case 1: $msg = array('type' => 'error', 'message' => _('Fehler bei der Rückkehr!')); break;
     }
+  } else if ($request->getVar('moveit', false)  && !sizeof($request->getVar('unit', array('' => '')))) {
+    $msg = array('type' => 'error', 'message' => _('Einheiten mitnehmen?'));
   }
 
   // refresh this cave
@@ -396,11 +398,11 @@ function unit_Movement($caveID, &$ownCave) {
   $template->addVar('unit_list', $units);
 
   // weitergereichte Koordinaten
-  if (!request_var('movementID', 0)) {
+  if (!$request->getVar('movementID', 0)) {
     $template->addVars(array(
-      'target_x_coord'   => request_var('targetXCoord', 0),
-      'target_y_coord'   => request_var('targetYCoord', 0),
-      'target_cave_name' => request_var('targetCaveName', ''),
+      'target_x_coord'   => $request->getVar('targetXCoord', 0),
+      'target_y_coord'   => $request->getVar('targetYCoord', 0),
+      'target_cave_name' => $request->getVar('targetCaveName', ''),
     ));
   }
 

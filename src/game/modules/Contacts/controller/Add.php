@@ -22,6 +22,7 @@ class Contacts_Add_Controller extends Controller {
   }
 
   function execute($caveID, $caves) {
+    global $request;
 
     // get model
     $model = new Contacts_Model($caveID, $caves);
@@ -30,7 +31,7 @@ class Contacts_Add_Controller extends Controller {
     $error = CONTACTS_NOERROR;
 
     // add contact
-    $contact = request_var('contact', '');
+    $contact = $request->getVar('contact', '');
     $error = $model->addContact($contact);
 
     // return Show Controller

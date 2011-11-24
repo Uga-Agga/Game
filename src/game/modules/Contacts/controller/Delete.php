@@ -22,6 +22,7 @@ class Contacts_Delete_Controller extends Controller {
   }
 
   function execute($caveID, $caves) {
+    global $request;
 
     // get model
     $model = new Contacts_Model($caveID, $caves);
@@ -30,7 +31,7 @@ class Contacts_Delete_Controller extends Controller {
     $error = CONTACTS_NOERROR;
 
     // delete contact
-    $contactID = intval(request_var('contactID', 0));
+    $contactID = $request->getVar('contactID', 0);
     $error = $model->deleteContact($contactID);
 
     // return Show Controller

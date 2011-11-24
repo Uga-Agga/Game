@@ -154,9 +154,9 @@ function page_sessionValidate() {
 }
 
 function page_getModus() {
-  global $config;
+  global $config, $request;
 
-  $modus = request_var('modus', NEWS);
+  $modus = $request->getVar('modus', NEWS);
   if (empty($modus)) {
     $modus = NEWS;
   }

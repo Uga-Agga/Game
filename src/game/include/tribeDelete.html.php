@@ -18,11 +18,11 @@ function tribeDelete_getContent($playerID, $tribe, $confirm) {
   $no_resource_flag = 1;
 
   // try to connect to login db
-  if (! tribe_isLeader($playerID, $tribe))
+  if (! tribe_isLeader($playerID, $tribe)) {
     page_dberror();
+  }
 
   // proccess form data
-
   if ($confirm) { // the only necessary field
     $success = tribe_deleteTribe($tribe);
 

@@ -17,9 +17,9 @@ require_once("game_rules.php");
 init_potions();
 
 function merchant_getMechantDetail($playerID, $caveID, &$details) {
+  global $db, $request, $template;
   global $buildingTypeList, $resourceTypeList, $tradeCategoriesTypeList, $tradeTypeList, $unitTypeList;
-  global $db, $template;
-  
+
   // open template
   $template->setFile('merchant.tmpl');
 
@@ -31,7 +31,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
      1 =>  array('type' => 'success', 'message' =>"Erfreut nimmt der Händler deine Bezahlung entgegen. \"Ich hoffe dir gefällt meine Ware. Empfehle mich bitte weiter!\"")
   );
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -39,7 +39,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $tradeID = request_var('tradeID', -1);
+      $tradeID = $request->getVar('tradeID', -1);
 
       $messageID = merchant_processOrder($tradeID, $caveID, $details);
       $details = getCaveSecure($caveID, $_SESSION['player']->playerID);

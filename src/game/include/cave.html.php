@@ -13,14 +13,14 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
+  global $config, $db, $request, $template;
   global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
-  global $config, $db, $template;
 
   // open template
   $template->setFile('cave.tmpl');
 
   $statusMsg = '';
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -28,7 +28,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 *
 ****************************************************************************************************/
     case 'caveGiveUp':
-      if (request_var('id', 0) == $details['caveID'] && isset($_POST['cancelOrderConfirm'])) {
+      if ($request->getVar('id', 0) == $details['caveID'] && $request->isPost('cancelOrderConfirm')) {
         if (cave_giveUpCave($details['caveID'], $_SESSION['player']->playerID, $_SESSION['player']->tribe)) {
           $template->throwError(_('Sie haben sich aus dieser Höhle zurückgezogen.'));
           return;
@@ -52,7 +52,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 *
 ****************************************************************************************************/
     case 'endProtection':
-      if (request_var('id', 0) == $details['caveID'] && isset($_POST['cancelOrderConfirm'])) {
+      if ($request->getVar('id', 0) == $details['caveID'] && $request->isPost('cancelOrderConfirm')) {
         if (beginner_endProtection($details['caveID'], $_SESSION['player']->playerID)) {
           $statusMsg = array('type' => 'success', 'message' => _('Sie haben den Anfängerschutz abgeschaltet.'));
           $details['protected'] = 0;

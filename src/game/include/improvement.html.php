@@ -13,7 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function improvement_getImprovementDetail($caveID, &$details) {
-  global $buildingTypeList, $template;
+  global $request, $template;
+  global $buildingTypeList;
 
   // open template
   $template->setFile('improvement.tmpl');
@@ -34,7 +35,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
   // get this cave's queue
   $queue = improvement_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -42,7 +43,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $buildingID = request_var('buildingID', -1);
+      $buildingID = $request->getVar('buildingID', -1);
       if ($buildingID == -1) {
         $messageID = 2;
         break;
@@ -65,7 +66,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = request_var('id', 0);
+      $eventID = $request->getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 1;
         break;
@@ -77,7 +78,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
         break;
       }
 
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         $messageID = improvement_cancelOrder($eventID, $caveID);
         if ($messageID == 0) {
           $queue = '';
@@ -99,7 +100,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'demolishing':
-      $improvementID = request_var('id', -1);
+      $improvementID = $request->getVar('id', -1);
       if ($improvementID == -1) {
         $messageID = 4;
         break;
@@ -110,7 +111,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
         break;
       }
 
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         $messageID = improvement_Demolishing($improvementID, $caveID, $details);
         $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
       } else {

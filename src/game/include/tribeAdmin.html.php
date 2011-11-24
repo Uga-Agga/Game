@@ -13,7 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeAdmin_getContent($playerID, $tag) {
-  global $config, $template, $relationList, $governmentList, $wonderTypeList;
+  global $config, $request, $template;
+  global $relationList, $governmentList, $wonderTypeList;
 
   // messages
   $messageText = array(
@@ -125,7 +126,7 @@ function tribeAdmin_getContent($playerID, $tag) {
     tribe_unmakeJuniorLeader($leaderID, $tag);
   }
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -134,13 +135,13 @@ function tribeAdmin_getContent($playerID, $tag) {
 ****************************************************************************************************/
 
     case 'update':
-      $data = request_var('data', array('' => ''));
+      $data = $request->getVar('data', array('' => ''));
 
       $postData = array(
         'name'        => $data['name'],
         'password'    => ($data['password'] != 'password') ? $data['password'] : $tribeData['password'],
         'avatar'      => $data['avatar'],
-        'description' => $_POST['data']['description']
+        'description' => $data['description']
       );
       $messageID = tribe_processAdminUpdate($playerID, $tag, $postData);
       $template->addVar('tribe_data', $postData);
@@ -157,7 +158,7 @@ function tribeAdmin_getContent($playerID, $tag) {
         break;
       }
 
-      $governmentData = request_var('governmentData', array('' => ''));
+      $governmentData = $request->getVar('governmentData', array('' => ''));
       $messageID = government_processGovernmentUpdate($tag, $governmentData);
     break;
 
@@ -167,7 +168,7 @@ function tribeAdmin_getContent($playerID, $tag) {
 *
 ****************************************************************************************************/
     case 'juniorLeader':
-      $juniorLeader = request_var('juniorLeader', array('' => ''));
+      $juniorLeader = $request->getVar('juniorLeader', array('' => ''));
       $newleadership = array(0 => $leaderID, 1 => $juniorLeader['juniorLeaderID']);
 
       if (!$isLeader) {
@@ -199,7 +200,7 @@ function tribeAdmin_getContent($playerID, $tag) {
       if (!$isLeader) {
         $messageID = -21;
       } else {
-        $messageID = tribe_processKickMember(request_var('playerID', 0), $tag);
+        $messageID = tribe_processKickMember($request->getVar('playerID', 0), $tag);
       }
     break;
 
@@ -209,8 +210,8 @@ function tribeAdmin_getContent($playerID, $tag) {
 *
 ****************************************************************************************************/
     case 'updateRelation':
-      $relationData = request_var('relationData', array('' => ''));
-      if (isset($_POST['forceSurrender'])) {
+      $relationData = $request->getVar('relationData', array('' => ''));
+      if ($request->isPost('forceSurrender')) {
         $messageID = relation_forceSurrender($tag, $relationData);
         $tribeRelations = relation_getRelationsForTribe($tag);
         $tribeWarTargets = relation_getWarTargetsAndFame($tag);
@@ -332,7 +333,7 @@ return;
 
 /*
   // proccess form data
-  if (($relationData = request_var('relationData', array('' => ''))) && request_var('forceSurrender', 0)) {
+  if (($relationData = $request->getVar('relationData', array('' => ''))) && $request->getVar('forceSurrender', 0)) {
     $messageID = relation_forceSurrender($tag, $relationData);
 */
 

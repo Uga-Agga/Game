@@ -113,7 +113,7 @@ function checkall(){
             <td>{{ item.nachrichtenart }}</td>
             <td>
               {% if item.read == 0 %}<img src="{{ gfx }}/de_DE/t_uga/messages/mail.gif" width="12px" height="12px" alt="" />{% endif %}
-              <a href="main.php{{ item.linkparams|raw }}">{{ item.betreff }}</a>
+              <a href="main.php{{ item.linkparams|raw }}">{{ item.subject|raw }}</a>
             </td>
             <td class="text-right">{{ item.datum }}</td>
           </tr>

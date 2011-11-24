@@ -25,7 +25,6 @@ class CaveBookmarks_Controller_Show extends Controller {
   }
 
   function execute($caveID, $caves) {
-
     // get model
     $model = new CaveBookmarks_Model();
 

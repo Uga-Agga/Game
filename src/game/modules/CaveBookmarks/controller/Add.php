@@ -22,6 +22,7 @@ class CaveBookmarks_Controller_Add extends Controller {
   }
 
   function execute($caveID, $caves) {
+    global $request;
 
     // get model
     $model = new CaveBookmarks_Model($caveID, $caves);
@@ -30,10 +31,10 @@ class CaveBookmarks_Controller_Add extends Controller {
     $error = CAVEBOOKMARKS_NOERROR;
 
     // add CaveBookmark
-    if (request_var('name', "")) {
-      $error = $model->addCaveBookmarkByName(request_var('name', ""));
+    if ($request->getVar('name', '')) {
+      $error = $model->addCaveBookmarkByName($request->getVar('name', ''));
     } else {
-      $error = $model->addCaveBookmarkByCoord(request_var('xCoord', 0), request_var('yCoord', 0));
+      $error = $model->addCaveBookmarkByCoord($request->getVar('xCoord', 0), $request->getVar('yCoord', 0));
     }
 
     // return Show Controller

@@ -23,13 +23,17 @@ $messageText = array (
   'db'      => _('Es konnte keine Verbindung zur Datenbank hergestellt werden!<br />Bitte wende dich an einen Administrator oder versuche es später erneut.'),
   'inaktiv' => sprintf(_('Sie waren für %s Minuten oder mehr inaktiv. Bitte loggen sie sich erneut ins Spiel ein um weiterspielen zu können.'), ((int)(SESSION_MAX_LIFETIME/60))),
   'logout'  => _('Du bist jetzt ausgeloggt und können den Browser schließen oder weitersurfen.<br /><br />Vielen Dank für das Spielen von Uga-Agga!'),
+  'wrongSessionID' => _('Falsche oder ungültige SessionID.'),
 );
+
+// init request class
+$request = new Request();
 
 // load and open template
 $template = new Template(UA_GAME_DIR . '/templates/de_DE/uga/');
 $template->setFile('finish.tmpl');
 
-$id = request_var('id', '');
+$id = $request->getVar('id', '');
 if (!empty($id) && isset($messageText[$id])) {
   $message = $messageText[$id];
 

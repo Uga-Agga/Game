@@ -28,7 +28,7 @@ init_heroSkills();
  *  @param meineHöhlen  all the data of all your caves
  */
 function hero_getHeroDetail($caveID, &$ownCaves) {
-  global $config, $db, $template;
+  global $config, $db, $request, $template;
   global $potionTypeList, $heroTypesList, $heroSkillTypeList, $resourceTypeList;
 
   // open template
@@ -72,8 +72,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   );
 
   // create new hero
-  $action = request_var('action', '');
-  $newHeroID = request_var('id', '');
+  $action = $request->getVar('action', '');
+  $newHeroID = $request->getVar('id', '');
   if ($action =="createHero") {
     if (isset($heroTypesList[$newHeroID])) {
       $messageID = createNewHero($heroTypesList[$newHeroID]['heroTypeID'], $playerID, $caveID);
@@ -102,7 +102,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       $resource[$key->dbFieldName]= $tmp;
     }
 
-    $action = request_var('action', '');
+    $action = $request->getVar('action', '');
     switch ($action) {
       case 'reincarnate':
         if ($hero['isAlive'] == 1) {
@@ -130,7 +130,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         }
 
         if ($hero['tpFree'] >= 1) {
-          $skill = request_var('skill', '');
+          $skill = $request->getVar('skill', '');
           switch ($skill) {
             case 'force':
               //typ='force';
@@ -185,8 +185,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       break;
 
       case 'immolateResources':
-        $resourceID = request_var('resourceID', -1);
-        $value = request_var('value', 0);
+        $resourceID = $request->getVar('resourceID', -1);
+        $value = $request->getVar('value', 0);
 
         $resultArray = hero_immolateResources($resourceID, $value, $caveID, $ownCaves);
         $messageID = $resultArray['messageID'];
@@ -203,8 +203,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           break;
         }
 
-        $potionID = request_var('potionID', -1);
-        $value = request_var('value', 0);
+        $potionID = $request->getVar('potionID', -1);
+        $value = $request->getVar('value', 0);
 
         if ($potionID == -1) {
           $messageID = -8; 

@@ -18,7 +18,7 @@ require_once('modules/Contacts/model/Contacts.php');
 // MESSAGES                                                                  //
 ///////////////////////////////////////////////////////////////////////////////
 function messages_getMessages($caveID, $deletebox, $box) {
-  global $config, $template;
+  global $config, $request, $template;
 
   // open template
   $template->setFile('messageList.tmpl');
@@ -35,8 +35,8 @@ function messages_getMessages($caveID, $deletebox, $box) {
   }
 
   // checkboxes checked
-  if (is_array($deletebox) && isset($_POST['mark_action'])) {
-    $mark_action = request_var('mark_action_value', '');
+  if (is_array($deletebox) && $request->isPost('mark_action')) {
+    $mark_action = $request->getVar('mark_action_value', '');
     switch ($mark_action) {
       // mail and delete
       case 'mail_and_delete':
@@ -65,21 +65,20 @@ function messages_getMessages($caveID, $deletebox, $box) {
   }
 
   // delete all
-  if (isset($_POST['delete_all'])) {
-    $deleted = $messagesClass->deleteAllMessages($box, request_var('messageClass', -2));
+  if ($request->isPost('delete_all')) {
+    $deleted = $messagesClass->deleteAllMessages($box, $request->getVar('messageClass', -2));
     $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleted));
     unset($_REQUEST['messageClass']);
   }
 
-   
   // flag messages
-  if (isset($_POST['flag'])) {
-    $messagesClass->flag(request_var('id', array('' => '')));
+  if ($request->isPost('flag')) {
+    $messagesClass->flag($request->getVar('id', array('' => '')));
   }
 
   // unflag messages
-  if (isset($_POST['unflag'])) {
-    $messagesClass->unflag(request_var('id', array('' => '')));
+  if ($request->isPost('unflag')) {
+    $messagesClass->unflag($request->getVar('id', array('' => '')));
   }
 
   // verschiedene Boxes werden hier behandelt... //
@@ -91,7 +90,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
 
   $classes = array();
   foreach ($messagesClass->MessageClass as $id => $text) {
-    $messageClass = (isset($_REQUEST['messageClass'])) ? request_var('messageClass', 0) : 0;
+    $messageClass = (isset($_REQUEST['messageClass'])) ? $request->getVar('messageClass', 0) : 0;
     if ($id != 1001) {
       $selected = ($messageClass == $id) ? 'selected="selected"' : '';
       $classes[] = array('id' => $id, 'text' => $text, 'selected' => $selected);
@@ -104,8 +103,8 @@ function messages_getMessages($caveID, $deletebox, $box) {
   /////////////////////////////////////////////////
 
   // calculate offset
-  $offset = request_var('offset', 0);
-  $messageClass = (isset($_REQUEST['messageClass'])) ? request_var('messageClass', 0) : -2;
+  $offset = $request->getVar('offset', 0);
+  $messageClass = (isset($_REQUEST['messageClass'])) ? $request->getVar('messageClass', 0) : -2;
   switch ($box){
     default:
     case BOX_INCOMING:
@@ -188,7 +187,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function messages_showMessage($caveID, $messageID, $box) {
-  global $config, $template;
+  global $config, $request, $template;
 
   // init messages class
   $messagesClass = new Messages;
@@ -206,7 +205,7 @@ function messages_showMessage($caveID, $messageID, $box) {
       $template->addVars(array(
         'reply' => array(
           array('arg' => "box",        'value' => BOX_INCOMING),
-          array('arg' => "betreff",    'value' => $messagesClass->createSubject($message['betreff'])),
+          array('arg' => "subject",    'value' => $messagesClass->createSubject($message['subject'])),
           array('arg' => "empfaenger", 'value' => $message['sender'])
         )
       ));
@@ -238,7 +237,7 @@ function messages_showMessage($caveID, $messageID, $box) {
   }
 
   // get next and privious messageID
-  $messageClass = request_var('filter', -2);
+  $messageClass = $request->getVar('filter', -2);
 
   $messageIdList = array();
   switch ($box) {
@@ -282,7 +281,7 @@ function messages_showMessage($caveID, $messageID, $box) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function messages_newMessage($caveID) {
-  global $config, $template;
+  global $config, $request, $template;
 
   // get contacts model
   $contacts_model = new Contacts_Model();
@@ -293,13 +292,13 @@ function messages_newMessage($caveID) {
   $template->setShowRresource(false);
 
   $template->addVars(array(
-    'box'        => request_var('box', BOX_INCOMING),
+    'box'        => $request->getVar('box', BOX_INCOMING),
     'sender'     => $_SESSION['player']->name,
-    'empfaenger' => unhtmlentities(request_var('empfaenger', "")),
-    'betreff'    => request_var('betreff', ""),
+    'empfaenger' => unhtmlentities($request->getVar('empfaenger', '')),
+    'subject'    => $request->getVar('subject', '', true),
     'contacts'   => $contacts,
     'hidden'     => array(
-      array('arg' => "box",    'value' => request_var('box', BOX_INCOMING)),
+      array('arg' => "box",    'value' => $request->getVar('box', BOX_INCOMING)),
       array('arg' => "caveID", 'value' => $caveID),
       array('arg' => "modus",  'value' => NEW_MESSAGE_RESPONSE)
     ),
@@ -311,18 +310,18 @@ function messages_newMessage($caveID) {
 ///////////////////////////////////////////////////////////////////////////////
 
 function messages_sendMessage($caveID) {
-  global $config, $template;
+  global $config, $request, $template;
 
   // init messages class
   $messagesClass = new Messages;
 
   $zeichen = 16384;
 
-  $betreff = (isset($_POST['betreff']) && !empty($_POST['betreff'])) ? $_POST['betreff'] : _('Kein Betreff');
-  $nachricht = (isset($_POST['nachricht']) && !empty($_POST['nachricht'])) ? $_POST['nachricht'] : '';
+  $subject = ($request->isPost('subject', true)) ? $request->getVar('subject', '', true) : _('Kein Betreff');
+  $nachricht = ($request->isPost('nachricht', true)) ? $request->getVar('nachricht', '', true) : '';
 
   // **** get recipient ****
-  $contactID = request_var('contactID', 0);
+  $contactID = $request->getVar('contactID', 0);
 
   // get recipient from contactlist
   $empfaenger = "";
@@ -334,7 +333,7 @@ function messages_sendMessage($caveID) {
 
   // get recipient from textfield
   } else {
-    $empfaenger = request_var('empfaenger', "");
+    $empfaenger = $request->getVar('empfaenger', '');
   }
 
   // open template
@@ -345,14 +344,14 @@ function messages_sendMessage($caveID) {
     $message = array('type' => 'error', 'message' => sprintf(_('Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass die Nachricht nicht länger als %d Zeichen oder leer ist.'), $zeichen));
 
     $template->addVars(array(
-      'box'        => request_var('box', BOX_INCOMING),
+      'box'        => $request->getVar('box', BOX_INCOMING),
       'status_msg' => $message,
       'sender'     => $_SESSION['player']->name,
       'empfaenger' => $empfaenger,
-      'betreff'    => $betreff,
+      'subject'    => $subject,
       'nachricht'  => $nachricht,
       'hidden'     => array(
-        array('arg' => "box",    'value' => request_var('box', BOX_INCOMING)),
+        array('arg' => "box",    'value' => $request->getVar('box', BOX_INCOMING)),
         array('arg' => "caveID", 'value' => $caveID),
         array('arg' => "modus",  'value' => NEW_MESSAGE_RESPONSE)
       ),
@@ -361,7 +360,7 @@ function messages_sendMessage($caveID) {
     return;
   }
 
-  if ($messagesClass->insertMessageIntoDB($empfaenger, $betreff, $nachricht)) {
+  if ($messagesClass->insertMessageIntoDB($empfaenger, $subject, $nachricht)) {
     $template->addVar('status_msg', array('type' => 'success', 'message' => _('Ihre Nachricht wurde verschickt!')));
     messages_getMessages($caveID, 0, BOX_INCOMING);
     return;
@@ -369,14 +368,14 @@ function messages_sendMessage($caveID) {
     $message = array('type' => 'error', 'message' => _('Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass es den angegebenen Empfänger gibt.'));
 
     $template->addVars(array(
-      'box'        => request_var('box', BOX_INCOMING),
+      'box'        => $request->getVar('box', BOX_INCOMING),
       'status_msg' => $message,
       'sender'     => $_SESSION['player']->name,
       'empfaenger' => $empfaenger,
-      'betreff'    => $betreff,
+      'subject'    => $subject,
       'nachricht'  => $nachricht,
       'hidden'     => array(
-        array('arg' => "box",    'value' => request_var('box', BOX_INCOMING)),
+        array('arg' => "box",    'value' => $request->getVar('box', BOX_INCOMING)),
         array('arg' => "caveID", 'value' => $caveID),
         array('arg' => "modus",  'value' => NEW_MESSAGE_RESPONSE)
       ),

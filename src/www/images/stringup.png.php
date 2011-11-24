@@ -19,7 +19,10 @@ require_once("include/params.inc.php");
 require_once("include/db.inc.php");
 require_once("include/basic.lib.php");
 
-$caveID = request_var('cave_id', 0);
+// init request class
+$request = new Request();
+
+$caveID = $request->getVar('cave_id', 0);
 if ($caveID == 0) exit(1);
 
 $filename = "temp/$caveID.png";

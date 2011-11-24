@@ -44,7 +44,7 @@ class VoteButton {
   function getButtonParams() {
 
     return array('imgSrc' => $this->imgSrc,
-                 'id'     => $this->id);
+                   'id'     => $this->id);
   }
 
   function getURL() {
@@ -75,12 +75,12 @@ class GalaxyNewsVoteButton extends VoteButton {
 
 
 function vote_main() {
-
+  global $request;
   // initialize return value
   $result = '';
 
   // get current task
-  $task = request_var('task', "");
+  $task = $request->getVar('task', '');
 
   switch ($task) {
 
@@ -133,7 +133,7 @@ function vote_vote() {
   }
 
   // get button id
-  $id = strval(request_var('id', ''));
+  $id = strval($request->getVar('id', ''));
 
   // get class
   if (!isset($VOTE_CLASSES[$id])) {

@@ -25,9 +25,10 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  *  export_switch() - returns formatted xml/irc/bb code
  */
 function export_switch() {
+  global $request;
 
-  $modus = request_var('modus', "");
-  $format = request_var('format', "text");
+  $modus = $request->getVar('modus', '');
+  $format = $request->getVar('format', 'text');
   
   switch ($modus) {
     case 'allCaves':
@@ -46,15 +47,15 @@ function export_switch() {
     case 'movement':
       switch ($format) {
         case 'xml':
-          return export_movement_xml(request_var('movementID', 0));
+          return export_movement_xml($request->getVar('movementID', 0));
           break;
           
         case 'bb':
-          return export_movement_bb(request_var('movementID', 0));
+          return export_movement_bb($request->getVar('movementID', 0));
           break;
          
         case 'irc':
-          return export_movement_irc(request_var('movementID', 0));
+          return export_movement_irc($request->getVar('movementID', 0));
           break;
           
         default:
@@ -66,7 +67,7 @@ function export_switch() {
     case 'thisCave':
       switch ($format) {
         case 'xml':
-          return export_thisCave_xml(request_var('caveID', 0));
+          return export_thisCave_xml($request->getVar('caveID', 0));
           break;
           
           
@@ -94,11 +95,11 @@ function export_switch() {
     case 'buildings':
       switch ($format) {
         case 'xml':
-          return export_buildings_xml(request_var('caveID', 0));
+          return export_buildings_xml($request->getVar('caveID', 0));
           break;
 
         case 'bb':
-          return export_buildings_bb(request_var('caveID', 0));
+          return export_buildings_bb($request->getVar('caveID', 0));
           break;
           
         default:
@@ -110,7 +111,7 @@ function export_switch() {
     case 'messages':
       switch ($format) {
         case 'xml':
-          return export_messages_xml(request_var('messageID', 0));
+          return export_messages_xml($request->getVar('messageID', 0));
           break;
           
         default: 

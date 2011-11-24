@@ -14,7 +14,8 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 define('GRAPH_URL', 'http://chart.apis.google.com/chart?');
 
 function statistic_getContent() {
-  global $db, $template, $scienceTypeList, $unitTypeList, $template;
+  global $db, $request, $template;
+  global $scienceTypeList, $unitTypeList;
 
   $template->setFile('statistic.tmpl');
 
@@ -45,9 +46,9 @@ function statistic_getContent() {
     return;
   }
 
-/*
-* print god stats
-*/
+  /*
+  * print god stats
+  */
   $GodStatsList = array();
   $GodStats = $StatsData[GOD_STATS];
   ksort($GodStats);
@@ -57,9 +58,9 @@ function statistic_getContent() {
   }
   $template->addVars(array('GodStats' => $GodStatsList));
 
-/*
-* print god halfgod stats
-*/
+  /*
+  * print god halfgod stats
+  */
   $HalfGodStatsList = array();
   $HalfGodStats = $StatsData[HALFGOD_STATS];
   ksort($HalfGodStats);
@@ -74,8 +75,8 @@ function statistic_getContent() {
   $template->addVars(array('HalfGodStats' => $HalfGodStatsList));
 
   /*
-* print storage stats
-*/
+  * print storage stats
+  */
   $StorageStatsList = array();
   $StorageStats = $StatsData[STORAGE_STATS];
   ksort($StorageStats);
@@ -124,8 +125,8 @@ function statistic_getContent() {
   /*
    * show unit details
    */
-  $show = request_var('show', '');
-  $Unit = request_var('unit', "");
+  $show = $request->getVar('show', '');
+  $Unit = $request->getVar('unit', '');
   if ($show == "unit_detail" && !empty($Unit) && $Unit != "all") {
     $template->addVars(array(
       'showUnitDetails' => true, 

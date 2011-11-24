@@ -13,22 +13,11 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
-
-  global
-    $buildingTypeList,
-    $defenseSystemTypeList,
-    $resourceTypeList,
-    $scienceTypeList,
-    $unitTypeList,
-    $wonderTypeList,
-    $template,
-    $no_resource_flag,
-    $config;
+  global $config, $template;
+  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList, $wonderTypeList;
 
   // get wonder target text
   $uaWonderTargetText = WonderTarget::getWonderTargets();
-
-  $no_resource_flag = 1;
 
   // first check whether that wonder should be displayed...
   $wonder = $wonderTypeList[$wonderID];
@@ -43,7 +32,8 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
   }
   else {
     $shortVersion = false;
-    $template->setFile('wonderDetail.tmpl');    
+    $template->setFile('wonderDetail.tmpl');
+    $template->setShowRresource(false);
   }
 
   // iterate ressourcecosts

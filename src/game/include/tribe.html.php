@@ -18,7 +18,7 @@ define('TRIBE_ACTION_LEAVE',         3);
 define('TRIBE_ACTION_MESSAGE',       4);
 
 function tribe_getContent($playerID, $tribe) {
-  global $template, $governmentList;
+  global $template, $request, $governmentList;
 
   // messages
   $messageText = array (
@@ -46,19 +46,19 @@ function tribe_getContent($playerID, $tribe) {
 
   // process form data
   $messageID = 0;
-  $tribeAction =  request_var('tribeAction', 0);
+  $tribeAction =  $request->getVar('tribeAction', 0);
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
-      if (tribe_validatePassword(request_var('password', '')) && tribe_validateTag(request_var('tag', ''))) {
-        $messageID = tribe_processJoin($playerID, request_var('tag', ''), request_var('password', ''));
+      if (tribe_validatePassword($request->getVar('password', '')) && tribe_validateTag($request->getVar('tag', ''))) {
+        $messageID = tribe_processJoin($playerID, $request->getVar('tag', ''), $request->getVar('password', ''));
       } else {
         $messageID = tribe_processJoinFailed();
       }
     break;
 
     case TRIBE_ACTION_CREATE:
-      if (tribe_validatePassword(request_var('password', '')) && tribe_validateTag(request_var('tag', ''))){
-        $messageID = tribe_processCreate($playerID, request_var('tag', ''), request_var('password', ''), request_var('restore_rank', 'no') == 'yes');
+      if (tribe_validatePassword($request->getVar('password', '')) && tribe_validateTag($request->getVar('tag', ''))){
+        $messageID = tribe_processCreate($playerID, $request->getVar('tag', ''), $request->getVar('password', ''), $request->getVar('restore_rank', 'no') == 'yes');
       } else {
         $messageID = tribe_processCreateFailed();
       }
@@ -69,16 +69,16 @@ function tribe_getContent($playerID, $tribe) {
     break;
 
     case TRIBE_ACTION_MESSAGE:
-      if (!isset($_POST['messageText']) || empty($_POST['messageText'])) {
+      if (!$request->isPost('messageText', true)) {
         $messageID = -9;
         break;
       }
-      $ingame = (isset($_POST['ingame'])) ? true : false;
+      $ingame = $request->isPost('ingame');
 
       if ($ingame){
-        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $_POST['messageText']);
+        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $request->getVar('messageText', true));
       } else {
-        $messageID = tribe_processSendTribeMessage($playerID, $tribe, $_POST['messageText']);
+        $messageID = tribe_processSendTribeMessage($playerID, $tribe, $request->getVar('messageText', true));
       }
     break;
   }

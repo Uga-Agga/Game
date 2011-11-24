@@ -13,7 +13,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function unit_getUnitDetail($caveID, &$details) {
-  global $resourceTypeList, $unitTypeList, $FUELRESOURCEID, $template;
+  global $request, $template;
+  global $resourceTypeList, $unitTypeList, $FUELRESOURCEID;
 
   // open template
   $template->setFile('unitBuilder.tmpl');
@@ -31,7 +32,7 @@ function unit_getUnitDetail($caveID, &$details) {
   // get this cave's queue
   $queue = unit_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -39,8 +40,8 @@ function unit_getUnitDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $unitID = request_var('unitID', -1);
-      $quantity = request_var('quantity', 0);
+      $unitID = $request->getVar('unitID', -1);
+      $quantity = $request->getVar('quantity', 0);
       if ($unitID == -1) {
         $messageID = 2;
         break;
@@ -63,7 +64,7 @@ function unit_getUnitDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = request_var('id', 0);
+      $eventID = $request->getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 1;
         break;
@@ -75,7 +76,7 @@ function unit_getUnitDetail($caveID, &$details) {
         break;
       }
 
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         $messageID = unit_cancelOrder($eventID, $caveID);
 
         if ($messageID == 0) {

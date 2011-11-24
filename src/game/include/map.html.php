@@ -22,8 +22,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
   and MAP_HEIGHT from the configuration to determine size of the region. Also handles
   the case where the actual map in the database has fewer caves than specified in
   MAP_WIDTH and / or MAP_HEIGHT */
-function calcVisibleMapRegion($mapSize, $xCoord, $yCoord)
-{
+function calcVisibleMapRegion($mapSize, $xCoord, $yCoord) {
    // correct width und height for the case where the actual map is smaller than what could be displayed
    // in a map section.
   $MAP_WIDTH  = min(MAP_WIDTH,  $mapSize['maxX']-$mapSize['minX']+1); // attention: reads the constant MAP_WIDTH and writes the corrected value to a local variable of same name...
@@ -53,6 +52,7 @@ function calcVisibleMapRegion($mapSize, $xCoord, $yCoord)
 
 
 function determineCoordsFromParameters($caveData, $mapSize) {
+  global $request;
 
   // default Werte: Koordinaten of the given caveData (that is the data of the presently selected own cave)
   $xCoord  = $caveData['xCoord'];
@@ -60,16 +60,16 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   $message = '';
 
   // wenn in die Minimap geklickt wurde, zoome hinein
-  if (($minimap_x = request_var('minimap_x', 0)) && 
-      ($minimap_y = request_var('minimap_y', 0)) && 
-      ($scaling   = request_var('scaling', 0)) !== 0) {
+  if (($minimap_x = $request->getVar('minimap_x', 0)) && 
+      ($minimap_y = $request->getVar('minimap_y', 0)) && 
+      ($scaling   = $request->getVar('scaling', 0)) !== 0) {
 
     $xCoord = Floor($minimap_x * 100 / $scaling) + $mapSize['minX'];
     $yCoord = Floor($minimap_y * 100 / $scaling) + $mapSize['minY'];
   }
 
   // caveName eingegeben ?
-  else if ($caveName = request_var('caveName', "")) {
+  else if ($caveName = $request->getVar('caveName', '')) {
     $coords = getCaveByName($caveName);
     if (!$coords['xCoord']) {
       $message = sprintf(_('Die Höhle mit dem Namen: "%s" konnte nicht gefunden werden!'), $caveName);
@@ -81,7 +81,7 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   }
 
   // caveID eingegeben ?
-  else if ($targetCaveID = request_var('targetCaveID', 0)) {
+  else if (($targetCaveID = $request->getVar('targetCaveID', 0)) !== 0) {
     $coords = getCaveByID($targetCaveID);
     if ($coords === null) {
       $message = sprintf(_('Die Höhle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       
@@ -93,9 +93,9 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   }
 
   // Koordinaten eingegeben ?
-  else if (request_var('xCoord', 0) && request_var('yCoord', 0)) {
-    $xCoord = request_var('xCoord', 0);
-    $yCoord = request_var('yCoord', 0);
+  else if ($request->getVar('xCoord', 0) && $request->getVar('yCoord', 0)) {
+    $xCoord = $request->getVar('xCoord', 0);
+    $yCoord = $request->getVar('yCoord', 0);
   }
 
   // Koordinaten begrenzen
@@ -107,7 +107,8 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   return array (
     'xCoord'  => $xCoord,
     'yCoord'  => $yCoord,
-    'message' => $message);
+    'message' => $message
+  );
 }
 
 
@@ -156,28 +157,28 @@ function getCaveMapContent($caveID, $caves) {
                        'scaling' => MINIMAP_SCALING)));
 
   $template->addVars(array('E' => array('x' =>  (($section['centerX'] + $section['width']) < $maxX ? ($section['centerX'] + $section['width']) : $maxX),
-                                        'y' =>    $section['centerY'])));
+                                         'y' =>    $section['centerY'])));
 
   $template->addVars(array('SE' => array('x' => (($section['centerX'] + $section['width']  < $maxX) ? ($section['centerX'] + $section['width']) : $maxX),
-                                         'y' => (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
+                                          'y' => (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
 
   $template->addVars(array('S' => array('x' =>    $section['centerX'], 
-                                        'y' =>  (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
+                                         'y' =>  (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
 
   $template->addVars(array('SW' => array('x' => (($section['centerX'] - $section['width']  > $minX) ? ($section['centerX'] - $section['width']) : $minX),
-                                         'y' => (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
+                                          'y' => (($section['centerY'] + $section['height'] < $maxY) ? ($section['centerY'] + $section['height']) : $maxY))));
 
   $template->addVars(array('W' => array('x' =>  (($section['centerX'] - $section['width']  > $minX) ? ($section['centerX'] - $section['width']) : $minX),
-                                        'y' =>    $section['centerY'])));
+                                         'y' =>    $section['centerY'])));
 
   $template->addVars(array('NW' => array('x' => (($section['centerX'] - $section['width']  > $minX) ? ($section['centerX'] - $section['width']) : $minX), 
-                                         'y' => (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
+                                          'y' => (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
 
   $template->addVars(array('N' => array('x' =>    $section['centerX'], 
-                                        'y' =>  (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
+                                         'y' =>  (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
 
   $template->addVars(array('NE' => array('x' => (($section['centerX'] + $section['width']  < $maxX) ? ($section['centerX'] + $section['width']) : $maxX),
-                                         'y' => (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
+                                          'y' => (($section['centerY'] - $section['height'] > $minY) ? ($section['centerY'] - $section['height']) : $minY))));
 
   // Module "CaveBookmarks" Integration
   // FIXME should know whether the module is installed
@@ -232,9 +233,10 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   $map = array();
   foreach ($caveDetails AS $cave) {
 
-    $cell = array('terrain'   => 'terrain'.$cave['terrain'],
-                  'alt'       => "{$cave['cavename']} - ({$cave['xCoord']}|{$cave['yCoord']}) - {$cave['region']}",
-                  'link'      => "modus=map_detail&amp;targetCaveID={$cave['caveID']}");
+    $cell = array(
+      'terrain'   => 'terrain'.$cave['terrain'],
+      'alt'       => "{$cave['cavename']} - ({$cave['xCoord']}|{$cave['yCoord']}) - {$cave['region']}",
+      'link'      => "modus=" . MAP_DETAIL . "&amp;targetCaveID={$cave['caveID']}");
 
     // unbewohnte Höhle
     if ($cave['playerID'] == 0) {
@@ -264,7 +266,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 
 
       // link zum Tribe einfügen
-      $cell['link_tribe'] = "modus=tribe_detail&amp;tribe=".urlencode(unhtmlentities($cave['tribe']));
+      $cell['link_tribe'] = "modus=" . TRIBE_DETAIL . "&amp;tribe=".urlencode(unhtmlentities($cave['tribe']));
 
       // Stamm abkürzen
       $decodedTribe = unhtmlentities($cave['tribe']);
@@ -297,7 +299,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   }
 
   // create a region data array with an empty row as starting point.
-  $regionData = array( 'rows' => array());  
+  $regionData = array('rows' => array());
 
   // über alle Zeilen
   for ($j = $minY - 1; $j <= $maxY + 1; ++$j) {

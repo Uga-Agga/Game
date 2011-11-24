@@ -12,8 +12,9 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function science_getScienceDetail($caveID, &$details){
-  global $scienceTypeList, $template;
+function science_getScienceDetail($caveID, &$details) {
+  global $request, $template;
+  global $scienceTypeList;
 
   // open template
   $template->setFile('scienceBuilder.tmpl');
@@ -31,7 +32,7 @@ function science_getScienceDetail($caveID, &$details){
   // get this cave's queue
   $queue = science_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -39,7 +40,7 @@ function science_getScienceDetail($caveID, &$details){
 *
 ****************************************************************************************************/
     case 'build':
-      $scienceID = request_var('scienceID', -1);
+      $scienceID = $request->getVar('scienceID', -1);
       if ($scienceID == -1) {
         $messageID = 2;
         break;
@@ -62,7 +63,7 @@ function science_getScienceDetail($caveID, &$details){
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = request_var('id', 0);
+      $eventID = $request->getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 2;
         break;
@@ -74,7 +75,7 @@ function science_getScienceDetail($caveID, &$details){
         break;
       }
 
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         $messageID = science_cancelOrder($eventID, $caveID);
 
         if ($messageID == 0) {

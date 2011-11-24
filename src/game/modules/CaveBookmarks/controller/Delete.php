@@ -22,6 +22,7 @@ class CaveBookmarks_Controller_Delete extends Controller {
   }
 
   function execute($caveID, $caves) {
+    global $request;
 
     // get model
     $model = new CaveBookmarks_Model($caveID, $caves);
@@ -30,7 +31,7 @@ class CaveBookmarks_Controller_Delete extends Controller {
     $error = CAVEBOOKMARKS_NOERROR;
 
     // delete bookmark
-    $bookmarkID = intval(request_var('bookmarkID', 0));
+    $bookmarkID = $request->getVar('bookmarkID', 0);
     $error = $model->deleteCaveBookmark($bookmarkID);
 
     // return Show Controller

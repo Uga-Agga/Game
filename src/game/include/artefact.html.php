@@ -13,7 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function artefact_getDetail($caveID, &$myCaves) {
-  global $config, $template;
+  global $config, $request, $template;
   global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
 
   $messageText = array(
@@ -31,7 +31,7 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   $show_artefact = TRUE;
 
-  $artefactID = request_var('artefactID', 0);
+  $artefactID = $request->getVar('artefactID', 0);
   $artefact = artefact_getArtefactByID($artefactID);
 
   if (empty($artefact)) {
@@ -70,7 +70,7 @@ function artefact_getDetail($caveID, &$myCaves) {
         $showStatus = 1;
 
         // Ritual ausführen?
-        if (isset($_POST['initiate'])) {
+        if ($request->isPost('initiate')) {
           $messageID = artefact_beginInitiation($artefact);
 
           // reload

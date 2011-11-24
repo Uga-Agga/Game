@@ -19,7 +19,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function profile_main() {
-  global $config, $template;
+  global $config, $request, $template;
 
   // connect to login db
   if (!($db_login = DbConnect($config->DB_LOGIN_HOST, $config->DB_LOGIN_USER, $config->DB_LOGIN_PWD, $config->DB_LOGIN_NAME))) {
@@ -27,7 +27,7 @@ function profile_main() {
     return;
   }
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
     // change cave page
     case 'change':
@@ -40,7 +40,7 @@ function profile_main() {
 
     // change cave page
     case 'delete':
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         if (profile_processDeleteAccount($db_login, $_SESSION['player']->playerID)) {
           session_destroy();
 
@@ -207,13 +207,13 @@ function profile_fillUserData($template, $playerData) {
 /** This function sets the changed data specified by the user.
  */
 function profile_update($db_login) {
-  global $db;
+  global $db, $request;
 
   $playerID = $_SESSION['player']->playerID;
-  $data     = request_var('data', array('' => ''));
-  $password = request_var('password', array('' => ''));
+  $data     = $request->getVar('data', array('' => ''));
+  $password = $request->getVar('password', array('' => ''));
 
-  $data['description'] = $_POST['data']['description'];
+  $data['description'] = $request->getVar('description', '', true);
 
   // validate language code
   $uaLanguageNames = LanguageNames::getLanguageNames();

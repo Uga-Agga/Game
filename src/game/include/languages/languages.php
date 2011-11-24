@@ -14,7 +14,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 class LanguageNames {
 
-  function getLanguageNames(){
+  static function getLanguageNames(){
     static $result = NULL;
 
     if ($result === NULL){

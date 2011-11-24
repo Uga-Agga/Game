@@ -16,13 +16,10 @@ define("SILVERPERGOLD",   26);
 define("COPPERPERSILVER", 13);
 
 function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
-
-  global $no_resource_flag, $template;
-
-  $no_resource_flag = 1;
+  global $request, $template;
   $msg = "";
 
-  if (sizeof(request_var('question', array('' => '')))) {
+  if (sizeof($request->getVar('question', array('' => '')))) {
     $msg = questionnaire_giveAnswers();
   }
 
@@ -123,10 +120,10 @@ function questionnaire_getQuestions() {
 }
 
 function questionnaire_giveAnswers() {
-  global $db;
+  global $db, $request;
 
   // filter given answers
-  $answers = request_var('question', array('' => ''));
+  $answers = $request->getVar('question', array('' => ''));
   foreach ($answers AS $questionID => $choiceID) {
     if ($choiceID < 0) unset($answers[$questionID]);
   }
@@ -213,14 +210,15 @@ function questionnaire_addCredits($credits) {
 }
 
 function questionnaire_presents($caveID, &$ownCaves) {
-  global $db, $defenseSystemTypeList, $unitTypeList, $resourceTypeList, $template;
+  global $db, $request, $template;
+  global $defenseSystemTypeList, $unitTypeList, $resourceTypeList;
 
   $template->setFile('questionnairePresents.tmpl');
   $template->setShowRresource(false);
 
   $msg = "";
-  if (intval(request_var('presentID', 0)) > 0)
-    $msg = questionnaire_getPresent($caveID, $ownCaves, request_var('presentID', 0));
+  if ($request->getVar('presentID', 0) > 0)
+    $msg = questionnaire_getPresent($caveID, $ownCaves, $request->getVar('presentID', 0));
 
   // show message
   if ($msg != "")

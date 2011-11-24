@@ -20,7 +20,8 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function defense_builder($caveID, &$details) {
-  global $defenseSystemTypeList, $template;
+  global $request, $template;
+  global $defenseSystemTypeList;
 
   // open template
   $template->setFile('defenseBuilder.tmpl');
@@ -41,7 +42,7 @@ function defense_builder($caveID, &$details) {
   // get this cave's queue
   $queue = defense_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = request_var('action', '');
+  $action = $request->getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -49,7 +50,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $defenseID = request_var('defenseID', -1);
+      $defenseID = $request->getVar('defenseID', -1);
       if ($defenseID == -1) {
         $messageID = 6;
         break;
@@ -72,7 +73,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = request_var('id', 0);
+      $eventID = $request->getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 0;
         break;
@@ -84,7 +85,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         $messageID = defense_cancelOrder($eventID, $caveID);
 
         if ($messageID == 1) {
@@ -107,7 +108,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'demolishing':
-      $defenseID = request_var('id', -1);
+      $defenseID = $request->getVar('id', -1);
       if ($defenseID == -1) {
         $messageID = 4;
         break;
@@ -118,7 +119,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if (isset($_POST['cancelOrderConfirm'])) {
+      if ($request->isPost('cancelOrderConfirm')) {
         $messageID = defense_Demolishing($defenseID, $caveID, $details);
         $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
       } else {
