@@ -284,7 +284,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
     if ( $relationTypeActual == $relationType ) { // change to actual relation?
       return -14;
-    } 
+    }
 
     if (!$relation['own']['changeable']) {
       return -4;
@@ -708,7 +708,9 @@ function relation_getRelation($from, $target) {
       'tribe' => $target,
       'tribe_target' => $from,
       'changeable'   => 1,
-      'relationType' => 0
+      'relationType' => 0,
+      'tribe_rankingPoints'  => 0,
+      'target_rankingPoints' => 0
     );
   }
   $sql->closeCursor();
