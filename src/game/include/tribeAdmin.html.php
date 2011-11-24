@@ -200,12 +200,8 @@ function tribeAdmin_getContent($playerID, $tag) {
       if (!$isLeader) {
         $messageID = -21;
       } else {
-<<<<<<< HEAD
         $messageID = tribe_processKickMember($request->getVar('playerID', 0), $tag);
-=======
-        $messageID = tribe_processKickMember(request_var('playerID', 0), $tag);
         $memberData = tribe_getAllMembers($tag);
->>>>>>> Round12
       }
     break;
 
