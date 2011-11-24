@@ -12,18 +12,20 @@
 {% extends "base.tmpl" %}
 {% block title %}Einheiten{% endblock %}
 {% block content %}
- <script type="text/javascript">
-  function insert10(unitID){
+
+<script type="text/javascript">
+  function build_max_units(unitID){
    var amount;
    amount = document.getElementById("unit_" + unitID + "");
    if (amount.value == ""){
-   amount.value = 10;
+   amount.value = {{ max_build_units }};
    }
    else{
    amount.value = "";
    }
   }
- </script>
+</script>
+
 {% if quene_show %}
   <div class="notice">
     <ul>
@@ -59,7 +61,7 @@
               <form method="post" action="main.php?modus={{unit_link }}&amp;action=build&amp;unitID={{ item.unit_id }}&amp;caveID={{ cave_id }}">
               <p class="nodistance">
                 {% if item.build_link %}
-                  Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="insert10({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
+                  Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
                   <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
                 {% else %}
                   {{ item.no_build_msg }}
