@@ -205,6 +205,7 @@ function unit_getUnitDetail($caveID, &$details) {
     'status_msg'        => (isset($messageID)) ? $messageText[$messageID] : '',
     'units'             => $units,
     'units_unqualified' => $unitsUnqualified,
+    'max_build_units'   => MAX_SIMULTAN_BUILDED_UNITS,
   ));
 
 }

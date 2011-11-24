@@ -200,6 +200,7 @@ function tribeAdmin_getContent($playerID, $tag) {
         $messageID = -21;
       } else {
         $messageID = tribe_processKickMember(request_var('playerID', 0), $tag);
+        $memberData = tribe_getAllMembers($tag);
       }
     break;
 
