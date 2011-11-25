@@ -22,6 +22,8 @@ function tribe_getContent($playerID, $tribe) {
 
   // messages
   $messageText = array (
+   -16 => array('type' => 'error', 'message' => _('Du bist zur Zeit in keinem Stamm.')),
+   -15 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen wärend du in einem Stamm bist.')),
    -14 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
    -13 => array('type' => 'error', 'message' => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.')),
    -12 => array('type' => 'error', 'message' => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.')),
@@ -57,6 +59,11 @@ function tribe_getContent($playerID, $tribe) {
     break;
 
     case TRIBE_ACTION_CREATE:
+      if (!empty($_SESSION['player']->tribe)) {
+        $messageID = -15;
+        break;
+      }
+
       if (tribe_validatePassword($request->getVar('password', '')) && tribe_validateTag($request->getVar('tag', ''))){
         $messageID = tribe_processCreate($playerID, $request->getVar('tag', ''), $request->getVar('password', ''), $request->getVar('restore_rank', 'no') == 'yes');
       } else {
@@ -65,10 +72,20 @@ function tribe_getContent($playerID, $tribe) {
     break;
 
     case TRIBE_ACTION_LEAVE:
+      if (empty($_SESSION['player']->tribe)) {
+        $messageID = -16;
+        break;
+      }
+
       $messageID = tribe_processLeave($playerID, $tribe);
     break;
 
     case TRIBE_ACTION_MESSAGE:
+      if (empty($_SESSION['player']->tribe)) {
+        $messageID = -16;
+        break;
+      }
+
       if (!$request->isPost('messageText', true)) {
         $messageID = -9;
         break;

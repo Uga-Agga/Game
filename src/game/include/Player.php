@@ -110,7 +110,7 @@ class Player {
     return $retval;
   }
 
-  function addHistoryEntry($playerID, $entry, $timestamp = -1) {
+  public static function addHistoryEntry($playerID, $entry, $timestamp = -1) {
     global $db;
 
     if ($timestamp == -1)
