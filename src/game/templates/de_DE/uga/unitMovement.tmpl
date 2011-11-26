@@ -465,7 +465,7 @@ function hideWMTT() {
                 {% endfor %}
               {% endif %}
               {% if item.artefact %}
-                <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item.artefact.name }}</span></li>
+                <li><span style="font-size: x-small; white-space:nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
               {% endif %}
               {% if item.hero %}
                   <li><span style="font-size: x-small; white-space:nowrap;">{{ item.hero }}</span></li>
@@ -540,9 +540,7 @@ function hideWMTT() {
             {% endfor %}
           {% endif %}
           {% if item.artefact %}
-            {% for item_artefact in item.artefact %}
-              <li><span style="font-size: x-small; white-space:nowrap;"><img title="{{ item_artefact.name }}" src="images/artefacts/{{ item_artefact.resref }}.gif" width="30" height="30" alt="{{ item_artefact.name }}">&nbsp;{{ item_artefact.name }}</span></li>
-            {% endfor %}
+            <li><span style="font-size: x-small; white-space:nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
           {% endif %}
           </ul>
         </td>
