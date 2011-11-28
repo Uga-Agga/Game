@@ -25,7 +25,7 @@ function improvement_getQueue($playerID, $caveID) {
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return false;
 
-  $return = $sql->fetch();
+  $return = $sql->fetch(PDO::FETCH_ASSOC);
   if (count($return) !== 0) {
     return $return;
   }

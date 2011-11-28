@@ -13,7 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function rssFeedNews_getContent() {
-  global $config, $template;
+  global $template;
 
   $template->setFile('rssFeedNews.tmpl');
   $template->setShowRresource(false);

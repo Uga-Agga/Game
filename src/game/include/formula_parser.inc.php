@@ -25,21 +25,22 @@ init_Effects();
 init_Symbols();
 
 function init_Symbols(){
-  global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList,
-         $defenseSystemTypeList, $effectTypeList;
-
   global $FORMULA_SYMBOLS, $FORMULA_READABLE;
 
-  $FORMULA_SYMBOLS = array("R" => &$resourceTypeList,
-                           "B" => &$buildingTypeList,
-                           "U" => &$unitTypeList,
-                           "S" => &$scienceTypeList,
-                           "D" => &$defenseSystemTypeList,
-                           "E" => &$effectTypeList);
+  $FORMULA_SYMBOLS = array(
+    "R" => &$GLOBALS['resourceTypeList'],
+    "B" => &$GLOBALS['buildingTypeList'],
+    "U" => &$GLOBALS['unitTypeList'],
+    "S" => &$GLOBALS['scienceTypeList'],
+    "D" => &$GLOBALS['defenseSystemTypeList'],
+    "E" => &$GLOBALS['effectTypeList']
+  );
 
-  $FORMULA_READABLE = array("LEAST"    => "Min",
-                            "GREATEST" => "Max",
-                            "POW"      => "Potenz");
+  $FORMULA_READABLE = array(
+    "LEAST"    => "Min",
+    "GREATEST" => "Max",
+    "POW"      => "Potenz"
+  );
 }
 
 function sign($value) {
@@ -58,7 +59,6 @@ function formula_parseToSQL($formula) {
 
   // parse symbols
   for ($i = 0; $i < strlen($formula); $i++) {
-
     // opening brace
     if ($formula{$i} == '[') {
 
@@ -73,17 +73,16 @@ function formula_parseToSQL($formula) {
       // 'ACT]' or 'MAX]'
       $i += 3;
 
-      if (strncasecmp($field, "ACT", 3) == 0)
+      if (strncasecmp($field, "ACT", 3) == 0) {
         $sql .= $FORMULA_SYMBOLS[$symbol][$index]->dbFieldName;
-
-      else if (strncasecmp($field, "MAX", 3) == 0)
+      } else if (strncasecmp($field, "MAX", 3) == 0) {
         $sql .= formula_parseToSQL($FORMULA_SYMBOLS[$symbol][$index]->maxLevel);
-
+      }
     } else {
       $sql .= $formula{$i};
     }
   }
-  
+
   $sql = str_replace(array('min(',   'max(',      'sgn('),
                      array('LEAST(', 'GREATEST(', 'SIGN('),
                      $sql);
@@ -92,14 +91,14 @@ function formula_parseToSQL($formula) {
 }
 
 function formula_parseToPHP($formula, $detail) {
-
-  global $FORMULA_SYMBOLS, $config;
+  global $FORMULA_SYMBOLS;
 
   $farmmalus = max($_SESSION['player']->fame - FREE_FARM_POINTS , 0);
-  $formula = str_replace("[E25.ACT]",$farmmalus,$formula);
+  $formula = str_replace("[E25.ACT]", $farmmalus, $formula);
 
-  if ($config->RUN_TIMER)
+  if (UgaAggaConfig::RUN_TIMER) {
     $timer = page_startTimer();
+  }
 
   // translate abstract functions to php functions
   $formula = str_replace(array('sgn'), array('SIGN'), $formula);
@@ -107,32 +106,32 @@ function formula_parseToPHP($formula, $detail) {
   // translate variables
   $php = '';
   for ($i = 0; $i < strlen($formula); $i++) {
-
     if ($formula{$i} == '[') {
 
       $symbol = $formula{++$i};
       $index = 0;
 
-      while($formula{++$i} != '.')
+      while($formula{++$i} != '.') {
         $index = $index * 10 + ($formula{$i} + 0);
+      }
 
       $field = substr($formula, ++$i, 3);
       // 'ACT]' or 'MAX]'
       $i += 3;
 
-      if (strncasecmp($field, "ACT", 3) == 0)
+      if (strncasecmp($field, "ACT", 3) == 0) {
         $php .= $detail . '["' . $FORMULA_SYMBOLS[$symbol][$index]->dbFieldName . '"]';
-
-      else if (strncasecmp($field, "MAX", 3) == 0)
+      } else if (strncasecmp($field, "MAX", 3) == 0) {
         $php .= formula_parseToPHP($FORMULA_SYMBOLS[$symbol][$index]->maxLevel, $detail);
-
+      }
     } else {
       $php .= $formula{$i};
     }
   }
 
-  if ($config->RUN_TIMER)
+  if (UgaAggaConfig::RUN_TIMER) {
     echo "<p>rules_parseToPHP: " . page_stopTimer($timer) . "s</p>";
+  }
 
   return $php;
 }
@@ -140,9 +139,7 @@ function formula_parseToPHP($formula, $detail) {
 function formula_parseToReadable($formula){
   global $FORMULA_SYMBOLS, $FORMULA_READABLE;
 
-  foreach($FORMULA_READABLE as $key => $value) {
-    $formula = str_replace($key, $value, $formula);
-  }
+  $formula = str_replace(array_keys(SymbolsConstants::$READABLE), SymbolsConstants::$READABLE, $formula);
 
   // parse symbols
   $return = '';
@@ -186,40 +183,58 @@ function formula_parseToReadable($formula){
  *           or a string describing the circumstances needed to build that object
  */
 function rules_checkDependencies($object, $caveData) {
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
-
-  foreach ($object->maxBuildingDepList as $key => $value)
-    if ($value != -1 && $value < $caveData[$buildingTypeList[$key]->dbFieldName])
+  foreach ($object->maxBuildingDepList as $key => $value) {
+    if ($value != -1 && $value < $caveData[$GLOBALS['buildingTypeList'][$key]->dbFieldName]) {
       return FALSE;
-  foreach ($object->maxDefenseSystemDepList as $key => $value)
-    if ($value != -1 && $value < $caveData[$defenseSystemTypeList[$key]->dbFieldName])
-      return FALSE;
-  foreach ($object->maxResourceDepList as $key => $value)
-    if ($value != -1 && $value < $caveData[$resourceTypeList[$key]->dbFieldName])
-      return FALSE;
-  foreach ($object->maxScienceDepList as $key => $value)
-    if ($value != -1 && $value < $caveData[$scienceTypeList[$key]->dbFieldName])
-      return FALSE;
-  foreach ($object->maxUnitDepList as $key => $value)
-    if ($value != -1 && $value < $caveData[$unitTypeList[$key]->dbFieldName])
-      return FALSE;
+    }
+  }
+  foreach ($object->maxDefenseSystemDepList as $key => $value) {
+    if ($value != -1 && $value < $caveData[$GLOBALS['defenseSystemTypeList'][$key]->dbFieldName]) {
+      return false;
+    }
+  }
+  foreach ($object->maxResourceDepList as $key => $value) {
+    if ($value != -1 && $value < $caveData[$GLOBALS['resourceTypeList'][$key]->dbFieldName]) {
+      return false;
+    }
+  }
+  foreach ($object->maxScienceDepList as $key => $value) {
+    if ($value != -1 && $value < $caveData[$GLOBALS['scienceTypeList'][$key]->dbFieldName]) {
+      return false;
+    }
+  }
+  foreach ($object->maxUnitDepList as $key => $value) {
+    if ($value != -1 && $value < $caveData[$GLOBALS['unitTypeList'][$key]->dbFieldName]) {
+      return false;
+    }
+  }
 
   $dep = NULL;
-  foreach($object->buildingDepList as $key => $value)
-    if ($value != "" && $value > $caveData[$buildingTypeList[$key]->dbFieldName])
-        $dep .= $buildingTypeList[$key]->name . ": ({$caveData[$buildingTypeList[$key]->dbFieldName]}/$value), ";
-  foreach($object->defenseSystemDepList as $key => $value)
-    if ($value != "" && $value > $caveData[$defenseSystemTypeList[$key]->dbFieldName])
-        $dep .= $defenseSystemTypeList[$key]->name . ":  ({$caveData[$defenseSystemTypeList[$key]->dbFieldName]}/$value), ";
-  foreach($object->resourceDepList as $key => $value)
-    if ($value != "" && $value > $caveData[$resourceTypeList[$key]->dbFieldName])
-        $dep .= $resourceTypeList[$key]->name . ":  ({$caveData[$resourceTypeList[$key]->dbFieldName]}/$value), ";
-  foreach($object->scienceDepList as $key => $value)
-    if ($value != "" && $value > $caveData[$scienceTypeList[$key]->dbFieldName])
-      $dep .= $scienceTypeList[$key]->name . ":  ({$caveData[$scienceTypeList[$key]->dbFieldName]}/$value), ";
-  foreach($object->unitDepList as $key => $value)
-    if ($value != "" && $value > $caveData[$unitTypeList[$key]->dbFieldName])
-      $dep .= $unitTypeList[$key]->name . ":  ({$caveData[$unitTypeList[$key]->dbFieldName]}/$value), ";
+  foreach($object->buildingDepList as $key => $value) {
+    if ($value != "" && $value > $caveData[$GLOBALS['buildingTypeList'][$key]->dbFieldName]) {
+      $dep .= $GLOBALS['buildingTypeList'][$key]->name . ": (" . $caveData[$GLOBALS['buildingTypeList'][$key]->dbFieldName] . "/" . $value . "), ";
+    }
+  }
+  foreach($object->defenseSystemDepList as $key => $value) {
+    if ($value != "" && $value > $caveData[$GLOBALS['defenseSystemTypeList'][$key]->dbFieldName]) {
+      $dep .= $GLOBALS['defenseSystemTypeList'][$key]->name . ": (" . $caveData[$GLOBALS['defenseSystemTypeList'][$key]->dbFieldName] . "/" . $value . "), ";
+    }
+  }
+  foreach($object->resourceDepList as $key => $value) {
+    if ($value != "" && $value > $caveData[$GLOBALS['resourceTypeList'][$key]->dbFieldName]) {
+      $dep .= $GLOBALS['resourceTypeList'][$key]->name . ": (" . $caveData[$GLOBALS['resourceTypeList'][$key]->dbFieldName] . "/" . $value . "), ";
+    }
+  }
+  foreach($object->scienceDepList as $key => $value) {
+    if ($value != "" && $value > $caveData[$GLOBALS['scienceTypeList'][$key]->dbFieldName]) {
+      $dep .= $GLOBALS['scienceTypeList'][$key]->name . ": (" . $caveData[$GLOBALS['scienceTypeList'][$key]->dbFieldName] . "/" . $value . "), ";
+    }
+  }
+  foreach($object->unitDepList as $key => $value) {
+    if ($value != "" && $value > $caveData[$GLOBALS['unitTypeList'][$key]->dbFieldName]) {
+      $dep .= $GLOBALS['unitTypeList'][$key]->name . ": (" . $caveData[$GLOBALS['unitTypeList'][$key]->dbFieldName] . "/" . $value . "), ";
+    }
+  }
 
   return ($dep === NULL ? TRUE : substr($dep, 0, -2));
 }

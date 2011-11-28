@@ -13,14 +13,13 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
-  global $config, $db, $request, $template;
-  global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
+  global $db, $template;
 
   // open template
   $template->setFile('cave.tmpl');
 
   $statusMsg = '';
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -28,7 +27,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 *
 ****************************************************************************************************/
     case 'caveGiveUp':
-      if ($request->getVar('id', 0) == $details['caveID'] && $request->isPost('cancelOrderConfirm')) {
+      if (Request::getVar('id', 0) == $details['caveID'] && Request::isPost('cancelOrderConfirm')) {
         if (cave_giveUpCave($details['caveID'], $_SESSION['player']->playerID, $_SESSION['player']->tribe)) {
           $template->throwError(_('Sie haben sich aus dieser Höhle zurückgezogen.'));
           return;
@@ -52,7 +51,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 *
 ****************************************************************************************************/
     case 'endProtection':
-      if ($request->getVar('id', 0) == $details['caveID'] && $request->isPost('cancelOrderConfirm')) {
+      if (Request::getVar('id', 0) == $details['caveID'] && Request::isPost('cancelOrderConfirm')) {
         if (beginner_endProtection($details['caveID'], $_SESSION['player']->playerID)) {
           $statusMsg = array('type' => 'success', 'message' => _('Sie haben den Anfängerschutz abgeschaltet.'));
           $details['protected'] = 0;
@@ -94,16 +93,20 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
   }
 
   // fill give-up form
-  if ($showGiveUp) $template->addVar('give_up', true);
+  if ($showGiveUp) {
+    $template->addVar('give_up', true);
+  }
 
   // fill end beginner protection form
-  if ($details['protected']) $template->addVar('unprotected', true);
+  if ($details['protected']) {
+    $template->addVar('unprotected', true);
+  }
   
   $template->addVar('cave_data', $details);
 
   // RESOURCES AUSFUELLEN
   $resources = array();
-  foreach ($resourceTypeList as $resource)
+  foreach ($GLOBALS['resourceTypeList'] as $resource) {
     if (!$resource->nodocumentation || ($details[$resource->dbFieldName] > 0)) {
       $resources[] = array(
         'dbFieldName' => $resource->dbFieldName,
@@ -111,12 +114,14 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
         'value'       => $details[$resource->dbFieldName]
       );
     }
-
-  if (sizeof($resources)) $template->addVar('resource', $resources);
+  }
+  if (sizeof($resources)) {
+    $template->addVar('resource', $resources);
+  }
 
   // UNITS AUSFUELLEN
   $units = array();
-  foreach ($unitTypeList as $unit) {
+  foreach ($GLOBALS['unitTypeList'] as $unit) {
     $value = $details[$unit->dbFieldName];
     if ($value != 0)
       $units[] = array(
@@ -125,11 +130,13 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
         'value'       => $value
       );
   }
-  if (sizeof($units))$template->addVar('units', $units);
+  if (sizeof($units)) {
+    $template->addVar('units', $units);
+  }
 
   // BUILDINGS AUSFUELLEN
   $addons = array();
-  foreach ($buildingTypeList as $building) {
+  foreach ($GLOBALS['buildingTypeList'] as $building) {
     $value = $details[$building->dbFieldName];
     if ($value != 0)
       $buildings[] = array(
@@ -138,11 +145,13 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
         'value'       => $value
       );
   }
-  if (sizeof($buildings)) $template->addVar('buildings', $buildings);
+  if (sizeof($buildings)) {
+    $template->addVar('buildings', $buildings);
+  }
 
   // VERTEIDIGUNG AUSFUELLEN
   $defenses = array();
-  foreach ($defenseSystemTypeList as $defense) {
+  foreach ($GLOBALS['defenseSystemTypeList'] as $defense) {
     $value = $details[$defense->dbFieldName];
     if ($value != 0) {
       $defenses[] = array(
@@ -152,12 +161,13 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
       );
     }
   }
-  if (sizeof($defenses)) $template->addVar('defenses', $defenses);
+  if (sizeof($defenses)) {
+    $template->addVar('defenses', $defenses);
+  }
 }
 
 function getAllCavesDetailsContent($ownCaves) {
-  global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
-  global $config, $db, $template;
+  global $db, $template;
 
   // open template
   $template->setFile('caves.tmpl');
@@ -177,7 +187,7 @@ function getAllCavesDetailsContent($ownCaves) {
 
   $sum = $alt = 0;
   $myres = array();
-  foreach ($resourceTypeList AS $resource) {
+  foreach ($GLOBALS['resourceTypeList'] AS $resource) {
     $temp = array(
       'name'        => $resource->name,
       'dbFieldName' => $resource->dbFieldName,
@@ -214,7 +224,7 @@ function getAllCavesDetailsContent($ownCaves) {
 
   $sum = $alt = 0;
   $myunits = array();
-  foreach ($unitTypeList AS $unit) {
+  foreach ($GLOBALS['unitTypeList'] AS $unit) {
     $temp = array(
       'name'        => $unit->name,
       'dbFieldName' => $unit->dbFieldName,
@@ -241,7 +251,7 @@ function getAllCavesDetailsContent($ownCaves) {
 
   $sum = $alt = 0;
   $mybuildings = array();
-  foreach ($buildingTypeList AS $building) {
+  foreach ($GLOBALS['buildingTypeList'] AS $building) {
     $temp = array(
       'name'        => $building->name,
       'dbFieldName' => $building->dbFieldName,
@@ -268,7 +278,7 @@ function getAllCavesDetailsContent($ownCaves) {
 
   $sum = $alt = 0;
   $mydefenses = array();
-  foreach ($defenseSystemTypeList AS $defense) {
+  foreach ($GLOBALS['defenseSystemTypeList'] AS $defense) {
     $temp = array(
       'name'        => $defense->name,
       'dbFieldName' => $defense->dbFieldName,
@@ -306,15 +316,16 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
                         AND starting_position = 0");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-
-  if (!$sql->execute() || $sql->rowCount() == 0) return 0;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return false;
+  }
 
   $sql = $db->prepare("UPDATE ". CAVE_TABLE ." c
-                       SET  name = (SELECT name FROM ". CAVE_ORGINAL_NAME_TABLE ." co WHERE co.caveID = :caveID )
+                       SET  name = (SELECT name FROM ". CAVE_ORGINAL_NAME_TABLE ." co WHERE co.caveID = :caveID)
                        WHERE c.caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-
   $sql->execute();
+
   @unlink("/var/www/speed/images/temp/{$caveID}.png");
 
   // delete all scheduled Events
@@ -339,7 +350,7 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
         $sql = $db->prepare("UPDATE ". RELATION_TABLE ."
                              SET fame = :newfame
                              WHERE tribe = :actTribeRelation
-                             AND tribe_target  = :actTargetRelation");
+                               AND tribe_target  = :actTargetRelation");
         $sql->bindValue('newfame', $newfame, PDO::PARAM_INT);
         $sql->bindValue('actTribeRelation', $actRelation['tribe'], PDO::PARAM_INT);
         $sql->bindValue('actTargetRelation', $actRelation['tribe_target'], PDO::PARAM_INT);
@@ -353,70 +364,6 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
   hero_killHero($playerID);
 
   return 1;
-}
-
-function cave_giveUpConfirm($details) {
-  global $config, $db;
-
-  // Show confirmation request
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'dialog.ihtml');
-
-  tmpl_set($template, 'message', sprintf(_('Möchten Sie die Höhle %s wirklich aufgeben? Sie verlieren die Kontrolle über alle Rohstoffe und alle Einheiten, die sich hier befinden!'), $details['name']));
-
-  $buttons = array();
-
-  // give-up button
-  $buttons[] = array('formname'    => 'confirm',
-                     'text'        => _('Aufgeben'),
-                     'modus_name'  => 'modus',
-                     'modus_value' => CAVE_DETAIL,
-                     'ARGUMENT'    => array(
-                                        array('arg_name'  => 'caveGiveUpConfirm',
-                                              'arg_value' => 1,
-                                              ),
-                                        array('arg_name'  => 'giveUpCaveID',
-                                              'arg_value' => $details['caveID'],
-                                              )));
-  // cancel button
-  $buttons[] = array('formname'    => 'cancel',
-                     'text'        => _('Abbrechen'),
-                     'modus_name'  => 'modus',
-                     'modus_value' => CAVE_DETAIL);
-
-  tmpl_set($template, 'BUTTON', $buttons);
-  return tmpl_parse($template);
-}
-
-function beginner_endProtectionConfirm($details){
-  global $config, $db;
-
-  // Show confirmation request
-  $template = tmpl_open($_SESSION['player']->getTemplatePath() . 'dialog.ihtml');
-
-  tmpl_set($template, 'message', sprintf(_('Möchten Sie den Anfängerschutz in Höhle %s wirklich unwiderruflich aufgeben? Sie können dann ab sofort angreifen, aber auch angegriffen werden!'), $details['name']));
-
-  $buttons = array();
-
-  // unprotect button
-  $buttons[] = array('formname'    => 'confirm',
-                     'text'        => _('Anfängerschutz beenden'),
-                     'modus_name'  => 'modus',
-                     'modus_value' => CAVE_DETAIL,
-                     'ARGUMENT'    => array(
-                                        array('arg_name'  => 'endProtectionConfirm',
-                                              'arg_value' => 1,
-                                              ),
-                                        array('arg_name'  => 'caveID',
-                                              'arg_value' => $details['caveID'],
-                                              )));
-  // cancel button
-  $buttons[] = array('formname'    => 'cancel',
-                     'text'        => _('Abbrechen'),
-                     'modus_name'  => 'modus',
-                     'modus_value' => CAVE_DETAIL);
-
-  tmpl_set($template, 'BUTTON', $buttons);
-  return tmpl_parse($template);
 }
 
 ?>

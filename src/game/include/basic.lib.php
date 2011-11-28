@@ -265,29 +265,6 @@ function getMapSize() {
 /* ***************************************************************************/
 
 /**
- * use an additional list of allowed field names to prevent
- * users from cheating the formulas
- */
-function db_makeSetStatementSecure($data, $fields) {
-  if (!$data) {
-    return 0;
-  }
-
-  $count = 0;
-  $statement = "";
-
-  foreach($fields as $field) {
-    if (array_key_exists($field, $data)) {
-      $count++;
-      $statement .= $field ." = '". $data[$field] ."', ";
-    }
-  }
-
-  if (!$count) return 0;
-  return substr($statement, 0, strlen($statement) - 2);  // remove ", "
-}
-
-/**
  * connect to login database
  */
 function db_connectToLoginDB($host=0, $user=0, $pwd=0, $name=0) {
@@ -339,8 +316,7 @@ function lib_shorten_html($string, $length){
 }
 
 function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
-  global $defenseSystemTypeList, $unitTypeList, $buildingTypeList,
-         $scienceTypeList, $resourceTypeList, $db;
+  global $db;
 
   if (isset($item->maxLevel)) {
     $maxLevel = round(eval('return '.formula_parseToPHP("{$item->maxLevel};", '$cave')));
@@ -359,7 +335,7 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $resourceTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['resourceTypeList'][$key]->dbFieldName;
         array_push($set, "{$dbField} = {$dbField} - ({$formula})");
         array_push($where, "{$dbField} >= ({$formula})");
       }
@@ -372,7 +348,7 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $unitTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['unitTypeList'][$key]->dbFieldName;
         array_push($set, "{$dbField} = {$dbField} - ({$formula})");
         array_push($where, "{$dbField} >= ({$formula})");
       }
@@ -385,7 +361,7 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $buildingTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['buildingTypeList'][$key]->dbFieldName;
         array_push($set, "{$dbField} = {$dbField} - ({$formula})");
         array_push($where, "{$dbField} >= ({$formula})");
       }
@@ -398,29 +374,23 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $defenseSystemTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['defenseSystemTypeList'][$key]->dbFieldName;
         array_push($set, "{$dbField} = {$dbField} - ({$formula})");
         array_push($where, "{$dbField} >= ({$formula})");
       }
     }
   }
 
-  // generate SQL
-  if (sizeof($set)) {
-    $set     = implode(", ", $set);
-    $set     = "UPDATE ". CAVE_TABLE ." SET $set ";
-  }
-
   // generate dependencies
   if (isset($item->buildingDepLIst)) {
     foreach($item->buildingDepList as $key => $value) {
       if ($value) {
-        array_push($where, "{$buildingTypeList[$key]->dbFieldName} >= $value");
+        array_push($where, "{$GLOBALS['buildingTypeList'][$key]->dbFieldName} >= $value");
       }
     }
     foreach($item->maxBuildingDepList as $key => $value) {
       if ($value != -1) {
-        array_push($where, "{$buildingTypeList[$key]->dbFieldName} <= $value");
+        array_push($where, "{$GLOBALS['buildingTypeList'][$key]->dbFieldName} <= $value");
       }
     }
   }
@@ -428,12 +398,12 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
   if (isset($item->defenseSystemDepList)) {
     foreach($item->defenseSystemDepList as $key => $value) {
       if ($value) {
-        array_push($where, "{$defenseSystemTypeList[$key]->dbFieldName} >= $value");
+        array_push($where, "{$GLOBALS['defenseSystemTypeList'][$key]->dbFieldName} >= $value");
       }
     }
     foreach($item->maxDefenseSystemDepList as $key => $value) {
       if ($value != -1) {
-        array_push($where, "{$defenseSystemTypeList[$key]->dbFieldName} <= $value");
+        array_push($where, "{$GLOBALS['defenseSystemTypeList'][$key]->dbFieldName} <= $value");
       }
     }
   }
@@ -441,12 +411,12 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
   if (isset($item->resourceDepList)) {
     foreach($item->resourceDepList as $key => $value) {
       if ($value) {
-        array_push($where, "{$resourceTypeList[$key]->dbFieldName} >= $value");
+        array_push($where, "{$GLOBALS['resourceTypeList'][$key]->dbFieldName} >= $value");
       }
     }
     foreach($item->maxResourceDepList as $key => $value) {
       if ($value != -1) {
-        array_push($where, "{$resourceTypeList[$key]->dbFieldName} <= $value");
+        array_push($where, "{$GLOBALS['resourceTypeList'][$key]->dbFieldName} <= $value");
       }
     }
   }
@@ -454,12 +424,12 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
   if (isset($item->scienceDepList)) {
     foreach($item->scienceDepList as $key => $value) {
       if ($value) {
-        array_push($where, "{$scienceTypeList[$key]->dbFieldName} >= $value");
+        array_push($where, "{$GLOBALS['scienceTypeList'][$key]->dbFieldName} >= $value");
       }
     }
     foreach($item->maxScienceDepList as $key => $value) {
       if ($value != -1) {
-        array_push($where, "{$scienceTypeList[$key]->dbFieldName} <= $value");
+        array_push($where, "{$GLOBALS['scienceTypeList'][$key]->dbFieldName} <= $value");
       }
     }
   }
@@ -467,29 +437,31 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
   if (isset($item->unitDepList)) {
     foreach($item->unitDepList as $key => $value) {
       if ($value) {
-        array_push($where, "{$unitTypeList[$key]->dbFieldName} >= $value");
+        array_push($where, "{$GLOBALS['unitTypeList'][$key]->dbFieldName} >= $value");
       }
     }
     foreach($item->maxUnitDepList as $key => $value) {
       if ($value != -1) {
-        array_push($where, "{$unitTypeList[$key]->dbFieldName} <= $value");
+        array_push($where, "{$GLOBALS['unitTypeList'][$key]->dbFieldName} <= $value");
       }
     }
   }
 
-  $where = implode(" AND ", $where);
+  // generate SQL
+  if (sizeof($set)) {
+    $set = implode(', ', $set);
+    $where = implode(" AND ", $where);
 
-  $ret = $db->exec($set.$where);
-
-  if ($ret != 1) {
-    return 0;
+    $sql = "UPDATE ". CAVE_TABLE ." SET {$set} {$where}";
+    if (!$db->exec($sql)) {
+      return false;
+    }
   }
 
-  return 1;
+  return true;
 }
 
 function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
-  global $defenseSystemTypeList, $unitTypeList, $buildingTypeList, $scienceTypeList, $resourceTypeList;
   global $db;
 
   $setBack = array();
@@ -500,7 +472,7 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $resourceTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['resourceTypeList'][$key]->dbFieldName;
         array_push($setBack, "{$dbField} = {$dbField} + ({$formula})");
       }
     }
@@ -512,7 +484,7 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $unitTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['unitTypeList'][$key]->dbFieldName;
         $setBack[] = "{$dbField} = {$dbField} + ({$formula})";
       }
     }
@@ -524,7 +496,7 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $buildingTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['buildingTypeList'][$key]->dbFieldName;
         array_push($setBack, "{$dbField} = {$dbField} + ({$formula})");
       }
     }
@@ -536,7 +508,7 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
       if ($value) {
         $formula = formula_parseToSQL($value);
         $formula = "{$quantity} * ({$formula})";
-        $dbField = $defenseSystemTypeList[$key]->dbFieldName;
+        $dbField = $GLOBALS['defenseSystemTypeList'][$key]->dbFieldName;
         array_push($setBack, "{$dbField} = {$dbField} + ({$formula})");
       }
     }
@@ -544,23 +516,18 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
 
   // generate SQL
   if (sizeof($setBack)) {
-
     $setBack = implode(", ", $setBack);
-    $setBack = "UPDATE ". CAVE_TABLE ." SET {$setBack} WHERE caveID = {$caveID}";
+    $sql = "UPDATE ". CAVE_TABLE ." SET {$setBack} WHERE caveID = {$caveID}";
+    if (!$db->exec($sql)) {
+      return false;
+    }
   }
 
-  $ret = $db->exec($setBack);
-  
-  if ($ret != 1) {
-    return 0;
-  }
-
-  return 1;
+  return true;
 }
 
 // parse costs
 function parseCost($building, &$details) {
-  global $resourceTypeList, $unitTypeList, $buildingTypeList, $defenseSystemTypeList;
 
   $ret = array();
   $notenough = false;
@@ -570,14 +537,14 @@ function parseCost($building, &$details) {
 
       if ($cost) {
         $ret['resource_cost'][] = array(
-          'dbFieldName' => $resourceTypeList[$resourceID]->dbFieldName,
-          'name'         => $resourceTypeList[$resourceID]->name,
+          'dbFieldName'  => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
+          'name'         => $GLOBALS['resourceTypeList'][$resourceID]->name,
           'value'        => $cost,
-          'enough'       => ($details[$resourceTypeList[$resourceID]->dbFieldName] >= $cost) ? true : false,
-          'missing'      => $cost - $details[$resourceTypeList[$resourceID]->dbFieldName]
+          'enough'       => ($details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName] >= $cost) ? true : false,
+          'missing'      => $cost - $details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName]
         );
 
-        if (($details[$resourceTypeList[$resourceID]->dbFieldName] < $cost)) {
+        if (($details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName] < $cost)) {
           $notenough = true;
         }
       }
@@ -590,14 +557,14 @@ function parseCost($building, &$details) {
 
       if ($cost) {
         $ret['unit_cost'][] = array(
-          'dbFieldName' => $unitTypeList[$unitID]->dbFieldName,
-          'name'         => $unitTypeList[$unitID]->name,
+          'dbFieldName'  => $GLOBALS['unitTypeList'][$unitID]->dbFieldName,
+          'name'         => $GLOBALS['unitTypeList'][$unitID]->name,
           'value'        => $cost,
-          'enough'       => ($details[$unitTypeList[$unitID]->dbFieldName] >= $cost) ? true : false,
-          'missing'      => $cost - $details[$unitTypeList[$unitID]->dbFieldName]
+          'enough'       => ($details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName] >= $cost) ? true : false,
+          'missing'      => $cost - $details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName]
         );
 
-        if (($details[$unitTypeList[$unitID]->dbFieldName] < $cost)) {
+        if (($details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName] < $cost)) {
           $notenough = true;
         }
       }
@@ -610,14 +577,14 @@ function parseCost($building, &$details) {
 
       if ($cost) {
         $ret['building_cost'][] = array(
-          'dbFieldName' => $buildingTypeList[$buildingID]->dbFieldName,
-          'name'         => $buildingTypeList[$buildingID]->name,
+          'dbFieldName'  => $GLOBALS['buildingTypeList'][$buildingID]->dbFieldName,
+          'name'         => $GLOBALS['buildingTypeList'][$buildingID]->name,
           'value'        => $cost,
-          'enough'       => ($details[$buildingTypeList[$buildingID]->dbFieldName] >= $cost) ? true : false,
-          'missing'      => $cost - $details[$buildingTypeList[$buildingID]->dbFieldName]
+          'enough'       => ($details[$GLOBALS['buildingTypeList'][$buildingID]->dbFieldName] >= $cost) ? true : false,
+          'missing'      => $cost - $details[$GLOBALS['buildingTypeList'][$buildingID]->dbFieldName]
         );
 
-        if (($details[$buildingTypeList[$buildingID]->dbFieldName] < $cost)) {
+        if (($details[$GLOBALS['buildingTypeList'][$buildingID]->dbFieldName] < $cost)) {
           $notenough = true;
         }
       }
@@ -630,14 +597,14 @@ function parseCost($building, &$details) {
 
       if ($cost) {
         $ret['defense_cost'][] = array(
-          'dbFieldName' => $defenseSystemTypeList[$defenseID]->dbFieldName,
-          'name'         => $defenseSystemTypeList[$defenseID]->name,
+          'dbFieldName'  => $GLOBALS['defenseSystemTypeList'][$defenseID]->dbFieldName,
+          'name'         => $GLOBALS['defenseSystemTypeList'][$defenseID]->name,
           'value'        => $cost,
-          'enough'       => ($details[$defenseSystemTypeList[$defenseID]->dbFieldName] >= $cost) ? true : false,
-          'missing'      => $cost - $details[$defenseSystemTypeList[$defenseID]->dbFieldName]
+          'enough'       => ($details[$GLOBALS['defenseSystemTypeList'][$defenseID]->dbFieldName] >= $cost) ? true : false,
+          'missing'      => $cost - $details[$GLOBALS['defenseSystemTypeList'][$defenseID]->dbFieldName]
         );
 
-        if (($details[$defenseSystemTypeList[$defenseID]->dbFieldName] < $cost)) {
+        if (($details[$GLOBALS['defenseSystemTypeList'][$defenseID]->dbFieldName] < $cost)) {
           $notenough = true;
         }
       }

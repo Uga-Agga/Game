@@ -13,8 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function artefact_getDetail($caveID, &$myCaves) {
-  global $config, $request, $template;
-  global $resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList;
+  global $template;
 
   $messageText = array(
     -5 => array('type' => 'error', 'message' => _('Dieses Artefakt kann nicht noch einmal eingeweiht werden.')),
@@ -31,7 +30,7 @@ function artefact_getDetail($caveID, &$myCaves) {
 
   $show_artefact = TRUE;
 
-  $artefactID = $request->getVar('artefactID', 0);
+  $artefactID = Request::getVar('artefactID', 0);
   $artefact = artefact_getArtefactByID($artefactID);
 
   if (empty($artefact)) {
@@ -70,7 +69,7 @@ function artefact_getDetail($caveID, &$myCaves) {
         $showStatus = 1;
 
         // Ritual ausführen?
-        if ($request->isPost('initiate')) {
+        if (Request::isPost('initiate')) {
           $messageID = artefact_beginInitiation($artefact);
 
           // reload
@@ -87,7 +86,7 @@ function artefact_getDetail($caveID, &$myCaves) {
             $ritual = artefact_getRitualByID($artefact['initiationID']);
 
             // Hol die Kosten und beurteile ob genug da ist
-            $merged_game_rules = array_merge($resourceTypeList, $buildingTypeList, $unitTypeList, $scienceTypeList, $defenseSystemTypeList);
+            $merged_game_rules = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['defenseSystemTypeList']);
 
             $cost = array();
             foreach($merged_game_rules as $val) {

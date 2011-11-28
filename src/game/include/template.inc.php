@@ -21,8 +21,6 @@ class Template {
   private $template;
 
   public function __construct($path='') {
-    global $config;
-
     if (empty($path)) {
       $path = $_SESSION['player']->getTemplatePath();
     }

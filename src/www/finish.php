@@ -26,14 +26,11 @@ $messageText = array (
   'wrongSessionID' => _('Falsche oder ungültige SessionID.'),
 );
 
-// init request class
-$request = new Request();
-
 // load and open template
 $template = new Template(UA_GAME_DIR . '/templates/de_DE/uga/');
 $template->setFile('finish.tmpl');
 
-$id = $request->getVar('id', '');
+$id = Request::getVar('id', '');
 if (!empty($id) && isset($messageText[$id])) {
   $message = $messageText[$id];
 

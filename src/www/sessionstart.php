@@ -30,16 +30,10 @@ if (function_exists('posix_getpid')) {
 // start session
 session_start();
 
-// init config
-$config = new Config();
-
-// init request class
-$request = new Request();
-
 // keine Variablen angegeben
-$sessionID = $request->getVar('id', '');
-$playerID = $request->getVar('userID', 0);
-$noGfx = $request->getVar('nogfx', 0);
+$sessionID = Request::getVar('id', '');
+$playerID = Request::getVar('userID', 0);
+$noGfx = Request::getVar('nogfx', 0);
 
 if (!$sessionID || !$playerID) {
   page_error403("Fehlende Loginvariablen.");
@@ -47,7 +41,7 @@ if (!$sessionID || !$playerID) {
 
 // connect to database
 if (!($db = DbConnect())) {
-  header("Location: finish.php?id=db");
+  header("Location: Config::GAME_END_URL?id=db");
   exit;
 }
 
@@ -59,7 +53,7 @@ $sql = $db->prepare("SELECT *
 $sql->bindValue('s_id', $sessionID, PDO::PARAM_STR);
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 if (!$sql->execute()) {
-  header("Location: finish.php?id=wrongSessionID");
+  header("Location: Config::GAME_END_URL?id=wrongSessionID");
   exit;
 }
 
@@ -75,14 +69,14 @@ $sql = $db->prepare("UPDATE " . SESSION_TABLE . "
 $sql->bindValue('s_id', $sessionID, PDO::PARAM_STR);
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 if (!$sql->execute() || $sql->rowCount() == 0) {
-  header("Location: finish.php?id=wrongSessionID");
+  header("Location: Config::GAME_END_URL?id=wrongSessionID");
   exit;
 }
 
 // get player by playerID for session
 $player = Player::getPlayer($playerID);
 if (!$player) {
-  header("Location: finish.php?id=wrongSessionID");
+  header("Location: Config::GAME_END_URL?id=wrongSessionID");
   exit;
 }
 
@@ -96,7 +90,7 @@ $_SESSION['logintime'] = date("YmdHis");
 $_SESSION['messages'] = array();
 
 // go to start url
-header("Location: $config->GAME_START_URL");
+header("Location: Config::GAME_START_URL");
 exit;
 
 ?>

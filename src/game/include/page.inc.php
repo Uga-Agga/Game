@@ -18,16 +18,12 @@ require_once("include/db.inc.php");
 require_once("include/Player.php");
 
 function page_error403($message) {
-  global $config;
-
   @session_destroy();
   header("Location: finish.php?id=".urlencode($message));
   exit;
 }
 
 function page_dberror() {
-  global $config;
-
   header("Location: finish.php?id=db");
   exit;
 }
@@ -45,25 +41,20 @@ function stopwatch($start=false) {
 }
 
 function page_start() {
-  global $db, $config;
+  global $db;
 
   // start stopwatch
   stopwatch('start');
 
-  // get configuration
-  $config = new Config();
-
   // check for cookie
-  // FIXME german string..
   if (!sizeof($_COOKIE)) {
-    page_error403('Sie m&uuml;ssen 3rd party cookies erlauben.');
+    page_error403('Sie müssen 3rd party cookies erlauben.');
   }
 
   // start session
   session_start();
 
   // check for valid session
-  // FIXME german string..
   if (!isset($_SESSION['player']) || !$_SESSION['player']->playerID) {
     header("Location: finish.php?id=inaktiv");
     exit;
@@ -80,20 +71,22 @@ function page_start() {
 }
 
 function page_refreshUserData() {
-  global $db, $config;
+  global $db;
 
   $player = Player::getPlayer($_SESSION['player']->playerID);
-  if (!$player)
-    return FALSE;
+  if (!$player) {
+    return false;
+  }
 
   $_SESSION['player'] = $player;
 
-  return TRUE;
+  return true;
 }
 
 function page_end($watch = true) {
-  global $db, $config;
-  if ($config->RUN_TIMER ||$watch) {
+  global $db;
+
+  if (UgaAggaConfig::RUN_TIMER ||$watch) {
     $proctime  = stopwatch();
     $dbpercent = round($db->getQueryTime()/$proctime * 100, 2);
 
@@ -127,7 +120,7 @@ function page_sessionExpired() {
 }
 
 function page_sessionValidate() {
-  global $config, $db;
+  global $db;
 
   // calculate seconds with 1000s frac
   list($usec, $sec) = explode(" ", microtime());
@@ -143,25 +136,23 @@ function page_sessionValidate() {
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('sessionID', $_SESSION['session']['sessionID'], PDO::PARAM_INT);
   $sql->bindValue('whereMicrotime', $microtime, PDO::PARAM_INT);
-  $sql->bindValue('requestTimeout', $config->WWW_REQUEST_TIMEOUT, PDO::PARAM_INT);
-  
+  $sql->bindValue('requestTimeout', UgaAggaConfig::WWW_REQUEST_TIMEOUT, PDO::PARAM_INT);
   if (!$sql->execute() || $sql->rowCount() == 0) {
-    return FALSE;
+    return false;
   }
-  $sql->closeCursor();
 
   return true; //md5($_SERVER['HTTP_USER_AGENT'] . $_SERVER['HTTP_ACCEPT_LANGUAGE']) == $_SESSION['session']['loginchecksum'];
 }
 
 function page_getModus() {
-  global $config, $request;
+  global $request;
 
   $modus = $request->getVar('modus', NEWS);
   if (empty($modus)) {
     $modus = NEWS;
   }
 
-  if (in_array($modus, $config->rememberModusInclude)) {
+  if (in_array($modus, UgaAggaConfig::$rememberModusInclude)) {
     $_SESSION['current_modus'] = $modus;
   } else {
     $_SESSION['current_modus'] = NEWS;
@@ -171,9 +162,9 @@ function page_getModus() {
 }
 
 function page_logRequest($modus, $caveID) {
-  global $config, $db;
+  global $db;
 
-  if ($config->LOG_ALL && in_array($modus, $config->logModusInclude)){
+  if (UgaAggaConfig::LOG_ALL && in_array($modus, UgaAggaConfig::$logModusInclude)){
     $sql = $db->prepare("INSERT INTO " . LOG_X_TABLE . date("w") . "
                           (playerID, caveID, ip, request, sessionID)
                         VALUES (:playerID, :caveID, :ip, :request, :sessionID)");
@@ -187,9 +178,10 @@ function page_logRequest($modus, $caveID) {
 }
 
 function page_ore() {
-  global $db;
   //TODO
   return; 
+
+  global $db;
   $now = time();
 
   // increment time diff count

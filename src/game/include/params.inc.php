@@ -23,7 +23,7 @@ class Request {
   *
   * @access public
   */
-  function getVar($var_name, $default, $multibyte = false, $cookie = false) {
+  static function getVar($var_name, $default, $multibyte = false, $cookie = false) {
     if (!$cookie && !isset($_COOKIE[$var_name]))
     {
       if (!isset($_GET[$var_name]) && !isset($_POST[$var_name]))
@@ -106,7 +106,7 @@ class Request {
   *
   * @access public
   */
-  public function isPost($var, $checkEmpty) {
+  static function isPost($var, $checkEmpty=false) {
     if (isset($_POST[$var])) {
       if ($checkEmpty && empty($_POST[$var])) {
         return false;
@@ -124,7 +124,7 @@ class Request {
   *
   * @access public
   */
-  public function isGet($var, $checkEmpty) {
+  static function isGet($var, $checkEmpty=false) {
     if (isset($_GET[$var])) {
       if ($checkEmpty && empty($_GET[$var])) {
         return false;

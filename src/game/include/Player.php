@@ -134,12 +134,8 @@ class Player {
     return intval(date("Z"));
   }
 
-  function getTemplatePath(){
-    global $config;
-    return sprintf('%s/templates/%s/%s/',
-                   UA_GAME_DIR,
-                   $this->language,
-                   $config->template_paths[$this->template]);
+  function getTemplatePath() {
+    return sprintf('%s/templates/%s/%s/', UA_GAME_DIR, $this->language, UgaAggaConfig::$template_paths[$this->template]);
   }
 
   /**

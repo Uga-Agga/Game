@@ -21,7 +21,6 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function defense_builder($caveID, &$details) {
   global $request, $template;
-  global $defenseSystemTypeList;
 
   // open template
   $template->setFile('defenseBuilder.tmpl');
@@ -51,7 +50,7 @@ function defense_builder($caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $defenseID = $request->getVar('defenseID', -1);
-      if ($defenseID == -1) {
+      if ($defenseID == -1 || !isset($GLOBALS['defenseSystemTypeList'][$defenseID])) {
         $messageID = 6;
         break;
       }
@@ -97,7 +96,7 @@ function defense_builder($caveID, &$details) {
           'confirm_action'  => 'cancelOrder',
           'confirm_id'      => $eventID,
           'confirm_mode'    => DEFENSE_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest du den Arbeitsauftrag von <span class="bold">%s</span> abbrechen?'), $defenseSystemTypeList[$queue['defenseSystemID']]->name),
+          'confirm_msg'     => sprintf(_('Möchtest du den Arbeitsauftrag von <span class="bold">%s</span> abbrechen?'), $GLOBALS['defenseSystemTypeList'][$queue['defenseSystemID']]->name),
         ));
       }
     break;
@@ -114,7 +113,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if (!isset($defenseSystemTypeList[$defenseID])) {
+      if (!isset($GLOBALS['defenseSystemTypeList'][$defenseID])) {
         $messageID = 4;
         break;
       }
@@ -128,14 +127,14 @@ function defense_builder($caveID, &$details) {
           'confirm_action'  => 'demolishing',
           'confirm_id'      => $defenseID,
           'confirm_mode'    => DEFENSE_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest du <span class="bold">%s</span> einmal abreißen?'), $defenseSystemTypeList[$defenseID]->name),
+          'confirm_msg'     => sprintf(_('Möchtest du <span class="bold">%s</span> einmal abreißen?'), $GLOBALS['defenseSystemTypeList'][$defenseID]->name),
         ));
       }
     break;
   }
 
   $defenseSystem = $defenseSystemRelict = $defenseSystemUnqualified = array();
-  foreach ($defenseSystemTypeList as $id => $defense) {
+  foreach ($GLOBALS['defenseSystemTypeList'] as $id => $defense) {
     $maxLevel = round(eval('return '.formula_parseToPHP("{$defense->maxLevel};", '$details')));
 
     $result = rules_checkDependencies($defense, $details);
@@ -218,8 +217,8 @@ function defense_builder($caveID, &$details) {
   if ($queue) {
     $template->addVars(array(
       'quene_show'      => true,
-      'quene_name'      => $defenseSystemTypeList[$queue['defenseSystemID']]->name,
-      'quene_nextlevel' => $details[$defenseSystemTypeList[$queue['defenseSystemID']]->dbFieldName] + 1,
+      'quene_name'      => $GLOBALS['defenseSystemTypeList'][$queue['defenseSystemID']]->name,
+      'quene_nextlevel' => $details[$GLOBALS['defenseSystemTypeList'][$queue['defenseSystemID']]->dbFieldName] + 1,
       'quene_finish'    => time_formatDatetime($queue['end']),
       'quene_modus'     => DEFENSE_BUILDER,
       'quene_event_id'  => $queue['event_defenseSystemID']

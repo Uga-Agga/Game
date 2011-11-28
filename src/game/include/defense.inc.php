@@ -18,22 +18,23 @@ function defense_getQueue($playerID, $caveID) {
   global $db;
 
   // prepare query
-  $sql = $db->prepare("SELECT e.* FROM ". EVENT_DEFENSE_SYSTEM_TABLE ." e
-                         LEFT JOIN ". CAVE_TABLE ." c ON c.caveID = e.caveID
-                      WHERE c.caveID IS NOT NULL AND c.playerID = :playerID
-                        AND e.caveID = :caveID");
+  $sql = $db->prepare("SELECT e.* 
+                       FROM ". EVENT_DEFENSE_SYSTEM_TABLE ." e
+                       LEFT JOIN ". CAVE_TABLE ." c ON c.caveID = e.caveID
+                       WHERE c.caveID IS NOT NULL AND c.playerID = :playerID
+                         AND e.caveID = :caveID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  if (!$sql->execute()) return false;
 
-  if (!$sql->execute()) {
-    return 0;
-  }
-  
-  if (!($result = $sql->fetch())) {
-    return 0;
+  $return = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (count($return) !== 0) {
+    return $return;
   }
 
-  return $result;
+  return false;
 }
 
 
@@ -48,17 +49,15 @@ function defense_cancelOrder($event_defenseSystemID, $caveID) {
 
   // prepare query
   $sql = $db->prepare("DELETE FROM ". EVENT_DEFENSE_SYSTEM_TABLE . "
-                       WHERE event_defenseSystemID = :dfSID 
+                       WHERE event_defenseSystemID = :defenseSystemID 
                          AND caveID = :caveID");
-  $sql->bindValue('dfSID', $event_defenseSystemID, PDO::PARAM_INT);
+  $sql->bindValue('defenseSystemID', $event_defenseSystemID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-
-  // execute query
-  if($sql->execute()) {
-    return 1;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return 0; // return messageID
   }
 
-  return 0;
+  return 1; // return messageID
 }
 
 
@@ -75,15 +74,16 @@ function defense_demolishingPossible($caveID) {
   $sql = $db->prepare("SELECT toreDownTimeout < NOW()+0 AS possible ".
                    "FROM ". CAVE_TABLE ." WHERE caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  if (!$sql->execute()) return false;
 
-  // execute query
-  if (!$sql->execute())
-    return 0;
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
 
-  if (!($row = $sql->fetch()) || !$row["possible"])
-    return 0;
+  if (!$row['possible']) {
+    return false;
+  }
 
-  return 1;
+  return true;
 }
 
 
@@ -94,10 +94,9 @@ function defense_demolishingPossible($caveID) {
  */
 
 function defense_Demolishing($defenseID, $caveID, $cave) {
+  global $db;
 
-  global $resourceTypeList, $defenseSystemTypeList, $db;
-
-  $dbFieldName = $defenseSystemTypeList[$defenseID]->dbFieldName;
+  $dbFieldName = $GLOBALS['defenseSystemTypeList'][$defenseID]->dbFieldName;
 
   // can't demolish
   if (!defense_demolishingPossible($caveID)) {
@@ -106,37 +105,9 @@ function defense_Demolishing($defenseID, $caveID, $cave) {
 
   // no defenseSystem of that type
   if ($cave[$dbFieldName] < 1) {
-    return 3;
+    //return 3;
   }
 
-//  $query = "UPDATE Cave ";
-//  $where = "WHERE caveID = '$caveID' ".
-//           "AND {$dbFieldName} > 0 ";
-//
-//  // add resources gain
-//  /*
-//  if (is_array($defenseSystemTypeList[$defenseID]->resourceProductionCost)){
-//    $resources = array();
-//    foreach ($defenseSystemTypeList[$defenseID]->resourceProductionCost as $key => $value){
-//      if ($value != "" && $value != "0"){
-//        $formula     = formula_parseToSQL($value);
-//        $dbField     = $resourceTypeList[$key]->dbFieldName;
-//        $maxLevel    = round(eval('return '.formula_parseToPHP("{$resourceTypeList[$key]->maxLevel};", '$cave')));
-//        $resources[] = "$dbField = LEAST($maxLevel, $dbField + ($formula) / {$config->DEFENSESYSTEM_PAY_BACK_DIVISOR})";
-//      }
-//    }
-//    $set .= implode(", ", $resources);
-//  }
-//  */
-//
-//  // ATTENTION: "SET defenseSystem = defenseSystem - 1" has to be placed BEFORE
-//  //            the calculation of the resource return. Otherwise
-//  //            mysql would calculate the cost of the NEXT step not
-//  //            of the LAST defenseSystem step (returns would be too high)...
-//  $query .= "SET {$dbFieldName} = {$dbFieldName} - 1, ".
-//            "toreDownTimeout = (NOW() + INTERVAL ".
-//            TORE_DOWN_TIMEOUT." MINUTE)+0 ";
-            
   $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
                        SET {$dbFieldName} = {$dbFieldName} - 1,
                        toreDownTimeout = (NOW() + INTERVAL :toreDownTime MINUTE) + 0
@@ -144,8 +115,8 @@ function defense_Demolishing($defenseID, $caveID, $cave) {
                        AND {$dbFieldName} > 0");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   $sql->bindVAlue('toreDownTime', TORE_DOWN_TIMEOUT, PDO::PARAM_INT);
-
   if (!$sql->execute() || !$sql->rowCount() == 1) {
+  print_r($sql->debugDumpParams());
     return 4;
   }
 
@@ -161,19 +132,16 @@ function defense_Demolishing($defenseID, $caveID, $cave) {
  */
 
 function defense_processOrder($defenseID, $caveID, $cave) {
-  global $defenseSystemTypeList, $unitTypeList, $buildingTypeList, $scienceTypeList, $resourceTypeList;
   global $db;
 
-  $external = $defenseSystemTypeList[$defenseID];
-  $maxLevel = round(eval('return '.formula_parseToPHP("{$external->maxLevel};", '$cave')));
-
   // take production costs from cave
-  if (!processProductionCost($external, $caveID, $cave))
+  if (!processProductionCost($GLOBALS['defenseSystemTypeList'][$defenseID], $caveID, $cave)) {
     return 6;
+  }
 
   // calculate the production time;
   $prodTime = 0;
-  if ($time_formula = $external->productionTimeFunction) {
+  if ($time_formula = $GLOBALS['defenseSystemTypeList'][$defenseID]->productionTimeFunction) {
     $time_eval_formula = formula_parseToPHP($time_formula, '$cave');
 
     $time_eval_formula="\$prodTime = $time_eval_formula;";
@@ -182,8 +150,10 @@ function defense_processOrder($defenseID, $caveID, $cave) {
 
   $prodTime *= DEFENSESYSTEM_TIME_BASE_FACTOR;
   $now = time();
-  $sql = $db->prepare("INSERT INTO ". EVENT_DEFENSE_SYSTEM_TABLE ." (caveID, defenseSystemID, ".
-                   "start, end) VALUES (:caveID, :defenseID, :start, :end)");
+  $sql = $db->prepare("INSERT INTO ". EVENT_DEFENSE_SYSTEM_TABLE ." 
+                         (caveID, defenseSystemID, start, end)
+                       VALUES
+                         (:caveID, :defenseID, :start, :end)");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   $sql->bindValue('defenseID', $defenseID, PDO::PARAM_INT);
   $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
@@ -191,7 +161,7 @@ function defense_processOrder($defenseID, $caveID, $cave) {
 
   if (!$sql->execute()) {
     //give production costs back
-    processProductionCostSetBack($external, $caveID, $cave);
+    processProductionCostSetBack($GLOBALS['defenseSystemTypeList'][$defenseID], $caveID, $cave);
     return 6;
   }
 

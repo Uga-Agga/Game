@@ -133,69 +133,59 @@ define("MAX_AVATAR_HEIGHT", 200);
 define("HERO_DB_FIELD", "heroism");
 
 class Config {
+  const RUN_TIMER           = 0;
 
-  var $RUN_TIMER = 0;
-
-  var $LOG_ALL = 1;
+  const LOG_ALL             = 1;
 
   // DB Zugriff
-  var $DB_HOST              = "@GAME_DB_HOST@";
-  var $DB_USER              = "@GAME_DB_USER@";
-  var $DB_PWD               = "@GAME_DB_PASSWD@";
-  var $DB_NAME              = "@GAME_DB_NAME@";
+  const DB_HOST             = "@GAME_DB_HOST@";
+  const DB_USER             = "@GAME_DB_USER@";
+  const DB_PWD              = "@GAME_DB_PASSWD@";
+  const DB_NAME             = "@GAME_DB_NAME@";
 
-  var $DB_SELECT_HOST              = "@GAME_DB_SELECT_HOST@";
-  var $DB_SELECT_USER              = "@GAME_DB_SELECT_USER@";
-  var $DB_SELECT_PWD               = "@GAME_DB_SELECT_PASSWD@";
+  const DB_LOGIN_HOST       = "@LOGIN_DB_HOST@";
+  const DB_LOGIN_USER       = "@LOGIN_DB_USER@";
+  const DB_LOGIN_PWD        = "@LOGIN_DB_PASSWD@";
+  const DB_LOGIN_NAME       = "@LOGIN_DB_NAME@";
 
-  var $DB_LOGIN_HOST        = "@LOGIN_DB_HOST@";
-  var $DB_LOGIN_USER        = "@LOGIN_DB_USER@";
-  var $DB_LOGIN_PWD         = "@LOGIN_DB_PASSWD@";
-  var $DB_LOGIN_NAME        = "@LOGIN_DB_NAME@";
+  const GAME_END_URL        = "finish.php";
+  const GAME_START_URL      = "main.php";
 
-  var $DBERROR_URL          = "dberror.html.php";
+  const WWW_REQUEST_TIMEOUT = .000;
 
-  var $GAME_START_URL       = "main.php";
-
-  var $ERROR403_URL         = "error403.html.php";
-
-  var $WWW_REQUEST_TIMEOUT            = .000;
-  var $IMPROVEMENT_PAY_BACK_DIVISOR   = 2;
-  var $DEFENSESYSTEM_PAY_BACK_DIVISOR = 2;
-
-  var $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,
+  public static $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,
     UNIT_BUILDER, DEFENSE_BUILDER, IMPROVEMENT_DETAIL, SCIENCE_BUILDER, WONDER);
 
   // if one does not own any cave, one can only switch to the following modi
-  var $noCaveModusInclude = array(ARTEFACT_DETAIL,      ARTEFACT_LIST,
-                                   NO_CAVE_LEFT,         DELETE_ACCOUNT,
-                                   LOGOUT,               MAP,
-                                   MAP_DETAIL,           MESSAGES_LIST,
-                                   MESSAGE_READ,         MESSAGE_NEW,
-                                   NEW_MESSAGE_RESPONSE, PLAYER_DETAIL,
-                                   RANKING_PLAYER,       RANKING_TRIBE,
-                                   TRIBE_DETAIL,         TRIBE_HISTORY,
-                                   TRIBE_PLAYER_LIST,    TRIBE_RELATION_LIST,
-                                   USER_PROFILE,         WEATHER_REPORT);
+  public static $noCaveModusInclude = array(ARTEFACT_DETAIL,      ARTEFACT_LIST,
+                                              NO_CAVE_LEFT,         DELETE_ACCOUNT,
+                                              LOGOUT,               MAP,
+                                              MAP_DETAIL,           MESSAGES_LIST,
+                                              MESSAGE_READ,         MESSAGE_NEW,
+                                              NEW_MESSAGE_RESPONSE, PLAYER_DETAIL,
+                                              RANKING_PLAYER,       RANKING_TRIBE,
+                                              TRIBE_DETAIL,         TRIBE_HISTORY,
+                                              TRIBE_PLAYER_LIST,    TRIBE_RELATION_LIST,
+                                              USER_PROFILE,         WEATHER_REPORT);
 
   // only this modi will be logged
-  var $logModusInclude = array(UNIT_MOVEMENT, DELETE_ACCOUNT,
+  public static $logModusInclude = array(UNIT_MOVEMENT, DELETE_ACCOUNT,
                                ARTEFACT_DETAIL, TRIBE_DELETE, TRIBE_ADMIN,
                                DEFENSE_BUILDER, TAKEOVER, USER_PROFILE);
 
-  var $requestKeysNeed = array('modus');
+  public static $requestKeysNeed = array('modus');
 
-  var $template_paths  = array(1 => 'uga');
+  public static $template_paths  = array(1 => 'uga');
 
-  var $messageImage = array( 2 => "battle_won.gif",
+  public static $messageImage = array( 2 => "battle_won.gif",
                              6 => "trade_report.gif",
                             20 => "battle_lost.gif");
 
-  var $hiddenUser = array('Agga', 'Uga', 'Multihunter');
+  public static $hiddenUser = array('Agga', 'Uga', 'Multihunter');
 
-  var $gods = array('agga', 'uga', 'enzio');
+  public static $gods = array('agga', 'uga', 'enzio');
 
-  var $halfGods = array('carmi', 'feeble', 'firak', 'kirkalot', 'nebrot',
+  public static $halfGods = array('carmi', 'feeble', 'firak', 'kirkalot', 'nebrot',
                         'shadow_dragon', 'slavomir', 'trubatsch');
 }
 

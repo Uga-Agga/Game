@@ -4,25 +4,38 @@
 <xsl:strip-space elements="Name Description p"/>
 
 <xsl:template match="Config">&lt;?php
-// require_once('lib/GameObjects.php');
-// require_once('lib/MovementClass.php');
+/*
+ * game_rules.php -
+ * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
+
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 <xsl:apply-templates/>?&gt;
 </xsl:template>
 
 <xsl:template match="Header">
-$MAX_RESOURCE = <xsl:value-of select="count(//Resource)"/>;
-$MAX_BUILDING = <xsl:value-of select="count(//Building)"/>;
-$MAX_SCIENCE = <xsl:value-of select="count(//Science)"/>;
-$MAX_UNIT = <xsl:value-of select="count(//Unit)"/>;
-$MAX_DEFENSESYSTEM = <xsl:value-of select="count(//DefenseSystem)"/>;
-$TAKEOVERMAXPOPULARITYPOINTS = <xsl:value-of select="TakeoverMaxPopularityPoints"/>;
-$TAKEOVERMINRESOURCEVALUE = <xsl:value-of select="TakeoverMinResourceValue"/>;
-$WATCHTOWERVISIONRANGE = "<xsl:apply-templates select="WatchTowerVisionRange"/>";
-$EXPOSEINVISIBLE = "<xsl:apply-templates select="ExposeInvisible"/>";
-$WONDERRESISTANCE = "<xsl:apply-templates select="WonderResistance"/>";
-$FUELRESOURCEID = <xsl:value-of select="FuelResourceID"/>;
-$MOVEMENTCOSTCONSTANT = "<xsl:apply-templates select="MovementCost"/>";
-$MOVEMENTSPEEDCONSTANT = "<xsl:apply-templates select="MovementSpeed"/>";
+class GameConstants {
+  public static $MAX_RESOURCE = <xsl:value-of select="count(//Resource)"/>;
+  public static $MAX_BUILDING = <xsl:value-of select="count(//Building)"/>;
+  public static $MAX_SCIENCE = <xsl:value-of select="count(//Science)"/>;
+  public static $MAX_UNIT = <xsl:value-of select="count(//Unit)"/>;
+  public static $MAX_DEFENSESYSTEM = <xsl:value-of select="count(//DefenseSystem)"/>;
+  public static $TAKEOVER_MAX_POPULARITY_POINTS = <xsl:value-of select="TakeoverMaxPopularityPoints"/>;
+  public static $TAKEOVER_MIN_RESOURCE_VALUE = <xsl:value-of select="TakeoverMinResourceValue"/>;
+  public static $WATCHTOWER_VISION_RANGE = "<xsl:apply-templates select="WatchTowerVisionRange"/>";
+  public static $EXPOSE_INVISIBLE = "<xsl:apply-templates select="ExposeInvisible"/>";
+  public static $WONDER_RESISTANCE = "<xsl:apply-templates select="WonderResistance"/>";
+  public static $FUEL_RESOURCE_ID = <xsl:value-of select="FuelResourceID"/>;
+  public static $MOVEMENT_COST = "<xsl:apply-templates select="MovementCost"/>";
+  public static $MOVEMENT_SPEED = "<xsl:apply-templates select="MovementSpeed"/>";
+}
 </xsl:template>
 
 <xsl:template match="p">&lt;p&gt;<xsl:apply-templates/>&lt;/p&gt;</xsl:template>

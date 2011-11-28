@@ -12,11 +12,11 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-define('AUTH_TRIBE_MSG_PUBLIC', 0);
-define('AUTH_TRIBE_MSG_PRIVAT', 1);
-define('AUTH_TRIBE_CHANGE_RELATION', 2);
-define('AUTH_TRIBE_KICK_PLAYER', 3);
-define('AUTH_TRIBE_CHANGE_SETTINGS', 4);
+define('AUTH_TRIBE_MSG_TRIBE',       'auth_tribe_msg_tribe');
+define('AUTH_TRIBE_MSG_PRIVAT',      'auth_tribe_msg_public');
+define('AUTH_TRIBE_CHANGE_RELATION', 'auth_tribe_change_relation');
+define('AUTH_TRIBE_KICK',            'auth_tribe_kick');
+define('AUTH_TRIBE_CHANGE_SETTINGS', 'auth_tribe_change_settings');
 
 class auth {
   var $perm;
@@ -26,25 +26,25 @@ class auth {
   }
 
   private function initPermission() {
-    $this->perm[TRIBE_MSG_PUBLIC] = array(
-      'value' => 1,  'desc'  => 'Gilden Nachrichten schreiben'
+    $this->perm[AUTH_TRIBE_MSG_TRIBE] = array(
+      'value' => 1,  'desc'  => 'Stammesnachrichten schreiben'
     );
-    $this->perm[TRIBE_MSG_PRIVAT] = array(
-      'value' => 2,  'desc'  => 'Gilden Nachrichten per Privater Nachricht schreiben'
+    $this->perm[AUTH_TRIBE_MSG_PRIVAT] = array(
+      'value' => 2,  'desc'  => 'Stammesnachrichten per Privater Nachricht schreiben'
     );
-    $this->perm[TRIBE_CHANGE_RELATION] = array(
+    $this->perm[AUTH_TRIBE_CHANGE_RELATION] = array(
       'value' => 4,  'desc'  => 'Beziehungen ändern'
     );
-    $this->perm[TRIBE_KICK_PLAYER] = array(
+    $this->perm[AUTH_TRIBE_KICK] = array(
       'value' => 8,  'desc'  => 'Spieler kicken'
     );
-    $this->perm[TRIBE_CHANGE_SETTINGS] = array(
+    $this->perm[AUTH_TRIBE_CHANGE_SETTINGS] = array(
       'value' => 16, 'desc'  => 'Gilden Informationen bearbeiten'
     );
   }
 
   public function checkPermission($userAuth, $authID) {
-    if (!isset($this->perm[$authID]) || (int)$userAuth == 0) {
+    if (!isset($this->perm[$authID]) || intval($userAuth) == 0) {
       return false;
     }
 

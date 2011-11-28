@@ -30,8 +30,9 @@ function award_getAwardDetail($tag) {
     $template->addVar('no_award', true);
     return;
   }
-
   $award = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
   $template->addVar('award', $award);
 }
 

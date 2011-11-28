@@ -30,7 +30,7 @@ page_start();
 
 // session expired?
 if (page_sessionExpired()) {
-  header("Location: finish.php?id=inaktiv");
+  header("Location: Config::GAME_END_URL?id=inaktiv");
   exit;
 } else {
   $_SESSION['lastAction'] = time();
@@ -38,15 +38,12 @@ if (page_sessionExpired()) {
 
 // session valid?
 if (!page_sessionValidate()) {
-  header("Location: finish.php?id=wrongSessionID");
+  header("Location: Config::GAME_END_URL?id=wrongSessionID");
   exit;
 }
 
 // refresh user data
 page_refreshUserData();
-
-// init request class
-$request = new Request();
 
 // load template
 $template = new Template;
@@ -59,11 +56,11 @@ $ownCaves = getCaves($_SESSION['player']->playerID);
 
 // no caves left
 if (!$ownCaves) {
-  if (!in_array($modus, $config->noCaveModusInclude)) {
+  if (!in_array($modus, Config::$noCaveModusInclude)) {
     $modus = NO_CAVE_LEFT;
   }
 } else {
-  $caveID = $request->getVar('caveID', 0);
+  $caveID = Request::getVar('caveID', 0);
 
   // Keine neue Höhle ausgewählt.
   if ($caveID == 0) {
@@ -155,8 +152,8 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case MESSAGES_LIST:
-    $deletebox = $request->getVar('deletebox', array('' => ''));
-    $box = $request->getVar('box', 1);
+    $deletebox = Request::getVar('deletebox', array('' => ''));
+    $box = Request::getVar('box', 1);
     $box = (!empty($box)) ? $box : 1;
 
     messages_getMessages($caveID, $deletebox, $box);
@@ -164,8 +161,8 @@ switch ($modus) {
     break;
 
   case MESSAGE_READ:
-    $messageID = $request->getVar('messageID', 0);
-    $box = $request->getVar('box', 1);
+    $messageID = Request::getVar('messageID', 0);
+    $box = Request::getVar('box', 1);
 
     messages_showMessage($caveID, $messageID, $box);
     $requestKeys = array('messageID', 'box', 'filter');
@@ -204,8 +201,8 @@ switch ($modus) {
     break;
 
   case MAP_DETAIL:
-    $targetCaveID = $request->getVar('targetCaveID', 0);
-    $method = $request->getVar('method', '');
+    $targetCaveID = Request::getVar('targetCaveID', 0);
+    $method = Request::getVar('method', '');
     
     getCaveReport($caveID, $ownCaves, $targetCaveID, $method);
     $requestKeys = array('targetCaveID');
@@ -220,8 +217,8 @@ switch ($modus) {
     break;
 
   case IMPROVEMENT_DETAIL:
-    $buildingID = $request->getVar('buildingID', 0);
-    $method = $request->getVar('method', '');
+    $buildingID = Request::getVar('buildingID', 0);
+    $method = Request::getVar('method', '');
 
     improvement_getBuildingDetails($buildingID, $ownCaves[$caveID], $method);
     $requestKeys = array('buildingID');
@@ -236,8 +233,8 @@ switch ($modus) {
     break;
 
   case WONDER_DETAIL:
-    $wonderID = $request->getVar('wonderID', 0);
-    $method = $request->getVar('method', '');
+    $wonderID = Request::getVar('wonderID', 0);
+    $method = Request::getVar('method', '');
 
     wonder_getWonderDetailContent($wonderID, $ownCaves[$caveID], $method);
     $requestKeys = array('wonderID');
@@ -252,8 +249,8 @@ switch ($modus) {
     break;
 
   case DEFENSE_DETAIL:
-    $defenseID = $request->getVar('defenseID', 0);
-    $method = $request->getVar('method', '');
+    $defenseID = Request::getVar('defenseID', 0);
+    $method = Request::getVar('method', '');
 
     defense_showProperties($defenseID, $ownCaves[$caveID], $method);
     $requestKeys = array('defense_id');
@@ -268,8 +265,8 @@ switch ($modus) {
     break;
 
   case SCIENCE_DETAIL:
-    $scienceID = $request->getVar('scienceID', 0);
-    $method = $request->getVar('method', '');
+    $scienceID = Request::getVar('scienceID', 0);
+    $method = Request::getVar('method', '');
 
     science_getScienceDetails($scienceID, $ownCaves[$caveID], $method);
     $requestKeys = array('scienceID');
@@ -285,8 +282,8 @@ switch ($modus) {
 
 
   case UNIT_DETAIL:
-    $unitID = $request->getVar('unitID', 0);
-    $method = $request->getVar('method', '');
+    $unitID = Request::getVar('unitID', 0);
+    $method = Request::getVar('method', '');
 
     unit_getUnitDetails($unitID, $ownCaves[$caveID], $method);
     $requestKeys = array('unitID');
@@ -310,7 +307,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case RANKING_PLAYER:
-    $offset = $request->getVar('offset', '');
+    $offset = Request::getVar('offset', '');
     $offset = ranking_checkOffset($_SESSION['player']->playerID, $offset);
 
     ranking_getContent($caveID, $offset);
@@ -318,7 +315,7 @@ switch ($modus) {
     break;
 
   case RANKING_TRIBE:
-    $offset = $request->getVar('offset', '');
+    $offset = Request::getVar('offset', '');
     $offset  = rankingTribe_checkOffset($offset);
 
     rankingTribe_getContent($caveID, $offset);
@@ -338,21 +335,21 @@ switch ($modus) {
     break;
 
   case TRIBE_RELATION_LIST:
-    $tag = $request->getVar('tag', '');
+    $tag = Request::getVar('tag', '');
 
     tribeRelationList_getContent($tag);
     $requestKeys = array('tag');
     break;
 
   case TRIBE_HISTORY:
-    $tag = $request->getVar('tag', '');
+    $tag = Request::getVar('tag', '');
 
     tribeHistory_getContent($tag);
     $requestKeys = array('tag');
     break;
 
   case TRIBE_DELETE:
-    $confirm = $request->isPost('confirm');
+    $confirm = Request::isPost('confirm');
 
     tribeDelete_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $confirm);
     break;
@@ -390,7 +387,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case AWARD_DETAIL:
-    $award = $request->getVar('award', '');
+    $award = Request::getVar('award', '');
 
     award_getAwardDetail($award);
     $requestKeys = array('award');
@@ -425,21 +422,21 @@ switch ($modus) {
     break;
 
   case PLAYER_DETAIL:
-    $playerID = $request->getVar('playerID', 0);
+    $playerID = Request::getVar('playerID', 0);
 
     player_getContent($caveID, $playerID);
     $requestKeys = array('detailID');
     break;
 
   case TRIBE_DETAIL:
-    $tribeID = $request->getVar('tribeID', 0);
+    $tribeID = Request::getVar('tribeID', 0);
 
     tribe_getContent($caveID, $tribeID);
     $requestKeys = array('tribeID');
     break;
 
   case TRIBE_PLAYER_LIST:
-    $tribeID = $request->getVar('tribeID', 0);
+    $tribeID = Request::getVar('tribeID', 0);
 
     tribePlayerList_getContent($caveID, $tribeID);
     $requestKeys = array('tribeID');

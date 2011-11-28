@@ -466,10 +466,10 @@ CREATE TABLE IF NOT EXISTS `Event_hero` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `Hero_new`
+-- Tabellenstruktur für Tabelle `Hero`
 --
 
-CREATE TABLE IF NOT EXISTS `Hero_new` (
+CREATE TABLE IF NOT EXISTS `Hero` (
   `heroID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -503,69 +503,6 @@ CREATE TABLE IF NOT EXISTS `Hero_rituals` (
   `duration` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '43200',
   PRIMARY KEY (`ritualID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
---
--- Tabellenstruktur für Tabelle `Hero`
---
-
-CREATE TABLE IF NOT EXISTS `Hero` (
-  `heldenID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
-  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `angriffsWert` int(11) unsigned NOT NULL DEFAULT '0',
-  `verteidigungsWert` int(11) unsigned NOT NULL DEFAULT '0',
-  `mentalKraft` int(11) unsigned NOT NULL DEFAULT '0',
-  `koerperKraft` int(11) unsigned NOT NULL DEFAULT '0',
-  `fluchtGrenze` int(11) unsigned NOT NULL DEFAULT '0',
-  `erfahrungsWert` int(11) unsigned NOT NULL DEFAULT '0',
-  `level` int(11) unsigned NOT NULL DEFAULT '0',
-  `bonusPunkte` int(11) unsigned NOT NULL DEFAULT '0',
-  `leichteSiege` int(11) unsigned NOT NULL DEFAULT '0',
-  `schatzHals` int(11) unsigned NOT NULL DEFAULT '0',
-  `schatzKopf` int(11) unsigned NOT NULL DEFAULT '0',
-  `schatzRing` int(11) unsigned NOT NULL DEFAULT '0',
-  `schatzRuestung` int(11) unsigned NOT NULL DEFAULT '0',
-  `schatzWaffe` int(11) unsigned NOT NULL DEFAULT '0',
-  `schatzSchild` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`heldenID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `Hero_Monster`
---
-
-CREATE TABLE IF NOT EXISTS `Hero_Monster` (
-  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
-  `caveID` int(11) unsigned NOT NULL DEFAULT '0',
-  `starttime` char(14) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  UNIQUE KEY `playerID` (`playerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `Hero_tournament`
---
-
-CREATE TABLE IF NOT EXISTS `Hero_tournament` (
-  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
-  `round` int(11) unsigned NOT NULL DEFAULT '0',
-  `gebot` int(11) unsigned NOT NULL DEFAULT '0',
-  `turnierID` smallint(6) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `Hero_treasure`
---
-
-CREATE TABLE IF NOT EXISTS `Hero_treasure` (
-  `heroID` smallint(6) NOT NULL DEFAULT '0',
-  `treasureID` smallint(6) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 

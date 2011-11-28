@@ -13,12 +13,10 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function DbConnect($host=0, $user=0, $pwd=0, $name=0) {
-  global $config;
-
-  if(!$host) $host  = $config->DB_HOST;
-  if(!$user) $user  = $config->DB_USER;
-  if(!$pwd)  $pwd   = $config->DB_PWD;
-  if(!$name) $name  = $config->DB_NAME;
+  if(!$host) $host  = UgaAggaConfig::DB_HOST;
+  if(!$user) $user  = UgaAggaConfig::DB_USER;
+  if(!$pwd)  $pwd   = UgaAggaConfig::DB_PWD;
+  if(!$name) $name  = UgaAggaConfig::DB_NAME;
 
   /* Connect to an ODBC database using driver invocation */
   $dsn = "mysql:dbname={$name};host={$host}";
@@ -36,6 +34,8 @@ function DbConnect($host=0, $user=0, $pwd=0, $name=0) {
 }
 
 class ePDO extends PDO {
+  const PARAM_SET = -1;
+
   private $queryCount;
   private $queryTime;
 
