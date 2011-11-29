@@ -19,12 +19,12 @@ require_once("include/Player.php");
 
 function page_error403($message) {
   @session_destroy();
-  header("Location: finish.php?id=".urlencode($message));
+  header("Location: " . Config::GAME_END_URL . "?id=".urlencode($message));
   exit;
 }
 
 function page_dberror() {
-  header("Location: finish.php?id=db");
+  header("Location: " . Config::GAME_END_URL . "?id=db");
   exit;
 }
 
@@ -56,13 +56,13 @@ function page_start() {
 
   // check for valid session
   if (!isset($_SESSION['player']) || !$_SESSION['player']->playerID) {
-    header("Location: finish.php?id=inaktiv");
+    header("Location: " . Config::GAME_END_URL . "?id=inaktiv");
     exit;
   }
 
   // connect to database
   if (!($db = DbConnect())) {
-    header("Location: finish.php?id=db");
+    header("Location: " . Config::GAME_END_URL . "?id=db");
     exit;
   }
 

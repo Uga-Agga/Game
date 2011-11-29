@@ -30,7 +30,7 @@ page_start();
 
 // session expired?
 if (page_sessionExpired()) {
-  header("Location: Config::GAME_END_URL?id=inaktiv");
+  header("Location: " . Config::GAME_END_URL . "?id=inaktiv");
   exit;
 } else {
   $_SESSION['lastAction'] = time();
@@ -38,7 +38,7 @@ if (page_sessionExpired()) {
 
 // session valid?
 if (!page_sessionValidate()) {
-  header("Location: Config::GAME_END_URL?id=wrongSessionID");
+  header("Location: " . Config::GAME_END_URL . "?id=wrongSessionID");
   exit;
 }
 

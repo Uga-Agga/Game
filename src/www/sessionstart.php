@@ -41,7 +41,7 @@ if (!$sessionID || !$playerID) {
 
 // connect to database
 if (!($db = DbConnect())) {
-  header("Location: Config::GAME_END_URL?id=db");
+  header("Location: " . Config::GAME_END_URL . "?id=db");
   exit;
 }
 
@@ -53,7 +53,7 @@ $sql = $db->prepare("SELECT *
 $sql->bindValue('s_id', $sessionID, PDO::PARAM_STR);
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 if (!$sql->execute()) {
-  header("Location: Config::GAME_END_URL?id=wrongSessionID");
+  header("Location: " . Config::GAME_END_URL . "?id=wrongSessionID");
   exit;
 }
 
@@ -76,7 +76,7 @@ if (!$sql->execute() || $sql->rowCount() == 0) {
 // get player by playerID for session
 $player = Player::getPlayer($playerID);
 if (!$player) {
-  header("Location: Config::GAME_END_URL?id=wrongSessionID");
+  header("Location: " . Config::GAME_END_URL . "?id=wrongSessionID");
   exit;
 }
 
@@ -90,7 +90,7 @@ $_SESSION['logintime'] = date("YmdHis");
 $_SESSION['messages'] = array();
 
 // go to start url
-header("Location: Config::GAME_START_URL");
+header("Location: " . Config::GAME_START_URL);
 exit;
 
 ?>
