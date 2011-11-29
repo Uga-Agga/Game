@@ -268,12 +268,10 @@ function getMapSize() {
  * connect to login database
  */
 function db_connectToLoginDB($host=0, $user=0, $pwd=0, $name=0) {
-  global $config;
-
-  if(!$host) $host  = $config->DB_LOGIN_HOST;
-  if(!$user) $user  = $config->DB_LOGIN_USER;
-  if(!$pwd)  $pwd   = $config->DB_LOGIN_PWD;
-  if(!$name) $name  = $config->DB_LOGIN_NAME;
+  if(!$host) $host  = Config::DB_LOGIN_HOST;
+  if(!$user) $user  = Config::DB_LOGIN_USER;
+  if(!$pwd)  $pwd   = Config::DB_LOGIN_PWD;
+  if(!$name) $name  = Config::DB_LOGIN_NAME;
 
   /* Connect to an ODBC database using driver invocation */
   $dsn = "mysql:dbname={$name};host={$host}";
@@ -616,14 +614,12 @@ function parseCost($building, &$details) {
 }
 
 function createRequestString($requestKeys) {
-  global $config;
-
   // standard typen
   if (!is_array($requestKeys) || empty($requestKeys)) {
     return (isset($_REQUEST['modus'])) ? 'modus='.$_REQUEST['modus'] : '';
   }
 
-  $requestKeys = array_merge($config->requestKeysNeed, $requestKeys);
+  $requestKeys = array_merge(Config::$requestKeysNeed, $requestKeys);
 
   $requestAry = array();
   foreach ($requestKeys as $key) {

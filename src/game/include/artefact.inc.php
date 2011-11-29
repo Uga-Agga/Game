@@ -64,6 +64,8 @@ function getArtefactMovement($artefactID) {
   if (!$sql->execute()) return array();
 
   $result = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
   if (empty($result)) {
     return array();
   }
@@ -100,6 +102,8 @@ function artefact_getArtefactMovements() {
                        WHERE artefactID != 0");
   if (!$sql->execute()) return array();
   $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
   if (sizeof($result) == 0) return array();
 
   // collect movements
@@ -118,6 +122,7 @@ function artefact_getArtefactMovements() {
     if ($sql->rowCountSelect() == 0) continue;
     if (!$sql->execute()) continue;
     $row += $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
 
     // prepare query
     $sql = $db->prepare("SELECT c.name AS destination_cavename, c.xCoord AS destination_xCoord, c.yCoord AS destination_yCoord,
@@ -130,6 +135,7 @@ function artefact_getArtefactMovements() {
     if ($sql->rowCountSelect() != 1) continue;
     if (!$sql->execute()) continue;
     $row += $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
 
     $moves[$row['artefactID']] = $row;
   }
@@ -302,7 +308,6 @@ function artefact_beginInitiation($artefact) {
                        SET initiated = " . ARTEFACT_INITIATING . " 
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefact['artefactID'], PDO::PARAM_INT);
-
   if (!$sql->execute()) return -4;
 
   return 1;

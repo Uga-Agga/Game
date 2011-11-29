@@ -20,7 +20,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function defense_builder($caveID, &$details) {
-  global template;
+  global $template;
 
   // open template
   $template->setFile('defenseBuilder.tmpl');
@@ -56,7 +56,7 @@ function defense_builder($caveID, &$details) {
       }
 
       // check queue exist
-      if ($queue) {
+      if (sizeof($queue)) {
         $messageID = 8;
         break;
       }
@@ -79,7 +79,7 @@ function defense_builder($caveID, &$details) {
       }
 
       // check queue exist
-      if (!$queue || $queue['event_defenseSystemID'] != $eventID) {
+      if (!sizeof($queue) || $queue['event_defenseSystemID'] != $eventID) {
         $messageID = 0;
         break;
       }
@@ -88,7 +88,7 @@ function defense_builder($caveID, &$details) {
         $messageID = defense_cancelOrder($eventID, $caveID);
 
         if ($messageID == 1) {
-          $queue = '';
+          $queue = null;
         }
       } else {
         $template->addVars(array(
@@ -164,7 +164,7 @@ function defense_builder($caveID, &$details) {
       $defenseSystem[$defense->defenseSystemID] = array_merge($defenseSystem[$defense->defenseSystemID], parseCost($defense, $details));
 
       // show the building link ?!
-      if ($queue) {
+      if (sizeof($queue)) {
         $defenseSystem[$defense->defenseSystemID]['no_build_msg'] = _('Ausbau im Gange');
       } else if ($defenseSystem[$defense->defenseSystemID]['notenough'] && $maxLevel > $details[$defense->dbFieldName]) {
         $defenseSystem[$defense->defenseSystemID]['no_build_msg'] = _('Zu wenig Rohstoffe');
@@ -211,7 +211,7 @@ function defense_builder($caveID, &$details) {
 * Irgendwas im Ausbau?
 *
 ****************************************************************************************************/
-  if ($queue) {
+  if (sizeof($queue)) {
     $template->addVars(array(
       'quene_show'      => true,
       'quene_name'      => $GLOBALS['defenseSystemTypeList'][$queue['defenseSystemID']]->name,

@@ -17,8 +17,7 @@ require_once("game_rules.php");
 init_potions();
 
 function merchant_getMechantDetail($playerID, $caveID, &$details) {
-  global $db, $request, $template;
-  global $buildingTypeList, $resourceTypeList, $tradeCategoriesTypeList, $tradeTypeList, $unitTypeList;
+  global $db, $template;
 
   // open template
   $template->setFile('merchant.tmpl');
@@ -31,7 +30,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
      1 =>  array('type' => 'success', 'message' =>"Erfreut nimmt der Händler deine Bezahlung entgegen. \"Ich hoffe dir gefällt meine Ware. Empfehle mich bitte weiter!\"")
   );
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -39,7 +38,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $tradeID = $request->getVar('tradeID', -1);
+      $tradeID = Request::getVar('tradeID', -1);
 
       $messageID = merchant_processOrder($tradeID, $caveID, $details);
       $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
@@ -51,19 +50,19 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 * Anzeigen der kaufbaren Sachen
 *
 ****************************************************************************************************/
-  foreach ($tradeCategoriesTypeList as $j => $cat) {
+  foreach ($GLOBALS['tradeCategoriesTypeList'] as $j => $cat) {
     $trades[$j] = array(
       'id'   => $j,
-      'name' => $tradeCategoriesTypeList[$j]->name
+      'name' => $GLOBALS['tradeCategoriesTypeList'][$j]->name
     );
 
     $count = 0;
-    foreach ($tradeTypeList as $id => $trade) {
+    foreach ($GLOBALS['tradeTypeList'] as $id => $trade) {
       if ($trade->nodocumentation) {
         continue;
       }
 
-      if ($trade->category != $tradeCategoriesTypeList[$j]->id) {
+      if ($trade->category != $GLOBALS['tradeCategoriesTypeList'][$j]->id) {
         continue;
       }
    
@@ -80,6 +79,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 
       if ($sql->execute()) {
         $row = $sql->fetch(PDO::FETCH_ASSOC);
+        $sql->closeCursor();
 
         if ($row['allowed'] == 0 && $row) {
           $canbuy = false;
@@ -122,7 +122,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 }
 
 function merchant_processOrder($tradeID, $caveID, $caveData) {
-  global $tradeCategoriesTypeList, $tradeTypeList, $db, $potionTypeList;
+  global $db;
 
   $sql = $db->prepare("SELECT LockTill < :LockTill as allowed
                        FROM " . TRADELOCK_TABLE ."
@@ -130,8 +130,7 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
                         AND cat = :cat");
   $sql->bindValue('LockTill', date("Y-m-d H:i:s", time()), PDO::PARAM_STR);
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  $sql->bindValue('cat', $tradeTypeList[$tradeID]->category, PDO::PARAM_STR);
-
+  $sql->bindValue('cat', $GLOBALS['tradeTypeList'][$tradeID]->category, PDO::PARAM_STR);
   if ($sql->execute()) {
     $row =  $sql->fetch(PDO::FETCH_ASSOC);
     if ($row["allowed"]== 0 && $row) {
@@ -143,33 +142,31 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
                        WHERE  PlayerID= :playerID
                         AND cat = :cat");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  $sql->bindValue('cat', $tradeTypeList[$tradeID]->category, PDO::PARAM_STR);
-  
-  if (!$sql->execute()) {
+  $sql->bindValue('cat', $GLOBALS['tradeTypeList'][$tradeID]->category, PDO::PARAM_STR);
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return -1;
   }
 
   // take production costs from cave
-  if (!processProductionCost($tradeTypeList[$tradeID], $caveID, $caveData)) {
+  if (!processProductionCost($GLOBALS['tradeTypeList'][$tradeID], $caveID, $caveData)) {
     return 0;
   }
 
   $now = time() + $_SESSION['player']->getTimeCorrection();
   
-  if ($tradeTypeList[$tradeID]->category == "potion") {
-    foreach ($tradeTypeList[$tradeID]->impactList[0]['potions'] AS $potionID => $potion) {
+  if ($GLOBALS['tradeTypeList'][$tradeID]->category == "potion") {
+    foreach ($GLOBALS['tradeTypeList'][$tradeID]->impactList[0]['potions'] AS $potionID => $potion) {
       
-      if (!$potionTypeList[$potionID])
+      if (!$GLOBALS['potionTypeList'][$potionID])
         return -1;
       
       $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
-                           SET " . $potionTypeList[$potionID]->dbFieldName . " =  " . $potionTypeList[$potionID]->dbFieldName . " + :absolute 
+                           SET " . $GLOBALS['potionTypeList'][$potionID]->dbFieldName . " =  " . $GLOBALS['potionTypeList'][$potionID]->dbFieldName . " + :absolute 
                            WHERE playerID = :playerID");
       $sql->bindValue('absolute', $potion['absolute'], PDO::PARAM_INT);
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-      
-      if (!$sql->execute()) {
-        processProductionCostSetBack($tradeTypeList[$tradeID], $caveID, $caveData);
+      if (!$sql->execute() || $sql->rowCount() == 0) {
+        processProductionCostSetBack($GLOBALS['tradeTypeList'][$tradeID], $caveID, $caveData);
         return -1;
       }
     }
@@ -179,9 +176,9 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
     $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
   
     // now calculate the delayDelta depending on the first impact's delay
-    $delayDelta = $tradeTypeList[$tradeID]->impactList[0]['delay'] * $delayRandFactor;
+    $delayDelta = $GLOBALS['tradeTypeList'][$tradeID]->impactList[0]['delay'] * $delayRandFactor;
   
-    foreach($tradeTypeList[$tradeID]->impactList AS $impactID => $impact) {
+    foreach($GLOBALS['tradeTypeList'][$tradeID]->impactList AS $impactID => $impact) {
       $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
       $sql = $db->prepare("INSERT INTO ". EVENT_TRADE_TABLE ." 
                            (targetID, tradeID, impactID, start, end)
@@ -191,36 +188,25 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
       $sql->bindValue('impactID', $impactID, PDO::PARAM_INT);
       $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
       $sql->bindValue('end', time_toDatetime($now + $delay), PDO::PARAM_STR);
-  
-      if (!$sql->execute()) {
-        processProductionCostSetBack($tradeTypeList[$tradeID], $caveID, $caveData);
+      if (!$sql->execute() || $sql->rowCount() == 0) {
+        processProductionCostSetBack($GLOBALS['tradeTypeList'][$tradeID], $caveID, $caveData);
         return -1;
       }
     }
   }
 
-  $lock = $now + $tradeCategoriesTypeList[$tradeTypeList[$tradeID]->category]->secondsbetween ;
+  $lock = $now + $GLOBALS['tradeCategoriesTypeList'][$GLOBALS['tradeTypeList'][$tradeID]->category]->secondsbetween ;
 
   $sql = $db->prepare("INSERT INTO ". TRADELOCK_TABLE ." 
                        (PlayerID, cat, LockTill)
                         VALUES (:playerID, :cat, :LockTill)");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  $sql->bindValue('cat', $tradeTypeList[$tradeID]->category, PDO::PARAM_STR);
+  $sql->bindValue('cat', $GLOBALS['tradeTypeList'][$tradeID]->category, PDO::PARAM_STR);
   $sql->bindValue('LockTill', time_toDatetime($lock), PDO::PARAM_STR);
-
-  if (!$sql->execute()) {
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return -1;
   }
 
-  /*
-  $targetMessage =
-    "Der Besitzer der H&ouml;hle in {$caveData['xCoord']}/{$caveData['yCoord']} ".
-    "hat auf Ihre H&ouml;hle in $coordX/$coordY ein Wunder gewirkt.";
-
-  messages_sendSystemMessage($targetData['playerID'], 9,
-           "Wunder!",
-           $targetMessage, $db);
-  */
   return 1;
 }
 

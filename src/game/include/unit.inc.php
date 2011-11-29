@@ -2,6 +2,7 @@
 /*
  * unitbuild.inc.php -
  * Copyright (c) 2004  OGP-Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,13 +24,13 @@ function unit_getQueue($playerID, $caveID) {
                       "AND e.caveID = :caveID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) {
-    return 0;
-  }
-  
-  if (!($result = $sql->fetch())) {
-    return 0;
+  if (!$sql->execute()) return null;
+
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (empty($result)) {
+    return null;
   }
 
   return $result;
@@ -44,34 +45,28 @@ function unit_cancelOrder($event_unitID, $caveID) {
                          AND caveID = :caveID");
   $sql->bindValue('event_unitID', $event_unitID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) return 1; 
-  
-  return 0;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return 1; // return messageID
+  }
+
+  return 0; // return messageID
 }
 
 function unit_processOrder($unitID, $quantity, $caveID, $details) {
-
-  global $defenseSystemTypeList,
-         $unitTypeList,
-         $buildingTypeList,
-         $scienceTypeList,
-         $resourceTypeList, 
-         $db;
+  global $db;
 
   if ($quantity > MAX_SIMULTAN_BUILDED_UNITS || $quantity <= 0 ) {
     return 4;
   }
 
-
   // take the production costs from cave
-  if (!processProductionCost($unitTypeList[$unitID], $caveID, $details, $quantity)) {
+  if (!processProductionCost($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity)) {
     return 2;
   }
 
   $prodTime = 0;
   // calculate the production time;
-  if ($time_formula = $unitTypeList[$unitID]->productionTimeFunction){
+  if ($time_formula = $GLOBALS['unitTypeList'][$unitID]->productionTimeFunction){
     $time_eval_formula = formula_parseToPHP($time_formula, '$details');
     eval('$prodTime=' . $time_eval_formula . ';');
   }
@@ -84,11 +79,11 @@ function unit_processOrder($unitID, $quantity, $caveID, $details) {
   $sql->bindValue('quantity', $quantity, PDO::PARAM_INT);
   $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
   $sql->bindValue('end', time_toDatetime($now + $prodTime), PDO::PARAM_STR);
-  
-  if (!$sql->execute()) {
-    processProductionCostSetBack($unitTypeList[$unitID], $caveID, $details, $quantity);
+  if (!$sql->execute() || !$sql->rowCount() == 1) {
+    processProductionCostSetBack($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity);
     return 2;
   }
+
   return 3;
 }
 

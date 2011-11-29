@@ -2,6 +2,7 @@
 /*
  * defense.html.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,16 +26,16 @@ function defense_getQueue($playerID, $caveID) {
                          AND e.caveID = :caveID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  if (!$sql->execute()) return false;
+  if (!$sql->execute()) return null;
 
-  $return = $sql->fetch(PDO::FETCH_ASSOC);
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  if (sizeof($return) !== 0) {
-    return $return;
+  if (empty($result)) {
+    return null;
   }
 
-  return false;
+  return $result;
 }
 
 
@@ -158,8 +159,7 @@ function defense_processOrder($defenseID, $caveID, $cave) {
   $sql->bindValue('defenseID', $defenseID, PDO::PARAM_INT);
   $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
   $sql->bindValue('end', time_toDatetime($now + $prodTime), PDO::PARAM_STR);
-
-  if (!$sql->execute()) {
+  if (!$sql->execute() || !$sql->rowCount() == 1) {
     //give production costs back
     processProductionCostSetBack($GLOBALS['defenseSystemTypeList'][$defenseID], $caveID, $cave);
     return 6;

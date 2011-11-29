@@ -13,8 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function science_getScienceDetail($caveID, &$details) {
-  global $request, $template;
-  global $scienceTypeList;
+  global $template;
 
   // open template
   $template->setFile('scienceBuilder.tmpl');
@@ -32,7 +31,7 @@ function science_getScienceDetail($caveID, &$details) {
   // get this cave's queue
   $queue = science_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -40,14 +39,14 @@ function science_getScienceDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $scienceID = $request->getVar('scienceID', -1);
+      $scienceID = Request::getVar('scienceID', -1);
       if ($scienceID == -1) {
         $messageID = 2;
         break;
       }
 
       // check queue exist
-      if ($queue) {
+      if (sizeof($queue)) {
         $messageID = 2;
         break;
       }
@@ -63,23 +62,23 @@ function science_getScienceDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = $request->getVar('id', 0);
+      $eventID = Request::getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 2;
         break;
       }
 
       // check queue exist
-      if (!$queue || $queue['event_scienceID'] != $eventID) {
+      if (!sizeof($queue) || $queue['event_scienceID'] != $eventID) {
         $messageID = 2;
         break;
       }
 
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         $messageID = science_cancelOrder($eventID, $caveID);
 
         if ($messageID == 0) {
-          $queue = '';
+          $queue = null;
         }
       } else {
         $template->addVars(array(
@@ -87,7 +86,7 @@ function science_getScienceDetail($caveID, &$details) {
           'confirm_action'  => 'cancelOrder',
           'confirm_id'      => $eventID,
           'confirm_mode'    => SCIENCE_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest die Forschung von <span class="bold">%s</span> abbrechen?'), $scienceTypeList[$queue['scienceID']]->name),
+          'confirm_msg'     => sprintf(_('Möchtest die Forschung von <span class="bold">%s</span> abbrechen?'), $GLOBALS['scienceTypeList'][$queue['scienceID']]->name),
         ));
       }
     break;
@@ -95,7 +94,7 @@ function science_getScienceDetail($caveID, &$details) {
 
 
   $sciences = $sciencesUnqualified = array();
-  foreach ($scienceTypeList as $id => $science) {
+  foreach ($GLOBALS['scienceTypeList'] as $id => $science) {
     $maxLevel = round(eval('return '.formula_parseToPHP("{$science->maxLevel};", '$details')));
     $notenough=FALSE;
 
@@ -122,7 +121,7 @@ function science_getScienceDetail($caveID, &$details) {
       $sciences[$science->scienceID] = array_merge($sciences[$science->scienceID], parseCost($science, $details));
 
       // show the building link ?!
-      if ($queue) {
+      if (sizeof($queue)) {
         $sciences[$science->scienceID]['no_build_msg'] = _('Erforschung im Gange');
       } else if ($sciences[$science->scienceID]['notenough'] && $maxLevel > $details[$science->dbFieldName]) {
         $sciences[$science->scienceID]['no_build_msg'] = _('Zu wenig Rohstoffe');
@@ -157,11 +156,11 @@ function science_getScienceDetail($caveID, &$details) {
 * Irgendwas im Ausbau?
 *
 ****************************************************************************************************/
-  if ($queue) {
+  if (sizeof($queue)) {
     $template->addVars(array(
       'quene_show'      => true,
-      'quene_name'      => $scienceTypeList[$queue['scienceID']]->name,
-      'quene_nextlevel' => $details[$scienceTypeList[$queue['scienceID']]->dbFieldName] + 1,
+      'quene_name'      => $GLOBALS['scienceTypeList'][$queue['scienceID']]->name,
+      'quene_nextlevel' => $details[$GLOBALS['scienceTypeList'][$queue['scienceID']]->dbFieldName] + 1,
       'quene_finish'    => time_formatDatetime($queue['end']),
       'quene_modus'     => SCIENCE_BUILDER,
       'quene_event_id'  => $queue['event_scienceID']

@@ -2,6 +2,7 @@
 /*
  * science.inc.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,13 +24,13 @@ function science_getQueue($playerID, $caveID) {
                       "AND e.caveID = :caveID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) {
-    return 0;
-  }
-  
-  if (!($result = $sql->fetch())) {
-    return 0;
+  if (!$sql->execute()) return null;
+
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (empty($result)) {
+    return null;
   }
 
   return $result;
@@ -44,11 +45,11 @@ function science_cancelOrder($event_scienceID, $caveID) {
                       "AND caveID = :caveID");
   $sql->bindValue('event_scienceID', $event_scienceID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) return 1; 
-  
-  return 0;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return 1; // return messageID
+  }
 
+  return 0; // return messageID
 }
 
 function science_processOrder($scienceID, $caveID, $cave) {
@@ -118,11 +119,11 @@ function science_processOrder($scienceID, $caveID, $cave) {
   $sql->bindValue('scienceID', $scienceID, PDO::PARAM_INT);
   $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
   $sql->bindValue('end', time_toDatetime($now + $prodTime), PDO::PARAM_STR);
-                   
-  if (!$sql->execute()) {
+  if (!$sql->execute() || !$sql->rowCount() == 1) {
     processProductionCostSetBack($science, $caveID, $cave);
     return 2;
   }
+
   return 3;
 }
 

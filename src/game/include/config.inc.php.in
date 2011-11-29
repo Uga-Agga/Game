@@ -175,7 +175,7 @@ class Config {
 
   public static $requestKeysNeed = array('modus');
 
-  public static $template_paths  = array(1 => 'uga');
+  public static $template_paths  = array(1 => 'uga', 2 => 'agga', 3 => 'enzio');
 
   public static $messageImage = array( 2 => "battle_won.gif",
                              6 => "trade_report.gif",

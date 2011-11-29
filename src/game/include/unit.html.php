@@ -13,8 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function unit_getUnitDetail($caveID, &$details) {
-  global $request, $template;
-  global $resourceTypeList, $unitTypeList, $FUELRESOURCEID;
+  global $template;
 
   // open template
   $template->setFile('unitBuilder.tmpl');
@@ -32,7 +31,7 @@ function unit_getUnitDetail($caveID, &$details) {
   // get this cave's queue
   $queue = unit_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -40,15 +39,15 @@ function unit_getUnitDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $unitID = $request->getVar('unitID', -1);
-      $quantity = $request->getVar('quantity', 0);
+      $unitID = Request::getVar('unitID', -1);
+      $quantity = Request::getVar('quantity', 0);
       if ($unitID == -1) {
         $messageID = 2;
         break;
       }
 
       // check queue exist
-      if ($queue) {
+      if (sizeof($queue)) {
         $messageID = 5;
         break;
       }
@@ -64,23 +63,23 @@ function unit_getUnitDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = $request->getVar('id', 0);
+      $eventID = Request::getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 1;
         break;
       }
 
       // check queue exist
-      if (!$queue || $queue['event_unitID'] != $eventID) {
+      if (!sizeof($queue) || $queue['event_unitID'] != $eventID) {
         $messageID = 1;
         break;
       }
 
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         $messageID = unit_cancelOrder($eventID, $caveID);
 
         if ($messageID == 0) {
-          $queue = '';
+          $queue = null;
         }
       } else {
         $template->addVars(array(
@@ -88,14 +87,14 @@ function unit_getUnitDetail($caveID, &$details) {
           'confirm_action'  => 'cancelOrder',
           'confirm_id'      => $eventID,
           'confirm_mode'    => UNIT_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest du den Arbeitsauftrag von <span class="bold">%s</span> abbrechen?'), $unitTypeList[$queue['unitID']]->name),
+          'confirm_msg'     => sprintf(_('Möchtest du den Arbeitsauftrag von <span class="bold">%s</span> abbrechen?'), $GLOBALS['unitTypeList'][$queue['unitID']]->name),
         ));
       }
     break;
   }
 
   $units = $unitsUnqualified = array();
-  foreach ($unitTypeList as $id => $unit) {
+  foreach ($GLOBALS['unitTypeList'] as $id => $unit) {
     $result = rules_checkDependencies($unit, $details);
 
 /****************************************************************************************************
@@ -125,7 +124,7 @@ function unit_getUnitDetail($caveID, &$details) {
         'spy_chance'       => $unit->spyChance,
         'spy_quality'      => $unit->spyQuality,
         'anti_spy_chance'  => $unit->antiSpyChance,
-        'fuel_name'        => $resourceTypeList[$FUELRESOURCEID]->dbFieldName,
+        'fuel_name'        => $GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->dbFieldName,
         'fuel_factor'      => $unit->foodCost,
         'way_cost'         => $unit->wayCost,
         'normal_damage_probabilit'    => 100 * (1-($unit->heavyDamageProbability + $unit->criticalDamageProbability)),
@@ -136,7 +135,7 @@ function unit_getUnitDetail($caveID, &$details) {
       $units[$unit->unitID] = array_merge($units[$unit->unitID], parseCost($unit, $details));
 
       // show the building link ?!
-      if ($queue)
+      if (sizeof($queue))
         $units[$unit->unitID]['no_build_msg'] = _('Ausbau im Gange');
       else if ($units[$unit->unitID]['notenough'])
         $units[$unit->unitID]['no_build_msg'] = _('Zu wenig Rohstoffe');
@@ -169,7 +168,7 @@ function unit_getUnitDetail($caveID, &$details) {
         'spy_chance'       => $unit->spyChance,
         'spy_quality'      => $unit->spyQuality,
         'anti_spy_chance'  => $unit->antiSpyChance,
-        'fuel_name'        => $resourceTypeList[$FUELRESOURCEID]->dbFieldName,
+        'fuel_name'        => $GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->dbFieldName,
         'fuel_factor'      => $unit->foodCost,
         'way_cost'         => $unit->wayCost,
         'normal_damage_probabilit'    => 100 * (1-($unit->heavyDamageProbability + $unit->criticalDamageProbability)),
@@ -185,10 +184,10 @@ function unit_getUnitDetail($caveID, &$details) {
 * Irgendwas im Ausbau?
 *
 ****************************************************************************************************/
-  if ($queue) {
+  if (sizeof($queue)) {
     $template->addVars(array(
       'quene_show'      => true,
-      'quene_name'      => $unitTypeList[$queue['unitID']]->name,
+      'quene_name'      => $GLOBALS['unitTypeList'][$queue['unitID']]->name,
       'quene_quantity'  => $queue['quantity'],
       'quene_finish'    => time_formatDatetime($queue['end']),
       'quene_modus'     => UNIT_BUILDER,

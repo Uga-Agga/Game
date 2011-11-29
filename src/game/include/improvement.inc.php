@@ -2,6 +2,7 @@
 /*
  * improvement.inc.php - 
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -23,14 +24,16 @@ function improvement_getQueue($playerID, $caveID) {
                          AND e.caveID = :caveID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  if (!$sql->execute()) return false;
+  if (!$sql->execute()) return null;
 
-  $return = $sql->fetch(PDO::FETCH_ASSOC);
-  if (count($return) !== 0) {
-    return $return;
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (empty($result)) {
+    return null;
   }
 
-  return false;
+  return $result;
 }
 
 function improvement_cancelOrder($event_expansionID, $caveID) {
@@ -42,10 +45,10 @@ function improvement_cancelOrder($event_expansionID, $caveID) {
   $sql->bindValue('event_expansionID', $event_expansionID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute() || $sql->rowCount() == 0) {
-    return 1;
+    return 1; // return messageID
   }
 
-  return 0;
+  return 0; // return messageID
 }
 
 function improvement_toreDownIsPossible($caveID) {
@@ -58,6 +61,8 @@ function improvement_toreDownIsPossible($caveID) {
   if (!$sql->execute()) return false;
 
   $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
   if (!$row['possible']) {
     return false;
   }
@@ -66,26 +71,28 @@ function improvement_toreDownIsPossible($caveID) {
 }
 
 function improvement_Demolishing($buildingID, $caveID, $caveData) {
-  global $resourceTypeList, $buildingTypeList, $config, $db;
+  global $db;
 
-  $bFieldName = $buildingTypeList[$buildingID]->dbFieldName;
+  $bFieldName = $GLOBALS['buildingTypeList'][$buildingID]->dbFieldName;
 
-  // can't tear down
-  if (!improvement_toreDownIsPossible($caveID)) return 8;
+  // can't demolish
+  if (!improvement_toreDownIsPossible($caveID)) {
+    return 8;
+  }
 
   // no building of that type
   if ($caveData[$bFieldName] < 1) return 7;
 
   // add resources gain
   /*
-  if (is_array($buildingTypeList[$buildingID]->resourceProductionCost)){
+  if (is_array($GLOBALS['buildingTypeList'][$buildingID]->resourceProductionCost)){
     $resources = array();
-    foreach ($buildingTypeList[$buildingID]->resourceProductionCost as $key => $value){
+    foreach ($GLOBALS['buildingTypeList'][$buildingID]->resourceProductionCost as $key => $value){
       if ($value != "" && $value != "0"){
         $formula     = formula_parseToSQL($value);
-        $dbField     = $resourceTypeList[$key]->dbFieldName;
-        $maxLevel    = round(eval('return '.formula_parseToPHP("{$resourceTypeList[$key]->maxLevel};", '$caveData')));
-        $resources[] = "$dbField = LEAST($maxLevel, $dbField + ($formula) / {$config->IMPROVEMENT_PAY_BACK_DIVISOR})";
+        $dbField     = $GLOBALS['resourceTypeList'][$key]->dbFieldName;
+        $maxLevel    = round(eval('return '.formula_parseToPHP("{$GLOBALS['resourceTypeList'][$key]->maxLevel};", '$caveData')));
+        $resources[] = "$dbField = LEAST($maxLevel, $dbField + ($formula) / {Config::IMPROVEMENT_PAY_BACK_DIVISOR})";
       }
     }
     $set .= implode(", ", $resources);
@@ -109,7 +116,6 @@ function improvement_Demolishing($buildingID, $caveID, $caveData) {
 }
 
 function improvement_processOrder($buildingID, $caveID, $caveData) {
-  global $buildingTypeList;
   global $db;
 
   $sql = $db->prepare("SELECT count(*) as count
@@ -118,12 +124,13 @@ function improvement_processOrder($buildingID, $caveID, $caveData) {
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return 2;
   $return = $sql->fetch();
+  $sql->closeCursor();
 
   if ($return['count'] != 0) {
     return 2;
   }
 
-  $building = $buildingTypeList[$buildingID];
+  $building = $GLOBALS['buildingTypeList'][$buildingID];
 
   // take production costs from cave
   if (!processProductionCost($building, $caveID, $caveData)) {
@@ -148,8 +155,7 @@ function improvement_processOrder($buildingID, $caveID, $caveData) {
   $sql->bindValue('expansionID', $buildingID, PDO::PARAM_INT);
   $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
   $sql->bindValue('end', time_toDatetime($now + $prodTime), PDO::PARAM_STR);
-  
-  if (!$sql->execute()) {
+  if (!$sql->execute() || !$sql->rowCount() == 1) {
     processProductionCostSetBack($building, $caveID, $caveData);
     return 2;
   }

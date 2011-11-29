@@ -69,7 +69,7 @@ $sql = $db->prepare("UPDATE " . SESSION_TABLE . "
 $sql->bindValue('s_id', $sessionID, PDO::PARAM_STR);
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 if (!$sql->execute() || $sql->rowCount() == 0) {
-  header("Location: Config::GAME_END_URL?id=wrongSessionID");
+  header("Location: " . Config::GAME_END_URL . "?id=wrongSessionID");
   exit;
 }
 
