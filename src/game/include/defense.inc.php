@@ -30,7 +30,7 @@ function defense_getQueue($playerID, $caveID) {
   $return = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  if (count($return) !== 0) {
+  if (sizeof($return) !== 0) {
     return $return;
   }
 
@@ -71,8 +71,9 @@ function defense_demolishingPossible($caveID) {
   global $db;
 
   // prepare query
-  $sql = $db->prepare("SELECT toreDownTimeout < NOW()+0 AS possible ".
-                   "FROM ". CAVE_TABLE ." WHERE caveID = :caveID");
+  $sql = $db->prepare("SELECT toreDownTimeout < NOW()+0 AS possible
+                       FROM ". CAVE_TABLE ."
+                       WHERE caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return false;
 
@@ -110,13 +111,12 @@ function defense_Demolishing($defenseID, $caveID, $cave) {
 
   $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
                        SET {$dbFieldName} = {$dbFieldName} - 1,
-                       toreDownTimeout = (NOW() + INTERVAL :toreDownTime MINUTE) + 0
+                         toreDownTimeout = (NOW() + INTERVAL :toreDownTime MINUTE) + 0
                        WHERE caveID = :caveID 
-                       AND {$dbFieldName} > 0");
+                         AND {$dbFieldName} > 0");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   $sql->bindVAlue('toreDownTime', TORE_DOWN_TIMEOUT, PDO::PARAM_INT);
   if (!$sql->execute() || !$sql->rowCount() == 1) {
-  print_r($sql->debugDumpParams());
     return 4;
   }
 

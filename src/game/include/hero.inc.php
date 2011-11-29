@@ -11,7 +11,7 @@
  */
 
 function getHeroByPlayer($playerID) {
-  global $db, $heroTypesList;
+  global $db;
 
   // set database query with playerID
   $sql = $db->prepare("SELECT *
@@ -27,8 +27,8 @@ function getHeroByPlayer($playerID) {
     return null;
   }
 
-  $hero['id']       = $heroTypesList[$hero['heroTypeID']]['id'];
-  $hero['typeName'] = $heroTypesList[$hero['heroTypeID']]['name'];
+  $hero['id']       = $GLOBALS['heroTypesList'][$hero['heroTypeID']]['id'];
+  $hero['typeName'] = $GLOBALS['heroTypesList'][$hero['heroTypeID']]['name'];
   $hero['path']     = _('hero_imperator.gif');
   $hero['location'] = _('tot');
 
@@ -39,7 +39,7 @@ function getHeroByPlayer($playerID) {
     $hero['path'] = _('hero_constructor.gif');
   }
 
-  $hero['lvlUp'] = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['lvlUp_formula']) . ";");
+  $hero['lvlUp'] = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['lvlUp_formula']) . ";");
   $hero['expLeft'] = $hero['lvlUp'] - $hero['exp'];
 
   if ($hero['healPoints'] == 0 || $hero['isAlive'] == false) {
@@ -116,17 +116,17 @@ function getHeroQueue($playerID) {
 
 
 function skillForce($playerID, $hero) {
-  global $db, $heroTypesList, $effectTypeList;
+  global $db;
 
   $hero['forceLvl'] = $hero['forceLvl']++;
-  $force = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['force_formula']) . ";");
+  $force = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['force_formula']) . ";");
 
   // update effects
   $fields = array();
-  foreach ($effectTypeList as $effect) {
-    if (array_key_exists($effect->dbFieldName, $heroTypesList[$hero['heroTypeID']]['effects'])) {
-      array_push($fields, $effect->dbFieldName . " = ".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['absolute'].
-      "+" . $effect->dbFieldName."*(1+".$heroTypesList[$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
+  foreach ($GLOBALS['effectTypeList'] as $effect) {
+    if (array_key_exists($effect->dbFieldName, $GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'])) {
+      array_push($fields, $effect->dbFieldName . " = ".$GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'][$effect->dbFieldName]['absolute'].
+      "+" . $effect->dbFieldName."*(1+".$GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
     }
   }
 
@@ -158,10 +158,10 @@ function skillForce($playerID, $hero) {
 }
 
 function skillMaxHp($playerID, $hero) {
-  global $db, $heroTypesList;
+  global $db;
   
   $hero['maxHpLvl'] = $hero['maxHpLvl']++;
-  $maxHP = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['maxHP_formula']) . ";");
+  $maxHP = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                      SET maxHpLvl = maxHpLvl + 1,
@@ -174,10 +174,10 @@ function skillMaxHp($playerID, $hero) {
 }
 
 function skillRegHp($playerID, $hero) {
-  global $db, $heroTypesList;
+  global $db;
   
   $hero['regHpLvl'] = ++$hero['regHpLvl'];
-  $regHP = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['regHP_formula']) . ";");
+  $regHP = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['regHP_formula']) . ";");
 
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
@@ -287,7 +287,7 @@ function createRitual($caveID, $playerID, $ritual, $hero, &$ownCaves) {
 }
 
 function createNewHero($heroTypeID, $playerID, $caveID) {
-  global $db, $heroTypesList;
+  global $db;
 
   $hero = getHeroByPlayer($playerID);
 
@@ -304,7 +304,7 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
     $sql->bindValue('name', $player['name'], PDO::PARAM_INT);
     $sql->bindValue('exp', 0, PDO::PARAM_INT);
     $sql->bindValue('healPoints', 0, PDO::PARAM_INT);
-    $sql->bindValue('maxHealPoints', eval("return " . hero_parseFormulas($heroTypesList[$heroTypeID]['maxHP_formula']) . ";"), PDO::PARAM_INT);
+    $sql->bindValue('maxHealPoints', eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$heroTypeID]['maxHP_formula']) . ";"), PDO::PARAM_INT);
     $sql->bindValue('isAlive', 0, PDO::PARAM_INT);
     if (!$sql->execute()) {
       $sql->closeCursor();
@@ -313,7 +313,7 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
 
     /* no effects while creating
     // effects
-    foreach ($heroTypesList[$heroTypeID]['effects'] AS $key => $value) {
+    foreach ($GLOBALS['heroTypesList'][$heroTypeID]['effects'] AS $key => $value) {
       $sql = $db->prepare("UPDATE " .HERO_TABLE . "
                          SET " . $key ." = :value");
       $sql->bindValue('value', $value['absolute'], PDO::PARAM_STR);
@@ -353,14 +353,14 @@ function hero_removeHeroFromCave ($heroID) {
 }
 
 function hero_usePotion ($potionID, $value) {
-  global $db, $potionTypeList;
+  global $db;
 
   $playerID = $_SESSION['player']->playerID;
 
   $playerData = getPlayerByID($playerID);
   $hero = getHeroByPlayer($playerID);
 
-  $potion = $potionTypeList[$potionID];
+  $potion = $GLOBALS['potionTypeList'][$potionID];
 
   if (!$potion) {
     return -8;
@@ -429,7 +429,7 @@ function hero_usePotion ($potionID, $value) {
 }
 
 function hero_levelUp($hero) {
-  global $db, $effectTypeList, $heroTypesList;
+  global $db;
 
   if ($hero['exp'] < $hero['lvlUp']) {
     return -12;
@@ -449,14 +449,14 @@ function hero_levelUp($hero) {
 }
 
 function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
-  global $db, $resourceTypeList;
+  global $db;
 
   if ($resourceID < 0 || $value == 0) {
     return array('messageID' => -13, 'value' => 0);
   }
 
-  if (array_key_exists($resourceID, $resourceTypeList)) {
-    $resource = $resourceTypeList[$resourceID];
+  if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
+    $resource = $GLOBALS['resourceTypeList'][$resourceID];
     $playerID = $_SESSION['player']->playerID;
 
     // not enough resources in cave
@@ -551,7 +551,7 @@ function hero_killHero ($playerID) {
 }
 
 function hero_removeHeroEffectsFromCave($playerID) {
-  global $db, $heroTypesList, $effectTypeList;
+  global $db;
 
   $hero = getHeroByPlayer($playerID);
 
@@ -568,8 +568,8 @@ function hero_removeHeroEffectsFromCave($playerID) {
 
   // removing hero effects from cave is only needed, if resource factors are involved
   $effectArray = array();
-  foreach($effectTypeList as $effect) {
-    if (array_key_exists($effect->dbFieldName, $heroTypesList[$hero['heroTypeID']]['effects'])) {
+  foreach($GLOBALS['effectTypeList'] as $effect) {
+    if (array_key_exists($effect->dbFieldName, $GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'])) {
       array_push($effectArray, $effect->dbFieldName . " = " . $effect->dbFieldName . " - " . $hero[$effect->dbFieldName]);
     }
   }

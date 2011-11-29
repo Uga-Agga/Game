@@ -21,15 +21,14 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function defense_showProperties($defenseID, $cave, $method) {
   global $template;
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
   // first check whether that defense should be displayed...
-  $defense = $defenseSystemTypeList[$defenseID];
+  $defense = $GLOBALS['defenseSystemTypeList'][$defenseID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$defense->maxLevel};", '$cave')));
   $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
 
   if (!$defense || ($defense->nodocumentation && !$cave[$defense->dbFieldName] && rules_checkDependencies($defense, $cave) !== TRUE)) {
-    $defense = current($defenseSystemTypeList);
+    $defense = current($GLOBALS['defenseSystemTypeList']);
   }
 
   // open template
@@ -59,8 +58,8 @@ function defense_showProperties($defenseID, $cave, $method) {
         array_push(
           $resourcecost,
           array(
-           'name'        => $resourceTypeList[$resourceID]->name,
-           'dbFieldName' => $resourceTypeList[$resourceID]->dbFieldName,
+           'name'        => $GLOBALS['resourceTypeList'][$resourceID]->name,
+           'dbFieldName' => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
            'value'       => $cost
           )
         );
@@ -73,23 +72,23 @@ function defense_showProperties($defenseID, $cave, $method) {
       if ($cost)
         array_push($unitcost,
                    array(
-                   'name'        => $unitTypeList[$unitID]->name,
-                   'dbFieldName' => $unitTypeList[$unitID]->dbFieldName,
+                   'name'        => $GLOBALS['unitTypeList'][$unitID]->name,
+                   'dbFieldName' => $GLOBALS['unitTypeList'][$unitID]->dbFieldName,
                    'value'       => $cost));
     }
 
     $buildingCost = array();
     foreach ($defense->buildingProductionCost as $key => $value)
       if ($value != "" && $value != 0)
-        array_push($buildingCost, array('dbFieldName' => $buildingTypeList[$key]->dbFieldName,
-                                        'name'        => $buildingTypeList[$key]->name,
+        array_push($buildingCost, array('dbFieldName' => $GLOBALS['buildingTypeList'][$key]->dbFieldName,
+                                        'name'        => $GLOBALS['buildingTypeList'][$key]->name,
                                         'value'       => ceil(eval('return '.formula_parseToPHP($defense->buildingProductionCost[$key] . ';', '$details')))));
 
     $defenseCost = array();
     foreach ($defense->defenseProductionCost as $key => $value)
       if ($value != "" && $value != 0)
-        array_push($defenseCost, array('dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
-                                       'name'        => $defenseSystemTypeList[$key]->name,
+        array_push($defenseCost, array('dbFieldName' => $GLOBALS['defenseSystemTypeList'][$key]->dbFieldName,
+                                       'name'        => $GLOBALS['defenseSystemTypeList'][$key]->name,
                                        'value'       => ceil(eval('return '.formula_parseToPHP($defense->defenseProductionCost[$key] . ';', '$details')))));
 
     $levels[$count] = array('level' => $level + 1,
@@ -112,53 +111,53 @@ function defense_showProperties($defenseID, $cave, $method) {
 
   foreach ($defense->buildingDepList as $key => $level)
     if ($level)
-      array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
+      array_push($buildingdep, array('name'  => $GLOBALS['buildingTypeList'][$key]->name,
                                      'level' => "&gt;= " . $level));
 
   foreach ($defense->defenseSystemDepList as $key => $level)
     if ($level)
-      array_push($defensesystemdep, array('name'  => $defenseSystemTypeList[$key]->name,
+      array_push($defensesystemdep, array('name'  => $GLOBALS['defenseSystemTypeList'][$key]->name,
                                           'level' => "&gt;= " . $level));
 
   foreach ($defense->resourceDepList as $key => $level)
     if ($level)
-      array_push($resourcedep, array('name'  => $resourceTypeList[$key]->name,
+      array_push($resourcedep, array('name'  => $GLOBALS['resourceTypeList'][$key]->name,
                                      'level' => "&gt;= " . $level));
 
   foreach ($defense->scienceDepList as $key => $level)
     if ($level)
-      array_push($sciencedep, array('name'  => $scienceTypeList[$key]->name,
+      array_push($sciencedep, array('name'  => $GLOBALS['scienceTypeList'][$key]->name,
                                     'level' => "&gt;= " . $level));
 
   foreach ($defense->unitDepList as $key => $level)
     if ($level)
-      array_push($unitdep, array('name'  => $unitTypeList[$key]->name,
+      array_push($unitdep, array('name'  => $GLOBALS['unitTypeList'][$key]->name,
                                  'level' => "&gt;= " . $level));
 
 
   foreach ($defense->maxBuildingDepList as $key => $level)
     if ($level != -1)
-      array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
+      array_push($buildingdep, array('name'  => $GLOBALS['buildingTypeList'][$key]->name,
                                      'level' => "&lt;= " . $level));
 
   foreach ($defense->maxDefenseSystemDepList as $key => $level)
     if ($level != -1)
-      array_push($defensesystemdep, array('name'  => $defenseSystemTypeList[$key]->name,
+      array_push($defensesystemdep, array('name'  => $GLOBALS['defenseSystemTypeList'][$key]->name,
                                           'level' => "&lt;= " . $level));
 
   foreach ($defense->maxResourceDepList as $key => $level)
     if ($level != -1)
-      array_push($resourcedep, array('name'  => $resourceTypeList[$key]->name,
+      array_push($resourcedep, array('name'  => $GLOBALS['resourceTypeList'][$key]->name,
                                      'level' => "&lt;= " . $level));
 
   foreach ($defense->maxScienceDepList as $key => $level)
     if ($level != -1)
-      array_push($sciencedep, array('name'  => $scienceTypeList[$key]->name,
+      array_push($sciencedep, array('name'  => $GLOBALS['scienceTypeList'][$key]->name,
                                     'level' => "&lt;= " . $level));
 
   foreach ($defense->maxUnitDepList as $key => $level)
     if ($level != -1)
-      array_push($unitdep, array('name'  => $unitTypeList[$key]->name,
+      array_push($unitdep, array('name'  => $GLOBALS['unitTypeList'][$key]->name,
                                  'level' => "&lt;= " . $level));
 
 

@@ -28,8 +28,7 @@ init_heroSkills();
  *  @param meineHöhlen  all the data of all your caves
  */
 function hero_getHeroDetail($caveID, &$ownCaves) {
-  global $config, $db, $request, $template;
-  global $potionTypeList, $heroTypesList, $heroSkillTypeList, $resourceTypeList;
+  global $db, $template;
 
   // open template
   $template->setFile('hero.tmpl');
@@ -72,11 +71,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   );
 
   // create new hero
-  $action = $request->getVar('action', '');
-  $newHeroID = $request->getVar('id', '');
+  $action = Request::getVar('action', '');
+  $newHeroID = Request::getVar('id', '');
   if ($action =="createHero") {
-    if (isset($heroTypesList[$newHeroID])) {
-      $messageID = createNewHero($heroTypesList[$newHeroID]['heroTypeID'], $playerID, $caveID);
+    if (isset($GLOBALS['heroTypesList'][$newHeroID])) {
+      $messageID = createNewHero($GLOBALS['heroTypesList'][$newHeroID]['heroTypeID'], $playerID, $caveID);
     }
   }
 
@@ -89,7 +88,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
 
-    foreach ($resourceTypeList as $key) {
+    foreach ($GLOBALS['resourceTypeList'] as $key) {
       $dbFieldName = $key->dbFieldName;
       $enough = ($ritual[$dbFieldName]<=$cave[$dbFieldName]);
       $tmp = array(
@@ -102,7 +101,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       $resource[$key->dbFieldName]= $tmp;
     }
 
-    $action = $request->getVar('action', '');
+    $action = Request::getVar('action', '');
     switch ($action) {
       case 'reincarnate':
         if ($hero['isAlive'] == 1) {
@@ -130,7 +129,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         }
 
         if ($hero['tpFree'] >= 1) {
-          $skill = $request->getVar('skill', '');
+          $skill = Request::getVar('skill', '');
           switch ($skill) {
             case 'force':
               //typ='force';
@@ -185,8 +184,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       break;
 
       case 'immolateResources':
-        $resourceID = $request->getVar('resourceID', -1);
-        $value = $request->getVar('value', 0);
+        $resourceID = Request::getVar('resourceID', -1);
+        $value = Request::getVar('value', 0);
 
         $resultArray = hero_immolateResources($resourceID, $value, $caveID, $ownCaves);
         $messageID = $resultArray['messageID'];
@@ -203,8 +202,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           break;
         }
 
-        $potionID = $request->getVar('potionID', -1);
-        $value = $request->getVar('value', 0);
+        $potionID = Request::getVar('potionID', -1);
+        $value = Request::getVar('value', 0);
 
         if ($potionID == -1) {
           $messageID = -8; 
@@ -224,7 +223,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
     $player = getPlayerByID($playerID);
     $potions = array();
-    foreach ($potionTypeList AS $potionID => $potion) {
+    foreach ($GLOBALS['potionTypeList'] AS $potionID => $potion) {
       if ($player[$potion->dbFieldName] > 0) {
         $potion->value = $player[$potion->dbFieldName];
         $potions[] = $potion;
@@ -276,14 +275,14 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       'delay'            => time_formatDuration($ritual['duration']),
       'ritual'           => $ritual,
       'resource'         => $resource,
-      'resourceTypeList' => $resourceTypeList,
+      'resourceTypeList' => $GLOBALS['resourceTypeList'],
     ));
   }
 
   if ($newhero) {
     $template->addVars(array(
         'newhero'       => $newhero,
-        'heroTypesList' => $heroTypesList
+        'heroTypesList' => $GLOBALS['heroTypesList']
     ));
   }
 
@@ -291,8 +290,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $template->addVar('potions', $potions);
   }
 
-  if ($heroSkillTypeList) {
-    $template->addVar('skills', $heroSkillTypeList);
+  if ($GLOBALS['heroSkillTypeList']) {
+    $template->addVar('skills', $GLOBALS['heroSkillTypeList']);
   }
 }
 

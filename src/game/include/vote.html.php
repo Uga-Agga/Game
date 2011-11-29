@@ -75,12 +75,11 @@ class GalaxyNewsVoteButton extends VoteButton {
 
 
 function vote_main() {
-  global $request;
   // initialize return value
   $result = '';
 
   // get current task
-  $task = $request->getVar('task', '');
+  $task = Request::getVar('task', '');
 
   switch ($task) {
 

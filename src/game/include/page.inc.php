@@ -86,7 +86,7 @@ function page_refreshUserData() {
 function page_end($watch = true) {
   global $db;
 
-  if (UgaAggaConfig::RUN_TIMER ||$watch) {
+  if (Config::RUN_TIMER ||$watch) {
     $proctime  = stopwatch();
     $dbpercent = round($db->getQueryTime()/$proctime * 100, 2);
 
@@ -136,7 +136,7 @@ function page_sessionValidate() {
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('sessionID', $_SESSION['session']['sessionID'], PDO::PARAM_INT);
   $sql->bindValue('whereMicrotime', $microtime, PDO::PARAM_INT);
-  $sql->bindValue('requestTimeout', UgaAggaConfig::WWW_REQUEST_TIMEOUT, PDO::PARAM_INT);
+  $sql->bindValue('requestTimeout', Config::WWW_REQUEST_TIMEOUT, PDO::PARAM_INT);
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return false;
   }
@@ -145,14 +145,12 @@ function page_sessionValidate() {
 }
 
 function page_getModus() {
-  global $request;
-
-  $modus = $request->getVar('modus', NEWS);
+  $modus = Request::getVar('modus', NEWS);
   if (empty($modus)) {
     $modus = NEWS;
   }
 
-  if (in_array($modus, UgaAggaConfig::$rememberModusInclude)) {
+  if (in_array($modus, Config::$rememberModusInclude)) {
     $_SESSION['current_modus'] = $modus;
   } else {
     $_SESSION['current_modus'] = NEWS;
@@ -164,7 +162,7 @@ function page_getModus() {
 function page_logRequest($modus, $caveID) {
   global $db;
 
-  if (UgaAggaConfig::LOG_ALL && in_array($modus, UgaAggaConfig::$logModusInclude)){
+  if (Config::LOG_ALL && in_array($modus, Config::$logModusInclude)){
     $sql = $db->prepare("INSERT INTO " . LOG_X_TABLE . date("w") . "
                           (playerID, caveID, ip, request, sessionID)
                         VALUES (:playerID, :caveID, :ip, :request, :sessionID)");

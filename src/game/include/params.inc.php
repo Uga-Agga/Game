@@ -143,7 +143,7 @@ class Request {
   *
   * @access private
   */
-  private function setVar(&$result, $var, $type, $multibyte = false) {
+  static private function setVar(&$result, $var, $type, $multibyte = false) {
     settype($var, $type);
     $result = $var;
 

@@ -135,7 +135,7 @@ class Player {
   }
 
   function getTemplatePath() {
-    return sprintf('%s/templates/%s/%s/', UA_GAME_DIR, $this->language, UgaAggaConfig::$template_paths[$this->template]);
+    return sprintf('%s/templates/%s/%s/', UA_GAME_DIR, $this->language, Config::$template_paths[$this->template]);
   }
 
   /**

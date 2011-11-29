@@ -96,7 +96,7 @@ function formula_parseToPHP($formula, $detail) {
   $farmmalus = max($_SESSION['player']->fame - FREE_FARM_POINTS , 0);
   $formula = str_replace("[E25.ACT]", $farmmalus, $formula);
 
-  if (UgaAggaConfig::RUN_TIMER) {
+  if (Config::RUN_TIMER) {
     $timer = page_startTimer();
   }
 
@@ -129,7 +129,7 @@ function formula_parseToPHP($formula, $detail) {
     }
   }
 
-  if (UgaAggaConfig::RUN_TIMER) {
+  if (Config::RUN_TIMER) {
     echo "<p>rules_parseToPHP: " . page_stopTimer($timer) . "s</p>";
   }
 

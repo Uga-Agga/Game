@@ -20,7 +20,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function defense_builder($caveID, &$details) {
-  global $request, $template;
+  global template;
 
   // open template
   $template->setFile('defenseBuilder.tmpl');
@@ -41,7 +41,7 @@ function defense_builder($caveID, &$details) {
   // get this cave's queue
   $queue = defense_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -49,7 +49,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $defenseID = $request->getVar('defenseID', -1);
+      $defenseID = Request::getVar('defenseID', -1);
       if ($defenseID == -1 || !isset($GLOBALS['defenseSystemTypeList'][$defenseID])) {
         $messageID = 6;
         break;
@@ -72,7 +72,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = $request->getVar('id', 0);
+      $eventID = Request::getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 0;
         break;
@@ -84,7 +84,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         $messageID = defense_cancelOrder($eventID, $caveID);
 
         if ($messageID == 1) {
@@ -107,7 +107,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'demolishing':
-      $defenseID = $request->getVar('id', -1);
+      $defenseID = Request::getVar('id', -1);
       if ($defenseID == -1) {
         $messageID = 4;
         break;
@@ -118,7 +118,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         $messageID = defense_Demolishing($defenseID, $caveID, $details);
         $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
       } else {
@@ -158,7 +158,6 @@ function defense_builder($caveID, &$details) {
         'time'             => time_formatDuration(eval('return ' . formula_parseToPHP($defense->productionTimeFunction . ";", '$details')) * DEFENSESYSTEM_TIME_BASE_FACTOR),
         'maxlevel'         => $maxLevel,
         'currentlevel'     => "0" + $details[$defense->dbFieldName],
-//        'duration_formula' => formula_parseToReadable($defense->productionTimeFunction),
         'antiSpyChance'    => $defense->antiSpyChance,
         'breakdown_link'   => ($details[$defense->dbFieldName] > 0) ? true : false
       );
@@ -187,7 +186,6 @@ function defense_builder($caveID, &$details) {
         'defense_id'       => $defense->defenseSystemID,
         'cave_id'          => $caveID,
         'currentlevel'     => "0" + $details[$defense->dbFieldName],
-//        'duration_formula' => formula_parseToReadable($defense->productionTimeFunction),
         'dependencies'     => ($result !== false) ? $result : false
       );
 
@@ -203,7 +201,6 @@ function defense_builder($caveID, &$details) {
         'defense_id'       => $defense->defenseSystemID,
         'cave_id'          => $caveID,
         'dependencies'     => $result,
-//        'duration_formula' => formula_parseToReadable($defense->productionTimeFunction),
         'antiSpyChance'    => $defense->antiSpyChance,
       );
     }
