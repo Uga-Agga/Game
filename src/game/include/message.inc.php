@@ -936,13 +936,13 @@ class MessageExporter {
                        '%s: %s<br />'.
                        '%s<br /><hr />',
                        _('Absender'), $message->sender,
-                       _('Empf&auml;nger'), $message->recipient,
+                       _('Empfänger'), $message->recipient,
                        _('Datum'), $message->time,
                        _('Betreff'), $message->subject,
                        $message->text);
 
     // add headers
-    $mail = "<html><body>" . $mail . "</body></html>";
+    $mail = '<html><head><meta http-equiv="Content-type" content="text/html; charset=UTF-8" /></head><body>' . $mail . '</body></html>';
 
     // zip it
     require_once("zip.lib.php");
@@ -965,13 +965,13 @@ class MessageExporter {
                     "MIME-version: 1.0\n".
                     "Content-type: multipart/mixed; ".
                     "boundary=\"$mail_boundary\"\n".
-                    "Content-transfer-encoding: 7BIT\n".
+                    "Content-transfer-encoding: 8BIT\n".
                     "X-attachments: $filename;\n\n";
 
     // hier fängt der normale mail-text an
     $mail_headers .= "--$mail_boundary\n".
-                     "Content-Type: text/plain; charset=\"iso-8859-1\"\n\n".
-                     _("Hallo,\n\ndu hast im Nachrichten Fenster auf den Knopf 'Mailen&l&ouml;schen' gedr&uuml;ckt. Die dabei markierten Nachrichten werden dir nun mit dieser Email zugesandt. Um den Datenverkehr gering zu halten, wurden dabei deine Nachrichten komprimiert. Mit einschl&auml;gigen Programmen wie WinZip l&auml;sst sich diese Datei entpacken.\n\nGru&szlig;, dein UA-Team") . "\n";
+                     "Content-Type: text/plain; charset=\"UTF-8\"\n\n".
+                     _("Hallo,\n\ndu hast im Nachrichten Fenster auf den Knopf 'Mailen&löschen' gedrückt. Die dabei markierten Nachrichten werden dir nun mit dieser Email zugesandt. Um den Datenverkehr gering zu halten, wurden dabei deine Nachrichten komprimiert. Mit einschlägigen Programmen wie WinZip lässt sich diese Datei entpacken.\n\nGruß, dein UA-Team") . "\n";
 
     // hier fängt der datei-anhang an
     $mail_headers .= "--$mail_boundary\n".
