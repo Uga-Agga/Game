@@ -191,99 +191,92 @@ function skillRegHp($playerID, $hero) {
   return $sql->execute();
 
 }
-function getRitualByLvl($lvl) {
+function getRitual($hero) {
   global $db;
-
-  // set database query with playerID
-  $sql = $db->prepare("SELECT *
-                       FROM ". HERO_RITUAL_TABLE ." 
-                       WHERE ritualID  = :lvl");
-  $sql->bindValue('lvl', $lvl, PDO::PARAM_INT);
-  if (!$sql->execute()) return NULL;
-
-  $ret = $sql->fetch(PDO::FETCH_ASSOC);
-  $sql->closeCursor();
-
-  // Kein Ritual auf dem eigenen lvl? letztes Ritual nehmen.
-  if (empty($ret)) {
-    $sql = $db->prepare("SELECT *
-                         FROM ". HERO_RITUAL_TABLE ." 
-                         ORDER BY ritualID DESC
-                         LIMIT 0,1");
-    if (!$sql->execute()) return NULL;
-
-    $ret = $sql->fetch(PDO::FETCH_ASSOC);
-    $sql->closeCursor();
+  
+  $ritualCost = $GLOBALS['heroTypesList'][$hero['heroTypeID']]['ritual']['ritualCost'];
+  foreach ($ritualCost as $costID => $cost) {
+    $ritualCost[$costID] = eval("return " . hero_parseFormulas($cost) . ";");
   }
-
-  return (empty($ret)) ? null : $ret;
+  
+  $duration = array('duration' => $GLOBALS['heroTypesList'][$hero['heroTypeID']]['ritual']['duration']);
+  return array_merge($ritualCost, $duration);
 }
 
 function createRitual($caveID, $playerID, $ritual, $hero, &$ownCaves) {
   global $db;
 
   $cave = getCaveSecure($caveID, $playerID);
-
-  if ($ritual['population']['value']<= $cave['population'] &&
-  $ritual['food']['value']<= $cave['food'] &&
-  $ritual['wood']['value']<= $cave['wood'] &&
-  $ritual['stone']['value']<= $cave['stone'] &&
-  $ritual['metal']['value']<= $cave['metal'] &&
-  $ritual['sulfur']['value']<= $cave['sulfur'])
-  {
-    $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
-                         SET population = population - :pop,
-                           food = food - :food,
-                           wood = wood - :wood,
-                           stone = stone - :stone,
-                           metal = metal - :metal,
-                           sulfur = sulfur - :sulfur
-                         WHERE (playerID = :playerID) AND (caveID = :caveID)");
-    $sql->bindValue('pop', $ritual['population']['value'], PDO::PARAM_INT);
-    $sql->bindValue('food', $ritual['food']['value'], PDO::PARAM_INT);
-    $sql->bindValue('wood', $ritual['wood']['value'], PDO::PARAM_INT);
-    $sql->bindValue('stone', $ritual['stone']['value'], PDO::PARAM_INT);
-    $sql->bindValue('metal', $ritual['metal']['value'], PDO::PARAM_INT);
-    $sql->bindValue('sulfur', $ritual['sulfur']['value'], PDO::PARAM_INT);
-    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-    if (!$sql->execute()) {
-      $sql->closeCursor();
-      return -7;
-    }
-
-    $now = time();
-    $sql = $db->prepare("INSERT INTO ". EVENT_HERO_TABLE ."
-                           (caveID, playerID, heroID, start, end, blocked) 
-                         VALUES
-                           (:caveID, :playerID, :heroID, :start, :end, :blocked)");      
-    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-    $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
-    $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
-    $sql->bindValue('end', time_toDatetime($now + $ritual['duration']), PDO::PARAM_STR);
-    $sql->bindValue('blocked', 0, PDO::PARAM_INT);
-    if ($sql->execute()) {
-      $sql->closeCursor();
-
-      $sql =  $db->prepare("UPDATE " . HERO_TABLE . "
-                            SET isAlive = -1,
-                              caveID = :caveID
-                            WHERE heroID = :heroID");
-      $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
-      $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-      if (!$sql->execute()) {
-        return -3;
+  $duration = $ritual['duration'];
+  unset($ritual['duration']);
+  // get ritual costs
+  $costs = array();
+  $temp = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['defenseSystemTypeList']);
+  foreach($temp as $val) {
+    if (array_key_exists($val->dbFieldName, $ritual)) {
+      if ($ritual[$val->dbFieldName]['value']) {
+        $costs[$val->dbFieldName] = $ritual[$val->dbFieldName]['value'];
       }
-
-      // update cave
-      $ownCaves[$caveID] = $ownCaves[$caveID] = getCaveSecure($caveID, $_SESSION['player']->playerID);
-
-      return 2;
     }
   }
 
-  return -3;
+  $set     = array();
+  $setBack = array();
+  $where   = array("WHERE caveID = '{$caveID}'");
+
+  // get all the costs
+  foreach ($costs as $key => $value) {
+    array_push($set,     "{$key} = {$key} - ({$value})");
+    array_push($setBack, "{$key} = {$key} + ({$value})");
+    array_push($where,   "{$key} >= ({$value})");
+  }
+
+  $where = implode(" AND ", $where);
+
+  // generate SQL
+  if (sizeof($set)) {
+    $set     = implode(", ", $set);
+    
+    if (!$db->exec("UPDATE ". CAVE_TABLE ." SET {$set} {$where}")) {
+      return -3;
+    }
+
+    $setBack = implode(", ", $setBack);
+    $setBack = "UPDATE ". CAVE_TABLE ." SET $setBack WHERE caveID = '{$caveID}'";
+  } else {
+    return -7;
+  }
+
+  $now = time();
+  $sql = $db->prepare("INSERT INTO ". EVENT_HERO_TABLE ."
+                         (caveID, playerID, heroID, start, end, blocked) 
+                       VALUES
+                         (:caveID, :playerID, :heroID, :start, :end, :blocked)");
+  $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
+  $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
+  $sql->bindValue('end', time_toDatetime($now + $duration), PDO::PARAM_STR);
+  $sql->bindValue('blocked', 0, PDO::PARAM_INT);
+  if ($sql->execute()) {
+    $sql->closeCursor();
+
+    $sql =  $db->prepare("UPDATE " . HERO_TABLE . "
+                          SET isAlive = -1,
+                            caveID = :caveID
+                          WHERE heroID = :heroID");
+    $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
+    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+    if (!$sql->execute()) {
+      $db->query($setBack);
+      return -7;
+    }
+
+    // update cave
+    $ownCaves[$caveID] = getCaveSecure($caveID, $_SESSION['player']->playerID);
+
+    return 2;
+  }
 }
 
 function createNewHero($heroTypeID, $playerID, $caveID) {
@@ -311,19 +304,6 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
       return -6;
     }
 
-    /* no effects while creating
-    // effects
-    foreach ($GLOBALS['heroTypesList'][$heroTypeID]['effects'] AS $key => $value) {
-      $sql = $db->prepare("UPDATE " .HERO_TABLE . "
-                         SET " . $key ." = :value");
-      $sql->bindValue('value', $value['absolute'], PDO::PARAM_STR);
-      
-      if (!$sql->execute()) {
-        $sql->closeCursor();
-        return -6;
-      }
-    }
-    */
     return 3;
   }
 
