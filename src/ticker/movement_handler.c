@@ -730,7 +730,7 @@ struct Battle *hero_update_after_battle(db_t *database,
           abs(battle->attackers_acc_hitpoints_units_before - battle->attackers_acc_hitpoints_units), hero.maxHealPoints, war_points_attacker);
       dstring_append(ds, " WHERE heroID = %d", heroID);
 
-      debug(DEBUG_HERO, "hero_update_after_battle: %s", dstring_str(ds));
+      debug(DEBUG_HERO, "hero_update_after_battle attacker: %s", dstring_str(ds));
       db_query_dstring(database, ds);
 
       /*check if hero is alive*/
@@ -760,7 +760,7 @@ struct Battle *hero_update_after_battle(db_t *database,
           abs(battle->defenders_acc_hitpoints_units_before - battle->defenders_acc_hitpoints_units), hero.maxHealPoints, war_points_defender);
       dstring_append(ds, " WHERE heroID = %d", heroID);
 
-      debug(DEBUG_HERO, "%s", dstring_str(ds));
+      debug(DEBUG_HERO, "hero_update_after_battle defender: %s", dstring_str(ds));
       db_query_dstring(database, ds);
 
       /*check if hero is alive*/
