@@ -1137,7 +1137,7 @@ void battle_report (db_t *database,
   // hero defender message
   if (result->defenders->heroFights) {
     if (result->defenders_hero_died != 0) {
-      template_set(template1, "HERO/hero_dead", "");
+      template_set(template2, "HERO/hero_dead", "");
     }
 
     template_set_fmt(template2, "HERO/hero_points_defender", "%d", hero_points_defender);
