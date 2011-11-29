@@ -308,7 +308,10 @@ function artefact_beginInitiation($artefact) {
                        SET initiated = " . ARTEFACT_INITIATING . " 
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefact['artefactID'], PDO::PARAM_INT);
-  if (!$sql->execute()) return -4;
+  if (!$sql->execute()) {
+    $db->query($setBack);
+    return -4;
+  }
 
   return 1;
 }

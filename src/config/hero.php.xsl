@@ -34,7 +34,9 @@ function init_heroSkills() {
                      'force_formula' =&gt; '<xsl:value-of select="force"/>', 
                      'regHP_formula' =&gt; '<xsl:value-of select="regHP"/>', 
                      'maxHP_formula' =&gt; '<xsl:value-of select="maxHP"/>',
-                     'effects' =&gt; array(<xsl:apply-templates select="effects/effect"/>));
+                     'effects' =&gt; array(<xsl:apply-templates select="effects/effect"/>), 
+                     'ritual' =&gt; array('ritualCost' => array(<xsl:apply-templates select="ritual/Cost"/>),
+                                          'duration' => '<xsl:value-of select="ritual/@duration"/>'));
   
 </xsl:template>
 
@@ -54,8 +56,13 @@ function init_heroSkills() {
                                          'relative' =&gt; <xsl:value-of select="@relative"/>,
                                          'maxDelta' =&gt; <xsl:value-of select="@maxDelta"/>,
                                          'type' =&gt; '<xsl:value-of select="@type"/>')
-                                          <xsl:if test="position()!=last()">,
-                                          </xsl:if></xsl:template>
+                                          <xsl:if test="position()!=last()">,</xsl:if>
+</xsl:template>
+
+<xsl:template match="Cost">
+'<xsl:value-of select="@id"/>' =&gt; '<xsl:apply-templates/>'
+<xsl:if test="position()!=last()">,</xsl:if>
+</xsl:template>
 
 <xsl:template match="Description"><xsl:apply-templates/></xsl:template>
 <xsl:template match="p">&lt;p&gt;<xsl:value-of select="normalize-space()"/>&lt;/p&gt;</xsl:template>

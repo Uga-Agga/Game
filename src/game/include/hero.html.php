@@ -38,7 +38,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $player = getPlayerByID($playerID);
 
   $newhero = false;
-
+  
   $messageText = array(
     -18 => array('type' => 'error', 'message' => _('Euer Held ist tot!')),
     -17 => array('type' => 'error', 'message' => _('Euer Held ist gar nicht tot!')),
@@ -84,7 +84,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   if ($hero != null) {
     $showLevelUp = false;
 
-    $ritual = getRitualByLvl($hero['lvl']);
+    $ritual = getRitual($hero);
+    
     $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
 

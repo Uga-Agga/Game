@@ -597,10 +597,6 @@ function init_defenseSystems(){
 <xsl:template match="Encumbrance"><xsl:value-of select="count(id(@id)/preceding-sibling::*)"/> => '<xsl:value-of select="@value"/>'<xsl:if test="position()!=last()">, </xsl:if>
 </xsl:template>
 
-<!-- Hero -->
-<xsl:template match="HeroType">/****hallo***/</xsl:template>
-<xsl:template match="HeroSkills"></xsl:template>
-
 <!-- Potions -->
 <xsl:template match="Potions">
 /*************** Tränke ******************/
