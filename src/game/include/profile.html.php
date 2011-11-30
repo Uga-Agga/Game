@@ -19,15 +19,15 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function profile_main() {
-  global $config, $request, $template;
+  global $template;
 
   // connect to login db
-  if (!($db_login = DbConnect($config->DB_LOGIN_HOST, $config->DB_LOGIN_USER, $config->DB_LOGIN_PWD, $config->DB_LOGIN_NAME))) {
+  if (!($db_login = DbConnect(Config::DB_LOGIN_HOST, Config::DB_LOGIN_USER, Config::DB_LOGIN_PWD, Config::DB_LOGIN_NAME))) {
     $template->throwError('Datenbankverbindungsfehler. Bitte wende dich an einen Administrator.');
     return;
   }
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
     // change cave page
     case 'change':
@@ -40,7 +40,7 @@ function profile_main() {
 
     // change cave page
     case 'delete':
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         if (profile_processDeleteAccount($db_login, $_SESSION['player']->playerID)) {
           session_destroy();
 
@@ -149,7 +149,7 @@ function profile_getPlayerData($db_login){
  *  database.
  */
 function profile_fillUserData($template, $playerData) {
-  global $config, $template;
+  global $template;
 
   $profileData = array();
 
@@ -181,7 +181,7 @@ function profile_fillUserData($template, $playerData) {
   ////////////// template //////////////////////
   $p = new ProfileDataGroup(_('Template auswählen'));
   $slct = new ProfileElementSelection(_('Template auswählen'), 'data', 'template');
-  foreach ($config->template_paths as $key => $text) {
+  foreach (Config::$template_paths as $key => $text) {
     $slct->add(new ProfileSelector($key, $text, $key == $_SESSION['player']->template));
   }
   $p->add($slct);$profileData[] = $p->getTmplData();
@@ -207,13 +207,13 @@ function profile_fillUserData($template, $playerData) {
 /** This function sets the changed data specified by the user.
  */
 function profile_update($db_login) {
-  global $db, $request;
+  global $db;
 
   $playerID = $_SESSION['player']->playerID;
-  $data     = $request->getVar('data', array('' => ''));
-  $password = $request->getVar('password', array('' => ''));
+  $data     = Request::getVar('data', array('' => ''));
+  $password = Request::getVar('password', array('' => ''));
 
-  $data['description'] = $request->getVar('description', '', true);
+  $data['description'] = Request::getVar('description', '', true);
 
   // validate language code
   $uaLanguageNames = LanguageNames::getLanguageNames();
@@ -253,7 +253,7 @@ function profile_update($db_login) {
   $sql->bindValue('email2', $data['email2'], PDO::PARAM_STR);
   $sql->bindValue('avatar', $data['avatar'], PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  if (!$sql->execute()) {
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
   }
 

@@ -21,7 +21,6 @@ require_once('lib/Movement.php');
 /*****************************************************************************/
 
 function digest_getMovements($ownCave, $doNotShow, $showDetails) {
-  global $resourceTypeList, $unitTypeList, $EXPOSEINVISIBLE;
   global $db;
 
   // get movements
@@ -92,7 +91,7 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
     if ($row['isOwnMovement'] == 0) {
       if ($ua_movements[$row['movementID']]->mayBeInvisible) {
         $anzahl_sichtbarer_einheiten = 0;
-        foreach ($unitTypeList as $unitType)
+        foreach ($GLOBALS['unitTypeList'] as $unitType)
         {
           if ($unitType->visible) {
             $anzahl_sichtbarer_einheiten += $row[$unitType->dbFieldName];
@@ -144,15 +143,15 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
         $tmp['hero'] = "Held läuft mit!";
       }
 
-      // eval(ExposeInvisible)
+      // eval(GameConstants::EXPOSE_INVISIBLE)
       // FIXME (mlunzena): oben holen wir schon bestimmte Höhlendaten,
       //                   das sollte man zusammenfassen..
       $target = getCaveByID($row['target_caveID']);
-      $expose = eval('return '.formula_parseToPHP($EXPOSEINVISIBLE.";", '$target'));
+      $expose = eval('return '.formula_parseToPHP(GameConstants::EXPOSE_INVISIBLE.";", '$target'));
 
       // show units
       $units = array();
-      foreach ($unitTypeList as $unit) {
+      foreach ($GLOBALS['unitTypeList'] as $unit) {
 
         // this movement does not contain units of that type
         if (!$row[$unit->dbFieldName]) continue;
@@ -186,7 +185,7 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
       }
 
       $resources = array();
-      foreach ($resourceTypeList as $resource) {
+      foreach ($GLOBALS['resourceTypeList'] as $resource) {
         if (!$row[$resource->dbFieldName]) continue;
 
         $resources[] = array(
@@ -234,9 +233,9 @@ function digest_getInitiationDates($ownCave) {
                          LEFT JOIN " . ARTEFACT_TABLE . " a ON e.artefactID = a.artefactID
                          LEFT JOIN " . ARTEFACT_CLASS_TABLE . " ac ON a.artefactClassID = ac.artefactClassID
                          WHERE " . $caveIDs . " ORDER BY e.end ASC, e.event_artefactID ASC");
-
-  if (!$sql->execute()) 
+  if (!$sql->execute()) {
     return array();
+  }
 
   $result = array();
   while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
@@ -268,7 +267,6 @@ function digest_getInitiationDates($ownCave) {
 
 function digest_getAppointments($ownCaves){
   global $db;
-  global $buildingTypeList, $scienceTypeList, $defenseSystemTypeList, $unitTypeList;
 
   $caveIDs = implode(', ', array_keys($ownCaves));
 
@@ -278,19 +276,20 @@ function digest_getAppointments($ownCaves){
                        FROM " . EVENT_UNIT_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
                        ORDER BY end ASC, event_unitID ASC");
-  if (!$sql->execute()) return array();
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $result[] = array(
-      'event_name'         => $row['quantity'] . "x " . $unitTypeList[$row['unitID']]->name,
-      'cave_name'          => $ownCaves[$row['caveID']]['name'],
-      'cave_id'            => $row['caveID'],
-      'category'           => 'unit',
-      'modus'              => UNIT_BUILDER,
-      'event_id'           => $row['event_unitID'],
-      'event_start'        => time_fromDatetime($row['start']),
-      'event_end'          => time_fromDatetime($row['end']),
-      'event_end_date'     => time_formatDatetime($row['end']),
-      'seconds_before_end' => time_fromDatetime($row['end']) - time());
+  if ($sql->execute()) {
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $result[] = array(
+        'event_name'         => $row['quantity'] . "x " . $GLOBALS['unitTypeList'][$row['unitID']]->name,
+        'cave_name'          => $ownCaves[$row['caveID']]['name'],
+        'cave_id'            => $row['caveID'],
+        'category'           => 'unit',
+        'modus'              => UNIT_BUILDER,
+        'event_id'           => $row['event_unitID'],
+        'event_start'        => time_fromDatetime($row['start']),
+        'event_end'          => time_fromDatetime($row['end']),
+        'event_end_date'     => time_formatDatetime($row['end']),
+        'seconds_before_end' => time_fromDatetime($row['end']) - time());
+    }
   }
   $sql->closeCursor();
 
@@ -300,21 +299,21 @@ function digest_getAppointments($ownCaves){
                        WHERE caveID IN (" . $caveIDs . ")
                        ORDER BY end ASC, event_expansionID ASC");
   $sql->bindValue('caveIDs', $caveIDs);
-
-  if (!$sql->execute()) return array();
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $nextLevel = $ownCaves[$row['caveID']][$buildingTypeList[$row['expansionID']]->dbFieldName] + 1;
-    $result[] = array(
-      'event_name'         => $buildingTypeList[$row['expansionID']]->name. " Stufe ". $nextLevel,
-      'cave_name'          => $ownCaves[$row['caveID']]['name'],
-      'cave_id'            => $row['caveID'],
-      'category'           => 'building',
-      'modus'              => IMPROVEMENT_BUILDER,
-      'event_id'           => $row['event_expansionID'],
-      'event_start'        => time_fromDatetime($row['start']),
-      'event_end'          => time_fromDatetime($row['end']),
-      'event_end_date'     => time_formatDatetime($row['end']),
-      'seconds_before_end' => time_fromDatetime($row['end']) - time());
+  if ($sql->execute()) {
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $nextLevel = $ownCaves[$row['caveID']][$GLOBALS['buildingTypeList'][$row['expansionID']]->dbFieldName] + 1;
+      $result[] = array(
+        'event_name'         => $GLOBALS['buildingTypeList'][$row['expansionID']]->name. " Stufe ". $nextLevel,
+        'cave_name'          => $ownCaves[$row['caveID']]['name'],
+        'cave_id'            => $row['caveID'],
+        'category'           => 'building',
+        'modus'              => IMPROVEMENT_BUILDER,
+        'event_id'           => $row['event_expansionID'],
+        'event_start'        => time_fromDatetime($row['start']),
+        'event_end'          => time_fromDatetime($row['end']),
+        'event_end_date'     => time_formatDatetime($row['end']),
+        'seconds_before_end' => time_fromDatetime($row['end']) - time());
+    }
   }
   $sql->closeCursor();
 
@@ -323,22 +322,22 @@ function digest_getAppointments($ownCaves){
                        FROM " . EVENT_DEFENSE_SYSTEM_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
                        ORDER BY end ASC, event_defenseSystemID ASC");
-
-  if (!$sql->execute()) return array();
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $nextLevel = $ownCaves[$row['caveID']][$defenseSystemTypeList[$row['defenseSystemID']]->dbFieldName] + 1;
-    $result[] = array(
-      'event_name'         => $defenseSystemTypeList[$row['defenseSystemID']]->name . " Stufe ". $nextLevel,
-      'cave_name'          => $ownCaves[$row['caveID']]['name'],
-      'cave_id'            => $row['caveID'],
-      'category'           => 'defense',
-      'modus'              => DEFENSE_BUILDER,
-      'event_id'           => $row['event_defenseSystemID'],
-      'event_start'        => time_fromDatetime($row['start']),
-      'event_end'          => time_fromDatetime($row['end']),
-      'event_end_date'     => time_formatDatetime($row['end']),
-      'seconds_before_end' => time_fromDatetime($row['end']) - time()
-    );
+  if ($sql->execute()) {
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $nextLevel = $ownCaves[$row['caveID']][$GLOBALS['defenseSystemTypeList'][$row['defenseSystemID']]->dbFieldName] + 1;
+      $result[] = array(
+        'event_name'         => $GLOBALS['defenseSystemTypeList'][$row['defenseSystemID']]->name . " Stufe ". $nextLevel,
+        'cave_name'          => $ownCaves[$row['caveID']]['name'],
+        'cave_id'            => $row['caveID'],
+        'category'           => 'defense',
+        'modus'              => DEFENSE_BUILDER,
+        'event_id'           => $row['event_defenseSystemID'],
+        'event_start'        => time_fromDatetime($row['start']),
+        'event_end'          => time_fromDatetime($row['end']),
+        'event_end_date'     => time_formatDatetime($row['end']),
+        'seconds_before_end' => time_fromDatetime($row['end']) - time()
+      );
+    }
   }
   $sql->closeCursor();
 
@@ -347,22 +346,22 @@ function digest_getAppointments($ownCaves){
                        FROM " . EVENT_SCIENCE_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
                        ORDER BY end ASC, event_scienceID ASC");
-
-  if (!$sql->execute()) return array();
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)){
-    $nextLevel = $ownCaves[$row['caveID']][$scienceTypeList[$row['scienceID']]->dbFieldName] + 1;
-    $result[] = array(
-      'event_name'         => $scienceTypeList[$row['scienceID']]->name. " Stufe ". $nextLevel,
-      'cave_name'          => $ownCaves[$row['caveID']]['name'],
-      'cave_id'            => $row['caveID'],
-      'category'           => 'science',
-      'modus'              => SCIENCE_BUILDER,
-      'event_id'           => $row['event_scienceID'],
-      'event_start'        => time_fromDatetime($row['start']),
-      'event_end'          => time_fromDatetime($row['end']),
-      'event_end_date'     => time_formatDatetime($row['end']),
-      'seconds_before_end' => time_fromDatetime($row['end']) - time()
-    );
+  if ($sql->execute()) {
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $nextLevel = $ownCaves[$row['caveID']][$GLOBALS['scienceTypeList'][$row['scienceID']]->dbFieldName] + 1;
+      $result[] = array(
+        'event_name'         => $GLOBALS['scienceTypeList'][$row['scienceID']]->name. " Stufe ". $nextLevel,
+        'cave_name'          => $ownCaves[$row['caveID']]['name'],
+        'cave_id'            => $row['caveID'],
+        'category'           => 'science',
+        'modus'              => SCIENCE_BUILDER,
+        'event_id'           => $row['event_scienceID'],
+        'event_start'        => time_fromDatetime($row['start']),
+        'event_end'          => time_fromDatetime($row['end']),
+        'event_end_date'     => time_formatDatetime($row['end']),
+        'seconds_before_end' => time_fromDatetime($row['end']) - time()
+      );
+    }
   }
   $sql->closeCursor();
 
@@ -371,21 +370,21 @@ function digest_getAppointments($ownCaves){
                        FROM " . EVENT_HERO_TABLE . "
                        WHERE caveID IN (" . $caveIDs . ")
                        ORDER BY end ASC, event_heroID ASC");
-
-  if (!$sql->execute()) return array();
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $result[] = array(
-      'event_name'         => "Wiedererweckung des Helden",
-      'cave_name'          => $ownCaves[$row['caveID']]['name'],
-      'cave_id'            => $row['caveID'],
-      'category'           => 'hero',
-      'modus'              => HERO_DETAIL,
-      'event_id'           => $row['event_heroID'],
-      'event_start'        => time_fromDatetime($row['start']),
-      'event_end'          => time_fromDatetime($row['end']),
-      'event_end_date'     => time_formatDatetime($row['end']),
-      'seconds_before_end' => time_fromDatetime($row['end']) - time()
-    );
+  if ($sql->execute()) {
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $result[] = array(
+        'event_name'         => "Wiedererweckung des Helden",
+        'cave_name'          => $ownCaves[$row['caveID']]['name'],
+        'cave_id'            => $row['caveID'],
+        'category'           => 'hero',
+        'modus'              => HERO_DETAIL,
+        'event_id'           => $row['event_heroID'],
+        'event_start'        => time_fromDatetime($row['start']),
+        'event_end'          => time_fromDatetime($row['end']),
+        'event_end_date'     => time_formatDatetime($row['end']),
+        'seconds_before_end' => time_fromDatetime($row['end']) - time()
+      );
+    }
   }
   $sql->closeCursor();
 

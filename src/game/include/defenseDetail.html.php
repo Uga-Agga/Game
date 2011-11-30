@@ -195,9 +195,8 @@ function defense_showProperties($defenseID, $cave, $method) {
     'warPoints'     => $defense->warPoints,
     'levels'        => $levels,
     'depgroup'      => $dependencies,
-    'rules_path'    => RULES_PATH));
-
-
+    'rules_path'    => RULES_PATH)
+  );
 }
 
 ?>

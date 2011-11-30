@@ -80,7 +80,9 @@ class Player {
     $playerData = $sql->fetch(PDO::FETCH_ASSOC);
     $sql->closeCursor();
 
-    if (!$playerData)  return NULL;
+    if (empty($playerData)) {
+      return null;
+    }
 
     return ($complete) ? $playerData : new Player($playerData);
   }
@@ -118,8 +120,9 @@ class Player {
 
     // prepare query
     $sql = $db->prepare("INSERT INTO ". PLAYER_HISTORY_TABLE ." 
-                     (playerID, timestamp, entry) 
-                     VALUES (:playerID, :timestamp, :entry)");
+                           (playerID, timestamp, entry) 
+                         VALUES
+                           (:playerID, :timestamp, :entry)");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     $sql->bindValue('timestamp', time_toDatetime($timestamp), PDO::PARAM_STR);
     $sql->bindValue('entry', $entry, PDO::PARAM_STR);
