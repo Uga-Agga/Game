@@ -18,6 +18,7 @@ include INC_DIR."basic.lib.php";
 include INC_DIR."time.inc.php";
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
+include INC_DIR."hero.inc.php";
 
 
 if ($_SERVER['argc'] != 2) {
@@ -121,28 +122,6 @@ else {
   echo "SUCCESS\n";
 }
 
-echo "DELETE PLAYER $playerID: Delete Hero_tournament";
-$sql = $db_game->prepare("DELETE FROM ".HERO_TOURNAMENT_TABLE ." WHERE playerID = :playerID");
-$sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-
-if (!$sql->execute()) {
-  echo "FAILURE\n";
-}
-else {
-  echo "SUCCESS\n";
-}
-
-echo "DELETE PLAYER $playerID: Delete Hero_Monster";
-$sql = $db_game->prepare("DELETE FROM ". HERO_MONSTER_TABLE ." WHERE playerID = :playerID");
-$sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-
-if (!$sql->execute()) {
-  echo "FAILURE\n";
-}
-else {
-  echo "SUCCESS\n";
-}
-
 echo "DELETE PLAYER $playerID: Delete Contacts";
 $sql = $db_game->prepare("DELETE FROM ". CONTACTS_TABLE ." 
                           WHERE playerID = :playerID 
@@ -183,7 +162,11 @@ $result = $sqlSelect->fetchAll();
 foreach ($result AS $row) {
   echo "DELETE PLAYER $playerID: Reset playerID at Cave {$row['caveID']}\n";
   $sqlDelete = $db_game->prepare("UPDATE ". CAVE_TABLE ." 
-                                  SET playerID = 0, takeoverable = 2, protection_end = NOW()+0, secureCave=0 
+                                    SET playerID = 0, 
+                                    takeoverable = 2, 
+                                    protection_end = NOW()+0, 
+                                    secureCave=0,
+                                    hero = 0,
                                   WHERE caveID = :caveID");
   $sqlDelete->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
   
@@ -281,6 +264,9 @@ else {
 }
 
 echo "DELETE PLAYER $playerID: Delete hero";
+if (!hero_killHero($playerID)) {
+  echo "FAILURE hero_killHero";
+}
 $sql = $db_game->prepare("DELETE FROM " . HERO_TABLE ."
                           WHERE playerID = :playerID");
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);

@@ -41,6 +41,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
 
   $messageText = array(
+    -19 => array('type' => 'error', 'message' => _('Fehler beim Eintragen des neuen Heldentyps!')),
     -18 => array('type' => 'error', 'message' => _('Euer Held ist tot!')),
     -17 => array('type' => 'error', 'message' => _('Euer Held ist gar nicht tot!')),
     -16 => array('type' => 'error', 'message' => _('Fehler beim Eintragen der Erfahrungspunkte nach der Opferung!')),
@@ -68,8 +69,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
     7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
     8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.')),
-    9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.'))
-  );
+    9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.')), 
+    10 => array('type' => 'success', 'message' => _('Heldentyp erfolgreich gewechselt!')));
 
   // create new hero
   $action = request_var('action', '');
@@ -81,7 +82,16 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   }
 
   $hero = getHeroByPlayer($playerID);
-
+  
+  
+  $showTypesList = false;
+  $changeType = false;
+  if ($hero['heroTypeID'] == 1000) {
+    $hero = null;
+    $changeType = true;
+    $showTypesList = true;
+  }
+  
   if ($hero != null) {
     $showLevelUp = false;
 
@@ -217,6 +227,11 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         }
 
         $messageID = hero_usePotion($potionID, $value);
+        if ($messageID == 6) {
+          $hero = null;
+          $showTypesList = true;
+          $changeType = true;
+        }
       break;
     }
 
@@ -230,6 +245,13 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         $potions[] = $potion;
       }
     }
+  } elseif ($changeType) {
+    if (request_var('action', '') == 'changeType') {
+      $messageID = hero_changeType(request_var('typeID', -1));
+      $showTypesList = false;
+      $hero = getHeroByPlayer($playerID);
+    }
+  
   } else {
     $player = getPlayerByID($playerID);
     if ($player['heroism'] >= 1){
@@ -284,6 +306,13 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $template->addVars(array(
         'newhero'       => $newhero,
         'heroTypesList' => $heroTypesList
+    ));
+  }
+  
+  if ($showTypesList) {
+    $template->addVars(array(
+      'changeType' => $changeType,
+      'heroTypesList' => $heroTypesList
     ));
   }
 
