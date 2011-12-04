@@ -391,16 +391,37 @@ function hero_usePotion ($potionID, $value) {
       return -8;
     }
   } else {
-    $sql = $db->prepare("UPDATE " . HERO_TABLE ."
-                         SET maxHpLvl = 0,
-                           forceLvl = 0,
-                           regHpLvl = 0
+    
+    //remove hero effects from cave
+    if (!hero_removeHeroEffectsFromCave($playerID)) {
+      return -8;
+    }
+    
+    //remove hero effect from hero
+    if (!hero_clearHeroEffects($playerID)) {
+      return -8;
+    }
+    
+    $tpFree = $hero['maxHpLvl'] + $hero['forceLvl'] + $hero['regHpLvl'] + $hero['tpFree'];
+    $healPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
+    $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET 
+                           maxHpLvl = 0, maxHealPoints = :maxHealPoints,
+                           healPoints = :healpoints,
+                           forceLvl = 0, `force` = 0,
+                           regHpLvl = 0, regHP = 0,
+                           tpFree = :tpFree, 
+                           heroTypeID = 1000
                          WHERE playerID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    $sql->bindValue('tpFree', $tpFree, PDO::PARAM_INT);
+    $sql->bindValue('maxHealPoints', $healPoints, PDO::PARAM_INT);
+    $sql->bindValue('healpoints', floor($healPoints / 2), PDO::PARAM_INT);
     if (!$sql->execute()) {
       $sql_setback->execute();
       return -8;
     }
+    
+    
 
     return 6;
   }
@@ -524,10 +545,12 @@ function hero_killHero ($playerID) {
   $sql = $db->prepare("DELETE FROM ". EVENT_HERO_TABLE ." WHERE heroID = :heroID");
   $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
   
-  $sql->execute();
+  $return = $sql->execute();
 
   // remove effects from cave
-  hero_removeHeroEffectsFromCave($playerID);
+  $return = hero_removeHeroEffectsFromCave($playerID) && $return;
+  
+  return $return;
 }
 
 function hero_removeHeroEffectsFromCave($playerID) {
@@ -563,6 +586,44 @@ function hero_removeHeroEffectsFromCave($playerID) {
   }
 
   return true;
+}
+
+function hero_changeType($typeID) {
+  global $db;
+  
+  $hero = getHeroByPlayer($_SESSION['player']->playerID);
+  if ($hero['heroTypeID'] != 1000) {
+    return -19;
+  }
+  
+  $sql = $db->prepare("UPDATE " . HERO_TABLE . "
+                       SET heroTypeID = :typeID
+                       WHERE playerID = :playerID");
+  $sql->bindValue('typeID', $typeID, PDO::PARAM_INT);
+  $sql->bindValue('playerID', $_SESSION['player']->playerID);
+  
+  if (!$sql->execute()) {
+    return -19;
+  }
+  
+  return 10;
+}
+
+function hero_clearHeroEffects($playerID) {
+  global $db;
+  
+  $hero = getHeroByPlayer($playerID);
+  
+  $fields = array();
+  foreach ($GLOBALS['effectTypeList'] as $effect) {
+    array_push( $fields, $effect->dbFieldName . " = 0");
+  }
+  
+  $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET " . implode(", ", $fields) . " WHERE playerID = :playerID");
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  
+  return $sql->execute();
+  
 }
 
 ?>

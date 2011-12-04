@@ -213,6 +213,7 @@
   {% endif %}
 {% endif %} {# end of hero.isAlive #}
 
+{% if ritual %}
 <div class="box small">
   <div class="box-header">{{ ritual.name }}</div>
   <div class="boxcontent smallinner success inner">
@@ -258,8 +259,30 @@
     </table>
   </div>
 </div>
+{% endif %}
 
 <div class="success small"><a href="http://faq.uga-agga.de/content/1/41/de/neu-in-hr12-%7C-heldentum.html" onclick="window.open(this.href); return false;">weitere Informationen zu den Helden</a></div>
+{% endif %}
+{% if changeType %}
+<div class="box">
+  <div class="box-header">Neue Art des Helden wählen:</div>
+  <div class="box-content success inner">
+    <table class="table nohover" rules="rows">
+      {% for item in heroTypesList %} 
+      {% set bgID = (bgID+1)%2 %}
+      <tr class="bg{{ bgID }}">
+        <td>
+          <span class="bold">{{ item.name }}</span><br />
+          {{ item.description|raw }}
+        </td>
+        <td style="text-align: right;">
+          <a href="main.php?modus={{ hero_link }}&amp;action=changeType&amp;typeID={{ item.heroTypeID }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" /></a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
 {% endif %} 
 {% if newhero %}
 <div class="box">
