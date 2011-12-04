@@ -1,7 +1,7 @@
 <?php
 /*
  * statistic.html.php -
- * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2010  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,19 +14,18 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 define('GRAPH_URL', 'http://chart.apis.google.com/chart?');
 
 function statistic_getContent() {
-  global $db, $request, $template;
-  global $scienceTypeList, $unitTypeList;
+  global $db, $template;
 
   $template->setFile('statistic.tmpl');
 
-  foreach ($unitTypeList AS $value)
+  foreach ($GLOBALS['unitTypeList'] AS $value)
   {
     if (!$value->nodocumentation) {
       $UnitFieldsName[$value->dbFieldName] = $value->name;
     }
   }
   asort($UnitFieldsName);
-  foreach ($scienceTypeList AS $value)
+  foreach ($GLOBALS['scienceTypeList'] AS $value)
   {
     $ScienceFieldsName[$value->dbFieldName] = $value->name;
   }
@@ -125,8 +124,8 @@ function statistic_getContent() {
   /*
    * show unit details
    */
-  $show = $request->getVar('show', '');
-  $Unit = $request->getVar('unit', '');
+  $show = Request::getVar('show', '');
+  $Unit = Request::getVar('unit', '');
   if ($show == "unit_detail" && !empty($Unit) && $Unit != "all") {
     $template->addVars(array(
       'showUnitDetails' => true, 

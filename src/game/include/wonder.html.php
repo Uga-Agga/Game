@@ -2,6 +2,7 @@
 /*
  * wonder.html.php - 
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,7 +14,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function wonder_getWonderContent($caveID, &$details) {
-  global $wonderTypeList, $request, $template;
+  global $template;
 
   // open template
   $template->setFile('wonder.tmpl');
@@ -28,7 +29,7 @@ function wonder_getWonderContent($caveID, &$details) {
      2 => array('type' => 'info', 'message' => _('Die Götter haben Ihr Flehen nicht erhört! Die eingesetzten Opfergaben sind natürlich dennoch verloren. Mehr Glück beim nächsten Mal!'))
   );
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -36,10 +37,10 @@ function wonder_getWonderContent($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'wonder':
-      $wonderID = $request->getVar('wonderID', -1);
-      $caveName = $request->getVar('CaveName', '');
-      $xCoord = $request->getVar('xCoord', 0);
-      $yCoord = $request->getVar('yCoord', 0);
+      $wonderID = Request::getVar('wonderID', -1);
+      $caveName = Request::getVar('CaveName', '');
+      $xCoord = Request::getVar('xCoord', 0);
+      $yCoord = Request::getVar('yCoord', 0);
 
       if ($wonderID != -1) {
         if (!empty($caveName)) {

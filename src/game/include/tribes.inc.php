@@ -155,8 +155,6 @@ function government_processGovernmentUpdate($tag, $governmentData) {
 }
 
 function relation_checkForRelationAttrib($tag_tribe1, $tag_tribe2, $attribArray) {
-  global $relationList;
-
   if (!is_array($attribArray)) {
     exit;
   }
@@ -165,7 +163,7 @@ function relation_checkForRelationAttrib($tag_tribe1, $tag_tribe2, $attribArray)
   $result = FALSE;
   
   foreach($attribArray as $attrib) {
-    $result = ($relationList[$relation['own']['relationType']][$attrib]==1) && ($relationList[$relation['other']['relationType']][$attrib]==1); 
+    $result = ($GLOBALS['relationList'][$relation['own']['relationType']][$attrib]==1) && ($GLOBALS['relationList'][$relation['other']['relationType']][$attrib]==1); 
     if ($result) {
       break;
     }
@@ -190,16 +188,14 @@ function relation_areEnemys($tag_tribe1, $tag_tribe2) {
 }
 
 function tribe_isAtWar($tag, $includePrepareForWar) {
-  global $relationList;
-
   $relations = relation_getRelationsForTribe($tag);
   $weAreAtWar = FALSE;
   foreach ($relations['own'] as $actRelation) { 
-    if ($relationList[$actRelation['relationType']]['isWar']) {
+    if ($GLOBALS['relationList'][$actRelation['relationType']]['isWar']) {
       $weAreAtWar = TRUE;
       break;
     };
-    if ($includePrepareForWar && ($relationList[$actRelation['relationType']]['isPrepareForWar'])) {
+    if ($includePrepareForWar && ($GLOBALS['relationList'][$actRelation['relationType']]['isPrepareForWar'])) {
       $weAreAtWar = TRUE;
       break;
     };  
@@ -208,8 +204,7 @@ function tribe_isAtWar($tag, $includePrepareForWar) {
 }
 
 function relation_haveSameEnemy($tag_tribe1, $tag_tribe2, $PrepareForWar, $War) {
-  global $relationList;
-  
+ 
   // now we need the relations auf the two tribes
   $ownRelations = relation_getRelationsForTribe($tag_tribe1);
   $targetRelations = relation_getRelationsForTribe($tag_tribe2);
@@ -220,10 +215,10 @@ function relation_haveSameEnemy($tag_tribe1, $tag_tribe2, $PrepareForWar, $War) 
         $ownType = $actRelation['relationType'];
         $targetType = $actTargetRelation['relationType'];
 
-        $weHaveWar   = ($PrepareForWar && $relationList[$ownType]['isPrepareForWar']) ||
-                      ($War && $relationList[$ownType]['isWar']);
-        $theyHaveWar = ($PrepareForWar && $relationList[$targetType]['isPrepareForWar']) ||
-                       ($War && $relationList[$targetType]['isWar']);
+        $weHaveWar   = ($PrepareForWar && $GLOBALS['relationList'][$ownType]['isPrepareForWar']) ||
+                      ($War && $GLOBALS['relationList'][$ownType]['isWar']);
+        $theyHaveWar = ($PrepareForWar && $GLOBALS['relationList'][$targetType]['isPrepareForWar']) ||
+                       ($War && $GLOBALS['relationList'][$targetType]['isWar']);
 
         if ($weHaveWar && $theyHaveWar) {
           return TRUE;
@@ -255,7 +250,6 @@ function tribe_isTopTribe($tag) {
 
 
 function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
-  global $relationList;
 
   if (!$FORCE) { 
     if (strcasecmp($tag, $relationData['tag']) == 0) {
@@ -275,7 +269,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     }
 
     $relationType = $relationData['relationID'];
-    $relationInfo = $relationList[$relationType];
+    $relationInfo = $GLOBALS['relationList'][$relationType];
 
     if (!($relation = relation_getRelation($tag, $relationData['tag']))) {
       return -3;
@@ -299,11 +293,11 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     $relationFrom = $relation['own']['relationType'];
     $relationTo   = $relationType;
 
-    if (!$FORCE && ($relationList[$relationTo]['isWarAlly'])) {
+    if (!$FORCE && ($GLOBALS['relationList'][$relationTo]['isWarAlly'])) {
       //generally allowes?
-      if (! $relationList[$relationFrom]['isAlly']) 
+      if (! $GLOBALS['relationList'][$relationFrom]['isAlly']) 
         return -18;
-      if (! $relationList[$relation['other']['relationType']]['isAlly']) 
+      if (! $GLOBALS['relationList'][$relation['other']['relationType']]['isAlly']) 
         return -19;
       if (! relation_haveSameEnemy($ownTribeInfo['tag'], $targetTribeInfo['tag'], TRUE, TRUE)) 
         return -20;
@@ -313,7 +307,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     // check minimum size of target tribe if it's not an ultimatum
     if ((($relationInfo['targetSizeDiffDown'] > 0) ||
          ($relationInfo['targetSizeDiffUp'] > 0)) &&
-         (!$relationList[$relationTypeOtherActual]['isUltimatum'])) {
+         (!$GLOBALS['relationList'][$relationTypeOtherActual]['isUltimatum'])) {
 
       $from_points   = max(0, tribe_getMight($tag));
       $target_points = max(0, tribe_getMight($relationData['tag']));
@@ -339,11 +333,11 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
   if ($relationType == $relation['other']['relationType'] && $relationType != 0) {
     $end_time = $relation['other']['duration'];
   } else {
-    $duration = $relationList[$relationTypeActual]['transitions'][$relationType]['time'];
+    $duration = $GLOBALS['relationList'][$relationTypeActual]['transitions'][$relationType]['time'];
     $end_time = 0;
   }
 
-  if ($relationList[$relationFrom]['isPrepareForWar'] &&  $relationList[$relationTo]['isWar']) {
+  if ($GLOBALS['relationList'][$relationFrom]['isPrepareForWar'] &&  $GLOBALS['relationList'][$relationTo]['isWar']) {
     $OurFame = $relation['own']['fame'];
     $OtherFame = $relation['other']['fame'];
   } else {
@@ -361,14 +355,14 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
   }
 
   // calculate elo if war ended  
-  if ($relationList[$relationType]['isWarWon']) {
+  if ($GLOBALS['relationList'][$relationType]['isWarWon']) {
                             ranking_calculateElo($tag, 
                             tribe_getMight($tag), 
                             $relationData['tag'], 
                             tribe_getMight($relationData['tag']));
   ranking_updateWonLost($tag, $targetTribeInfo['tag'], false);
 
-  } else if ($relationList[$relationType]['isWarLost']) {
+  } else if ($GLOBALS['relationList'][$relationType]['isWarLost']) {
       ranking_calculateElo($relationData['tag'], 
                            tribe_getMight($relationData['tag']), 
                            $tag, tribe_getMight($tag));
@@ -376,11 +370,11 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
   }
 
   // insert history message
-  if (isset($relationList[$relationType]['historyMessage'])) {
-    relation_insertIntoHistory($tag, relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $relationList[$relationType]['historyMessage']));
+  if (isset($GLOBALS['relationList'][$relationType]['historyMessage'])) {
+    relation_insertIntoHistory($tag, relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $GLOBALS['relationList'][$relationType]['historyMessage']));
   }
 
-  $relationName = $relationList[$relationType]['name'];
+  $relationName = $GLOBALS['relationList'][$relationType]['name'];
   tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION, "Haltung gegenüber {$targetTribeInfo['tag']} geändert",
     "Ihr Stammesanführer hat die Haltung Ihres Stammes gegenüber dem Stamm {$targetTribeInfo['tag']} auf $relationName geändert.");
 
@@ -399,11 +393,11 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     }
 
     // insert history
-    if (isset($relationList[$oST]['historyMessage'])) {
-      relation_insertIntoHistory($targetTribeInfo['tag'], relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $relationList[$oST]['historyMessage']));
+    if (isset($GLOBALS['relationList'][$oST]['historyMessage'])) {
+      relation_insertIntoHistory($targetTribeInfo['tag'], relation_prepareHistoryMessage($tag, $targetTribeInfo['tag'], $GLOBALS['relationList'][$oST]['historyMessage']));
     }
 
-    $relationName = $relationList[$oST]['name'];
+    $relationName = $GLOBALS['relationList'][$oST]['name'];
     tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Haltung gegenüber $tag geändert",
       "Die Haltung Ihres Stammes gegenüber dem Stamm $tag  wurde automatisch auf $relationName geändert.");
 
@@ -417,20 +411,23 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 }
 
 function relation_leaveTribeAllowed($tag) {
-  global $relationList;
-
   $tribeRelations = relation_getRelationsForTribe($tag);
 
-  if (!$tribeRelations)
-    return 0;
+  if (!sizeof($tribeRelations)) {
+    return false;
+  }
 
-  foreach ($relationList as $relationTypeID => $relationType)
-    if ($relationType['dontLeaveTribe'])
-      foreach ($tribeRelations['own'] as $target => $relation)
-        if ($relation['relationType'] == $relationTypeID)
-          return 0;
+  foreach ($GLOBALS['relationList'] as $relationTypeID => $relationType) {
+    if ($relationType['dontLeaveTribe']) {
+      foreach ($tribeRelations['own'] as $target => $relation) {
+        if ($relation['relationType'] == $relationTypeID) {
+          return false;
+        }
+      }
+    }
+  }
 
-  return 1;
+  return true;
 }
 
 
@@ -593,7 +590,7 @@ function relation_calcFame($winner, $winnerOld, $looser, $looserOld) {
 }
 
 function relation_setRelation($from, $target, $relation, $duration, $end_time, $from_points_old, $target_points_old, $fame=0) {
-  global $relationList, $db;
+  global $db;
 
   if (($from_points = tribe_getMight($from)) < 0) {
     $from_points = 0;
@@ -603,7 +600,7 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
   }
 
   // have to remember the number of members of the other side?
-  if ($relationList[$relation]['storeTargetMembers']) {
+  if ($GLOBALS['relationList'][$relation]['storeTargetMembers']) {
     $target_members = tribe_getNumberOfMembers($target);
   }
 
@@ -628,13 +625,13 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
       "tribe_rankingPoints = '$from_points', ".
       "target_rankingPoints = '$target_points', ".
       "attackerReceivesFame = '".
-      $relationList[$relation]['attackerReceivesFame']."', ".
+      $GLOBALS['relationList'][$relation]['attackerReceivesFame']."', ".
       "defenderReceivesFame = '".
-      $relationList[$relation]['defenderReceivesFame']."', ".
+      $GLOBALS['relationList'][$relation]['defenderReceivesFame']."', ".
       "defenderMultiplicator = '".
-      $relationList[$relation]['defenderMultiplicator']."', ".
+      $GLOBALS['relationList'][$relation]['defenderMultiplicator']."', ".
       "attackerMultiplicator = '".
-      $relationList[$relation]['attackerMultiplicator']."', ".
+      $GLOBALS['relationList'][$relation]['attackerMultiplicator']."', ".
       ($end_time ?
        "duration = '$end_time' " :
        "duration = (NOW() + INTERVAL '$duration' HOUR) + 0 ").", ".
@@ -645,12 +642,12 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
   }
 
   // calculate the fame update if necessary
-  if ($relationList[$relation]['fameUpdate'] != 0) {
-    if ($relationList[$relation]['fameUpdate'] > 0) {
+  if ($GLOBALS['relationList'][$relation]['fameUpdate'] != 0) {
+    if ($GLOBALS['relationList'][$relation]['fameUpdate'] > 0) {
       $fame = relation_calcFame($from_points, $from_points_old,
                                 $target_points, $target_points_old);
     }
-    else if ($relationList[$relation]['fameUpdate'] < 0) {
+    else if ($GLOBALS['relationList'][$relation]['fameUpdate'] < 0) {
       // calculate fame: first argument is winner!
       $fame = -1 * relation_calcFame($target_points, $target_points_old,
                                      $from_points, $from_points_old);
@@ -721,8 +718,7 @@ function relation_getRelation($from, $target) {
 
 
 function relation_isPossible($to, $from) {
-  global $relationList;
-  return array_key_exists($to, $relationList[$from]['transitions']);
+  return array_key_exists($to, $GLOBALS['relationList'][$from]['transitions']);
 }
 
 
@@ -731,17 +727,18 @@ function relation_getRelationsForTribe($tag) {
   global $db;
 
   // get relations from $tag to other tribes
-  $sql = $db->prepare("SELECT *,  DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time,  (NOW()+0) > duration AS changeable 
+  $sql = $db->prepare("SELECT *,  DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, (NOW()+0) > duration AS changeable 
                        FROM ". RELATION_TABLE . "
                        WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) {
-    return 0;
+    return null;
   }
 
-  $own=array();
+  // copy result into an array
+  $warTargets = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $own[strtoupper($row['tribe_target'])] = $row;
+    $own[strtoupper($row['target'])] = $row;
   }
   $sql->closeCursor();
 
@@ -751,7 +748,7 @@ function relation_getRelationsForTribe($tag) {
                        WHERE tribe_target LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) {
-    return 0;
+    return null;
   }
 
   $other=array();
@@ -763,116 +760,81 @@ function relation_getRelationsForTribe($tag) {
   return array("own" => $own, "other" => $other);
 }
 
+/*
+ * returns an array of the current targets in war, the fame of both sides 
+ * and both the actual percents and the estimated percents
+ * content of the arrays are: target, fame_own, fame_target, percent_actual, 
+ * percent_estimated, isForcedSurrenderTheoreticallyPossible, isForcedSurrenderPracticallyPossible, 
+ * isForcedSurrenderPracticallyPossibleForTarget
+ */
 function relation_getWarTargetsAndFame($tag) {
-  // returns an array of the current targets in war, the fame of both sides 
-  //and both the actual percents and the estimated percents
-  // content of the arrays are: target, fame_own, fame_target, percent_actual, 
-  //percent_estimated, isForcedSurrenderTheoreticallyPossible, isForcedSurrenderPracticallyPossible, 
-  //isForcedSurrenderPracticallyPossibleForTarget
-  global $relationList, $db;
-
+  global $db;
 
   // first get the id of war
   $warId = 0;
-  while( !($relationList[$warId]['isWar']) ){
+  while( !($GLOBALS['relationList'][$warId]['isWar']) ){
     $warId++;
   }
 
   $prepareForWarId = 0;
 //  while( !($relationList[$prepareForWarId]['isPrepareForWar']) ){
-  while( !($relationList[$prepareForWarId]['isWar']) ){
+  while( !($GLOBALS['relationList'][$prepareForWarId]['isWar']) ){
     $prepareForWarId++;
   }
 
-
-  $minTimeForForceSurrenderHours = $relationList[$warId]['minTimeForForceSurrenderHours'];
-  $maxTimeForForceSurrenderHours = $relationList[$warId]['maxTimeForForceSurrenderHours'];
+  $minTimeForForceSurrenderHours = $GLOBALS['relationList'][$warId]['minTimeForForceSurrenderHours'];
+  $maxTimeForForceSurrenderHours = $GLOBALS['relationList'][$warId]['maxTimeForForceSurrenderHours'];
 
   // generate query for MySQL, get wars
-  $query = 
-    "SELECT r_target.tribe as target, ".
-    "r_own.fame as fame_own, ".
-    "r_target.fame as fame_target, ".
-    "ROUND(((GREATEST(0, r_own.fame) / 
-    (GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame) + 
-    ((GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame)) <= 0 ))) + 
-    (r_own.fame > r_target.fame AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/
-    3600 >= '$maxTimeForForceSurrenderHours' AND r_own.fame <= 0 AND r_target.fame <= 0)) * 100, 2) 
-    as percent_actual, ".
-    "ROUND(GREATEST((1 - ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp)) / 
-    3600 - '$minTimeForForceSurrenderHours') / 
-    (2 * ('$maxTimeForForceSurrenderHours' - '$minTimeForForceSurrenderHours') )) * 100, 50) , 2) 
-    as percent_estimated, ".
-    "((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= '$minTimeForForceSurrenderHours') 
-    as isForcedSurrenderTheoreticallyPossible, ".
-    "((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= '$minTimeForForceSurrenderHours') 
-    AND ((GREATEST(0, r_own.fame) / (GREATEST(0, r_own.fame) + 
-    GREATEST(0, r_target.fame) + ( (GREATEST(0, r_own.fame) + 
-    GREATEST(0, r_target.fame)) <= 0 )) ) + (r_own.fame > r_target.fame 
-    AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= '$maxTimeForForceSurrenderHours' 
-    AND r_own.fame <= 0 AND r_target.fame <= 0) ) > 
-    GREATEST((1 - ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/
-    3600 - '$minTimeForForceSurrenderHours') / 
-    (2 * ('$maxTimeForForceSurrenderHours' - '$minTimeForForceSurrenderHours') )), 0.5) 
-    as isForcedSurrenderPracticallyPossible, ".
-    "((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= '$minTimeForForceSurrenderHours') 
-    AND ((GREATEST(0, r_target.fame) / (GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame) + 
-    ((GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame)) <= 0 ))) + 
-    (r_target.fame > r_own.fame 
-    AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= '$maxTimeForForceSurrenderHours' 
-    AND r_own.fame <= 0 AND r_target.fame <= 0) ) > 
-    GREATEST((1 - ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/
-    3600 - '$minTimeForForceSurrenderHours') / 
-    (2 * ('$maxTimeForForceSurrenderHours' - '$minTimeForForceSurrenderHours') )), 0.5) 
-    as isForcedSurrenderPracticallyPossibleForTarget ".
-    "FROM ". RELATION_TABLE ." r_own, ". RELATION_TABLE ." r_target ".
-    "WHERE r_own.tribe LIKE r_target.tribe_target ".
-    "AND r_target.tribe LIKE r_own.tribe_target ".
-    "AND r_target.relationType = r_own.relationType ".
-    "AND r_own.relationType = '$warId' ".
-    "AND r_own.tribe LIKE '$tag' ".
-    "ORDER BY r_own.timestamp ASC";
-  $result = $db->query($query);
+  $sql = $db->prepare("SELECT r_target.tribe as target,
+                         r_own.fame as fame_own,
+                         r_target.fame as fame_target,
+                         ROUND((
+                           (GREATEST(0, r_own.fame) / (GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame) + ((GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame)) <= 0 )))
+                           + (r_own.fame > r_target.fame AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp)) / 3600 >= :maxTimeForForceSurrenderHours AND r_own.fame <= 0 AND r_target.fame <= 0)) * 100, 2)
+                           as percent_actual,
+                         ROUND(GREATEST((1 - ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp)) / 3600 - :minTimeForForceSurrenderHours) /
+                           (2 * (:maxTimeForForceSurrenderHours - :minTimeForForceSurrenderHours) )) * 100, 50) , 2)
+                           as percent_estimated,
+                         ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= :minTimeForForceSurrenderHours) as isForcedSurrenderTheoreticallyPossible,
+                         ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= :minTimeForForceSurrenderHours) 
+                           AND ((GREATEST(0, r_own.fame) / (GREATEST(0, r_own.fame) + 
+                           GREATEST(0, r_target.fame) + ( (GREATEST(0, r_own.fame) + 
+                           GREATEST(0, r_target.fame)) <= 0 )) ) + (r_own.fame > r_target.fame 
+                           AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= :maxTimeForForceSurrenderHours
+                           AND r_own.fame <= 0 AND r_target.fame <= 0) ) >  GREATEST((1 - ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp)) /
+                           3600 - :minTimeForForceSurrenderHours) / (2 * (:maxTimeForForceSurrenderHours - :minTimeForForceSurrenderHours) )), 0.5) 
+                           as isForcedSurrenderPracticallyPossible,
+                         ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= :minTimeForForceSurrenderHours) 
+                           AND ((GREATEST(0, r_target.fame) / (GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame)
+                           + ((GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame)) <= 0 )))
+                           + (r_target.fame > r_own.fame AND (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/3600 >= :maxTimeForForceSurrenderHours
+                           AND r_own.fame <= 0 AND r_target.fame <= 0) ) >  GREATEST((1 - ((UNIX_TIMESTAMP() - UNIX_TIMESTAMP(r_own.timestamp))/
+                           3600 - :minTimeForForceSurrenderHours) / (2 * (:maxTimeForForceSurrenderHours - :minTimeForForceSurrenderHours) )), 0.5) 
+                           as isForcedSurrenderPracticallyPossibleForTarget
+                       FROM ". RELATION_TABLE ." r_own, ". RELATION_TABLE ." r_target
+                       WHERE r_own.tribe LIKE r_target.tribe_target
+                         AND r_target.tribe LIKE r_own.tribe_target
+                         AND r_target.relationType = r_own.relationType
+                         AND r_own.relationType = '$warId'
+                         AND r_own.tribe LIKE '$tag'
+                       ORDER BY r_own.timestamp ASC";
+  $sql->bindValue(':maxTimeForForceSurrenderHours', $maxTimeForForceSurrenderHours, PDO::PARAM_INT);
+  $sql->bindValue(':minTimeForForceSurrenderHours', $minTimeForForceSurrenderHours, PDO::PARAM_INT);
+  $sql->execute();
 
   // copy result into an array
   $warTargets = array();
-  while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+  while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $warTargets[strtoupper($row['target'])] = $row;
   }
+  $sql->closeCursor();
 
-/*
-  // generate query for MySQL, get prepare for wars
-  $query = 
-    "SELECT r_target.tribe as target, ".
-    "r_own.fame as fame_own, ".
-    "r_target.fame as fame_target, ".
-    "ROUND((GREATEST(0, r_own.fame) / (GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame) + ( (GREATEST(0, r_own.fame) + GREATEST(0, r_target.fame)) <= 0 ))) * 100, 2) as percent_actual, ".
-    "ROUND(100 , 2) as percent_estimated, ".
-    "0 as isForcedSurrenderTheoreticallyPossible, ".
-    "0 as isForcedSurrenderPracticallyPossible, ".
-    "0 as isForcedSurrenderPracticallyPossibleForTarget ".
-    "FROM Relation r_own, Relation r_target ".
-    "WHERE r_own.tribe LIKE r_target.tribe_target ".
-    "AND r_target.tribe LIKE r_own.tribe_target ".
-    "AND r_target.relationType = r_own.relationType ".
-    "AND r_own.relationType = '$prepareForWarId' ".
-    "AND r_own.tribe LIKE '$tag' ".
-    "ORDER BY r_own.timestamp ASC";
-
-  $result = $db->query($query);
-
-  // copy result into an array
-  while ($row = $result->nextRow(MYSQL_ASSOC)) {
-    $warTargets[strtoupper($row['target'])] = $row;
-  }
-*/
   return $warTargets;
 }
 
 function relation_forceSurrender($tag, $relationData) {
-  global $relationList;
   // check conditions
-
   if(!$relationData){
     return -3;
   }
@@ -900,7 +862,7 @@ function relation_forceSurrender($tag, $relationData) {
 
   // find surrender
   $surrenderId = 0;
-  while( !($relationList[$surrenderId]['isWarLost']) ){
+  while( !($GLOBALS['relationList'][$surrenderId]['isWarLost']) ){
     $surrenderId++;
   }
 
@@ -1024,7 +986,7 @@ function tribe_getPlayerList($tag) {
  * is the tribe old enough, to be deleted?
  */
 function tribe_isDeletable($tag) {
-  global $relationList, $db;
+  global $db;
 
   // GOD ALLY is not deletable
   if (!strcmp($tag, GOD_ALLY))
@@ -1070,16 +1032,16 @@ function tribe_getTribeByTag($tag) {
                          LEFT JOIN ". PLAYER_TABLE ." p ON t.leaderID = p.playerID
                        WHERE t.tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  if (!$sql->execute()) return null;
 
-  if (!$sql->execute()) {
-    return 0;
-  }
-  if (!($row = $sql->fetch(PDO::FETCH_ASSOC))) {
-    return 0;
-  }
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  return $row;
+  if (empty($result)) {
+    return null;
+  }
+
+  return $result;
 }
 
 function tribe_makeLeader($playerID, $tag) {
@@ -1150,10 +1112,10 @@ function tribe_joinTribe($playerID, $tag) {
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute() || $sql->rowCount() == 0) {
-    return 0;
+    return false;
   }
 
-  return 1;
+  return true;
 }
 
 function tribe_leaveTribe($playerID, $tag) {
@@ -1304,7 +1266,7 @@ function tribe_createTribe($tag, $name, $leaderID) {
 
 
 function tribe_deleteTribe($tag, $FORCE = 0) {
-  global $relationList, $db;
+  global $db;
 
   if (! $FORCE && ! relation_leaveTribeAllowed($tag)) {
     return 0;
@@ -1323,7 +1285,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
   }
   // end others relations
   foreach ($tribeRelations['other'] AS $otherTag => $relation){
-    $relationType = $relationList[$relation['relationType']];
+    $relationType = $GLOBALS['relationList'][$relation['relationType']];
     $oDST = $relationType['onDeletionSwitchTo'];
     if ($oDST >= 0){
 
@@ -1339,11 +1301,11 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
         return 0;
 
       // insert history
-      if (isset($relationList[$oDST]['historyMessage'])){
-        relation_insertIntoHistory($otherTag, relation_prepareHistoryMessage($tag, $otherTag, $relationList[$oDST]['historyMessage']));
+      if (isset($GLOBALS['relationList'][$oDST]['historyMessage'])){
+        relation_insertIntoHistory($otherTag, relation_prepareHistoryMessage($tag, $otherTag, $GLOBALS['relationList'][$oDST]['historyMessage']));
       }
       // insert tribe message
-      $relationName = $relationList[$oDST]['name'];
+      $relationName = $GLOBALS['relationList'][$oDST]['name'];
       tribe_sendTribeMessage($otherTag, TRIBE_MESSAGE_RELATION, "Haltung gegenüber $tag geändert",
         "Die Haltung Ihres Stammes gegenüber dem Stamm $tag  wurde automatisch auf $relationName geändert.");
     }
@@ -1633,11 +1595,11 @@ function tribe_processJoin($playerID, $tag, $password) {
                          FROM " . PLAYER_TABLE . "
                          WHERE tribe LIKE :tag");
     $sql->bindValue('tag', $tribeData['tag'], PDO::PARAM_STR);
-
     if (!$sql->execute()) {
       return -13;
     }
-    $row = $sql->fetch();
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
 
     if (!$row['IsOk']) {
       return -13;
@@ -1669,8 +1631,11 @@ function tribe_setBlockingPeriodPlayerID($playerID) {
                        SET tribeBlockEnd = (NOW() + INTERVAL ". TRIBE_BLOCKING_PERIOD_PLAYER." SECOND)+0
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_STR);
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return false;
+  }
 
-  return $sql->execute();
+  return true;
 }
 
 function tribe_changeTribeAllowedForPlayerID($playerID) {
@@ -1680,10 +1645,11 @@ function tribe_changeTribeAllowedForPlayerID($playerID) {
                        FROM ". PLAYER_TABLE . "
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_STR);
-
-  if (!$sql->execute() || !($row = $sql->fetch())) {
-    return 0;
+  if (!$sql->execute()) {
+    return false;
   }
+
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
   return $row['blocked'] != 1;
@@ -1784,9 +1750,6 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
 
   // init messages class
   $messagesClass = new Messages;
-  if (!tribe_isLeaderOrJuniorLeader($leaderID, $tag)) {
-    return -9;
-  }
 
   // get all members
   $sql = $db->prepare("SELECT name FROM ". PLAYER_TABLE ." WHERE tribe LIKE :tag");
@@ -1806,9 +1769,6 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
 }
 
 function tribe_processSendTribeMessage($leaderID, $tag, $message) {
-  if (!tribe_isLeaderOrJuniorLeader($leaderID, $tag)) {
-    return -9;
-  }
 
   if (!tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Nachricht vom Stammesanführer", $message)) {
     return -9;
@@ -1828,8 +1788,11 @@ function tribe_sendTribeMessage($tag, $type, $heading, $message) {
   $sql->bindValue('messageClass', $type, PDO::PARAM_INT);
   $sql->bindValue('messageSubject', $heading, PDO::PARAM_STR);
   $sql->bindValue('messageText', $message, PDO::PARAM_STR);
-  
-  return $sql->execute();
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return false;
+  }
+
+  return true;
 }
 
 function tribe_getTribeMessages($tag) {
@@ -1841,15 +1804,15 @@ function tribe_getTribeMessages($tag) {
                        ORDER BY messageTime DESC
                        LIMIT 0, 30");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-
   if (!$sql->execute()){
-    return 0;
+    return null;
   }
 
   $messages = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $messages[$row['tribeMessageID']] = $row;
   }
+  $sql->closeCursor();
 
   return $messages;
 }
@@ -1977,23 +1940,6 @@ function tribe_isLeader($playerID, $tribe) {
                        FROM ". TRIBE_TABLE . "
                        WHERE tag LIKE :tribe
                          AND leaderID = :playerID");
-  $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-
-  if ($sql->rowCountSelect() == 0) {
-    return 0;
-  }
-
-  return 1;
-}
-
-function tribe_isLeaderOrJuniorLeader($playerID, $tribe) {
-  global $db;
-  
-  $sql = $db->prepare("SELECT name 
-                       FROM " . TRIBE_TABLE . "
-                       WHERE tag LIKE :tribe
-                         AND (leaderID = :playerID OR juniorLeaderID = :playerID)");
   $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
