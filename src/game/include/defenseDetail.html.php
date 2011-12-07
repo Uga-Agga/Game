@@ -2,6 +2,7 @@
 /*
  * defense.html.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -195,9 +196,8 @@ function defense_showProperties($defenseID, $cave, $method) {
     'warPoints'     => $defense->warPoints,
     'levels'        => $levels,
     'depgroup'      => $dependencies,
-    'rules_path'    => RULES_PATH));
-
-
+    'rules_path'    => RULES_PATH)
+  );
 }
 
 ?>

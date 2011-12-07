@@ -16,26 +16,27 @@ function getCaveDetailsByCoords($minX, $minY, $maxX, $maxY) {
   global $db;
 
   $caveDetails = array();
-  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, ".
-                       "c.yCoord, c.secureCave, c.artefacts, c.takeoverable, ".
-                       "p.name, p.playerID, p.tribe, ".
-                       "r.name as region ".
-                       "FROM ". CAVE_TABLE ." c LEFT JOIN ". PLAYER_TABLE ." p ".
-                       "ON c.playerID = p.playerID ".
-                       "LEFT JOIN ". REGIONS_TABLE ." r ".
-                       "ON c.regionID = r.regionID ".
-                       "WHERE :minX <= c.xCoord AND c.xCoord <= :maxX ".
-                       "AND   :minY <= c.yCoord AND c.yCoord <= :maxY ".
-                       "ORDER BY c.yCoord, c.xCoord");
+  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribe, r.name as region
+                       FROM ". CAVE_TABLE ." c
+                         LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                         LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID
+                       WHERE :minX <= c.xCoord AND c.xCoord <= :maxX
+                         AND   :minY <= c.yCoord AND c.yCoord <= :maxY
+                       ORDER BY c.yCoord, c.xCoord");
   $sql->bindValue('minX', $minX, PDO::PARAM_INT);
   $sql->bindValue('minY', $minY, PDO::PARAM_INT);
   $sql->bindValue('maxX', $maxX, PDO::PARAM_INT);
   $sql->bindValue('maxY', $maxY, PDO::PARAM_INT);
-  
-  if($sql->execute())
-    while($row = $sql->fetch(PDO::FETCH_ASSOC))
-      array_push($caveDetails, $row);
-  return $caveDetails;
+  if (!$sql->execute()) return array();
+
+  $result = $sql->fetchAll(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (empty($result)) {
+    return array();
+  }
+
+  return $result;
 }
 
 function getEmptyCell(){
@@ -47,14 +48,15 @@ function getCornerCell() {
 }
 
 function getLegendCell($name, $value){
-  return array('header' => array('text' => "<small>$name: $value</small>"));
+  return array('header' => array('text' => "<span class=\"text-small\">$name: $value</span>"));
 }
 
 function getMapCell($map, $xCoord, $yCoord){
-  if (!is_array($map[$xCoord][$yCoord]))
+  if (!is_array($map[$xCoord][$yCoord])) {
     return getEmptyCell();
-  else
+  } else {
     return array('mapcell' => $map[$xCoord][$yCoord]);
+  }
 }
 
 ?>

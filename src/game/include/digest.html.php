@@ -2,6 +2,7 @@
 /*
  * digest.html.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,7 +21,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function digest_getDigest($ownCaves) {
-  global $config, $template;
+  global $template;
 
   // open template
   $template->setFile('easyDigest.tmpl');

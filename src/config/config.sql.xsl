@@ -84,10 +84,10 @@ ALTER TABLE `Event_weatherEnd`
 <xsl:apply-templates select="//EffectType"/>;
 
 
-#Hero_new
+#Hero
 #effects
 
-ALTER TABLE `Hero_new`
+ALTER TABLE `Hero`
 <xsl:apply-templates select="//EffectType"/>;
 
 

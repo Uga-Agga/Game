@@ -13,8 +13,7 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function improvement_getImprovementDetail($caveID, &$details) {
-  global $request, $template;
-  global $buildingTypeList;
+  global $template;
 
   // open template
   $template->setFile('improvement.tmpl');
@@ -35,7 +34,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
   // get this cave's queue
   $queue = improvement_getQueue($_SESSION['player']->playerID, $caveID);
 
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -43,14 +42,14 @@ function improvement_getImprovementDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'build':
-      $buildingID = $request->getVar('buildingID', -1);
+      $buildingID = Request::getVar('buildingID', -1);
       if ($buildingID == -1) {
         $messageID = 2;
         break;
       }
 
       // check queue exist
-      if ($queue) {
+      if (sizeof($queue)) {
         $messageID = 9;
         break;
       }
@@ -66,22 +65,22 @@ function improvement_getImprovementDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'cancelOrder':
-      $eventID = $request->getVar('id', 0);
+      $eventID = Request::getVar('id', 0);
       if ($eventID == 0) {
         $messageID = 1;
         break;
       }
 
       // check queue exist
-      if (!$queue || $queue['event_expansionID'] != $eventID) {
+      if (!sizeof($queue) || $queue['event_expansionID'] != $eventID) {
         $messageID = 1;
         break;
       }
 
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         $messageID = improvement_cancelOrder($eventID, $caveID);
         if ($messageID == 0) {
-          $queue = '';
+          $queue = null;
         }
       } else {
         $template->addVars(array(
@@ -89,7 +88,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
           'confirm_action'  => 'cancelOrder',
           'confirm_id'      => $eventID,
           'confirm_mode'    => IMPROVEMENT_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest du den Arbeitsauftrag von <span class="bold">%s</span> abbrechen?'), $buildingTypeList[$queue['expansionID']]->name),
+          'confirm_msg'     => sprintf(_('Möchtest du den Arbeitsauftrag von <span class="bold">%s</span> abbrechen?'), $GLOBALS['buildingTypeList'][$queue['expansionID']]->name),
         ));
       }
     break;
@@ -100,18 +99,18 @@ function improvement_getImprovementDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     case 'demolishing':
-      $improvementID = $request->getVar('id', -1);
+      $improvementID = Request::getVar('id', -1);
       if ($improvementID == -1) {
         $messageID = 4;
         break;
       }
 
-      if (!isset($buildingTypeList[$improvementID])) {
+      if (!isset($GLOBALS['buildingTypeList'][$improvementID])) {
         $messageID = 4;
         break;
       }
 
-      if ($request->isPost('cancelOrderConfirm')) {
+      if (Request::isPost('cancelOrderConfirm')) {
         $messageID = improvement_Demolishing($improvementID, $caveID, $details);
         $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
       } else {
@@ -120,14 +119,14 @@ function improvement_getImprovementDetail($caveID, &$details) {
           'confirm_action'  => 'demolishing',
           'confirm_id'      => $improvementID,
           'confirm_mode'    => IMPROVEMENT_BUILDER,
-          'confirm_msg'     => sprintf(_('Möchtest du <span class="bold">%s</span> einmal abreißen?'), $buildingTypeList[$improvementID]->name),
+          'confirm_msg'     => sprintf(_('Möchtest du <span class="bold">%s</span> einmal abreißen?'), $GLOBALS['buildingTypeList'][$improvementID]->name),
         ));
       }
     break;
   }
 
   $improvement = $improvementRelict = $improvementUnqualified = array();
-  foreach ($buildingTypeList as $id => $building) {
+  foreach ($GLOBALS['buildingTypeList'] as $id => $building) {
     $maxLevel = round(eval('return ' . formula_parseToPHP("{$building->maxLevel};", '$details')));
     $notenough = FALSE;
 
@@ -147,13 +146,12 @@ function improvement_getImprovementDetail($caveID, &$details) {
         'time'             => time_formatDuration(eval('return ' . formula_parseToPHP($building->productionTimeFunction . ";", '$details')) * BUILDING_TIME_BASE_FACTOR),
         'maxlevel'         => $maxLevel,
         'currentlevel'     => "0" + $details[$building->dbFieldName],
-//        'duration_formula' => formula_parseToReadable($building->productionTimeFunction),
         'breakdown_link'   => ($details[$building->dbFieldName] > 0) ? true : false,
       );
       $improvement[$building->buildingID] = array_merge($improvement[$building->buildingID], parseCost($building, $details));
 
       // show the building link ?!
-      if ($queue) {
+      if (sizeof($queue)) {
         $improvement[$building->buildingID]['no_build_msg'] = _('Ausbau im Gange');
       } else if ($improvement[$building->buildingID]['notenough'] && $maxLevel > $details[$building->dbFieldName]) {
         $improvement[$building->buildingID]['no_build_msg'] = _('Zu wenig Rohstoffe');
@@ -175,7 +173,6 @@ function improvement_getImprovementDetail($caveID, &$details) {
         'building_id'      => $building->buildingID,
         'cave_id'          => $caveID,
         'currentlevel'     => "0" + $details[$building->dbFieldName],
-//      'duration_formula' => formula_parseToReadable($building->productionTimeFunction),
         'dependencies'     => ($result !== FALSE) ? $result : false
       );
 
@@ -191,7 +188,6 @@ function improvement_getImprovementDetail($caveID, &$details) {
         'building_id'      => $building->buildingID,
         'cave_id'          => $caveID,
         'dependencies'     => $result,
-//      'duration_formula' => formula_parseToReadable($building->productionTimeFunction)
       );
     }
   }
@@ -201,11 +197,11 @@ function improvement_getImprovementDetail($caveID, &$details) {
 * Irgendwas im Ausbau?
 *
 ****************************************************************************************************/
-  if ($queue) {
+  if (sizeof($queue)) {
     $template->addVars(array(
       'quene_show'      => true,
-      'quene_name'      => $buildingTypeList[$queue['expansionID']]->name,
-      'quene_nextlevel' => $details[$buildingTypeList[$queue['expansionID']]->dbFieldName] + 1,
+      'quene_name'      => $GLOBALS['buildingTypeList'][$queue['expansionID']]->name,
+      'quene_nextlevel' => $details[$GLOBALS['buildingTypeList'][$queue['expansionID']]->dbFieldName] + 1,
       'quene_finish'    => time_formatDatetime($queue['end']),
       'quene_modus'     => IMPROVEMENT_BUILDER,
       'quene_event_id'  => $queue['event_expansionID']

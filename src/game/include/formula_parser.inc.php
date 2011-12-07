@@ -139,7 +139,7 @@ function formula_parseToPHP($formula, $detail) {
 function formula_parseToReadable($formula){
   global $FORMULA_SYMBOLS, $FORMULA_READABLE;
 
-  $formula = str_replace(array_keys(SymbolsConstants::$READABLE), SymbolsConstants::$READABLE, $formula);
+  $formula = str_replace(array_keys($FORMULA_READABLE), $FORMULA_READABLE, $formula);
 
   // parse symbols
   $return = '';

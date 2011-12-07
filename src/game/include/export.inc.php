@@ -1,7 +1,8 @@
 <?php
 /*
  * export.inc.php -
- * Copyright (c) 2004  OGP Team, 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2004  Georg Pitterle
+ * Copyright (c) 2011  Sascha Lange <salange@uos.de>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -25,10 +26,8 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  *  export_switch() - returns formatted xml/irc/bb code
  */
 function export_switch() {
-  global $request;
-
-  $modus = $request->getVar('modus', '');
-  $format = $request->getVar('format', 'text');
+  $modus = Request::getVar('modus', '');
+  $format = Request::getVar('format', 'text');
   
   switch ($modus) {
     case 'allCaves':
@@ -47,15 +46,15 @@ function export_switch() {
     case 'movement':
       switch ($format) {
         case 'xml':
-          return export_movement_xml($request->getVar('movementID', 0));
+          return export_movement_xml(Request::getVar('movementID', 0));
           break;
           
         case 'bb':
-          return export_movement_bb($request->getVar('movementID', 0));
+          return export_movement_bb(Request::getVar('movementID', 0));
           break;
          
         case 'irc':
-          return export_movement_irc($request->getVar('movementID', 0));
+          return export_movement_irc(Request::getVar('movementID', 0));
           break;
           
         default:
@@ -67,7 +66,7 @@ function export_switch() {
     case 'thisCave':
       switch ($format) {
         case 'xml':
-          return export_thisCave_xml($request->getVar('caveID', 0));
+          return export_thisCave_xml(Request::getVar('caveID', 0));
           break;
           
           
@@ -95,11 +94,11 @@ function export_switch() {
     case 'buildings':
       switch ($format) {
         case 'xml':
-          return export_buildings_xml($request->getVar('caveID', 0));
+          return export_buildings_xml(Request::getVar('caveID', 0));
           break;
 
         case 'bb':
-          return export_buildings_bb($request->getVar('caveID', 0));
+          return export_buildings_bb(Request::getVar('caveID', 0));
           break;
           
         default:
@@ -111,7 +110,7 @@ function export_switch() {
     case 'messages':
       switch ($format) {
         case 'xml':
-          return export_messages_xml($request->getVar('messageID', 0));
+          return export_messages_xml(Request::getVar('messageID', 0));
           break;
           
         default: 
@@ -131,7 +130,7 @@ function export_switch() {
  *  export_allCaves_xml() - returns formatted xml-code for all caves 
  */
 function export_allCaves_xml() {
-  global $resourceTypeList, $buildingTypeList, $unitTypeList, $defenseSystemTypeList, $db;
+  global $db;
   
   $caves = array();
   
@@ -140,7 +139,6 @@ function export_allCaves_xml() {
                        WHERE playerID = :playerID 
                        ORDER BY name ASC");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  
   if ($sql->execute()) {
     while($row = $sql->fetch(PDO::FETCH_ASSOC))
       $caves_data[$row['caveID']] = $row;
@@ -162,7 +160,7 @@ function export_allCaves_xml() {
 
     // Ressources
     $resources = $cave->addChild('resources');
-    foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
+    foreach ($GLOBALS['resourceTypeList'] AS $resourceID => $resourceDetail) {
       if ($caveDetails[$resourceDetail->dbFieldName] > 0) {
         $resource = $resources->addChild('resource');
         $resource->addChild('id', $resourceDetail->resourceID);
@@ -174,7 +172,7 @@ function export_allCaves_xml() {
     
     // Units
     $units = $cave->addChild('units');
-    foreach ($unitTypeList AS $unitsID => $unitDetail) {
+    foreach ($GLOBALS['unitTypeList'] AS $unitsID => $unitDetail) {
       if ($caveDetails[$unitDetail->dbFieldName] > 0) {
         $unit = $units->addChild('unit');
         $unit->addChild('id', $unitDetail->unitID);
@@ -185,7 +183,7 @@ function export_allCaves_xml() {
     
     // Buildings
     $buildings = $cave->addChild('buildings');
-    foreach ($buildingTypeList AS $buildingID => $buildingDetail) {
+    foreach ($GLOBALS['buildingTypeList'] AS $buildingID => $buildingDetail) {
       if ($caveDetails[$buildingDetail->dbFieldName] > 0) {
         $building = $buildings->addChild('building');
         $building->addChild('id', $buildingDetail->buildingID);
@@ -196,7 +194,7 @@ function export_allCaves_xml() {
     
     // Defense Systems
     $defenseSystems = $cave->addChild('defenseSystems');
-    foreach ($defenseSystemTypeList AS $defenseSystemID => $defenseSystemDetail) {
+    foreach ($GLOBALS['defenseSystemTypeList'] AS $defenseSystemID => $defenseSystemDetail) {
       if ($caveDetails[$defenseSystemDetail->dbFieldName] > 0) {
         $defenseSystem = $defenseSystems->addChild('defenseSystem');
         $defenseSystem->addChild('id', $defenseSystemDetail->defenseSystemID);
@@ -214,7 +212,7 @@ function export_allCaves_xml() {
  *  export_thisCave_xml() - returns formatted xml-code for a single caves 
  */
 function export_thisCave_xml($caveID) {
-  global $resourceTypeList, $buildingTypeList, $unitTypeList, $defenseSystemTypeList, $db;
+  global $db;
   
   $caves=array();
   
@@ -227,13 +225,12 @@ function export_thisCave_xml($caveID) {
   if ($sql->execute()) {
     $row = $sql->fetch(PDO::FETCH_ASSOC);
   } else return 'Datenbankfehler!';
-  
 
   $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><thisCave></thisCave>");
   $cave = $xml;
   $header = $cave->addChild('header');
   $header->addChild('playerName', $_SESSION['player']->name);
-  
+
   $cave->addChild('caveID', $row['caveID']);
   $cave->addChild('caveName', $row['name']);
   $cave->addChild('xCoord', $row['xCoord']);
@@ -241,7 +238,7 @@ function export_thisCave_xml($caveID) {
 
   // Ressources
   $resources = $cave->addChild('resources');
-  foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
+  foreach ($GLOBALS['resourceTypeList'] AS $resourceID => $resourceDetail) {
     if ($row[$resourceDetail->dbFieldName] > 0) {
       $resource = $resources->addChild('resource');
       $resource->addChild('id', $resourceDetail->resourceID);
@@ -250,41 +247,40 @@ function export_thisCave_xml($caveID) {
       $resource->addChild('delta', $row[$resourceDetail->dbFieldName ."_delta"]);
     }
   }
-    
-    // Units
-    $units = $cave->addChild('units');
-    foreach ($unitTypeList AS $unitsID => $unitDetail) {
-      if ($row[$unitDetail->dbFieldName] > 0) {
-        $unit = $units->addChild('unit');
-        $unit->addChild('id', $unitDetail->unitID);
-        $unit->addChild('unitName', $unitDetail->name);
-        $unit->addChild('value', $row[$unitDetail->dbFieldName]);
-      }
-    }
-    
-    // Buildings
-    $buildings = $cave->addChild('buildings');
-    foreach ($buildingTypeList AS $buildingID => $buildingDetail) {
-      if ($row[$buildingDetail->dbFieldName] > 0) {
-        $building = $buildings->addChild('building');
-        $building->addChild('id', $buildingDetail->buildingID);
-        $building->addChild('buildingName', $buildingDetail->name);
-        $building->addChild('value', $row[$buildingDetail->dbFieldName]);
-      }
-    }
-    
-    // Defense Systems
-    $defenseSystems = $cave->addChild('defenseSystems');
-    foreach ($defenseSystemTypeList AS $defenseSystemID => $defenseSystemDetail) {
-      if ($row[$defenseSystemDetail->dbFieldName] > 0) {
-        $defenseSystem = $defenseSystems->addChild('defenseSystem');
-        $defenseSystem->addChild('id', $defenseSystemDetail->defenseSystemID);
-        $defenseSystem->addChild('defenseSystemName', $defenseSystemDetail->name);
-        $defenseSystem->addChild('value', $row[$defenseSystemDetail->dbFieldName]);
-      }
-    }   
 
-  
+  // Units
+  $units = $cave->addChild('units');
+  foreach ($GLOBALS['unitTypeList'] AS $unitsID => $unitDetail) {
+    if ($row[$unitDetail->dbFieldName] > 0) {
+      $unit = $units->addChild('unit');
+      $unit->addChild('id', $unitDetail->unitID);
+      $unit->addChild('unitName', $unitDetail->name);
+      $unit->addChild('value', $row[$unitDetail->dbFieldName]);
+    }
+  }
+
+  // Buildings
+  $buildings = $cave->addChild('buildings');
+  foreach ($GLOBALS['buildingTypeList'] AS $buildingID => $buildingDetail) {
+    if ($row[$buildingDetail->dbFieldName] > 0) {
+      $building = $buildings->addChild('building');
+      $building->addChild('id', $buildingDetail->buildingID);
+      $building->addChild('buildingName', $buildingDetail->name);
+      $building->addChild('value', $row[$buildingDetail->dbFieldName]);
+    }
+  }
+
+  // Defense Systems
+  $defenseSystems = $cave->addChild('defenseSystems');
+  foreach ($GLOBALS['defenseSystemTypeList'] AS $defenseSystemID => $defenseSystemDetail) {
+    if ($row[$defenseSystemDetail->dbFieldName] > 0) {
+      $defenseSystem = $defenseSystems->addChild('defenseSystem');
+      $defenseSystem->addChild('id', $defenseSystemDetail->defenseSystemID);
+      $defenseSystem->addChild('defenseSystemName', $defenseSystemDetail->name);
+      $defenseSystem->addChild('value', $row[$defenseSystemDetail->dbFieldName]);
+    }
+  }
+
   return $xml->asPrettyXML();
 }
 
@@ -293,7 +289,7 @@ function export_thisCave_xml($caveID) {
  */
 
 function export_movement_xml($movementID) {
-  global $resourceTypeList, $unitTypeList, $db;
+  global $db;
 
   require_once('lib/Movement.php');
   require_once('include/digest.inc.php');
@@ -346,7 +342,7 @@ function export_movement_xml($movementID) {
 
   // Units
   $units = $movement->addChild('units');
-  foreach ($unitTypeList AS $unitsID => $unitDetail) {
+  foreach ($GLOBALS['unitTypeList'] AS $unitsID => $unitDetail) {
      if ($move[$unitDetail->dbFieldName] > 0) {
        if ($move['isOwnMovement'] || $unitDetail->visible) {
          $unit = $units->addChild('unit');
@@ -359,7 +355,7 @@ function export_movement_xml($movementID) {
 
   // Resources
   $resources = $movement->addChild('resources');
-  foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
+  foreach ($GLOBALS['resourceTypeList'] AS $resourceID => $resourceDetail) {
     if ($move[$resourceDetail->dbFieldName] > 0) {
       $resource = $resources->addChild('resource');
       $resource->addAttribute('id', $resourceDetail->resourceID);
@@ -386,7 +382,7 @@ function export_movement_xml($movementID) {
  * export_movement_bb - returns movements bb-code formatted
  */
 function export_movement_bb ($movementID) {
-  global $resourceTypeList, $unitTypeList, $db;
+  global $db;
   
   require_once('lib/Movement.php');
   require_once('include/digest.inc.php');
@@ -439,7 +435,7 @@ function export_movement_bb ($movementID) {
 
   // units
   $units = "Einheiten: \n";
-  foreach ($unitTypeList AS $unitsID => $unitDetail) {
+  foreach ($GLOBALS['unitTypeList'] AS $unitsID => $unitDetail) {
     if ($move[$unitDetail->dbFieldName] > 0) {
       if ($move['isOwnMovement'] || $unitDetail->visible)
         $units .= $unitDetail->name .": " . (($ua_movements[$move['movementID']]->fogUnit && !$move['isOwnMovement']) ? calcFogUnit($move[$unitDetail->dbFieldName]) : $move[$unitDetail->dbFieldName]) . "\n";
@@ -449,7 +445,7 @@ function export_movement_bb ($movementID) {
 
   // resources
   $resources = "";
-  foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
+  foreach ($GLOBALS['resourceTypeList'] AS $resourceID => $resourceDetail) {
     if ($move[$resourceDetail->dbFieldName] > 0) 
       $resources .= $resourceDetail->name .": " . (($ua_movements[$move['movementID']]->fogResource && !$move['isOwnMovement']) ? calcFogResource($move[$resourceDetail->dbFieldName]) : $move[$resourceDetail->dbFieldName]) . "\n";
     }
@@ -484,7 +480,7 @@ function export_movement_bb ($movementID) {
  * export_movement_irc - returns movements irc-code formatted
  */
 function export_movement_irc ($movementID) {
-  global $resourceTypeList, $unitTypeList, $db;
+  global $db;
   
   require_once('lib/Movement.php');
   require_once('include/digest.inc.php');
@@ -537,7 +533,7 @@ function export_movement_irc ($movementID) {
 
   // units
   $units = "Einheiten: ";
-  foreach ($unitTypeList AS $unitsID => $unitDetail) {
+  foreach ($GLOBALS['unitTypeList'] AS $unitsID => $unitDetail) {
     if ($move[$unitDetail->dbFieldName] > 0) {
       if ($move['isOwnMovement'] || $unitDetail->visible)
         $units .= $unitDetail->name .": " . (($ua_movements[$move['movementID']]->fogUnit && !$move['isOwnMovement']) ? calcFogUnit($move[$unitDetail->dbFieldName]) : $move[$unitDetail->dbFieldName]) . ", ";
@@ -547,7 +543,7 @@ function export_movement_irc ($movementID) {
 
   // resources
   $resources = "";
-  foreach ($resourceTypeList AS $resourceID => $resourceDetail) {
+  foreach ($GLOBALS['resourceTypeList'] AS $resourceID => $resourceDetail) {
     if ($move[$resourceDetail->dbFieldName] > 0) 
       $resources .= $resourceDetail->name .": " . (($ua_movements[$move['movementID']]->fogResource && !$move['isOwnMovement']) ? calcFogResource($move[$resourceDetail->dbFieldName]) : $move[$resourceDetail->dbFieldName]) . ", ";
     }
@@ -646,7 +642,7 @@ function export_sciences_bb() {
  */
 
 function export_buildings_xml($caveID) {
-  global $db, $buildingTypeList;
+  global $db;
 
   $sql = $db->prepare("SELECT * FROM ". CAVE_TABLE ." ".
                        "WHERE playerID = :playerID " .
@@ -671,7 +667,7 @@ function export_buildings_xml($caveID) {
 
   // Buildings
   $buildings = $cave->addChild('buildings');
-  foreach ($buildingTypeList AS $buildingID => $buildingDetail) {
+  foreach ($GLOBALS['buildingTypeList'] AS $buildingID => $buildingDetail) {
     if ($row[$buildingDetail->dbFieldName] > 0) {
       $building = $buildings->addChild('building');
       $building->addChild('id', $buildingDetail->buildingID);
@@ -688,7 +684,7 @@ function export_buildings_xml($caveID) {
  */
 
 function export_buildings_bb($caveID) {
-  global $db, $buildingTypeList;
+  global $db;
 
   $sql = $db->prepare("SELECT * FROM ". CAVE_TABLE." ".
                        "WHERE playerID = :playerID ".
@@ -705,7 +701,7 @@ function export_buildings_bb($caveID) {
     $_SESSION['player']->name;
 
   $building = "";
-  foreach ($buildingTypeList AS $buildingID => $buildingDetail) {
+  foreach ($GLOBALS['buildingTypeList'] AS $buildingID => $buildingDetail) {
     if ($row[$buildingDetail->dbFieldName]) {
       $building .= $buildingDetail->name . ": " . $row[$buildingDetail->dbFieldName] ."\n";
     }

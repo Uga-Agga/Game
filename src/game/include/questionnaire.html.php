@@ -16,10 +16,10 @@ define("SILVERPERGOLD",   26);
 define("COPPERPERSILVER", 13);
 
 function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
-  global $request, $template;
+  global $template;
   $msg = "";
 
-  if (sizeof($request->getVar('question', array('' => '')))) {
+  if (sizeof(Request::getVar('question', array('' => '')))) {
     $msg = questionnaire_giveAnswers();
   }
 
@@ -120,10 +120,10 @@ function questionnaire_getQuestions() {
 }
 
 function questionnaire_giveAnswers() {
-  global $db, $request;
+  global $db;
 
   // filter given answers
-  $answers = $request->getVar('question', array('' => ''));
+  $answers = Request::getVar('question', array('' => ''));
   foreach ($answers AS $questionID => $choiceID) {
     if ($choiceID < 0) unset($answers[$questionID]);
   }
@@ -132,26 +132,33 @@ function questionnaire_giveAnswers() {
   $sql = $db->prepare("SELECT * 
                        FROM ". QUESTIONNAIRE_CHOISES_TABLE ."
                        WHERE questionID IN (".implode(", ", array_map(array($db, 'quote'), array_keys($answers))).")");
-  if ($sql->rowCountSelect() == 0) return array('type' => 'error', 'message' => _('Keine derartigen Fragen!'));
-    if (!$sql->execute()) return array('type' => 'error', 'message' => _('Fehler') . ": " . mysql_error());
+  if ($sql->rowCountSelect() == 0) {
+    return array('type' => 'error', 'message' => _('Keine derartigen Fragen!'));
+  }
+  if (!$sql->execute()) {
+    return array('type' => 'error', 'message' => _('Fehler beim auslesen der Fragen'));
+  }
 
   $valid = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if (!isset($valid[$row['questionID']]))
+    if (!isset($valid[$row['questionID']])) {
       $valid[$row['questionID']] = array();
+    }
     $valid[$row['questionID']][$row['choiceID']] = $row;
   }
 
   // validate given answers
   foreach ($answers AS $questionID => $choiceID) {
-    if (!isset($valid[$questionID][$choiceID]))
+    if (!isset($valid[$questionID][$choiceID])) {
       unset($answers[$questionID]);
+    }
   }
 
   $valid = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if (!isset($valid[$row['questionID']]))
+    if (!isset($valid[$row['questionID']])) {
       $valid[$row['questionID']] = array();
+    }
     $valid[$row['questionID']][$row['choiceID']] = $row;
   }
 
@@ -162,8 +169,12 @@ function questionnaire_giveAnswers() {
   $sql = $db->prepare("SELECT * 
                        FROM ". QUESTIONNAIRE_QUESTIONS_TABLE ."
                        WHERE questionID IN (".implode(",", array_keys($answers)).")");
-  if ($sql->rowCountSelect() == 0) return array('type' => 'error', 'message' => _('Keine derartigen Fragen!'));
-  if (!$sql->execute()) return array('type' => 'error', 'message' => _('Fehler') . ": " . mysql_error());
+  if ($sql->rowCountSelect() == 0) {
+    return array('type' => 'error', 'message' => _('Keine derartigen Fragen!'));
+  }
+  if (!$sql->execute()) {
+    return array('type' => 'error', 'message' => _('Fehler beim auslesen der Fragen'));
+  }
   
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $questions[$row['questionID']] = $row;
@@ -172,15 +183,19 @@ function questionnaire_giveAnswers() {
   // insert into db and reward afterwards
   $rewards = 0;
   foreach ($answers AS $questionID => $choiceID) {
-    $sql = $db->prepare("INSERT INTO ". QUESTIONNAIRE_ANSWERS_TABLE ." ".
-             "(playerID, questionID, choiceID) ".
-             "VALUES (:playerID, :questionID, :choiceID)");
+    $sql = $db->prepare("INSERT INTO ". QUESTIONNAIRE_ANSWERS_TABLE ."
+                           (playerID, questionID, choiceID)
+                         VALUES
+                          (:playerID, :questionID, :choiceID)");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('questionID', $questionID, PDO::PARAM_INT);
     $sql->bindValue('choiceID', $choiceID, PDO::PARAM_INT);
-
-    if (!$sql->execute()) return array('type' => 'error', 'message' => _('Fehler') . ": " . mysql_error());
-    if ($sql->rowCount() != 1) continue;
+    if (!$sql->execute()) {
+      return array('type' => 'error', 'message' => _('Fehler beim eintragen der Antworten.'));
+    }
+    if ($sql->rowCount() != 1) {
+      continue;
+    }
     $sql->closeCursor();
     $rewards += $questions[$questionID]['credits'];
   }
@@ -196,70 +211,84 @@ function questionnaire_giveAnswers() {
 function questionnaire_addCredits($credits) {
   global $db;
 
-  $sql = $db->prepare("UPDATE ". PLAYER_TABLE ." SET questionCredits = questionCredits + :credits 
-                       WHERE playerID = :playerID AND questionCredits + :credits >= 0");
+  $sql = $db->prepare("UPDATE ". PLAYER_TABLE ."
+                       SET questionCredits = questionCredits + :credits 
+                       WHERE playerID = :playerID
+                         AND questionCredits + :credits >= 0");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('credits', $credits, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) die("questionnaire_addCredits: " . mysql_error());
-
-  if ($sql->rowCount() != 1) return false;
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return false;
+  }
 
   $_SESSION['player']->questionCredits += $credits;
   return true;
 }
 
 function questionnaire_presents($caveID, &$ownCaves) {
-  global $db, $request, $template;
-  global $defenseSystemTypeList, $unitTypeList, $resourceTypeList;
+  global $db, $template;
 
   $template->setFile('questionnairePresents.tmpl');
   $template->setShowRresource(false);
 
   $msg = "";
-  if ($request->getVar('presentID', 0) > 0)
-    $msg = questionnaire_getPresent($caveID, $ownCaves, $request->getVar('presentID', 0));
+  if (Request::getVar('presentID', 0) > 0) {
+    $msg = questionnaire_getPresent($caveID, $ownCaves, Request::getVar('presentID', 0));
+  }
 
   // show message
-  if ($msg != "")
+  if ($msg != "") {
     $template->setVar('message', $msg);
+  }
 
   // show my credits
-  if ($account = questionnaire_getCredits($_SESSION['player']->questionCredits))
+  if ($account = questionnaire_getCredits($_SESSION['player']->questionCredits)) {
     $template->addVar('account', $account);
+  }
 
-
-  $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_PRESENTS_TABLE ." ORDER BY presentID ASC");
-  
-  if (!$sql->execute()) return _('Fehler') . ": " . mysql_error();
+  $sql = $db->prepare("SELECT * 
+                       FROM ". QUESTIONNAIRE_PRESENTS_TABLE ."
+                       ORDER BY presentID ASC");
+  if (!$sql->execute()) {
+    return array('type' => 'error', 'message' => _('Fehler beim eintragen der Antworten.'));
+  }
 
   $presents = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-
-    if (!questionnaire_timeIsRight($row))
+    if (!questionnaire_timeIsRight($row)) {
       continue;
+    }
 
     $row += questionnaire_getCredits($row['credits']);
 
     $externals = array();
-    foreach ($defenseSystemTypeList AS $external)
-      if ($row[$external->dbFieldName] > 0)
-        $externals[] = array('amount' => $row[$external->dbFieldName],
-                             'name'   => $external->name);
+    foreach ($v AS $external) {
+      if ($row[$external->dbFieldName] > 0) {
+        $externals[] = array(
+          'amount' => $row[$external->dbFieldName],
+          'name'   => $external->name);
+      }
+    }
     if (sizeof($externals)) $row['EXTERNAL'] = $externals;
 
     $resources = array();
-    foreach ($resourceTypeList AS $resource)
-      if ($row[$resource->dbFieldName] > 0)
-        $resources[] = array('amount' => $row[$resource->dbFieldName],
-                             'name'   => $resource->name);
+    foreach ($GLOBALS['resourceTypeList'] AS $resource) {
+      if ($row[$resource->dbFieldName] > 0) {
+        $resources[] = array(
+          'amount' => $row[$resource->dbFieldName],
+          'name'   => $resource->name);
+      }
+    }
     if (sizeof($resources)) $row['RESOURCE'] = $resources;
 
     $units = array();
-    foreach ($unitTypeList AS $unit)
-      if ($row[$unit->dbFieldName] > 0)
-        $units[] = array('amount' => $row[$unit->dbFieldName],
-                         'name'   => $unit->name);
+    foreach ($GLOBALS['unitTypeList'] AS $unit) {
+      if ($row[$unit->dbFieldName] > 0) {
+        $units[] = array(
+          'amount' => $row[$unit->dbFieldName],
+          'name'   => $unit->name);
+      }
+    }
     if (sizeof($units)) $row['UNIT'] = $units;
 
     $presents[] = $row;
@@ -298,10 +327,10 @@ function questionnaire_timeIsRight($row) {
 }
 
 function questionnaire_parseNumericElement($element, &$targetArray, $numberOfElements) {
-  
   $subelements = explode(", ", $element);
-  for ($i = 0; $i < $numberOfElements; $i++)
+  for ($i = 0; $i < $numberOfElements; $i++) {
     $targetArray[$i] = ($subelements[0] == "*");
+  }
 
   for ($i = 0; $i < count($subelements); $i++) {
     if (preg_match("~^(\\*|([0-9]{1,2})(-([0-9]{1,2}))?)(/([0-9]{1,2}))?$~",
@@ -341,82 +370,87 @@ function questionnaire_lTrimZeros($number) {
 }
 
 function questionnaire_getPresent($caveID, &$ownCaves, $presentID) {
-  global $db, $defenseSystemTypeList, $resourceTypeList, $unitTypeList;
+  global $db;
 
   $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_PRESENTS_TABLE ." WHERE presentID = :presentID");
   $sql->bindValue('presentID', $presentID, PDO::PARAM_INT);
-  
-  if (!$sql->execute()) return _('Fehler') . ": " . mysql_error();
+  if (!$sql->execute()) {
+    return _('Probleme beim auslesen des Geschenks.');
+  }
 
   $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  if (!questionnaire_timeIsRight($row))
-    return _('"Dieses Geschenk kann ich euch nicht anbieten, H&auml;uptling!"');
+  if (!questionnaire_timeIsRight($row)) {
+    return _('"Dieses Geschenk kann ich euch nicht anbieten, Häuptling!"');
+  }
 
-  // gen�gend Schnecken?
+  // genügend Schnecken?
   $myaccount = questionnaire_getCredits($_SESSION['player']->questionCredits);
   $price     = questionnaire_getCredits($row['credits']);
 
   if ($myaccount['credits'] < $price['credits'])
-    return _('"Ihr habt nicht die passenden Schnecken, H&auml;uptling!"');
+    return _('"Ihr habt nicht die passenden Schnecken, Häuptling!"');
 
   // Preis abziehen
   if (!questionnaire_addCredits(-$row['credits']))
-    return _('"Ich bin mit dem Schnecken abz&auml;hlen durcheinander gekommen, H&auml;uptling! Versucht es noch einmal!"');
+    return _('"Ich bin mit dem Schnecken abzählen durcheinander gekommen, Häuptling! Versucht es noch einmal!"');
 
-  // Geschenk �berreichen
+  // Geschenk überreichen
 
   $presents = array();
   $caveData = $ownCaves[$caveID];
-  foreach ($defenseSystemTypeList AS $external)
+  foreach ($GLOBALS['defenseSystemTypeList'] AS $external) {
     if ($row[$external->dbFieldName] > 0) {
       $dbField    = $external->dbFieldName;
       $maxLevel   = round(eval('return '.formula_parseToPHP("{$external->maxLevel};", '$caveData')));
       $presents[] = "$dbField = LEAST(GREATEST($maxLevel, $dbField), $dbField + ".$row[$external->dbFieldName].")";
     }
+  }
 
-  foreach ($resourceTypeList AS $resource)
+  foreach ($GLOBALS['resourceTypeList'] AS $resource) {
     if ($row[$resource->dbFieldName] > 0) {
       $dbField    = $resource->dbFieldName;
       $maxLevel   = round(eval('return '.formula_parseToPHP("{$resource->maxLevel};", '$caveData')));
       $presents[] = "$dbField = LEAST($maxLevel, $dbField + ".$row[$resource->dbFieldName].")";
     }
+  }
 
-  foreach ($unitTypeList AS $unit)
+  foreach ($GLOBALS['unitTypeList'] AS $unit) {
     if ($row[$unit->dbFieldName] > 0) {
       $dbField    = $unit->dbFieldName;
       $presents[] = "$dbField = $dbField + " . $row[$unit->dbFieldName];
     }
+  }
 
   if (sizeof($presents)) {
     // UPDATE Cave
-    $sql = $db->prepare("UPDATE ". CAVE_TABLE ." SET " . implode(", ", $presents) .
-             " WHERE caveID = :caveID AND playerID = :playerID");
+    $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
+                         SET " . implode(", ", $presents) . "
+                         WHERE caveID = :caveID
+                           AND playerID = :playerID");
     $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-
-    if (!$sql->execute())
-      return _('Fehler') . ": " . mysql_error();
+    if (!$sql->execute()) {
+      return _('Probleme beim UPDATE des Geschenks.');
+    }
 
     // UPDATE Questionnaire_presents
-    $sql = $db->prepare("UPDATE ". QUESTIONNAIRE_PRESENTS_TABLE ." SET use_count = use_count + 1 ".
-             "WHERE presentID = :presentID");
+    $sql = $db->prepare("UPDATE ". QUESTIONNAIRE_PRESENTS_TABLE ."
+                         SET use_count = use_count + 1
+                         WHERE presentID = :presentID");
     $sql->bindValue('presentID', $presentID, PDO::PARAM_INT);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return _('Probleme beim UPDATE des Geschenks.');
+    }
 
-    if (!$sql->execute())
-      return _('Fehler') . ": " . mysql_error();
-      
-    if ($sql->rowCount() != 1)
-      return _('Probleme beim UPDATE des Geschenks');
-
-    // H�hle auffrischen
+    // Höhle auffrischen
     $ownCaves[$caveID] = getCaveSecure($caveID, $_SESSION['player']->playerID);
 
-    return _('Eure Geschenke sind nun in eurer H&ouml;hle!');
+    return _('Eure Geschenke sind nun in eurer Höhle!');
   }
 
-  return _('Danke f&uuml;r die Schnecken!');
+  return _('Danke für die Schnecken!');
 }
 
 ?>

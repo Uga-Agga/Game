@@ -95,21 +95,26 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $showLevelUp = false;
 
     $ritual = getRitual($hero);
-    
+
     $resource['duration'] = $ritual['duration'];
     $cave = getCaveSecure($caveID, $playerID);
 
     foreach ($GLOBALS['resourceTypeList'] as $key) {
       $dbFieldName = $key->dbFieldName;
-      $enough = ($ritual[$dbFieldName]<=$cave[$dbFieldName]);
+
+      if (!isset($ritual[$dbFieldName])){
+        continue;
+      }
+
+      $enough = ($ritual[$dbFieldName] <= $cave[$dbFieldName]);
       $tmp = array(
         'enough'      => $enough,
-        'value'       => $ritual["$dbFieldName"],
-        'missing'     => $ritual["$dbFieldName"]-$cave["$dbFieldName"],
+        'value'       => $ritual[$dbFieldName],
+        'missing'     => $ritual[$dbFieldName] - $cave[$dbFieldName],
         'dbFieldName' => $dbFieldName,
         'name'        => $key->name,
       );
-      $resource[$key->dbFieldName]= $tmp;
+      $resource[$key->dbFieldName] = $tmp;
     }
 
     $action = Request::getVar('action', '');

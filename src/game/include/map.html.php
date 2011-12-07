@@ -52,24 +52,22 @@ function calcVisibleMapRegion($mapSize, $xCoord, $yCoord) {
 
 
 function determineCoordsFromParameters($caveData, $mapSize) {
-  global $request;
-
   // default Werte: Koordinaten of the given caveData (that is the data of the presently selected own cave)
   $xCoord  = $caveData['xCoord'];
   $yCoord  = $caveData['yCoord'];
   $message = '';
 
   // wenn in die Minimap geklickt wurde, zoome hinein
-  if (($minimap_x = $request->getVar('minimap_x', 0)) && 
-      ($minimap_y = $request->getVar('minimap_y', 0)) && 
-      ($scaling   = $request->getVar('scaling', 0)) !== 0) {
+  if (($minimap_x = Request::getVar('minimap_x', 0)) && 
+      ($minimap_y = Request::getVar('minimap_y', 0)) && 
+      ($scaling   = Request::getVar('scaling', 0)) !== 0) {
 
     $xCoord = Floor($minimap_x * 100 / $scaling) + $mapSize['minX'];
     $yCoord = Floor($minimap_y * 100 / $scaling) + $mapSize['minY'];
   }
 
   // caveName eingegeben ?
-  else if ($caveName = $request->getVar('caveName', '')) {
+  else if ($caveName = Request::getVar('caveName', '')) {
     $coords = getCaveByName($caveName);
     if (!$coords['xCoord']) {
       $message = sprintf(_('Die Höhle mit dem Namen: "%s" konnte nicht gefunden werden!'), $caveName);
@@ -81,7 +79,7 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   }
 
   // caveID eingegeben ?
-  else if (($targetCaveID = $request->getVar('targetCaveID', 0)) !== 0) {
+  else if (($targetCaveID = Request::getVar('targetCaveID', 0)) !== 0) {
     $coords = getCaveByID($targetCaveID);
     if ($coords === null) {
       $message = sprintf(_('Die Höhle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       
@@ -93,9 +91,9 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   }
 
   // Koordinaten eingegeben ?
-  else if ($request->getVar('xCoord', 0) && $request->getVar('yCoord', 0)) {
-    $xCoord = $request->getVar('xCoord', 0);
-    $yCoord = $request->getVar('yCoord', 0);
+  else if (Request::getVar('xCoord', 0) && Request::getVar('yCoord', 0)) {
+    $xCoord = Request::getVar('xCoord', 0);
+    $yCoord = Request::getVar('yCoord', 0);
   }
 
   // Koordinaten begrenzen
@@ -111,11 +109,9 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   );
 }
 
-
-
 /** creates the map-page with header and the specified map region */
 function getCaveMapContent($caveID, $caves) {
-  global $config, $terrainList, $template;
+  global $template;
 
   $caveData = $caves[$caveID];
   $mapSize = getMapSize();  // Größe der Karte wird benötigt
@@ -211,8 +207,6 @@ function getCaveMapContent($caveID, $caves) {
 
 /** calculates the displayed data for a specific map region. */
 function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
-  global $config, $terrainList;
-
   $caveData = $caves[$caveID];
   $mapSize = getMapSize();  // Größe der Karte wird benötigt
   $message  = '';
@@ -343,7 +337,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 /** fills the map-region data into the thin, header-less template. 
  This is used as response to Ajax calls. */
 function getCaveMapRegionContent($caveID, $caves) {
-  global $config, $terrainList, $template;
+  global $template;
 
   $caveData = $caves[$caveID];
   $mapSize = getMapSize();  // Größe der Karte wird benötigt
@@ -372,7 +366,7 @@ function getCaveMapRegionContent($caveID, $caves) {
 
 
 function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
-  global $terrainList, $template;
+  global $template;
 
   if (!$targetCaveID) {
     $template->throwError('Es wurde keine Höhle ausgewählt.');
@@ -397,8 +391,8 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
     $playerDetails = getPlayerByID($cave['playerID']);
   }
 
-  $cave['terrain_name'] = $terrainList[$cave['terrain']]['name'];
-  $cave['terrain_img'] = $terrainList[$cave['terrain']]['img'];
+  $cave['terrain_name'] = $GLOBALS['terrainList'][$cave['terrain']]['name'];
+  $cave['terrain_img'] = $GLOBALS['terrainList'][$cave['terrain']]['img'];
   $region = getRegionByID($cave['regionID']);
 
   if ($cave['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
@@ -421,7 +415,7 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
         'caveName'     => $value['name'],
         'xCoord'       => $value['xCoord'],
         'yCoord'       => $value['yCoord'],
-        'terrain'      => $terrainList[$value['terrain']]['name'],
+        'terrain'      => $GLOBALS['terrainList'][$value['terrain']]['name'],
         'caveSize'     => floor($value[CAVE_SIZE_DB_FIELD] / 50) + 1,
         'secureCave'   => $value['secureCave'],
       );

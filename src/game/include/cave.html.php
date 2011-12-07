@@ -2,6 +2,7 @@
 /*
  * cave.html.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -304,7 +305,7 @@ function getAllCavesDetailsContent($ownCaves) {
 }
 
 function cave_giveUpCave($caveID, $playerID, $tribe) {
-  global $db, $relationList;
+  global $db;
   
   $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
                       SET playerID = 0,
@@ -344,7 +345,7 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
     foreach ($ownRelations['own'] as $actRelation) {
       $ownType = $actRelation['relationType'];
 
-      if ($relationList[$ownType]['isPrepareForWar'] || $relationList[$ownType]['isWar']) {
+      if ($GLOBALS['relationList'][$ownType]['isPrepareForWar'] || $v[$ownType]['isWar']) {
         $newfame = $actRelation['fame'] - (NONSECURE_CAVE_VAlUE * NONSECURE_CAVE_GIVEUP_FAKTOR);
         
         $sql = $db->prepare("UPDATE ". RELATION_TABLE ."

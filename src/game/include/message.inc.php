@@ -2,6 +2,7 @@
 /*
  * message.inc.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -295,7 +296,7 @@ class Messages extends Parser {
    *
    */
   public function getIncomingMessages($offset, $row_count, $messageClass = -2) {
-    global $db, $config;
+    global $db;
 
     $nachrichten = array();
 
@@ -381,7 +382,7 @@ class Messages extends Parser {
    *
    */
   public function getOutgoingMessages($offset, $row_count, $messageClass = -2) {
-    global $db, $config;
+    global $db;
 
     $nachrichtenart = "";
     foreach($this->MessageClass AS $key => $value)
@@ -461,7 +462,7 @@ class Messages extends Parser {
    *
    */
   public function getTrashMessages($offset, $row_count, $messageClass = -2) {
-    global $db, $config;
+    global $db;
 
     $nachrichten = array();
 
@@ -737,7 +738,7 @@ class Messages extends Parser {
   }
 
   public function insertMessageIntoDB($empfaenger, $subject, $nachricht, $sender_delete=false) {
-    global $db, $config;
+    global $db;
 
     // get Empfaenger ID
     $sql = $db->prepare("SELECT playerID FROM ". PLAYER_TABLE ." WHERE name = :empfaenger");

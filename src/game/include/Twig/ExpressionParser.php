@@ -259,7 +259,9 @@ class Twig_ExpressionParser
                     return new Twig_Node_Expression_GetAttr($alias['node'], new Twig_Node_Expression_Constant($alias['name'], $line), $args, Twig_TemplateInterface::METHOD_CALL, $line);
                 }
 
-                return new Twig_Node_Expression_Function($name, $args, $line);
+                $class = $this->getFunctionNodeClass($name);
+
+                return new $class($name, $args, $line);
         }
     }
 
@@ -318,7 +320,9 @@ class Twig_ExpressionParser
                 $arguments = $this->parseArguments();
             }
 
-            $node = new Twig_Node_Expression_Filter($node, $name, $arguments, $token->getLine(), $tag);
+            $class = $this->getFilterNodeClass($name->getAttribute('value'));
+
+            $node = new $class($node, $name, $arguments, $token->getLine(), $tag);
 
             if (!$this->parser->getStream()->test(Twig_Token::PUNCTUATION_TYPE, '|')) {
                 break;
@@ -378,5 +382,25 @@ class Twig_ExpressionParser
         }
 
         return new Twig_Node($targets);
+    }
+
+    protected function getFunctionNodeClass($name)
+    {
+        $functionMap = $this->parser->getEnvironment()->getFunctions();
+        if (isset($functionMap[$name]) && $functionMap[$name] instanceof Twig_Filter_Node) {
+            return $functionMap[$name]->getClass();
+        }
+
+        return 'Twig_Node_Expression_Function';
+    }
+
+    protected function getFilterNodeClass($name)
+    {
+        $filterMap = $this->parser->getEnvironment()->getFilters();
+        if (isset($filterMap[$name]) && $filterMap[$name] instanceof Twig_Filter_Node) {
+            return $filterMap[$name]->getClass();
+        }
+
+        return 'Twig_Node_Expression_Filter';
     }
 }

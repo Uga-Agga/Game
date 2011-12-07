@@ -22,19 +22,19 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 <xsl:template match="Header">
 class GameConstants {
-  public static $MAX_RESOURCE = <xsl:value-of select="count(//Resource)"/>;
-  public static $MAX_BUILDING = <xsl:value-of select="count(//Building)"/>;
-  public static $MAX_SCIENCE = <xsl:value-of select="count(//Science)"/>;
-  public static $MAX_UNIT = <xsl:value-of select="count(//Unit)"/>;
-  public static $MAX_DEFENSESYSTEM = <xsl:value-of select="count(//DefenseSystem)"/>;
-  public static $TAKEOVER_MAX_POPULARITY_POINTS = <xsl:value-of select="TakeoverMaxPopularityPoints"/>;
-  public static $TAKEOVER_MIN_RESOURCE_VALUE = <xsl:value-of select="TakeoverMinResourceValue"/>;
-  public static $WATCHTOWER_VISION_RANGE = "<xsl:apply-templates select="WatchTowerVisionRange"/>";
-  public static $EXPOSE_INVISIBLE = "<xsl:apply-templates select="ExposeInvisible"/>";
-  public static $WONDER_RESISTANCE = "<xsl:apply-templates select="WonderResistance"/>";
-  public static $FUEL_RESOURCE_ID = <xsl:value-of select="FuelResourceID"/>;
-  public static $MOVEMENT_COST = "<xsl:apply-templates select="MovementCost"/>";
-  public static $MOVEMENT_SPEED = "<xsl:apply-templates select="MovementSpeed"/>";
+  const MAX_RESOURCE = <xsl:value-of select="count(//Resource)"/>;
+  const MAX_BUILDING = <xsl:value-of select="count(//Building)"/>;
+  const MAX_SCIENCE = <xsl:value-of select="count(//Science)"/>;
+  const MAX_UNIT = <xsl:value-of select="count(//Unit)"/>;
+  const MAX_DEFENSESYSTEM = <xsl:value-of select="count(//DefenseSystem)"/>;
+  const TAKEOVER_MAX_POPULARITY_POINTS = <xsl:value-of select="TakeoverMaxPopularityPoints"/>;
+  const TAKEOVER_MIN_RESOURCE_VALUE = <xsl:value-of select="TakeoverMinResourceValue"/>;
+  const WATCHTOWER_VISION_RANGE = "<xsl:apply-templates select="WatchTowerVisionRange"/>";
+  const EXPOSE_INVISIBLE = "<xsl:apply-templates select="ExposeInvisible"/>";
+  const WONDER_RESISTANCE = "<xsl:apply-templates select="WonderResistance"/>";
+  const FUEL_RESOURCE_ID = <xsl:value-of select="FuelResourceID"/>;
+  const MOVEMENT_COST = "<xsl:apply-templates select="MovementCost"/>";
+  const MOVEMENT_SPEED = "<xsl:apply-templates select="MovementSpeed"/>";
 }
 </xsl:template>
 

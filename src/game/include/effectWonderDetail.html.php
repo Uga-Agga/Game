@@ -14,7 +14,6 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function effect_getEffectWonderDetailContent($caveID, $caveData) {
   global $db, $template;
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList, $wonderTypeList, $effectTypeList;
 
   // open template
   $template->setFile('effectWonderDetail.tmpl');
@@ -23,46 +22,65 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   $wondersData = array();
   if ($wonders){
     foreach ($wonders AS $key => $data) {
-      if ($wonderTypeList[$data['wonderID']]->groupID == 0 or $wonderTypeList[$data['wonderID']]->groupID == 3) {
-        $wonderData = array("name"  =>$wonderTypeList[$data['wonderID']]->name,
-                            "end"   =>$data['end_time']);
+      if ($GLOBALS['wonderTypeList'][$data['wonderID']]->groupID == 0 or $GLOBALS['wonderTypeList'][$data['wonderID']]->groupID == 3) {
+        $wonderData = array(
+          'name'  =>$GLOBALS['wonderTypeList'][$data['wonderID']]->name,
+          'end'   =>$data['end_time']);
         $effectsData = array();
 
         // iterating through effectTypes
-        foreach ($effectTypeList AS $effect)
-          if ($value = $data[$effect->dbFieldName] + 0)
-            $effectsData[] = array("name"  => $effect->name,
-                                   "value" => ($value > 0 ? "+" : "") . $value);
+        foreach ($GLOBALS['effectTypeList'] AS $effect) {
+          if ($value = $data[$effect->dbFieldName] + 0) {
+            $effectsData[] = array(
+              'name'  => $effect->name,
+              'value' => ($value > 0 ? "+" : "") . $value);
+          }
+        }
 
         // iterating through resourceTypes
-        foreach ($resourceTypeList AS $resource)
-          if ($value = $data[$resource->dbFieldName] + 0)
-            $effectsData[] = array("name"  => $resource->name,
-                                   "value" => ($value > 0 ? "+" : "") . $value);
+        foreach ($GLOBALS['resourceTypeList'] AS $resource) {
+          if ($value = $data[$resource->dbFieldName] + 0) {
+            $effectsData[] = array(
+              'name'  => $resource->name,
+              'value' => ($value > 0 ? "+" : "") . $value);
+          }
+        }
 
         // iterating through buildingTypes
-        foreach ($buildingTypeList AS $building)
-          if ($value = $data[$building->dbFieldName] + 0)
-            $effectsData[] = array("name"  => $building->name,
-                                   "value" => ($value > 0 ? "+" : "") . $value);
+        foreach ($GLOBALS['buildingTypeList'] AS $building) {
+          if ($value = $data[$building->dbFieldName] + 0) {
+            $effectsData[] = array(
+              'name'  => $building->name,
+              'value' => ($value > 0 ? "+" : "") . $value);
+          }
+        }
 
         // iterating through scienceTypes
-        foreach ($scienceTypeList AS $science)
-          if ($value = $data[$science->dbFieldName] + 0)
-            $effectsData[] = array("name"  => $science->name,
-                                   "value" => ($value > 0 ? "+" : "") . $value);
+        foreach ($GLOBALS['scienceTypeList'] AS $science) {
+          if ($value = $data[$science->dbFieldName] + 0) {
+            $effectsData[] = array(
+              'name'  => $science->name,
+              'value' => ($value > 0 ? "+" : "") . $value);
+          }
+        }
 
         // iterating through unitTypes
-        foreach ($unitTypeList AS $unit)
-          if ($value = $data[$unit->dbFieldName] + 0)
-            $effectsData[] = array("name"  => $unit->name,
-                                   "value" => ($value > 0 ? "+" : "") . $value);
+        foreach ($GLOBALS['unitTypeList'] AS $unit) {
+          if ($value = $data[$unit->dbFieldName] + 0) {
+            $effectsData[] = array(
+              'name'  => $unit->name,
+              'value' => ($value > 0 ? "+" : "") . $value);
+          }
+        }
 
         // iterating through defenseSystemTypes
-        foreach ($defenseSystemTypeList AS $defenseSystem)
-          if ($value = $data[$defenseSystem->dbFieldName] + 0)
-            $effectsData[] = array("name"  => $defenseSystem->name,
-                                   "value" => ($value > 0 ? "+" : "") . $value);
+        foreach ($GLOBALS['defenseSystemTypeList'] AS $defenseSystem) {
+          if ($value = $data[$defenseSystem->dbFieldName] + 0) {
+            $effectsData[] = array(
+              'name'  => $defenseSystem->name,
+              'value' => ($value > 0 ? "+" : "") . $value);
+          }
+        }
 
         $wonderData['EFFECT'] = $effectsData;
 
@@ -76,21 +94,24 @@ function effect_getEffectWonderDetailContent($caveID, $caveData) {
   
   $heroData = array();
   if ($hero && $hero['caveID'] == $caveID) {
-    foreach ($effectTypeList AS $effect) {
+    foreach ($GLOBALS['effectTypeList'] AS $effect) {
       $value = $hero[$effect->dbFieldName]+0;
       if ($value) {
-        $heroData[] = array('name'  => $effect->name, 
-                            'value' => $value); 
+        $heroData[] = array(
+          'name'  => $effect->name, 
+          'value' => $value); 
       }
     }
   }
   
   $effectsData = array();
-  foreach ($effectTypeList AS $data) {
+  foreach ($GLOBALS['effectTypeList'] AS $data) {
     $value = $caveData[$data->dbFieldName] + 0;
-    if ($value)
-      $effectsData[] = array("name"  => $data->name,
-                             "value" => $value);
+    if ($value) {
+      $effectsData[] = array(
+        'name'  => $data->name,
+        'value' => $value);
+     }
   } // end iterating through effectTypes
 
   $data = array();

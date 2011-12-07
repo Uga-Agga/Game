@@ -403,7 +403,7 @@ function hero_usePotion ($potionID, $value) {
     }
     
     $tpFree = $hero['maxHpLvl'] + $hero['forceLvl'] + $hero['regHpLvl'] + $hero['tpFree'];
-    $healPoints = eval("return " . hero_parseFormulas($heroTypesList[$hero['heroTypeID']]['maxHP_formula']) . ";");
+    $healPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
     $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET 
                            maxHpLvl = 0, maxHealPoints = :maxHealPoints,
                            healPoints = :healpoints,
@@ -610,12 +610,12 @@ function hero_changeType($typeID) {
 }
 
 function hero_clearHeroEffects($playerID) {
-  global $db, $effectTypeList;
+  global $db;
   
   $hero = getHeroByPlayer($playerID);
   
   $fields = array();
-  foreach ($effectTypeList as $effect) {
+  foreach ($GLOBALS['effectTypeList'] as $effect) {
     array_push( $fields, $effect->dbFieldName . " = 0");
   }
   

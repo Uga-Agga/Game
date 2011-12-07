@@ -2,6 +2,7 @@
 /*
  * tribe.html.php -
  * Copyright (c) 2004  OGP-Team
+ * Copyright (c) 2011  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,10 +19,12 @@ define('TRIBE_ACTION_LEAVE',         3);
 define('TRIBE_ACTION_MESSAGE',       4);
 
 function tribe_getContent($playerID, $tribe) {
-  global $template, $request, $governmentList;
+  global $template;
 
   // messages
   $messageText = array (
+   -18 => array('type' => 'error', 'message' => _('Du keine Berechtigung eine Nachricht zu schreiben.')),
+   -17 => array('type' => 'error', 'message' => _('Du mußt eine Nachricht schreiben um sie versenden zu können.')),
    -16 => array('type' => 'error', 'message' => _('Du bist zur Zeit in keinem Stamm.')),
    -15 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen wärend du in einem Stamm bist.')),
    -14 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
@@ -48,11 +51,11 @@ function tribe_getContent($playerID, $tribe) {
 
   // process form data
   $messageID = 0;
-  $tribeAction =  $request->getVar('tribeAction', 0);
+  $tribeAction =  Request::getVar('tribeAction', 0);
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
-      if (tribe_validatePassword($request->getVar('password', '')) && tribe_validateTag($request->getVar('tag', ''))) {
-        $messageID = tribe_processJoin($playerID, $request->getVar('tag', ''), $request->getVar('password', ''));
+      if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))) {
+        $messageID = tribe_processJoin($playerID, Request::getVar('tag', ''), Request::getVar('password', ''));
       } else {
         $messageID = tribe_processJoinFailed();
       }
@@ -64,8 +67,8 @@ function tribe_getContent($playerID, $tribe) {
         break;
       }
 
-      if (tribe_validatePassword($request->getVar('password', '')) && tribe_validateTag($request->getVar('tag', ''))){
-        $messageID = tribe_processCreate($playerID, $request->getVar('tag', ''), $request->getVar('password', ''), $request->getVar('restore_rank', 'no') == 'yes');
+      if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))){
+        $messageID = tribe_processCreate($playerID, Request::getVar('tag', ''), Request::getVar('password', ''), Request::getVar('restore_rank', 'no') == 'yes');
       } else {
         $messageID = tribe_processCreateFailed();
       }
@@ -86,16 +89,17 @@ function tribe_getContent($playerID, $tribe) {
         break;
       }
 
-      if (!$request->isPost('messageText', true)) {
-        $messageID = -9;
+      if (!Request::isPost('messageText', true)) {
+        $messageID = -17;
         break;
       }
-      $ingame = $request->isPost('ingame');
 
-      if ($ingame){
-        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, $request->getVar('messageText', true));
+      if (Request::isPost('ingame') && checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) {
+        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, Request::getVar('messageText', true));
+      } else if (checkPermission($_SESSION['player']->auth, 'tribe_msg_public')) {
+        $messageID = tribe_processSendTribeMessage($playerID, $tribe, Request::getVar('messageText', true));
       } else {
-        $messageID = tribe_processSendTribeMessage($playerID, $tribe, $request->getVar('messageText', true));
+        $messageID = -18;
       }
     break;
   }
@@ -117,7 +121,8 @@ function tribe_getContent($playerID, $tribe) {
 // ----------------------------------------------------------------------------
 // ------- SECTION FOR TRIBE MEMBERS ------------- ----------------------------
   else {
-    if (!($tribeData = tribe_getTribeByTag($tribe))) {
+    $tribeData = tribe_getTribeByTag($tribe)
+    if ($tribeData == null) {
       $template->throwError('Der Stamm konnte nicht geladen werden.');
       return;
     }
@@ -125,10 +130,6 @@ function tribe_getContent($playerID, $tribe) {
     // open template
     $template->setFile('tribeMember.tmpl');
     $template->setShowRresource(false);
-
-    if (tribe_isLeaderOrJuniorLeader($playerID, $tribe)) {
-      $template->addVar('is_leader', true);
-    }
 
     if($tribeData['juniorLeaderID']) {
       $juniorAdmin = new Player(getPlayerByID($tribeData['juniorLeaderID']));
@@ -144,7 +145,14 @@ function tribe_getContent($playerID, $tribe) {
       'leader_id'    => $tribeData['leaderID'],
       'junior_leader_name' => (isset($juniorAdmin->name)) ? $juniorAdmin->name : '',
       'junior_leader_id'   => (isset($juniorAdmin->playerID)) ? $juniorAdmin->playerID : 0,
-      'government_name'    => $governmentList[$tribeData['governmentID']]['name']
+      'government_name'    => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
+
+      'auth_manage'   => (checkPermission($_SESSION['player']->auth, 'tribe_change_settings') ||
+                          checkPermission($_SESSION['player']->auth, 'tribe_kick_player') ||
+                          checkPermission($_SESSION['player']->auth, 'tribe_change_relation') ? true : false,
+
+      'auth_send_msg' => (checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe') || 
+                          checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) ? true : false,
     ));
 
     $targetFacts = array();
