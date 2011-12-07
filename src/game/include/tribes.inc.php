@@ -818,7 +818,7 @@ function relation_getWarTargetsAndFame($tag) {
                          AND r_target.relationType = r_own.relationType
                          AND r_own.relationType = '$warId'
                          AND r_own.tribe LIKE '$tag'
-                       ORDER BY r_own.timestamp ASC";
+                       ORDER BY r_own.timestamp ASC");
   $sql->bindValue(':maxTimeForForceSurrenderHours', $maxTimeForForceSurrenderHours, PDO::PARAM_INT);
   $sql->bindValue(':minTimeForForceSurrenderHours', $minTimeForForceSurrenderHours, PDO::PARAM_INT);
   $sql->execute();
