@@ -14,15 +14,6 @@
 
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once("rules/hero.rules.php");
-
-//init Potions
-init_potions();
-//init HeroTypes
-init_heroTypes();
-//init HeroSkills
-init_heroSkills();
-
 /** This function returns basic hero details
  *
  *  @param caveID       the current caveID

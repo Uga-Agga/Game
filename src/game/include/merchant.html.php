@@ -12,10 +12,6 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once("game_rules.php");
-//init Potions
-init_potions();
-
 function merchant_getMechantDetail($playerID, $caveID, &$details) {
   global $db, $template;
 
@@ -41,7 +37,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
     case 'build':
       $tradeID = Request::getVar('tradeID', -1);
 
-      if (!isset($tradeTypeList[$tradeID])) {
+      if (!isset($GLOBALS['tradeTypeList'][$tradeID])) {
         $messageID = -3;
         break;
       }

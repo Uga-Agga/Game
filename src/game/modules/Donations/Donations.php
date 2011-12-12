@@ -19,13 +19,12 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function donations_main($caveID, $caves) {
-  global $request;
 
   // initialize controller
   $controller = NULL;
 
   // get current task
-  $task = $request->getVar('task', 0);
+  $task = Request::getVar('task', 0);
 
   switch ($task) {
 

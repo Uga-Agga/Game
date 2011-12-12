@@ -19,13 +19,12 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
  */
 
 function contactsbookmarks_main($caveID, $caves) {
-  global $request;
 
   // initialize controller
   $controller = NULL;
 
   // get current task
-  $task = $request->getVar('task', '');
+  $task = Request::getVar('task', '');
 
   switch ($task) {
 

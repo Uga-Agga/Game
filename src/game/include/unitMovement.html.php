@@ -18,9 +18,6 @@ require_once('lib/Movement.php');
 function unit_Movement($caveID, &$ownCave) {
   global $db, $template;
 
-  //init HeroTypes
-  init_heroTypes();
-
   // get movements
   $ua_movements = Movement::getMovements();
 

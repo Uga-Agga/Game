@@ -10,6 +10,16 @@
  * the License, or (at your option) any later version.
  */
 
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
+
+//init Potions
+init_potions();
+//init HeroTypes
+init_heroTypes();
+//init HeroSkills
+init_heroSkills();
+
 function getHeroByPlayer($playerID) {
   global $db;
 
