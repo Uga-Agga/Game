@@ -14,7 +14,8 @@
 
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once("hero.rules.php");
+require_once("rules/hero.rules.php");
+
 //init Potions
 init_potions();
 //init HeroTypes
