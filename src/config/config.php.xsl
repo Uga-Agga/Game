@@ -5,7 +5,7 @@
 
 <xsl:template match="Config">&lt;?php
 /*
- * game_rules.php -
+ * game.rules.php -
  * Copyright (c) 2004  OGP Team
  * Copyright (c) 2011  David Unger
  *
@@ -89,8 +89,7 @@ class Resource {
   }
 }
 
-function init_resources(){
-  global $resourceTypeList;
+function init_resources() {
 <xsl:apply-templates select="Resource"/>
 }
 </xsl:template>
@@ -106,7 +105,7 @@ function init_resources(){
   </xsl:if>
   <xsl:if test="@hidden!=0">$tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   </xsl:if>
-  $resourceTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['resourceTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
 <!-- ***** BUILDINGS ****************************************************** -->
@@ -152,9 +151,7 @@ class Building {
   }
 }
 
-function init_buildings(){
-
-  global $buildingTypeList;
+function init_buildings() {
   <xsl:apply-templates select="Building"/>
 }
 </xsl:template>
@@ -202,7 +199,7 @@ function init_buildings(){
   </xsl:if>
   <xsl:if test="@hidden!=0">$tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   </xsl:if>
-  $buildingTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['buildingTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
 <xsl:template match="ScienceTypes">
@@ -244,8 +241,6 @@ class Science {
 }
 
 function init_sciences(){
-
-  global $scienceTypeList;
   <xsl:apply-templates select="Science"/>
 }
 </xsl:template>
@@ -293,7 +288,7 @@ function init_sciences(){
   <xsl:if test="@hidden!=0">$tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   </xsl:if>
 
-  $scienceTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['scienceTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
 <xsl:template match="UnitTypes">
@@ -378,8 +373,6 @@ class Unit {
 }
 
 function init_units(){
-
-  global $unitTypeList;
   <xsl:apply-templates select="Unit"/>
 }
 </xsl:template>
@@ -452,7 +445,7 @@ function init_units(){
   </xsl:if>
   <xsl:if test="@hidden!=0">$tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   </xsl:if>
-  $unitTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['unitTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
 <xsl:template match="DefenseSystemTypes">
@@ -522,8 +515,6 @@ class DefenseSystem {
 }
 
 function init_defenseSystems(){
-
-  global $defenseSystemTypeList;
  <xsl:apply-templates select="DefenseSystem"/>
 }
 </xsl:template>
@@ -581,7 +572,7 @@ function init_defenseSystems(){
   </xsl:if>
   <xsl:if test="@hidden!=0">$tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   </xsl:if>
-  $defenseSystemTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['defenseSystemTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
 <xsl:template match="Cost"><xsl:value-of select="count(id(@id)/preceding-sibling::*)"/> => '<xsl:apply-templates/>'<xsl:if test="position()!=last()">, </xsl:if>
@@ -625,7 +616,6 @@ class Potion {
 }
 
 function init_potions() {
-  global $potionTypeList;
   <xsl:apply-templates select="Potion"/>
 }
 </xsl:template>
@@ -641,7 +631,7 @@ function init_potions() {
                      <xsl:value-of select="TP_setback"/>, 
                      <xsl:value-of select="NeededLevel"/>,
                      0);
-  $potionTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['potionTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
   
 </xsl:template>
 
@@ -650,14 +640,14 @@ function init_potions() {
 <xsl:template match="Terrains">
 /********************** Terrains *********************/
   define("MAX_TERRAINS", <xsl:value-of select="count(Terrain)"/>);
-  global $terrainList;
-  $terrainList = array();
+
+  $GLOBALS['terrainList'] = array();
   <xsl:apply-templates select="Terrain"/>
 </xsl:template>
 
 <xsl:template match="Terrain">
   // <xsl:value-of select="Name"/>
-  $terrainList[<xsl:value-of select="@id"/>] = array('name' =&gt; '<xsl:value-of select="Name"/>',
+  $GLOBALS['terrainList'][<xsl:value-of select="@id"/>] = array('name' =&gt; '<xsl:value-of select="Name"/>',
                           'img' =&gt; '<xsl:value-of select="img"/>',
                           'takeoverByCombat' =&gt; <xsl:value-of select="@takeoverByCombat"/>,
                           'barren' =&gt; <xsl:value-of select="@barren"/>,

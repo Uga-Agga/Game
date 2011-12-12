@@ -20,7 +20,6 @@ require_once("include/db.functions.php");
 require_once("include/time.inc.php");
 require_once("include/basic.lib.php");
 require_once("include/vote.html.php");
-require_once("include/wonder.rules.php");
 require_once("modules/Messages/Messages.php");
 require_once("include/formula_parser.inc.php");
 

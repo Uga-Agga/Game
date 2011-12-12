@@ -63,7 +63,7 @@ function wonder_getWonderContent($caveID, &$details) {
 
   // Show the wonder table
   $wonders = $wondersUnqualified = array();
-  foreach ($wonderTypeList as $id => $wonder) {
+  foreach ($GLOBALS['wonderTypeList'] as $id => $wonder) {
     $result = rules_checkDependencies($wonder, $details);
 
 /****************************************************************************************************

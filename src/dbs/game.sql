@@ -729,6 +729,7 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `noStatistic` tinyint(1) NOT NULL DEFAULT '0',
   `notInactive` tinyint(1) NOT NULL DEFAULT '0',
   `heroID` tinyint(1) NOT NULL DEFAULT '0',
+  `auth` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
   UNIQUE KEY `name` (`name`),
   KEY `tribe` (`tribe`),

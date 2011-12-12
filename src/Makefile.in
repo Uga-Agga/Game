@@ -27,11 +27,10 @@ WWWRUN =      @WWWRUN@
 
 # file names
 CONFIG =      dbs/game_rules.sql \
-	      game/include/effect_list.php game/include/game_rules.php \
-	      game/include/government.rules.php game/include/relation_list.php \
-	      game/include/startvalues.php game/include/wonder.rules.php \
-	      game/include/trade.rules.php \
-		game/include/hero.rules.php
+	      game/include/rules/effects.list.php game/include/rules/game.rules.php \
+	      game/include/rules/government.rules.php game/include/rules/relation.list.php \
+	      game/include/rules/startvalues.php game/include/rules/wonder.rules.php \
+	      game/include/rules/trade.rules.php game/include/rules/hero.rules.php
 
 LANGUAGES =   de_DE
 MODULES =     CaveBookmarks Contacts Donations EventReports Messages Suggestions
@@ -245,31 +244,31 @@ dbs/game_rules.sql: config/config.tmp config/config.sql.xsl
 	$(XSLTPROC) config/config.sql.xsl $< >$@
 
 # generated PHP files
-game/include/effect_list.php: config/config.tmp config/effects.php.xsl
+game/include/rules/effects.list.php: config/config.tmp config/effects.php.xsl
 	$(XSLTPROC) config/effects.php.xsl $< >$@
 
-game/include/game_rules.php: config/config.tmp config/config.php.xsl
+game/include/rules/game.rules.php: config/config.tmp config/config.php.xsl
 	$(XSLTPROC) config/config.php.xsl $< >$@
 
-game/include/government.rules.php: config/government.xml config/government.php.xsl
+game/include/rules/government.rules.php: config/government.xml config/government.php.xsl
 	$(XMLLINT) $<
 	$(XSLTPROC) config/government.php.xsl $< >$@
 
-game/include/relation_list.php: config/relations.xml config/relations.php.xsl
+game/include/rules/relation.list.php: config/relations.xml config/relations.php.xsl
 	$(XMLLINT) $<
 	$(XSLTPROC) config/relations.php.xsl $< >$@
 
-game/include/startvalues.php: config/start.xml config/start.php.xsl
+game/include/rules/startvalues.php: config/start.xml config/start.php.xsl
 	$(XMLLINT) $<
 	$(XSLTPROC) config/start.php.xsl $< >$@
 
-game/include/wonder.rules.php: config/config.tmp config/wonder.php.xsl
+game/include/rules/wonder.rules.php: config/config.tmp config/wonder.php.xsl
 	$(XSLTPROC) config/wonder.php.xsl $< >$@
 
-game/include/trade.rules.php: config/config.tmp config/trade.php.xsl
+game/include/rules/trade.rules.php: config/config.tmp config/trade.php.xsl
 	$(XSLTPROC) config/trade.php.xsl $< >$@
 
-game/include/hero.rules.php: config/hero.xml config/hero.php.xsl
+game/include/rules/hero.rules.php: config/hero.xml config/hero.php.xsl
 	$(XMLLINT) $<
 	$(XSLTPROC) config/hero.php.xsl $< >$@
 

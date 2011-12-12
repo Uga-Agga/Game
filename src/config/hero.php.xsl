@@ -3,19 +3,25 @@
 <xsl:output method="text" encoding="UTF-8"/>
 
 <xsl:template match="Heroes">&lt;?php
-global $heroTypesList;
-global $heroSkillTypeList;
+/*
+ * hero.rules.php -
+ * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
 
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function init_heroTypes () {
-  global $heroTypesList;
-  
   <xsl:apply-templates select="HeroTypes/HeroType"/>
 }
 
 function init_heroSkills() {
-  global $heroSkillTypeList;
-  
   <xsl:apply-templates select="HeroSkills/HeroSkill"/>
 
 }
@@ -24,7 +30,7 @@ function init_heroSkills() {
 
 <xsl:template match="HeroType">
   
-  $heroTypesList['<xsl:value-of select="count(preceding-sibling::*)"/>'] =  array(
+  $GLOBALS['heroTypesList']['<xsl:value-of select="count(preceding-sibling::*)"/>'] =  array(
                      'name' =&gt; '<xsl:value-of select="Name"/>',
                      'description' =&gt; "<xsl:apply-templates select="Description"/>",
                      'id' =&gt; '<xsl:value-of select="@id"/>',
@@ -42,7 +48,7 @@ function init_heroSkills() {
 
 <xsl:template match="HeroSkill">
 
-  $heroSkillTypeList['<xsl:value-of select="@id"/>'] = array(
+  $GLOBALS['heroSkillTypeList']['<xsl:value-of select="@id"/>'] = array(
                      'name' =&gt; '<xsl:value-of select="Name"/>',
                      'description' =&gt; "<xsl:apply-templates select="Description"/>",
                      'id' =&gt; '<xsl:value-of select="@id"/>',

@@ -6,6 +6,19 @@
 <xsl:template match="Config"><xsl:apply-templates select="EffectTypes" /></xsl:template>
 
 <xsl:template match="EffectTypes">&lt;?php
+/*
+ * effects.list.php -
+ * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
+
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 define("MAX_EFFECT", <xsl:value-of select="count(EffectType)"/>);
 
 /********************** Effecttypes *********************/
@@ -25,14 +38,12 @@ class Effects {
 }
 
 function init_Effects() {
-  global $effectTypeList;
-
-  $effectTypeList = array();
+  $GLOBALS['effectTypeList'] = array();
 <xsl:for-each select="EffectType">
 <xsl:variable name="id" select="position()-1"/>
   /* ***** <xsl:value-of select="Name"/> ***** */
   $tmp = new Effects('<xsl:value-of select="$id"/>', '<xsl:value-of select="Name"/>', '<xsl:value-of select="@id"/>', '<xsl:apply-templates select="Description[@lang='de_DE']"/>');
-  $effectTypeList[<xsl:value-of select="$id"/>] = $tmp;
+  $GLOBALS['effectTypeList'][<xsl:value-of select="$id"/>] = $tmp;
 </xsl:for-each>
 }
 ?&gt;

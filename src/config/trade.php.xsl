@@ -18,6 +18,20 @@
 </xsl:choose><xsl:value-of select="count(id(@id)/preceding-sibling::*)"/>.ACT]</xsl:template>
 
 <xsl:template match="trades">&lt;?php
+/*
+ * trade.rules.php -
+ * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011  David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
+
+/** ensure this file is being included by a parent file */
+defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
+
 /********************** Tradetypes *********************/
 class Trade {
   var $tradeID;
@@ -45,10 +59,7 @@ class Trade {
   }
 }
 
-$tradeTypeList = array();
-
 function init_Trades(){
-  global $tradeTypeList;
   <xsl:apply-templates select="trade"/>
 }
 
@@ -67,7 +78,6 @@ class TradeCategories {
 $tradeCategoriesTypeList = array();
 
 function init_TradeCategories() {
-  global $tradeCategoriesTypeList;
   <xsl:apply-templates select="tradecategories/tradecategory"/>
 }
 
@@ -84,7 +94,7 @@ init_TradeCategories();
   $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
   $tmp-&gt;secondsbetween = <xsl:apply-templates select="@secondsbetween"/>;
 
-  $tradeCategoriesTypeList["<xsl:apply-templates select="@id"/>"] = $tmp;
+  $GLOBALS['tradeCategoriesTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
 
 </xsl:template>
 
@@ -107,7 +117,7 @@ init_TradeCategories();
   $tmp-&gt;resourceProductionCost = array(<xsl:apply-templates select="Cost[name(id(@id))='Resource']"/>);
   $tmp-&gt;unitProductionCost     = array(<xsl:apply-templates select="Cost[name(id(@id))='Unit']"/>);
   $tmp-&gt;buildingProductionCost = array(<xsl:apply-templates select="Cost[name(id(@id))='Building']"/>);
-  $tradeTypeList[<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+  $GLOBALS['tradeTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 
 </xsl:template>
 

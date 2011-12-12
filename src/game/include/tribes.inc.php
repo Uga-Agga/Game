@@ -32,16 +32,17 @@ function leaderChoose_processChoiceUpdate($voterID, $playerID, $tribe) {
 
   $player = new Player(getPlayerByID($playerID));
 
-  if (!$player || strcasecmp ($player->tribe, $tribe)) {
+  if (!$player || strcasecmp($player->tribe, $tribe)) {
     return -1;
   } else {
     $sql = $db->prepare("REPLACE ". ELECTION_TABLE." 
-                         SET voterID = :voterID,  playerID = :playerID,  tribe = :tribe");
+                         SET voterID = :voterID, 
+                           playerID = :playerID,
+                           tribe = :tribe");
     $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-
-    if (!$sql->execute()) {
+    if (!$sql->execute() || $sql->rowCount() == 0) {
       return -1;
     }
     return 1;
@@ -51,12 +52,13 @@ function leaderChoose_processChoiceUpdate($voterID, $playerID, $tribe) {
 function leaderChoose_deleteChoiceForPlayer($voterID) {
   global $db;
   
-  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ." WHERE voterID = :voterID ");
+  $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ."
+                       WHERE voterID = :voterID ");
   $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
-
-  if (!$sql->execute()) {
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     return 0;
   }
+
   return 1;
 }
 

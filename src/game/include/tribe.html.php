@@ -49,6 +49,9 @@ function tribe_getContent($playerID, $tribe) {
     10 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!'))
   );
 
+  // init auth
+  $auth = new auth;
+
   // process form data
   $messageID = 0;
   $tribeAction =  Request::getVar('tribeAction', 0);
@@ -121,7 +124,7 @@ function tribe_getContent($playerID, $tribe) {
 // ----------------------------------------------------------------------------
 // ------- SECTION FOR TRIBE MEMBERS ------------- ----------------------------
   else {
-    $tribeData = tribe_getTribeByTag($tribe)
+    $tribeData = tribe_getTribeByTag($tribe);
     if ($tribeData == null) {
       $template->throwError('Der Stamm konnte nicht geladen werden.');
       return;
@@ -147,12 +150,12 @@ function tribe_getContent($playerID, $tribe) {
       'junior_leader_id'   => (isset($juniorAdmin->playerID)) ? $juniorAdmin->playerID : 0,
       'government_name'    => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
 
-      'auth_manage'   => (checkPermission($_SESSION['player']->auth, 'tribe_change_settings') ||
-                          checkPermission($_SESSION['player']->auth, 'tribe_kick_player') ||
-                          checkPermission($_SESSION['player']->auth, 'tribe_change_relation') ? true : false,
+      'auth_manage'   => ($auth->checkPermission($_SESSION['player']->auth, 'tribe_change_settings') ||
+                          $auth->checkPermission($_SESSION['player']->auth, 'tribe_kick_player') ||
+                          $auth->checkPermission($_SESSION['player']->auth, 'tribe_change_relation')) ? true : false,
 
-      'auth_send_msg' => (checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe') || 
-                          checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) ? true : false,
+      'auth_send_msg' => ($auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe') || 
+                          $auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) ? true : false,
     ));
 
     $targetFacts = array();

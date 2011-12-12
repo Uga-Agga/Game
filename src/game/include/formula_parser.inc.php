@@ -12,8 +12,9 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once("game_rules.php");
-require_once("effect_list.php");
+require_once("rules/game.rules.php");
+require_once("rules/effects.list.php");
+require_once("rules/wonder.rules.php");
 
 init_Buildings();
 init_Units();
