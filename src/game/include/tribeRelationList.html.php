@@ -51,8 +51,8 @@ function tribeRelationList_getContent($tribe) {
 
       $relationsData[$target] = array (
         'tribe'         => $relationData['tribe'],
-        'relation_to'   => $relationList[$relationData['relationType']]['name'],
-        'relation_from' => $relationList[0]['name'],
+        'relation_to'   => $relationList[0]['name'],
+        'relation_from' => $relationList[$relationData['relationType']]['name'],
       );
     }
   }

@@ -474,10 +474,13 @@ function hideWMTT() {
           </td>
           <td style="text-align:right; vertical-align:middle;">
           {% if item.CANCEL %}
-          <a href="main.php?modus={{ item.CANCEL.modus }}&amp;eventID={{ item.CANCEL.eventID }}"><img src="{{ gfx }}/de_DE/t_uga/abort.png" class="noborder" width="20" height="20" alt="Einheiten umkehren" title="Einheiten umkehren" /></a>
+          <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
+            <input type="hidden" name="eventID" value="{{ item.CANCEL.eventID }}" />
+            <input type="hidden" name="action" value="cancel" />
+            <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
+          </form>
           {% endif %}
           &nbsp;</td>
-          
         </tr>
       {% endfor %}
     </table>

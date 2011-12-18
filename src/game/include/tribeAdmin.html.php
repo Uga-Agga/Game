@@ -322,6 +322,19 @@ function tribeAdmin_getContent($playerID, $tag) {
     }
   }
 
+  foreach($tribeRelations['other'] AS $target => $targetData) {
+    if (isset($tribeRelations['own'][$target])) {
+      continue;
+    }
+
+    $relations[$target] = array(
+      'tag'            => $target,
+      'their_relation' => $relationList[$tribeRelations['other'][$target]['relationType']]['name'],
+      'duration'       => $targetData['time'],
+      'relation_type'  => 0,
+    );
+  }
+
   $template->addVars(array(
     'relations'      => (isset($relations)) ? $relations : array(),
     'relations_info' => (isset($relation_info)) ? $relation_info : array(),

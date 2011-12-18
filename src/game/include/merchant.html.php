@@ -25,6 +25,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 
   // messages
   $messageText = array (
+    -3 => array('type' => 'info', 'message' =>"Der Händler schaut dich entgeistert an. \"Was willst du von mir?\""),
     -2 => array('type' => 'info', 'message' =>"Der Händler schaut dich entgeistert an. \"Du warst doch gerade erst hier. Komm später nochmal wieder\""),
     -1 =>  array('type' => 'error', 'message' =>"Es ist ein Fehler bei der Verarbeitung Ihrer Anfrage aufgetreten. Bitte wenden Sie sich an die Administratoren."),
      0 =>  array('type' => 'info', 'message' =>"Der Händler schüttelt mit dem Kopf. \"Meine Ware hat ihren Preis und sie ist jeden Rohstoff wert! Der nächste Häuptling ist bestimmt bereit meinen Preis zu zahlen!\""),
@@ -40,6 +41,11 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $tradeID = request_var('tradeID', -1);
+
+      if (!isset($tradeTypeList[$tradeID])) {
+        $messageID = -3;
+        break;
+      }
 
       $messageID = merchant_processOrder($tradeID, $caveID, $details);
       $details = getCaveSecure($caveID, $_SESSION['player']->playerID);

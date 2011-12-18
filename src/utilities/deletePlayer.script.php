@@ -165,8 +165,8 @@ foreach ($result AS $row) {
                                     SET playerID = 0, 
                                     takeoverable = 2, 
                                     protection_end = NOW()+0, 
-                                    secureCave=0,
-                                    hero = 0,
+                                    secureCave = 0,
+                                    hero = 0
                                   WHERE caveID = :caveID");
   $sqlDelete->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
   
