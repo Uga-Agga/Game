@@ -12,31 +12,27 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once('formula_parser.inc.php');
-
 ################################################################################
 
 
 /**
  * This function delegates the task at issue to the respective function.
  */
-
 function takeover_main($caveID, $ownCaves) {
-  global $request, $template;
-  global $resourceTypeList, $TAKEOVERMAXPOPULARITYPOINTS, $TAKEOVERMINRESOURCEVALUE;
+  global $template;
 
   // open template
   $template->setFile('takeover.tmpl');
 
   $feedback = '';
-  $action = $request->getVar('action', '');
+  $action = Request::getVar('action', '');
   switch ($action) {
     case 'withdrawal':
-      if ($request->isPost('abort_withdrawal')) {
+      if (Request::isPost('abort_withdrawal')) {
         break;
       }
 
-      if ($request->isPost('confirm_withdrawal')) {
+      if (Request::isPost('confirm_withdrawal')) {
         $feedback = takeover_withdrawal();
         break;
       }
@@ -47,13 +43,13 @@ function takeover_main($caveID, $ownCaves) {
     break;
 
     case 'change':
-      if ($request->isPost('abort_change')) {
+      if (Request::isPost('abort_change')) {
         break;
       }
 
       $bidding       = takeover_getBidding();
-      $xCoord        = $request->getVar('xCoord', 0);
-      $yCoord        = $request->getVar('yCoord', 0);
+      $xCoord        = Request::getVar('xCoord', 0);
+      $yCoord        = Request::getVar('yCoord', 0);
       $currentYCoord = (isset($bidding['yCoord'])) ? $bidding['yCoord'] : 0;
       $currentXCoord = (isset($bidding['xCoord'])) ? $bidding['xCoord'] : 0;
 
@@ -67,7 +63,7 @@ function takeover_main($caveID, $ownCaves) {
         break;
       }
 
-      if ($request->isPost('confirm_change')) {
+      if (Request::isPost('confirm_change')) {
         $feedback = takeover_change($xCoord, $yCoord);
         break;
       }
@@ -102,7 +98,7 @@ function takeover_main($caveID, $ownCaves) {
 
     // collect resource ratings
     $ratings = array();
-    foreach ($resourceTypeList AS $resource) {
+    foreach ($GLOBALS['resourceTypeList'] AS $resource) {
       if ($resource->takeoverValue) {
         $ratings[] = array(
           'dbFieldName' => $resource->dbFieldName,
@@ -118,10 +114,10 @@ function takeover_main($caveID, $ownCaves) {
 *
 ****************************************************************************************************/
     $template->addVars(array(
-      'popularity'       => $TAKEOVERMAXPOPULARITYPOINTS,
+      'popularity'       => GameConstants::TAKEOVER_MAX_POPULARITY_POINTS,
       'maxcaves'         => $maxcaves,
-      'target_x_coord'   => $request->getVar('targetXCoord', 0),
-      'target_y_coord'   => $request->getVar('targetYCoord', 0),
+      'target_x_coord'   => Request::getVar('targetXCoord', 0),
+      'target_y_coord'   => Request::getVar('targetYCoord', 0),
       'resource_ratings' => $ratings
     ));
 
@@ -149,10 +145,8 @@ function takeover_main($caveID, $ownCaves) {
  */
 
 function takeover_change($xCoord, $yCoord) {
-  global $request;
-
   // get check
-  $change_check = $request->getVar('change_check', 0);
+  $change_check = Request::getVar('change_check', 0);
 
   // verify $check
   if ($change_check != $_SESSION['change_check']) {
@@ -176,10 +170,10 @@ function takeover_change($xCoord, $yCoord) {
  */
 
 function takeover_withdrawal() {
-  global $db, $request;
+  global $db;
 
   // get check
-  $withdrawal_check = $request->getVar('withdrawal_check', 0);
+  $withdrawal_check = Request::getVar('withdrawal_check', 0);
 
   // verify $check
   if (!isset($_SESSION['withdrawal_check']) || $withdrawal_check != $_SESSION['withdrawal_check']) {
@@ -208,7 +202,7 @@ function takeover_withdrawal() {
  */
 
 function takeover_getBidding($caveCount=0) {
-  global $db, $resourceTypeList;
+  global $db;
 
   // prepare query
   $sql = $db->prepare("SELECT * FROM ". CAVE_TAKEOVER_TABLE ." WHERE playerID = :playerID");
@@ -239,7 +233,7 @@ function takeover_getBidding($caveCount=0) {
   // get sent resources
   $sum = 0;
   $resources = array();
-  foreach ($resourceTypeList as $resource) {
+  foreach ($GLOBALS['resourceTypeList'] as $resource) {
     $amount = $row[$resource->dbFieldName];
     if ($amount > 0) {
       $resources[] = array('name'  => $resource->name, 'value' => $amount);
@@ -302,7 +296,7 @@ function takeover_getStatusPic($status) {
  */
 
 function changeCaveIfReasonable($xCoord, $yCoord) {
-  global $db, $resourceTypeList;
+  global $db;
 
   // prepare return value
   $result = FALSE;
@@ -318,7 +312,7 @@ function changeCaveIfReasonable($xCoord, $yCoord) {
         // prepare statement
         $colNames = array();
         $values = array();
-        foreach($resourceTypeList AS $resource) {
+        foreach($GLOBALS['resourceTypeList'] AS $resource) {
             $colNames[] = $resource->dbFieldName;
             $values[]   = "0";
         }

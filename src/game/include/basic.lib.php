@@ -100,7 +100,8 @@ function getCaves($playerID){
                        WHERE playerID = :playerID
                        ORDER BY name ASC");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  if (!$sql->execute()) return 0;
+  if (!$sql->execute()) return array();
+
   while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $caves[$row['caveID']] = $row;
   }

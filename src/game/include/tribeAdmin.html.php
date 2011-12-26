@@ -78,21 +78,24 @@ function tribeAdmin_getContent($playerID, $tag) {
   $template->addVar('tribe_data', $tribeData);
 
   //get Member Data
-  if (!($memberData = tribe_getAllMembers($tag))) {
+  $memberData = tribe_getAllMembers($tag);
+  if (empty($memberData)) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
     return;
   }
   $template->addVar('tribe_members', $memberData);
 
   // get government
-  if (!($tribeGovernment = government_getGovernmentForTribe($tag))) {
+  $tribeGovernment = government_getGovernmentForTribe($tag);
+  if (empty($tribeGovernment)) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
     return;
   }
   $tribeGovernment['name'] = $governmentList[$tribeGovernment['governmentID']]['name'];
 
   // get relations
-  if (!($tribeRelations = relation_getRelationsForTribe($tag))) {
+  $tribeRelations = relation_getRelationsForTribe($tag)
+  if (empty($tribeRelations)) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
     return;
   }

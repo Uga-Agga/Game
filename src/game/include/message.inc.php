@@ -769,7 +769,7 @@ class Messages extends Parser {
                            :messageText,
                            NOW()+0,
                            :senderDelete)");
-    $sql->bindValue('recipientID', $row['playerID'], PDO::PARAM_STR);
+    $sql->bindValue('recipientID', $row['playerID'], PDO::PARAM_INT);
     $sql->bindValue('senderID', $this->selfPlayerID, PDO::PARAM_INT);
     $sql->bindValue('messageClass', 10, PDO::PARAM_INT);
     $sql->bindValue('messageSubject', $subject, PDO::PARAM_STR);

@@ -593,9 +593,6 @@ LOGIN_DB_PASSWD
 LOGIN_DB_USER
 LOGIN_DB_NAME
 LOGIN_DB_HOST
-GAME_DB_SELECT_PASSWD
-GAME_DB_SELECT_USER
-GAME_DB_SELECT_HOST
 GAME_DB_PASSWD
 GAME_DB_USER
 GAME_DB_NAME
@@ -3263,12 +3260,6 @@ GAME_DB_NAME=$cfg_game_db_name
 GAME_DB_USER=$cfg_game_db_user
 
 GAME_DB_PASSWD=$cfg_game_db_passwd
-
-GAME_DB_SELECT_HOST=$cfg_game_db_select_host
-
-GAME_DB_SELECT_USER=$cfg_game_db_select_user
-
-GAME_DB_SELECT_PASSWD=$cfg_game_db_select_passwd
 
 LOGIN_DB_HOST=$cfg_login_db_host
 

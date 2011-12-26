@@ -35,6 +35,7 @@ movement_time_base	40
 science_time_base	40
 unit_time_base		40
 wonder_time_base	40
+weather_time_base	40
 
 # value in hours, default: 24h
 government_change	24
