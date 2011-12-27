@@ -94,7 +94,7 @@ function leaderChoose_getVoteOf($playerID) {
   $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  return (isset($row['playerID'])) $row['playerID'] : false;
+  return (isset($row['playerID'])) ? $row['playerID'] : false;
 }
 
 function government_getGovernmentForTribe($tag) {
@@ -234,9 +234,9 @@ function tribe_isTopTribe($tag) {
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) return false;
 
-  $data = $sql->fetch(PDO::FETCH_ASSOC)
+  $data = $sql->fetch(PDO::FETCH_ASSOC);
 
-  return (isset($data['rank']) && $data['rank'] <= 10) true : false;
+  return (isset($data['rank']) && $data['rank'] <= 10) ? true : false;
 }
 
 function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
@@ -450,7 +450,7 @@ function relation_insertIntoHistory($tribe, $message) {
   $sql->bindValue('ingameTime', "{$time['day']}. $month im Jahr {$time['year']}", PDO::PARAM_STR);
   $sql->bindValue('message', $message, PDO::PARAM_STR);
   if (!$sql->execute() || $sql->rowCount() == 0) {
-    return false
+    return false;
   }
 
   return true;
@@ -528,10 +528,10 @@ function tribe_getPoints($tag) {
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) return -1;
 
-  $row = $sql->fetch(PDO::FETCH_ASSOC)
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  return (isset($row['points_rank'])) $row['points_rank'] : 0;
+  return (isset($row['points_rank'])) ? $row['points_rank'] : 0;
 }
 
 /*
@@ -545,10 +545,10 @@ function tribe_getMight($tag) {
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) return -1;
 
-  $row = $sql->fetch(PDO::FETCH_ASSOC)
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  return (isset($row['points_rank'])) $row['points_rank'] : 0;
+  return (isset($row['points_rank'])) ? $row['points_rank'] : 0;
 }
 
 /**
@@ -990,7 +990,7 @@ function tribe_getNumberOfMembers($tag) {
   $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  return (isset($row_count['members'])) $row_count['members'] : -1;
+  return (isset($row_count['members'])) ? $row_count['members'] : -1;
 }
 
 function tribe_getTribeByTag($tag) {
