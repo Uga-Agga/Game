@@ -1797,7 +1797,7 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
   }
 
   while ($member = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanführer", $message, true)) {
+    if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanführer", $message, true, true)) {
       return -9;
     }
   }
