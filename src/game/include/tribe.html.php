@@ -190,7 +190,7 @@ function tribe_getContent($playerID, $tribe) {
     $relationsAll = relation_getRelationsForTribe($tribeData['name']);
     if (sizeof($relationsAll)) {
       foreach ($relationsAll['own'] as $name => $relationTribe) {
-        if ($relationTribe['relationType'] == RELATION_ALLY) {
+        if ($relationTribe['relationType'] == RELATION_ALLY || $relationTribe['relationType'] == RELATION_WAR_ALLY) {
           $relationAlly[] = $relationTribe;
         }
       }

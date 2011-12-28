@@ -717,7 +717,7 @@ function relation_getRelationsForTribe($tag) {
   $sql->closeCursor();
 
   // get relations from other tribes to $tag
-  $sql = $db->prepare("SELECT *
+  $sql = $db->prepare("SELECT *,  DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time
                        FROM ". RELATION_TABLE . "
                        WHERE tribe_target LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
@@ -1727,7 +1727,7 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
   }
 
   while ($member = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanführer", $message, true)) {
+    if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanführer", $message, true, true)) {
       return -9;
     }
   }

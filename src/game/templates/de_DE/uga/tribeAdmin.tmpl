@@ -161,6 +161,7 @@
           <td class="text-left">{{ item.tag }}</td>
           <td class="text-left">
             Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+            {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
           </td>
           <td class="text-right">
             {% if item.war %}
@@ -185,60 +186,5 @@
   </div>
 </div>
 {% endif %}
-<!--
-      <tmpl:RELATION>
-      <form method="post" action="main.php">
-        <p><input type="hidden" name="{modus_name}" value="{modus}" />
-        <input type="hidden" name="{dataarray}[{dataentry}]" value="{value}" /></p>
 
-        <table>
-          <tr>
-            <td>{value}</td>
-
-            <tmpl:SELECTOR>
-            <td>
-              <select name="{dataarray}[{dataentry}]">
-                <tmpl:OPTION><option value="{value}" {selected}>{text}</option></tmpl:OPTION>
-              </select>
-            </td>
-            </tmpl:SELECTOR>
-
-            <td>
-              <input type="submit" value="{caption}">
-            </td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>Ihre Haltung uns gegen&uuml;ber: {their_relation}</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td>Punkte damals: Unsere: {tribe_points}. Ihre: {target_points}.</td>
-          </tr>
-          <tmpl:WAR>
-          <tr>
-            <td>&nbsp;</td>
-            <td>Kn&uuml;ppelpunkte: Unsere: {fame_own}. Ihre: {fame_target}.</td>
-          </tr>
-          <td>
-            <td>&nbsp;</td>
-            <td>Kriegsanteil: {percent_actual}&nbsp;%
-              <tmpl:FORCEDSURRENDER>
-              <span class="{class}">({percent_estimated}&nbsp;% ben&ouml;tigt)</span>
-            </td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-            <td><p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p></td>
-            </tmpl:FORCEDSURRENDER>
-          </tr>
-          </tmpl:WAR>
-        </table>
-      </form>
-      </tmpl:RELATION>
-    </td>
-  </tr>
-</table>
-</div></div>
--->
 {% endblock %}

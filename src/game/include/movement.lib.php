@@ -96,14 +96,14 @@ function calcFogUnit($unitCount) {
   else if ($unitCount < 4097)  return 'eine Menge';
   else if ($unitCount < 6145) return 'eine Legion';
   else if ($unitCount < 8193) return 'ein Haufen';
-  else if ($unitCount < 12289) return 'ein großer Haufen';
+  else if ($unitCount < 12289) return 'ein groÃŸer Haufen';
   else if ($unitCount < 16385) return 'verdammt viele';
   else if ($unitCount < 20481) return 'Unmengen';
   else if ($unitCount < 32769) return 'eine Streitmacht ';
   else if ($unitCount < 49153) return 'eine Armee';
   else if ($unitCount < 65537) return 'Heerscharen';
   else if ($unitCoun < 98305) return 'eine haltlose Horde ';
-  else return 'darüber eine endlose wogende Masse';
+  else return 'darÃ¼ber eine endlose wogende Masse';
 }
 
 function calcFogResource($resourceCount) {
@@ -116,11 +116,11 @@ function calcFogResource($resourceCount) {
   else if ($resourceCount < 4097) return 'ein kleiner Haufen';
   else if ($resourceCount < 16385) return 'ein beachtlicher Haufen';
   else if ($resourceCount < 32769) return 'eine Menge';
-  else if ($resourceCount < 65537) return 'eine große Menge';
+  else if ($resourceCount < 65537) return 'eine groÃŸe Menge';
   else if ($resourceCount < 131074) return 'ein Berg';
-  else if ($resourceCount < 262148) return 'ein großer Berg';
+  else if ($resourceCount < 262148) return 'ein groÃŸer Berg';
   else if ($resourceCount < 524296) return 'ein riesiger Berg';
-  else  return 'unglaublicher Überfluss';
+  else  return 'unglaublicher Ãœberfluss';
 }
 
 ?>

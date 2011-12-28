@@ -371,7 +371,7 @@ function export_movement_xml($movementID) {
   }
   
   // Hero
-  if ($move['heroID'] != 0) {
+  if ($move['heroID'] != 0 && $move['isOwnMovement']) {
     $movement->addChild('hero', 'true');
   }
 
@@ -460,7 +460,7 @@ function export_movement_bb ($movementID) {
   
   // Hero
   $hero = "";
-  if ($move['heroID'] != 0) {
+  if ($move['heroID'] != 0 && $move['isOwnMovement']) {
     $hero = "Der Held läuft mit!";
   }
 
@@ -560,7 +560,7 @@ function export_movement_irc ($movementID) {
   
   // Hero
   $hero = '';
-  if ($move['heroID'] != 0) {
+  if ($move['heroID'] != 0 && $move['isOwnMovement']) {
     $hero = "Held läuft mit!";
   }
 

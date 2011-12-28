@@ -73,6 +73,7 @@ function wonder_getWonderContent($caveID, &$details) {
 ****************************************************************************************************/
     if (($result === TRUE) && (!$wonder->nodocumentation)) {
       $wonders[$wonder->wonderID] = array(
+        'dbFieldName' => $wonder->wonderID, // Dummy. Wird für die boxCost.tmpl gebraucht.
         'name'        => $wonder->name,
         'wonder_id'   => $wonder->wonderID,
         'description' => $wonder->description,

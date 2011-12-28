@@ -737,7 +737,7 @@ class Messages extends Parser {
     return $row;
   }
 
-  public function insertMessageIntoDB($empfaenger, $subject, $nachricht, $sender_delete=false) {
+  public function insertMessageIntoDB($empfaenger, $subject, $nachricht, $sender_delete=false, $isTribeMessage = false) {
     global $db;
 
     // get Empfaenger ID
@@ -771,7 +771,7 @@ class Messages extends Parser {
                            :senderDelete)");
     $sql->bindValue('recipientID', $row['playerID'], PDO::PARAM_INT);
     $sql->bindValue('senderID', $this->selfPlayerID, PDO::PARAM_INT);
-    $sql->bindValue('messageClass', 10, PDO::PARAM_INT);
+    $sql->bindValue('messageClass', ($isTribeMessage) ? 8 : 10, PDO::PARAM_INT);
     $sql->bindValue('messageSubject', $subject, PDO::PARAM_STR);
     $sql->bindValue('messageText', $nachricht, PDO::PARAM_STR);
     $sql->bindValue('senderDelete', $sender_delete, PDO::PARAM_BOOL);

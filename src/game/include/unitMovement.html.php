@@ -296,7 +296,7 @@ function unit_Movement($caveID, &$ownCave) {
         }
       }
     }
-  } else if ($eventID = Request::getVar('eventID', 0)) {
+  } else if (Request::isPost('action') && Request::getVar('action', '') == 'cancel' && $eventID = Request::getVar('eventID', 0)) {
     $msgID = reverseMovementEvent($caveID, $eventID);
     switch ($msgID) {
       case 0: $msg = array('type' => 'success', 'message' => _('Die Einheiten kehren zurück!')); break;
