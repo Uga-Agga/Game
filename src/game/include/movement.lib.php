@@ -102,7 +102,7 @@ function calcFogUnit($unitCount) {
   else if ($unitCount < 32769) return 'eine Streitmacht ';
   else if ($unitCount < 49153) return 'eine Armee';
   else if ($unitCount < 65537) return 'Heerscharen';
-  else if ($unitCoun < 98305) return 'eine haltlose Horde ';
+  else if ($unitCount < 98305) return 'eine haltlose Horde ';
   else return 'darüber eine endlose wogende Masse';
 }
 
