@@ -131,6 +131,7 @@ function takeover_main($caveID, $ownCaves) {
         'chosen'          => true,
         'current_x_coord' => $bidding['xCoord'],
         'current_y_Coord' => $bidding['yCoord'],
+        'current_name'    => $bidding['caveName'],
         'bidding'         => $bidding,
       ));
     } else {
