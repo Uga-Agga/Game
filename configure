@@ -568,6 +568,10 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 FAME_MIN_POINTS
 FAME_DECREASE
+MAP_MIN_X
+MAP_MAX_X
+MAP_MIN_Y
+MAP_MAX_Y
 TRIBE_LEAVE_COST
 CAVE_SIZE_DB_FIELD
 GOD_TRIBE
@@ -3324,6 +3328,13 @@ FAME_DECREASE=$cfg_fame_decrease
 
 FAME_MIN_POINTS=$cfg_fame_min_points
 
+MAP_MIN_X=$cfg_map_min_x
+
+MAP_MAX_X=$cfg_map_max_x
+
+MAP_MIN_Y=$cfg_map_min_y
+
+MAP_MAX_Y=$cfg_map_max_y
 
 ac_config_files="$ac_config_files src/Makefile src/dbs/db-util src/ticker/ticker.conf src/utilities/crontab src/utilities/db_backup.cron src/utilities/util.inc.php src/game/include/config.inc.php src/www/config.inc.php"
 

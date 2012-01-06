@@ -80,6 +80,11 @@ define("RSS_PATH", "@RSS_URL@");
 define("TOOLS_PATH", "@TOOLS_URL@");
 
 /* ***** MAP ***** ********************************************************* */
+define("MAP_MIN_X",       "@MAP_MIN_X@");
+define("MAP_MAX_X",       "@MAP_MAX_X@");
+define("MAP_MIN_Y",       "@MAP_MIN_Y@");
+define("MAP_MAX_Y",       "@MAP_MAX_Y@");
+
 define("MAP_WIDTH",       7);
 define("MAP_HEIGHT",      9);
 define("MINIMAP_SCALING", 200);

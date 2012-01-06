@@ -254,7 +254,7 @@ function takeover_getBidding($caveCount=0) {
   $bidders = array();
   $sql = $db->prepare("SELECT p.name, p.playerID, ct.status 
                        FROM ". CAVE_TAKEOVER_TABLE ." ct, Player p 
-                       WHERE caveID = :caveID AND ct.playerID = p.playerID 
+                       WHERE ct.caveID = :caveID AND ct.playerID = p.playerID 
                        AND ct.playerID != :playerID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);

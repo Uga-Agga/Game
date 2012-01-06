@@ -53,3 +53,8 @@ cave_size_db_field	soybean
 tribe_leave_cost	0
 fame_decrease		1
 fame_min_points         500
+
+map_min_x 1
+map_max_x 10
+map_min_y 1
+map_max_y 10

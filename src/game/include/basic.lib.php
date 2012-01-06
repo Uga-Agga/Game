@@ -248,15 +248,22 @@ function getMapSize() {
 
   static $size = null;
 
-  if ($size === null){
+  if ($size === null) {
+    $size = array(
+      'minX' => MAP_MIN_X,
+      'maxX' => MAP_MAX_X,
+      'minY' => MAP_MIN_Y,
+      'maxY' => MAP_MAX_Y,
+    );
+/*
     $sql = $db->prepare("SELECT min(xCoord) as minX, max(xCoord) as maxX, min(yCoord) as minY, max(yCoord) as maxY
                          FROM " . CAVE_TABLE);
     if ($sql->execute()) {
       $size = $sql->fetch(PDO::FETCH_ASSOC);
     }
     $sql->closeCursor();
+*/
   }
-
   return $size;
 }
 

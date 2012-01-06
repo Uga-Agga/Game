@@ -125,6 +125,10 @@ AC_SUBST(CAVE_SIZE_DB_FIELD, $cfg_cave_size_db_field)
 AC_SUBST(TRIBE_LEAVE_COST, $cfg_tribe_leave_cost)
 AC_SUBST(FAME_DECREASE, $cfg_fame_decrease)
 AC_SUBST(FAME_MIN_POINTS, $cfg_fame_min_points)
+AC_SUBST(MAP_MIN_X, $cfg_map_min_x)
+AC_SUBST(MAP_MAX_X, $cfg_map_max_x)
+AC_SUBST(MAP_MIN_Y, $cfg_map_min_y)
+AC_SUBST(MAP_MAX_Y, $cfg_map_max_y)
 
 AC_CONFIG_FILES(src/Makefile src/dbs/db-util src/ticker/ticker.conf
   src/utilities/crontab src/utilities/db_backup.cron src/utilities/util.inc.php

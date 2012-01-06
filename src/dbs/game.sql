@@ -166,7 +166,8 @@ CREATE TABLE IF NOT EXISTS `Cave_takeover` (
   `yCoord` int(11) unsigned NOT NULL DEFAULT '0',
   `status` int(11) NOT NULL DEFAULT '0',
   `lastAction` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`playerID`)
+  PRIMARY KEY (`playerID`),
+  UNIQUE KEY `caveID` (`caveID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -905,7 +906,8 @@ CREATE TABLE IF NOT EXISTS `Ranking` (
   `fame` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
   KEY `rank` (`rank`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  KEY `religion` (`religion`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
