@@ -86,14 +86,14 @@
       <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
         <tr>
           <th class="text-left">Gegner</th>
-          <th>Knüppelpunkte: (unsere/ihre)</th>
+          <th>Knüppelpunkte: (unsere / ihre)</th>
           <th>Kriegsanteil</th>
         </tr>
         {% if target_facts %}
           {% for item in target_facts %}
           <tr>
             <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.target|url_encode }}">{{ item.target }}</a></td>
-            <td>{{ item.fame_own }}/{{ item.fame_target }}</td>
+            <td>{{ item.fame_own }} / {{ item.fame_target }}</td>
             <td><span class="{{ item.class }}">{{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)</span></td>
           </tr>
           {% endfor %}
