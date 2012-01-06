@@ -496,7 +496,7 @@ function takeover_transfer_cave_to($caveID, $playerID) {
 function takeover_system_message($receiverID, $betreff, $nachricht) {
   global $db;
 
-  $type = 0;
+  $type = 3; //information
   $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ."
                          (recipientID,
                          senderID,
