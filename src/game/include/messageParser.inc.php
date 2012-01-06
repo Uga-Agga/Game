@@ -581,7 +581,7 @@ class parser {
         }
 
         $lt = implode("", $lt);
-        $list[$listNum] = '<ul style="list-style-type: square;">' . "\n" . $lt . "\n" . '</ul>';
+        $list[$listNum] = '<ul style="list-style-type: square; padding-left: 20px;">' . "\n" . $lt . "\n" . '</ul>';
 
         // replace...
         foreach ($backupList as $backupListNum => $bla) {
@@ -692,7 +692,7 @@ class parser {
       // this will REALLY enhance parsed text, especially when viewed through Opera
       $lineBreaks = array(
         0 => array('<code style="white-space: pre;">', '</code>'),
-        1 => array('<ul style="list-style-type: square;">', '</ul>'),
+        1 => array('<ul style="list-style-type: square; padding-left: 20px;">', '</ul>'),
         2 => array('<ol style="list-style-type: decimal;">', '</ol>')
       );
 
