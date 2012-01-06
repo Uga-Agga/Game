@@ -171,8 +171,7 @@ function setMovementEvent($caveID, $caveData,
 
   // insert fuer movement_event basteln
   $now = time();
-  $nowMicrotime = microtime(true);
-  $insert = "INSERT INTO ". EVENT_MOVEMENT_TABLE ." (caveID, source_caveID, target_caveID, movementID, `start`, `end`, `endMicrotime`, artefactID, heroID, speedFactor, exposeChance, ";
+  $insert = "INSERT INTO ". EVENT_MOVEMENT_TABLE ." (caveID, source_caveID, target_caveID, movementID, `start`, `end`, artefactID, heroID, speedFactor, exposeChance, ";
   $i = 0;
   foreach ($unit as $uID => $val) {
     if (!empty($val)){
@@ -192,11 +191,10 @@ function setMovementEvent($caveID, $caveData,
   $exposeChance = (double)rand() / (double)getRandMax();
 
   $insert .= sprintf(" ) VALUES (%d, %d, %d, %d, ".
-                     "'%s', '%s', %f, %d, %d, %f, %f, ",
+                     "'%s', '%s', %d, %d, %f, %f, ",
                      $caveID, $caveID, $targetCaveID, $movementID,
                      time_toDatetime($now),
                      time_toDatetime($now + $absDuration * 60),
-                     $nowMicrotime,
                      $artefactID, $heroID, $speedFactor, $exposeChance);
 
   $i = 0;
