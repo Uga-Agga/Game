@@ -862,7 +862,7 @@ CREATE TABLE IF NOT EXISTS `RankingTribe` (
   `fame_rank` int(11) NOT NULL DEFAULT '0',
   `caves` int(11) unsigned NOT NULL DEFAULT '0',
   `points_rank` int(11) unsigned NOT NULL DEFAULT '0',
-  `playerAverage` int(11) unsigned NOT NULL DEFAULT '0',
+  `playerAverage` int(11) NOT NULL DEFAULT '0',
   `warpoints` int(11) unsigned NOT NULL DEFAULT '0',
   `glory` int(11) unsigned NOT NULL DEFAULT '0',
   `war_won` int(11) unsigned NOT NULL DEFAULT '0',
