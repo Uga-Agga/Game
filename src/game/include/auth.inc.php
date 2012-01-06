@@ -20,29 +20,29 @@ class auth {
   }
 
   private function initPermission() {
-    $this->perm['tribe_msg_tribe'] = array(
+    $this->perm['tribe']['msg_tribe'] = array(
       'value' => 1,  'desc'  => 'Stammesnachrichten schreiben'
     );
-    $this->perm['tribe_msg_public'] = array(
+    $this->perm['tribe']['msg_public'] = array(
       'value' => 2,  'desc'  => 'Stammesnachrichten per Privater Nachricht schreiben'
     );
-    $this->perm['tribe_change_relation'] = array(
+    $this->perm['tribe']['change_relation'] = array(
       'value' => 4,  'desc'  => 'Beziehungen ändern'
     );
-    $this->perm['tribe_kick_player'] = array(
+    $this->perm['tribe']['kick_player'] = array(
       'value' => 8,  'desc'  => 'Spieler kicken'
     );
-    $this->perm['tribe_change_settings'] = array(
+    $this->perm['tribe']['change_settings'] = array(
       'value' => 16, 'desc'  => 'Gilden Informationen bearbeiten'
     );
   }
 
-  public function checkPermission($userAuth, $authID) {
-    if (!isset($this->perm[$authID]) || intval($userAuth) == 0) {
+  public function checkPermission($authType, $authID, $userAuth) {
+    if (!isset($this->perm[$authType][$authID]) || intval($userAuth) == 0) {
       return false;
     }
 
-    if ($userAuth & $this->perm[$authID]['value']) {
+    if ($userAuth & $this->perm[$authType][$authID]['value']) {
       return true;
     }
 

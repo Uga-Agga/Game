@@ -40,6 +40,7 @@ class Player {
   var $timeCorrection;
   var $tribe;
   var $tribeBlockEnd;
+  var $auth;
 
   function Player($record) {
 
@@ -65,6 +66,7 @@ class Player {
     $this->timeCorrection     = $record['timeCorrection'];
     $this->tribe              = $record['tribe'];
     $this->tribeBlockEnd      = $record['tribeBlockEnd'];
+    $this->auth               = $record['auth'];
   }
 
   static function getPlayer($playerID, $complete=false) {

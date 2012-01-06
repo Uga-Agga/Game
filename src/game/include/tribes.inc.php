@@ -710,7 +710,7 @@ function relation_getRelationsForTribe($tag) {
   if (!$sql->execute()) return NULL;
 
   // copy result into an array
-  $warTargets = array();
+  $own = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $own[strtoupper($row['target'])] = $row;
   }

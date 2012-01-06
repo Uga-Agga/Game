@@ -150,12 +150,12 @@ function tribe_getContent($playerID, $tribe) {
       'junior_leader_id'   => (isset($juniorAdmin->playerID)) ? $juniorAdmin->playerID : 0,
       'government_name'    => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
 
-      'auth_manage'   => ($auth->checkPermission($_SESSION['player']->auth, 'tribe_change_settings') ||
-                          $auth->checkPermission($_SESSION['player']->auth, 'tribe_kick_player') ||
-                          $auth->checkPermission($_SESSION['player']->auth, 'tribe_change_relation')) ? true : false,
+      'auth_manage'   => ($auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) ||
+                          $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth) ||
+                          $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth)) ? true : false,
 
-      'auth_send_msg' => ($auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe') || 
-                          $auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) ? true : false,
+      'auth_send_msg' => ($auth->checkPermission('tribe', 'msg_tribe', $_SESSION['player']->auth, 'tribe_msg_tribe') || 
+                          $auth->checkPermission('tribe', 'msg_public', $_SESSION['player']->auth, 'tribe_msg_tribe')) ? true : false,
     ));
 
     $targetFacts = array();
@@ -188,7 +188,7 @@ function tribe_getContent($playerID, $tribe) {
 
     $relationAlly = array();
     $relationsAll = relation_getRelationsForTribe($tribeData['name']);
-    if (sizeof($relationsAll)) {
+    if (sizeof($relationsAll['own'])) {
       foreach ($relationsAll['own'] as $name => $relationTribe) {
         if ($relationTribe['relationType'] == RELATION_ALLY || $relationTribe['relationType'] == RELATION_WAR_ALLY) {
           $relationAlly[] = $relationTribe;
