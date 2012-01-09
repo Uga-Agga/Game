@@ -661,6 +661,7 @@ static void after_takeover_attacker_update(db_t *database,
 {
   int update = 0;
   int i;
+  struct Hero hero;
 
   /* construct attacker update */
   for (i = 0; i < MAX_UNIT; ++i)
@@ -679,9 +680,12 @@ static void after_takeover_attacker_update(db_t *database,
     /* put hero into cave */
     if (heroID > 0)
     {
-      remove_hero_effects_from_cave (database, heroID);
-      put_hero_into_cave(database, heroID, target_caveID);
-      apply_hero_effects_to_cave(database, heroID);
+      get_hero_by_id(database, heroID, &hero);
+      if (hero.isAlive != HERO_DEAD) {
+        remove_hero_effects_from_cave (database, heroID);
+        put_hero_into_cave(database, heroID, target_caveID);
+        apply_hero_effects_to_cave(database, heroID);
+      }
     }
     /* put remaining units into target_cave */
     ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
@@ -1318,33 +1322,33 @@ void movement_handler (db_t *database, db_result_t *result)
       /* secure or protected target gave? */
       if (cave2.secure || cave_is_protected(&cave2))
       {
-  /* send remaining units back */
-  ds = dstring_new("INSERT INTO Event_movement"
-       " (caveID, target_caveID, source_caveID, movementID,"
-       " speedFactor, start, end, artefactID, heroID");
+        /* send remaining units back */
+        ds = dstring_new("INSERT INTO Event_movement"
+             " (caveID, target_caveID, source_caveID, movementID,"
+             " speedFactor, start, end, artefactID, heroID");
 
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-  dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-           source_caveID, source_caveID, target_caveID, RUECKKEHR,
-           speed_factor, return_start, return_end, artefact, heroID);
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
+                 source_caveID, source_caveID, target_caveID, RUECKKEHR,
+                 speed_factor, return_start, return_end, artefact, heroID);
 
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, ",%d", resources[i]);
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%d", units[i]);
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%d", resources[i]);
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%d", units[i]);
 
-  dstring_append(ds, ")");
+        dstring_append(ds, ")");
 
-  db_query_dstring(database, ds);
+        db_query_dstring(database, ds);
 
-  /* create and send reports */
-  /* FIXME use different message in report (protected -> secure) */
-  protected_report(database, &cave1, &player1, &cave2, &player2);
-  break;
+        /* create and send reports */
+        /* FIXME use different message in report (protected -> secure) */
+        protected_report(database, &cave1, &player1, &cave2, &player2);
+        break;
       }
 
       get_relation_info(database, player1.tribe, player2.tribe, &relation1);
