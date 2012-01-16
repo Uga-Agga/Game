@@ -82,13 +82,8 @@ function checkFormValues($val) {
   return (int) $val;
 }
 
-function setMovementEvent($caveID, $caveData,
-                          $targetX, $targetY,
-                          $unit, $resource,
-                          $movementID, $reqFood, $absDuration,
-                          $artefactID, $heroID, $caveSpeedFactor) {
-                            
-  global $db, $unitTypeList, $resourceTypeList, $FUELRESOURCEID;
+function setMovementEvent($caveID, $caveData,  $targetX, $targetY, $unit, $resource, $movementID, $reqFood, $absDuration, $artefactID, $heroID, $caveSpeedFactor) {
+  global $db;
 
   // ziel-hoehlenID holen
   $sql = $db->prepare("SELECT caveID FROM ". CAVE_TABLE ." 
@@ -114,22 +109,22 @@ function setMovementEvent($caveID, $caveData,
 
   foreach ($unit as $unitID => $value) {
     if( !empty( $value )) {
-      $set[] = $unitTypeList[$unitID]->dbFieldName." = ".$unitTypeList[$unitID]->dbFieldName." - $value ";
-      $setRollback[] = $unitTypeList[$unitID]->dbFieldName." = ".$unitTypeList[$unitID]->dbFieldName." + $value ";
-      $where .= "AND ".$unitTypeList[$unitID]->dbFieldName." >= $value ";
+      $set[] = $GLOBALS['unitTypeList'][$unitID]->dbFieldName." = ".$GLOBALS['unitTypeList'][$unitID]->dbFieldName." - $value ";
+      $setRollback[] = $GLOBALS['unitTypeList'][$unitID]->dbFieldName." = ".$GLOBALS['unitTypeList'][$unitID]->dbFieldName." + $value ";
+      $where .= "AND ".$GLOBALS['unitTypeList'][$unitID]->dbFieldName." >= $value ";
       $where .= "AND $value >= 0 "; // check for values bigger 0!
     }
   }
 
   foreach ($resource as $resourceID => $value) {
     $value_to_check = $value;
-    if ($resourceID == $FUELRESOURCEID)
+    if ($resourceID == GameConstants::FUEL_RESOURCE_ID)
       $value += $reqFood;
 
     if (!empty($value) || !empty($value_to_check)) {
-      $set[] = $resourceTypeList[$resourceID]->dbFieldName." = ".$resourceTypeList[$resourceID]->dbFieldName." - $value ";
-      $setRollback[] = $resourceTypeList[$resourceID]->dbFieldName." = ".$resourceTypeList[$resourceID]->dbFieldName." + $value ";
-      $where .= "AND ".$resourceTypeList[$resourceID]->dbFieldName." >= $value ";
+      $set[] = $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName." = ".$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName." - $value ";
+      $setRollback[] = $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName." = ".$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName." + $value ";
+      $where .= "AND ".$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName." >= $value ";
       if (!empty($value_to_check)) {
         $where .= "AND $value_to_check >= 0 ";
       }
@@ -176,13 +171,13 @@ function setMovementEvent($caveID, $caveData,
   foreach ($unit as $uID => $val) {
     if (!empty($val)){
       if ($i++ != 0) $insert .= " , ";
-      $insert .= $unitTypeList[$uID]->dbFieldName;
+      $insert .= $GLOBALS['unitTypeList'][$uID]->dbFieldName;
     }
   }
 
   foreach ($resource as $rID => $val) {
     if (!empty($val)) {
-      $insert .= " , ".$resourceTypeList[$rID]->dbFieldName;
+      $insert .= " , ".$GLOBALS['resourceTypeList'][$rID]->dbFieldName;
     }
   }
   $speedFactor = getMaxSpeedFactor($unit) * $caveSpeedFactor;
