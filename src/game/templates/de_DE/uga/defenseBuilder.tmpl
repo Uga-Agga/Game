@@ -76,7 +76,8 @@
 {% if defense_system_unqualified %}
 <div class="box">
   <div class="box-header">Verteidigungsanlagen, die noch nicht gebaut werden können</div>
-  <div class="box-content success inner">
+  <div id="defense_system_unqualified" class="box-content success inner text-center box_toggle">Verteidigungsanlagen einblenden</div>
+  <div id="defense_system_unqualified_content" class="box-content success inner" style="display: none;">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in defense_system_unqualified %}
         {% set bgID = (bgID+1)%2 %}

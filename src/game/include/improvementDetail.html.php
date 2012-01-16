@@ -16,15 +16,16 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   global $template;
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
 
   // first check whether that building should be displayed...
-  $building = $buildingTypeList[$buildingID];
+  $building = $GLOBALS['buildingTypeList'][$buildingID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$building->maxLevel};", '$caveData')));
-  if (!$building || ($building->nodocumentation &&
-                 !$caveData[$building->dbFieldName] &&
-                 rules_checkDependencies($building, $caveData) !== TRUE))
-    $building = current($buildingTypeList);
+  $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
+  $maxReadable = formula_parseToReadable($building->maxLevel);
+
+  if (!$building || ($building->nodocumentation && !$caveData[$building->dbFieldName] && rules_checkDependencies($building, $caveData) !== TRUE)) {
+    $building = current($GLOBALS['buildingTypeList']);
+  }
 
   // open template
   if ($method == 'ajax') {
@@ -34,68 +35,82 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   else {
     $shortVersion = false;
     $template->setFile('improvementDetail.tmpl');
+    $template->setShowRresource(false);
   }
-  $template->setShowRresource(false);
 
   $currentlevel = $caveData[$building->dbFieldName];
-  $levels = array();
-  for ($level = $caveData[$building->dbFieldName], $count = 0;
-       $level < $maxLevel && $count < ($shortVersion ? 3 : 10);
-       ++$count, ++$level, ++$caveData[$building->dbFieldName]){
-
-    $duration = time_formatDuration(
-                  eval('return ' .
-                       formula_parseToPHP($buildingTypeList[$buildingID]->productionTimeFunction.";",'$caveData'))
-                  * BUILDING_TIME_BASE_FACTOR);
+  $levels = $costTimeLvl = array();
+  for ($level = $caveData[$building->dbFieldName], $count = 0; $level < $maxLevel && $count < ($shortVersion ? 3 : 10); ++$count, ++$level, ++$caveData[$building->dbFieldName]) {
+    $duration = time_formatDuration(eval('return ' . formula_parseToPHP($GLOBALS['buildingTypeList'][$buildingID]->productionTimeFunction.";",'$caveData')) * BUILDING_TIME_BASE_FACTOR);
 
     // iterate ressourcecosts
     $resourcecost = array();
-    foreach ($building->resourceProductionCost as $resourceID => $function){
-
+    foreach ($building->resourceProductionCost as $resourceID => $function) {
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
-      if ($cost)
-        array_push($resourcecost,
-                   array(
-                   'name'        => $resourceTypeList[$resourceID]->name,
-                   'dbFieldName' => $resourceTypeList[$resourceID]->dbFieldName,
-                   'value'       => $cost));
+      if ($cost) {
+        array_push($resourcecost, array(
+          'name'        => $GLOBALS['resourceTypeList'][$resourceID]->name,
+          'dbFieldName' => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
+          'value'       => $cost
+        ));
+      }
     }
+
     // iterate unitcosts
     $unitcost = array();
-    foreach ($building->unitProductionCost as $unitID => $function){
+    foreach ($building->unitProductionCost as $unitID => $function) {
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
-      if ($cost)
-        array_push($unitcost,
-                   array(
-                   'name'        => $unitTypeList[$unitID]->name,
-                   'dbFieldName' => $unitTypeList[$unitID]->dbFieldName,
-                   'value'       => $cost));
+      if ($cost) {
+        array_push($unitcost, array(
+          'name'        => $GLOBALS['unitTypeList'][$unitID]->name,
+          'dbFieldName' => $GLOBALS['unitTypeList'][$unitID]->dbFieldName,
+          'value'       => $cost
+        ));
+      }
     }
 
-  $buildingCost = array();
-  foreach ($building->buildingProductionCost as $key => $value)
-    if ($value != "" && $value != 0)
-      array_push($buildingCost, array('dbFieldName' => $buildingTypeList[$key]->dbFieldName,
-                                      'name'        => $buildingTypeList[$key]->name,
-                                      'value'       => ceil(eval('return '.formula_parseToPHP($building->buildingProductionCost[$key] . ';', '$details')))));
+    // iterate buildingCost
+    $buildingCost = array();
+    foreach ($building->buildingProductionCost as $buildingID => $function) {
+      $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
+      if ($cost) {
+        array_push($buildingCost, array(
+          'name'        => $GLOBALS['buildingTypeList'][$buildingID]->name,
+          'dbFieldName' => $GLOBALS['buildingTypeList'][$buildingID]->dbFieldName,
+          'value'       => $cost
+        ));
+      }
+    }
 
-  $defenseCost = array();
-  foreach ($building->defenseProductionCost as $key => $value)
-    if ($value != "" && $value != 0)
-      array_push($defenseCost,  array('dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
-                                      'name'        => $defenseSystemTypeList[$key]->name,
-                                      'value'       => ceil(eval('return '.formula_parseToPHP($building->defenseProductionCost[$key] . ';', '$details')))));
+    // iterate defenseCost
+    $defenseCost = array();
+    foreach ($building->defenseProductionCost as $defenseID => $function) {
+      $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
+      if ($cost) {
+        array_push($defenseCost, array(
+          'name'        => $GLOBALS['defenseSystemTypeList'][$defenseID]->name,
+          'dbFieldName' => $GLOBALS['defenseSystemTypeList'][$defenseID]->dbFieldName,
+          'value'       => $cost
+        ));
+      }
+    }
 
-    $levels[$count] = array('level' => $level + 1,
-                            'time'  => $duration,
-                            'BUILDINGCOST'  => $buildingCost,
-                            'DEFENSECOST'  => $defenseCost,
-                            'RESOURCECOST' => $resourcecost,
-                            'UNITCOST'     => $unitcost);
+    $levels[$count] = array(
+      'level'         => $level + 1,
+      'time'          => $duration,
+      'resource_cost' => $resourcecost,
+      'unit_cost'     => $unitcost,
+      'building_cost' => $buildingCost,
+      'defense_cost'  => $defenseCost
+    );
   }
-  if (sizeof($levels))
-    $levels = array('population' => $caveData['population'], 'LEVEL' => $levels);
 
+  if (sizeof($levels)) {
+    $costTimeLvl = array(
+      'population' => $caveData['population'],
+      'item'       => $levels
+    );
+  }
 
   $dependencies     = array();
   $buildingdep      = array();
@@ -104,87 +119,143 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   $sciencedep       = array();
   $unitdep          = array();
 
-  foreach ($building->buildingDepList as $key => $level)
-    if ($level)
-      array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
-                                     'level' => "&gt;= " . $level));
+  foreach ($building->buildingDepList as $key => $level) {
+    if ($level) {
+      array_push($buildingdep, array(
+        'name'  => $GLOBALS['buildingTypeList'][$key]->name,
+        'level' => "&gt;= " . $level
+      ));
+    }
+  }
 
-  foreach ($building->defenseSystemDepList as $key => $level)
-    if ($level)
-      array_push($defensesystemdep, array('name'  => $defenseSystemTypeList[$key]->name,
-                                          'level' => "&gt;= " . $level));
+  foreach ($building->defenseSystemDepList as $key => $level) {
+    if ($level) {
+      array_push($defensesystemdep, array(
+        'name'  => $GLOBALS['defenseSystemTypeList'][$key]->name,
+        'level' => "&gt;= " . $level
+      ));
+    }
+  }
 
-  foreach ($building->resourceDepList as $key => $level)
-    if ($level)
-      array_push($resourcedep, array('name'  => $resourceTypeList[$key]->name,
-                                     'level' => "&gt;= " . $level));
+  foreach ($building->resourceDepList as $key => $level) {
+    if ($level) {
+      array_push($resourcedep, array(
+        'name'  => $GLOBALS['resourceTypeList'][$key]->name,
+        'level' => "&gt;= " . $level
+      ));
+    }
+  }
 
-  foreach ($building->scienceDepList as $key => $level)
-    if ($level)
-      array_push($sciencedep, array('name'  => $scienceTypeList[$key]->name,
-                                    'level' => "&gt;= " . $level));
+  foreach ($building->scienceDepList as $key => $level) {
+    if ($level) {
+      array_push($sciencedep, array(
+        'name'  => $GLOBALS['scienceTypeList'][$key]->name,
+        'level' => "&gt;= " . $level
+      ));
+    }
+  }
 
-  foreach ($building->unitDepList as $key => $level)
-    if ($level)
-      array_push($unitdep, array('name'  => $unitTypeList[$key]->name,
-                                 'level' => "&gt;= " . $level));
-
-
-  foreach ($building->maxBuildingDepList as $key => $level)
-    if ($level != -1)
-      array_push($buildingdep, array('name'  => $buildingTypeList[$key]->name,
-                                     'level' => "&lt;= " . $level));
-
-  foreach ($building->maxDefenseSystemDepList as $key => $level)
-    if ($level != -1)
-      array_push($defensesystemdep, array('name'  => $defenseSystemTypeList[$key]->name,
-                                          'level' => "&lt;= " . $level));
-
-  foreach ($building->maxResourceDepList as $key => $level)
-    if ($level != -1)
-      array_push($resourcedep, array('name'  => $resourceTypeList[$key]->name,
-                                     'level' => "&lt;= " . $level));
-
-  foreach ($building->maxScienceDepList as $key => $level)
-    if ($level != -1)
-      array_push($sciencedep, array('name'  => $scienceTypeList[$key]->name,
-                                    'level' => "&lt;= " . $level));
-
-  foreach ($building->maxUnitDepList as $key => $level)
-    if ($level != -1)
-      array_push($unitdep, array('name'  => $unitTypeList[$key]->name,
-                                 'level' => "&lt;= " . $level));
+  foreach ($building->unitDepList as $key => $level) {
+    if ($level) {
+      array_push($unitdep, array(
+        'name'  => $GLOBALS['unitTypeList'][$key]->name,
+        'level' => "&gt;= " . $level
+      ));
+    }
+  }
 
 
-  if (sizeof($buildingdep))
-    array_push($dependencies, array('name' => _('Erweiterungen'),
-                                    'DEP'  => $buildingdep));
+  foreach ($building->maxBuildingDepList as $key => $level) {
+    if ($level != -1) {
+      array_push($buildingdep, array(
+        'name'  => $GLOBALS['buildingTypeList'][$key]->name,
+        'level' => "&lt;= " . $level
+      ));
+    }
+  }
 
-  if (sizeof($defensesystemdep))
-    array_push($dependencies, array('name' => _('Verteidigungsanlagen'),
-                                    'DEP'  => $defensesystemdep));
+  foreach ($building->maxDefenseSystemDepList as $key => $level) {
+    if ($level != -1) {
+      array_push($defensesystemdep, array(
+        'name'  => $GLOBALS['defenseSystemTypeList'][$key]->name,
+        'level' => "&lt;= " . $level
+      ));
+    }
+  }
 
-  if (sizeof($resourcedep))
-    array_push($dependencies, array('name' => _('Rohstoffe'),
-                                    'DEP'  => $resourcedep));
+  foreach ($building->maxResourceDepList as $key => $level) {
+    if ($level != -1) {
+      array_push($resourcedep, array(
+        'name'  => $GLOBALS['resourceTypeList'][$key]->name,
+        'level' => "&lt;= " . $level
+      ));
+    }
+  }
 
-  if (sizeof($sciencedep))
-    array_push($dependencies, array('name' => _('Forschungen'),
-                                    'DEP'  => $sciencedep));
+  foreach ($building->maxScienceDepList as $key => $level) {
+    if ($level != -1) {
+      array_push($sciencedep, array(
+        'name'  => $GLOBALS['scienceTypeList'][$key]->name,
+        'level' => "&lt;= " . $level
+      ));
+    }
+  }
 
-  if (sizeof($unitdep))
-    array_push($dependencies, array('name' => _('Einheiten'),
-                                    'DEP'  => $unitdep));
+  foreach ($building->maxUnitDepList as $key => $level) {
+    if ($level != -1) {
+      array_push($unitdep, array(
+        'name'  => $GLOBALS['unitTypeList'][$key]->name,
+        'level' => "&lt;= " . $level
+      ));
+    }
+  }
 
-  $template->addVars(array('name'          => $building->name,
-                            'dbFieldName'   => $building->dbFieldName,
-                            'description'   => $building->description,
-                            'maxlevel'      => $maxLevel,
-                            'currentlevel'  => $currentlevel,
-                            'LEVELS'        => $levels,
-                            'DEPGROUP'      => $dependencies,
-                            'rules_path'    => RULES_PATH));
+  if (sizeof($buildingdep)) {
+    array_push($dependencies, array(
+      'name' => _('Erweiterungen'),
+      'dep'  => $buildingdep
+    ));
+  }
 
+  if (sizeof($defensesystemdep)) {
+    array_push($dependencies, array(
+      'name' => _('Verteidigungsanlagen'),
+      'dep'  => $defensesystemdep
+    ));
+  }
+
+  if (sizeof($resourcedep)) {
+    array_push($dependencies, array(
+      'name' => _('Rohstoffe'),
+      'dep'  => $resourcedep
+    ));
+  }
+
+  if (sizeof($sciencedep)) {
+    array_push($dependencies, array(
+      'name' => _('Forschungen'),
+      'dep'  => $sciencedep
+    ));
+  }
+
+  if (sizeof($unitdep)) {
+    array_push($dependencies, array(
+      'name' => _('Einheiten'),
+      'dep'  => $unitdep
+    ));
+  }
+
+  $template->addVars(array(
+    'name'          => $building->name,
+    'dbFieldName'   => $building->dbFieldName,
+    'description'   => $building->description,
+    'maxlevel'      => $maxLevel,
+    'maxReadable'   => $maxReadable,
+    'currentlevel'  => $currentlevel,
+    'cost_time_lvl' => $costTimeLvl,
+    'dependencies'  => $dependencies,
+    'rules_path'    => RULES_PATH
+  ));
 }
 
 ?>

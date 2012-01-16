@@ -18,12 +18,14 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   // first check whether that science should be displayed...
   $science = $GLOBALS['scienceTypeList'][$scienceID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$science->maxLevel};", '$caveData')));
-  if (!$science || ($science->nodocumentation &&
-                 !$caveData[$science->dbFieldName] &&
-                 rules_checkDependencies($science, $caveData) !== TRUE)) {
+  $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
+  $maxReadable = formula_parseToReadable($science->maxLevel);
+
+  if (!$science || ($science->nodocumentation && !$caveData[$science->dbFieldName] && rules_checkDependencies($science, $caveData) !== TRUE)) {
     $science = current($GLOBALS['scienceTypeList']);
   }
 
+  // open template
   if ($method == 'ajax') {
     $template->setFile('scienceDetailAjax.tmpl');
     $shortVersion = 1;
@@ -35,7 +37,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   }
 
   $currentlevel = $caveData[$science->dbFieldName];
-  $levels = array();
+  $levels = $costTimeLvl = array();
   for ($level = $caveData[$science->dbFieldName], $count = 0; $level < $maxLevel && $count < ($shortVersion ? 3 : 10); ++$count, ++$level, ++$caveData[$science->dbFieldName]) {
     $duration = time_formatDuration(eval('return ' . formula_parseToPHP($GLOBALS['scienceTypeList'][$scienceID]->productionTimeFunction.";",'$caveData')) * BUILDING_TIME_BASE_FACTOR);
 
@@ -51,6 +53,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
         ));
       }
     }
+
     // iterate unitcosts
     $unitcost = array();
     foreach ($science->unitProductionCost as $unitID => $function) {
@@ -64,6 +67,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
       }
     }
 
+    // iterate buildingCost
     $buildingCost = array();
     foreach ($science->buildingProductionCost as $key => $value) {
       if ($value != "" && $value != 0) {
@@ -75,6 +79,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
       }
     }
 
+    // iterate defenseCost
     $defenseCost = array();
     foreach ($science->defenseProductionCost as $key => $value) {
       if ($value != "" && $value != 0) {
@@ -89,16 +94,16 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
     $levels[$count] = array(
       'level' => $level + 1,
       'time'  => $duration,
-      'BUILDINGCOST' => $buildingCost,
-      'DEFENSECOST'  => $defenseCost,
-      'RESOURCECOST' => $resourcecost,
-      'UNITCOST'     => $unitcost
+      'resource_cost' => $resourcecost,
+      'unit_cost'     => $unitcost,
+      'building_cost' => $buildingCost,
+      'defense_cost'  => $defenseCost
     );
   }
   if (sizeof($levels)) {
-    $levels = array(
+    $costTimeLvl = array(
       'population' => $caveData['population'],
-      'LEVEL' => $levels
+      'item'       => $levels
     );
   }
 
@@ -202,35 +207,35 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   if (sizeof($buildingdep)) {
     array_push($dependencies, array(
       'name' => _('Erweiterungen'),
-      'DEP'  => $buildingdep
+      'dep'  => $buildingdep
     ));
   }
 
   if (sizeof($defensesystemdep)) {
     array_push($dependencies, array(
       'name' => _('Verteidigungsanlagen'),
-      'DEP'  => $defensesystemdep
+      'dep'  => $defensesystemdep
     ));
   }
 
   if (sizeof($resourcedep)) {
     array_push($dependencies, array(
       'name' => _('Rohstoffe'),
-      'DEP'  => $resourcedep
+      'dep'  => $resourcedep
     ));
   }
 
   if (sizeof($sciencedep)) {
     array_push($dependencies, array(
       'name' => _('Forschungen'),
-      'DEP'  => $sciencedep
+      'dep'  => $sciencedep
     ));
   }
 
   if (sizeof($unitdep)) {
     array_push($dependencies, array(
       'name' => _('Einheiten'),
-      'DEP'  => $unitdep
+      'dep'  => $unitdep
     ));
   }
 
@@ -239,9 +244,10 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
     'dbFieldName'   => $science->dbFieldName,
     'description'   => $science->description,
     'maxlevel'      => $maxLevel,
+    'maxReadable'   => $maxReadable,
     'currentlevel'  => $currentlevel,
-    'LEVELS'        => $levels,
-    'DEPGROUP'      => $dependencies,
+    'cost_time_lvl' => $costTimeLvl,
+    'dependencies'  => $dependencies,
     'rules_path'    => RULES_PATH
   ));
 }

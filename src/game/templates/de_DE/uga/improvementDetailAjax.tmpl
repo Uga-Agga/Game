@@ -9,65 +9,67 @@
  * the License, or (at your option) any later version. 
  */
 #}
-{% spaceless %}
 
 <div style="float: left; width: 39%; max-width: 256px;">
-<img src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
+  <img src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
 </div>
 <div style="float: left; width: 61%;">
-{{ description|raw }}
-<br/>
-<span class="bold">Maximale Stufe:</span> {{ maxlevel }}<br/>
-<br/>
-  
-{% if DEPGROUP %}
-  <strong>Abhängigkeiten: </strong><br/>
-	{% for depGroup in DEPGROUP %}
-    <strong>{{ depGroup.name}}:</strong>
-    {% for dependency in depGroup.DEP %}
-      {{ dependency.name }} {{ dependency.level|raw }}
-    {% endfor %}
-    <br/>
-	{% endfor %}
-{% endif %}
-
-
-  
-	  {% if LEVELS %}
-	  <br/><strong>Baukosten und -zeiten bei {{ LEVELS.population }} Einwohnern:</strong>
-      <table>
-        {% for level in LEVELS['LEVEL'] %}
-        <tr>
-          <td style="text-align: right;">Stufe {{ level.level }}:</td>
-          <td style="padding-left: 6px;">		  
-        	{% for resource in level.RESOURCECOST %}
-            <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
-            {{ resource.value }} &nbsp;
-            {% endfor %}
-        	{% for unit in level.UNITCOST %}
-              <br />
-              {{ unit.name }}: {{ unit.value }}
-            {% endfor %}
-        	{% for building in level.BUILDINGCOST %}
-              <br />
-              {{ building.name }}: {{ building.value }}
-            {% endfor %}
-        	{% for defense in level.DEFENSECOST %}
-              <br />
-              {{ defense.name }}: {{ defense.value }}
-            {% endfor %}
-		  </td>
-            <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
-          
-        </tr>
-        {% endfor %}
-       </table>
-     {% endif %}
-
-     
-
-
+  <ul>
+    <li style="padding-bottom: 10px;">{{ description|raw }}</li>
+    <li><span class="bold">Maximale Stufe:</span> {{ maxlevel }}</li>
+    <li style="padding-bottom: 10px;"><span class="bold">Berechnung:</span> {{ maxReadable }}</li>
 </div>
 <div style="clear: both;"></div>
 
-{% endspaceless %}
+<div style="float: left; padding-right: 30px;">
+  {% if dependencies %}
+    <span class="bold">Abhängigkeiten: </span><br/>
+    <ul>
+    {% for groups in dependencies %}
+      <li style="padding-left: 5px">
+        <span class="bold">{{ groups.name}}:</span>
+        <table>
+        {% for dependency in groups.dep %}
+        <tr>
+          <td style="padding-left: 5px">{{ dependency.name }}</td><td>{{ dependency.level|raw }}</td>
+        </tr>
+        {% endfor %}
+        </table>
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+
+<div style="float: left;">
+  {% if cost_time_lvl %}
+  <span class="bold">Baukosten und -zeiten bei {{ cost_time_lvl.population }} Einwohnern:</span>
+    <table>
+      {% for level in cost_time_lvl.item %}
+      <tr>
+        <td style="text-align: right;">Stufe {{ level.level }}:</td>
+        <td style="padding-left: 6px;">
+          {% for resource in level.resource_cost %}
+            <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
+            {{ resource.value }} &nbsp;
+          {% endfor %}
+          {% for unit in level.unit_cost %}
+            <br />
+            {{ unit.name }}: {{ unit.value }}
+          {% endfor %}
+          {% for building in level.building_cost %}
+            <br />
+            {{ building.name }}: {{ building.value }}
+          {% endfor %}
+          {% for defense in level.defense_cost %}
+            <br />
+            {{ defense.name }}: {{ defense.value }}
+          {% endfor %}
+        </td>
+        <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+   {% endif %}
+</div>
+<div style="clear: both;"></div>

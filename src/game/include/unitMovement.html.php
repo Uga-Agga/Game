@@ -399,8 +399,8 @@ function unit_Movement($caveID, &$ownCave) {
   // weitergereichte Koordinaten
   if (!Request::getVar('movementID', 0)) {
     $template->addVars(array(
-      'target_x_coord'   => Request::getVar('targetXCoord', 0),
-      'target_y_coord'   => Request::getVar('targetYCoord', 0),
+      'target_x_coord'   => Request::getVar('targetXCoord', ''),
+      'target_y_coord'   => Request::getVar('targetYCoord', ''),
       'target_cave_name' => Request::getVar('targetCaveName', ''),
     ));
   }

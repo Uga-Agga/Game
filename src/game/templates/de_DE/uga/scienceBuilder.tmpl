@@ -73,7 +73,8 @@
 {% if science_unqualified %}
 <div class="box">
   <div class="box-header">Entdeckungen, die noch nicht erforscht werden können</div>
-  <div class="box-content success inner">
+  <div id="science_unqualified" class="box-content success inner text-center box_toggle">Forschungen einblenden</div>
+  <div id="science_unqualified_content" class="box-content success inner" style="display: none;">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in science_unqualified %}
         {% set bgID = (bgID+1)%2 %}

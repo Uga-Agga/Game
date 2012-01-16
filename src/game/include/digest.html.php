@@ -25,7 +25,7 @@ function digest_getDigest($ownCaves) {
 
   // open template
   $template->setFile('easyDigest.tmpl');
-  
+
   // get movements
   // don't show returning movements
   // don't show details for each movement

@@ -79,7 +79,8 @@
 {% if improvement_unqualified %}
 <div class="box">
   <div class="box-header">Erweiterungen, die noch nicht gebaut werden können</div>
-  <div class="box-content success inner">
+  <div id="improvement_unqualified" class="box-content success inner text-center box_toggle">Erweiterungen einblenden</div>
+  <div id="improvement_unqualified_content" class="box-content success inner" style="display: none;">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in improvement_unqualified %}
         {% set bgID = (bgID+1)%2 %}

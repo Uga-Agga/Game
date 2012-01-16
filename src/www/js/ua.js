@@ -70,12 +70,22 @@ $(document).ready(function() {
     var url = $(this).attr('href');
     toggleObjectDetails($(this), url, event);
   });
-  
+
   $('a.export-link').click(function (event) {
     var url = $(this).attr('href');
     displayExportDialog(this, url, event);
     event.preventDefault();
   });
+
+  $('.box_toggle').click(function(){
+    $(this).css('display', 'none');
+    $('#'+$(this).attr('id')+'_content').slideDown("slow");
+  });
+
+  $('.box_toggle').hover(
+    function() { $(this).css('cursor', 'pointer'); },
+    function() { $(this).css('cursor', 'default'); }
+  );
 });
 
 function open_page(url, opt){

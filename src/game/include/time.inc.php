@@ -21,7 +21,6 @@ function time_toDatetime($timestamp) {
 }
 
 function time_formatDatetime($timestamp) {
-  
   $timecorrection = $_SESSION['player']->getTimeCorrection();
   return gmdate("d.m.Y H:i:s", time_fromDatetime($timestamp) + $timecorrection);
 }
