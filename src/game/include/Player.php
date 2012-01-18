@@ -41,6 +41,7 @@ class Player {
   var $tribe;
   var $tribeBlockEnd;
   var $auth;
+  var $tutorialID;
 
   function Player($record) {
 
@@ -67,6 +68,7 @@ class Player {
     $this->tribe              = $record['tribe'];
     $this->tribeBlockEnd      = $record['tribeBlockEnd'];
     $this->auth               = $record['auth'];
+    $this->tutorialID         = $record['tutorialID'];
   }
 
   static function getPlayer($playerID, $complete=false) {

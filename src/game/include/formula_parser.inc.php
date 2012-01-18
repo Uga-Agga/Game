@@ -15,6 +15,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 require_once("rules/game.rules.php");
 require_once("rules/effects.list.php");
 require_once("rules/wonder.rules.php");
+require_once("rules/tutorial.php");
 
 init_Buildings();
 init_Units();

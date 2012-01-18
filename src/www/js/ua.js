@@ -86,6 +86,21 @@ $(document).ready(function() {
     function() { $(this).css('cursor', 'pointer'); },
     function() { $(this).css('cursor', 'default'); }
   );
+
+  //function for tutorial form dropdown
+  function tutorial() {
+    if ($("#tutorial_form").is(":hidden")){
+      $("#tutorial_form").slideDown("slow");
+      $(".tutorial").css({"bottom": "-20px"});
+    }
+    else{
+      $("#tutorial_form").slideUp("slow");
+      $(".tutorial").css({"bottom": "-12px"});
+    }
+  }
+
+  //run contact form when any contact link is clicked
+  $(".tutorial").click(function(){tutorial()});
 });
 
 function open_page(url, opt){

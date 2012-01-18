@@ -34,9 +34,13 @@
       .terrain5 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_nichts.gif); }
       .terrain4 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_geroellwueste.gif); }
       .terrain6 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_wasser.gif); }
+
+      #tutorial_container {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
+      #tutorial_form { {% if not tutorial_open %}display:none;{% endif %} }
+      #tutorial_container .tutorial { {% if tutorial_open %}bottom: -20px;{% endif %} }
     </style>
 
-    <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
     <script type='text/javascript' src='js/jquery.jqDock.min.js'></script>
     <script type='text/javascript' src='js/jquery.countdown.min.js'></script>
     <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
@@ -69,6 +73,38 @@
 <body>
   <div id="page">
     <div id="header">
+      <div id="header-left" style="margin-top: 0px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat;">
+        {% if tutorial_show %}
+          <div id="tutorial_container">
+            <div id="tutorial_form">
+              <div class="loader"></div>
+              <div class="bar"></div>
+              <div class="box-header">{{ tutorial_name|raw }}</div>
+              <div class="box-content success inner text-center">
+                {% if tutorial_finish %}
+                  <div class="tutorial_finish">
+                    {{ tutorial_finish_msg|raw }}
+                    <form id="tutorial" action="main.php?{{ query_string|raw }}&amp;caveID={{ cave_id }}" method="post">
+                      <input type="hidden" name="nextTutorial" value="next" />
+                      <input class="submit" type="submit" value="zum nächstes Tutorial" name="submit">
+                    </form>
+                  </div>
+                {% else %}
+                  {{ tutorial_description|raw }}
+                {% endif %}
+              </div>
+            </div>
+            <div class="tutorial">Tutorial</div>
+          </div>
+        {% endif %}
+      </div>
+      <div id="header-right" class="text-right" style="margin-top: 0px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;">
+        <a href="main.php?modus=logout"><img id="logout" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" style="width: 35px; height: 30px;" /></a><br />
+        <img id="terrain" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" style="margin-right:100px; margin-top:-30px;" /><br />
+        <img id="month" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." style="margin-right:120px;" /><br /> 
+        <img id="weather" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" style="margin-right:100px;" /><br />
+        <div id="header_farm_points" class="bold" style="margin-right:10px;margin-top:5px">Farmpunkte: {{ player_fame }}</div>
+      </div>
       <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
         <div id="header-menu">
           {% if show_hero_link %}<a href="main.php?modus={{ hero_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>{% endif %}
@@ -86,14 +122,6 @@
         </div>
         <img id="header_round_name" src="./images/round_name.png" style="margin-top: 90px" alt="" />
       </div>
-      <div id="header-left" style="background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat;">&nbsp;</div>
-      <div id="header-right" style="background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;text-align:right;">
-        <a href="main.php?modus=logout"><img id="logout" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" style="width: 35px; height: 30px;" /></a><br />
-        <img id="terrain" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" style="margin-right:100px; margin-top:-30px;" /><br />
-        <img id="month" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." style="margin-right:120px;" /><br /> 
-        <img id="weather" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" style="margin-right:100px;" /><br />
-        <div id="header_farm_points" class="bold" style="margin-right:10px;margin-top:5px">Farmpunkte: {{ player_fame }}</div>
-    </div>
       <div style="clear: both;"></div>
     </div>
 
@@ -111,8 +139,6 @@
         <li><a href="main.php?modus={{ takeover_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></a></li>
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
       </ul>
-      <br />
-      <br />
     </div>
 
     <div id="content">
@@ -126,7 +152,7 @@
       <div id="cave-details">
         <div class="block" id="cave-details-list">
           |&nbsp;{% for item in navigateCave %}
-            <a href="main.php?{{ item.query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
+            <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
           {% endfor %}
         </div>
 

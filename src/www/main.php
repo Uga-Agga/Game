@@ -2,6 +2,7 @@
 /*
  * main.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -463,6 +464,27 @@ switch ($modus) {
     break;
 }
 
+// init tutorial
+$tutorial = new Tutorial;
+$tutorialFinish = $tutorial->checkFinish($ownCaves[$caveID]);
+if (!$tutorial->noTutorial) {
+  if ($tutorialFinish && Request::isPost('nextTutorial')) {
+    $tutorial->setFinish($ownCaves[$caveID]);
+    $tutorialFinish = $tutorial->checkFinish($ownCaves[$caveID]);
+  }
+
+  $template->addVars(array(
+    'tutorial_show'        => true,
+    'tutorial_name'        => $tutorial->name,
+    'tutorial_description' => $tutorial->description,
+    'tutorial_finish_msg'  => $tutorial->finishMsg,
+    'tutorial_finish'      => $tutorialFinish,
+    'tutorial_open'        => ($tutorialFinish || Request::isPost('nextTutorial')) ? true : false,
+  ));
+} else {
+  $template->addVar('tutorial_show', false);
+}
+
 // prepare resource bar
 $resources = array();
 if ($template->getShowRresource() && isset($resourceTypeList)) {
@@ -488,12 +510,6 @@ if ($template->getShowRresource() && isset($resourceTypeList)) {
 // prepare new mail
 $newMessageCount = messages_main($caveID, $ownCaves);
 
-// prepare next and previous cave
-$keys = array_keys($ownCaves);
-$pos =  array_search($caveID, $keys);
-$prev = isset($keys[$pos - 1]) ? $keys[$pos - 1] : $keys[count($keys)-1];
-$next = isset($keys[$pos + 1]) ? $keys[$pos + 1] : $keys[0];
-
 // set time
 $UgaAggaTime = getUgaAggaTime(time());
 $UgaAggaTime['month_name'] = getMonthName($UgaAggaTime['month']);
@@ -514,6 +530,9 @@ foreach ($terrainList[$ownCaves[$caveID]['terrain']]['effects'] as $id => $value
   $terrainEffects[] = $effectTypeList[$id]->name . ' ' . $value;
 }
 
+// get queryString
+$requestString = createRequestString($requestKeys);
+
 // fill it
 $template->addVars(array(
   'showads'           => ($showads) ? true : false,
@@ -523,17 +542,18 @@ $template->addVars(array(
   'cave_y_coord'      => $ownCaves[$caveID]['yCoord'],
   'cave_terrain'      => $ownCaves[$caveID]['terrain'],
   'cave_terrain_desc' => $terrainList[$ownCaves[$caveID]['terrain']]['name'] . ' (' . implode(' | ', $terrainEffects) . ')',
-  'time'          => date("d.m.Y H:i:s"),
-  'bottom'        => vote_main(),
-  'new_mail_link' => (!empty($newMessageCount)) ? '_new' : '',
-  'rules_path'    => RULES_PATH,
-  'help_path'     => HELP_PATH,
-  'player_fame'   => $_SESSION['player']->fame,
-  'weather_id'    => $weatherTypeList[$region['weather']]->weatherID,
-  'weather_name'  => $weatherTypeList[$region['weather']]->name,
-  'gfx'           => ($_SESSION['nogfx']) ? DEFAULT_GFX_PATH : $_SESSION['player']->gfxpath,
-  'show_hero_link' => ($ownCaves[$caveID][HERO_DB_FIELD] > 0) ? true : false,
-  'countdown_time' => $now->format("M j, Y H:i:s O"),
+  'time'              => date("d.m.Y H:i:s"),
+  'bottom'            => vote_main(),
+  'new_mail_link'     => (!empty($newMessageCount)) ? '_new' : '',
+  'rules_path'        => RULES_PATH,
+  'help_path'         => HELP_PATH,
+  'player_fame'       => $_SESSION['player']->fame,
+  'weather_id'        => $weatherTypeList[$region['weather']]->weatherID,
+  'weather_name'      => $weatherTypeList[$region['weather']]->name,
+  'gfx'               => ($_SESSION['nogfx']) ? DEFAULT_GFX_PATH : $_SESSION['player']->gfxpath,
+  'show_hero_link'    => ($ownCaves[$caveID][HERO_DB_FIELD] > 0) ? true : false,
+  'countdown_time'    => $now->format("M j, Y H:i:s O"),
+  'query_string'      => $requestString,
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],
@@ -588,8 +608,6 @@ $template->addVars(array(
   'wonder_detail_link'      => WONDER_DETAIL,
 ));
 
-$requestString = createRequestString($requestKeys);
-
 $caves = array();
 if (sizeof($ownCaves)) {
   $caves['navigateCave'] = array();
@@ -605,7 +623,6 @@ if (sizeof($ownCaves)) {
       'active_name'       => $ownCaves[$caveID]['name'],
       'active_x_coord'    => $ownCaves[$caveID]['xCoord'],
       'active_y_coord'    => $ownCaves[$caveID]['yCoord'],
-      'query_string'      => $requestString,
       'active'            => ($Cave['caveID'] == $caveID) ? true : false,
     );
   }
@@ -614,7 +631,14 @@ if (sizeof($ownCaves)) {
 }
 
 $template->render();
+
 /*
+// prepare next and previous cave
+$keys = array_keys($ownCaves);
+$pos =  array_search($caveID, $keys);
+$prev = isset($keys[$pos - 1]) ? $keys[$pos - 1] : $keys[count($keys)-1];
+$next = isset($keys[$pos + 1]) ? $keys[$pos + 1] : $keys[0];
+
 if (!is_null($prev))
   tmpl_set($template, '/PREVCAVE', array('id' => $prev, 'name' => $ownCaves[$prev]['name']));
 
