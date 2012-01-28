@@ -1,7 +1,8 @@
 {#
 /* ScienceBuilder.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -30,40 +31,40 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
-<div class="box">
-  <div class="box-header">Forschungen</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% if science %}
-        {% for item in science %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }} object-row">
-            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
-            <td>
-              <dl class="nodistance">
-                <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
-              </dl>
-            </td>
-            <td class="td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
-            <td class="td-size">Stufe: {{ item.currentlevel }}</td>
-            <td class="td-button-single text-right">
-              {% if item.build_link %}
-                <a href="main.php?modus={{ science_link }}&amp;action=build&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Erforschen" title="Erforschen" /></a>
-              {% else %}
-                <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
-              {% endif %}
-            </td>
-          </tr>
-          <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display:none"><td>&nbsp;</td>
-            <td colspan="4" class="object-details">
-            </td>
-          </tr>
-        {% endfor %}
-      {% else %}
-        <tr class="bg1"><td>Zur Zeit kannst du nix weiteres erforschen.</td></tr>
-      {% endif %}
-      {% set bgID = 0 %}
+<div class="ua-box">
+  <div class="ua-box-header">Forschungen</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% if science %}
+          {% for item in science %}
+            {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }} object-row">
+              <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+              <td>
+                <dl>
+                  <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                  <dd>{% include "boxCost.tmpl" %}</dd>
+                </dl>
+              </td>
+              <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
+              <td class="ua-td-level">Stufe: {{ item.currentlevel }}</td>
+              <td class="ua-td-build">
+                {% if item.build_link %}
+                  <a href="main.php?modus={{ science_link }}&amp;action=build&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
+                {% endif %}
+              </td>
+            </tr>
+            <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.science_id }}" style="display: none;">
+              <td colspan="6" class="object-details">
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr class="bg1"><td>Zur Zeit kannst du nichts erforschen.</td></tr>
+        {% endif %}
+        {% set bgID = 0 %}
+      </tbody>
     </table>
   </div>
 </div>
@@ -71,27 +72,29 @@
 <div class="success"><a href="{{ rules_path }}" onclick="window.open(this.href); return false;">weitere Informationen zu allen Entdeckungen</a></div>
 
 {% if science_unqualified %}
-<div class="box">
-  <div class="box-header">Entdeckungen, die noch nicht erforscht werden können</div>
-  <div id="science_unqualified" class="box-content success inner text-center box_toggle change_mouseover">Forschungen einblenden</div>
-  <div id="science_unqualified_content" class="box-content success inner" style="display: none;">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% for item in science_unqualified %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }} object-row">
-          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-          <td class="">
-            <dl class="nodistance">
-              <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-              <dd class="">{{ item.dependencies }}</dd>
-            </dl>
-          </td>
-        </tr>
-        <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display:none"><td>&nbsp;</td>
-          <td colspan="1" class="object-details">
-          </td>
-        </tr>
-      {% endfor %}
+<div class="ua-box">
+  <div class="ua-box-header">Erweiterungen, die noch nicht gebaut werden können.</div>
+  <div id="science_unqualified" class="ua-box-content box_toggle change_mouseover space center">Forschungen einblenden</div>
+  <div id="science_unqualified_content" class="ua-box-content" style="display: none;">
+    <table>
+      <tbody>
+        {% for item in science_unqualified %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }} object-row">
+            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td>
+              <dl>
+                <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dd>{{ item.dependencies }}</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display:none">
+            <td colspan="3" class="object-details">
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>

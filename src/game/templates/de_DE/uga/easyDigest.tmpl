@@ -18,12 +18,12 @@
 <div style="height: 10px">&nbsp;</div>
 
 {% if opponent_movement %}
-  <div class="box">
-    <div class="box-header">
+  <div class="ua-box">
+    <div class="ua-box-header">
       <img src="{{ gfx }}/de_DE/t_uga/icon_close.png" style="margin:-3px" width="16" height="16" alt="Minus" title="Minus" onclick="moreinfo('opponent', this)" />&nbsp;&nbsp;Fremde Bewegungen  
     </div>
 
-    <div class="box-content success inner" id="opponent">
+    <div class="ua-box-content" id="opponent">
       <table class="table" cellpadding="3" cellspacing="0" rules="rows">
         {% for item in opponent_movement %}
         <tr class="digest-mov-{{ item.movement_id }}" onclick="moreinfo('movement_{{ item.event_id }}', 1)">
@@ -93,11 +93,11 @@
 {% endif %}
 
 {% if own_movements %}
-  <div class="box">
-    <div class="box-header" style="font-weight:bold;">
+  <div class="ua-box">
+    <div class="ua-box-header">
       <img src="{{ gfx }}/de_DE/t_uga/icon_close.png" style="margin:-3px" width="16" height="16" alt="Minus" title="Minus" onclick="moreinfo('own', this)" />&nbsp;&nbsp;Eigene Bewegungen  
     </div>
-    <div class="box-content success inner" id="own">
+    <div class="ua-box-content" id="own">
       <table class="table" cellpadding="3" cellspacing="0" rules="rows">
         {% for item in own_movements %}
         <tr class="digest-mov-{{ item.movement_id }}" onclick="moreinfo('movement_{{ item.event_id }}', 1)">
@@ -168,9 +168,9 @@
 
 
 {% if initiations %}
-  <div class="box">
-    <div class="box-header">Artefakte - Einweihungen</div>
-    <div class = "box-content success inner" id="initiations">
+  <div class="ua-box">
+    <div class="ua-box-header">Artefakte - Einweihungen</div>
+    <div class="ua-box-content" id="initiations">
       <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in initiations %}
         <tr class="digest-artefact">
@@ -197,65 +197,67 @@
 <br />
 {% endif %}
 
-<div class="box">
-  <div class="box-header">Ausstehende Termine</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% for item in appointments %}
-      <tr class="digest-{{ item.category }}">
-        <td>{{ item.event_name }}</td>
-        <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
-        <td class="date-td">{{ item.event_end_date }}</td>
-        <td class="time-bar-td text-right">
-          <script type="text/javascript">
-            // <![CDATA[
-            $(function () {
-                var timer_{{ item.category }}_appointment_{{ item.event_id }} = new Date();
-                timer_{{ item.category }}_appointment_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                $('#timer_{{ item.category }}_appointment_{{ item.event_id }}').countdown({until: timer_{{ item.category }}_appointment_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
-            });
-            // ]]>
-          </script>
-          <div id="timer_{{ item.category }}_appointment_{{ item.event_id }}"></div>
-        </td>
-      </tr>
-      {% else %}
-        <tr><td><span>Zur Zeit liegen keine Termine vor.</span></td></tr>
-      {% endfor %}
+<div class="ua-box">
+  <div class="ua-box-header">Ausstehende Termine</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% for item in appointments %}
+          <tr class="ua-digest-{{ item.category }}">
+            <td class="ua-td-name">{{ item.event_name }}</td>
+            <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
+            <td class="right">{{ item.event_end_date }}</td>
+            <td class="ua-td-timer">
+              <script type="text/javascript">
+                // <![CDATA[
+                $(function () {
+                    var timer_{{ item.category }}_appointment_{{ item.event_id }} = new Date();
+                    timer_{{ item.category }}_appointment_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
+                    $('#timer_{{ item.category }}_appointment_{{ item.event_id }}').countdown({until: timer_{{ item.category }}_appointment_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
+                });
+                // ]]>
+              </script>
+              <div id="timer_{{ item.category }}_appointment_{{ item.event_id }}"></div>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td class="center">Zur Zeit liegen keine Termine vor.</td></tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>
 
 {% if no_building %}
-<div class="box">
-  <div class="box-header">Kein Erweiterungsbau</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+<div class="ua-box">
+  <div class="ua-box-header">Kein Erweiterungsbau</div>
+  <div class="ua-box-content">
+    <ul>
       {% for item in no_building %}
-        <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
+        <li><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></li>
       {% endfor %}
-    </table>
+    </ul>
   </div>
 </div>
 {% endif %}
 
 {% if no_unit %}
-<div class="box">
-  <div class="box-header">Keine Einheitenproduktion</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+<div class="ua-box">
+  <div class="ua-box-header">Keine Einheitenproduktion</div>
+  <div class="ua-box-content">
+    <ul>
       {% for item in no_unit %}
-        <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
+        <li><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></li>
       {% endfor %}
-    </table>
+    </ul>
   </div>
 </div>
 {% endif %}
 
 {% if no_defenses %}
-<div class="box">
-  <div class="box-header">Kein Verteidigungsbau</div>
-  <div class="box-content success inner">
+<div class="ua-box">
+  <div class="ua-box-header">Kein Verteidigungsbau</div>
+  <div class="ua-box-content">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_defenses %}
         <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>
@@ -266,9 +268,9 @@
 {% endif %}
 
 {% if no_sciences %}
-<div class="box">
-  <div class="box-header">Keine Forschungen</div>
-  <div class="box-content success inner">
+<div class="ua-box">
+  <div class="ua-box-header">Keine Forschungen</div>
+  <div class="ua-box-content">
     <table class="table" cellpadding="3" cellspacing="0" rules="rows">
       {% for item in no_sciences %}
         <tr><td><span><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.caveID }}">{{ item.cave_name }}</a></span></td></tr>

@@ -113,7 +113,7 @@ function defense_showProperties($defenseID, $cave, $method) {
 
   if (sizeof($levels)) {
     $costTimeLvl = array(
-      'population' => $caveData['population'],
+      'population' => $cave['population'],
       'item'       => $levels
     );
   }
@@ -263,7 +263,7 @@ function defense_showProperties($defenseID, $cave, $method) {
     'size'          => $defense->hitPoints,
     'antiSpyChance' => $defense->antiSpyChance,
     'warPoints'     => $defense->warPoints,
-    'cost_time_lvl' => $levels,
+    'cost_time_lvl' => $costTimeLvl,
     'dependencies'  => $dependencies,
     'rules_path'    => RULES_PATH)
   );

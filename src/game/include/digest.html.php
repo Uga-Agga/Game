@@ -49,7 +49,7 @@ function digest_getDigest($ownCaves) {
 
   // fill arrays with potential shortcuts
   $units = $buildings = $defenses = $sciences = array();
-  foreach ($ownCaves as $value){
+  foreach ($ownCaves as $value) {
     $units[$value['caveID']] = array(
       'caveID'    => $value['caveID'],
       'cave_name' => $value['name'],
@@ -70,7 +70,7 @@ function digest_getDigest($ownCaves) {
 
   // remove elements in these arrays, if there is such an appointment
   foreach ($appointments as $value) {
-    switch ($value['modus']){
+    switch ($value['modus']) {
       case UNIT_BUILDER:
         unset($units[$value['cave_id']]);
         break;

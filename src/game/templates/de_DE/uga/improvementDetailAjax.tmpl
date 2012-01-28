@@ -10,66 +10,66 @@
  */
 #}
 
-<div style="float: left; width: 39%; max-width: 256px;">
-  <img src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
+<div style="padding: 10px;">
+  <img class="float-left" src="{{ gfx }}/buildings/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
+  {{ description|raw }}
+  <p style="padding-top: 10px;"><span class="bold">Maximale Stufe:</span> {{ maxlevel }}</p>
+  <p><span class="bold">Berechnung:</span> ({{ maxReadable }})</p>
 </div>
-<div style="float: left; width: 61%;">
-  <ul>
-    <li style="padding-bottom: 10px;">{{ description|raw }}</li>
-    <li><span class="bold">Maximale Stufe:</span> {{ maxlevel }}</li>
-    <li style="padding-bottom: 10px;"><span class="bold">Berechnung:</span> {{ maxReadable }}</li>
-</div>
-<div style="clear: both;"></div>
 
-<div style="float: left; padding-right: 30px;">
-  {% if dependencies %}
-    <span class="bold">Abhängigkeiten: </span><br/>
-    <ul>
-    {% for groups in dependencies %}
-      <li style="padding-left: 5px">
-        <span class="bold">{{ groups.name}}:</span>
-        <table>
-        {% for dependency in groups.dep %}
-        <tr>
-          <td style="padding-left: 5px">{{ dependency.name }}</td><td>{{ dependency.level|raw }}</td>
-        </tr>
+<div style="padding-top: 10px;" class="ym-grid">
+  <div class="ym-g684-5 ym-gl">
+    <div class="ym-gbox">
+      {% if dependencies %}
+        <span class="bold">Abhängigkeiten:</span>
+        {% for groups in dependencies %}
+          <dl style="padding-left: 5px">
+            <span class="bold">{{ groups.name}}:</span>
+            <dt>
+              {% for dependency in groups.dep %}
+                <dd style="padding-left: 10px">{{ dependency.name }} {{ dependency.level|raw }}</dd>
+              {% endfor %}
+            </dt>
+          </dl>
         {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="ym-g684-7 ym-gl">
+    <div class="ym-gbox">
+      {% if cost_time_lvl %}
+        <table>
+          <thead>
+            <tr><th colspan="3">Baukosten und -zeiten bei {{ cost_time_lvl.population }} Einwohnern:</th></tr>
+          </thead>
+          <tbody>
+            {% for level in cost_time_lvl.item %}
+            <tr>
+              <td>Stufe {{ level.level }}:</td>
+              <td>
+                {% for resource in level.resource_cost %}
+                  <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
+                  {{ resource.value }} &nbsp;
+                {% endfor %}
+                {% for unit in level.unit_cost %}
+                  <br />
+                  {{ unit.name }}: {{ unit.value }}
+                {% endfor %}
+                {% for building in level.building_cost %}
+                  <br />
+                  {{ building.name }}: {{ building.value }}
+                {% endfor %}
+                {% for defense in level.defense_cost %}
+                  <br />
+                  {{ defense.name }}: {{ defense.value }}
+                {% endfor %}
+              </td>
+              <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
-      </li>
-    {% endfor %}
-    </ul>
-  {% endif %}
+      {% endif %}
+    </div>
+  </div>
 </div>
-
-<div style="float: left;">
-  {% if cost_time_lvl %}
-  <span class="bold">Baukosten und -zeiten bei {{ cost_time_lvl.population }} Einwohnern:</span>
-    <table>
-      {% for level in cost_time_lvl.item %}
-      <tr>
-        <td style="text-align: right;">Stufe {{ level.level }}:</td>
-        <td style="padding-left: 6px;">
-          {% for resource in level.resource_cost %}
-            <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{ resource.name }}" title="{{ resource.name }}" />			
-            {{ resource.value }} &nbsp;
-          {% endfor %}
-          {% for unit in level.unit_cost %}
-            <br />
-            {{ unit.name }}: {{ unit.value }}
-          {% endfor %}
-          {% for building in level.building_cost %}
-            <br />
-            {{ building.name }}: {{ building.value }}
-          {% endfor %}
-          {% for defense in level.defense_cost %}
-            <br />
-            {{ defense.name }}: {{ defense.value }}
-          {% endfor %}
-        </td>
-        <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" width="15" height="15" border="0" alt="Dauer:" />{{ level.time }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-   {% endif %}
-</div>
-<div style="clear: both;"></div>

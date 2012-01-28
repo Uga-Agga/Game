@@ -55,15 +55,6 @@ function hideWMTT() {
 }
 
 $(document).ready(function() {
-  // set up the options to be used for jqDock...
-  var dockOptions =
-    { align: 'middle' // horizontal menu, with expansion DOWN from a fixed TOP edge
-    , size: 30
-    , labels: 'bc'  // add labels (defaults to 'br')
-    };
-  // ...and apply...
-  $('#header-menu').jqDock(dockOptions);
- 
   // The following code attaches the ajax-detail toggle to the click
   // event of all detail links on the page.  
   $('a.object-detail-link').click(function (event) {
@@ -71,52 +62,37 @@ $(document).ready(function() {
     toggleObjectDetails($(this), url, event);
   });
 
-  $('a.export-link').click(function (event) {
-    var url = $(this).attr('href');
-    displayExportDialog(this, url, event);
-    event.preventDefault();
-  });
-
   $('.box_toggle').click(function(){
     $(this).css('display', 'none');
     $('#'+$(this).attr('id')+'_content').slideDown("slow");
   });
 
-  $('.box_toggle').hover(
+  $('.change_mouseover').hover(
     function() { $(this).css('cursor', 'pointer'); },
     function() { $(this).css('cursor', 'default'); }
   );
 
   //function for tutorial form dropdown
   function tutorial() {
-    if ($("#tutorial_form").is(":hidden")){
-      $("#tutorial_form").slideDown("slow");
-      $(".tutorial").css({"bottom": "-20px"});
+    if ($(".ua-tutorial-box").is(":hidden")){
+      $(".ua-tutorial-box").slideDown("slow");
+      $(".ua-tutorial-button").css({"bottom": "-22px"});
     }
     else{
-      $("#tutorial_form").slideUp("slow");
-      $(".tutorial").css({"bottom": "-12px"});
+      $(".ua-tutorial-box").slideUp("slow");
+      $(".ua-tutorial-button").css({"bottom": "1px"});
     }
   }
 
   //run contact form when any contact link is clicked
-  $(".tutorial").click(function(){tutorial()});
+  $(".ua-tutorial-button").click(function(){tutorial()});
+
+  // set up the options to be used for jqDock...
+  var dockOptions =
+    { align: 'middle' // horizontal menu, with expansion DOWN from a fixed TOP edge
+    , size: 30
+    , labels: 'bc'  // add labels (defaults to 'br')
+    };
+  // ...and apply...
+  $('#ym-head-menu-item').jqDock(dockOptions);
 });
-
-function open_page(url, opt){
-  if (opt == 0) // current window
-    window.location = url;
-  else if (opt == 1) // new window
-    window.open(url);
-  else if (opt == 2) // background window
-  {
-    window.open(url);
-    self.focus();
-  }
-}
-
-function exportPopup(url) {
-  newwindow=window.open(url,'name','height=400,width=500, resizable=yes, scrollbars=yes');
-  if (window.focus) {newwindow.focus()}
-  return false;
-}

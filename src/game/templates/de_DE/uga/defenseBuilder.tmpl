@@ -27,105 +27,110 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
-<div class="box">
-  <div class="box-header">Verteidigungsanlagen</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% if defense_system %}
-        {% for item in defense_system %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }} object-row">
-            <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-            <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ item.name }}" /></td>
-            <td>
-              <dl class="nodistance">
-                <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
-              </dl>
-            </td>
-            <td class="td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
-            <td class="td-size">Stufe: {{ item.currentlevel }}</td>
-            <td class="td-button-double text-right">
-              {% if item.build_link %}
-                <a href="main.php?modus={{ defense_link }}&amp;action=build&amp;defenseID={{ item.defense_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
-              {% else %}
-                <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
-              {% endif %}
-              {% if item.breakdown_link %}
-                <a href="main.php?modus={{ defense_link }}&amp;action=demolishing&amp;id={{ item.defense_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a>
-              {% endif %}
-            </td>
-          </tr>
-          <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
-            <td colspan="6" class="object-details">
-            </td>
-          </tr>
-        {% endfor %}
-      {% else %}
-        <tr class="bg1"><td>Zur Zeit kannst du leider keine Verteidigungsanlagen bauen.</td></tr>
-      {% endif %}
-      {% set bgID = 0 %}
+<div class="ua-box">
+  <div class="ua-box-header">Verteidigungsanlagen</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% if defense_system %}
+          {% for item in defense_system %}
+            {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }} object-row">
+              <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+              <td class="ua-td-smallicon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+              <td>
+                <dl>
+                  <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                  <dd>{% include "boxCost.tmpl" %}</dd>
+                </dl>
+              </td>
+              <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
+              <td class="ua-td-level">Stufe: {{ item.currentlevel }}</td>
+              <td class="ua-td-build">
+                {% if item.build_link %}
+                  <a href="main.php?modus={{ defense_link }}&amp;action=build&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
+                {% else %}
+                  <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
+                {% endif %}
+                {% if item.breakdown_link %}
+                  <a href="main.php?modus={{ defense_link }}&amp;action=demolishing&amp;id={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a>
+                {% endif %}
+              </td>
+            </tr>
+            <tr class="bg{{ bgID }} detail-row" id="defense_{{ item.defense_id }}" style="display: none;">
+              <td colspan="6" class="object-details">
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr class="bg1"><td>Zur Zeit kannst du leider keine Verteidigungsanlagen bauen.</td></tr>
+        {% endif %}
+        {% set bgID = 0 %}
+      </tbody>
     </table>
   </div>
 </div>
 
-
 <div class="success"><a href="{{ rules_path }}?modus=misc&amp;miscID=2" onclick="window.open(this.href); return false;">Übersicht zu allen Verteidigungsanlagen</a></div>
 
-
 {% if defense_system_unqualified %}
-<div class="box">
-  <div class="box-header">Verteidigungsanlagen, die noch nicht gebaut werden können</div>
-  <div id="defense_system_unqualified" class="box-content success inner text-center box_toggle change_mouseover">Verteidigungsanlagen einblenden</div>
-  <div id="defense_system_unqualified_content" class="box-content success inner" style="display: none;">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% for item in defense_system_unqualified %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }} object-row">
-          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-          <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ name }}" /></td>
-          <td class="">
-            <dl class="nodistance">
-              <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-              <dd class="">{{ item.dependencies }}</dd>
-            </dl>
-          </td>
-        </tr>
-        <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
-          <td colspan="6" class="object-details">
-          </td>
-        </tr>
-      {% endfor %}
-      {% set bgID = 0 %}
+<div class="ua-box">
+  <div class="ua-box-header">Verteidigungsanlagen, die noch nicht gebaut werden können.</div>
+  <div id="defense_system_unqualified" class="ua-box-content box_toggle change_mouseover space center">Verteidigungsanlagen einblenden</div>
+  <div id="defense_system_unqualified_content" class="ua-box-content" style="display: none;">
+    <table>
+      <tbody>
+        {% for item in defense_system_unqualified %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }} object-row">
+            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="ua-td-smallicon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+            <td>
+              <dl>
+                <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dd>{{ item.dependencies }}</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr class="bg{{ bgID }} detail-row" id="defense_{{ item.defense_id }}" style="display:none">
+            <td colspan="3" class="object-details">
+            </td>
+          </tr>
+        {% endfor %}
+        {% set bgID = 0 %}
+      </tbody>
     </table>
   </div>
 </div>
 {% endif %}
 
 {% if defense_system_relict %}
-<div class="box">
-  <div class="box-header">Relikte</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% for item in defense_system_relict %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }} object-row">
-          <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-          <td class="td-mini-icon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20px" height="30px" alt="" title="{{ name }}" /></td>
-          <td class="">
-            <dl class="nodistance">
-              <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-              <dd class="">{{ item.dependencies }}</dd>
-            </dl>
-          </td>
-          <td class="td-size">Stufe: {{ item.currentlevel }}</td>
-          <td class="td-button-single text-right"><a href="main.php?modus={{ defense_link }}&amp;action=demolishing&amp;id={{ item.defense_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
-        </tr>
-        <tr class="detail-row" id="defense_{{ item.defense_id }}" style="display:none">
-          <td colspan="6" class="object-details">
-          </td>
-        </tr>
-      {% endfor %}
+<div class="ua-box">
+  <div class="ua-box-header">Relikte</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% for item in defense_system_relict %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }} object-row">
+            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="ua-td-smallicon"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+            <td>
+              <dl>
+                <dt><a class="object-detail-link" href="main.php?modus={{ defense_detail_link }}&amp;defenseID={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dd>{{ item.dependencies }}</dd>
+              </dl>
+            </td>
+            <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
+            <td class="ua-td-level">Stufe: {{ item.currentlevel }}</td>
+            <td class="ua-td-build"><a href="main.php?modus={{ defense_link }}&amp;action=demolishing&amp;id={{ item.defense_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
+          </tr>
+          <tr class="bg{{ bgID }} detail-row" id="defense_{{ item.defense_id }}" style="display: none;">
+            <td colspan="6" class="object-details">
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>

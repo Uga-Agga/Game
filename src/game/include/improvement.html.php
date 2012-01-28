@@ -16,7 +16,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
   global $template;
 
   // open template
-  $template->setFile('improvement.tmpl');
+  $template->setFile('improvementBuilder.tmpl');
 
   // messages
   $messageText = array (

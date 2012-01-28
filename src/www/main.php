@@ -476,8 +476,7 @@ if (!$tutorial->noTutorial) {
   $template->addVars(array(
     'tutorial_show'        => true,
     'tutorial_name'        => $tutorial->name,
-    'tutorial_description' => $tutorial->description,
-    'tutorial_finish_msg'  => $tutorial->finishMsg,
+    'tutorial_msg'         => ($tutorialFinish) ? $tutorial->finishMsg : $tutorial->description,
     'tutorial_finish'      => $tutorialFinish,
     'tutorial_open'        => ($tutorialFinish || Request::isPost('nextTutorial')) ? true : false,
   ));

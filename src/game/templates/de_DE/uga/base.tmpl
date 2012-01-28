@@ -1,7 +1,8 @@
 {#
 /* base.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger,
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,12 +17,27 @@
     <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 
-    <link rel="shortcut icon" href="./images/favicon.ico" />
-    <link href="mapstyle.php" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
-    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/base.css" rel="stylesheet" />
-    <!--[if lte IE 7]><link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/ie.css" rel="stylesheet" /><![endif]-->
+    <!-- mobile viewport optimisation -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="yaml/core/base.min.css" type="text/css"/>
+    <!--[if lte IE 7]><link rel="stylesheet" href="yaml/core/iehacks.min.css" type="text/css"/><![endif]-->
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <link rel="stylesheet" href="css/typography.css" type="text/css"/>
+    <link rel="stylesheet" href="css/jquery-ui-1.8.17.custom.css" type="text/css" />
+    <link rel="stylesheet" href="css/form.css" type="text/css"/>
+    <link rel="stylesheet" href="css/styles.css" type="text/css"/>
+    <!--[if lte IE 7]><link rel="stylesheet" href="css/ie.css" type="text/css"/><![endif]-->
+
+    <!-- javascript -->
+     <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
+     <script type="text/javascript" src="js/jquery.jqDock-1.9.min.js"></script>
+     <script type="text/javascript" src="js/jquery-ui-1.8.17.custom.min.js"></script>
+     <script type="text/javascript" src="js/jquery.countdown-1.5.11.min.js"></script>
+     <script type="text/javascript" src="js/ua.js"></script>
+     
     <style type="text/css">
       .box {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
       .error, .alert, .notice, .success, .info, .tooltip { behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
@@ -35,41 +51,157 @@
       .terrain4 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_geroellwueste.gif); }
       .terrain6 { background-image: url({{ gfx }}/de_DE/t_uga/map/bg_cell_wasser.gif); }
 
-      #tutorial_container {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
-      #tutorial_form { {% if not tutorial_open %}display:none;{% endif %} }
-      #tutorial_container .tutorial { {% if tutorial_open %}bottom: -20px;{% endif %} }
+      .ua-tutorial-button { height: 20px; width: 120px; font-weight: bold; color: #FFFFFF; border: 1px solid #FFFFFF;
+        background-image: url({{ gfx }}/de_DE/t_uga/grass.png);
+        background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;
+        behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);
+        position: relative; left: 150px; cursor: pointer; text-align: center; top: -15px;}
     </style>
 
-    <script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
-    <script type='text/javascript' src='js/jquery.jqDock.min.js'></script>
-    <script type='text/javascript' src='js/jquery.countdown.min.js'></script>
-    <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
-    <script type="text/javascript" src="js/ua.js"></script>
-
     <script type="text/javascript">
-      function moreinfo(bereich, object) {
-        myHead = document.getElementById(bereich);
-
-        if (myHead.style.display == "") {
-          // zuklappen
-          object.src = '{{ gfx }}/de_DE/t_uga/icon_open.png';
-          myHead.style.display = "none";
-        } else {
-          // aufklappen
-          object.src = '{{ gfx }}/de_DE/t_uga/icon_close.png';
-          myHead.style.display = "";
-        }
-      }
-
       function serverTime() { 
         var time = null; 
         time = new Date("{{ countdown_time }}"); 
         return time; 
       }
     </script>
+
   {% endblock %}
 </head>
+<body>
+  <div class="ym-wrapper">
+    <div class="ym-column linearize-level-1">
+      <div class="ym-col1 ym-col-head1">
+        &nbsp;
+        {% if tutorial_show %}
+          <div class="ua-tutorial-box" {% if not tutorial_open %}style="display: none;"{% endif %}>
+            <div class="ua-box-header">{{ tutorial_name|raw }}</div>
+            <div class="ua-box-content">
+              <form method="post" action="main.php?{{ query_string|raw }}&amp;caveID={{ cave_id }}" class="ym-form">
+                <div class="ym-grid linearize-level-2">
+                  <div style="padding: 10px 0;" class="ym-gbox center">
+                    {{ tutorial_msg|raw }}
+                  </div>
+                </div>
+                {% if tutorial_finish %}
+                <div class="ym-fbox-button center">
+                  <input type="hidden" name="nextTutorial" value="next" />
+                  <input type="submit" value="zum nächstes Tutorial" class="submit" id="submit" name="submit" />
+                </div>
+                {% endif %}
+              </form>
+            </div>
+          </div>
+          <div class="ua-tutorial-button">Tutorial</div>
+        {% endif %}
+      </div>
+      <div class="ym-col2 ym-col-head2">
+        &nbsp;
+      </div>
+      <div class="ym-col3 ym-col-head3">
+        <div class="ym-head-menu">
+          <div id="ym-head-menu-item">
+            <a href="main.php?modus=hero_detail"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>
+            <a href="main.php?modus=cave_detail"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
+            <a href="main.php?modus=CaveBookmarks"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
+            <a href="main.php?modus=questionnaire"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
+            <a href="main.php?modus=Donations"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
+            <a href="main.php?modus=tribe"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
+            <a href="main.php?modus=Contacts"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
+            <a href="main.php?modus=effectwonder_detail"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
+            <a href="main.php?modus=user_profile"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
+            <a href="main.php?modus=artefact_list"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
+            <a href="main.php?modus=news"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
+            <a href="http://faq.uga-agga.de" onclick="open_page(this.href, 1); return false;"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
+          </div>
+        </div>
+      </div>
+      <div class="ym-ie-clearing">&nbsp;</div>
+    </div>
+
+    <div id="main">
+      <div class="ym-column">
+        <div class="ym-col1 ym-col-con1">
+          <ul class="list-menu">
+            <li><a href="main.php?modus={{ easy_digest_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></a></li>
+            <li><a href="main.php?modus={{ unit_movement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></a></li>
+            <li><a href="main.php?modus={{ messages_list_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
+            <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></a></li>
+            <li><a href="main.php?modus={{ ranking_player_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></a></li>
+            <li><a href="main.php?modus={{ map_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></a></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
+            <li><a href="main.php?modus={{ wonder_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></a></li>
+            <li><a href="main.php?modus={{ takeover_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></a></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
+          </ul>
+        </div>
+        <div class="ym-col2 ym-col-con2">
+          <ul class="list-menu">
+            <li><a href="main.php?modus={{ improvement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></a></li>
+            <li><a href="main.php?modus={{ science_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></a></li>
+            <li><a href="main.php?modus={{ defense_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
+            <li><a href="main.php?modus={{ unit_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
+            <li><a href="main.php?modus={{ merchant_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
+            <li><a href="http://forum.uga-agga.de" onclick="open_page(this.href, 1); return false;"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></a></li>
+            <li><a href="main.php?modus={{ suggestions_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></a></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
+          </ul>
+        </div>
+        <div class="ym-col3 ym-col-con3">
+          <div class="ym-cbox">
+            <ul class="list-space">
+              <li>
+              {% for item in resources %}
+                <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
+                {{ item.amount }} ({{ item.delta }})&nbsp;</span>
+              {% endfor %}
+              </li>
+              <li>
+                <div class="block" id="cave-details-list">
+                  |&nbsp;{% for item in navigateCave %}
+                    <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
+                  {% endfor %}
+                </div>
+              </li>
+              <li>
+                <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
+              </li>
+            </ul>
+            {% block content %}{% endblock %}
+          </div>
+        </div>
+        <div class="ym-ie-clearing">&nbsp;</div>
+      </div>
+    </div>
+
+    {% block footer %}
+      <div class="ym-grid">
+        <div class="ym-g33 ym-gl ym-col-footer1">
+          <div class="ym-cbox">Serverzeit: {{ time }}</div>
+        </div>
+        <div class="ym-g33 ym-gl ym-col-footer2">
+          <div class="ym-cbox">{% include 'vote.tmpl' %}</div>
+        </div>
+        <div class="ym-g33 ym-gr ym-col-footer3">
+          <div class="ym-cbox">
+            <a href="main.php?modus=statistic">Statistik</a> &amp;
+            <a href="{{ help_path }}" onclick="open_page(this.href, 1); return false;">Hilfe</a> &amp;
+            <a href="{{ rules_path }}" onclick="open_page(this.href, 1); return false;">Regeln</a>&nbsp;
+            <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
+          </div>
+        </div>
+      </div>
+    {% endblock %}
+  </div>
+  {% include "extendsFooter.tmpl" %}
+</body>
+</html>
+
+<!--
 <body>
   <div id="page">
     <div id="header">
@@ -106,92 +238,7 @@
         <div id="header_farm_points" class="bold" style="margin-right:10px;margin-top:5px">Farmpunkte: {{ player_fame }}</div>
       </div>
       <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
-        <div id="header-menu">
-          {% if show_hero_link %}<a href="main.php?modus={{ hero_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>{% endif %}
-          <a href="main.php?modus={{ cave_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
-          <a href="main.php?modus={{ cave_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
-          <a href="main.php?modus={{ questionaire_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
-          <a href="main.php?modus={{ donations_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
-          <a href="main.php?modus={{ tribe_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
-          <a href="main.php?modus={{ contact_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
-          <a href="main.php?modus={{ effectwonder_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
-          <a href="main.php?modus={{ user_profile_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
-          <a href="main.php?modus={{ artefact_list_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
-          <a href="main.php?modus={{ news_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
-          <a href="http://faq.uga-agga.de" onclick="open_page(this.href, 1); return false;"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
-        </div>
         <img id="header_round_name" src="./images/round_name.png" style="margin-top: 90px" alt="" />
       </div>
       <div style="clear: both;"></div>
-    </div>
-
-    <div id="content-left">
-      <ul id="ul-menu-left">
-        <li><a href="main.php?modus={{ easy_digest_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></a></li>
-        <li><a href="main.php?modus={{ unit_movement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></a></li>
-        <li><a href="main.php?modus={{ messages_list_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
-        <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></a></li>
-        <li><a href="main.php?modus={{ ranking_player_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></a></li>
-        <li><a href="main.php?modus={{ map_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></a></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
-        <li><a href="main.php?modus={{ wonder_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></a></li>
-        <li><a href="main.php?modus={{ takeover_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></a></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
-      </ul>
-    </div>
-
-    <div id="content">
-      <div id="resources">
-        {% for item in resources %}
-          <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
-          {{ item.amount }} ({{ item.delta }})&nbsp;</span>
-        {% endfor %}
-      </div>
-
-      <div id="cave-details">
-        <div class="block" id="cave-details-list">
-          |&nbsp;{% for item in navigateCave %}
-            <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
-          {% endfor %}
-        </div>
-
-        <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
-      </div>
-
-      {% block content %}{% endblock %}
-    </div>
-    <div id="content-right">
-      <ul id="ul-menu-right">
-        <li><a href="main.php?modus={{ improvement_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></a></li>
-        <li><a href="main.php?modus={{ science_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></a></li>
-        <li><a href="main.php?modus={{ defense_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
-        <li><a href="main.php?modus={{ unit_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
-        <li><a href="main.php?modus={{ merchant_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
-        <li><a href="http://forum.uga-agga.de" onclick="open_page(this.href, 1); return false;"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></a></li>
-        <li><a href="main.php?modus={{ suggestions_link }}"><img src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></a></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
-      </ul>
-    </div>
-    <div style="clear: both;"></div>
-
-    {% block footer %}
-    <div id="bottom" style="margin-top: 10px;">
-      <div id="bottom-left"><p>Serverzeit: {{ time }}</p></div>
-      <div id="bottom-middle"><p>{% include 'vote.tmpl' %}</p></div>
-      <div id="bottom-right"><p>
-        <a href="main.php?modus=statistic">Statistik</a> &amp;
-        <a href="{{ help_path }}" onclick="open_page(this.href, 1); return false;">Hilfe</a> &amp;
-        <a href="{{ rules_path }}" onclick="open_page(this.href, 1); return false;">Regeln</a>&nbsp;
-        <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
-      </p></div>
-      <div style="clear: both;"></div>
-    </div>
-    {% endblock %}
-  </div>
-  {% include "extendsFooter.tmpl" %}
-</body>
-</html>
+    </div>-->
