@@ -24,7 +24,7 @@ function digest_getDigest($ownCaves) {
   global $template;
 
   // open template
-  $template->setFile('easyDigest.tmpl');
+  $template->setFile('digest.tmpl');
 
   // get movements
   // don't show returning movements
@@ -89,16 +89,67 @@ function digest_getDigest($ownCaves) {
     }
   }
 
+  // remove elements in these arrays, if there is such an appointment
+  $caveAction = array();
+  foreach ($appointments as $value) {
+    switch ($value['modus']) {
+      case UNIT_BUILDER:
+        $caveAction['units'][$value['cave_id']] = true;
+        break;
+
+      case IMPROVEMENT_BUILDER:
+        $caveAction['buildings'][$value['cave_id']] = true;
+        break;
+
+      case DEFENSE_BUILDER:
+        $caveAction['defenses'][$value['cave_id']] = true;
+        break;
+
+      case SCIENCE_BUILDER:
+        $caveAction['sciences'][$value['cave_id']] = true;
+        break;
+    }
+  }
+
+  $u = $b = $d = $s = 0;
+  $caveNoAction = array();
+  foreach ($ownCaves as $value) {
+    if (!isset($caveAction['unit'][$value['caveID']])) {
+      $caveNoAction[$u++]['unit'] = array(
+        'caveID'    => $value['caveID'],
+        'cave_name' => $value['name'],
+        'modus'     => UNIT_BUILDER);
+    }
+
+    if (!isset($caveAction['buildings'][$value['caveID']])) {
+      $caveNoAction[$b++]['buildings'] = array(
+        'caveID' => $value['caveID'],
+        'cave_name' => $value['name'],
+        'modus'  => IMPROVEMENT_BUILDER);
+    }
+
+    if (!isset($caveAction['defenses'][$value['caveID']])) {
+      $caveNoAction[$d++]['defenses'] = array(
+        'caveID' => $value['caveID'],
+        'cave_name' => $value['name'],
+        'modus'  => DEFENSE_BUILDER);
+    }
+
+    if (!isset($caveAction['sciences'][$value['caveID']])) {
+      $caveNoAction[$s++]['sciences'] = array(
+        'caveID' => $value['caveID'],
+        'cave_name' => $value['name'],
+        'modus' => SCIENCE_BUILDER);
+    }
+  }
+
   // send to template
   $template->addVars(array(
     'own_movements'      => $ownMovement,
     'opponent_movement'  => $opponentMovement,
     'initiations'        => $initiations,
     'appointments'       => $appointments,
-    'no_building'        => $buildings,
-    'no_unit'            => $units,
-    'no_defenses'        => $defenses,
-    'no_sciences'        => $sciences,
+    'cave_no_action'     => $caveNoAction,
     'microtime'          => time() . '000'
   ));
 }

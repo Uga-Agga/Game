@@ -49,12 +49,12 @@ function defense_showProperties($defenseID, $cave, $method) {
     $duration = time_formatDuration(eval('return ' . formula_parseToPHP($defense->productionTimeFunction.";",'$cave')) * DEFENSESYSTEM_TIME_BASE_FACTOR);
 
     // iterate ressourcecosts
-    $resourcecost = array();
+    $resourceCost = array();
     foreach ($defense->resourceProductionCost as $resourceID => $function) {
 
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$cave')));
       if ($cost) {
-        array_push($resourcecost, array(
+        array_push($resourceCost, array(
            'name'        => $GLOBALS['resourceTypeList'][$resourceID]->name,
            'dbFieldName' => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
            'value'       => $cost
@@ -63,11 +63,11 @@ function defense_showProperties($defenseID, $cave, $method) {
     }
 
     // iterate unitcosts
-    $unitcost = array();
+    $unitCost = array();
     foreach ($defense->unitProductionCost as $unitID => $function){
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$cave')));
       if ($cost) {
-        array_push($unitcost, array(
+        array_push($unitCost, array(
           'name'        => $GLOBALS['unitTypeList'][$unitID]->name,
           'dbFieldName' => $GLOBALS['unitTypeList'][$unitID]->dbFieldName,
           'value'       => $cost
@@ -104,8 +104,8 @@ function defense_showProperties($defenseID, $cave, $method) {
     $levels[$count] = array(
       'level'         => $level + 1,
       'time'          => $duration,
-      'resource_cost' => $resourcecost,
-      'unit_cost'     => $unitcost,
+      'resource_cost' => $resourceCost,
+      'unit_cost'     => $unitCost,
       'building_cost' => $buildingCost,
       'defense_cost'  => $defenseCost
     );

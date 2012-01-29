@@ -44,10 +44,10 @@
             <tr class="bg{{ bgID }} object-row">
               <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
               <td class="ua-td-smallicon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
-              <td class="">
-                <dl class="">
+              <td>
+                <dl>
                   <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                  <dd class="">{% include "boxCost.tmpl" %}</dd>
+                  <dd>{% include "boxCost.tmpl" %}</dd>
                 </dl>
               </td>
               <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
@@ -91,14 +91,14 @@
           <tr class="bg{{ bgID }} object-row">
             <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td class="ua-td-smallicon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
-            <td class="">
-              <dl class="">
+            <td>
+              <dl>
                 <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                <dd class="">{{ item.dependencies }}</dd>
+                <dd>{{ item.dependencies }}</dd>
               </dl>
             </td>
           </tr>
-          <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display:none">
+          <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;">
             <td colspan="3" class="object-details">
             </td>
           </tr>
@@ -120,16 +120,16 @@
       <tr class="bg{{ bgID }} object-row" id="building_{{ item.building_id }}">
         <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
         <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
-        <td class="">
+        <td>
           <dl class="nodistance">
             <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-            <dd class="">{{ item.dependencies }}</dd>
+            <dd>{{ item.dependencies }}</dd>
           </dl>
         </td>
         <td class="td-size">Stufe: {{ item.currentlevel }}</td>
         <td class="td-button-single text-right"><a href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
       </tr>
-      <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display:none"><td>&nbsp;</td>
+      <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;"><td>&nbsp;</td>
         <td colspan="6" class="object-details">
         </td>
       </tr>

@@ -41,6 +41,7 @@
             {% set bgID = (bgID+1)%2 %}
             <tr class="bg{{ bgID }} object-row">
               <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+              <td class="ua-td-smallicon"><img src="{{ gfx }}/sciences/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
               <td>
                 <dl>
                   <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
@@ -51,7 +52,9 @@
               <td class="ua-td-level">Stufe: {{ item.currentlevel }}</td>
               <td class="ua-td-build">
                 {% if item.build_link %}
-                  <a href="main.php?modus={{ science_link }}&amp;action=build&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
+                  <a href="main.php?modus={{ science_link }}&amp;action=build&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Erforschen" title="Erfoschen" /></a>
+                {% else %}
+                  <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
                 {% endif %}
               </td>
             </tr>
@@ -82,6 +85,7 @@
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }} object-row">
             <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="ua-td-smallicon"><img src="{{ gfx }}/sciences/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
             <td>
               <dl>
                 <dt><a class="object-detail-link" href="main.php?modus={{ science_detail_link }}&amp;scienceID={{ item.science_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
@@ -89,7 +93,7 @@
               </dl>
             </td>
           </tr>
-          <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display:none">
+          <tr class="bg{{ bgID }} detail-row" id="science_{{ item.science_id }}" style="display: none;">
             <td colspan="3" class="object-details">
             </td>
           </tr>

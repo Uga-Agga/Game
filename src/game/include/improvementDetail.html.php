@@ -44,11 +44,11 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
     $duration = time_formatDuration(eval('return ' . formula_parseToPHP($GLOBALS['buildingTypeList'][$buildingID]->productionTimeFunction.";",'$caveData')) * BUILDING_TIME_BASE_FACTOR);
 
     // iterate ressourcecosts
-    $resourcecost = array();
+    $resourceCost = array();
     foreach ($building->resourceProductionCost as $resourceID => $function) {
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
       if ($cost) {
-        array_push($resourcecost, array(
+        array_push($resourceCost, array(
           'name'        => $GLOBALS['resourceTypeList'][$resourceID]->name,
           'dbFieldName' => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
           'value'       => $cost
@@ -57,11 +57,11 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
     }
 
     // iterate unitcosts
-    $unitcost = array();
+    $unitCost = array();
     foreach ($building->unitProductionCost as $unitID => $function) {
       $cost = ceil(eval('return '. formula_parseToPHP($function . ';', '$caveData')));
       if ($cost) {
-        array_push($unitcost, array(
+        array_push($unitCost, array(
           'name'        => $GLOBALS['unitTypeList'][$unitID]->name,
           'dbFieldName' => $GLOBALS['unitTypeList'][$unitID]->dbFieldName,
           'value'       => $cost
@@ -98,8 +98,8 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
     $levels[$count] = array(
       'level'         => $level + 1,
       'time'          => $duration,
-      'resource_cost' => $resourcecost,
-      'unit_cost'     => $unitcost,
+      'resource_cost' => $resourceCost,
+      'unit_cost'     => $unitCost,
       'building_cost' => $buildingCost,
       'defense_cost'  => $defenseCost
     );
