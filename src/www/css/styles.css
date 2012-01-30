@@ -10,8 +10,11 @@ dd { margin: 0; }
 .box { padding: 10px 0; }
 .bold { font-weight: bold; }
 .space { padding: 10px; }
+.bg0 { background-color: #eee; }
+.bg1 {  }
+.left { text-align: left; }
 
-.ym-wrapper { min-width: 980px; }
+.ym-wrapper { width: 100%; min-width: 980px; position: absolute; top: 0px; }
 .ym-col-head1 { min-width: 454px; width: 454px; height: 192px; text-align: left; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_left.png); background-repeat: no-repeat; } /* left column */
 .ym-col-head2 { min-width: 446px; width: 446px; height: 192px; text-align: right; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_right.png); background-repeat: no-repeat; } /* right column */
 .ym-col-head3 { position: relative; width: 500px; margin-right: auto; margin-left: auto; text-align: center; } /* center column */
@@ -32,14 +35,18 @@ dd { margin: 0; }
 .ua-box { background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important;}
 .ua-box-header { color: #FFFFFF; margin: 3px; padding-top: 2px; text-align: center; font-weight: bold; }
 .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
+.ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
 
-.ua-td-build { width: 47px; text-align: center; }
+.ua-td-build { width: 47px; text-align: right; padding-right: 4px; }
+.ua-td-count { width: 90px; text-align: right; }
+.ua-td-input { width: 120px; text-align: right; padding-right: 4px; }
 .ua-td-level { width: 80px; text-align: center; }
-.ua-td-name { padding-left: 4px }
+.ua-td-name { padding-left: 4px; }
 .ua-td-smallicon { width: 34px; text-align: center; }
 .ua-td-time { width: 100px; text-align: right; }
-.ua-td-timer { width: 65px; text-align: right; padding-right: 4px; }
+.ua-td-timer { width: 75px; text-align: right; padding-right: 4px; }
 .ua-td-open { width: 18px; text-align: center; }
+.ua-td-padding { padding-left: 4px; padding-right: 4px; }
 
 /* farben fuer den terminkalender */
 .ua-digest-building { background-color: #CCFFCC; }
@@ -54,6 +61,42 @@ dd { margin: 0; }
 .ua-digest-mov-4 {background-color: #FFCC99; }
 .ua-digest-mov-5 {background-color: #FFFFFF; }
 .ua-digest-mov-6 {background-color: #FFCC99; }
+
+/* farben für die Nachrichten */
+.msg_0 { background-color: #fff; } /* Information */
+.msg_2 { background-color: #fc9; } /* Sieg */
+.msg_6 { background-color: #cf9; } /* Handelsbericht */
+.msg_7 { background-color: #ff9; } /* RÃ¼ckkehr */
+.msg_8 { background-color: #cfc; } /* Stammesnachricht */
+.msg_9 { background-color: #9cf; } /* Wunder */
+.msg_10 { background-color: #FFFFFF; } /* Benutzernachricht */
+.msg_11 { background-color: #fc9; } /* Spionage */
+.msg_12 { background-color: #9cf; } /* Artefakt */
+.msg_20 { background-color: #fc9; } /* Niederlage */
+.msg_99 { background-color: #ccc; } /* Uga-Agga Team */
+.msg_1001 { background-color: #fff; } /* ANKÜNDIGUNG */
+.msg_read0 a { background-repeat: no-repeat; font-weight: bold; }
+
+.msg-body { padding: 10px; border-top: 2px solid #ddd; }
+
+a.text-msg-next:link { color: #FFFFFF; text-decoration: none; }
+a.text-msg-next:visited { color: #FFFFFF; text-decoration: none; }
+a.text-msg-next:active { color: #FFFFFF; text-decoration: none; }
+a.text-msg-next:hover { color: #FFFFFF; text-decoration: underline; }
+a.text-msg-previous:link { color: #FFFFFF; text-decoration: none; }
+a.text-msg-previous:visited { color: #FFFFFF; text-decoration: none; }
+a.text-msg-previous:active { color: #FFFFFF; text-decoration: none; }
+a.text-msg-previous:hover { color: #FFFFFF; text-decoration: underline; }
+
+.dt-msg {display: block; float: left; text-align: left; width: 13%;}
+.dd-msg {margin-left: 14%;}
+
+/* Höhlenliste */
+.secureCavebold, .secureCave-bold:visited { font-weight: bold;color: #000; }
+.secureCave-bold1, .secureCave-1:visited, .secureCave-bold1:visited, .secureCave-1 { font-weight: bold; color: #b8860b; }
+.unsecureCave-bold, .unsecureCave-bold:visited { font-weight: bold; color: #FF00FF; }
+.secureCave- { color: #080; }
+.unsecureCave-, .unsecureCave-:visited { color: #FF00FF; }
 
 /* Simple 684.gs port for YAML 4 */
 .ym-g684-1 { width: 57px; }
@@ -84,5 +127,6 @@ dd { margin: 0; }
 .tooltip { padding: 0px; margin-bottom: 0px; position: absolute; display: none ; width: 150px; text-align: center; background: #fbe3e4; color: #8a1f11; border-color: #fbc2c4; }
 
 /* tutroial */
-.ua-tutorial-box { position: relative; top: -18px; z-index: 2; width: 420px; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px;}
+.ua-tutorial { position: absolute; top: 0px; z-index: 2; }
+.ua-tutorial-box { z-index: 2; width: 420px; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px;}
 .ua-tutorial-button { z-index: 2; }
