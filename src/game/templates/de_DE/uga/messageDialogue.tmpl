@@ -1,7 +1,8 @@
 {#
 /* messageDialogue.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,46 +27,67 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
-<div class="box">
-  <div class="box-header">&nbsp;</div>
-  <div class="box-content success inner">
-
-    <div style="width: 33%; float: left; text-align: left; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a></div>
-    <div style="width: 34%; float: left; text-align: center; margin: 5px 0;"><a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a></div>
-    <div style="width: 33%; float: right; text-align: right; margin: 5px 0;"><a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a></div>
-    <div style="clear: both;"></div>
+<div class="ua-box">
+  <div class="ua-box-header">&nbsp;</div>
+  <div class="ua-box-content">
+    <div class="ym-grid" style="padding-top: 5px; padding-bottom: 5px;">
+      <div class="ym-g25 ym-gl">
+        <div class="ym-gbox center">
+          <a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a>
+        </div>
+      </div>
+      <div class="ym-g25 ym-gl">
+        <div class="ym-gbox center">
+          <a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a>
+        </div>
+      </div>
+      <div class="ym-g25 ym-gl">
+        <div class="ym-gbox center">
+          <a href="main.php?modus={{ messages_list_link }}&amp;box=3"><img src="{{ gfx }}/de_DE/t_uga/messages/trash.png" class="noborder" alt="Papierkorb" title="Papierkorb" /></a>
+        </div>
+      </div>
+      <div class="ym-g25 ym-gl">
+        <div class="ym-gbox center">
+          <a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="box">
-  <div class="box-header">Nachricht schreiben</div>
-  <div class="box-content success inner">
-
-    <form id="newMessage" method="post" action="main.php">
-    <div id="msg-header">
-      <div style="float: left; width: 60%;">
-        <dl>
-          <dt class="dt-msg2"><span class="bold"><a href="?modus=Contacts">Adressbuch:</a></span></dt>
-            <dd class="dd-msg2">
-              <select name="contactID" onchange="disable_to(); return true;">
-                <option value="-1">Bitte wählen</option>
-                {% if contacts %}{% for item in contacts %}<option value="{{ item.contactID }}">{{ item.contactname }}</option>{% endfor %}{% endif %}
-              </select>
-            </dd>
-          <dt class="dt-msg2">An:</dt>
-            <dd class="dd-msg2"><input name="empfaenger" type="text" style="width:450px;" value="{{ empfaenger }}" size="35" maxlength="255" tabindex="1" /></dd>
-          <dt class="dt-msg2">Betreff:</dt>
-            <dd class="dd-msg2"><input name="subject" type="text" style="width:450px;" value="{{ subject|raw }}" size="35" maxlength="255" tabindex="2" /></dd>
-          <dt class="dt-msg2"><input type="submit" name="senden" value="senden" tabindex="4" /></dt>
-        </dl>
+<!--<span class="bold"><a href="?modus=Contacts">Adressbuch:</a></span>-->
+<div class="ua-box">
+  <div class="ua-box-header">Nachricht schreiben</div>
+  <div class="ua-box-content">
+    <form class="ym-form ym-columnar" id="newMessage" method="post" action="main.php">
+      <div class="ym-grid">
+        <div class="ym-g684-7 ym-gl">
+          <div class="ym-gbox ym-fbox-select">
+            <label for="select-1" style="width: 90px;">Adressbuch:</label>
+            <select name="select-1" id="select-1" size="1">
+              <option value="-1" selected="selected" disabled="disabled">Bitte wählen</option>
+              {% if contacts %}{% for item in contacts %}<option value="{{ item.contactID }}">{{ item.contactname }}</option>{% endfor %}{% endif %}
+            </select>
+          </div>
+          <div class="ym-gbox ym-fbox-text">
+            <label for="empfaenger" style="width: 90px;">An:</label>
+            <input type="text" name="empfaenger" id="empfaenger" size="40" maxlength="255" tabindex="1" />
+          </div>
+          <div class="ym-gbox ym-fbox-text">
+            <label for="subject" style="width: 90px;">Betreff:</label>
+            <input type="text" name="subject" id="subject" size="40" maxlength="255" tabindex="2" />
+          </div>
+        </div>
       </div>
-      <div style="clear: both;"></div>
-    </div>
 
-    <div id="msg-body">
-      <textarea class="td_msg_col_12" name="nachricht" rows="20" cols="61" tabindex="3">{{ nachricht|raw }}</textarea><br />
+      <div class="ym-gbox ym-fbox-text">
+        <textarea name="nachricht" id="nachricht" style="width: 100%;" cols="61" rows="20" tabindex="3">{{ nachricht|raw }}</textarea>
+      </div>
+
+      <div class="ym-fbox-button">
         {% for item in hidden %}<input type="hidden" name="{{ item.arg }}" value="{{ item.value }}" />{% endfor %}
-    </div>
+        <input type="submit" class="ym-button" value="Senden" id="submit" name="Senden" tabindex="4" />
+      </div>
     </form>
   </div>
 </div>

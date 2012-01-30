@@ -11,43 +11,53 @@
  */
 #}
 {% spaceless %}
-  <table class="table nohover" >
-   <tr>    
-    <td >{{description|raw}}</td>
-   </tr>
-   <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td>
-      <strong>Eigenschaften:</strong>
+
+<div style="padding: 10px;">
+  {{ description|raw }}
+  <p style="padding-top: 10px;">
+    <span class="bold">Kosten:</span>
+    {% for resource in resource_cost %}
+      <img src="{{gfx}}/resources/{{resource.dbFieldName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{resource.name}}" title="{{resource.name}}" />
+      {{resource.value}} &nbsp;
+    {% endfor %}
+    {% for unit in unit_cost %}
+      {{name}}: {{value}} &nbsp;
+    {% endfor %}
+  </p>
+</div>
+
+<div style="padding-top: 10px;" class="ym-grid">
+  <div class="ym-g684-4 ym-gl">
+    <div class="ym-gbox">
+      {% if dependencies %}
+        <span class="bold">Abhängigkeiten:</span>
+        {% for groups in dependencies %}
+          <dl style="padding-left: 5px">
+            <span class="bold">{{ groups.name }}:</span>
+            <dt>
+              {% for dependency in groups.dep %}
+                <dd style="padding-left: 10px">{{ dependency.name }} {{ dependency.level|raw }}</dd>
+              {% endfor %}
+            </dt>
+          </dl>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+  <div class="ym-g684-5 ym-gl">
+    <div class="ym-gbox">
       <table>
-        <tr>
-          <td>
-            <i>Erfolgswahrscheinlichkeit:</i> {{chance}}<br />
-            <i>Mögliche Ziele:</i> {{target|raw}}<br />
-            <i>Art:</i> {{offensiveness}}
-          </td>
-        </tr>
+        <thead>
+          <tr><th colspan="2">Eigenschaften</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Erfolgswahrscheinlichkeit:</td><td>{{ chance }}</td></tr>
+          <tr><td>Mögliche Ziele:</td><td>{{ target|raw }}</td></tr>
+          <tr><td>Art:</td><td>{{ offensiveness }}</td></tr>
+        </tbody>
       </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <strong>Kosten:</strong>
-      <table>
-        <tr>
-          <td>
-            {% for resource in RESOURCECOST %}
-              <img src="{{gfx}}/resources/{{resource.dbFieldName}}_icon.gif" style="width:15px; height:15px; border:none;" alt="{{resource.name}}" title="{{resource.name}}" />
-              {{resource.value}} &nbsp;
-            {% endfor %}
-            {% for unit in UNITCOST %}
-              {{name}}: {{value}} &nbsp;
-            {% endfor %}
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
- </table>
+    </div>
+  </div>
+</div>
 
 {% endspaceless %}

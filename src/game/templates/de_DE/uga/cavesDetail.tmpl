@@ -1,0 +1,130 @@
+{#
+/* caves.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Höhlen-Übersicht{% endblock %}
+{% block content %}
+
+<div id="export_button"><a class="export-link" href="export.php?modus=allCaves&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a></div>
+<div id="export-dialog"></div>
+
+<div class="ua-box ua-box-center">
+  <div class="ua-box-header">Rohstoffe</div>
+  <div class="ua-box-content">
+    <table cellpadding="3" cellspacing="0" rules="all">
+      <thead>
+        <tr style="padding-left: 4px; padding-right: 4px;">
+          <th>&nbsp;</th>
+          {% for item in caves %}<th class="center"><a href="main.php?modus={{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+          <th class="center">&sum;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in resource %}
+          <tr style="padding-left: 4px; padding-right: 4px;">
+            <td class="ua-td-padding"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" width="20" height="20" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.sum_max }})" /></td>
+            {% for cave_data in item.cave %}
+              <td class="ua-td-padding">
+                <div class="text-left" style="float: left;">{{ cave_data.amount }}&nbsp;</div>
+                <div class="text-right" style="float: right;">({{ cave_data.delta }})</div>
+                <div style="clear: both;"></div>
+              </td>
+            {% endfor %}
+              <td class="ua-td-padding">
+                <div class="text-left" style="float: left;">{{ item.sum }}</div>
+                <div class="text-right" style="float: right;">({{ item.sum_delta }})</div>
+                <div style="clear: both;"></div>
+              </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+<div class="ua-box ua-box-center">
+  <div class="ua-box-header">Einheiten</div>
+  <div class="ua-box-content">
+    <table cellpadding="3" cellspacing="0" rules="all">
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          {% for item in caves %}<th class="center"><a href="main.php?modus={{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+          <th class="center">&sum;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in unit %}
+          <tr>
+            <td class="ua-td-padding"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+            {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
+            <td class="ua-td-padding">{{ item.sum }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+<div class="ua-box ua-box-center">
+  <div class="ua-box-header">Erweiterungen</div>
+  <div class="ua-box-content">
+    <table cellpadding="3" cellspacing="0" rules="all">
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          {% for item in caves %}<th class="center"><a href="main.php?modus){{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+          <th class="center">&sum;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in building %}
+          <tr>
+            <td class="ua-td-padding"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+            {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
+            <td class="ua-td-padding">{{ item.sum }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+<div class="ua-box ua-box-center">
+  <div class="ua-box-header">Verteidigung</div>
+  <div class="ua-box-content">
+    <table cellpadding="3" cellspacing="0" rules="all">
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          {% for item in caves %}<th class="center"><a href="main.php?modus={{ cave_detail_link }}&amp;caveID={{ item.cave_id }}"><img src="images/stringup.png.php?cave_id={{ item.cave_id }}" alt="{{ item.cave_name }}" title="{{ item.cave_name }}" /></a></th>{% endfor %}
+          <th class="center">&sum;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in defenses %}
+          <tr>
+            <td class="ua-td-padding"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+            {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
+            <td class="ua-td-padding">{{ item.sum }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div style="clear: both;"></div>
+
+{% endblock %}

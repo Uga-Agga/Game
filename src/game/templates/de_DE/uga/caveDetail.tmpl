@@ -1,0 +1,93 @@
+{#
+/* cave.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Höhlendetails{% endblock %}
+{% block content %}
+
+{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
+
+{% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
+
+<a class="export-link" href="export.php?modus=thisCave&amp;caveID={{ cave_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><div id="export-dialog"></div>
+
+<div class="ua-box">
+  <div class="ua-box-header">Höhle {{ cave_data.name }} in ({{ cave_data.xCoord }}; {{ cave_data.yCoord }}). Region {{ cave_data.region_name }}. {% if cave_data.properties %}{% for item in cave_data.properties %}<em>({{ item.text }})</em>{% endfor %}{% endif %}</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% if resource %}
+        <tr>
+          <td>
+            <ul>
+              {% for item in resource %}
+              <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /><br />{{ item.value }}</li>
+              {% endfor %}
+            </ul>
+            <div style="clear: both;"></div>
+          </td>
+        </tr>
+        {% endif %}
+        {% if units %}
+        <tr>
+          <td>
+            <ul>
+              {% for item in units %}
+              <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /><br/>{{ item.value }}</li>
+              {% endfor %}
+            </ul>
+            <div style="clear: both;"></div>
+          </td>
+        </tr>
+        {% endif %}
+        {% if buildings %}
+        <tr>
+          <td>
+            <ul>
+              {% for item in buildings %}
+              <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /><br />{{ item.value }}</li>
+              {% endfor %}
+            </ul>
+            <div style="clear: both;"></div>
+          </td>
+        </tr>
+        {% endif %}
+        {% if defenses %}
+        <tr>
+          <td>
+            <ul>
+              {% for item in defenses %}
+              <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /><br />{{ item.value }}</li>
+              {% endfor %}
+            </ul>
+            <div style="clear: both;"></div>
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if give_up %}
+  <form method="post" action="main.php?modus={{ cave_detail_link }}&amp;action=caveGiveUp">
+    <p><input type="hidden" name="giveUpCaveID" value="{{ cave_data.cave_id }}" /></p>
+    <p><input type="submit" value="Höhle {{ cave_data.name }} aufgeben" /></p>
+  </form>
+{% endif %}
+{% if unprotected %}
+  <form method="post" action="main.php?modus={{ cave_detail_link }}&amp;action=endProtection">
+    <p><input type="submit" value="Anfängerschutz vorzeitig beenden." /></p>
+  </form>
+{% endif %}
+
+{% endblock %}

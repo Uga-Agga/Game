@@ -2,7 +2,7 @@
 /*
  * cave.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,7 +17,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
   global $db, $template;
 
   // open template
-  $template->setFile('cave.tmpl');
+  $template->setFile('caveDetail.tmpl');
 
   $statusMsg = '';
   $action = Request::getVar('action', '');
@@ -171,7 +171,7 @@ function getAllCavesDetailsContent($ownCaves) {
   global $db, $template;
 
   // open template
-  $template->setFile('caves.tmpl');
+  $template->setFile('cavesDetail.tmpl');
 
   $mycaves = array();
   foreach ($ownCaves AS $caveID => $caveDetails) {

@@ -29,15 +29,15 @@
         {% endfor %}
         {% for unit in unit_cost %}
           <br />
-          {{unit.name}}: {{unit.value}}
+          {{ unit.name }}: {{ unit.value }}
         {% endfor %}
         {% for building in buiding_cost %}
           <br />
-          {{building.name}}: {{building.value}}
+          {{ building.name }}: {{ building.value }}
         {% endfor %}
         {% for defense in defense_cost %}
           <br />
-          {{defense.name}}: {{defense.value}}
+          {{ defense.name }}: {{ defense.value }}
         {% endfor %}
       </p>
       <p style="padding-top: 10px;"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" /> {{ duration }}</p>
@@ -50,7 +50,7 @@
             <span class="bold">Abhängigkeiten:</span>
             {% for groups in dependencies %}
               <dl style="padding-left: 5px">
-                <span class="bold">{{ groups.name}}:</span>
+                <span class="bold">{{ groups.name }}:</span>
                 <dt>
                   {% for dependency in groups.dep %}
                     <dd style="padding-left: 10px">{{ dependency.name }} {{ dependency.level|raw }}</dd>

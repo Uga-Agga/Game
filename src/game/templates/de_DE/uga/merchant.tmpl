@@ -28,21 +28,22 @@
 </div>
 
 {% for cat in trades %}
-<div class="box">
-  <div class="box-header">{{ cat.name }}</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+<div class="ua-box">
+  <div class="ua-box-header">{{ cat.name }}</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
       {% for item in cat.data %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td>
-            <dl class="nodistance">
+          <td class="ua-td-name">
+            <dl>
               <dt><span class="bold">{{ item.name }}</span></dt>
-              <dd class="td_def_dd_2">{% include "boxCost.tmpl" %}</dd>
-             {% if item.description %}<dd>{{ item.description|raw }}</dd>{% endif %}
+              <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
+             {% if item.description %}<dd style="padding-left: 10px">{{ item.description|raw }}</dd>{% endif %}
             </dl>
           </td>
-          <td class="text-right">
+          <td class="ua-td-build">
             {% if item.build_link %}
               <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Kaufen" title="Kaufen" /></a>
             {% else %}
@@ -51,6 +52,7 @@
           </td>
         </tr>
       {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>

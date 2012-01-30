@@ -25,7 +25,7 @@
       <table>
         <tbody>
           {% for item in opponent_movement %}
-          <tr id="digest_mov_{{ item.event_id }}" class="box_show_hide change_mouseover">
+          <tr id="digest_mov_{{ item.event_id }}" class="ua-digest-mov-{{ item.movement_id }} box_show_hide change_mouseover">
             <td class="ua-td-name">
               {{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br />
               <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.source_xCoord }}&amp;targetYCoord={{ item.source_yCoord }}&amp;targetCaveName={{ item.source_cave_name|url_encode }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span>
@@ -99,7 +99,7 @@
       <table>
         <tbody>
           {% for item in own_movements %}
-          <tr id="digest_mov_{{ item.event_id }}" class="box_show_hide change_mouseover">
+          <tr id="digest_mov_{{ item.event_id }}" class="ua-digest-mov-{{ item.movement_id }} box_show_hide change_mouseover">
             <td class="ua-td-name">
               {{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br />
               <span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.cave_id }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span>

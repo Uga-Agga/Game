@@ -17,7 +17,7 @@ require_once("config.inc.php");
 require_once("include/page.inc.php");
 require_once("include/db.functions.php");
 require_once("include/export.inc.php");
-require_once("include/game_rules.php");
+require_once("include/rules/game.rules.php");
 require_once("include/time.inc.php");
 require_once("include/basic.lib.php");
 require_once("include/movement.lib.php");

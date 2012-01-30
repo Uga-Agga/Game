@@ -31,7 +31,7 @@
             <span class="bold">Abhängigkeiten:</span>
             {% for groups in dependencies %}
               <dl>
-                <span class="bold">{{ groups.name}}:</span>
+                <span class="bold">{{ groups.name }}:</span>
                 <dt>
                   {% for dependency in groups.dep %}
                     <dd style="padding-left: 10px">{{ dependency.name }} {{ dependency.level|raw }}</dd>
