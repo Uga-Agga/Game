@@ -28,12 +28,14 @@ class Effects {
   var $name;
   var $dbFieldName;
   var $description;
+  var $isResourceEffect;
 
-  function Effects($effectID, $name, $dbFieldName, $description){
+  function Effects($effectID, $name, $dbFieldName, $description, $isResourceEffect){
     $this-&gt;effectID    = $effectID;
     $this-&gt;name        = $name;
     $this-&gt;dbFieldName = $dbFieldName;
     $this-&gt;description = $description;
+    $this-&gt;isResourceEffect = $isResourceEffect;
   }
 }
 
@@ -42,7 +44,7 @@ function init_Effects() {
 <xsl:for-each select="EffectType">
 <xsl:variable name="id" select="position()-1"/>
   /* ***** <xsl:value-of select="Name"/> ***** */
-  $tmp = new Effects('<xsl:value-of select="$id"/>', '<xsl:value-of select="Name"/>', '<xsl:value-of select="@id"/>', '<xsl:apply-templates select="Description[@lang='de_DE']"/>');
+  $tmp = new Effects('<xsl:value-of select="$id"/>', '<xsl:value-of select="Name"/>', '<xsl:value-of select="@id"/>', '<xsl:apply-templates select="Description[@lang='de_DE']"/>', '<xsl:value-of select="@isResourceEffect"/>');
   $GLOBALS['effectTypeList'][<xsl:value-of select="$id"/>] = $tmp;
 </xsl:for-each>
 }

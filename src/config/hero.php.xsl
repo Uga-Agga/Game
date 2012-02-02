@@ -21,10 +21,6 @@ function init_heroTypes () {
   <xsl:apply-templates select="HeroTypes/HeroType"/>
 }
 
-function init_heroSkills() {
-  <xsl:apply-templates select="HeroSkills/HeroSkill"/>
-
-}
 ?&gt;</xsl:template>
 
 
@@ -40,30 +36,11 @@ function init_heroSkills() {
                      'force_formula' =&gt; '<xsl:value-of select="force"/>', 
                      'regHP_formula' =&gt; '<xsl:value-of select="regHP"/>', 
                      'maxHP_formula' =&gt; '<xsl:value-of select="maxHP"/>',
-                     'effects' =&gt; array(<xsl:apply-templates select="effects/effect"/>), 
                      'ritual' =&gt; array('ritualCost' => array(<xsl:apply-templates select="ritual/Cost"/>),
                                           'duration' => '<xsl:value-of select="ritual/@duration"/>'));
   
 </xsl:template>
 
-<xsl:template match="HeroSkill">
-
-  $GLOBALS['heroSkillTypeList']['<xsl:value-of select="@id"/>'] = array(
-                     'name' =&gt; '<xsl:value-of select="Name"/>',
-                     'description' =&gt; "<xsl:apply-templates select="Description"/>",
-                     'id' =&gt; '<xsl:value-of select="@id"/>',
-                     'costTP' =&gt; '<xsl:apply-templates select="CostTP"/>',
-                     'requiredLevel' =&gt; '<xsl:apply-templates select="RequiredLevel"/>');
-                     
-</xsl:template>
-
-<xsl:template match="effect">
-'<xsl:value-of select="@id"/>' =&gt; array('absolute' =&gt; <xsl:value-of select="@absolute"/>,
-                                         'relative' =&gt; <xsl:value-of select="@relative"/>,
-                                         'maxDelta' =&gt; <xsl:value-of select="@maxDelta"/>,
-                                         'type' =&gt; '<xsl:value-of select="@type"/>')
-                                          <xsl:if test="position()!=last()">,</xsl:if>
-</xsl:template>
 
 <xsl:template match="Cost">
 '<xsl:value-of select="@id"/>' =&gt; '<xsl:apply-templates/>'

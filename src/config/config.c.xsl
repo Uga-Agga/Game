@@ -572,8 +572,9 @@ static const struct Effect effect_type_list[] = {
       .description = {<xsl:apply-templates select="Description"/>},
 </xsl:if>
       .dbFieldName = "<xsl:value-of select="@id"/>",
-      .hidden      = <xsl:value-of select="@hidden"/>
-    }
+      .hidden      = <xsl:value-of select="@hidden"/>,
+    },
+    .isResourceEffect = <xsl:value-of select="@isResourceEffect"/>
   },
 </xsl:for-each>
 };

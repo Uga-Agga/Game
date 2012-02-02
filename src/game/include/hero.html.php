@@ -32,6 +32,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
   
   $messageText = array(
+    -23 => array('type' => 'error', 'message' => _('Die Fähigkeit wurde schon erlernt!')),
+    -22 => array('type' => 'error', 'message' => _('Dein Held hat den falschen Typ, um die Fähigkeit zu erlernen!')),
+    -21 => array('type' => 'error', 'message' => _('Fehler beim Erlernen der Fähigkeit!')),
+    -20 => array('type' => 'error', 'message' => _('Dein Held hat nicht das erforderliche Level!')),
     -19 => array('type' => 'error', 'message' => _('Fehler beim Eintragen des neuen Heldentyps!')),
     -18 => array('type' => 'error', 'message' => _('Euer Held ist tot!')),
     -17 => array('type' => 'error', 'message' => _('Euer Held ist gar nicht tot!')),
@@ -61,7 +65,9 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
     8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.')),
     9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.')), 
-    10 => array('type' => 'success', 'message' => _('Heldentyp erfolgreich gewechselt!')));
+    10 => array('type' => 'success', 'message' => _('Heldentyp erfolgreich gewechselt!')), 
+    11 => array('type' => 'success', 'message' => _('Dein Held hat eine neue Fähigkeit erlernt!')),
+    );
 
   // create new hero
   $action = Request::getVar('action', '');
@@ -182,6 +188,22 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         }
       break;
 
+      case 'skill_ability':
+        if ($hero['isAlive'] != 1) {
+          $messageID = -18;
+          break;
+        }
+
+        if ($hero['tpFree'] >= 1) {
+          if ($skillID = Request::getVar('skillID', '')) {
+            $messageID = hero_skillAbility($skillID, $hero);
+          }
+          
+          
+        }
+      break;
+      
+      
       case 'lvlUp':
         if ($hero['isAlive'] != 1) {
           $messageID = -18;
@@ -243,8 +265,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       }
     }
   } elseif ($changeType) {
-    if (request_var('action', '') == 'changeType') {
-      $messageID = hero_changeType(request_var('typeID', -1));
+    if (Request::getVar('action', '') == 'changeType') {
+      $messageID = hero_changeType(Request::getVar('typeID', -1));
       $showTypesList = false;
       $hero = getHeroByPlayer($playerID);
     }
@@ -309,7 +331,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   if ($showTypesList) {
     $template->addVars(array(
       'changeType' => $changeType,
-      'heroTypesList' => $heroTypesList
+      'heroTypesList' => $GLOBALS['heroTypesList']
     ));
   }
 
@@ -318,7 +340,26 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   }
 
   if ($GLOBALS['heroSkillTypeList']) {
-    $template->addVar('skills', $GLOBALS['heroSkillTypeList']);
+    // filter skills by hero type
+    $skills = array();
+    foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
+      foreach ($skill['requiredType'] as $rt) {
+        if ($rt == $hero['id']) {
+          $skills[] = $skill;
+        }
+      }
+    }
+    
+    // check if send button is disabled
+    foreach ($skills as $skillID => $skill) {
+      if ($hero[$skill['dbFieldName']] || 
+          $skill['tpCost'] > $hero['tpFree'] || 
+          $skill['requiredLevel'] > $hero['lvl']) {
+        $skills[$skillID]['disableButton'] = true;
+      }
+    }
+    
+    $template->addVar('skills', $skills);
   }
 }
 

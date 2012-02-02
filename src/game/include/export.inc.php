@@ -1,7 +1,7 @@
 <?php
 /*
  * export.inc.php -
- * Copyright (c) 2004  Georg Pitterle
+ * Copyright (c) 2012  Georg Pitterle
  * Copyright (c) 2011  Sascha Lange <salange@uos.de>
  *
  * This program is free software; you can redistribute it and/or
@@ -12,15 +12,6 @@
 
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
-
-
-/* 
- * to implement in html as
- *  <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=xml" onclick="return popitup(this.href)"><img src="http://www.taxitransfers.co.uk/images/XML_Icon.jpg" class="noborder" width="20" height="20" alt="Export als XML" /></a><br />
- *  <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=bb" onclick="return popitup(this.href)"><img src="http://www.mil.ufl.edu/~nechyba/__eel6825.f2003/icons/text_icon.jpg" class="noborder" width="20" height="20" alt="Export als Text" /></a><br />
- *  <a href="export.php?modus=movement&amp;movementID={eventID}&amp;format=irc" onclick="return popitup(this.href)"><img src="http://www.clipart.clipartist.net/openclipart/clipart/computer/icons/flat-theme/applications/irc_protocol_l.png" class="noborder" width="20" height="20" alt="Export als IRC" /></a>
- *
- */
 
 /*
  *  export_switch() - returns formatted xml/irc/bb code
