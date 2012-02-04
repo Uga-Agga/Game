@@ -1,14 +1,9 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- Hero -->
-<!ELEMENT Heroes (HeroTypes, HeroSkills)>
+<!ELEMENT Heroes (HeroTypes)>
 <!ELEMENT HeroTypes (HeroType+)>
-<!ELEMENT HeroType (Name+, Description+, lvl, lvlUp, maxHP, force, regHP, effects*, ritual)>
+<!ELEMENT HeroType (Name+, Description+, lvl, lvlUp, maxHP, force, regHP, ritual)>
 <!ATTLIST HeroType
-  id CDATA #REQUIRED
->
-<!ELEMENT HeroSkills (HeroSkill*)>
-<!ELEMENT HeroSkill (Name+, Description+, CostTP, RequiredLevel*)>
-<!ATTLIST HeroSkill
   id CDATA #REQUIRED
 >
 <!ELEMENT ritual (Cost+)>
@@ -30,8 +25,6 @@
 <!ELEMENT force (#PCDATA)>
 <!ELEMENT regHP (#PCDATA)>
 <!ELEMENT p (#PCDATA)>
-<!ELEMENT RequiredLevel (#PCDATA)>
-<!ELEMENT CostTP (#PCDATA)>
 <!ELEMENT Cost (#PCDATA)>
 <!ATTLIST Cost
   id CDATA #REQUIRED

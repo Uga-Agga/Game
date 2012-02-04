@@ -127,34 +127,59 @@ function getHeroQueue($playerID) {
 
 function skillForce($playerID, $hero) {
   global $db;
-
-  $hero['forceLvl'] = $hero['forceLvl']++;
-  $force = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['force_formula']) . ";");
+  
+  $newForceLevel = $hero['forceLvl'] + 1;
 
   // update effects
-  $fields = array();
+  $effectFactorArray = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
-    if (array_key_exists($effect->dbFieldName, $GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'])) {
-      array_push($fields, $effect->dbFieldName . " = ".$GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'][$effect->dbFieldName]['absolute'].
-      "+" . $effect->dbFieldName."*(1+".$GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'][$effect->dbFieldName]['relative'].")");
+    $effectFactorArray[$effect->dbFieldName] = 0;
+  }
+  
+  // merge effect factors of different skills
+  foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
+    if ($hero[$skill['dbFieldName']]) {
+      foreach ($GLOBALS['effectTypeList'] as $effect) {
+        if (array_key_exists($effect->dbFieldName, $skill['effects'])) {
+          $effectFactorArray[$effect->dbFieldName] +=  $skill['skillFactor'];
+        }
+      }
     }
   }
-
+  
+  // calculate new value for each effect
+  $effectDeltaArray = array();
+  foreach ($effectFactorArray as $key => $value) {
+    $effectDeltaArray[$key] = $effectFactorArray[$key]*$newForceLevel - $effectFactorArray[$key]*$hero['forceLvl'] ;
+  }
+  
+  // create string for sql-querry
+  $fields = array();
+  foreach ($effectDeltaArray as $key => $value) {
+    $fields[] = $key . " = " . ($value + $hero[$key]);
+  }
+  
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET forceLvl = forceLvl + 1,
                        tpFree = tpFree - 1, 
-                       `force` = :force,
+                       `force` = `force` + 1,
                        ".implode(", ", $fields)."
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  $sql->bindValue('force', $force, PDO::PARAM_STR);
   if (!$sql->execute()) {
     return false;
   }
 
-  // update cave-effect if constructor
-  if ($hero['id'] == 'Constructor') {
+// update effect in cave table
+  $fields = array();
+  foreach ($GLOBALS['effectTypeList'] as $effect) {
+    if ($effect->isResourceEffect) {
+      $fields[] = $effect->dbFieldName . " = " . $effect->dbFieldName . " + " . $effectDeltaArray[$effect->dbFieldName];
+    }
+  }
+  
+  if (sizeof($fields)) {
     $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
                          SET " . implode(", ", $fields). "
                          WHERE caveID = :caveID");
@@ -201,6 +226,91 @@ function skillRegHp($playerID, $hero) {
   return $sql->execute();
 
 }
+
+function hero_skillAbility($skillID, $hero) {
+  global $db;
+  
+  $skill = array();
+  if (array_key_exists($skillID, $GLOBALS['heroSkillTypeList'])) {
+    $skill = $GLOBALS['heroSkillTypeList'][$skillID];
+  } else {
+    return -21;
+  }
+  
+  // check for right type
+  $rightType = false;
+  foreach ($skill['requiredType'] as $type) {
+    if ($type == $hero['id']) {
+      $rightType = true;
+      break;
+    }
+  }
+  if (!$rightType) {
+     return -22;
+  }
+  
+  // check if already skilled
+  if ($hero[$skill['dbFieldName']])
+    return -23;
+  
+  // check for enough TP
+  if ($skill['costTP'] > $hero['tpFree']) {
+    return -11;
+  }
+  
+  //process skill
+  $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET 
+                        tpFree = tpFree - :costTP, 
+                        {$skill['dbFieldName']} = 1
+                       WHERE heroID = :heroID");
+  $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
+  $sql->bindValue('costTP', $skill['costTP'], PDO::PARAM_INT);
+  
+  if (!$sql->execute())
+    return -21;
+  
+  // set skill for further processes
+  $hero[$skill['dbFieldName']] = 1;
+  
+  // UPDATE EFFECTS
+  // update hero effects
+  $fields = array();
+  foreach ($skill['effects'] as $key => $effect) {
+    $fields[] = $key . " = " . $key . " + " . ($skill['skillFactor']*$hero['forceLvl']);
+  }
+  
+  $sql = $db->prepare("UPDATE " . HERO_TABLE . "
+                       SET " . implode(", ", $fields). "
+                       WHERE heroID = :heroID");
+  $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return -21;
+  }
+  
+  // update cave table
+  $fields = array();
+  foreach ($GLOBALS['effectTypeList'] as $effect) {
+    if ($effect->isResourceEffect) {
+      if (array_key_exists($effect->dbFieldName, $skill['effects'])) {
+        $fields[] = $effect->dbFieldName . " = " . $effect->dbFieldName . " + " . ($skill['skillFactor']*$hero['forceLvl']);
+      }
+    }
+  }
+  
+  if (sizeof($fields)) {
+    $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
+                         SET " . implode(", ", $fields). "
+                         WHERE caveID = :caveID");
+    $sql->bindValue('caveID', $hero['caveID'], PDO::PARAM_INT);
+    if (!$sql->execute()) {
+      return -21;
+    }
+  }
+  
+  return 11;
+}
+
+
 function getRitual($hero) {
   global $db;
   
@@ -408,11 +518,18 @@ function hero_usePotion ($potionID, $value) {
     }
     
     //remove hero effect from hero
-    if (!hero_clearHeroEffects($playerID)) {
+    if (!hero_clearHeroEffectsAndSkills($playerID)) {
       return -8;
     }
     
     $tpFree = $hero['maxHpLvl'] + $hero['forceLvl'] + $hero['regHpLvl'] + $hero['tpFree'];
+    
+    foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
+      if ($hero[$skill['dbFieldName']]) {
+        $tpFree += $skill['costTP'];
+      }
+    }
+    
     $healPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
     $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET 
                            maxHpLvl = 0, maxHealPoints = :maxHealPoints,
@@ -574,15 +691,11 @@ function hero_removeHeroEffectsFromCave($playerID) {
     return true;
   }
 
-  // remove effects only for constructor type
-  if ($hero['id'] != 'Constructor') {
-    return true;
-  }
 
   // removing hero effects from cave is only needed, if resource factors are involved
   $effectArray = array();
   foreach($GLOBALS['effectTypeList'] as $effect) {
-    if (array_key_exists($effect->dbFieldName, $GLOBALS['heroTypesList'][$hero['heroTypeID']]['effects'])) {
+    if ($effect->isResourceEffect) {
       array_push($effectArray, $effect->dbFieldName . " = " . $effect->dbFieldName . " - " . $hero[$effect->dbFieldName]);
     }
   }
@@ -619,14 +732,18 @@ function hero_changeType($typeID) {
   return 10;
 }
 
-function hero_clearHeroEffects($playerID) {
+function hero_clearHeroEffectsAndSkills($playerID) {
   global $db;
   
   $hero = getHeroByPlayer($playerID);
   
   $fields = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
-    array_push( $fields, $effect->dbFieldName . " = 0");
+    array_push($fields, $effect->dbFieldName . " = 0");
+  }
+  
+  foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
+    array_push($fields, $skill['dbFieldName'] . " = 0");
   }
   
   $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET " . implode(", ", $fields) . " WHERE playerID = :playerID");

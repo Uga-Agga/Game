@@ -59,7 +59,7 @@
           </tr>
           <tr><td>&nbsp;</td></tr>
           <tr>
-            <td class="bold">freie Talentpunkte:</td>
+            <td class="bold">freie Talentpunkte (TP):</td>
             <td class="text-right" colspan="3">{{ hero.tpFree }}</td>
           </tr>
           <tr>
@@ -140,7 +140,7 @@
 
   {% if skills %}
   <div class="notice small" style="width: 660px;">
-   <p style="text-align: left; margin-left: 10px; font-weight: bold;">Spezielle Fähigkeiten</p>
+   <p style="text-align: left; margin-left: 10px; font-weight: bold;">Fähigkeiten ausbilden</p>
    <br />
    <table class="table" cellspacing="0" cellpadding="2"
     style="text-align: center">
@@ -148,6 +148,8 @@
      <th class="bg2 nohover" style="text-align: left;">Name</th>
      <th class="bg2 nohover">Ben. Level</th>
      <th class="bg2 nohover">Kosten</th>
+     <th class="bg2 nohover">Faktor</th>
+     <th class="bg2 nohover">&nbsp;</th>
      <th class="bg2 nohover">&nbsp;</th>
     </tr>
     {% for skill in skills %} 
@@ -157,10 +159,18 @@
      <div class="text-small">{{ skill.description|raw }}</div>
      </td>
      <td>{{ skill.requiredLevel }}</td>
-     <td>{{ skill.costTP }}</td>
+     <td>{{ skill.costTP }} TP</td>
+     <td>{{ skill.skillFactor }}</td>
      <td style="text-align: right;"><img
       src="{{gfx }}/de_DE/t_uga/skills/{{ skill.id }}.jpg" width="20px" height="20px"
       style="vertical-align: middle;" />
+     </td>
+     <td>
+      <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
+        <input type="hidden" name="action" value="skill_ability">
+        <input type="hidden" name="skillID" value="{{ skill.id }}"/>
+        <input name="value" value="Anwenden" type="submit" {% if skill.disableButton %} disabled="disabled" {% endif %}/>
+      </form>
      </td>
     </tr>
     {% endfor %}

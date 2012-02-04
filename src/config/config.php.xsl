@@ -635,6 +635,41 @@ function init_potions() {
   
 </xsl:template>
 
+<!-- HeroSkills -->
+<xsl:template match="HeroSkills">
+  function init_heroSkills () {
+    <xsl:apply-templates select="HeroSkill"/>
+  }
+</xsl:template>
+<xsl:template match="HeroSkill">
+
+  $GLOBALS['heroSkillTypeList']['<xsl:value-of select="@id"/>'] = array(
+                     'name' =&gt; '<xsl:value-of select="Name"/>',
+                     'description' =&gt; "<xsl:apply-templates select="Description"/>",
+                     'id' =&gt; '<xsl:value-of select="@id"/>',
+                     'dbFieldName' =&gt; '<xsl:value-of select="@id"/>',
+                     'costTP' =&gt; '<xsl:apply-templates select="CostTP"/>',
+                     'requiredLevel' =&gt; '<xsl:apply-templates select="RequiredLevel"/>', 
+                     'requiredType' =&gt; array(<xsl:apply-templates select="RequiredType"/>),
+                     'skillFactor' =&gt; '<xsl:value-of select="skillFactor"/>',
+                     'effects' =&gt; array(<xsl:apply-templates select="effects/effect"/>)
+                     );
+                     
+</xsl:template>
+
+<xsl:template match="effect">
+'<xsl:value-of select="@id"/>' =&gt; array('absolute' =&gt; <xsl:value-of select="@absolute"/>,
+                                         'relative' =&gt; <xsl:value-of select="@relative"/>,
+                                         'maxDelta' =&gt; <xsl:value-of select="@maxDelta"/>,
+                                         'type' =&gt; '<xsl:value-of select="@type"/>')
+                                          <xsl:if test="position()!=last()">,</xsl:if>
+</xsl:template>
+
+<xsl:template match="RequiredType">
+'<xsl:value-of select="count(preceding-sibling::*)"/>' =&gt; '<xsl:value-of select="@id" />'
+<xsl:if test="position()!=last()">,</xsl:if>
+</xsl:template>
+
 
 <!-- Terrains -->
 <xsl:template match="Terrains">

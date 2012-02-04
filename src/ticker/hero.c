@@ -189,20 +189,20 @@ void apply_hero_effects_to_cave (db_t *database, int heroID)
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
 
-  /* apply effects only if constructor type */
-  if (hero.type != CONSTRUCTOR_ID)
-    return;
-
   /* Bedingung: Held muss lebendig sein */
   if (hero.isAlive != HERO_ALIVE)
     throw(BAD_ARGUMENT_EXCEPTION, "apply_hero_effects_to_cave: hero is not alive");
 
-  for (i = 0; i < MAX_EFFECT; ++i)
-    dstring_append(ds, "%s %s = %s + %f",
-                  (i == 0 ? "" : ","),
-                  effect_type[i]->dbFieldName,
-                  effect_type[i]->dbFieldName,
-                  hero.effect[i]);
+  // apply effects only if it matters resources
+  for (i = 0; i < MAX_EFFECT; ++i) {
+    if (((struct Effect *)effect_type[i])->isResourceEffect) {
+      dstring_append(ds, "%s %s = %s + %f",
+                    (i == 0 ? "" : ","),
+                    effect_type[i]->dbFieldName,
+                    effect_type[i]->dbFieldName,
+                    hero.effect[i]);
+    }
+  }
 
   dstring_append(ds, " WHERE caveID = %d", hero.caveID);
   db_query_dstring(database, ds);
@@ -223,10 +223,6 @@ void remove_hero_effects_from_cave (db_t *database, int heroID)
   /* get hero values; throws exception, if that hero is missing */
   get_hero_by_id(database, heroID, &hero);
 
-  /* remove effects only, if constructor type*/
-  if (hero.type != CONSTRUCTOR_ID)
-    return;
-
   /* Bedingung: muss tot sein */
   if (hero.isAlive != HERO_DEAD)
     {
@@ -234,12 +230,16 @@ void remove_hero_effects_from_cave (db_t *database, int heroID)
         throw(BAD_ARGUMENT_EXCEPTION, "remove_hero_effect_from_cave: hero is not alive");
     }
 
-  for (i = 0; i < MAX_EFFECT; ++i)
-    dstring_append(ds, "%s %s = %s - %f",
-                  (i == 0 ? "" : ","),
-                  effect_type[i]->dbFieldName,
-                  effect_type[i]->dbFieldName,
-                  hero.effect[i]);
+  // remove effects only if it matters resources
+  for (i = 0; i < MAX_EFFECT; ++i) {
+    if (((struct Effect *)effect_type[i])->isResourceEffect) {
+      dstring_append(ds, "%s %s = %s - %f",
+                    (i == 0 ? "" : ","),
+                    effect_type[i]->dbFieldName,
+                    effect_type[i]->dbFieldName,
+                    hero.effect[i]);
+    }
+  }
 
   dstring_append(ds, " WHERE caveID = %d", hero.caveID);
   db_query_dstring(database, ds);

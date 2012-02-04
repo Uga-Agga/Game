@@ -192,6 +192,7 @@ struct Unit
 struct Effect
 {
     struct GameObject base;
+    int isResourceEffect;
 };
 
 struct Terrain

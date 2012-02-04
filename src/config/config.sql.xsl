@@ -88,7 +88,7 @@ ALTER TABLE `Event_weatherEnd`
 #effects
 
 ALTER TABLE `Hero`
-<xsl:apply-templates select="//EffectType"/>;
+<xsl:apply-templates select="//EffectType|//HeroSkill"/>;
 
 
 #Hero_rituals
@@ -144,7 +144,7 @@ ADD `<xsl:value-of select="@id"/>_delta` INTEGER NOT NULL default '0'</xsl:if>
 <xsl:if test="position()!=last()">,</xsl:if>
 </xsl:template>
 
-<xsl:template match="Building|DefenseSystem|Science|Unit|Potion">
+<xsl:template match="Building|DefenseSystem|Science|Unit|Potion|HeroSkill">
 ADD `<xsl:value-of select="@id"/>` INTEGER NOT NULL default '0'<xsl:if test="position()!=last()">,</xsl:if>
 </xsl:template>
 
