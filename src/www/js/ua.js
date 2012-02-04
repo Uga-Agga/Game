@@ -67,6 +67,10 @@ $(document).ready(function() {
     $('#'+$(this).attr('id')+'_content').slideDown("slow");
   });
 
+  $('.box_show_hide').click(function(){
+    $('#'+$(this).attr('id')+'_content').toggle("fast");
+  });
+
   $('.change_mouseover').hover(
     function() { $(this).css('cursor', 'pointer'); },
     function() { $(this).css('cursor', 'default'); }
@@ -76,16 +80,21 @@ $(document).ready(function() {
   function tutorial() {
     if ($(".ua-tutorial-box").is(":hidden")){
       $(".ua-tutorial-box").slideDown("slow");
-      $(".ua-tutorial-button").css({"bottom": "-22px"});
     }
     else{
       $(".ua-tutorial-box").slideUp("slow");
-      $(".ua-tutorial-button").css({"bottom": "1px"});
     }
   }
 
   //run contact form when any contact link is clicked
   $(".ua-tutorial-button").click(function(){tutorial()});
+
+  //display export popup
+  $('a.export-link').click(function (event) {
+    var url = $(this).attr('href');
+    displayExportDialog(this, url, event);
+    event.preventDefault();
+  });
 
   // set up the options to be used for jqDock...
   var dockOptions =
@@ -94,5 +103,5 @@ $(document).ready(function() {
     , labels: 'bc'  // add labels (defaults to 'br')
     };
   // ...and apply...
-  $('#ym-head-menu-item').jqDock(dockOptions);
+  $('#ua-head-menu-item').jqDock(dockOptions);
 });
