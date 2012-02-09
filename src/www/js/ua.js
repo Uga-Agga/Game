@@ -55,6 +55,11 @@ function hideWMTT() {
 }
 
 $(document).ready(function() {
+  $('a.new-window').click(function (event) {
+    window.open($(this).attr('href'));
+    return false;
+  });
+
   // The following code attaches the ajax-detail toggle to the click
   // event of all detail links on the page.  
   $('a.object-detail-link').click(function (event) {

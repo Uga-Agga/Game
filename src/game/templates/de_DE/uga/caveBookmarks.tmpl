@@ -1,7 +1,8 @@
 {#
 /* caveBookmarks.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,69 +16,79 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
-<div class="small box">
-  <div class="box-header">Höhlen Adressbuch</div>
-  <div class="box-content success inner">
-    <table class="table text-left" cellpadding="3" cellspacing="0" rules="rows">
-      <tr class="bg2 nohover">
-        <th class="bg2 nohover">&nbsp;</th>
-        <th class="bg2 nohover">Name</th>
-        <th class="bg2 nohover">Koords</th>
-        <th class="bg2 nohover">Region</th>
-        <th class="bg2 nohover">Besitzer</th>
-        <th class="bg2 nohover">Stamm</th>
-        <th class="bg2 nohover" style="width: 150px;">&nbsp;</th>
-      </tr>
-      {% if cave_bookmarks %}
-        {% for item in cave_bookmarks %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td>&nbsp;</td>
-          <td><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
-          <td>({{ item.xCoord }}|{{ item.yCoord }})</td>
-          <td>{{ item.region }}</td>
-          <td><a href="?modus=player_detail&amp;detailID={{ item.playerID }}">{{ item.playerName }}</a></td>
-          <td><a href="?modus=tribe_detail&amp;tribe={{ item.tribe }}">{{ item.tribe }}</a></td>
-          <td style="width: 150px;">
-            <div style="float: right;"><form method="post" action="main.php?modus={{ unit_movement_link }}">
-              <p><input type="hidden" name="targetXCoord" value="{{ item.xCoord }}" />
-              <input type="hidden" name="targetYCoord" value="{{ item.yCoord }}" />
-              <input type="hidden" name="targetCaveName" value="{{ item.name }}" />
-              <input type="submit" value="Bewegen!" /></p>
-            </form></div>
-
-            <div style="float: right;"><form method="post" action="main.php?modus={{ cave_bookmarks_link }}">
-              <p><input type="hidden" name="modus" value="CaveBookmarks" />
-              <input type="hidden" name="task" value="Delete" />
-              <input type="hidden" name="bookmarkID" value="{{ item.bookmarkID }}" />
-              <input type="submit" value="löschen" /></p>
-            </form></div>
-            <div style="clear: both;"></div>
-          </td>
+<div class="ua-box small">
+  <div class="ua-box-header">Höhlenliste</div>
+  <div class="ua-box-content">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Koords</th>
+          <th>Region</th>
+          <th>Besitzer</th>
+          <th>Stamm</th>
+          {% if cave_bookmarks %}<th style="width: 150px;">&nbsp;</th>{% endif %}
         </tr>
-        {% endfor %}
-      {% else %}
-        <tr><td colspan="7">Bisher keine Höhlen eingetragen.</td></tr>
-      {% endif %}
+      </thead>
+      <tbody>
+        {% if cave_bookmarks %}
+          {% for item in cave_bookmarks %}
+          {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }}">
+              <td><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
+              <td>({{ item.xCoord }}|{{ item.yCoord }})</td>
+              <td>{{ item.region }}</td>
+              <td><a href="?modus=player_detail&amp;detailID={{ item.playerID }}">{{ item.playerName }}</a></td>
+              <td><a href="?modus=tribe_detail&amp;tribe={{ item.tribe }}">{{ item.tribe }}</a></td>
+              <td style="width: 150px;">
+                <div style="float: right;"><form method="post" action="main.php?modus={{ unit_movement_link }}">
+                  <p><input type="hidden" name="targetXCoord" value="{{ item.xCoord }}" />
+                  <input type="hidden" name="targetYCoord" value="{{ item.yCoord }}" />
+                  <input type="hidden" name="targetCaveName" value="{{ item.name }}" />
+                  <input type="submit" value="Bewegen!" /></p>
+                </form></div>
+
+                <div style="float: right;"><form method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+                  <p><input type="hidden" name="modus" value="CaveBookmarks" />
+                  <input type="hidden" name="task" value="Delete" />
+                  <input type="hidden" name="bookmarkID" value="{{ item.bookmarkID }}" />
+                  <input type="submit" value="löschen" /></p>
+                </form></div>
+                <div style="clear: both;"></div>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td class="center" colspan="6">Bisher keine Höhlen eingetragen.</td></tr>
+        {% endif %}
+      </tbody>
     </table>
   </div>
 </div>
 
-<div class="small box">
-  <div class="box-header">Höhle hinzufügen</div>
-  <div class="box-content success inner text-center">
-    <form id="newcavebookmarkbyname" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
-      <p>Name: <input name="name" type="text" size="35" maxlength="90" />
-      <input type="submit" name="add" value="Hinzufügen" />
-      <input type="hidden" name="task" value="Add" /></p>
-    </form>
-    <br />
-    <form id="newcavebookmarkbycoord" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
-      <p>x: <input name="xCoord" type="text" size="4" maxlength="4" />
-      y: <input name="yCoord" type="text" size="4" maxlength="4" />
-      <input type="submit" name="add" value="Hinzufügen" />
-      <input type="hidden" name="task" value="Add" /></p>
-    </form>
+<div class="ua-box small">
+  <div class="ua-box-header">Höhle hinzufügen</div>
+  <div class="ua-box-content">
+    <form class="ym-form ym-columnar" id="newcavebookmarkbyname" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+      <div class="ym-gbox ym-fbox-text">
+        <label for="name" style="width: 50px;">Name:</label>
+        <input style="width: 150px; type="text" name="name" id="name" size="40" maxlength="255" tabindex="1" />
+      </div>
+
+      <div class="ym-gbox ym-fbox-text">
+        <label for="xCoord" style="width: 50px;">x:</label>
+        <input style="width: 50px; type="text" name="xCoord" id="xCoord" size="4" maxlength="4" tabindex="2" />
+      </div>
+      <div class="ym-gbox ym-fbox-text">
+        <label for="yCoord" style="width: 50px;">y:</label>
+        <input style="width: 50px; type="text" name="yCoord" id="yCoord" size="4" maxlength="4" tabindex="3" />
+      </div>
+
+      <div class="ym-fbox-button">
+        <input type="hidden" name="task" value="Add" /></p>
+        <input type="submit" class="ym-button" value="Hinzufügen" id="add" name="add" tabindex="4" />
+      </div>
+   </form>
   </div>
 </div>
 {% endblock %}

@@ -211,10 +211,10 @@ function profile_update($db_login) {
   global $db;
 
   $playerID = $_SESSION['player']->playerID;
-  $data     = Request::getVar('data', array('' => ''));
+  $data     = Request::getVar('data', array('' => ''), true);
   $password = Request::getVar('password', array('' => ''));
 
-  $data['description'] = Request::getVar('description', '', true);
+  //$data['description'] = $_POST['data']['description'];
 
   // validate language code
   $uaLanguageNames = LanguageNames::getLanguageNames();

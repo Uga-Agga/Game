@@ -737,12 +737,12 @@ class Messages extends Parser {
     return $row;
   }
 
-  public function insertMessageIntoDB($empfaenger, $subject, $nachricht, $sender_delete=false, $isTribeMessage = false) {
+  public function insertMessageIntoDB($recipient, $subject, $nachricht, $sender_delete=false, $isTribeMessage = false) {
     global $db;
 
     // get Empfaenger ID
-    $sql = $db->prepare("SELECT playerID FROM ". PLAYER_TABLE ." WHERE name = :empfaenger");
-    $sql->bindValue('empfaenger', $empfaenger, PDO::PARAM_STR);
+    $sql = $db->prepare("SELECT playerID FROM ". PLAYER_TABLE ." WHERE name = :recipient");
+    $sql->bindValue('recipient', $recipient, PDO::PARAM_STR);
     if (!$sql->execute()) {
       return 0;
     }

@@ -461,6 +461,10 @@
 		border-right:1px solid #ccc;
 	}
 
+	.last {
+		border-right:1px solid #000000 !important;
+	}
+
 	/* highlight row on mouse over */
 	tbody tr:hover th,
 	tbody tr:hover td {

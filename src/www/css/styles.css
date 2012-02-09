@@ -18,11 +18,11 @@ dd { margin: 0; }
 .ym-col-head1 { min-width: 454px; width: 454px; height: 192px; text-align: left; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_left.png); background-repeat: no-repeat; } /* left column */
 .ym-col-head2 { min-width: 446px; width: 446px; height: 192px; text-align: right; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_right.png); background-repeat: no-repeat; } /* right column */
 
-.ua-header-menu { z-index: 1; position: relative; width: 500px; margin-right: auto; margin-left: auto; text-align: center; } /* center column */
-  .ua-head-menu { width: 500px; height: 54px; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
+.ua-header-menu { z-index: 1; position: relative; width: 100%; min-width: 980px;  text-align: center; } /* center column */
+  .ua-head-menu { width: 500px; height: 54px; margin: 0 auto; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
     #ua-head-menu-item { padding: 10px; }
     #ua-head-menu-item div.jqDockWrap { margin: 0 auto; }
-    #ua-head-menu-item div.jqDock {cursor:pointer;}
+    #ua-head-menu-item div.jqDock { cursor:pointer; }
       div.jqDockLabel { padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
 
 .ym-col-con1 { width: 133px; text-align: left; } /* left column */
@@ -112,7 +112,6 @@ a.text-msg-previous:hover { color: #FFFFFF; text-decoration: underline; }
 .ym-g684-10 { width: 570px; }
 .ym-g684-11 { width: 627px; }
 .ym-g684-12 { width: 684px; }
-
 
 /* message boxen */
 .error, .alert, .notice, .success, .info, .tooltip {padding:0.8em; margin-bottom:1em; border: 2px solid #ddd; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;}

@@ -1,7 +1,8 @@
 {#
 /* profile.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,95 +18,86 @@
 
 {% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
 
-<form id="preferences" method="post" action="main.php?modus={{ user_profile_link }}">
-  {% for item in profile_data %}
-    <div class="box small" style="margin-bottom: 10px;">
-      <div class="box-header">{{ item.heading }}:</div>
-      <div class="box-content success inner text-left nohover">
-      <table>
+<div class="ua-box small">
+  <div class="ua-box-header">Profil</div>
+  <div class="ua-box-content">
+    <form class="ym-form ym-columnar" id="profileupdate" method="post" action="main.php?modus={{ user_profile_link }}">
+      {% for item in profile_data %}
+        <h6>{{ item.heading }}</h6>
         {% if item.entry_info %}
           {% for item_info in item.entry_info %}
-            <tr>
-              <td>&nbsp;</td>
-              <td>{{ item_info.name|raw }}:</td>
-              <td>{{ item_info.value }}</td>
-            </tr>
+            <div class="ym-fbox-text">
+              <label for="">{{ item_info.name|raw }}</label>
+              <div>{{ item_info.value }}</div>
+            </div>
           {% endfor %}
         {% endif %}
         {% if item.entry_input %}
           {% for item_input in item.entry_input %}
-            <tr>
-              <td>&nbsp;</td>
-              <td>{{ item_input.name|raw }}:</td>
-              <td><input name="{{ item_input.dataarray }}[{{ item_input.dataentry }}]" value="{{ item_input.value }}"  type="text" size="{{ item_input.size }}" maxlength="{{ item_input.maxlength }}" /></td>
-            </tr>
+            <div class="ym-fbox-text">
+              <label for="{{ item_input.dataarray }}[{{ item_input.dataentry }}]">{{ item_input.name|raw }}</label>
+              <input type="text" name="{{ item_input.dataarray }}[{{ item_input.dataentry }}]" id="{{ item_input.dataarray }}[{{ item_input.dataentry }}]" value="{{ item_input.value }}" size="{{ item_input.size }}" maxlength="{{ item_input.maxlength }}" />
+            </div>
           {% endfor %}
         {% endif %}
         {% if item.entry_memo %}
           {% for item_memo in item.entry_memo %}
-            <tr>          
-              <td>&nbsp;</td>
-              <td>{{ item_memo.name|raw }}:</td>
-              <td><textarea name="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" cols="{{ item_memo.cols }}" rows="{{ item_memo.rows }}">{{ item_memo.value|raw }}</textarea></td>
-            </tr>        
+            <div class="ym-fbox-text">
+              <label for="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]">{{ item_memo.name|raw }}</label>
+              <textarea name="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" id="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" cols="{{ item_memo.cols }}" rows="{{ item_memo.rows }}">{{ item_memo.value|raw }}</textarea>
+            </div>
           {% endfor %}
         {% endif %}
         {% if item.entry_input_pwd %}
           {% for item_input_pwd in item.entry_input_pwd %}
-            <tr>
-              <td>&nbsp;</td>
-              <td>{{ item_input_pwd.name|raw }}:</td>
-              <td><input name="{{ item_input_pwd.dataarray }}[{{ item_input_pwd.dataentry }}]" value="{{ item_input_pwd.value }}"  type="password" size="{{ item_input_pwd.size }}" maxlength="{{ item_input_pwd.maxlength }}" /></td>
-            </tr>        
+            <div class="ym-fbox-text">
+              <label for="{{ item_input_pwd.dataarray }}[{{ item_input.dataentry }}]">{{ item_input_pwd.name|raw }}</label>
+              <input type="password" name="{{ item_input_pwd.dataarray }}[{{ item_input_pwd.dataentry }}]" id="{{ item_input_pwd.dataarray }}[{{ item_input_pwd.dataentry }}]" size="{{ item_input_pwd.size }}" maxlength="{{ item_input_pwd.maxlength }}" />
+            </div>
           {% endfor %}
         {% endif %}
         {% if item.entry_selection %}
           {% for item_selection in item.entry_selection %}
-            <tr>
-              <td>&nbsp;</td>
-              <td>{{ item_selection.name|raw }}:</td>
-              <td>
-                <select name="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]">
-                  {% for selector in item_selection.selector %}
-                    <option value="{{ selector.key }}" {% if selector.selector %}selected="selected"{% endif %}>{{ selector.text }}</option>
-                  {% endfor %}
-                </select>
-              </td>
-            </tr>
+            <div class="ym-fbox-select">
+              <label for="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]">{{ item_selection.name|raw }}</label>
+              <select name="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]" id="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]" size="1">
+                <option value="0" disabled="disabled">Please choose</option>
+                {% for selector in item_selection.selector %}
+                  <option value="{{ selector.key }}" {% if selector.selector %}selected="selected"{% endif %}>{{ selector.text }}</option>
+                {% endfor %}
+              </select>
+            </div>
           {% endfor %}
         {% endif %}
         {% if item.entry_checkbox %}
           {% for item_checkbox in item.entry_checkbox %}
-            <tr>
-              <td>&nbsp;</td>
-              <td>{{ item_checkbox.name|raw }}:</td>
-              <td><input name="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]" value="{{ item_checkbox.value }}" type="checkbox" {% if item_checkbox.checked %}checked="checked"{% endif %} /></td>
-            </tr>
+            <div class="ym-fbox-check">
+              <input type="checkbox" name="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]" id="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]" value="{{ item_checkbox.value }}" {% if item_checkbox.checked %}checked="checked"{% endif %} />
+              <label for="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]">{{ item_checkbox.name|raw }}</label>
+            </div>
           {% endfor %}
         {% endif %}
-      </table>
-     </div>
-    </div>
-   {% endfor %}
+      {% endfor %}
 
-  <div class="small nohover" style="margin-bottom: 20px;">
-    <input type="hidden" name="action" value="change" />
-    <input type='submit' value="Speichern" />
-    <input type='reset' value="Zurücksetzen" />
+      <div class="ym-fbox-button center">
+        <input type="hidden" name="action" value="change" />
+        <input type="submit" class="ym-button" value="Speichern" id="safe" name="safe"/>
+        <input type="reset" class="ym-button" value="reset" id="reset" name="reset" />
+      </div>
+    </form>
   </div>
-</form>
+</div>
 
-<div class="box small">
-  <div class="box-header">Account Löschen</div>
-  <div class="box-content success inner text-center">
-    <ul>
-      <li>Ich habe keine Lust mehr:</li>
-      <li>
-        <form id="delete" method="post" action="main.php?modus={{ user_profile_link }}">
-          <p><input type="hidden" name="action" value="delete" /><input type="submit" value="Den Account löschen!" /></p>
-        </form>
-      </li>
-    </ul>
+<div class="ua-box small">
+  <div class="ua-box-header">Account Löschen</div>
+  <div class="ua-box-content">
+    <form class="ym-form ym-columnar" id="accountdelete" method="post" action="main.php?modus={{ user_profile_link }}">
+      <div class="space center bold">Ich habe keine Lust mehr!</div>
+      <div class="ym-fbox-button center">
+        <input type="hidden" name="action" value="delete" />
+        <input type="submit" class="ym-button" value="Den Account löschen!" id="delete" name="delete"/>
+      </div>
+    </form>
   </div>
 </div>
 

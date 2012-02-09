@@ -16,9 +16,9 @@
 {% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
 {% if auth_manage or auth_send_msg %}
-<div class="box small">
-  <div class="box-header">Stammesverwaltung</div>
-  <div class="box-content success inner text-center">
+<div class="ua-box">
+  <div class="ua-box-header">Stammesverwaltung</div>
+  <div class="ua-box-content">
     <form method="post" action="main.php?modus={{ tribe_link }}">
     <ul>
       {% if auth_manage %}
@@ -42,9 +42,9 @@
 </div>
 {% endif %}
 
-<div class="box small">
-  <div class="box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
-  <div class="box-content success inner text-center">
+<div class="ua-box small">
+  <div class="ua-box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
+  <div class="ua-box-content center">
     <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
       <ul>
         <li class="bold" style="padding-bottom: 10px; text-align: center;">Informationen:</li>
@@ -86,25 +86,31 @@
     </div>
     <div style="clear: both;"></div>
 
-    <div class="notice nohover" style="margin-left: 10px; margin-right: 10px;">
-      <table class="table" style="width: 100%" cellpadding="3" cellspacing="0" rules="rows">
+    <div class="notice" style="margin-left: 10px; margin-right: 10px;">
+    <span class="center bold">Kriegsgegner</span>
+    <table class="bordertable">
+      <thead>
         <tr>
-          <th class="text-left">Gegner</th>
-          <th>Knüppelpunkte: (unsere / ihre)</th>
-          <th>Kriegsanteil</th>
+          <th>Gegner</th>
+          <th class="center">Knüppelpunkte: (unsere / ihre)</th>
+          <th class="center">Kriegsanteil</th>
         </tr>
+      </thead>
+      <tbody>
         {% if target_facts %}
           {% for item in target_facts %}
-          <tr>
-            <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.target|url_encode }}">{{ item.target }}</a></td>
-            <td>{{ item.fame_own }} / {{ item.fame_target }}</td>
-            <td><span class="{{ item.class }}">{{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)</span></td>
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="center"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.target|url_encode }}">{{ item.target }}</a></td>
+            <td class="center">{{ item.fame_own }} / {{ item.fame_target }}</td>
+            <td class="last"><span class="{{ item.class }}">{{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)</span></td>
           </tr>
           {% endfor %}
         {% else %}
-          <tr><td colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
+          <tr class="bg0"><td class="last center" colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
         {% endif %}
-      </table>
+      </tbody>
+    </table>
     </div>
 
     <ul style="margin-left: 10px; margin-right: 10px;">
@@ -115,6 +121,10 @@
             <h3 class="loud">{{ item.time }}&nbsp;&nbsp;{{ item.subject }}</h3>
             {{ item.message|raw }}
           </div>
+        </li>
+      {% else %}
+        <li>
+          <div class="info text-left">Zur Zeit gibt es keine Stammesnachrichten.</div>
         </li>
       {% endfor %}
     </ul>

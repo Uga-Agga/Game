@@ -106,7 +106,7 @@
         <a href="main.php?modus=user_profile"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
         <a href="main.php?modus=artefact_list"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
         <a href="main.php?modus=news"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
-        <a href="http://faq.uga-agga.de" onclick="open_page(this.href, 1); return false;"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
+        <a href="http://faq.uga-agga.de" class="new-window"><img src='http://gfx.uga-agga.de/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
       </div>
     </div>
     <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
@@ -154,7 +154,7 @@
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
-            <li><a href="http://forum.uga-agga.de" onclick="open_page(this.href, 1); return false;"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></a></li>
+            <li><a href="http://forum.uga-agga.de" class="new-window"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></a></li>
             <li><a href="main.php?modus={{ suggestions_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></a></li>
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
           </ul>
@@ -197,8 +197,8 @@
         <div class="ym-g33 ym-gr ym-col-footer3">
           <div class="ym-cbox">
             <a href="main.php?modus=statistic">Statistik</a> &amp;
-            <a href="{{ help_path }}" onclick="open_page(this.href, 1); return false;">Hilfe</a> &amp;
-            <a href="{{ rules_path }}" onclick="open_page(this.href, 1); return false;">Regeln</a>&nbsp;
+            <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
+            <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
             <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
           </div>
         </div>
@@ -208,45 +208,3 @@
   {% include "extendsFooter.tmpl" %}
 </body>
 </html>
-
-<!--
-<body>
-  <div id="page">
-    <div id="header">
-      <div id="header-left" style="margin-top: 0px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat;">
-        {% if tutorial_show %}
-          <div id="tutorial_container">
-            <div id="tutorial_form">
-              <div class="loader"></div>
-              <div class="bar"></div>
-              <div class="box-header">{{ tutorial_name|raw }}</div>
-              <div class="box-content success inner text-center">
-                {% if tutorial_finish %}
-                  <div class="tutorial_finish">
-                    {{ tutorial_finish_msg|raw }}
-                    <form id="tutorial" action="main.php?{{ query_string|raw }}&amp;caveID={{ cave_id }}" method="post">
-                      <input type="hidden" name="nextTutorial" value="next" />
-                      <input class="submit" type="submit" value="zum nächstes Tutorial" name="submit">
-                    </form>
-                  </div>
-                {% else %}
-                  {{ tutorial_description|raw }}
-                {% endif %}
-              </div>
-            </div>
-            <div class="tutorial">Tutorial</div>
-          </div>
-        {% endif %}
-      </div>
-      <div id="header-right" class="text-right" style="margin-top: 0px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;">
-        <a href="main.php?modus=logout"><img id="logout" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" style="width: 35px; height: 30px;" /></a><br />
-        <img id="terrain" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" style="margin-right:100px; margin-top:-30px;" /><br />
-        <img id="month" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." style="margin-right:120px;" /><br /> 
-        <img id="weather" class="float_right" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" style="margin-right:100px;" /><br />
-        <div id="header_farm_points" class="bold" style="margin-right:10px;margin-top:5px">Farmpunkte: {{ player_fame }}</div>
-      </div>
-      <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
-        <img id="header_round_name" src="./images/round_name.png" style="margin-top: 90px" alt="" />
-      </div>
-      <div style="clear: both;"></div>
-    </div>-->

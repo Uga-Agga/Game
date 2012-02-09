@@ -207,7 +207,7 @@ function messages_showMessage($caveID, $messageID, $box) {
         'reply' => array(
           array('arg' => "box",        'value' => BOX_INCOMING),
           array('arg' => "subject",    'value' => $messagesClass->createSubject($message['subject'])),
-          array('arg' => "empfaenger", 'value' => $message['sender'])
+          array('arg' => "recipient", 'value' => $message['sender'])
         )
       ));
       //$contacts = array('contact' => $message['sender']);
@@ -295,7 +295,7 @@ function messages_newMessage($caveID) {
   $template->addVars(array(
     'box'        => Request::getVar('box', BOX_INCOMING),
     'sender'     => $_SESSION['player']->name,
-    'empfaenger' => unhtmlentities(Request::getVar('empfaenger', '')),
+    'recipient'  => unhtmlentities(Request::getVar('recipient', '')),
     'subject'    => Request::getVar('subject', '', true),
     'contacts'   => $contacts,
     'hidden'     => array(
@@ -325,16 +325,16 @@ function messages_sendMessage($caveID) {
   $contactID = Request::getVar('contactID', 0);
 
   // get recipient from contactlist
-  $empfaenger = "";
+  $recipient = "";
   if ($contactID > 0) {
     // get contacts model
     $contacts_model = new Contacts_Model();
     $contact = $contacts_model->getContact($contactID);
-    $empfaenger = $contact['contactname'];
+    $recipient = $contact['contactname'];
 
   // get recipient from textfield
   } else {
-    $empfaenger = Request::getVar('empfaenger', '');
+    $recipient = Request::getVar('recipient', '');
   }
 
   // open template
@@ -348,7 +348,7 @@ function messages_sendMessage($caveID) {
       'box'        => Request::getVar('box', BOX_INCOMING),
       'status_msg' => $message,
       'sender'     => $_SESSION['player']->name,
-      'empfaenger' => $empfaenger,
+      'recipient' => $recipient,
       'subject'    => $subject,
       'nachricht'  => $nachricht,
       'hidden'     => array(
@@ -361,7 +361,7 @@ function messages_sendMessage($caveID) {
     return;
   }
 
-  if ($messagesClass->insertMessageIntoDB($empfaenger, $subject, $nachricht)) {
+  if ($messagesClass->insertMessageIntoDB($recipient, $subject, $nachricht)) {
     $template->addVar('status_msg', array('type' => 'success', 'message' => _('Ihre Nachricht wurde verschickt!')));
     messages_getMessages($caveID, 0, BOX_INCOMING);
     return;
@@ -372,7 +372,7 @@ function messages_sendMessage($caveID) {
       'box'        => Request::getVar('box', BOX_INCOMING),
       'status_msg' => $message,
       'sender'     => $_SESSION['player']->name,
-      'empfaenger' => $empfaenger,
+      'recipient'  => $recipient,
       'subject'    => $subject,
       'nachricht'  => $nachricht,
       'hidden'     => array(

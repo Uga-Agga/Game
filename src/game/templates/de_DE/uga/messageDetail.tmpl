@@ -91,7 +91,7 @@
                 {% for item in reply %}
                   <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
                 {% endfor %}
-                <input type="submit" class="ym-button" value="Antworten" id="submit" name="Antworten" />
+                <input type="submit" class="ym-button" value="Antworten" id="Antworten" name="Antworten" />
             </div>
           </form>
         {% endif %}
@@ -103,7 +103,7 @@
               {% for item in delete.item %}
                 <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
               {% endfor %}
-              <input type="submit" class="ym-button" value="{{ delete.name }}" id="submit" name="mark_action" />
+              <input type="submit" class="ym-button" value="{{ delete.name }}" id="mark_action" name="mark_action" />
             </div>
           </form>
         {% endif %}
