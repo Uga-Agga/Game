@@ -21,7 +21,7 @@ include "util.inc.php";
 
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
-include INC_DIR."game_rules.php";
+include INC_DIR."rules/game.rules.php";
 
 $config = new Config();
 $db     = DbConnect();
