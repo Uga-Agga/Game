@@ -576,60 +576,64 @@ function hero_levelUp($hero) {
   return 7;
 }
 
-function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
+function hero_immolateResources($value_array, $caveID, &$ownCaves) {
   global $db;
 
-  if ($resourceID < 0 || $value == 0) {
+  if (!sizeof($value_array)) {
     return array('messageID' => -13, 'value' => 0);
   }
-
-  if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
-    $resource = $GLOBALS['resourceTypeList'][$resourceID];
-    $playerID = $_SESSION['player']->playerID;
-
-    // immolation allowed only in actual cave
-    if ($ownCaves[$caveID]['hero']) {
-      return array('messageID' => -24, 'value' =>0);
-    }
-    
-    // not enough resources in cave
-    if ($ownCaves[$caveID][$resource->dbFieldName] < $value) {
-      return array('messageID' => -14, 'value'=>0);
-    }
-
-    // take resource from cave
-    $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
-                         SET ". $resource->dbFieldName . " = " . $resource->dbFieldName . " - :value
-                         WHERE caveID = :caveID");
-    $sql->bindValue('value', $value, PDO::PARAM_INT);
-    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-    if (!$sql->execute() || $sql->rowCount() == 0) {
-      return array('messageID' => -15, 'value' => 0);
-    }
-
-    // add experience points
-    $sql = $db->prepare("UPDATE " . HERO_TABLE . "
-                         SET exp = exp + :expValue
-                         WHERE playerID = :playerID");
-    $sql->bindValue('expValue', $value*$resource->takeoverValue, PDO::PARAM_INT);
-    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-    if (!$sql->execute() || $sql->rowCount() == 0) {
-      // return resource to cave
-      $sql_setback = $db->prepare("UPDATE " . CAVE_TABLE . "
-                                   SET " . $resource->dbFieldName . " = " . $resource->dbFieldName . " + :value
-                                   WHERE caveID = :caveID");
-      $sql_setback->bindValue('value', $value, PDO::PARAM_INT);
-      $sql_setback->bindValue('caveID', $caveID, PDO::PARAM_INT);
-      $sql_setback->execute();
-
-      return array('messageID' => -16, 'value' => 0);
-    }
-
-    $ownCaves = getCaves($playerID);
-    return array('messageID' => 8, 'value' => $value * $resource->takeoverValue);
-  } else {
-    return array('messageID'=> -13, 'value' => 0);
+  
+  // immolation allowed only in actual cave
+  if (!$ownCaves[$caveID]['hero']) {
+    return array('messageID' => -24, 'value' =>0);
   }
+
+  $points = 0;
+  foreach ($value_array as $resourceID => $value) {
+    if ($value) {
+      if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
+        $resource = $GLOBALS['resourceTypeList'][$resourceID];
+        $playerID = $_SESSION['player']->playerID;
+        
+        // not enough resources in cave
+        if ($ownCaves[$caveID][$resource->dbFieldName] < $value) {
+          continue;
+        }
+    
+        // take resource from cave
+        $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
+                             SET ". $resource->dbFieldName . " = " . $resource->dbFieldName . " - :value
+                             WHERE caveID = :caveID");
+        $sql->bindValue('value', $value, PDO::PARAM_INT);
+        $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+        if (!$sql->execute() || $sql->rowCount() == 0) {
+          continue;
+        }
+    
+        // add experience points
+        $sql = $db->prepare("UPDATE " . HERO_TABLE . "
+                             SET exp = exp + :expValue
+                             WHERE playerID = :playerID");
+        $sql->bindValue('expValue', $value*$resource->takeoverValue, PDO::PARAM_INT);
+        $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+        if (!$sql->execute() || $sql->rowCount() == 0) {
+          // return resource to cave
+          $sql_setback = $db->prepare("UPDATE " . CAVE_TABLE . "
+                                       SET " . $resource->dbFieldName . " = " . $resource->dbFieldName . " + :value
+                                       WHERE caveID = :caveID");
+          $sql_setback->bindValue('value', $value, PDO::PARAM_INT);
+          $sql_setback->bindValue('caveID', $caveID, PDO::PARAM_INT);
+          $sql_setback->execute();
+    
+          continue;
+        }
+    
+        $ownCaves = getCaves($playerID);
+        $points += $value * $resource->takeoverValue;
+      }
+    }
+  }
+  return array('messageID' => 8, 'value' => $points);
 }
 
 function hero_cancelOrder () {

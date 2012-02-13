@@ -217,10 +217,9 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       break;
 
       case 'immolateResources':
-        $resourceID = Request::getVar('resourceID', -1);
-        $value = Request::getVar('value', 0);
+        $value = Request::getVar('value', array('' => ''));
 
-        $resultArray = hero_immolateResources($resourceID, $value, $caveID, $ownCaves);
+        $resultArray = hero_immolateResources($value, $caveID, $ownCaves);
         $messageID = $resultArray['messageID'];
 
         // set exp value in message

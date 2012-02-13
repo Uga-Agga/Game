@@ -120,20 +120,19 @@
           <th class="bg2">Menge</th>
           <th class="bg2">&nbsp;</th>
         </tr>
+        <form action="main.php?modus={{ hero_link }}" method="post">
         {% for resource in resourceTypeList %}
           {% if resource.takeoverValue > 0 %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
             <td>{{ resource.name }}</td>
-            <form action="main.php?modus={{ hero_link }}" method="post">
-            <input type="hidden" name="action" value="immolateResources"/>
-            <input type="hidden" name="resourceID" value="{{ resource.resourceID}}"/>
-            <td><input name="value" type="text" size="10" /> x{{ resource.takeoverValue }}</td>
-            <td><input name="submitImmolation" value="Ugh!" type="submit" /></td>
-            </form>
+            <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /> x{{ resource.takeoverValue }}</td>
           </tr>
           {% endif %}
         {% endfor %}
+        <input type="hidden" name="action" value="immolateResources"/>
+        <td><input name="submitImmolation" value="Ugh!" type="submit" /></td>
+        </form>
       </table>
     </div>
   </div>
