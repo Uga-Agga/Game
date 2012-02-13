@@ -594,16 +594,12 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
       if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
         $playerID = $_SESSION['player']->playerID;
-        
-        // not enough resources in cave
-        if ($ownCaves[$caveID][$resource->dbFieldName] < $value) {
-          continue;
-        }
-    
+
         // take resource from cave
         $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
                              SET ". $resource->dbFieldName . " = " . $resource->dbFieldName . " - :value
-                             WHERE caveID = :caveID");
+                             WHERE caveID = :caveID
+                             AND " . $resource->dbFieldName . " >= :value");
         $sql->bindValue('value', $value, PDO::PARAM_INT);
         $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
         if (!$sql->execute() || $sql->rowCount() == 0) {
