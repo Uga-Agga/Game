@@ -34,6 +34,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   $newhero = false;
   
   $messageText = array(
+    -24 => array('type' => 'error', 'message' => _('Es können nur Rohstoffe aus der aktuellen Höhle geopfert werden!')),
     -23 => array('type' => 'error', 'message' => _('Die Fähigkeit wurde schon erlernt!')),
     -22 => array('type' => 'error', 'message' => _('Dein Held hat den falschen Typ, um die Fähigkeit zu erlernen!')),
     -21 => array('type' => 'error', 'message' => _('Fehler beim Erlernen der Fähigkeit!')),
@@ -337,6 +338,12 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     ));
   }
 
+  $showImmolation = false;
+  if ($ownCaves[$caveID]['hero']) {
+    $showImmolation = true;
+  }
+  $template->addVar('showImmolation', $showImmolation);
+  
   if (isset($potions) && $potions) {
     $template->addVar('potions', $potions);
   }

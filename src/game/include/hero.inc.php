@@ -587,6 +587,11 @@ function hero_immolateResources($resourceID, $value, $caveID, &$ownCaves) {
     $resource = $GLOBALS['resourceTypeList'][$resourceID];
     $playerID = $_SESSION['player']->playerID;
 
+    // immolation allowed only in actual cave
+    if ($ownCaves[$caveID]['hero']) {
+      return array('messageID' => -24, 'value' =>0);
+    }
+    
     // not enough resources in cave
     if ($ownCaves[$caveID][$resource->dbFieldName] < $value) {
       return array('messageID' => -14, 'value'=>0);
