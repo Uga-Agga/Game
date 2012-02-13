@@ -100,7 +100,7 @@ function sciences_getContent() {
     'name'           => $science->name,
     'description'    => $science->description,
     'maximum'        => formula_parseToReadable($science->maxLevel),
-    'productionTime' => formula_parseToReadable($science->productionTimeFunction),
+    'productionTime' => "(".formula_parseToReadable($science->productionTimeFunction).")*".SCIENCE_TIME_BASE_FACTOR." (in Sekunden)",
     'dbFieldName'    => $science->dbFieldName,
     'resource_cost'  => $resourceCost,
     'dependencies'   => rules_checkDependencies($science),

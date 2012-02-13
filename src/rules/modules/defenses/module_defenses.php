@@ -100,7 +100,7 @@ function defenses_getContent(){
     'name'           => $defenseSystem->name,
     'description'    => $defenseSystem->description,
     'maximum'        => formula_parseToReadable($defenseSystem->maxLevel),
-    'productionTime' => formula_parseToReadable($defenseSystem->productionTimeFunction),
+    'productionTime' => "(".formula_parseToReadable($defenseSystem->productionTimeFunction) . ")*". DEFENSESYSTEM_TIME_BASE_FACTOR . " (in Sekunden)",
     'rangeAttack'    => $defenseSystem->attackRange,
     'attackRate'     => $defenseSystem->attackRate,
     'defenseRate'    => $defenseSystem->defenseRate,

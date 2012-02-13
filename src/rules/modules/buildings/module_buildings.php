@@ -100,7 +100,7 @@ function buildings_getContent() {
     'name'           => $building->name,
     'description'    => $building->description,
     'maximum'        => formula_parseToReadable($building->maxLevel),
-    'productionTime' => formula_parseToReadable($building->productionTimeFunction),
+    'productionTime' => "(".formula_parseToReadable($building->productionTimeFunction) . ")*". BUILDING_TIME_BASE_FACTOR . " (in Sekunden)" ,
     'dbFieldName'    => $building->dbFieldName,
     'resource_cost'  => $resourceCost,
     'dependencies'   => rules_checkDependencies($building),

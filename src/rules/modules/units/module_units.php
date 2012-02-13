@@ -99,7 +99,7 @@ function units_getContent() {
   $template->addVars(array(
     'name'                      => $unit->name,
     'description'               => $unit->description,
-    'productionTime'            => formula_parseToReadable($unit->productionTimeFunction),
+    'productionTime'            => "(".formula_parseToReadable($unit->productionTimeFunction).")*".BUILDING_TIME_BASE_FACTOR." (in Sekunden)",
     'rangeAttack'               => $unit->attackRange,
     'arealAttack'               => $unit->attackAreal,
     'attackRate'                => $unit->attackRate,
