@@ -67,7 +67,7 @@ class Player {
     $this->timeCorrection     = $record['timeCorrection'];
     $this->tribe              = $record['tribe'];
     $this->tribeBlockEnd      = $record['tribeBlockEnd'];
-    $this->auth               = $record['auth'];
+    $this->auth               = unserialize($record['auth']);
     $this->tutorialID         = $record['tutorialID'];
   }
 

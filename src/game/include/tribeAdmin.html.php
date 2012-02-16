@@ -13,11 +13,13 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribeAdmin_getContent($playerID, $tag) {
-  global $config, $request, $template;
-  global $relationList, $governmentList, $wonderTypeList;
+  global $template;
 
   // messages
   $messageText = array(
+    -32 => array('type' => 'error', 'message' => _('Die Rechte konnten nicht angewandt werden.')),
+    -31 => array('type' => 'error', 'message' => _('Fehler in den Formulardaten!')),
+    -30 => array('type' => 'error', 'message' => _('Du hast keine Berechtigung dies zu tun!')),
     -29 => array('type' => 'error', 'message' => _('Ungültiges Passwort! (Mind. 6 Zeichen, ohne Sonderzeichen)')),
     -28 => array('type' => 'error', 'message' => _('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!')),
     -27 => array('type' => 'success', 'message' => _('Das Stammeswunder wurde gewirkt.')),
@@ -51,21 +53,14 @@ function tribeAdmin_getContent($playerID, $tag) {
       1 => array('type' => 'success', 'message' => _('Der Spieler wurde erfolgreich gekickt.')),
       2 => array('type' => 'error', 'message' =>  _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.')),
       3 => array('type' => 'success', 'message' => _('Die Beziehung wurde umgestellt.')),
-      4 => array('type' => 'success', 'message' => _('Die Regierung wurde geändert.'))
+      4 => array('type' => 'success', 'message' => _('Die Regierung wurde geändert.')),
+      5 => array('type' => 'success', 'message' => _('Die Berechtigungen wurden erfolgreich geändert.'))
   );
 
   // open template
   $template->setFile('tribeAdmin.tmpl');
   $template->setShowRresource(false);
   $template->addVar('show_page', true);
-
-  // check, for security reasons!
-  if (!tribe_isLeaderOrJuniorLeader($playerID, $tag)) {
-    $template->addVars(array(
-      'status_msg' => array('type' => 'error', 'message' => 'Du hast keine Berechtigung den Stamm zu verwalten'),
-      'show_page'  => false
-    ));
-  }
 
   // get the tribe data
   if (!($tribeData = tribe_getTribeByTag($tag))) {
@@ -77,7 +72,7 @@ function tribeAdmin_getContent($playerID, $tag) {
   $tribeData['avatar'] = $avatar['path'];
   $template->addVar('tribe_data', $tribeData);
 
-  //get Member Data
+  //get member Data
   $memberData = tribe_getAllMembers($tag);
   if (empty($memberData)) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
@@ -85,29 +80,7 @@ function tribeAdmin_getContent($playerID, $tag) {
   }
   $template->addVar('tribe_members', $memberData);
 
-  // get government
-  $tribeGovernment = government_getGovernmentForTribe($tag);
-  if (empty($tribeGovernment)) {
-    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
-    return;
-  }
-  $tribeGovernment['name'] = $governmentList[$tribeGovernment['governmentID']]['name'];
-
-  // get relations
-  $tribeRelations = relation_getRelationsForTribe($tag)
-  if (empty($tribeRelations)) {
-    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
-    return;
-  }
-
-  // get current wars
-  $tribeWarTargets = relation_getWarTargetsAndFame($tag);
-
-/****************************************************************************************************
-*
-* Leader vom Stamm? Oder doch nur JuniorLeader?
-*
-****************************************************************************************************/
+  // get leader
   $isLeader = tribe_isLeader($playerID, $tag);
   if ($isLeader) {
     $template->addVar('is_leader', true);
@@ -123,13 +96,54 @@ function tribeAdmin_getContent($playerID, $tag) {
   if ($isLeader && !is_array($memberData[$leaderID])) {
     tribe_unmakeLeaderJuniorLeader($leaderID, $tag);
   }
-   
+
   //seems to be juniorleader, but not in tribe  
   if (!$isLeader && !is_array($memberData[$leaderID])) {
     tribe_unmakeJuniorLeader($leaderID, $tag);
   }
 
-  $action = $request->getVar('action', '');
+  // init auth
+  $auth = new auth;
+
+  // check, for security reasons!
+  if (!$auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) &&
+      !$auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth) &&
+      !$auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth) &&
+      !$isLeader) {
+    $template->throwError('Du hast keine Berechtigung den Stamm zu verwalten!');
+    return;
+  }
+
+  // get government
+  $tribeGovernment = government_getGovernmentForTribe($tag);
+  if (empty($tribeGovernment)) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
+  $tribeGovernment['name'] = $GLOBALS['governmentList'][$tribeGovernment['governmentID']]['name'];
+
+  // get relations
+  $tribeRelations = relation_getRelationsForTribe($tag);
+  if (empty($tribeRelations)) {
+    $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
+    return;
+  }
+
+  // get current wars
+  $tribeWarTargets = relation_getWarTargetsAndFame($tag);
+
+/****************************************************************************************************
+*
+* Rechte?
+*
+****************************************************************************************************/
+  $template->addVars(array(
+    'is_auth_change_settings' => $auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth),
+    'is_auth_kick_player'     => $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth),
+    'is_auth_change_relation' => $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth),
+  ));
+
+  $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
 *
@@ -138,7 +152,7 @@ function tribeAdmin_getContent($playerID, $tag) {
 ****************************************************************************************************/
 
     case 'update':
-      $data = $request->getVar('data', array('' => ''));
+      $data = Request::getVar('data', array('' => ''));
 
       $postData = array(
         'name'        => $data['name'],
@@ -161,8 +175,36 @@ function tribeAdmin_getContent($playerID, $tag) {
         break;
       }
 
-      $governmentData = $request->getVar('governmentData', array('' => ''));
+      $governmentData = Request::getVar('governmentData', array('' => ''));
       $messageID = government_processGovernmentUpdate($tag, $governmentData);
+    break;
+
+/****************************************************************************************************
+*
+* Spielerrechte Ändern
+*
+****************************************************************************************************/
+    case 'changeAuth':
+      if (!$isLeader) {
+        $messageID = -30;
+        break;
+      }
+
+      if (!Request::isPost('player_id', true)) {
+        $messageID = -31;
+        break;
+      }
+
+      $userAuth = 0;
+      foreach ($auth->perm['tribe'] as $type => $data) {
+        $userAuth = $userAuth | Request::getVar($type, 0);
+      }
+
+      if ($auth->setPermission('tribe', $userAuth, Request::getVar('player_id', 0))) {
+        $messageID = 0;
+      } else {
+        $messageID = 32;
+      }
     break;
 
 /****************************************************************************************************
@@ -171,7 +213,7 @@ function tribeAdmin_getContent($playerID, $tag) {
 *
 ****************************************************************************************************/
     case 'juniorLeader':
-      $juniorLeader = $request->getVar('juniorLeader', array('' => ''));
+      $juniorLeader = Request::getVar('juniorLeader', array('' => ''));
       $newleadership = array(0 => $leaderID, 1 => $juniorLeader['juniorLeaderID']);
 
       if (!$isLeader) {
@@ -203,7 +245,7 @@ function tribeAdmin_getContent($playerID, $tag) {
       if (!$isLeader) {
         $messageID = -21;
       } else {
-        $messageID = tribe_processKickMember($request->getVar('playerID', 0), $tag);
+        $messageID = tribe_processKickMember(Request::getVar('playerID', 0), $tag);
         $memberData = tribe_getAllMembers($tag);
       }
     break;
@@ -214,8 +256,8 @@ function tribeAdmin_getContent($playerID, $tag) {
 *
 ****************************************************************************************************/
     case 'updateRelation':
-      $relationData = $request->getVar('relationData', array('' => ''));
-      if ($request->isPost('forceSurrender')) {
+      $relationData = Request::getVar('relationData', array('' => ''));
+      if (Request::isPost('forceSurrender')) {
         $messageID = relation_forceSurrender($tag, $relationData);
         $tribeRelations = relation_getRelationsForTribe($tag);
         $tribeWarTargets = relation_getWarTargetsAndFame($tag);
@@ -261,7 +303,7 @@ function tribeAdmin_getContent($playerID, $tag) {
 ****************************************************************************************************/
   if ($isLeader && $tribeGovernment['isChangeable']) {
     $GovernmentSelect = array();
-    foreach($governmentList AS $governmentID => $typeData) {
+    foreach($GLOBALS['governmentList'] AS $governmentID => $typeData) {
       $GovernmentSelect[] = array(
         'value'    => $governmentID,
         'selected' => ($governmentID == $tribeGovernment['governmentID'] ? 'selected="selected"' : ''),
@@ -283,9 +325,9 @@ function tribeAdmin_getContent($playerID, $tag) {
     if (!$targetData['changeable']) {
       $relation_info[$target] = array(
         'tag'            => $target,
-        'relation'       => $relationList[$targetData['relationType']]['name'],
+        'relation'       => $GLOBALS['relationList'][$targetData['relationType']]['name'],
         'duration'       => $targetData['time'],
-        'their_relation' => (isset($tribeRelations['other'][$target])) ? $relationList[$tribeRelations['other'][$target]['relationType']]['name'] : $relationList[0]['name']
+        'their_relation' => (isset($tribeRelations['other'][$target])) ? $GLOBALS['relationList'][$tribeRelations['other'][$target]['relationType']]['name'] : $GLOBALS['relationList'][0]['name']
       );
 
       // war?
@@ -300,7 +342,7 @@ function tribeAdmin_getContent($playerID, $tag) {
         'tag'            => $target,
         'target_points'  => $targetData['target_rankingPoints'],
         'tribe_points'   => $targetData['tribe_rankingPoints'],
-        'their_relation' =>  (isset($tribeRelations['other'][$target])) ? $relationList[$tribeRelations['other'][$target]['relationType']]['name'] : $relationList[0]['name'],
+        'their_relation' =>  (isset($tribeRelations['other'][$target])) ? $GLOBALS['relationList'][$tribeRelations['other'][$target]['relationType']]['name'] : $GLOBALS['relationList'][0]['name'],
         'relation_type'  => $targetData['relationType'],
       );
 
@@ -333,7 +375,7 @@ function tribeAdmin_getContent($playerID, $tag) {
 
     $relations[$target] = array(
       'tag'            => $target,
-      'their_relation' => $relationList[$tribeRelations['other'][$target]['relationType']]['name'],
+      'their_relation' => $GLOBALS['relationList'][$tribeRelations['other'][$target]['relationType']]['name'],
       'duration'       => $targetData['time'],
       'relation_type'  => 0,
     );
@@ -342,81 +384,9 @@ function tribeAdmin_getContent($playerID, $tag) {
   $template->addVars(array(
     'relations'      => (isset($relations)) ? $relations : array(),
     'relations_info' => (isset($relation_info)) ? $relation_info : array(),
-    'relation_list' => $relationList,
+    'relation_list' => $GLOBALS['relationList'],
     'status_msg'    => (isset($messageID)) ? $messageText[$messageID] : '',
   ));
-
-return;
-
-/*
-  // proccess form data
-  if (($relationData = $request->getVar('relationData', array('' => ''))) && $request->getVar('forceSurrender', 0)) {
-    $messageID = relation_forceSurrender($tag, $relationData);
-*/
-
-  // existing relations towards other clans //////////////////
-  foreach($tribeRelations['own'] AS $target => $targetData) {
-    
-    if (!$targetData['changeable']) {
-
-      continue;
-    } else {
-      $relation = array('modus_name'=> "modus",
-                     'modus'          => TRIBE_ADMIN,
-                     'dataarray'      => "relationData",
-                     'dataentry'      => "tag",
-                     'value'          => $target,
-                     'target_points'  => $targetData['target_rankingPoints'],
-                     'tribe_points'   => $targetData['tribe_rankingPoints'],
-                     'their_relation' => $tribeRelations['other'][$target]
-                                         ? $relationList[$tribeRelations['other'][$target]['relationType']]['name']
-                                         : $relationList[0]['name'],
-                     'caption'        => _('ändern')); 
-
-      // war?
-
-      tmpl_set($template, 'RELATION', $relation);
-
-      tmpl_set($template, 'RELATION/SELECTOR',
-               array('dataarray' => "relationData",
-                     'dataentry' => "relationID"));
-
-      // check, if it is possible to get or loose fame, and display if true
-      /*if ($targetData['attackerReceivesFame'] ||
-          $targetData['defenderReceivesFame'] ||
-          $tribeRelations['other'][$target]['attackerReceivesFame'] ||
-          $tribeRelations['other'][$target]['defenderReceivesFame']) {
-        tmpl_set($template, 'RELATION/FAME',
-                 array('tribe_fame'   => $targetData['fame'],
-                       'target_fame'  => $tribeRelations['other'][$target]['fame'],
-                       'tribe_moral'  => $targetData['moral'],
-                       'target_moral' => $tribeRelations['other'][$target]['moral']));
-      }*/
-
-      foreach($relationList AS $relationType => $typeData) {
-        // get relation of target to tr.
-        if ($tribeRelations['other'][$tag]) {
-          $relationTypeTowardsTribe = $tribeRelations['other'][$tag]['relationType'];
-        }
-        
-        // check, if switch to relationType is possible
-        if ($relationTypeTowardsTribe != $relationType &&
-            $relationType != $targetData['relationType'] &&
-            !relation_isPossible($relationType, $targetData['relationType'])) {
-          continue;
-        }
-        
-        tmpl_iterate($template, 'RELATION/SELECTOR/OPTION');
-        tmpl_set($template, 'RELATION/SELECTOR/OPTION',
-                 array('value'    => $relationType,
-                       'selected' => $relationType == $targetData['relationType']
-                                     ? "selected"
-                                     : "",
-                       'text'     => $typeData['name']));
-      }
-
-    }
-  }
 }
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 /*
  * auth.inc.php -
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -63,6 +63,44 @@ class auth {
     }
 
     return $userPerm;
+  }
+
+  public function setPermission($authType, $newUserAuth, $playerID) {
+    global $db;
+
+    if (empty($authType) || empty($playerID)) {
+      return false;
+    }
+
+    // read user auth
+    $sql = $db->prepare("SELECT auth
+                         FROM " . PLAYER_TABLE . "
+                         WHERE playerID = :playerID");
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) return false;
+
+    $auth = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    // parse & update
+    $userAuth = unserialize($auth['auth']);
+    $userAuth[$authType] = $newUserAuth;
+
+    // update new permission
+    $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
+                         SET auth = :auth
+                         WHERE playerID = :playerID");
+    $sql->bindValue('auth', serialize($userAuth), PDO::PARAM_STR);
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) {
+      return false;
+    }
+
+    if ($_SESSION['player']->playerID == $playerID) {
+      $_SESSION['player']->auth[$authType] = $newUserAuth;
+    }
+
+    return true;
   }
 }
 

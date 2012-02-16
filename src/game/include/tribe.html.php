@@ -59,6 +59,9 @@ function tribe_getContent($playerID, $tribe) {
     case TRIBE_ACTION_JOIN:
       if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))) {
         $messageID = tribe_processJoin($playerID, Request::getVar('tag', ''), Request::getVar('password', ''));
+        if ($messageID == 1) {
+          $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
+        }
       } else {
         $messageID = tribe_processJoinFailed();
       }
@@ -97,9 +100,9 @@ function tribe_getContent($playerID, $tribe) {
         break;
       }
 
-      if (Request::isPost('ingame') && checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) {
+      if (Request::isPost('ingame') && $auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) {
         $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, Request::getVar('messageText', true));
-      } else if (checkPermission($_SESSION['player']->auth, 'tribe_msg_public')) {
+      } else if ($auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_public')) {
         $messageID = tribe_processSendTribeMessage($playerID, $tribe, Request::getVar('messageText', true));
       } else {
         $messageID = -18;
