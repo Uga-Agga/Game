@@ -78,13 +78,10 @@ function tribeAdmin_getContent($playerID, $tag) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
     return;
   }
-  $template->addVar('tribe_members', $memberData);
 
   // get leader
   $isLeader = tribe_isLeader($playerID, $tag);
   if ($isLeader) {
-    $template->addVar('is_leader', true);
-
     $leaderID = $playerID;
     $juniorLeaderID = tribe_getJuniorLeaderID($tag);
   } else {
@@ -106,10 +103,11 @@ function tribeAdmin_getContent($playerID, $tag) {
   $auth = new auth;
 
   // check, for security reasons!
-  if (!$auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) &&
-      !$auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth) &&
-      !$auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth) &&
-      !$isLeader) {
+  if ((!$auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth['tribe']) &&
+      !$auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth['tribe']) &&
+      !$auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth['tribe']) &&
+      !$isLeader) ||
+      !array_key_exists($_SESSION['player']->playerID, $memberData)) {
     $template->throwError('Du hast keine Berechtigung den Stamm zu verwalten!');
     return;
   }
@@ -132,17 +130,6 @@ function tribeAdmin_getContent($playerID, $tag) {
   // get current wars
   $tribeWarTargets = relation_getWarTargetsAndFame($tag);
 
-/****************************************************************************************************
-*
-* Rechte?
-*
-****************************************************************************************************/
-  $template->addVars(array(
-    'is_auth_change_settings' => $auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth),
-    'is_auth_kick_player'     => $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth),
-    'is_auth_change_relation' => $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth),
-  ));
-
   $action = Request::getVar('action', '');
   switch ($action) {
 /****************************************************************************************************
@@ -161,9 +148,11 @@ function tribeAdmin_getContent($playerID, $tag) {
         'description' => $data['description']
       );
       $messageID = tribe_processAdminUpdate($playerID, $tag, $postData);
-      $template->addVar('tribe_data', $postData);
+      $tribeData = tribe_getTribeByTag($tag);
+      $template->addVar('tribe_data', $tribeData);
 
     break;
+
 /****************************************************************************************************
 *
 * Regierungstyp ändern
@@ -203,8 +192,10 @@ function tribeAdmin_getContent($playerID, $tag) {
       if ($auth->setPermission('tribe', $userAuth, Request::getVar('player_id', 0))) {
         $messageID = 0;
       } else {
-        $messageID = 32;
+        $messageID = -32;
       }
+
+      $memberData = tribe_getAllMembers($tag);
     break;
 
 /****************************************************************************************************
@@ -384,8 +375,14 @@ function tribeAdmin_getContent($playerID, $tag) {
   $template->addVars(array(
     'relations'      => (isset($relations)) ? $relations : array(),
     'relations_info' => (isset($relation_info)) ? $relation_info : array(),
-    'relation_list' => $GLOBALS['relationList'],
-    'status_msg'    => (isset($messageID)) ? $messageText[$messageID] : '',
+    'relation_list'  => $GLOBALS['relationList'],
+    'status_msg'     => (isset($messageID)) ? $messageText[$messageID] : '',
+    'tribe_members'  => $memberData,
+
+    'is_auth_change_settings' => $isLeader || $auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth['tribe']),
+    'is_auth_kick_player'     => $isLeader || $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth['tribe']),
+    'is_auth_change_relation' => $isLeader || $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth['tribe']),
+    'is_leader'               => $isLeader
   ));
 }
 

@@ -712,7 +712,7 @@ function relation_getRelationsForTribe($tag) {
   // copy result into an array
   $own = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $own[strtoupper($row['target'])] = $row;
+    $own[strtoupper($row['tribe_target'])] = $row;
   }
   $sql->closeCursor();
 
@@ -915,8 +915,10 @@ function tribe_getAllTribes() {
 function tribe_getAllMembers($tag) {
   global $db;
 
+  $auth = new auth();
+
   $members = array();
-  $sql = $db->prepare("SELECT p.playerID, p.name, s.lastAction 
+  $sql = $db->prepare("SELECT p.playerID, p.name, p.auth, s.lastAction 
                        FROM ". PLAYER_TABLE ." p
                          LEFT JOIN ". SESSION_TABLE ." s ON s.playerID = p.playerID
                        WHERE tribe LIKE :tag
@@ -927,9 +929,12 @@ function tribe_getAllMembers($tag) {
   while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $row['lastAction'] = date("d.m.Y H:i:s", time_timestampToTime($row['lastAction']));
     $members[$row['playerID']] = $row;
+
+    $userAuth = unserialize($row['auth']);
+    $members[$row['playerID']]['tribeAuth'] = $auth->getAllTypePermission('tribe', $userAuth['tribe']);
   }
   $sql->closeCursor();
-  
+
   return $members;
 }
 

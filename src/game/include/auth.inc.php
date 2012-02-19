@@ -49,16 +49,14 @@ class auth {
     return false;
   }
 
-  public function getAllPermission($userAuth=0) {
+  public function getAllTypePermission($authType, $userAuth=0) {
     $UserPerm = array();
 
-    foreach ($this->perm as $id => $data) {
-      $userPerm[$id] = $this->perm[$id];
-
-      if(!($userAuth & $this->perm[$id]['value'])) {
-        $userPerm[$id]['auth'] = false;
+    foreach ($this->perm[$authType] as $id => $data) {
+      if(!($userAuth & $this->perm[$authType][$id]['value'])) {
+        $userPerm[$id] = false;
       } else {
-        $userPerm[$id]['auth'] = true;
+        $userPerm[$id] = true;
       }
     }
 

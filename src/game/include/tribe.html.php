@@ -137,12 +137,14 @@ function tribe_getContent($playerID, $tribe) {
     $template->setFile('tribeMember.tmpl');
     $template->setShowRresource(false);
 
-    if($tribeData['juniorLeaderID']) {
+    if ($tribeData['juniorLeaderID']) {
       $juniorAdmin = new Player(getPlayerByID($tribeData['juniorLeaderID']));
     }
     else {
       $juniorAdmin = array();
     }
+    
+    $isLeader = ($tribeData['leaderID'] == $_SESSION['player']->playerID) ? true : false;
 
     $template->addVars(array(
       'tribe_name'   => $tribeData['name'],
@@ -155,10 +157,12 @@ function tribe_getContent($playerID, $tribe) {
 
       'auth_manage'   => ($auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) ||
                           $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth) ||
-                          $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth)) ? true : false,
+                          $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth) ||
+                          $isLeader) ? true : false,
 
-      'auth_send_msg' => ($auth->checkPermission('tribe', 'msg_tribe', $_SESSION['player']->auth, 'tribe_msg_tribe') || 
-                          $auth->checkPermission('tribe', 'msg_public', $_SESSION['player']->auth, 'tribe_msg_tribe')) ? true : false,
+      'auth_send_msg' => ($auth->checkPermission('tribe', 'msg_tribe', $_SESSION['player']->auth, 'tribe_msg_tribe') ||
+                          $auth->checkPermission('tribe', 'msg_public', $_SESSION['player']->auth, 'tribe_msg_tribe') ||
+                          $isLeader) ? true : false,
     ));
 
     $targetFacts = array();

@@ -30,7 +30,8 @@
       </thead>
       <tbody>
         {% for item in resource %}
-          <tr style="padding-left: 4px; padding-right: 4px;">
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}" style="padding-left: 4px; padding-right: 4px;">
             <td class="ua-td-padding"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" width="20" height="20" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.sum_max }})" /></td>
             {% for cave_data in item.cave %}
               <td class="ua-td-padding">
@@ -65,8 +66,9 @@
       </thead>
       <tbody>
         {% for item in unit %}
-          <tr>
-            <td class="ua-td-padding"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="ua-td-padding"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40" height="50" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
             <td class="ua-td-padding">{{ item.sum }}</td>
           </tr>
@@ -90,8 +92,9 @@
       </thead>
       <tbody>
         {% for item in building %}
-          <tr>
-            <td class="ua-td-padding"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="ua-td-padding"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40" height="50" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
             <td class="ua-td-padding">{{ item.sum }}</td>
           </tr>
@@ -115,8 +118,9 @@
       </thead>
       <tbody>
         {% for item in defenses %}
-          <tr>
-            <td class="ua-td-padding"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="ua-td-padding"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40" height="50" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
             <td class="ua-td-padding">{{ item.sum }}</td>
           </tr>
