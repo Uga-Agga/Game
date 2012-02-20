@@ -200,9 +200,9 @@
 <div class="ua-box">
   <div class="ua-box-header">Ausstehende Termine</div>
   <div class="ua-box-content">
-    <table>
-      <tbody>
-        {% for item in appointments %}
+    {% for item in appointments %}
+      <table>
+        <tbody>
           <tr class="ua-digest-{{ item.category }}">
             <td class="ua-td-name">{{ item.event_name }}</td>
             <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
@@ -220,11 +220,11 @@
               <div id="timer_{{ item.category }}_appointment_{{ item.event_id }}"></div>
             </td>
           </tr>
-        {% else %}
-          <tr><td class="center">Zur Zeit liegen keine Termine vor.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    {% else %}
+      <div class="space center">Zur Zeit liegen keine Termine vor.</div>
+    {% endfor %}
   </div>
 </div>
 

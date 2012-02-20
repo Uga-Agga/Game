@@ -18,12 +18,12 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 
 /**
- * Diese Konstante gibt an, wieviele Sekunden vergehen müssen, damit der User
+ * Diese Konstante gibt an, wieviele Sekunden vergehen mÃ¼ssen, damit der User
  * erneut den Vote-Knopf eingeblendet bekommt.
  */
 DEFINE('VOTE_INTERVAL', 60 * 60 * 24); // every day
 
-$VOTE_CLASSES = array('gn' => 'GalaxyNewsVoteButton');
+$VOTE_CLASSES = array(); //array('gn' => 'GalaxyNewsVoteButton'); gibt es nicht mehr
 
 
 ################################################################################

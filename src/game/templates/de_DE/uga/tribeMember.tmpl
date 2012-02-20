@@ -15,29 +15,26 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
-{% if auth_manage or auth_send_msg %}
-<div class="ua-box">
+{% if is_auth_manage or is_auth_send_msg or is_auth_send_msg_ig %}
+<div class="ua-box small">
   <div class="ua-box-header">Stammesverwaltung</div>
   <div class="ua-box-content">
-    <form method="post" action="main.php?modus={{ tribe_link }}">
-    <ul>
-      {% if auth_manage %}
-        <li>Nachricht an alle Mitglieder:</li>
-        <li>
-          <textarea name="messageText" cols="60" rows="8"></textarea>
-        </li>
-        <li>
-          <input type="hidden" name="tribeAction" value="{{ tribe_action_message }}" />
-          <input type="submit" value="Stammesnachricht" />
-          <input type="submit" name="ingame" value="Private Nachricht" />
-        </li>
-      {% endif %}
-      {% if auth_manage %}
-        <li>&nbsp;</li>
-        <li style="font-size: 11px;"><a href="main.php?modus={{ tribe_admin_link }}">Den Stamm verwalten.</a></li>
-      {% endif %}
-    </ul>
-      </form>
+    {% if is_auth_manage %}<div style="width: 100%; text-align: center; padding-top: 10px;"><a href="main.php?modus={{ tribe_admin_link }}">Den Stamm verwalten.</a></div>{% endif %}
+
+    {% if is_auth_send_msg or is_auth_send_msg_ig %}
+    <form class="ym-form" id="tribeSendMsg" method="post" action="main.php?modus={{ tribe_link }}">
+      <div class="ym-fbox-text">
+        <label for="messageText">Nachricht an alle Mitglieder</label>
+        <textarea name="messageText" id="messageText" cols="60" rows="8"></textarea>
+      </div>
+      
+      <div class="ym-fbox-button center">
+        <input type="hidden" name="tribeAction" value="{{ tribe_action_message }}" />
+        {% if is_auth_send_msg %}<input type="submit" class="ym-button" value="Stammesnachricht" id="tribemsg" name="tribemsg"/>{% endif %}
+        {% if is_auth_send_msg_ig %}<input type="submit" class="ym-button" value="Private Nachricht" id="ingame" name="ingame"/>{% endif %}
+      </div>
+    </form>
+    {% endif %}
   </div>
 </div>
 {% endif %}

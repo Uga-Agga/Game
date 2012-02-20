@@ -429,17 +429,17 @@ switch ($modus) {
     break;
 
   case TRIBE_DETAIL:
-    $tribeID = Request::getVar('tribeID', 0);
+    $tribe = Request::getVar('tribe', '');
 
-    tribe_getContent($caveID, $tribeID);
-    $requestKeys = array('tribeID');
+    tribe_getContent($caveID, $tribe);
+    $requestKeys = array('tribe');
     break;
 
   case TRIBE_PLAYER_LIST:
-    $tribeID = Request::getVar('tribeID', 0);
+    $tribe = Request::getVar('tribe', '');
 
-    tribePlayerList_getContent($caveID, $tribeID);
-    $requestKeys = array('tribeID');
+    tribePlayerList_getContent($caveID, $tribe);
+    $requestKeys = array('tribe');
     break;
 
   case DYK:

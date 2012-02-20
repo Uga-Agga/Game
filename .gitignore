@@ -33,3 +33,4 @@ src/www/config.inc.php
 config.log
 config.status
 ugaagga.conf
+*~

@@ -139,15 +139,16 @@ function tribeAdmin_getContent($playerID, $tag) {
 ****************************************************************************************************/
 
     case 'update':
-      $data = Request::getVar('data', array('' => ''));
+      $password = Request::getVar('tribe_password', '');
 
       $postData = array(
-        'name'        => $data['name'],
-        'password'    => ($data['password'] != 'password') ? $data['password'] : $tribeData['password'],
-        'avatar'      => $data['avatar'],
-        'description' => $data['description']
+        'name'        => Request::getVar('tribe_name', ''),
+        'password'    => (!empty($password)) ? $password : $tribeData['password'],
+        'avatar'      => Request::getVar('tribe_avatar', ''),
+        'description' => Request::getVar('tribe_description', '', true)
       );
-      $messageID = tribe_processAdminUpdate($playerID, $tag, $postData);
+
+      $messageID = tribe_processAdminUpdate($tag, $postData);
       $tribeData = tribe_getTribeByTag($tag);
       $template->addVar('tribe_data', $tribeData);
 
@@ -247,6 +248,11 @@ function tribeAdmin_getContent($playerID, $tag) {
 *
 ****************************************************************************************************/
     case 'updateRelation':
+      if (!$auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth['tribe']) && !tribe_isLeader($_SESSION['player']->playerID, $tag)) {
+        $messageID = -30;
+        break;
+      }
+
       $relationData = Request::getVar('relationData', array('' => ''));
       if (Request::isPost('forceSurrender')) {
         $messageID = relation_forceSurrender($tag, $relationData);

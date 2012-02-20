@@ -130,6 +130,10 @@ function government_setGovernment($tag, $governmentID) {
 
 function government_processGovernmentUpdate($tag, $governmentData) {
 
+  if (!tribe_isLeader($_SESSION['player']->playerID, $tag)) {
+    return -30;
+  }
+
   if (!($oldGovernment = government_getGovernmentForTribe($tag))) {
     return -8;
   }
@@ -852,14 +856,16 @@ function relation_forceSurrender($tag, $relationData) {
   return relation_processRelationUpdate($target, $relationDataLooser);
 }
 
-function tribe_processAdminUpdate($leaderID, $tag, $data) {
+function tribe_processAdminUpdate($tag, $data) {
   global $db;
 
-  if (!tribe_isLeaderOrJuniorLeader($leaderID, $tag)) {
-    return 2;
+  $auth = new auth;
+
+  if (!$auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth['tribe']) && !tribe_isLeader($_SESSION['player']->playerID, $tag)) {
+    return -30;
   }
 
-  if (!tribe_validatePassword($data["password"])){
+  if (!tribe_validatePassword($data['password'])){
     return -29;
   }
 
@@ -1678,8 +1684,8 @@ function tribe_processKickMember($playerID, $tag) {
   $messagesClass = new Messages;
 
   // leader must not be kicked
-  if (tribe_isLeaderOrJuniorLeader($playerID, $tag)) {
-    return -2;
+  if (!$auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth['tribe']) && !tribe_isLeader($_SESSION['player']->playerID, $tag)) {
+    return -30;
   }
 
   // do not kick in wartime

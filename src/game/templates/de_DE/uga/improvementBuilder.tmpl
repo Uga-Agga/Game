@@ -36,11 +36,11 @@
 <div class="ua-box">
   <div class="ua-box-header">Erweiterungen</div>
   <div class="ua-box-content">
-    <table>
-      <tbody>
-        {% if improvement %}
+    {% if improvement %}
+      <table>
+        <tbody>
           {% for item in improvement %}
-            {% set bgID = (bgID+1)%2 %}
+          {% set bgID = (bgID+1)%2 %}
             <tr class="bg{{ bgID }} object-row">
               <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
               <td class="ua-td-smallicon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
@@ -63,17 +63,14 @@
                 {% endif %}
               </td>
             </tr>
-            <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;">
-              <td colspan="6" class="object-details">
-              </td>
-            </tr>
+            <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;"><td colspan="6" class="object-details"></td></tr>
           {% endfor %}
-        {% else %}
-          <tr class="bg1"><td>Zur Zeit kannst du leider keine Erweiterungen bauen.</td></tr>
-        {% endif %}
-        {% set bgID = 0 %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    {% else %}
+      <div class="space center">Zur Zeit kannst du leider noch keine Erweiterungen bauen.</div>
+    {% endif %}
+    {% set bgID = 0 %}
   </div>
 </div>
 

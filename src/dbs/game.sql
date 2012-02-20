@@ -730,6 +730,7 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `notInactive` tinyint(1) NOT NULL DEFAULT '0',
   `heroID` tinyint(1) NOT NULL DEFAULT '0',
   `auth` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tutorialID` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
   UNIQUE KEY `name` (`name`),
   KEY `tribe` (`tribe`),

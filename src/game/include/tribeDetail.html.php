@@ -14,7 +14,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function tribe_getContent($caveID, $tag) {
   global $db, $template;
-
+echo $tag;
   if (!$tag) {
     $template->throwError('Es wurde kein Stamm ausgewählt.');
     return;

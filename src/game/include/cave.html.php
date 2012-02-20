@@ -136,7 +136,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
   }
 
   // BUILDINGS AUSFUELLEN
-  $addons = array();
+  $buildings = array();
   foreach ($GLOBALS['buildingTypeList'] as $building) {
     $value = $details[$building->dbFieldName];
     if ($value != 0)

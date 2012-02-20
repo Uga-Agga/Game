@@ -100,10 +100,10 @@ function tribe_getContent($playerID, $tribe) {
         break;
       }
 
-      if (Request::isPost('ingame') && $auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_tribe')) {
-        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, Request::getVar('messageText', true));
-      } else if ($auth->checkPermission($_SESSION['player']->auth, 'tribe_msg_public')) {
-        $messageID = tribe_processSendTribeMessage($playerID, $tribe, Request::getVar('messageText', true));
+      if (Request::isPost('ingame') && ($auth->checkPermission('tribe', 'msg_public', $_SESSION['player']->auth['tribe']) || tribe_isLeader($_SESSION['player']->playerID, $tribe))) {
+        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, Request::getVar('messageText', '', true));
+      } else if ($auth->checkPermission('tribe', 'msg_tribe', $_SESSION['player']->auth['tribe']) || tribe_isLeader($_SESSION['player']->playerID, $tribe)) {
+        $messageID = tribe_processSendTribeMessage($playerID, $tribe, Request::getVar('messageText', '', true));
       } else {
         $messageID = -18;
       }
@@ -155,14 +155,13 @@ function tribe_getContent($playerID, $tribe) {
       'junior_leader_id'   => (isset($juniorAdmin->playerID)) ? $juniorAdmin->playerID : 0,
       'government_name'    => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
 
-      'auth_manage'   => ($auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) ||
-                          $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth) ||
-                          $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth) ||
-                          $isLeader) ? true : false,
+      'is_auth_manage'   => ($auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) ||
+                                             $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth) ||
+                                             $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth) ||
+                                             $isLeader) ? true : false,
 
-      'auth_send_msg' => ($auth->checkPermission('tribe', 'msg_tribe', $_SESSION['player']->auth, 'tribe_msg_tribe') ||
-                          $auth->checkPermission('tribe', 'msg_public', $_SESSION['player']->auth, 'tribe_msg_tribe') ||
-                          $isLeader) ? true : false,
+      'is_auth_send_msg'      => ($auth->checkPermission('tribe', 'msg_tribe', $_SESSION['player']->auth) || $isLeader) ? true : false,
+      'is_auth_send_msg_ig' => ($auth->checkPermission('tribe', 'msg_public', $_SESSION['player']->auth) || $isLeader) ? true : false,
     ));
 
     $targetFacts = array();
@@ -197,7 +196,7 @@ function tribe_getContent($playerID, $tribe) {
     $relationsAll = relation_getRelationsForTribe($tribeData['name']);
     if (sizeof($relationsAll['own'])) {
       foreach ($relationsAll['own'] as $name => $relationTribe) {
-        if ($relationTribe['relationType'] == RELATION_ALLY || $relationTribe['relationType'] == RELATION_WAR_ALLY) {
+        if (in_array($relationTribe['relationType'], Config::tribeRelationAlly)) {
           $relationAlly[] = $relationTribe;
         }
       }
