@@ -17,6 +17,7 @@
 <div id="export_button"><a class="export-link" href="export.php?modus=allCaves&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a></div>
 <div id="export-dialog"></div>
 
+{% if resource %}
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Rohstoffe</div>
   <div class="ua-box-content">
@@ -52,7 +53,9 @@
   </div>
 </div>
 <div style="clear: both;"></div>
+{% endif %}
 
+{% if unit %}
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Einheiten</div>
   <div class="ua-box-content">
@@ -78,7 +81,9 @@
   </div>
 </div>
 <div style="clear: both;"></div>
+{% endif %}
 
+{% if building %}
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Erweiterungen</div>
   <div class="ua-box-content">
@@ -104,7 +109,9 @@
   </div>
 </div>
 <div style="clear: both;"></div>
+{% endif %}
 
+{% if defenses %}
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Verteidigung</div>
   <div class="ua-box-content">
@@ -130,5 +137,6 @@
   </div>
 </div>
 <div style="clear: both;"></div>
+{% endif %}
 
 {% endblock %}

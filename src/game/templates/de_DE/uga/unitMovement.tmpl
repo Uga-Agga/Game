@@ -1,7 +1,8 @@
 {#
 /* unitMovement.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -44,12 +45,8 @@ function dur() {
   var FOODPERCAVE    = {{ movement_cost_constant }};
   
   /* Using torus edge condition */
-  var xCoord = {{ dim_x }} -
-               Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetXCoord.value ) -
-               {{ currentX }}) - {{ dim_x }});
-  var yCoord = {{ dim_y }} -
-               Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetYCoord.value ) -
-               {{ currentY }}) - {{ dim_y }});
+  var xCoord = {{ dim_x }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetXCoord.value ) - {{ currentX }}) - {{ dim_x }});
+  var yCoord = {{ dim_y }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetYCoord.value ) - {{ currentY }}) - {{ dim_y }});
 
   var movementID = parseInt(getMovementID());
   if (isNaN(movementID) || typeof(uamoves[movementID]) == 'undefined') return;
@@ -66,10 +63,8 @@ function dur() {
   }
   var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));  
   // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor
-  var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) *
-                 MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']);
-  
-  
+  var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) * MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']);
+
   var movementspeed =  maxSpeedFactor * uamoves[movementID]['speedfactor'];
   if (isNaN(maxSpeedFactor)){
     if (domcomp) document.getElementById("movementspeed").innerHTML = "-";
@@ -154,8 +149,8 @@ function getArmySize(){
     if (amount != "" && Number(amount) > 0)
       armySize += amount*units[i]['hitPoints'];
   }
-  if (domcomp) document.getElementById("armySize").innerHTML = armySize;
-  else document.getElementById("armySize").value = armySize;
+  if (domcomp) document.getElementById("armySize").innerHTML = "Größe Armee: "+armySize;
+  else document.getElementById("armySize").value = "Größe Armee: "+armySize;
 }
 {% endif %}
 
@@ -241,176 +236,164 @@ function hideWMTT() {
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
 
-<form id="unitMoving" action="main.php" method="post">
-  <div class="box">
-    <div class="box-header">Bewegung</div>
-    <div class="box-content success inner nohover">
-    <table class="table">
-      <tr >
-      <td>
-      <table class="table">
-      <tr>
-        <td colspan="4">&nbsp;</td>
-        <td colspan="10" align="center" style="width:305px;"><strong>Transportkapazität</strong></td>
-        <td>&nbsp;</td>
-      </tr>
-      <tr>
-        <td class="bg2 nohover" style="width:200px;"><strong>Einheit</strong></td>
-        <td class="bg2 nohover" style="width:75px;"><strong>Menge</strong></td>
-        <td class="bg2 nohover" style="width:50px;"><strong>Max</strong></td>
-        {% for item in resource %}<td  class="bg2 nohover" style="width:30px;" align="center"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></td>{% endfor %}
-        <td colspan="3">&nbsp;</td>
-      </tr>
-      {% for item in unit_list %}
+<div class="ua-box">
+  <div class="ua-box-header">Einheiten Bewegen</div>
+  <div class="ua-box-content">
+    <form class="ym-form" id="unitMoving" style="padding-left: 4px; padding-right: 4px;" method="post" action="main.php?modus={{ unit_movement_link }}">
+      <table>
+        <thead>
+        <tr>
+          <td colspan="3">&nbsp;</td>
+          <td colspan="10" class="center bold">Transportkapazität</td>
+        </tr>
+        <tr>
+          <td class="bold" style="width: 155px">Einheit</td>
+          <td class="bold" style="width: 55px">Menge</td>
+          <td class="bold" style="width: 55px">Max</td>
+          {% for item in resource %}<td><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></td>{% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in unit_list %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
           <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
-          <td><input id="unit_{{ item.warrior_id }}" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
+          <td><input id="unit_{{ item.warrior_id }}" style="width: 90%" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
           <td>{{ item.max_warrior_count }}</td>
           {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
         </tr>
-      {% endfor %}
-      <tr>
+        {% endfor %}
+        <tr>
         <td><label for="all">Alle Auswählen</label></td>
-        <td><input name="all" id="all" type="checkbox" value="check all" onclick="checkall();" /></td>
-        <td>&nbsp;</td>
-        {% for item in resource %}<td style="width:30px;" align="center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
-      </tr>
+          <td><input name="all" id="all" type="checkbox" value="check all" onclick="checkall();" /></td>
+          <td>&nbsp;</td>
+          {% for item in resource %}<td style="width:30px;" align="center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
+        </tr>
+        </tbody>
       </table>
-      </td>
-      </tr>
-      <tr><td>&nbsp;</td></tr>
-      <tr>
-      <td>
-      <table class="table">
-      <tr>
-      <td style="width:190px;">
-        <ul class="clean_list" style="padding-left: 3px;">
-          <li class="bold"><a href="{{ rules_path }}?modus=misc&amp;miscID=3" onclick="window.open(this.href); return false;"><strong>Ressourcen mitnehmen:</strong></a></li>
-          {% for item in resource %}
-          <li>
-            <div style="width: 22px; float: left;"><label for="rohstoff_{{ item.resource_id }}"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></label></div>
-            <div style="width: 75px; float: left;"><input id="rohstoff_{{ item.resource_id }}" name="rohstoff[{{ item.resource_id }}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
-            <div style="width: 86px; float: left;"><label for="rohstoff_{{ item.resource_id }}">({{ item.current_amount }})</label></div>
-            <div style="clear: both;"></div>
-          </li>
-          {% endfor %}
-          {% if artefact %}
-            <li class="bold">Ein Artefakt mitnehmen</li>
+      <div class="ym-grid" style="padding-top: 5px;">
+        <div class="ym-g33 ym-gl">
+          <ul class="movement left">
+            <li class="bold"><a class="new-window" href="{{ rules_path }}?modus=misc&amp;miscID=3">Ressourcen:</a></li>
+            {% for item in resource %}
             <li>
-            {% for item in artefact %}
-              <div><input type="radio" name="myartefacts" id="myartefacts{{ item.artefactID }}" value="{{ item.artefactID }}" /><label for="myartefacts{{ item.artefactID }}">{{ item.name }}</label></div>
-            {% endfor %}
-            <div><input name="myartefacts" id="myartefactsnone" type="radio" value="-1" checked="checked" /><label for="myartefactsnone">keines</label></div>
+              <div class="ym-grid">
+              <div class="ym-gl" style="width: 22px;"><label for="rohstoff_{{ item.resource_id }}"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></label></div>
+              <div class="ym-gl" style="width: 50px;"><input style="width: 50px;" id="rohstoff_{{ item.resource_id }}" name="rohstoff[{{ item.resource_id }}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
+              <div class="ym-gl left" style="width: 75px; padding-left: 3px;"><label for="rohstoff_{{ item.resource_id }}">({{ item.current_amount }})</label></div>
+              </div>
             </li>
-          {% endif %}
-        </ul>
-      </td>
-      <td style="width: 258px;">
-        <ul class="clean_list">
-          <li>
-            <ul class="clean_list" style="padding-left: 3px;">
-              <li><strong>Bewegungsart:</strong></li>
+            {% endfor %}
+            {% if artefact %}
+              <li style="height: 10px;">&nbsp;</li>
+              <li class="bold">Artefakt:</li>
               <li>
-                <div style="width: 25px; height: 22px; float: left;"><input type="radio" name="movementID" id="movementID0" value="0" checked="checked" /></div>
-                <div style="width: 227px; height: 22px; float: left;"><label for="movementID0"><em>Wähle eine Bewegung</em></label></div>
-                <div style="clear: both;"></div>
-              </li>
-              {% for item in selectable_movements %}
-              <li>
-                <div style="width: 25px; height: 22px; float: left;"><input type="radio" name="movementID" id="movementID{{ item.id }}" value="{{ item.id }}" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
-                <div style="width: 227px; height: 22px; float: left;"><label for="movementID{{ item.id }}">{{ item.description }}<script type="text/javascript">uamoves[{{ item.id }}] = {speedfactor:{{ item.speedfactor }}, foodfactor:{{ item.foodfactor }}};</script></label></div>
-                <div style="clear: both;"></div>
-              </li>
-              {% endfor %}
-            </ul>
-          </li>
-          
-          <li class="border_top" style="height: 10px;">&nbsp;</li>
-          <li>
-            <div style="width: 115px; height: 25px; float: left;">Bewegungsdauer:</div>
-            <div style="width: 130px; height: 25px; float: left;" id="duration">- Min</div>
-            <div style="clear: both;"></div>
-          </li>
-          <li>
-            <div style="width: 120px; height: 25px; float: left;">Nahrungsverbrauch:</div>
-            <div style="width: 125px; height: 25px; float: left;" id="food">- Nahrung</div>
-            <div style="clear: both;"></div>
-          </li>
-          <li>
-            <div style="width: 176px; height: 25px; float: left;">Bewegungsgeschwindigkeit:</div>
-            <div style="width: 69px; height: 25px; float: left;" id="movementspeed">0</div>
-            <div style="clear: both;"></div>
-          </li>
-        </ul>
-      </td>
-      <td style="width: 250px;">
-        <ul class="clean_list">
-          <li>
-            <ul class="clean_list" style="padding-left: 3px;">
-              {% if hero %}
-              <li class="bold">Held mitnehmen?</li>
-              <input type="checkbox" name="moveHero" value="true"><label>Helden mitnehmen</label><br /><br />
-              <li>
-                <div style="float:left;">Größe Armee: &nbsp;</div>
-                <div id="armySize">0</div> 
-                <div >Erfahrung Held: {{ hero.exp }} </div>
-                <div >Lebenspunkte Held: {{ hero.healPoints }} </div>
-              </li><br />
-              {% endif %}
-              <li><strong>Ziel:</strong></li>
-              <li>
-                <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">x:</label></div>
-                <div style="width: 167px; height: 25px; float: left;"><input name="targetXCoord" id="targetXCoord" value="{{ target_x_coord }}" type="text" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
-                <div style="clear: both;"></div>
-              </li>
-              <li>
-                <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">y:</label></div>
-                <div style="width: 167px; height: 25px; float: left;"><input name="targetYCoord" id="targetYCoord" value="{{ target_y_coord }}" type="text" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" /></div>
-                <div style="clear: both;"></div>
-              </li>
-              <li>
-                <div style="width: 80px; height: 25px; float: left;"><label for="targetXCoord">Höhlenname:</label></div>
-                <div style="width: 167px; height: 25px; float: left;"><input name="targetCaveName" id="targetCaveName" value="{{ target_cave_name }}" type="text" size="20" maxlength="50" /></div>
-                <div style="clear: both;"></div>
-              </li>
-              {% if bookmarks_cave %}
-              <li>
-                <div style="width: 80px; height: 25px; float: left;"><a href="?modus=CaveBookmarks&amp;task=Show">Höhlenliste:</a></div>
-                <div style="width: 167px; height: 25px; float: left;">
-                  <select name="targetCaveID" id="targetCaveID" onchange="disable_to(); return true;" style="width: 170px;">
-                    <option value="-1">Bitte wählen</option>
-                    {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
-                  </select>
+                {% for item in artefact %}
+                  <div class="ym-fbox-check">
+                    <input type="radio" name="myartefacts" value="{{ item.artefactID }}" id="myartefacts{{ item.artefactID }}"  />
+                    <label for="myartefacts{{ item.artefactID }}">{{ item.name }}</label>
+                  </div>
+                {% endfor %}
+                <div class="ym-fbox-check">
+                  <input type="radio" name="myartefacts" value="-1" id="myartefactsnone" checked="checked"  />
+                  <label for="myartefactsnone">keines</label>
                 </div>
-                <div style="clear: both;"></div>
               </li>
-              <li>
-                <script type="text/javascript">
-                  // <![CDATA[
-                  {% for item in bookmarks_cave %}caveBookmarks[{{ item.caveID }}] = [{{ item.xCoord }},{{ item.yCoord }},"{{ item.raw_name }}"];{% endfor %}
-                  // ]]>
-                </script>
-              </li>
-              {% endif %}
-            </ul>
-          </li>
-        </ul>
-        <div style="float: left;">
-          {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
-          <input type="submit" value="und los geht's. UGH?" />
+            {% endif %}
+          </ul>
         </div>
-      </td>
-      </tr>
-      </table>
-      </td>
-    </tr>
-  </table>
-  <br />
+        <div class="ym-g33 ym-gl">
+          <ul class="clean_list">
+            <li>
+              <ul class="movement">
+                <li><strong>Bewegungsart:</strong></li>
+                <li>
+                  <div class="ym-fbox-check">
+                    <input type="radio" name="movementID" value="0" id="movementID0" checked="checked" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+                    <label for="movementID0"><em>Wähle eine Bewegung</em></label>
+                  </div>
+                </li>
+                {% for item in selectable_movements %}
+                  <li>
+                    <div class="ym-fbox-check">
+                      <input type="radio" name="movementID" value="{{ item.id }}" id="movementID{{ item.id }}" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+                      <label for="movementID{{ item.id }}">{{ item.description }}<script type="text/javascript">uamoves[{{ item.id }}] = {speedfactor:{{ item.speedfactor }}, foodfactor:{{ item.foodfactor }}};</script></label>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+            <li class="border_top" style="height: 10px;">&nbsp;</li>
+            <li>Bewegungsdauer:<br /><div style="padding-left: 5px;" id="duration">- Min</div></li>
+            <li>Nahrungsverbrauch:<br /><div style="padding-left: 5px;" id="food">- Nahrung</div></li>
+            <li>Bewegungsgeschwindigkeit:<br /><div style="padding-left: 5px;" id="movementspeed">0</div>
+            </li>
+          </ul>
+        </div>
+        <div class="ym-g33 ym-gl">
+          <ul>
+            {% if hero %}
+              <li class="bold">Held</li>
+              <li>
+                <div class="ym-fbox-check">
+                  <input type="checkbox" name="moveHero" id="moveHero" value="true" />
+                  <label for="moveHero">mitnehmen?</label>
+                </div>
+              </li>
+              <li><div id="armySize">Größe Armee: 0</div></li>
+              <li>Erfahrung Held: {{ hero.exp }}</li>
+              <li>Lebenspunkte Held: {{ hero.healPoints }}</li>
+            {% endif %}
+            <li style="height: 10px;">&nbsp;</li>
+            <li class="bold">Ziel</li>
+            <li>
+              <div class="ym-fbox-text">
+                <label for="targetXCoord">x:</label>
+                <input type="text" name="targetXCoord" id="targetXCoord" value="{{ target_x_coord }}" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+              </div>
+            </li>
+            <li>
+              <div class="ym-fbox-text">
+                <label for="targetYCoord">y:</label>
+                <input type="text" name="targetYCoord" id="targetYCoord" value="{{ target_y_coord }}" size="4" maxlength="4" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+              </div>
+            </li>
+            <li>
+              <div class="ym-fbox-text">
+                <label for="targetCaveName">Höhlenname:</label>
+                <input type="text" name="targetCaveName" id="targetCaveName" value="{{ target_cave_name }}" size="4" maxlength="50" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+              </div>
+            </li>
+            {% if bookmarks_cave %}
+            <li>
+              <div class="ym-fbox-select">
+                <label for="bookmarks_cave"><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Show">Höhlenliste:</a></label>
+                <select name="bookmarks_cave" id="bookmarks_cave" size="1" onchange="disable_to(); return true;">
+                  <option value="-1" selected="selected">Bitte wählen</option>
+                  {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
+                </select>
+              </div>
+            </li>
+            <li>
+              <script type="text/javascript">
+              // <![CDATA[
+                {% for item in bookmarks_cave %}caveBookmarks[{{ item.caveID }}] = [{{ item.xCoord }},{{ item.yCoord }},"{{ item.raw_name }}"];{% endfor %}
+              // ]]>
+              </script>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+    </div>
+
+    <div class="ym-fbox-button right">
+      {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
+      <input type="submit" class="ym-button" value="und los geht's. UGH?" id="submit" name="submit"/>
+    </div>
+  </form>
   </div>
   </div>
-</form>
-<br />
+
 <div id="export-dialog"></div>
 {% if ownMovement %}
 <div class="box">
@@ -487,8 +470,6 @@ function hideWMTT() {
   </div>
 </div>
 {% endif %}
-
-<br />
 
 {% if oppMovement %}
 <div class="box">
