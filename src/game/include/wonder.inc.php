@@ -2,6 +2,7 @@
 /*
  * wonder.inc.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -214,8 +215,13 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
   global $db;
   
   // check if wonder exists and is TribeWonder
-  $wonder = $GLOBALS['wonderTypeList'][$wonderID];
-  if (!$wonder || !$wonder->isTribeWonder) {
+  if (isset($GLOBALS['wonderTypeList'][$wonderID])) {
+    $wonder = $GLOBALS['wonderTypeList'][$wonderID];
+  } else {
+    return -35;
+  }
+  
+  if (!$wonder->isTribeWonder) {
     return -35;
   }
   

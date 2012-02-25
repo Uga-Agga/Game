@@ -323,9 +323,10 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1, $fromTribe
   }
 
   $set     = array();
-  $where   = array("WHERE caveID = {$caveID} ");
   if ($fromTribeStorage) {
     $where = array("WHERE tag LIKE '" . $_SESSION['player']->tribe."'");
+  } else {
+    $where   = array("WHERE caveID = {$caveID} ");
   }
 
   if (isset($item->maxLevel)) {
@@ -451,9 +452,10 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1, $fromTribe
   }
 
   // generate SQL
-  $table = CAVE_TABLE;
   if ($fromTribeStorage) {
     $table = TRIBE_TABLE;
+  } else {
+    $table = CAVE_TABLE;
   }
   if (sizeof($set)) {
     $set = implode(', ', $set);
@@ -522,10 +524,12 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1, $fro
   }
 
   // generate SQL
-  $table = CAVE_TABLE;
-  $where = " WHERE caveID = " . $caveID;
   if ($fromTribeStorage) {
     $where = " WHERE tag = '" . $_SESSION['player']->tribe."'"; 
+    $table = TRIBE_TABLE;
+  } else {
+    $where = " WHERE caveID = " . $caveID;
+    $table = CAVE_TABLE;
   }
   if (sizeof($setBack)) {
     $setBack = implode(", ", $setBack);

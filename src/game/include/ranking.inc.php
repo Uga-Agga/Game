@@ -2,6 +2,7 @@
 /*
  * ranking.inc.php -
  * Copyright (c) 2004  OGP-Team
+ * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -130,12 +131,13 @@ function rankingTribe_checkOffset($offset) {
 function ranking_getRowsByOffset($caveID, $offset) {
   global $db;
 
+  $offset = ($offset > 0) ? $offset -1 : 0;
   $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, p.tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
                        FROM ". RANKING_TABLE ." r
                          LEFT JOIN ". PLAYER_TABLE ." p ON r.playerID = p.playerID
                          LEFT JOIN ". TRIBE_TABLE ." t ON p.tribe = t.tag
                        ORDER BY rank ASC LIMIT :offset, :rankingRows");
-  $sql->bindValue('offset', ($offset - 1), PDO::PARAM_INT);
+  $sql->bindValue('offset', ($offset), PDO::PARAM_INT);
   $sql->bindValue('rankingRows', RANKING_ROWS, PDO::PARAM_INT);
 
   if (!$sql->execute()) {

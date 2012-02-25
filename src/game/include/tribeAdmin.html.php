@@ -2,6 +2,7 @@
 /*
  * tribeAdmin.html.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -268,6 +269,11 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
       }
     break;
   
+/****************************************************************************************************
+*
+* Stammeswunder?
+*
+****************************************************************************************************/
   case 'tribeWonder':
       $wonderID = Request::getVar('wonderID', -1);
       $tribeName = Request::getVar('TribeName', '');
