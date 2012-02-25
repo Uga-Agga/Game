@@ -79,6 +79,7 @@ class Wonder {
   var $chance;
   var $nodocumentation;
   var $groupID;
+  var $isTribeWonder;
   
   var $impactList;
 
@@ -114,6 +115,7 @@ class Wonder {
     $this-&gt;chance          = "";
     $this-&gt;nodocumentation = 0;
     $this-&gt;groupID         = 0;
+    $this-&gt;isTribeWonder   = 0;
     
     $this-&gt;impactList    = array();
 
@@ -172,6 +174,7 @@ function init_Wonders(){
   $tmp-&gt;chance          = "<xsl:apply-templates select="chance"/>";
   $tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   $tmp-&gt;groupID         = <xsl:apply-templates select="@groupID"/>;
+  $tmp-&gt;isTribeWonder   = <xsl:apply-templates select="@isTribeWonder"/>;
   
   $tmp-&gt;impactList = array(<xsl:apply-templates select="impacts/impact"/>);
 

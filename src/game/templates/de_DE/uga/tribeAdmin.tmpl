@@ -252,6 +252,100 @@
 </div>
 {% endif %}
 
+{% if tribeStorage %}
+<div class="ua-box small">
+  <div class="ua-box-header">Stammeslager</div>
+  <div class="ua-box-content">
+    <table>
+      <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th>Rohstoff</th>
+        <th>Guthaben</th>
+      </tr>
+      </thead>
+      {% for item in tribeStorage %}
+      <tr>
+        <td><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.value }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <p>Einzahlungen:</p>
+    <table>
+      <thead>
+      <tr>
+        <th>Spieler</th>
+        {% for item in tribeStorage %}
+        <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
+        {% endfor %}
+      </tr>
+      </thead>
+      {% for donation in donations %}
+      <tr>
+        {% for item in donation %}
+        <td>{{ item }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<div class="ua-box small">
+  <div class="ua-box-header">Stammeswunder</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% if tribeWonders %}
+          {% for item in tribeWonders %}
+            {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }} object-row">
+              <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+              <td>
+                <dl>
+                  <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                  <dd>{% include "boxCost.tmpl" %}</dd>
+                </dl>
+              </td>
+              <td class="right" style="vertical-align:center;">
+                {% if item.build_link %}
+                <form action="main.php?modus={{ tribe_admin_link }}" method="post">
+                  <div id="wonder">
+                    <input type="hidden" name="action" value="tribeWonder" />
+                    <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
+                    <input type="hidden" name="caveID" value="{{ cave_id }}" />
+                    <ul>
+                      <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
+                      <li style="float: right; text-align: left;">
+                        <ul class="clean_list" style="width: 300px;">
+                          <li>Name des Stammes: <input type="text" name="TribeName" size="10" maxlength="32" /></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+                </form>
+                {% else %}
+                  <span style="text-align: right;"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
+                {% endif %}
+              </td>
+            </tr>
+            <tr class="detail-row" style="display: none">
+              <td class="object-details" colspan="3">
+              </td>
+            </tr>  
+          {% endfor %}
+        {% else %}
+          <tr class="bg1"><td class="center">Dein Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</td></tr>
+        {% endif %}
+        {% set bgID = 0 %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <!--
     {% if junior_leader_select and is_leader %}
     <div class="notice nohover" style="width: 270px; float: right; margin-right: 5px; margin-top: 5px;">

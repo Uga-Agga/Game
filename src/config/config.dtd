@@ -87,6 +87,7 @@
   offensive (0 | 1) "0"
   target (same | own | other | all) #REQUIRED
   hidden (0 | 1) "0"
+  isTribeWonder (0 | 1) "0"
   groupID CDATA "0"
 >
 <!-- trades -->

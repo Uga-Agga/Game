@@ -32,6 +32,7 @@ init_Wonders();
 
 function wonder_getActiveWondersForCaveID($caveID) {
   global $db;
+  
   $sql = $db->prepare("SELECT * 
                        FROM ". EVENT_WONDER_END_TABLE . "
                        WHERE caveID = :caveID 
@@ -52,10 +53,10 @@ function wonder_getActiveWondersForCaveID($caveID) {
 }
 
 function wonder_recalc($caveID) {
-  global $db, $effectTypeList;
+  global $db;
 
   $fields = array();
-  foreach($effectTypeList AS $effectID => $data) {
+  foreach($GLOBALS['effectTypeList'] AS $effectID => $data) {
     array_push($fields,
          "SUM(".$data->dbFieldName.") AS ".$data->dbFieldName);
   }
@@ -78,7 +79,7 @@ function wonder_recalc($caveID) {
   }
 
   $effects = array();
-  foreach($effectTypeList AS $effectID => $data) {
+  foreach($GLOBALS['effectTypeList'] AS $effectID => $data) {
     $effects[$effectID] = $row[$data->dbFieldName];
   }
 
@@ -87,17 +88,9 @@ function wonder_recalc($caveID) {
 
 function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $caveData) {
 
-  global
-    $defenseSystemTypeList,
-    $unitTypeList,
-    $buildingTypeList,
-    $scienceTypeList,
-    $resourceTypeList,
-    $wonderTypeList,
-    $WONDERRESISTANCE,
-    $db;
+  global $db;
 
-  if ($wonderTypeList[$wonderID]->target == "same") {
+  if ($GLOBALS['wonderTypeList'][$wonderID]->target == "same") {
     $targetID = $caveID;
     $sql = $db->prepare("SELECT * FROM ". CAVE_TABLE ." 
                          WHERE caveID = :targetID");
@@ -127,10 +120,10 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
 
   // check, if cave allowed
 
-  if ($wonderTypeList[$wonderID]->target == "own") {
+  if ($GLOBALS['wonderTypeList'][$wonderID]->target == "own") {
     $allowed = $playerID == $targetData['playerID'];
   }
-  else if ($wonderTypeList[$wonderID]->target == "other") {
+  else if ($GLOBALS['wonderTypeList'][$wonderID]->target == "other") {
     $allowed = $playerID != $targetData['playerID'];
   }
   else {      // $wonderTypeList[$wonderID]->target == "all"  or == "same"
@@ -141,10 +134,10 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   }
 
   // take production costs from cave
-  if (!processProductionCost($wonderTypeList[$wonderID], $caveID, $caveData))
+  if (!processProductionCost($GLOBALS['wonderTypeList'][$wonderID], $caveID, $caveData))
     return 0;
   // calculate the chance and evaluate into $chance
-  if ($chance_formula = $wonderTypeList[$wonderID]->chance) {
+  if ($chance_formula = $GLOBALS['wonderTypeList'][$wonderID]->chance) {
     $chance_eval_formula = formula_parseToPHP($chance_formula, '$caveData');
 
     $chance_eval_formula="\$chance=$chance_eval_formula;";
@@ -154,8 +147,8 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   // if this wonder is offensive
   // calculate the wonder resistance and evaluate into $resistance
   // TODO: Wertebereich der Resistenz ist derzeit 0 - 1, also je höher desto resistenter
-  if ($wonderTypeList[$wonderID]->offensiveness == "offensive"){
-    $resistance_eval_formula = formula_parseToPHP($WONDERRESISTANCE, '$targetData');
+  if ($GLOBALS['wonderTypeList'][$wonderID]->offensiveness == "offensive"){
+    $resistance_eval_formula = formula_parseToPHP(GameConstants::WONDER_RESISTANCE, '$targetData');
     $resistance_eval_formula = "\$resistance=$resistance_eval_formula;";
     eval($resistance_eval_formula);
   } else {
@@ -173,9 +166,9 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
   // now calculate the delayDelta depending on the first impact's delay
   $delayDelta =
-    $wonderTypeList[$wonderID]->impactList[0]['delay'] * $delayRandFactor;
+    $GLOBALS['wonderTypeList'][$wonderID]->impactList[0]['delay'] * $delayRandFactor;
 
-  foreach($wonderTypeList[$wonderID]->impactList AS $impactID => $impact) {
+  foreach($GLOBALS['wonderTypeList'][$wonderID]->impactList AS $impactID => $impact) {
     $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
 
     $now = time();
@@ -193,7 +186,7 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
     
     if (!$sql->execute()) {
       //give production costs back
-      processProductionCostSetBack($wonderTypeList[$wonderID], $caveID, $caveData);
+      processProductionCostSetBack($GLOBALS['wonderTypeList'][$wonderID], $caveID, $caveData);
       return -1;
     }
   }
@@ -202,7 +195,7 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   $messageClass = new Messages;
   $sourceMessage =
     "Sie haben auf die H&ouml;hle in $coordX/$coordY ein Wunder ".
-    $wonderTypeList[$wonderID]->name." erwirkt.";
+    $GLOBALS['wonderTypeList'][$wonderID]->name." erwirkt.";
   $targetMessage =
     "Der Besitzer der H&ouml;hle in {$caveData['xCoord']}/{$caveData['yCoord']} ".
     "hat auf Ihre H&ouml;hle in $coordX/$coordY ein Wunder gewirkt.";
@@ -215,6 +208,95 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
            $targetMessage);
 
   return 1;
+}
+
+function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tribe) {
+  global $db;
+  
+  // check if wonder exists and is TribeWonder
+  $wonder = $GLOBALS['wonderTypeList'][$wonderID];
+  if (!$wonder || !$wonder->isTribeWonder) {
+    return -35;
+  }
+  
+  // check if player is leader
+  if (!tribe_isLeader($_SESSION['player']->playerID, $caster_tribe)) {
+    return -34;
+  }
+  
+  // take wonder Costs from TribeStorage
+  if (!processProductionCost($wonder, 0, NULL, 1, true)) {
+    return -35;
+  }
+  
+  
+  // does the wonder fail?
+  if (((double)rand() / (double)getRandMax()) > $wonder->chance) {
+    return 6;          // wonder did fail
+  }
+
+  // schedule the wonder's impacts
+
+  // create a random factor between -0.3 and +0.3
+  $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
+  // now calculate the delayDelta depending on the first impact's delay
+  $delayDelta =
+    $wonder->impactList[0]['delay'] * $delayRandFactor;
+  
+  // get targets
+  $targets = tribe_getTribeWonderTargets($target_tribe);
+  if (!$targets || sizeof($targets) == 0) {
+    return -35;
+  }
+  
+  $now = time();
+  // loop over targets
+  foreach ($targets as $target) {
+    // loop over impacts
+    foreach($wonder->impactList as $impactID =>$impact) {
+      $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
+      
+      $sql = $db->prepare("INSERT INTO ". EVENT_WONDER_TABLE ." (casterID, sourceID, targetID, 
+                       wonderID, impactID, start, end) 
+                       VALUES (:playerID, :caveID, :targetID, :wonderID, :impactID, :start, :end)");
+      $sql->bindValue('playerID', 0, PDO::PARAM_INT); // playerID 0, for not receiving lots of wonder-end-messages
+      $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+      $sql->bindValue('targetID', $target['caveID'], PDO::PARAM_INT);
+      $sql->bindValue('wonderID', $wonderID, PDO::PARAM_INT);
+      $sql->bindValue('impactID', $impactID, PDO::PARAM_INT);
+      $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
+      $sql->bindValue('end', time_toDatetime($now + $delay), PDO::PARAM_STR);
+      
+      $sql->execute();
+    } // end foreach impactList
+  } // end foreach target
+  
+  
+  // send caster messages
+  $messageClass = new Messages;
+  $sourceMessage = "Sie haben auf den Stamm \"$target_tribe\" ein Stammeswunder ".
+    $wonder->name." erwirkt.";
+  $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9,
+           "Stammeswunder erwirkt auf \"$target_tribe\"",
+           $sourceMessage);
+  
+  // send target messages
+  $targetPlayersArray = array();
+  foreach ($targets as $target) {
+    if (!array_key_exists($target['playerID'], $targetPlayersArray)) {
+      $targetPlayersArray[$target['playerID']] = $target;
+    }
+  }
+  
+  foreach($targetPlayersArray as $target) {
+    $targetMessage = "Der Stamm \"$caster_tribe\" hat ein Stammeswunder auf deine Höhlen gewirkt";
+    $messageClass->sendSystemMessage($target['playerID'], 9,
+             "Wunder!",
+             $targetMessage);
+  }
+  
+  return -27;
+  
 }
 
 ?>

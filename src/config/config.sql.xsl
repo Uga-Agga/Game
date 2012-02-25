@@ -135,6 +135,26 @@ ALTER TABLE `StatisticUnit`
 <xsl:sort select="@id"/>
 </xsl:apply-templates>;
 
+#Tribe
+#resources
+
+ALTER TABLE `Tribe`
+<xsl:apply-templates select="//Resource">
+<xsl:sort select="name()"/>
+<xsl:sort select="@id"/>
+</xsl:apply-templates>;
+
+#TribeStorageDonations
+#resources
+#Tribe
+#resources
+
+ALTER TABLE `TribeStorageDonations`
+<xsl:apply-templates select="//Resource">
+<xsl:sort select="name()"/>
+<xsl:sort select="@id"/>
+</xsl:apply-templates>;
+
 </xsl:template>
 
 <xsl:template match="Resource">

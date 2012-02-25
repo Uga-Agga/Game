@@ -64,6 +64,11 @@ function wonder_getWonderContent($caveID, &$details) {
   // Show the wonder table
   $wonders = $wondersUnqualified = array();
   foreach ($GLOBALS['wonderTypeList'] as $id => $wonder) {
+    // exclude tribeWonders
+    if ($wonder->isTribeWonder) {
+      continue;
+    }
+    
     $result = rules_checkDependencies($wonder, $details);
 
 /****************************************************************************************************

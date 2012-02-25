@@ -315,7 +315,7 @@ function lib_shorten_html($string, $length){
   return $string;
 }
 
-function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
+function processProductionCost ($item, $caveID, $cave, $quantity = 1, $fromTribeStorage = false) {
   global $db;
 
   if (isset($item->maxLevel)) {
@@ -324,6 +324,9 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
 
   $set     = array();
   $where   = array("WHERE caveID = {$caveID} ");
+  if ($fromTribeStorage) {
+    $where = array("WHERE tag LIKE '" . $_SESSION['player']->tribe."'");
+  }
 
   if (isset($item->maxLevel)) {
     array_push($where, "{$item->dbFieldName} < $maxLevel");
@@ -448,11 +451,15 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
   }
 
   // generate SQL
+  $table = CAVE_TABLE;
+  if ($fromTribeStorage) {
+    $table = TRIBE_TABLE;
+  }
   if (sizeof($set)) {
     $set = implode(', ', $set);
     $where = implode(" AND ", $where);
-
-    $sql = "UPDATE ". CAVE_TABLE ." SET {$set} {$where}";
+    
+    $sql = "UPDATE ". $table ." SET {$set} {$where}";
     if (!$db->exec($sql)) {
       return false;
     }
@@ -461,7 +468,7 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1) {
   return true;
 }
 
-function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
+function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1, $fromTribeStorage = false) {
   global $db;
 
   $setBack = array();
@@ -515,9 +522,14 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
   }
 
   // generate SQL
+  $table = CAVE_TABLE;
+  $where = " WHERE caveID = " . $caveID;
+  if ($fromTribeStorage) {
+    $where = " WHERE tag = '" . $_SESSION['player']->tribe."'"; 
+  }
   if (sizeof($setBack)) {
     $setBack = implode(", ", $setBack);
-    $sql = "UPDATE ". CAVE_TABLE ." SET {$setBack} WHERE caveID = {$caveID}";
+    $sql = "UPDATE ". $table ." SET {$setBack} " . $where;
     if (!$db->exec($sql)) {
       return false;
     }
@@ -528,7 +540,7 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1) {
 
 // parse costs
 function parseCost($building, &$details) {
-
+  
   $ret = array();
   $notenough = false;
   if (isset($building->resourceProductionCost)) {
@@ -643,7 +655,7 @@ function checkAvatar($url) {
   // curl mit Url initialisieren
   $ch = curl_init($url);
 
-  // optionen setzen: nur header zurückliefern
+  // optionen setzen: nur header zurï¿½ckliefern
   curl_setopt_array($ch, array(
     CURLOPT_HEADER         => true,
     CURLOPT_NOBODY         => true,
@@ -653,12 +665,12 @@ function checkAvatar($url) {
 
   curl_exec($ch);
 
-  // prüfe ob der Content-Type einer der geforderten ist
+  // prï¿½fe ob der Content-Type einer der geforderten ist
   if (eregi('^('. implode('|', $contentTypes). ')', curl_getinfo($ch, CURLINFO_CONTENT_TYPE))) {
     // bild infos holen
     $imageInfo = @getimagesize($url);
 
-    // Bild zu groß?
+    // Bild zu groï¿½?
     if ($imageInfo[0] > MAX_AVATAR_WIDTH || $imageInfo[1] > MAX_AVATAR_HEIGHT) {
       return false;
     }
