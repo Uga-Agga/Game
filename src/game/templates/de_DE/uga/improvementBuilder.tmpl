@@ -51,7 +51,7 @@
                 </dl>
               </td>
               <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
-              <td class="ua-td-level">Stufe: {{ item.currentlevel }}</td>
+              <td class="ua-td-level">Stufe: ({{ item.currentlevel }}/{{ item.maxlevel }})</td>
               <td class="ua-td-build">
                 {% if item.build_link %}
                   <a href="main.php?modus={{ improvement_link }}&amp;action=build&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Ausbauen" title="Ausbauen" /></a>
