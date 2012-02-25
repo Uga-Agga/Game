@@ -18,9 +18,10 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 
   // messages
   $messageText = array(
-    -35 => array('type' => 'error', 'info' => _('Beim Ausführen des Stammeswunders ist ein Problem aufgetreten!')),
-    -34 => array('type' => 'error', 'info' => _('Nur der Stammesführer darf das Stammeswunder wundern!')),
-    -33 => array('type' => 'error', 'info' => _('Bitte Stammesnamen eingeben!')),
+    -36 => array('type' => 'error', 'message' => _('Stamm nicht gefunden! Tippfehler?')),
+    -35 => array('type' => 'error', 'message' => _('Beim Ausführen des Stammeswunders ist ein Problem aufgetreten!')),
+    -34 => array('type' => 'info', 'message' => _('Nur der Stammesführer darf das Stammeswunder wundern!')),
+    -33 => array('type' => 'error', 'message' => _('Bitte Stammesnamen eingeben!')),
     -32 => array('type' => 'error', 'message' => _('Die Rechte konnten nicht angewandt werden.')),
     -31 => array('type' => 'error', 'message' => _('Fehler in den Formulardaten!')),
     -30 => array('type' => 'error', 'message' => _('Du hast keine Berechtigung dies zu tun!')),

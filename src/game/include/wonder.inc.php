@@ -221,6 +221,10 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
     return -35;
   }
   
+  if (!tribe_getTribeByTag($target_tribe)) {
+    return -36;
+  }
+  
   if (!$wonder->isTribeWonder) {
     return -35;
   }
