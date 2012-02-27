@@ -51,7 +51,7 @@ function leaderChoose_processChoiceUpdate($voterID, $playerID, $tribe) {
 
 function leaderChoose_deleteChoiceForPlayer($voterID) {
   global $db;
-  
+
   $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ."
                        WHERE voterID = :voterID ");
   $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
@@ -245,7 +245,7 @@ function tribe_isTopTribe($tag) {
 
 function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
-  if (!$FORCE) { 
+  if (!$FORCE) {
     if (strcasecmp($tag, $relationData['tag']) == 0) {
       return -7;
     }
