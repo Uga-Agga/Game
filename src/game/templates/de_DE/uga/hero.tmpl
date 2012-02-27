@@ -105,7 +105,8 @@
   </div>
 </div>
 
-{% if hero.isAlive>0 and showImmolation %}
+{% if hero.isAlive>0 %}
+  {% if showImmolation %}
   <div class="box small">
     <div class="box-header">Rohstoffe opfern</div>
     <div class="boxcontent smallinner success inner">
@@ -136,7 +137,8 @@
       </table>
     </div>
   </div>
-
+  {% endif %}
+  
   {% if skills %}
   <div class="notice small" style="width: 660px;">
    <p style="text-align: left; margin-left: 10px; font-weight: bold;">Fähigkeiten ausbilden</p>

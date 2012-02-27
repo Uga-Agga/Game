@@ -17,16 +17,20 @@ define('TRIBE_ACTION_JOIN',          1);
 define('TRIBE_ACTION_CREATE',        2);
 define('TRIBE_ACTION_LEAVE',         3);
 define('TRIBE_ACTION_MESSAGE',       4);
+define('TRIBE_ACTION_DONATE',        5);
 
-function tribe_getContent($playerID, $tribe) {
+function tribe_getContent($playerID, $tribe, $caveID) {
   global $template;
 
   // messages
   $messageText = array (
+   
+   -20 => array('type' => 'error', 'message' => _('Fehler beim Eintragen ins Stammeslager!')),
+   -19 => array('type' => 'info', 'message' => _('Bitte Daten in das Formular eintragen.')),
    -18 => array('type' => 'error', 'message' => _('Du keine Berechtigung eine Nachricht zu schreiben.')),
    -17 => array('type' => 'error', 'message' => _('Du mußt eine Nachricht schreiben um sie versenden zu können.')),
    -16 => array('type' => 'error', 'message' => _('Du bist zur Zeit in keinem Stamm.')),
-   -15 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen wärend du in einem Stamm bist.')),
+   -15 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen während du in einem Stamm bist.')),
    -14 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
    -13 => array('type' => 'error', 'message' => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.')),
    -12 => array('type' => 'error', 'message' => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.')),
@@ -46,7 +50,8 @@ function tribe_getContent($playerID, $tribe) {
      3 => array('type' => 'success', 'message' => _('Der Stamm wurde erfolgreich angelegt.')),
      4 => array('type' => 'success', 'message' => _('Sie waren das letzte Mitglied, der Stamm wurde aufgelöst')),
      5 => array('type' => 'success', 'message' => _('Die Nachricht wurde eingetragen')),
-    10 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!'))
+    10 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!')), 
+    11 => array('type' => 'success', 'message' => _('Einzahlung in das Stammeslager erfolgreich durchgeführt!'))
   );
 
   // init auth
@@ -108,6 +113,11 @@ function tribe_getContent($playerID, $tribe) {
         $messageID = -18;
       }
     break;
+    
+    case TRIBE_ACTION_DONATE:
+      $value = Request::getVar('value', array('' => ''));
+      $messageID = tribe_donateResources($value, $caveID, $ownCaves);
+    break;
   }
 
   if ($tribeAction == TRIBE_ACTION_JOIN  || $tribeAction == TRIBE_ACTION_LEAVE || $tribeAction == TRIBE_ACTION_CREATE) {
@@ -135,7 +145,7 @@ function tribe_getContent($playerID, $tribe) {
 
     // open template
     $template->setFile('tribeMember.tmpl');
-    $template->setShowRresource(false);
+    $template->setShowRresource(true);
 
     if ($tribeData['juniorLeaderID']) {
       $juniorAdmin = new Player(getPlayerByID($tribeData['juniorLeaderID']));
@@ -231,7 +241,22 @@ function tribe_getContent($playerID, $tribe) {
     'tribe_action_join'    => TRIBE_ACTION_JOIN,
     'tribe_action_leave'   => TRIBE_ACTION_LEAVE,
     'tribe_action_message' => TRIBE_ACTION_MESSAGE,
+    'tribe_action_donate'  => TRIBE_ACTION_DONATE
   ));
+  
+  // Stammeslager
+  $lastDonation = tribe_getLastDonationForTribeStorage($playerID);
+  if ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) {
+    $template->addVars(array(
+        'showTribeStorage' => true, 
+        'resourceTypeList' => $GLOBALS['resourceTypeList']
+    ));
+  } else {
+    $template->addVar("donationInterval", TRIBE_STORAGE_DONATION_INTERVAL);
+    if ($lastDonation) {
+      $template->addVar("lastDonation", date("Y-m-d H:i:s",$lastDonation));
+    }
+  }
 }
 
 ?>

@@ -1070,19 +1070,6 @@ CREATE TABLE IF NOT EXISTS `Tribe` (
   KEY `leaderID` (`leaderID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `TribeStorageDonations`
---
-
-CREATE TABLE IF NOT EXISTS `TribeStorageDonations` (
-  `donationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `playerID` int(11) NOT NULL,
-  `tribe` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `timestamp`timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`donationID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1121,3 +1108,17 @@ CREATE TABLE IF NOT EXISTS `TribeMessage` (
   KEY `tag` (`tag`),
   KEY `messageTime` (`messageTime`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `TribeStorageDonations`
+--
+
+CREATE TABLE IF NOT EXISTS `TribeStorageDonations` (
+  `donationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `playerID` int(11) NOT NULL,
+  `tribe` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`donationID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

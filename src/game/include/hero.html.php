@@ -361,7 +361,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     // check if send button is disabled
     foreach ($skills as $skillID => $skill) {
       if ($hero[$skill['dbFieldName']] || 
-          $skill['tpCost'] > $hero['tpFree'] || 
+          $skill['costTP'] > $hero['tpFree'] || 
           $skill['requiredLevel'] > $hero['lvl']) {
         $skills[$skillID]['disableButton'] = true;
       }

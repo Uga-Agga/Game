@@ -136,6 +136,9 @@ define("MAX_AVATAR_HEIGHT", 200);
 /* ***** HERO ***** ********************************************************* */
 define("HERO_DB_FIELD", "heroism");
 
+/* ***** TRIBE_STORAGE_DONATION ***** *************************************** */
+define("TRIBE_STORAGE_DONATION_INTERVAL", 24);
+
 class Config {
   const RUN_TIMER           = 0;
 

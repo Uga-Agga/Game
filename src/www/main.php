@@ -327,7 +327,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case TRIBE:
-    tribe_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
+    tribe_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $caveID);
     break;
 
   case TRIBE_ADMIN:

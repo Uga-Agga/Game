@@ -27,7 +27,7 @@
 #define DB_TABLE_CAVE_TAKEOVER "Cave_takeover"
 #define DB_TABLE_PLAYER  "Player"
 #define DB_TABLE_RELATION "Relation"
-#define DB_TABLE_HERO "Hero_new"
+#define DB_TABLE_HERO "Hero"
 
 #define ID_SCIENCE_UGA 22
 #define ID_SCIENCE_AGGA 23

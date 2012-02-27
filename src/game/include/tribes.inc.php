@@ -2141,7 +2141,90 @@ function tribe_getTribeWonderTargets($tag) {
   }
   
   return $sql->fetchAll(PDO::FETCH_ASSOC);
+}
 
+/*
+ * get Last Donation for tribe storage
+ */
+function tribe_getLastDonationForTribeStorage ($playerID) {
+  global $db; 
+  
+  $sql = $db->prepare("SELECT MAX(timestamp) as timestamp FROM " . TRIBE_STORAGE_DONATIONS_TABLE . "
+                        WHERE playerID = :playerID");
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+  
+  $sql->execute();
+  $ret = $sql->fetch(PDO::FETCH_ASSOC);
+  if (empty($ret)) {
+    return NULL;
+  } else {
+    return $ret['timestamp'];
+  }
+}
+
+function tribe_donateResources($value_array, $caveID, &$ownCaves) {
+  global $db;
+  
+  $playerID = $_SESSION['player']->playerID;
+  
+  if (!sizeof($value_array)) {
+    return -19;
+  }
+  
+  $fields_cave = array();
+  $fields_storage = array();
+  $fields_donations = array();
+  $fields_resources = array();
+  $where = array();
+  
+  foreach ($value_array as $resourceID => $value) {
+    if ($value) {
+      if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
+        $resource = $GLOBALS['resourceTypeList'][$resourceID];
+        
+        $fields_cave[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " - " . $value;
+        $fields_storage[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " + " . $value;
+        $fields_resources[] = $resource->dbFieldName;
+        $fields_donations[] = $value;
+        $where[] = " AND " . $resource->dbFieldName . " >= " . $value;
+      }
+    }
+  }
+  
+  $sql = $db->prepare("INSERT INTO " . TRIBE_STORAGE_DONATIONS_TABLE . 
+                        "(playerID, tribe, timestamp, ".implode (", ", $fields_resources) . ")
+                        VALUES (:playerID, :tribe, :timestamp, " . implode(", ", $fields_donations). ")");
+  $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
+  $sql->bindValue('timestamp', time(), PDO::PARAM_INT);
+  
+  if (!$sql->execute()) {
+    return -20;
+  }
+  
+  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . " SET
+                        " . implode(", ", $fields_storage) . "
+                       WHERE tag LIKE :tribe");
+  $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
+  
+  if (!$sql->execute()) {
+    return -20;
+  }
+  
+  $sql = $db->prepare("UPDATE " . CAVE_TABLE . " SET 
+                        " . implode (", ", $fields_cave) . "
+                        WHERE caveID = :caveID 
+                        " . implode(" ", $where));
+  $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  
+  if (!$sql->execute()) {
+    return -20;
+  }
+  
+  // update caves
+  $ownCaves = getCaves($playerID);
+  
+  return 11;
 }
 
 ?>

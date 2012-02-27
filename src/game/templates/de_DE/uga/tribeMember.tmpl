@@ -132,5 +132,39 @@
     </form>
   </div>
 </div>
+{% if showTribeStorage %}
+<div class="ua-box small">
+  <div class="ua-box-header">Stammeslager</div>
+  <div class="ua-box-content center">
+    <div class="notice" style="text-align:center">
+      Hier können Einzahlungen ins Stammeslager getätigt werden. <br /><br />
+      Die Ressourcen werden für Stammeswunder benötigt.
+    </div>
+
+    <table class="table nohover" rules="rows">
+      <tr class="bg2">
+        <th class="bg2">Rohstoff</th>
+        <th class="bg2">Menge</th>
+        <th class="bg2">&nbsp;</th>
+      </tr>
+      <form action="main.php?modus={{ tribe_link }}" method="post">
+      {% for resource in resourceTypeList %}
+        {% set bgID = (bgID+1)%2 %}
+        <tr class="bg{{ bgID }}">
+          <td>{{ resource.name }}</td>
+          <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /></td>
+        </tr>
+      {% endfor %}
+      <input type="hidden" name="tribeAction" value="{{ tribe_action_donate }}"/>
+      <td><input name="submitDonation" value="Ugh!" type="submit" /></td>
+      </form>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="info small bottom_space">Einzahlungen in die Stammeskasse sind nur alle {{ donationInterval }} Stunden möglich!
+{% if lastDonation %}Letzte Einzahlung war am {{ lastDonation }}. {% endif %}</div>
+
+{% endif %}
 
 {% endblock %}
