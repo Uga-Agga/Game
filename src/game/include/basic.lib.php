@@ -323,10 +323,13 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1, $fromTribe
   }
 
   $set     = array();
+  // generate SQL
   if ($fromTribeStorage) {
-    $where = array("WHERE tag LIKE '" . $_SESSION['player']->tribe."'");
+    $table = TRIBE_TABLE;
+    $where = array("tag LIKE '" . $_SESSION['player']->tribe . "'");
   } else {
-    $where   = array("WHERE caveID = {$caveID} ");
+    $table = CAVE_TABLE;
+    $where   = array("caveID = {$caveID}");
   }
 
   if (isset($item->maxLevel)) {
@@ -451,17 +454,11 @@ function processProductionCost ($item, $caveID, $cave, $quantity = 1, $fromTribe
     }
   }
 
-  // generate SQL
-  if ($fromTribeStorage) {
-    $table = TRIBE_TABLE;
-  } else {
-    $table = CAVE_TABLE;
-  }
   if (sizeof($set)) {
     $set = implode(', ', $set);
     $where = implode(" AND ", $where);
     
-    $sql = "UPDATE ". $table ." SET {$set} {$where}";
+    $sql = "UPDATE ". $table ." SET {$set} WHERE {$where}";
     if (!$db->exec($sql)) {
       return false;
     }
@@ -525,15 +522,16 @@ function processProductionCostSetBack($item, $caveID, $cave, $quantity = 1, $fro
 
   // generate SQL
   if ($fromTribeStorage) {
-    $where = " WHERE tag = '" . $_SESSION['player']->tribe."'"; 
     $table = TRIBE_TABLE;
+    $where = "tag = '" . $_SESSION['player']->tribe."'"; 
   } else {
-    $where = " WHERE caveID = " . $caveID;
     $table = CAVE_TABLE;
+    $where = "caveID = " . $caveID;
   }
+
   if (sizeof($setBack)) {
     $setBack = implode(", ", $setBack);
-    $sql = "UPDATE ". $table ." SET {$setBack} " . $where;
+    $sql = "UPDATE ". $table ." SET {$setBack} WHERE {$where}";
     if (!$db->exec($sql)) {
       return false;
     }
