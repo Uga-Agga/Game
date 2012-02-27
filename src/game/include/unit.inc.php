@@ -55,13 +55,23 @@ function unit_cancelOrder($event_unitID, $caveID) {
 function unit_processOrder($unitID, $quantity, $caveID, $details) {
   global $db;
 
-  if ($quantity > MAX_SIMULTAN_BUILDED_UNITS || $quantity <= 0 ) {
-    return 4;
-  }
+  if ($quantity == 'max') {
+    $quantity = MAX_SIMULTAN_BUILDED_UNITS;
+    while (!processProductionCost($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity) && $quantity != 0) {
+      $quantity--;
+    }
+    if ($quantity <= 0) {
+      return 4;
+    }
+  } else {
+    if ($quantity > MAX_SIMULTAN_BUILDED_UNITS || $quantity <= 0 ) {
+      return 4;
+    }
 
-  // take the production costs from cave
-  if (!processProductionCost($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity)) {
-    return 2;
+    // take the production costs from cave
+    if (!processProductionCost($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity)) {
+      return 2;
+    }
   }
 
   $prodTime = 0;
