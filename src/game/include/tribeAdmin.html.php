@@ -2,6 +2,7 @@
 /*
  * tribeAdmin.html.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -12,11 +13,15 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function tribeAdmin_getContent($playerID, $tag) {
+function tribeAdmin_getContent($playerID, $tag, $caveID) {
   global $template;
 
   // messages
   $messageText = array(
+    -36 => array('type' => 'error', 'message' => _('Stamm nicht gefunden! Tippfehler?')),
+    -35 => array('type' => 'error', 'message' => _('Beim Ausführen des Stammeswunders ist ein Problem aufgetreten!')),
+    -34 => array('type' => 'info', 'message' => _('Nur der Stammesführer darf das Stammeswunder wundern!')),
+    -33 => array('type' => 'error', 'message' => _('Bitte Stammesnamen eingeben!')),
     -32 => array('type' => 'error', 'message' => _('Die Rechte konnten nicht angewandt werden.')),
     -31 => array('type' => 'error', 'message' => _('Fehler in den Formulardaten!')),
     -30 => array('type' => 'error', 'message' => _('Du hast keine Berechtigung dies zu tun!')),
@@ -54,7 +59,8 @@ function tribeAdmin_getContent($playerID, $tag) {
       2 => array('type' => 'error', 'message' =>  _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.')),
       3 => array('type' => 'success', 'message' => _('Die Beziehung wurde umgestellt.')),
       4 => array('type' => 'success', 'message' => _('Die Regierung wurde geändert.')),
-      5 => array('type' => 'success', 'message' => _('Die Berechtigungen wurden erfolgreich geändert.'))
+      5 => array('type' => 'success', 'message' => _('Die Berechtigungen wurden erfolgreich geändert.')), 
+      6 => array('type' => 'info', 'message' => _('Die Götter haben Ihr Flehen nicht erhört! Die eingesetzten Opfergaben sind natürlich dennoch verloren. Mehr Glück beim nächsten Mal!'))
   );
 
   // open template
@@ -263,7 +269,32 @@ function tribeAdmin_getContent($playerID, $tag) {
         $tribeRelations = relation_getRelationsForTribe($tag);
       }
     break;
-  }
+  
+/****************************************************************************************************
+*
+* Stammeswunder?
+*
+****************************************************************************************************/
+  case 'tribeWonder':
+      $wonderID = Request::getVar('wonderID', -1);
+      $tribeName = Request::getVar('TribeName', '');
+
+      if ($wonderID != -1) {
+        if (!empty($tribeName)) {
+          $messageID = wonder_processTribeWonder($caveID, $wonderID, $tag, $tribeName);
+          $tribeData = tribe_getTribeByTag($tag);
+        } else {
+          $messageID = -33;
+        }
+      } else {
+        $messageID = -26;
+        break;
+      }
+  
+  
+  
+  
+  } // end action switch
 
 /****************************************************************************************************
 *
@@ -390,6 +421,64 @@ function tribeAdmin_getContent($playerID, $tag) {
     'is_auth_change_relation' => $isLeader || $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth['tribe']),
     'is_leader'               => $isLeader
   ));
+  
+/****************************************************************************************************
+*
+* Stammeslager
+*
+****************************************************************************************************/
+  
+  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
+  
+  $tribeStorageValues = array(); $tribeStorage = array();
+  foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
+    $tribeStorage[$resource->dbFieldName] = $tribeData[$resource->dbFieldName];
+    $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
+    $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
+    $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
+  }
+  
+  $template->addVars(array(
+    'tribeStorage' => $tribeStorageValues,
+    'donations' => $donations
+  ));
+  
+/****************************************************************************************************
+*
+* Stammeswunder
+*
+****************************************************************************************************/
+  
+  $tribeWonders = array();
+  foreach ($GLOBALS['wonderTypeList'] as $wonder) {
+    
+    
+    // exclude nonTribeWonders
+    if (!$wonder->isTribeWonder || $wonder->nodocumentation) {
+      continue;
+    }
+    
+    $result = rules_checkDependencies($wonder, $tribeStorage);
+    
+    $tribeWonders[$wonder->wonderID] = array(
+      'dbFieldName' => $wonder->wonderID, // Dummy. Wird für die boxCost.tmpl gebraucht.
+      'name'        => $wonder->name,
+      'wonder_id'   => $wonder->wonderID,
+      'description' => $wonder->description,
+      'same'        => ($wonder->target == 'same') ? true : false
+    );
+    $tribeWonders[$wonder->wonderID] = array_merge($tribeWonders[$wonder->wonderID], parseCost($wonder, $tribeStorage));
+  
+    // show the building link ?!
+    if ($tribeWonders[$wonder->wonderID]['notenough']) {
+      $tribeWonders[$wonder->wonderID]['no_build_msg'] = _('Zu wenig Rohstoffe');
+    } else {
+      $tribeWonders[$wonder->wonderID]['build_link'] = true;
+    }
+  }
+  
+  $template->addVar('tribeWonders', $tribeWonders);
+  
 }
 
 ?>

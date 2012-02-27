@@ -2,6 +2,7 @@
 /*
  * tribes.inc.php -
  * Copyright (c) 2004  OGP-Team
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -1490,7 +1491,7 @@ function tribe_recalcLeader1($tag) {
 
   $sql = $db->prepare("SELECT p.playerID, p.name
                        FROM ". PLAYER_TABLE ." p
-                         LEFT JOIN Ranking r ON p.playerID = r.playerID
+                         LEFT JOIN ".RANKING_TABLE." r ON p.playerID = r.playerID
                        WHERE p.tribe LIKE :tag
                          AND r.playerID IS NOT NULL
                        ORDER BY r.rank ASC
@@ -1520,7 +1521,7 @@ function tribe_recalcLeader2($tag) {
   
   $sql = $db->prepare("SELECT e.playerID, COUNT(e.voterID) AS votes
                        FROM ". ELECTION_TABLE ." e
-                         LEFT JOIN Player p ON p.playerID = e.playerID
+                         LEFT JOIN ". PLAYER_TABLE ." p ON p.playerID = e.playerID
                        WHERE e.tribe like :tag
                        GROUP BY e.playerID, p.name
                        ORDER BY votes DESC
@@ -2101,6 +2102,46 @@ function ranking_updateWonLost($tag, $targettag, $targetwon) {
 
     return 1;
   }
+}
+
+function tribe_getTribeStorageDonations ($tag) {
+  global $db;
+  
+  // Resourcenstring zusammenbasteln
+  $fields = array();
+  foreach($GLOBALS['resourceTypeList'] as $resource) {
+    $fields[] = "SUM(t." . $resource->dbFieldName . ") as " . $resource->dbFieldName;
+  }
+  
+  $sql = $db->prepare("SELECT p.name, ". implode(", ", $fields) ." FROM (" . TRIBE_STORAGE_DONATIONS_TABLE . " t
+                LEFT JOIN " . PLAYER_TABLE . " p
+                  ON t.playerID = p.playerID)
+                WHERE t.tribe LIKE :tag
+                  GROUP BY t.playerID");
+  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  
+  if ($sql->execute()) {
+    return $sql->fetchAll(PDO::FETCH_ASSOC);
+  } else {
+    return NULL;
+  }
+}
+
+function tribe_getTribeWonderTargets($tag) {
+  global $db;
+  
+  $sql = $db->prepare("SELECT c.playerID, c.caveID FROM " . CAVE_TABLE . " c
+                          LEFT JOIN " . PLAYER_TABLE . " p 
+                            ON p.playerID = c.playerID
+                        WHERE p.tribe LIKE :tag");
+  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  
+  if (!$sql->execute()) {
+    return NULL;
+  }
+  
+  return $sql->fetchAll(PDO::FETCH_ASSOC);
+
 }
 
 ?>

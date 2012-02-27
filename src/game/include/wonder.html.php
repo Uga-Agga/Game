@@ -3,6 +3,7 @@
  * wonder.html.php - 
  * Copyright (c) 2003  OGP Team
  * Copyright (c) 2011  David Unger
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -64,6 +65,11 @@ function wonder_getWonderContent($caveID, &$details) {
   // Show the wonder table
   $wonders = $wondersUnqualified = array();
   foreach ($GLOBALS['wonderTypeList'] as $id => $wonder) {
+    // exclude tribeWonders
+    if ($wonder->isTribeWonder) {
+      continue;
+    }
+    
     $result = rules_checkDependencies($wonder, $details);
 
 /****************************************************************************************************

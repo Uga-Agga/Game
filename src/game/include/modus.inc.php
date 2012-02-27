@@ -37,8 +37,7 @@ DEFINE('EVENT_WEATHER_TABLE',           'Event_weather');
 DEFINE('EVENT_WEATHER_END_TABLE',       'Event_weatherEnd');
 DEFINE('EVENT_WONDER_TABLE',            'Event_wonder');
 DEFINE('EVENT_WONDER_END_TABLE',        'Event_wonderEnd');
-DEFINE('HERO_OLD_TABLE',                'Hero');
-DEFINE('HERO_TABLE',                    'Hero_new');
+DEFINE('HERO_TABLE',                    'Hero');
 DEFINE('EVENT_HERO_TABLE',              'Event_hero');
 DEFINE('HERO_RITUAL_TABLE',             'Hero_rituals');
 DEFINE('HERO_MONSTER_TABLE',            'Hero_Monster');
@@ -76,6 +75,7 @@ DEFINE('TREASURE_TABLE',                'Treasure');
 DEFINE('TRIBE_TABLE',                   'Tribe');
 DEFINE('TRIBE_HISTORY_TABLE',           'TribeHistory');
 DEFINE('TRIBE_MESSAGE_TABLE',           'TribeMessage');
+DEFINE('TRIBE_STORAGE_DONATIONS_TABLE', 'TribeStorageDonations');
 
 DEFINE('LOGIN_TABLE',                   'Login');
 
@@ -173,7 +173,7 @@ $require_files[SCIENCE_DETAIL]              = array('science.inc.php', 'scienceD
 $require_files[SUGGESTIONS]                 = array('../modules/Suggestions/Suggestions.php');
 $require_files[TAKEOVER]                    = array('formula_parser.inc.php', 'takeover.html.php');
 $require_files[TRIBE]                       = array('tribe.html.php', 'tribes.inc.php', 'auth.inc.php', 'message.inc.php', 'rules/government.rules.php', 'rules/relation.list.php');
-$require_files[TRIBE_ADMIN]                 = array('tribeAdmin.html.php', 'tribes.inc.php', 'auth.inc.php', 'message.inc.php', 'rules/relation.list.php', 'rules/government.rules.php', 'rules/wonder.rules.php');
+$require_files[TRIBE_ADMIN]                 = array('tribeAdmin.html.php', 'tribes.inc.php', 'auth.inc.php', 'message.inc.php', 'rules/relation.list.php', 'rules/government.rules.php', 'rules/wonder.rules.php', 'wonder.inc.php');
 $require_files[TRIBE_DELETE]                = array('tribeDelete.html.php', 'tribes.inc.php', 'auth.inc.php', 'rules/relation.list.php', 'message.inc.php');
 $require_files[TRIBE_DETAIL]                = array('tribeDetail.html.php', 'tribes.inc.php', 'ranking.inc.php', 'messageParser.inc.php');
 $require_files[TRIBE_HISTORY]               = array('tribeHistory.html.php', 'tribes.inc.php');
