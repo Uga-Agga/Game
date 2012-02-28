@@ -24,7 +24,7 @@ function tribe_getContent($playerID, $tribe, $caveID) {
 
   // messages
   $messageText = array (
-   
+   -21 => array('type' => 'error', 'message' => _('Eine Resource hat den maximalen Einzahlungswert überschritten!')),
    -20 => array('type' => 'error', 'message' => _('Fehler beim Eintragen ins Stammeslager!')),
    -19 => array('type' => 'info', 'message' => _('Bitte Daten in das Formular eintragen.')),
    -18 => array('type' => 'error', 'message' => _('Du keine Berechtigung eine Nachricht zu schreiben.')),
@@ -231,7 +231,7 @@ function tribe_getContent($playerID, $tribe, $caveID) {
       $template->addVar('tribe_messages', $messageAry);
     }
   }
-
+  
   if ($messageID && isset($messageText[$messageID])) {
     $template->addVar('status_msg', $messageText[$messageID]);
   }
@@ -249,12 +249,13 @@ function tribe_getContent($playerID, $tribe, $caveID) {
   if ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) {
     $template->addVars(array(
         'showTribeStorage' => true, 
-        'resourceTypeList' => $GLOBALS['resourceTypeList']
+        'resourceTypeList' => $GLOBALS['resourceTypeList'], 
+        'donationInterval' => TRIBE_STORAGE_DONATION_INTERVAL
     ));
   } else {
     $template->addVar("donationInterval", TRIBE_STORAGE_DONATION_INTERVAL);
     if ($lastDonation) {
-      $template->addVar("lastDonation", date("Y-m-d H:i:s",$lastDonation));
+      $template->addVar("lastDonation", date("d.m.Y H:i:s",$lastDonation));
     }
   }
 }

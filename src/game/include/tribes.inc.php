@@ -2181,7 +2181,10 @@ function tribe_donateResources($value_array, $caveID, &$ownCaves) {
     if ($value) {
       if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
-        
+        // check if resource is over maxDonation value
+        if ($resource->maxDonation < $value) {
+          return -21;
+        }
         $fields_cave[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " - " . $value;
         $fields_storage[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " + " . $value;
         $fields_resources[] = $resource->dbFieldName;

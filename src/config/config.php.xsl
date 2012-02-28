@@ -77,15 +77,17 @@ class Resource {
   var $ratingValue     = 0;
   var $takeoverValue   = 0;
   var $saveStorage     = 0;
+  var $maxDonation     = 0;
   var $nodocumentation = 0;
 
-  function Resource($resourceID, $name, $remark, $dbFieldName, $maxLevel, $resProdFunction){
+  function Resource($resourceID, $name, $remark, $dbFieldName, $maxLevel, $resProdFunction, $maxDonation){
     $this-&gt;resourceID      = $resourceID;
     $this-&gt;name            = $name;
     $this-&gt;remark          = $remark;
     $this-&gt;dbFieldName     = $dbFieldName;
     $this-&gt;maxLevel        = $maxLevel;
     $this-&gt;resProdFunction = $resProdFunction;
+    $this-&gt;maxDonation     = $maxDonation;
   }
 }
 
@@ -96,7 +98,7 @@ function init_resources() {
 
 <xsl:template match="Resource">
   $tmp = new Resource(<xsl:value-of select="count(preceding-sibling::*)"/>, '<xsl:value-of select="Name"/>', "<xsl:apply-templates select="Remark[@lang='de_DE']"/>", '<xsl:apply-templates select="@id"/>', '<xsl:apply-templates select="MaxStorage"/>',
-                      '<xsl:apply-templates select="Production"/>');
+                      '<xsl:apply-templates select="Production"/>', '<xsl:apply-templates select="MaxDonation"/>');
   <xsl:if test="SafeStorage!='0'">$tmp-&gt;saveStorage = '<xsl:apply-templates select="SafeStorage"/>';
   </xsl:if>
   <xsl:if test="RatingValue!=0">$tmp-&gt;ratingValue = <xsl:apply-templates select="RatingValue"/>;
