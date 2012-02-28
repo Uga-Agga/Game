@@ -18,7 +18,6 @@ if ($_SERVER['argc'] != 5) {
   exit(1);
 }
 
-$config = new Config();
 $db     = DbConnect();
 
 $sql = $db->prepare("SELECT IF(ISNULL(max(caveID)), 0, max(caveID)) as maxCaveID FROM " . CAVE_TABLE . "");

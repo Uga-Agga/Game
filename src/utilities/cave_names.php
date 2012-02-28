@@ -11,20 +11,18 @@
  
 include "util.inc.php";
 
-global $config;
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 
 ini_set("memory_limit", "32M");
-    
-$config = new Config();
+
 $db     = DbConnect();
 
 $names = swapshuffle(createNames());
 
 $sql = $db->prepare("SELECT COUNT(*) AS num_caves FROM " . CAVE_TABLE . " GROUP BY NULL");
 if (!$sql->execute()) {
-  echo "Fehler bei der Abfrage der Anzahl der Höhlen. (1.a.)\n";
+  echo "Fehler bei der Abfrage der Anzahl der HÃ¶hlen. (1.a.)\n";
   return -1;
 }
 $row = $sql->fetch(PDO::FETCH_ASSOC);
@@ -32,24 +30,24 @@ $sql->closeCursor();
 $num_caves = $row['num_caves'];
 
 if ($num_caves > sizeof($names)){
-  echo "Zu wenig Namen für alle Höhlen. (2.a.)\n";
+  echo "Zu wenig Namen fÃ¼r alle HÃ¶hlen. (2.a.)\n";
   return -2;
 }
 
-// hier wird davon ausgegangen, dass die Höhlen mit 1 beginnend fortlaufend durchnummeriert sind.
+// hier wird davon ausgegangen, dass die Hï¿½hlen mit 1 beginnend fortlaufend durchnummeriert sind.
 $sqlUpdate = $db->prepare("UPDATE " . CAVE_TABLE . " SET name = :name WHERE caveID = :caveID");
 for ($i = 0; $i < $num_caves; ++$i) {
   $sqlUpdate->bindValue('name', $names[$i], PDO::PARAM_STR);
   $sqlUpdate->bindValue('caveID', ($i + 1), PDO::PARAM_INT);
 
   if (!$sqlUpdate->execute()) {
-    echo "Fehler beim Ändern des Höhlennamen: (" . ($i + 1) . ") " . $names[$i] . ". (3.a.)\n";
+    echo "Fehler beim Ã„ndern des HÃ¶hlennamen: (" . ($i + 1) . ") " . $names[$i] . ". (3.a.)\n";
     return -3;
   }
 }
 
 //
-// Liest aus einer Datei beliebiger Größe Strings ein und macht daraus eine Matrix
+// Liest aus einer Datei beliebiger Grï¿½ï¿½e Strings ein und macht daraus eine Matrix
 // Die Datei muss folgendes Format haben:
 //   #1\n
 //   string\n

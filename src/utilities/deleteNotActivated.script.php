@@ -14,7 +14,6 @@ include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 include INC_DIR."basic.lib.php";
 
-global $config;
 
 $DELETE_SCRIPT = "deletePlayer.script.php";
 $MAX_ACTIVATE_DURATION = 62 * 60 * 60;   // days * minutes * seconds
@@ -25,8 +24,6 @@ if ($_SERVER['argc'] != 1) {
 }
 
 echo "DELETE NOT ACTIVATED: (".date("d.m.Y H:i:s",time()).") Starting...\n";
-
-$config = new Config();
 
 if (!($db_login = db_connectToLoginDB())) {
   echo "DELETE NOT ACTIVATED: Failed to connect to login db.\n";

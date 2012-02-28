@@ -78,20 +78,15 @@ ini_set("memory_limit", "128M");
 include "util.inc.php";
 include INC_DIR . "config.inc.php";
 include INC_DIR . "db.inc.php";
-include INC_DIR . "game_rules.php";
+include INC_DIR . "rules/game.rules.php";
 include INC_DIR . "basic.lib.php";
 
-// get globals
-$config = new Config();
+// connect to DB
 $db     = DbConnect();
 
 // initialize game rules
 init_resources();
 init_sciences();
-
-// get extern vars
-global $resourceTypeList, $scienceTypeList,
-       $TAKEOVERMAXPOPULARITYPOINTS, $TAKEOVERMINRESOURCEVALUE;
 
 echo "---------------------------------------------------------------------\n";
 echo "- LOG FILE ----------------------------------------------------------\n";
@@ -142,7 +137,7 @@ foreach ($takeover_caves AS $row) {
   $winner = current($bidders);
 
   // check him for minimum bid
-  if ($winner['rel_bidding'] >= $TAKEOVERMINRESOURCEVALUE) {
+  if ($winner['rel_bidding'] >= GameConstants::TAKEOVER_MIN_RESOURCE_VALUE) {
     array_shift($bidders);
 
     // get winner's name
@@ -168,10 +163,10 @@ foreach ($takeover_caves AS $row) {
 
 /***** TRANSFER CAVES *****/
 
-// transfer caves to those players with a status >= TAKEOVERMAXPOPULARITYPOINTS
+// transfer caves to those players with a status >= TAKEOVER_MAX_POPULARITY_POINTS
 echo "\n***** TRANSFER CAVES TO WINNERS *****\n";
 
-// get biddings with a status >= TAKEOVERMAXPOPULARITYPOINTS
+// get biddings with a status >= TAKEOVER_MAX_POPULARITY_POINTS
 $transfers = takeover_get_transfers();
 
 foreach ($transfers AS $transfer) {
@@ -278,12 +273,12 @@ function takeover_remove_maxed_players() {
  *  @return true if finished successfully, false otherwise
  */
 function takeover_reset_biddings($caveID) {
-  global $db, $resourceTypeList;
+  global $db;
   static $resources;
 
   if (empty($resources)) {
     $resources = array();
-    foreach ($resourceTypeList AS $resource) {
+    foreach ($GLOBALS['resourceTypeList'] AS $resource) {
       $resources[] = $resource->dbFieldName . " = 0";
     }
     $resources = implode(", ", $resources);
@@ -320,14 +315,14 @@ function takeover_get_caves() {
  *  @return an array with all biddings for a cave, an empty array in case of an error
  */
 function takeover_get_bidders($caveID) {
-  global $db, $resourceTypeList;
+  global $db;
   static $query_resource;
 
   // initialize $query_resource
   if (empty($query_resource)) {
     $query_resource = array();
 
-    foreach ($resourceTypeList AS $resource) {
+    foreach ($GLOBALS['resourceTypeList'] AS $resource) {
       if ($resource->takeoverValue > 0) {
         $query_resource[] = $resource->takeoverValue . " * ct." . $resource->dbFieldName;
       }
@@ -368,10 +363,9 @@ function takeover_process_winner($winner) {
 }
 
 function takeover_process_biddings($biddings, $winner) {
-  global $TAKEOVERMINRESOURCEVALUE;
 
   foreach ($biddings AS $bidding) {
-    if ($bidding['rel_bidding'] >= $TAKEOVERMINRESOURCEVALUE) {
+    if ($bidding['rel_bidding'] >= GameConstants::TAKEOVER_MIN_RESOURCE_VALUE) {
       takeover_send_failed($bidding['playerID'], $bidding, $winner);
     } else {
       takeover_send_bidding_too_low($bidding['playerID'], $bidding, $winner);
@@ -380,9 +374,9 @@ function takeover_process_biddings($biddings, $winner) {
 }
 
 function takeover_get_transfers() {
-  global $db, $TAKEOVERMAXPOPULARITYPOINTS;
+  global $db;
 
-  $sql = $db->prepare("SELECT * FROM " . CAVE_TAKEOVER_TABLE . " WHERE status >= " . $TAKEOVERMAXPOPULARITYPOINTS);
+  $sql = $db->prepare("SELECT * FROM " . CAVE_TAKEOVER_TABLE . " WHERE status >= " . GameConstants::TAKEOVER_MAX_POPULARITY_POINTS);
   if (!$sql->execute()) {
     return array();
   }
@@ -415,7 +409,7 @@ function takeover_other_bidders($caveID, $playerID) {
 }
 
 function takeover_transfer_cave_to($caveID, $playerID) {
-  global $db, $scienceTypeList;
+  global $db;
 
   // check parameters
   $caveID   = (int) $caveID;
@@ -455,9 +449,9 @@ function takeover_transfer_cave_to($caveID, $playerID) {
   }
 
   // copy sciences
-  if (sizeof($scienceTypeList)) {
+  if (sizeof($GLOBALS['scienceTypeList'])) {
     $set = array();
-    foreach ($scienceTypeList AS $science) {
+    foreach ($GLOBALS['scienceTypeList'] AS $science) {
       $temp = $science->dbFieldName;
       $set[] = "$temp = '{$winner[$temp]}'";
     }
@@ -570,11 +564,10 @@ function takeover_send_failed($receiverID, $bidding, $winner) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_bidding_too_low($receiverID, $bidding, $winner) {
-  global $TAKEOVERMINRESOURCEVALUE;
 
   $template = tmpl_load(_MSG_BIDDINGTOOLOW);
   tmpl_set($template, $bidding);
-  tmpl_set($template, 'takeoverminresourcevalue', $TAKEOVERMINRESOURCEVALUE);
+  tmpl_set($template, 'takeoverminresourcevalue', GameConstants::TAKEOVER_MIN_RESOURCE_VALUE);
   tmpl_set($template, 'WINNER', $winner);
   return takeover_system_message($receiverID, _MSG_SUBJECT_BIDDINGTOOLOW, tmpl_parse($template));
 }

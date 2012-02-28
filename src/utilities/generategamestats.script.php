@@ -9,8 +9,6 @@
  * the License, or (at your option) any later version.
  */
 
-global $config, $scienceTypeList, $unitTypeList;
-
 include "util.inc.php";
 
 include INC_DIR."config.inc.php";
@@ -24,9 +22,6 @@ if ($_SERVER['argc'] != 1) {
 
 echo "RUNNING GAME STATS...\n";
 
-
-$config = new Config();
-
 if (!($db = DbConnect())) {
   echo "GAME STATS: Failed to connect to game db.\n";
   exit(1);
@@ -35,11 +30,11 @@ if (!($db = DbConnect())) {
 /*
  * get db fields
  */
-foreach ($scienceTypeList AS $value)
+foreach ($GLOBALS['scienceTypeList'] AS $value)
 {
   $ScienceFieldsName[$value->dbFieldName] = $value->name;
 }
-foreach ($unitTypeList AS $value)
+foreach ($GLOBALS['unitTypeList'] AS $value)
 {
   if (!$value->nodocumentation) {
     $UnitFieldsName[$value->dbFieldName] = $value->name;
@@ -51,8 +46,8 @@ foreach ($unitTypeList AS $value)
  */
 $SecretCave = array();
 $sqlHiddenUser = "";
-if (sizeof($config->hiddenUser)) {
-  $sqlHiddenUser = "WHERE Player.name IN ('" . implode("', '", $config->hiddenUser) . "')";
+if (sizeof(Config::$hiddenUser)) {
+  $sqlHiddenUser = "WHERE Player.name IN ('" . implode("', '", Config::$hiddenUser) . "')";
 }
 
 $sql = $db->prepare("SELECT caveID 
@@ -73,7 +68,7 @@ $sql->closeCursor();
  */
 echo "GAME STATS: Generate God Stats.\n";
 $statsData = array();
-foreach ($config->gods as $God) {
+foreach (Config::$gods as $God) {
   $statsData[GOD_STATS][$God] =  countPlayerGod($God);
 }
 unset($God);
@@ -82,7 +77,7 @@ unset($God);
  * get halfgod stats
  */
 echo "GAME STATS: Generate Halfgod Stats.\n";
-foreach ($config->halfGods as $Halfgod) {
+foreach (Config::$halfGods as $Halfgod) {
   $statsData[HALFGOD_STATS][$Halfgod] = countPlayerGod($Halfgod);
 }
 unset($Halfgod);
@@ -166,6 +161,7 @@ else {
  * make it public
  */
 echo "GAME STATS: parse into Database.\n";
+$DataDB = array();
 foreach ($statsData as $type => $data) {
   $sql = $db->prepare("SELECT * ".
                        "FROM ". STATISTIC_TABLE ." ".
@@ -203,7 +199,7 @@ foreach ($statsData as $type => $data) {
 echo "GAME STATS: Finish.\n";
 
 function countPlayerGod($God) {
-  global $config, $db;
+  global $db;
 
   if (empty($God))
   {
@@ -211,8 +207,8 @@ function countPlayerGod($God) {
   }
 
   $sqlHiddenUser = "";
-  if (sizeof($config->hiddenUser)) {
-    $sqlHiddenUser = "AND name NOT IN ('" . implode("', '", $config->hiddenUser) . "')";
+  if (sizeof(Config::$hiddenUser)) {
+    $sqlHiddenUser = "AND name NOT IN ('" . implode("', '", Config::$hiddenUser) . "')";
   }
 
   $sql = $db->prepare("SELECT COUNT(*) as n ".

@@ -15,10 +15,6 @@ include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 include INC_DIR."basic.lib.php";
 
-global $config;
-
-$config = new Config();
-
 if (!($db_login = db_connectToLoginDB())) {
   echo "Check Multi : Failed to connect to login db.\n";
   exit(1);

@@ -24,7 +24,6 @@ include "util.inc.php";
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 
-$config = new Config();
 $db     = DbConnect();
 
 $sql = $db->prepare("SELECT tribe, tribe_target, relationType

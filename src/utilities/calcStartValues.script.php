@@ -9,7 +9,6 @@
  * the License, or (at your option) any later version.
  */
 
-global $config;
 
 include("util.inc.php");
 
@@ -18,8 +17,6 @@ include INC_DIR."db.inc.php";
 include INC_DIR."startvalues.php";
 
 echo "CALCULATING START VALUES...\n";
-
-$config = new Config();
 
 if (!($db = DbConnect())) {
   echo "CALCSTARTVALUES: Failed to connect to game db.\n";

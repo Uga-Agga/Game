@@ -1,7 +1,14 @@
 <?php 
-global $config, $scienceTypeList;
+/*
+ * repairMissingStartSciences.php - delete inactive players
+ * Copyright (c) 2005  Marcus Lunzenauer
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ */
 
-define("INC_DIR", "/var/www/game/include/");
 
 if ($_SERVER['argc'] != 1) {
   echo "Usage: ".$_SERVER['argv'][0]."\n";
@@ -9,19 +16,12 @@ if ($_SERVER['argc'] != 1) {
 }
 
 echo "REPAIR START SCIENCES...\n";
-
+include "util.inc.php";
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 include INC_DIR."formula_parser.inc.php";
 
-$config = new Config();
-
-if (!($db = 
-      new Db($config->DB_HOST, $config->DB_USER, 
-             $config->DB_PWD, $config->DB_NAME))) {
-  echo "UNIT STATS: Failed to connect to game db.\n";
-  exit(1);
-}
+$db  = DbConnect();
 
 $query = 
   "SELECT * FROM StartValue";
@@ -36,7 +36,7 @@ while($row = $result->nextRow(MYSQL_ASSOC)) {
 }
 
 $scienceSet = array();
-foreach($scienceTypeList AS $id => $science) {
+foreach($GLOBALS['scienceTypeList'] AS $id => $science) {
   if (($tmp = $allValues[$science->dbFieldName]) > 0) {
     $scienceSet[] = "{$science->dbFieldName} = '{$tmp}'";
   }

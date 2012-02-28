@@ -13,9 +13,8 @@ include "util.inc.php";
 
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
-include INC_DIR."game_rules.php";
+include INC_DIR."rules/game.rules.php";
 
-$config = new Config();
 $db     = DbConnect();
 
 init_buildings();
@@ -23,12 +22,6 @@ init_defenseSystems();
 init_resources();
 init_sciences();
 init_units();
-
-global $buildingTypeList,
-       $defenseSystemTypeList,
-       $resourceTypeList,
-       $scienceTypeList,
-       $unitTypeList;
 
 ///////////////////////////// constant values //////////////////////////////
 
@@ -170,14 +163,14 @@ function unit_rating ($unit) {
 }
 
 $unitColNames = array();
-for ($i = 0; $i < sizeof($unitTypeList); ++$i) {
-  array_push($unitColNames, unit_rating($unitTypeList[$i]) . " * " . $unitTypeList[$i]->dbFieldName);
+for ($i = 0; $i < sizeof($GLOBALS['unitTypeList']); ++$i) {
+  array_push($unitColNames, unit_rating($GLOBALS['unitTypeList'][$i]) . " * " . $GLOBALS['unitTypeList'][$i]->dbFieldName);
 }
 $unitColNames  = implode(" + ", $unitColNames);
 
 $defenseColNames = array();
-for ($i = 0; $i < sizeof($defenseSystemTypeList); ++$i) {
-  array_push($defenseColNames, unit_rating($defenseSystemTypeList[$i]) . " * " . $defenseSystemTypeList[$i]->dbFieldName);
+for ($i = 0; $i < sizeof($GLOBALS['defenseSystemTypeList']); ++$i) {
+  array_push($defenseColNames, unit_rating($GLOBALS['defenseSystemTypeList'][$i]) . " * " . $GLOBALS['defenseSystemTypeList'][$i]->dbFieldName);
 }
 $defenseColNames = implode(" + ", $defenseColNames);
 
@@ -204,8 +197,8 @@ $sql->closeCursor();
 
 // dann Einheiten aus der Tabelle 'Event_Movement' dazu addieren
 $movingUnitColNames = array();
-for ($i = 0; $i < sizeof($unitTypeList); ++$i) {
-  array_push($movingUnitColNames, unit_rating($unitTypeList[$i]) . " * m." . $unitTypeList[$i]->dbFieldName);
+for ($i = 0; $i < sizeof($GLOBALS['unitTypeList']); ++$i) {
+  array_push($movingUnitColNames, unit_rating($GLOBALS['unitTypeList'][$i]) . " * m." . $GLOBALS['unitTypeList'][$i]->dbFieldName);
 }
 $movingUnitColNames  = implode(" + ", $movingUnitColNames);
 
@@ -292,8 +285,8 @@ foreach ($caves as $playerID => $countCaves) {
 // Schritt (1.c.) Summe aller vorhandenen Rohstoffe
 // FIXME: Die Rohstoffe moessen gewichtet werden!
 $resourcesColNames = array();
-for ($i = 0; $i < sizeof($resourceTypeList); ++$i) {
-  array_push($resourcesColNames, $resourceTypeList[$i]->takeoverValue . " * " . $resourceTypeList[$i]->dbFieldName);
+for ($i = 0; $i < sizeof($GLOBALS['resourceTypeList']); ++$i) {
+  array_push($resourcesColNames, $GLOBALS['resourceTypeList'][$i]->takeoverValue . " * " . $GLOBALS['resourceTypeList'][$i]->dbFieldName);
 }
 $resourcesColNames  = implode(" + ", $resourcesColNames);
 
@@ -335,8 +328,8 @@ foreach ($resources as $playerID => $resources) {
 // Schritt (1.d.) Summe aller Gebaeude in allen Hoehlen
 
 $buildingsColNames = array();
-for ($i = 0; $i < sizeof($buildingTypeList); ++$i) {
-  array_push($buildingsColNames, $buildingTypeList[$i]->ratingValue . " * " . $buildingTypeList[$i]->dbFieldName);
+for ($i = 0; $i < sizeof($GLOBALS['buildingTypeList']); ++$i) {
+  array_push($buildingsColNames, $GLOBALS['buildingTypeList'][$i]->ratingValue . " * " . $GLOBALS['buildingTypeList'][$i]->dbFieldName);
 }
 $buildingsColNames  = implode(" + ", $buildingsColNames);
 
@@ -379,8 +372,8 @@ foreach ($buildings as $playerID => $buildings) {
 // Schritt (1.e.) Summe aller Entdeckungen
 
 $sciencesColNames = array();
-for ($i = 0; $i < sizeof($scienceTypeList); ++$i) {
-  array_push($sciencesColNames, $scienceTypeList[$i]->dbFieldName);
+for ($i = 0; $i < sizeof($GLOBALS['scienceTypeList']); ++$i) {
+  array_push($sciencesColNames, $GLOBALS['scienceTypeList'][$i]->dbFieldName);
 }
 $sciencesColNames  = implode(" + ", $sciencesColNames);
 

@@ -12,24 +12,22 @@
  * adding missing clans.
  */
 
-global $config;
 
 include("util.inc.php");
 
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
-include INC_DIR."game_rules.php";
+include INC_DIR."rules/game.rules.php";
 include INC_DIR."tribes.inc.php";
 include INC_DIR."message.inc.php";
 include INC_DIR."db.functions.php";
 include INC_DIR."basic.lib.php";
-include INC_DIR."government.rules.php";
+include INC_DIR."rules/government.rules.php";
 include INC_DIR."time.inc.php";
-include INC_DIR."relation_list.php";
+include INC_DIR."rules/relation.list.php";
 include INC_DIR."Player.php";
 #include INC_DIR."languages/de_DE.php";
 
-$config = new Config();
 $db     = DbConnect();
 
 define('ID_WARALLY_RELATION',8);
@@ -73,40 +71,40 @@ echo "-- Checking Tribes --\n";
   $invalidated_tribes = array();
   
   foreach($tribes AS $tag => $data) {
-    if (in_array($tag,$untouchableTribes)) {
+    if (in_array($tag, $untouchableTribes)) {
 	continue;
     }
     
     if (($member_count = tribe_getNumberOfMembers($tag, $db)) < 0) 
     {
-      echo "Error counting members of tribe {$row['tag']}.\n";
+      echo "Error counting members of tribe {$data['tag']}.\n";
       return -1;
     } 
     
-    //Gültige Stämme prüfen auf Membermangel
+    //GÃ¼ltige StÃ¤mme prÃ¼fen auf Membermangel
     if ($data['valid'] && $member_count < TRIBE_MINIMUM_SIZE) 
     {
       if (tribe_SetTribeInvalid($tag, $db)) {
         array_push($invalidated_tribes,$tag);
       } 
       else {
-        echo "Error: Couldn´t set invalid for tribe $tag!\n";
+        echo "Error: Couldn't set invalid for tribe $tag!\n";
       }
     } 
-    //Ungültige Stämme prüfen auf Membermangel
+    //UngÃ¼ltige StÃ¤mme prÃ¼fen auf Membermangel
     if ((! $data['valid']) && $member_count >= TRIBE_MINIMUM_SIZE) 
     {
-      $data['valid'] = TRUE; // damit der Stamm nicht gelöscht wird
+      $data['valid'] = TRUE; // damit der Stamm nicht gelï¿½scht wird
       if (tribe_SetTribeValid($tag, $db)) {
         array_push($validated_tribes,$tag);
       } 
       else {
-        echo "Error: Couldn´t set valid for tribe $tag!\n";
+        echo "Error: Couldn't set valid for tribe $tag!\n";
       }
     }
     
     
-    //Ungültige Stämme prüfen auf Löschbarkeit
+    //UngÃ¼ltige StÃ¤mme prÃ¼fen auf LÃ¶schbarkeit
     if (((! $data['valid']) && $data['ValidationTimeOver']) || ($member_count==0))  
     {
       if (!relation_DeleteRelations($tag,$db)) {

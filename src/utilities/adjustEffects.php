@@ -153,7 +153,7 @@ function adjust_getCaveIDs($db) {
  */
 function adjust_adjustCave($db, $caveID) {
 
-  global $effectTypeList, $terrainList, $checkOnly;
+  global $checkOnly;
 
   // get cave
   $cave = getCaveByID($caveID);
@@ -166,14 +166,14 @@ function adjust_adjustCave($db, $caveID) {
 
   // check each effect
   $adjustments = array();
-  foreach($effectTypeList AS $effectID => $effect) {
+  foreach($GLOBALS['effectTypeList'] AS $effectID => $effect) {
 
     // get actual value
     $actual = $cave[$effect->dbFieldName];
 
     // get nominal value
     $nominal = $artefactEffects[$effectID] + $wonderEffects[$effectID];
-    $nominal += (double) $terrainList[$cave['terrain']]['effects'][$effectID];
+    $nominal += (double) $GLOBALS['terrainList'][$cave['terrain']]['effects'][$effectID];
 
     // check for deviation
     if ($actual != $nominal) {

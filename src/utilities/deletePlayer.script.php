@@ -8,7 +8,7 @@
  * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  */
-global $config;
+;
 include "util.inc.php";
 
 
@@ -29,8 +29,6 @@ if ($_SERVER['argc'] != 2) {
 $playerID = $_SERVER['argv'][1];
 
 echo "DELETE PLAYER $playerID: Starting...\n";
-
-$config = new Config();
 
 if (!($db_login = db_connectToLoginDB())) {
   echo "DELETE PLAYER $playerID: Failed to connect to login db.\n";

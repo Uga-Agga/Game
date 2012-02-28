@@ -9,7 +9,6 @@
  * the License, or (at your option) any later version.
  */
 
-global $config, $unitTypeList;
 
 include "util.inc.php";
 include INC_DIR."config.inc.php";
@@ -42,8 +41,6 @@ switch($_SERVER['argv'][1]) {
 
 echo "RUNNING UNIT STATS...\n";
 
-$config = new Config();
-
 if (!($db = DbConnect())) {
   echo "GAME UNIT STATS: Failed to connect to game db.\n";
   exit(1);
@@ -52,7 +49,8 @@ if (!($db = DbConnect())) {
 /*
  * get db fields
  */
-foreach ($unitTypeList AS $value) {
+foreach ($GLOBALS['unitTypeList'] AS $value) {
+  
   $UnitFieldsName[$value->dbFieldName] = $value->name;
 }
 

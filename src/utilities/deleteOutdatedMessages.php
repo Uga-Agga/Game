@@ -14,7 +14,6 @@ include "util.inc.php";
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 
-$config = new Config();
 $db     = DbConnect();
 
 $DAYS = 7; // how long should the messages be kept?

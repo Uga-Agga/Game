@@ -17,8 +17,6 @@ include INC_DIR."game_rules.php";
 include INC_DIR."time.inc.php";
 include INC_DIR."basic.lib.php";
 
-global $config;
-
 
 
 echo "---------------------------------------------------------------------\n";
@@ -26,8 +24,6 @@ echo "- MULTI ROTATE  LOG FILE --------------------------------------------\n";
 echo "  vom " . date("r") . "\n";
 
 
-
-$config = new Config();
 
 if (!($db_login = db_connectToLoginDB())) {
   echo "Rotate Multi : Failed to connect to login db.\n";
@@ -38,7 +34,7 @@ if (!($db_game = DbConnect())) {
   exit(1);
 }
 
-//alte multies als gelöscht markieren
+//alte multies als gelï¿½scht markieren
 $sql = $db_login->prepare("UPDATE Login 
                            SET deleted = 1 
                            WHERE multi = 66 
@@ -74,7 +70,7 @@ if (is_array($result)) {
       echo "Rotate Multi: Failed to get old tribe from Player\n";
       exit(1);
     }
-    //Nachricht für den alten Stamm erzeugen
+    //Nachricht fï¿½r den alten Stamm erzeugen
     if($row2 = $sql->fetch()) {
       if($row2['tribe'] != "") {
         $time = getUgaAggaTime(time());
@@ -85,7 +81,7 @@ if (is_array($result)) {
                                    (:tribe, NOW(), :timestamp, :message)");
         $sql2->bindValue('tribe', $row2['tribe'], PDO::PARAM_STR);
         $sql2->bindValue('ingameTime', $time['day']. "$month<br>im Jahr ".$time['year'], PDO::PARAM_STR);
-        $sql2->bindValue('message', "Spieler ".$row['user']." wurde in den Stamm Multi überführt", PDO::PARAM_STR);
+        $sql2->bindValue('message', "Spieler ".$row['user']." wurde in den Stamm Multi ï¿½berfï¿½hrt", PDO::PARAM_STR);
         
         if(!$sql->execute()) {
           echo "Rotate Multi: Failed to update old tribehistory\n";

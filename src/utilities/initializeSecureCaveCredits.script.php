@@ -8,14 +8,11 @@
  * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  */
-global $config;
 
 include ("util.inc.php");
 
 include (INC_DIR."db.inc.php");
 include (INC_DIR."config.inc.php");
-
-$config = new Config();
 
 if (!($db_game = DbConnect())) {
   echo "Failed to connect to game db.\n";

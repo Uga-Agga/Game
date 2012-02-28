@@ -17,12 +17,9 @@ include INC_DIR . "config.inc.php";
 
 include INC_DIR . "basic.lib.php";
 include INC_DIR . "time.inc.php";
-include INC_DIR . "effect_list.php";
-include INC_DIR . "wonder.rules.php";
+include INC_DIR . "rules/effects.list.php";
+include INC_DIR . "rules/wonder.rules.php";
 include INC_DIR . "wonder.inc.php";
-
-// get globals
-$config = new Config();
 
 // show header
 weather_showHeader();
@@ -80,11 +77,10 @@ function weather_showFooter() {
  * Return all wonders that are applicable as weather (groupID == 2)
  */
 function weather_getWeatherWonders() {
-  global $weatherTypeList;
 
   $result = array();
 
-  foreach ($weatherTypeList as $id => $weather) {
+  foreach ($GLOBALS['weatherTypeList'] as $id => $weather) {
     $result[$id] = $weather;
   }
 
@@ -128,7 +124,7 @@ function weather_generate() {
                          (regionID, weatherID, impactID, start, end)
                          VALUES (:regionID, :weatherID, :impactID, :start, :end)");
     foreach ($regionweather->impactList as $impactID => $impact) {
-      $delay = (int)(($delayDelta + $impact['delay']) * WEATHER_TIME_BASE_FACTOR);
+      $delay = (int)(($impact['delay']) * WEATHER_TIME_BASE_FACTOR);
 
       $now = time();
       $sql->bindValue('regionID', $region['regionID'], PDO::PARAM_INT);

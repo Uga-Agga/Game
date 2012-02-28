@@ -49,8 +49,6 @@ include INC_DIR . "config.inc.php";
 include INC_DIR . "db.inc.php";
 include INC_DIR . "basic.lib.php";
 
-// get globals
-$config = new Config();
 
 // show header
 inactives_showHeader();
