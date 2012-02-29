@@ -2162,7 +2162,7 @@ function tribe_getLastDonationForTribeStorage ($playerID) {
   }
 }
 
-function tribe_donateResources($value_array, $caveID, &$ownCaves) {
+function tribe_donateResources($value_array, $caveID, &$caveData) {
   global $db;
   
   $playerID = $_SESSION['player']->playerID;
@@ -2182,8 +2182,12 @@ function tribe_donateResources($value_array, $caveID, &$ownCaves) {
       if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
         // check if resource is over maxDonation value
-        if ($resource->maxDonation < $value) {
+        if ($resource->maxTribeDonation < $value) {
           return -21;
+        }
+        // check for enough resources in cave
+        if ($caveData[$resource->dbFieldName] < $value) {
+          return -22;
         }
         $fields_cave[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " - " . $value;
         $fields_storage[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " + " . $value;
@@ -2225,7 +2229,7 @@ function tribe_donateResources($value_array, $caveID, &$ownCaves) {
   }
   
   // update caves
-  $ownCaves = getCaves($playerID);
+  $caveData = getCaveByID($caveID);
   
   return 11;
 }

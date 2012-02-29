@@ -433,8 +433,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 *
 ****************************************************************************************************/
   
-  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
-  
   $tribeStorageValues = array(); $tribeStorage = array();
   foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
     $tribeStorage[$resource->dbFieldName] = $tribeData[$resource->dbFieldName];
@@ -444,8 +442,7 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
   }
   
   $template->addVars(array(
-    'tribeStorage' => $tribeStorageValues,
-    'donations' => $donations
+    'tribeStorage' => $tribeStorageValues
   ));
   
 /****************************************************************************************************
