@@ -19,7 +19,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 /** This function returns basic hero details
  *
  *  @param caveID       the current caveID
- *  @param meineHöhlen  all the data of all your caves
+ *  @param ownCaves  all the data of all your caves
  */
 function hero_getHeroDetail($caveID, &$ownCaves) {
   global $db, $template;
@@ -348,9 +348,23 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   }
 
   if ($GLOBALS['heroSkillTypeList']) {
-    // filter skills by hero type
+    
     $skills = array();
-    foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
+    foreach ($GLOBALS['heroSkillTypeList'] as $skillID => $skill) {
+      
+      // calculate skill effect
+      foreach ($skill['effects'] as $effect_dbFieldName => $effect) {
+        foreach($GLOBALS['effectTypeList'] as $eff) {
+          if ($eff->dbFieldName == $effect_dbFieldName) {
+            $name = $eff->name;
+            break;
+          }
+        }
+        
+        $skill['effect_values'][] = $name . ": " . ($skill['skillFactor']*$hero['forceLvl']);
+      }
+      
+    // filter skills by hero type
       foreach ($skill['requiredType'] as $rt) {
         if ($rt == $hero['id']) {
           $skills[] = $skill;
@@ -364,6 +378,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           $skill['costTP'] > $hero['tpFree'] || 
           $skill['requiredLevel'] > $hero['lvl']) {
         $skills[$skillID]['disableButton'] = true;
+      }
+      
+      if ($hero[$skill['dbFieldName']]) {
+        $skills[$skillID]['showEffects'] = true;
       }
     }
     

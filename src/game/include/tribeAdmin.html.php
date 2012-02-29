@@ -492,7 +492,10 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
     }
   }
   
-  $template->addVar('tribeWonders', $tribeWonders);
+  $template->addVars(array(
+    'tribeWonders' => $tribeWonders, 
+    'memberNumber' => $memberNumber, 
+  ));
   
 }
 

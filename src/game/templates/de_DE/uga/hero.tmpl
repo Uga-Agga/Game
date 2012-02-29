@@ -149,8 +149,7 @@
      <th class="bg2 nohover" style="text-align: left;">Name</th>
      <th class="bg2 nohover">Ben. Level</th>
      <th class="bg2 nohover">Kosten</th>
-     <th class="bg2 nohover">Faktor</th>
-     <th class="bg2 nohover">&nbsp;</th>
+     <th class="bg2 nohover">Basisfaktor</th>
      <th class="bg2 nohover">&nbsp;</th>
     </tr>
     {% for skill in skills %} 
@@ -162,15 +161,17 @@
      <td>{{ skill.requiredLevel }}</td>
      <td>{{ skill.costTP }} TP</td>
      <td>{{ skill.skillFactor }}</td>
-     <td style="text-align: right;"><img
-      src="{{gfx }}/de_DE/t_uga/skills/{{ skill.id }}.jpg" width="20px" height="20px"
-      style="vertical-align: middle;" />
-     </td>
      <td>
       <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
         <input type="hidden" name="action" value="skill_ability">
         <input type="hidden" name="skillID" value="{{ skill.id }}"/>
-        <input name="value" value="Anwenden" type="submit" {% if skill.disableButton %} disabled="disabled" {% endif %}/>
+        {% if skill.showEffects %}
+          {% for item in skill.effect_values %}
+            {{ item }} <br />
+          {% endfor %} 
+        {% else %}
+          <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
+        {% endif %}
       </form>
      </td>
     </tr>
