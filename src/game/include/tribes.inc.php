@@ -998,11 +998,11 @@ function tribe_getNumberOfMembers($tag) {
                        WHERE tribe LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) return -1;
-
+  
   $row = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-
-  return (isset($row_count['members'])) ? $row_count['members'] : -1;
+  
+  return (isset($row['members'])) ? $row['members'] : -1;
 }
 
 function tribe_getTribeByTag($tag) {

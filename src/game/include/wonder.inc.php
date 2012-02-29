@@ -221,9 +221,19 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
     return -35;
   }
   
-  if (!tribe_getTribeByTag($target_tribe)) {
+  // check if tribes exist
+  $targetTribeData = tribe_getTribeByTag($target_tribe);
+  if (!$targetTribeData || !tribe_getTribeByTag($caster_tribe)) {
     return -36;
   }
+  
+  // check if tribe is valid
+  if (!$targetTribeData['valid']) {
+    return -39;
+  }
+  
+  // check if caster tribe ist valid
+  if (!tribe_)
   
   // check if player is leader
   if (!tribe_isLeader($_SESSION['player']->playerID, $caster_tribe)) {
@@ -240,7 +250,8 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
   }
   
   // take wonder Costs from TribeStorage
-  if (!processProductionCost($wonder, 0, NULL, 1, true)) {
+  $memberNumber = tribe_getNumberOfMembers($caster_tribe);
+  if (!processProductionCost($wonder, 0, NULL, $memberNumber, true)) {
     return -35;
   }
   
