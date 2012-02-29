@@ -13,63 +13,66 @@
 {% block title %}Höhlenübersicht{% endblock %}
 {% block content %}
 
-<div class="box small">
-  <div class="box-header">Aktive Auswirkungen der Wunder</div>
-  <div class="box-content success inner text-center">
+<div class="ua-box small">
+  <div class="ua-box-header">Aktive Auswirkungen der Wunder</div>
+  <div class="ua-box-content">
   {% if wonder %}
-      <table class="table">
-        {% for item in wonder %}
-          <tr>
-            <td style="valign: top; float: left;"><span class="bold">{{ item.name }}</span>, wirkt noch bis: {{ item.end }}</td>
-          </tr>
-        {% endfor %}
-      </table>
+    <div class="ym-grid space">
+      {% for item in wonder %}
+      <div class="ym-g684-12 ym-gl">
+        <span class="bold">{{ item.name }}</span>, wirkt noch bis: {{ item.end }}
+      </div>
+      {% endfor %}
+    </div>
   {% else %}
-    <div class="success" style="margin-bottom: 0px">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
+    <div class="space center">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
   {% endif %}
   </div>
 </div>
 
-<div class="box small">
-  <div class="box-header">In der Höhle wirkende Effekte</div>
+<div class="ua-box small">
+  <div class="ua-box-header">In der Höhle wirkende Effekte</div>
   {% if effect %}
-    <div class="box-content success inner">
-      <table class="table nohover">
-        {% for item in effect %}
-          <tr>
-            <td style="valign: top; float: left;">{{ item.name }}:</td>
-            <td style="valign: top; float: left; width: 70px;">{{ item.value }}</td>
-          </tr>
-        {% endfor %}
-      </table>
+    <div class="ua-box-content">
+      <div class="ym-grid space">
+        <div class="ym-g684-12 ym-gl">
+          {% for item in effect %}
+          <div class="ym-grid">
+            <div class="ym-g684-4 ym-gl">{{ item.name }}:</div>
+            <div class="ym-g684-8 ym-gl">{{ item.value }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
     </div>
   {% else %}
-    <div class="success" style="margin-bottom: 0px">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
+    <div class="space center">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
   {% endif %}
 </div>
 
 {% if hero %}
-<div class="box small">
-  <div class="box-header">Effekte des Helden</div>
-    <div class="box-content success inner">
-      <table class="table nohover">
-      <tr>
-        <td colspan="2"><div class="notice" style="margin-bottom: 0px;">Die Effekte wirken nur, wenn die Bedingungen erfüllt sind (Held am Leben, usw.)!</div></td>
-      </tr>
+<div class="ua-box small">
+  <div class="ua-box-header">Effekte des Helden</div>
+  <div class="ua-box-content">
+    <div class="space center">Die Effekte wirken nur, wenn die Bedingungen erfüllt sind (Held am Leben, usw.)!</div>
+    <div class="ym-grid space">
+      <div class="ym-g684-12 ym-gl">
         {% for item in hero %}
-          <tr>
-            <td style="valign: top; float: left;">{{ item.name }}:</td>
-            <td style="valign: top; float: left; width: 70px;">{{ item.value }}</td>
-          </tr>
+        <div class="ym-grid">
+          <div class="ym-g684-4 ym-gl">{{ item.name }}:</div>
+          <div class="ym-g684-8 ym-gl">{{ item.value }}</div>
+        </div>
         {% endfor %}
-      </table>
+      </div>
     </div>
+  </div>
 </div>
 {% endif %}
 
-<div class="box small">
-  <div class="box-header">Aktuelle Farmpunkte</div>
-  <div class="box-content success inner">
+<!--
+<div class="ua-box small">
+  <div class="ua-box-header">Aktuelle Farmpunkte</div>
+  <div class="ua-box-content">
     <table class="table nohover">
       <tr>
         <td style="valign: top; float: left; width: 70px;">Anzahl:</td>
@@ -78,5 +81,6 @@
     </table>
   </div>
 </div>
+-->
 
 {% endblock %}

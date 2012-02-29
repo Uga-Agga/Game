@@ -41,7 +41,7 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
     -16 => array('type' => 'error', 'message' => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.')),
     -15 => array('type' => 'error', 'message' => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.')),
     -14 => array('type' => 'error', 'message' => _('Die Beziehung wurde nicht geändert, weil der ausgewählte Beziehungstyp bereits eingestellt ist.')),
-    -13 => array('type' => 'error', 'message' => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so grßen Stamm einzugehen.')),
+    -13 => array('type' => 'error', 'message' => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so großen Stamm einzugehen.')),
     -12 => array('type' => 'error', 'message' => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so kleinen Stamm einzugehen.')),
     -11 => array('type' => 'error', 'message' => sprintf(_('Die Moral des Gegners ist noch nicht schlecht genug. Sie muss unter %d sinken. Eine weitere Chance besteht, wenn die Mitgliederzahl des gegnerischen Stammes um 30 Prozent gesunken ist. Das Verhältnis Eurer Rankingpunkte zu denen des Gegners muss sich seit Kriegsbeginn verdoppelt haben.'), RELATION_FORCE_MORAL_THRESHOLD)),
     -10 => array('type' => 'error', 'message' => _('Die zu ändernde Beziehung wurde nicht gefunden!')),
@@ -143,12 +143,16 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 * Stammesinfos ändern
 *
 ****************************************************************************************************/
-
     case 'update':
+      if (!$isLeader || !$auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth['tribe'])) {
+        $messageID = -30;
+        break;
+      }
+
       $password = Request::getVar('tribe_password', '');
 
       $postData = array(
-        'name'        => Request::getVar('tribe_name', ''),
+        'name'        => Request::getVar('tribe_name', '', true),
         'password'    => (!empty($password)) ? $password : $tribeData['password'],
         'avatar'      => Request::getVar('tribe_avatar', ''),
         'description' => Request::getVar('tribe_description', '', true)
@@ -166,7 +170,7 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 *
 ****************************************************************************************************/
     case 'changeGoverment':
-      if (!$isLeader) {
+      if (!$isLeader || !$auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth['tribe'])) {
         $messageID = -21;
         break;
       }
@@ -182,7 +186,7 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 ****************************************************************************************************/
     case 'changeAuth':
       if (!$isLeader) {
-        $messageID = -30;
+        $messageID = -21;
         break;
       }
 
@@ -240,8 +244,8 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 *
 ****************************************************************************************************/
     case 'kick':
-      if (!$isLeader) {
-        $messageID = -21;
+      if (!$isLeader || !$auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth['tribe'])) {
+        $messageID = -30;
       } else {
         $messageID = tribe_processKickMember(Request::getVar('playerID', 0), $tag);
         $memberData = tribe_getAllMembers($tag);
@@ -276,6 +280,11 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 *
 ****************************************************************************************************/
   case 'tribeWonder':
+      if (!$isLeader) {
+        $messageID = -21;
+        break;
+      }
+
       $wonderID = Request::getVar('wonderID', -1);
       $tribeName = Request::getVar('TribeName', '');
 
@@ -290,10 +299,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
         $messageID = -26;
         break;
       }
-  
-  
-  
-  
   } // end action switch
 
 /****************************************************************************************************
