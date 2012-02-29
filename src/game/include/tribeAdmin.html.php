@@ -18,6 +18,8 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 
   // messages
   $messageText = array(
+    -38 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf andere Stämme gewundert werden!')),
+    -37 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf den eigenen Stamm gewundert werden!')),
     -36 => array('type' => 'error', 'message' => _('Stamm nicht gefunden! Tippfehler?')),
     -35 => array('type' => 'error', 'message' => _('Beim Ausführen des Stammeswunders ist ein Problem aufgetreten!')),
     -34 => array('type' => 'info', 'message' => _('Nur der Stammesführer darf das Stammeswunder wundern!')),

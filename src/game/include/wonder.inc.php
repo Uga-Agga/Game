@@ -215,7 +215,7 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
   global $db;
   
   // check if wonder exists and is TribeWonder
-  if (isset($GLOBALS['wonderTypeList'][$wonderID])) {
+  if (isset($GLOBALS['wonderTypeList'][$wonderID]) || !$wonder->isTribeWonder) {
     $wonder = $GLOBALS['wonderTypeList'][$wonderID];
   } else {
     return -35;
@@ -225,13 +225,18 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
     return -36;
   }
   
-  if (!$wonder->isTribeWonder) {
-    return -35;
-  }
-  
   // check if player is leader
   if (!tribe_isLeader($_SESSION['player']->playerID, $caster_tribe)) {
     return -34;
+  }
+  
+  // check target
+  if ($wonder->target == "own" && $caster_tribe != $target_tribe) {
+    return -37;
+  }
+  
+  if ($wonder->target == "other" && $caster_tribe == $target_tribe) {
+    return -38;
   }
   
   // take wonder Costs from TribeStorage
