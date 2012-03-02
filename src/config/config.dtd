@@ -11,7 +11,7 @@
 <!ELEMENT ScienceTypes (Science*)>
 <!ELEMENT UnitTypes (Unit*)>
 <!ELEMENT DefenseSystemTypes (DefenseSystem*)>
-<!ELEMENT Resource (Name+, Remark+, RatingValue, TakeoverValue, StealRatio, DestroyRatio, SafeStorage, MaxStorage, Production, MaxDonation)>
+<!ELEMENT Resource (Name+, Remark+, RatingValue, TakeoverValue, StealRatio, DestroyRatio, SafeStorage, MaxStorage, Production, MaxTribeDonation)>
 <!ATTLIST Resource id ID #REQUIRED hidden (0 | 1) "0">
 <!ELEMENT Building (Name+, Description+, Remark+, Position?, RatingValue, Cost*, ProductionTime, MaxDevelopmentLevel, (Requirement | EffectReq)*)>
 <!ATTLIST Building id ID #REQUIRED hidden (0 | 1) "0">
@@ -304,7 +304,7 @@
 <!ELEMENT HP_prozentual_increase (#PCDATA)>
 <!ELEMENT MaxDevelopmentLevel (#PCDATA | object)*>
 <!ELEMENT SafeStorage (#PCDATA | object)*>
-<!ELEMENT MaxDonation (#PCDATA)>
+<!ELEMENT MaxTribeDonation (#PCDATA)>
 <!ELEMENT MaxStorage (#PCDATA | object)*>
 <!ELEMENT MaxValue (#PCDATA)>
 <!ELEMENT MovementCost (#PCDATA | object)*>

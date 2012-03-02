@@ -273,24 +273,6 @@
       </tr>
       {% endfor %}
     </table>
-    <p>Einzahlungen:</p>
-    <table>
-      <thead>
-      <tr>
-        <th>Spieler</th>
-        {% for item in tribeStorage %}
-        <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
-        {% endfor %}
-      </tr>
-      </thead>
-      {% for donation in donations %}
-      <tr>
-        {% for item in donation %}
-        <td>{{ item }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </table>
   </div>
 </div>
 {% endif %}
@@ -308,7 +290,7 @@
               <td>
                 <dl>
                   <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                  <dd>{% include "boxCost.tmpl" %}</dd>
+                  <dd>{% include "boxCost.tmpl" %} bei {{ memberNumber }} Mitgliedern</dd>
                 </dl>
               </td>
               <td class="right" style="vertical-align:center;">

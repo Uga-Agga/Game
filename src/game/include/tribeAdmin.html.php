@@ -18,6 +18,9 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 
   // messages
   $messageText = array(
+    -39 => array('type' => 'error', 'message' => _('Ihr Stamm hat nicht genug Mitglieder um Stammeswunder sprechen zu können!')),
+    -38 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf andere Stämme gewundert werden!')),
+    -37 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf den eigenen Stamm gewundert werden!')),
     -36 => array('type' => 'error', 'message' => _('Stamm nicht gefunden! Tippfehler?')),
     -35 => array('type' => 'error', 'message' => _('Beim Ausführen des Stammeswunders ist ein Problem aufgetreten!')),
     -34 => array('type' => 'info', 'message' => _('Nur der Stammesführer darf das Stammeswunder wundern!')),
@@ -433,8 +436,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 *
 ****************************************************************************************************/
   
-  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
-  
   $tribeStorageValues = array(); $tribeStorage = array();
   foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
     $tribeStorage[$resource->dbFieldName] = $tribeData[$resource->dbFieldName];
@@ -444,8 +445,7 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
   }
   
   $template->addVars(array(
-    'tribeStorage' => $tribeStorageValues,
-    'donations' => $donations
+    'tribeStorage' => $tribeStorageValues
   ));
   
 /****************************************************************************************************
@@ -455,22 +455,32 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 ****************************************************************************************************/
   
   $tribeWonders = array();
+  $memberNumber = tribe_getNumberOfMembers($tag);
   foreach ($GLOBALS['wonderTypeList'] as $wonder) {
-    
     
     // exclude nonTribeWonders
     if (!$wonder->isTribeWonder || $wonder->nodocumentation) {
       continue;
     }
     
-    $result = rules_checkDependencies($wonder, $tribeStorage);
+    // multiply costs with number of tribe members
+    foreach($wonder->resourceProductionCost as $prodID => $prod) {
+      $wonder->resourceProductionCost[$prodID] = $prod * $memberNumber;
+    }
+    
+    foreach($wonder->unitProductionCost as $prodID => $prod) {
+      $wonder->unitProductionCost[$prodID] = $prod * $memberNumber;
+    }
+    
+    foreach($wonder->buildingProductionCost as $prodID => $prod) {
+      $wonder->buildingProductionCost[$prodID] = $prod * $memberNumber;
+    }
     
     $tribeWonders[$wonder->wonderID] = array(
       'dbFieldName' => $wonder->wonderID, // Dummy. Wird für die boxCost.tmpl gebraucht.
       'name'        => $wonder->name,
       'wonder_id'   => $wonder->wonderID,
-      'description' => $wonder->description,
-      'same'        => ($wonder->target == 'same') ? true : false
+      'description' => $wonder->description
     );
     $tribeWonders[$wonder->wonderID] = array_merge($tribeWonders[$wonder->wonderID], parseCost($wonder, $tribeStorage));
   
@@ -482,7 +492,10 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
     }
   }
   
-  $template->addVar('tribeWonders', $tribeWonders);
+  $template->addVars(array(
+    'tribeWonders' => $tribeWonders, 
+    'memberNumber' => $memberNumber, 
+  ));
   
 }
 
