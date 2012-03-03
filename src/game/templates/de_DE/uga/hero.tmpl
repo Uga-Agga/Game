@@ -16,14 +16,14 @@
 {% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %} 
 
 {% if hero %}
-<div class="box small">
-  <div class="box-header">Held von {{ hero.name }}</div>
-  <div class="box-content success inner">
-    <div style="float: left; width: 260px;">
+<div class="ua-box small">
+  <div class="ua-box-header">Held von {{ hero.name }}</div>
+  <div class="ua-box-content">
+    <div class="ym-grid">
+    <div class="ym-gl" style="min-width:250px;">
       <img src="{{ gfx }}/heroes/{{ hero.path }}" width="250px" height="250px" alt="Held" />
     </div>
-    <div class="text-right" style="float: right;">
-      <div class="notice" style="width: 320px;">
+    <div class="ym-gr notice" style="margin:5px">
         <p class="text-center bold">Statuswerte</p>
         <br />
         <table class="table nohover text-left" style="width: 320px;">
@@ -99,29 +99,29 @@
             </td>
           </tr>
         </table>
-      </div>
     </div>
     <div style="clear: both;"></div>
+  </div>
   </div>
 </div>
 
 {% if hero.isAlive>0 %}
   {% if showImmolation %}
-  <div class="box small">
-    <div class="box-header">Rohstoffe opfern</div>
-    <div class="boxcontent smallinner success inner">
-      <div class="notice" style="text-align:center">
+  <div class="ua-box small">
+    <div class="ua-box-header">Rohstoffe opfern</div>
+    <div class="ua-box-content" style="padding:10px;">
+      <div class="notice" style="text-align:center;">
         Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln. <br/><br />
-        Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!
+        Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!<br/>
+        Mehrfacheintragung möglich!
       </div>
 
-      <table class="table nohover" rules="rows">
+      <form action="main.php?modus={{ hero_link }}" method="post">
+      <table class="table text-center" rules="rows">
         <tr class="bg2">
           <th class="bg2">Rohstoff</th>
           <th class="bg2">Menge</th>
-          <th class="bg2">&nbsp;</th>
         </tr>
-        <form action="main.php?modus={{ hero_link }}" method="post">
         {% for resource in resourceTypeList %}
           {% if resource.takeoverValue > 0 %}
           {% set bgID = (bgID+1)%2 %}
@@ -131,59 +131,62 @@
           </tr>
           {% endif %}
         {% endfor %}
-        <input type="hidden" name="action" value="immolateResources"/>
-        <td><input name="submitImmolation" value="Ugh!" type="submit" /></td>
-        </form>
+        <tr>
+          <td colspan="2" style="text-align:right;"><input name="submitImmolation" value="Ugh!" type="submit" /></td>
+        </tr>
       </table>
+      </form>
     </div>
   </div>
+  {% else %}
+  <div class="info small">Keine Opferung möglich!</div>
   {% endif %}
   
   {% if skills %}
-  <div class="notice small" style="width: 660px;">
-   <p style="text-align: left; margin-left: 10px; font-weight: bold;">Fähigkeiten ausbilden</p>
-   <br />
-   <table class="table" cellspacing="0" cellpadding="2"
-    style="text-align: center">
-    <tr class="bg2 nohover">
-     <th class="bg2 nohover" style="text-align: left;">Name</th>
-     <th class="bg2 nohover">Ben. Level</th>
-     <th class="bg2 nohover">Kosten</th>
-     <th class="bg2 nohover">Basisfaktor</th>
-     <th class="bg2 nohover">&nbsp;</th>
-    </tr>
-    {% for skill in skills %} 
-    {% set bgID = (bgID+1)%2 %}
-    <tr class="bg{{ bgID }}">
-     <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
-     <div class="text-small">{{ skill.description|raw }}</div>
-     </td>
-     <td>{{ skill.requiredLevel }}</td>
-     <td>{{ skill.costTP }} TP</td>
-     <td>{{ skill.skillFactor }}</td>
-     <td>
-      <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
-        <input type="hidden" name="action" value="skill_ability">
-        <input type="hidden" name="skillID" value="{{ skill.id }}"/>
-        {% if skill.showEffects %}
-          {% for item in skill.effect_values %}
-            {{ item }} <br />
-          {% endfor %} 
-        {% else %}
-          <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
-        {% endif %}
-      </form>
-     </td>
-    </tr>
-    {% endfor %}
-   </table>
+  <div class="ua-box small">
+    <div class="ua-box-header">Fähigkeiten ausbilden</div>
+    <div class="ua-box-content">
+      <table class="table" style="text-align:center" rules="all">
+      <tr class="bg2 nohover">
+       <th class="bg2 nohover" style="text-align: left;">Name</th>
+       <th class="bg2 nohover">Benötigtes Level</th>
+       <th class="bg2 nohover">Kosten</th>
+       <th class="bg2 nohover">Basisfaktor</th>
+       <th class="bg2 nohover">&nbsp;</th>
+      </tr>
+      {% for skill in skills %} 
+      {% set bgID = (bgID+1)%2 %}
+      <tr class="bg{{ bgID }}">
+       <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
+       <div class="text-small">{{ skill.description|raw }}</div>
+       </td>
+       <td>{{ skill.requiredLevel }}</td>
+       <td>{{ skill.costTP }} TP</td>
+       <td>{{ skill.skillFactor }}</td>
+       <td>
+        <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
+          <input type="hidden" name="action" value="skill_ability">
+          <input type="hidden" name="skillID" value="{{ skill.id }}"/>
+          {% if skill.showEffects %}
+            {% for item in skill.effect_values %}
+              {{ item }} <br />
+            {% endfor %} 
+          {% else %}
+            <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
+          {% endif %}
+        </form>
+       </td>
+      </tr>
+      {% endfor %}
+    </table>
+    </div>
   </div>
   {% endif %}
 
   {% if potions %}
-  <div class="box small">
-    <div class="box-header">Tränke</div>
-    <div class="boxcontent smallinner success inner">
+  <div class="ua-box small">
+    <div class="ua-box-header">Tränke</div>
+    <div class="ua-box-content">
       <table class="table nohover" rules="rows">
         <tr class="bg2">
           <th class="bg2">Trank</th>
@@ -226,10 +229,9 @@
 {% endif %} {# end of hero.isAlive #}
 
 {% if ritual %}
-<div class="box small">
-  <div class="box-header">{{ ritual.name }}</div>
-  <div class="boxcontent smallinner success inner">
-
+<div class="ua-box small">
+    <div class="ua-box-header">Wiederbelebung</div>
+    <div class="ua-box-content">
     {% if quene_show %}
     <div class="notice" style="width: 600px; margin: 5px auto; text-align: center">
       <ul>
@@ -243,7 +245,7 @@
         <td><img src="{{ gfx }}/heroes/altar_large.gif" style="width: 225px; height: 140px;" alt="Altar der Auferstehung" /></td>
         <td>
           <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;">{{ ritual.description }}</p>
-          <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;"><strong>Kosten für Held auf Lvl {{ ritual.ritualID }}:</strong><br />&nbsp;&nbsp;
+          <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;"><strong>Kosten für Held auf Level {{ hero.lvl }}:</strong><br />&nbsp;&nbsp;
           <table>
             <tr>
               <td>
@@ -276,9 +278,9 @@
 <div class="success small"><a href="http://faq.uga-agga.de/content/1/41/de/neu-in-hr12-%7C-heldentum.html" onclick="window.open(this.href); return false;">weitere Informationen zu den Helden</a></div>
 {% endif %}
 {% if changeType %}
-<div class="box">
-  <div class="box-header">Neue Art des Helden wählen:</div>
-  <div class="box-content success inner">
+<div class="ua-box small">
+    <div class="ua-box-header">Neue Art des Helden wählen:</div>
+    <div class="ua-box-content">
     <table class="table nohover" rules="rows">
       {% for item in heroTypesList %} 
       {% set bgID = (bgID+1)%2 %}
@@ -297,9 +299,9 @@
 </div>
 {% endif %} 
 {% if newhero %}
-<div class="box">
-  <div class="box-header">Art des Helden wählen:</div>
-  <div class="box-content success inner">
+<div class="ua-box small">
+    <div class="ua-box-header">Art des Helden wählen:</div>
+    <div class="ua-box-content">
     <table class="table nohover" rules="rows">
       {% for item in heroTypesList %} 
       {% set bgID = (bgID+1)%2 %}
