@@ -110,6 +110,18 @@ function export_switch() {
       break;
 
       
+    
+    case 'statistics':
+      switch($format) {
+        case 'xml':
+          return export_stats_xml();
+          break;
+          
+        default: 
+          return "Unbekanntes Format für Export (" . $format . ")";
+      }
+      
+      
     default:
       return "Unbekannter Modus für Export!";
       break;
@@ -732,6 +744,115 @@ function export_messages_xml($messageID) {
 
   $xml = simplexml_load_string($message_data['messageXML'], 'mySimpleXML');
 
+  return $xml->asPrettyXML();
+}
+
+/*
+ * export_stats_xml() - returns xml of statistic data
+ */
+function export_stats_xml() {
+  global $db;
+  
+  $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><statistics></statistics>");
+  
+  foreach ($GLOBALS['unitTypeList'] AS $value) {
+    if (!$value->nodocumentation) {
+      $UnitFieldsName[$value->dbFieldName] = $value->name;
+    }
+  }
+  asort($UnitFieldsName);
+  
+  foreach ($GLOBALS['scienceTypeList'] AS $value) {
+    $ScienceFieldsName[$value->dbFieldName] = $value->name;
+  }
+
+  $sql = $db->prepare("SELECT * FROM " . STATISTIC_TABLE);
+  
+  if (!$sql->execute()) {
+    return;
+  }
+
+  $StatsData = array();
+  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+    $StatsData[$row['type']][$row['name']] = $row['value'];
+  }
+
+  if (!sizeof($StatsData)) {
+    return "Keine Daten gefunden!";
+  }
+
+  /*
+  * print god stats
+  */
+  $GodStatsList = array();
+  $GodStats = $StatsData[GOD_STATS];
+  ksort($GodStats);
+  $gods = $xml->addChild('gods');
+  foreach ($GodStats as $God => $value) {
+    if (!isset($ScienceFieldsName[$God])) {
+      continue;
+    }
+    $god = $gods->addChild('god', array_pop(unserialize($value)));
+    $god->addAttribute('name', $ScienceFieldsName[$God]);
+  }
+
+  /*
+  * print god halfgod stats
+  */
+  $HalfGodStatsList = array();
+  $HalfGodStats = $StatsData[HALFGOD_STATS];
+  ksort($HalfGodStats);
+  $hGods = $xml->addChild('halfGods');
+  foreach ($HalfGodStats as $HalfGod => $value) {
+    if (!isset($ScienceFieldsName[$HalfGod])) {
+      continue;
+    }
+    $hGod = $hGods->addChild('halfGod', array_pop(unserialize($value)));
+    $hGod->addAttribute('name', $ScienceFieldsName[$HalfGod]);
+  }
+
+  /*
+  * print storage stats
+  */
+  $StorageStatsList = array();
+  $StorageStats = $StatsData[STORAGE_STATS];
+  ksort($StorageStats);
+  $storages = $xml->addChild('storages');
+  foreach ($StorageStats as $Storage => $value) {
+    $storage = $storages->addChild('storage', array_pop(unserialize($value)));
+    $storage->addAttribute('size', $Storage);
+  }
+
+  /*
+   * get Unit stats
+   */
+  $sql = $db->prepare("SELECT * FROM ". STATISTIC_UNIT_TABLE ." ORDER BY type_sub DESC");
+
+  if (!$sql->execute()) {
+    return;
+  }
+
+  $StatsData = array();
+  
+  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+    $UnitStats[$row['type']][$row['type_sub']] = $row;
+  }
+  
+  $Units = array(); $UnitAll= 0;
+  $units = $xml->addChild('units');
+  $LastUnitStats = array_pop($UnitStats[STATS_HOUR]);
+  foreach ($UnitFieldsName as $Unit => $Name) {
+    if (!isset($LastUnitStats[$Unit]) || $LastUnitStats[$Unit] <= 0) {
+      continue;
+    }
+
+    $UnitAll = $UnitAll + $LastUnitStats[$Unit];
+    $unit = $units->addChild('unit', $LastUnitStats[$Unit]);
+    $unit->addAttribute('name', $Name);
+  }
+  $unit = $units->addChild('unit', $UnitAll);
+  $unit->addAttribute('name', 'all');
+  
   return $xml->asPrettyXML();
 }
 

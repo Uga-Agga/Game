@@ -58,87 +58,85 @@
 </fieldset>
 {% endif %}
 
-<div class="box small">
-  <div class="box-header">Götter/Halbgötter Statistik</div>
-  <div class="box-content success inner text-center nohover">
-    <table>
-      <tr>
-        <td style="vertical-align: top;">
-          <div class="notice" style="width: 280px;">
-            <table>
-              <tr align="left">
-                <th width="230px">Gott</th>
-                <th width="50px">Anbeter</th>
-              </tr>
-              {% for god in GodStats %}
+<a class="export-link" href="export.php?modus=statistics&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><div id="export-dialog"></div>
+
+<div class="ua-box">
+  <div class="ua-box-header">Halbgötter/Götter - Statistik</div>
+  <div class="ua-box-content">
+    <div class="ym-grid">
+      <div class="ym-g50 ym-gl">
+        <div class="notice" style="margin:2px;">
+          <table>
+            <tr align="left">
+              <th width="230px">Gott</th>
+              <th width="50px">Anbeter</th>
+            </tr>
+            {% for god in GodStats %}
+            <tr>
+              <td align="left">{{ god.name }}</td>
+              <td align="right">{{ god.value }}</td>
+            </tr>
+          {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="ym-g50 ym-gl">
+        <div class="notice" style="margin:2px;">
+          <table>
+            <tr align="left">
+              <th width="230px">Halbgott</th>
+              <th width="50px">Anbeter</th>
+            </tr>
+            {% for halfgod in HalfGodStats %}
               <tr>
-                <td align="left">{{ god.name }}</td>
-                <td align="right">{{ god.value }}</td>
+                <td align="left">{{ halfgod.name }}</td>
+                <td align="right">{{ halfgod.value }}</td>
               </tr>
             {% endfor %}
-            </table>
-          </div>
-        </td>
-        <td style="vertical-align: top;">
-          <div class="notice" style="width: 280px;">
-            <table>
-              <tr align="left">
-                <th width="230px">Halbgott</th>
-                <th width="50px">Anbeter</th>
-              </tr>
-              {% for halfgod in HalfGodStats %}
-                <tr>
-                  <td align="left">{{ halfgod.name }}</td>
-                  <td align="right">{{ halfgod.value }}</td>
-                </tr>
-              {% endfor %}
-            </table>
-          </div>
-        </td>
-      </tr>
-    </table>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="box small">
-  <div class="box-header">Einheiten/Lager Statistik</div>
-  <div class="box-content success inner text-center nohover">
-    <table>
-      <tr>
-        <td style="vertical-align: top;">
-          <div class="notice" style="width: 280px;">
-            <table>
-              <tr align="left">
-                <th width="230px">Name</th>
-                <th width="50px">Lebend</th>
-              </tr>
-              {% for unit in Units %}
-              <tr>
-                <td align="left"><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
-                <td align="right">{{ unit.value }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-          </div>
-        </td>
-        <td style="vertical-align: top;">
-          <div class="notice" style="width: 280px;">
-            <table>
-              <tr align="left">
-                <th width="230px">Lagerstufe</th>
-                <th width="50px">Anzahl</th>
-              </tr>
-              {% for storage in StorageStats %}
-              <tr>
-                <td align="left">{{ storage.name }}</td>
-                <td align="right">{{ storage.value }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-          </div>
-        </td>
-      </tr>
-    </table>
+<div class="ua-box">
+  <div class="ua-box-header">Einheiten/Lager - Statistik</div>
+  <div class="ua-box-content">
+    <div class="ym-grid">
+      <div class="ym-g50 ym-gl">
+        <div class="notice"  style="margin:2px;">
+          <table>
+            <tr align="left">
+              <th width="230px">Name</th>
+              <th width="50px">Lebend</th>
+            </tr>
+            {% for unit in Units %}
+            <tr>
+              <td align="left"><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
+              <td align="right">{{ unit.value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="ym-g50 ym-gl">
+        <div class="notice" style="margin:2px;">
+          <table>
+            <tr align="left">
+              <th width="230px">Lagerstufe</th>
+              <th width="50px">Anzahl</th>
+            </tr>
+            {% for storage in StorageStats %}
+            <tr>
+              <td align="left">{{ storage.name }}</td>
+              <td align="right">{{ storage.value }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

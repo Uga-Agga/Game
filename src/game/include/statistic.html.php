@@ -86,7 +86,7 @@ function statistic_getContent() {
   $template->addVars(array('StorageStats' => $StorageStatsList));
 
   /*
-   * het Unit stats
+   * get Unit stats
    */
   $sql = $db->prepare("SELECT * FROM ". STATISTIC_UNIT_TABLE ." ORDER BY type_sub DESC");
 
@@ -131,7 +131,6 @@ function statistic_getContent() {
       'showUnitDetails' => true, 
       'unitName' => $UnitFieldsName[$Unit]
     ));
-//    tmpl_set($template, 'UNITDETAILS/title', 'Einheiten Statistik');
 
     /*
      * get hour stats
