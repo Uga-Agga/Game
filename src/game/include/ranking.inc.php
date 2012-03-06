@@ -14,117 +14,97 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function ranking_checkOffset($playerID, $offset) {
-
   global $db;
 
   // get numRows of Ranking
   $sql = $db->prepare("SELECT COUNT(*) AS num_rows FROM " . RANKING_TABLE);
+  if (!$sql->execute()) return -1;
 
-  if (!$sql->execute() ) {
-    return -1;
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $num_rows = $row['num_rows'];
+  $sql->closeCursor();
+
+  // Es gibt weniger Spieler als maximal angezeiegt werden sollen? Ab Spieler 1 auflisten
+  if ($num_rows <= RANKING_ROWS) {
+    return 1;
   }
-  if ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $num_rows = $row['num_rows'];
+
+  // eingegbener offset ist eine zahl?
+  if (strval(intval($offset)) == $offset) {
+    return $num_rows - $offset - floor(RANKING_ROWS/2);
+  }
+
+  if (empty($offset)) {
+    // $offset is not set yet, show the actual player in the middle of the list
+    $sql = $db->prepare("SELECT rank
+                         FROM ". RANKING_TABLE." 
+                         WHERE playerID = :playerID");
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   } else {
-    // something is real wrong, just return '-1' as error message
-    return -1;
+    // $offset is a player name
+    $sql = $db->prepare("SELECT rank
+                         FROM ". RANKING_TABLE ." 
+                         WHERE name LIKE :offset");
+    $sql->bindValue('offset', $offset, PDO::PARAM_STR);
   }
 
-  if (strval(intval($offset)) != $offset) {
-    // $offset is NOT a line number
+  if (!$sql->execute()) return -1;
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
 
-    if (empty($offset)) {
-      // $offset is not set yet, show the actual player in the middle of the list
-      $sql = $db->prepare("SELECT rank
-                           FROM ". RANKING_TABLE." 
-                           WHERE playerID = :playerID");
-      $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-
-    } else {
-      // $offset is a player name
-      $sql = $db->prepare("SELECT rank
-                           FROM ". RANKING_TABLE ." 
-                           WHERE name LIKE :offset");
-      $sql->bindValue('offset', $offset, PDO::PARAM_STR);
-    }
-
-    if (!$sql->execute()) {
-      return -1;
-    }
-
-    // if at least one record exists, get 'rank'
-    if ($row = $sql->fetch()){
-      $offset = $row['rank'] - (!isset($offset) ? floor(RANKING_ROWS/2) : 0);
-    } else {
-      $offset = 1;
-    }
+  if (!$row) {
+    return 1;
+  } else {
+    return (($row['rank'] - floor(RANKING_ROWS/2)) > 0) ? $row['rank'] - floor(RANKING_ROWS/2) : 1;
   }
-
-  // the $offset is possibly out of bounds so make it right
-  if ($offset < 1)
-    $offset = 1;
-  if ($offset > $num_rows)
-    $offset = $num_rows;
-
-  return $offset;
 }
 
 function rankingTribe_checkOffset($offset) {
-
   global $db;
 
   // get numRows of Ranking
   $sql = $db->prepare("SELECT COUNT(*) AS num_rows FROM " . RANKING_TRIBE_TABLE);
+  if (!$sql->execute()) return -1;
 
-  if (!$sql->execute()) {
-    return -1;
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $num_rows = $row['num_rows'];
+  $sql->closeCursor();
+
+  // Es gibt weniger Stämme als maximal angezeiegt werden sollen? Ab Spieler 1 auflisten
+  if ($num_rows <= RANKING_ROWS) {
+    return 1;
   }
-  if ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $num_rows = $row['num_rows'];
+
+  // eingegbener offset ist eine zahl?
+  if (strval(intval($offset)) == $offset) {
+    return $num_rows - $offset - floor(RANKING_ROWS/2);
+  }
+
+  if (empty($offset) && $_SESSION['player']->tribe) {
+    // $offset is not set yet, show the actual tribe in the middle of the list
+    $sql = $db->prepare("SELECT rank
+                         FROM ". RANKING_TRIBE_TABLE." 
+                         WHERE tribe = :tribe");
+    $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_INT);
+  } else if ($_SESSION['player']->tribe) {
+    // $offset is a player name
+    $sql = $db->prepare("SELECT rank
+                         FROM ". RANKING_TRIBE_TABLE ." 
+                         WHERE tribe LIKE :offset");
+    $sql->bindValue('offset', $offset, PDO::PARAM_STR);
   } else {
-    // something is real wrong, just return '-1' as error message
-    return -1;
+    return 1;
   }
 
-  //if (!isset($offset))
-  //    $offset = 1;
+  if (!$sql->execute()) return -1;
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
 
-  if (strval(intval($offset)) != $offset) {
-
-    if (!isset($offset) && $_SESSION['player']->tribe != '') {
-      // $offset is not set yet, show the actual player's tribe in the middle of the list
-      $sql = $db->prepare("SELECT rank
-                           FROM ". RANKING_TRIBE_TABLE ." 
-                           WHERE tribe = :tibe");
-      $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
-      
-    } else {
-      // $offset is a tribe name
-      $sql = $db->prepare("SELECT rank
-                           FROM ". RANKING_TRIBE_TABLE ." 
-                           WHERE tribe LIKE :offset");
-      $sql->bindValue('offset', $offset, PDO::PARAM_STR);
-    }
-
-    if (!$sql->execute()) {
-      return -1;
-    }
-
-    // if at least one record exists, get 'rank'
-    if ($row = $sql->fetch()) {
-      $offset = $row['rank'] - (!isset($offset) ? floor(RANKING_ROWS/2) : 0);
-    } else {
-      $offset = 1;
-    }
+  if (!$row) {
+    return 1;
+  } else {
+    return (($row['rank'] - floor(RANKING_ROWS/2)) > 0) ? $row['rank'] - floor(RANKING_ROWS/2) : 1;
   }
-
-  // the $offset is possibly out of bounds so make it right
-  if ($offset < 1)
-    $offset = 1;
-  if ($offset > $num_rows)
-    $offset = $num_rows;
-
-  return $offset;
 }
 
 
