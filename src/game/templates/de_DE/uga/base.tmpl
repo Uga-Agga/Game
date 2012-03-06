@@ -189,20 +189,18 @@
     </div>
 
     {% block footer %}
-      <div class="ym-grid">
+      <div class="ym-grid" style="padding-top: 10px;">
         <div class="ym-g33 ym-gl ym-col-footer1">
-          <div class="ym-cbox">Serverzeit: {{ time }}</div>
+          Serverzeit: {{ time }}
         </div>
         <div class="ym-g33 ym-gl ym-col-footer2">
-          <div class="ym-cbox">{% include 'vote.tmpl' %}</div>
+          {% include 'vote.tmpl' %}
         </div>
         <div class="ym-g33 ym-gr ym-col-footer3">
-          <div class="ym-cbox">
-            <a href="main.php?modus=statistic">Statistik</a> &amp;
-            <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
-            <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
-            <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
-          </div>
+          <a href="main.php?modus=statistic">Statistik</a> &amp;
+          <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
+          <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
+          <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
         </div>
       </div>
     {% endblock %}

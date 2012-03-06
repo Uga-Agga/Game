@@ -145,7 +145,7 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
                         AND cat = :cat");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('cat', $GLOBALS['tradeTypeList'][$tradeID]->category, PDO::PARAM_STR);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
+  if (!$sql->execute()) {
     return -1;
   }
 

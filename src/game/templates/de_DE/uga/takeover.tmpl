@@ -160,20 +160,24 @@
     </div>
   </div>
 
-  <div class="box" style="width: 150px; margin-right: auto; margin-left: auto;">
-    <div class="box-header">Rohstoffwerte</div>
-    <div class="box-content success inner">
+  <div class="ua-box" style="width: 150px; margin-right: auto; margin-left: auto;">
+    <div class="ua-box-header">Rohstoffwerte</div>
+    <div class="ua-box-content">
       <table>
-        <tr>
-          <th align="center" style="width: 75px;">Rohstoff</th>
-          <th align="center" style="width: 75px;">Punkte</th>
-        </tr>
-        {% for item in resource_ratings %}
-        <tr>
-          <td align="center" style="width: 75px;">{{ item.name }}</td>
-          <td align="center" style="width: 75px;">{{ item.value }}</td>
-        </tr>
-        {% endfor %}
+        <thead>
+          <tr>
+            <th class="center">Rohstoff</th>
+            <th class="center">Punkte</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in resource_ratings %}
+          <tr>
+            <td class="center">{{ item.name }}</td>
+            <td class="center">{{ item.value }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
   </div>
