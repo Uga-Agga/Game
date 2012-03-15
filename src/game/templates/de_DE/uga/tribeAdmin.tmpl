@@ -22,77 +22,84 @@
   <div class="ua-box-header">Stammesverwaltung</div>
   <div class="ua-box-content">
     {% if is_auth_change_settings %}
-      <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
+      <div class="jquery_tabs">
         <h6>Allgemeines</h6>
-        <div class="ym-fbox-text">
-          <label for="tribe_tag">Tag</label>
-          <div id="tribe_tag">{{ tribe_data.tag }}</div>
-        </div>
-        <div class="ym-fbox-text">
-          <label for="tribe_name">Name</label>
-          <input type="text" name="tribe_name" id="tribe_name" value="{{ tribe_data.name }}" maxlength="20" />
-        </div>
-        <div class="ym-fbox-text">
-          <label for="tribe_password">Password</label>
-          <input type="password" name="tribe_password" id="tribe_password" value="" maxlength="15" />
-        </div>
-        <div class="ym-fbox-text">
-          <label for="tribe_avatar">Avatar URL</label>
-          <input type="text" name="tribe_avatar" id="tribe_avatar" value="{{ tribe_data.avatar }}" maxlength="90" />
-        </div>
-        <div class="ym-fbox-text">
-          <label for="tribe_description">Beschreibung</label>
-          <textarea name="tribe_description" id="tribe_description" cols="25" rows="8">{{ tribe_data.description| raw }}</textarea>
+        <div class="tabbody">
+          <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
+            <div class="ym-fbox-text">
+              <label for="tribe_tag">Tag</label>
+              <div id="tribe_tag">{{ tribe_data.tag }}</div>
+            </div>
+            <div class="ym-fbox-text">
+              <label for="tribe_name">Name</label>
+              <input type="text" name="tribe_name" id="tribe_name" value="{{ tribe_data.name }}" maxlength="20" />
+            </div>
+            <div class="ym-fbox-text">
+              <label for="tribe_password">Password</label>
+              <input type="password" name="tribe_password" id="tribe_password" value="" maxlength="15" />
+            </div>
+            <div class="ym-fbox-text">
+              <label for="tribe_avatar">Avatar URL</label>
+              <input type="text" name="tribe_avatar" id="tribe_avatar" value="{{ tribe_data.avatar }}" maxlength="90" />
+            </div>
+            <div class="ym-fbox-text">
+              <label for="tribe_description">Beschreibung</label>
+              <textarea name="tribe_description" id="tribe_description" cols="25" rows="8">{{ tribe_data.description| raw }}</textarea>
+            </div>
+
+            <div class="ym-fbox-button center">
+              <input type="hidden" name="action" value="update" />
+              <input type="submit" class="ym-button" value="Speichern" id="submit1" name="submit"/>
+              <input type="reset" class="ym-button" value="Reset" id="reset1" name="reset" />
+            </div>
+          </form>
         </div>
 
-        <div class="ym-fbox-button center">
-          <input type="hidden" name="action" value="update" />
-          <input type="submit" class="ym-button" value="Speichern" id="submit" name="submit"/>
-          <input type="reset" class="ym-button" value="Reset" id="reset" name="reset" />
-        </div>
-      </form>
-
-      <form class="ym-form ym-columnar" style="padding-top: 10px;" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
         <h6>Regierung</h6>
-        {% if government_select %}
-          <div class="ym-fbox-select">
-            <label for="governmentData[governmentID]">Regierungsform:</label>
-            <select name="governmentData[governmentID]" id="governmentData[governmentID]" size="1">
-              {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-            </select>
-          </div>
-        {% else %}
-          <div class="ym-fbox-text">
-            <label for="">Regierungsform</label>
-            <div>{{ government_data.name }} bis mindestens {{ government_data.duration }}</div>
+        <div class="tabbody">
+          <form class="ym-form ym-columnar" style="padding-top: 10px;" id="tribeGovernmentUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
+            {% if government_select %}
+              <div class="ym-fbox-select">
+                <label for="governmentData">Regierungsform:</label>
+                <select name="governmentData[governmentID]" id="governmentData" size="1">
+                  {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
+                </select>
+              </div>
+            {% else %}
+              <div class="ym-fbox-text">
+                <label for="">Regierungsform</label>
+                <div>{{ government_data.name }} bis mindestens {{ government_data.duration }}</div>
+              </div>
+            {% endif %}
+
+            <div class="ym-fbox-button center">
+              <input type="hidden" name="action" value="changeGoverment" />
+              <input type="submit" class="ym-button" value="Aktualisieren" id="submit2" name="submit"/>
+              <input type="reset" class="ym-button" value="Reset" id="reset2" name="reset" />
+            </div>
+          </form>
+        </div>
+
+        {% if junior_leader_select %}
+          <h6>Stellvertreter</h6>
+          <div class="tabbody">
+            <form class="ym-form ym-columnar" style="padding-top: 10px;" id="tribeJuniorLeaderUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
+              <div class="ym-fbox-select">
+                <label for="juniorLeader">Stellvertreter:</label>
+                <select name="juniorLeader[juniorLeaderID]" id="juniorLeader" size="1">
+                  {% for item in junior_leader_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
+                </select>
+              </div>
+
+              <div class="ym-fbox-button center">
+                <input type="hidden" name="action" value="changeGoverment" />
+                <input type="submit" class="ym-button" value="Aktualisieren" id="submit3" name="submit"/>
+                <input type="reset" class="ym-button" value="Reset" id="reset3" name="reset" />
+              </div>
+            </form>
           </div>
         {% endif %}
-
-        <div class="ym-fbox-button center">
-          <input type="hidden" name="action" value="changeGoverment" />
-          <input type="submit" class="ym-button" value="Aktualisieren" id="submit" name="submit"/>
-          <input type="reset" class="ym-button" value="Reset" id="reset" name="reset" />
-        </div>
-      </form>
-
-      {% if junior_leader_select %}
-        <form class="ym-form ym-columnar" style="padding-top: 10px;" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
-          <h6>Stellvertreter</h6>
-          <div class="ym-fbox-select">
-            <label for="juniorLeader[juniorLeaderID]">Stellvertreter:</label>
-            <select name="juniorLeader[juniorLeaderID]" id="juniorLeader[juniorLeaderID]" size="1">
-              {% for item in junior_leader_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-            </select>
-          </div>
-
-          <div class="ym-fbox-button center">
-            <input type="hidden" name="action" value="changeGoverment" />
-            <input type="submit" class="ym-button" value="Aktualisieren" id="submit" name="submit"/>
-            <input type="reset" class="ym-button" value="Reset" id="reset" name="reset" />
-          </div>
-        </form>
-      {% endif %}
-
+      </div>
     {% endif %}
   </div>
 </div>
@@ -146,8 +153,8 @@
                 <div class="ym-fbox-button center">
                   <input type="hidden" name="action" value="changeAuth" />
                   <input type="hidden" name="player_id" value="{{ item.playerID }}" />
-                  <input type="submit" class="ym-button" value="Speichern" id="submit" name="submit"/>
-                  <input type="reset" class="ym-button" value="Reset" id="reset" name="reset" />
+                  <input type="submit" class="ym-button" value="Speichern" id="submit4" name="submit"/>
+                  <input type="reset" class="ym-button" value="Reset" id="reset4" name="reset" />
                 </div>
               </form>
             </td>
@@ -164,19 +171,19 @@
 <div class="ua-box small">
   <div class="ua-box-header">Neue Beziehungen</div>
   <div class="ua-box-content">
-    <form class="ym-form ym-columnar"id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_admin_link }}">
+    <form class="ym-form ym-columnar" id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_admin_link }}">
       <div class="ym-grid" style="padding-top: 0.8em;" >
         <div class="ym-g50 ym-gl">
           <div class="ym-fbox-text">
-            <label for="relationData[tag]">Stammestag:</label>
-            <input type="text" name="relationData[tag]" id="relationData[tag]" value="" maxlength="8" />
+            <label for="relationData_tag">Stammestag:</label>
+            <input type="text" name="relationData[tag]" id="relationData_tag" value="" maxlength="8" />
           </div>
         </div>
 
         <div class="ym-g50 ym-gl">
           <div class="ym-fbox-select">
-            <label for="relationData[relationID]">Beziehung:</label>
-            <select name="relationData[relationID]" id="relationData[relationID]" size="1">
+            <label for="relationData_id">Beziehung:</label>
+            <select name="relationData[relationID]" id="relationData_id" size="1">
               {% for item in relation_list %}<option value="{{ item.relationID }}">{{ item.name }}</option>{% endfor %}
             </select>
           </div>
@@ -185,7 +192,7 @@
 
       <div class="ym-fbox-button center">
         <input type="hidden" name="action" value="updateRelation" />
-        <input type="submit" class="ym-button" value="Beziehung eingehen" id="submit" name="submit"/>
+        <input type="submit" class="ym-button" value="Beziehung eingehen" id="submit5" name="submit"/>
       </div>
     </form>
   </div>
