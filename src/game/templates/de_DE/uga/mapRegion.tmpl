@@ -17,7 +17,8 @@
 <div style="display: none;" id="message">{{ message|raw }}</div>
 {% endif %}
 
-<table cellpadding="0" cellspacing="0" style="padding: 0px; border: none; width: 100%;">
+<table id="map" cellpadding="0" cellspacing="0" style="padding: 0px; border: none; width: 100%;">
+  <thead>
   {% for row in mapregion.rows %}
     <tr>
       {% for cell in row %}
@@ -34,7 +35,7 @@
         {% endif %}
         {% if cell.mapcell %}
           <td style="text-align:center;vertical-align:top; min-width:60px;" class="{{ cell.mapcell.terrain }} t_{{ cell.mapcell.text_tribe }}">
-            <p><img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80%" height="20" alt="{{ cell.mapcell.alt }}" /><br />
+            <p><img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="{{ cell.mapcell.alt }}" /><br />
             {% if cell.mapcell.link_tribe %}
                <a href="main.php?{{ cell.mapcell.link_tribe|raw }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.text_tribe }}</small></a>
             {% endif %}   
@@ -48,6 +49,5 @@
      {% endfor %} 
     </tr>
   {% endfor %}
+  </thead>
 </table>
-
-

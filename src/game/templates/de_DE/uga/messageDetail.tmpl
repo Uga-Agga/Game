@@ -84,7 +84,7 @@
     </div>
 
     {% if reply or delete %}
-      <div style="float: left;">
+      <div style="float: left; width: 125px;">
         {% if reply %}
           <form class="ym-form" method="post" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}">
             <div class="ym-fbox-button">
@@ -96,7 +96,7 @@
           </form>
         {% endif %}
       </div>
-      <div>
+      <div style="padding-left: 125px;">
         {% if delete %}
           <form class="ym-form" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}">
             <div class="ym-fbox-button">
@@ -108,7 +108,6 @@
           </form>
         {% endif %}
       </div>
-      <div style="clear: both;"></div>
     {% endif %}
   </div>
 </div>

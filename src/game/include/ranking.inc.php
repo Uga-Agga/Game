@@ -24,7 +24,7 @@ function ranking_checkOffset($playerID, $offset) {
   $num_rows = $row['num_rows'];
   $sql->closeCursor();
 
-  // Es gibt weniger Spieler als maximal angezeiegt werden sollen? Ab Spieler 1 auflisten
+  // Es gibt weniger Spieler als maximal angezeigt werden können? Ab Spieler 1 auflisten
   if ($num_rows <= RANKING_ROWS) {
     return 1;
   }
@@ -70,7 +70,7 @@ function rankingTribe_checkOffset($offset) {
   $num_rows = $row['num_rows'];
   $sql->closeCursor();
 
-  // Es gibt weniger Stämme als maximal angezeiegt werden sollen? Ab Spieler 1 auflisten
+  // Es gibt weniger Stämme als maximal angezeigt werden können? Ab Spieler 1 auflisten
   if ($num_rows <= RANKING_ROWS) {
     return 1;
   }
