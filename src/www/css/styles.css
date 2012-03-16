@@ -35,7 +35,7 @@ dd { margin: 0; }
 .ym-col-footer3 { text-align: right; }
 
 .ua-box { background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important;}
-.ua-box-header { color: #FFFFFF; height: 17px; padding-top: 2px; text-align: center; font-weight: bold; }
+.ua-box-header { color: #FFFFFF; line-height: 20px; text-align: center; font-weight: bold; }
 .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
 .ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
 
