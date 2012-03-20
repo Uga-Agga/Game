@@ -115,7 +115,6 @@
         Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!<br/>
         Mehrfacheintragung möglich!
       </div>
-
       <form action="main.php?modus={{ hero_link }}" method="post">
       <table class="table text-center" rules="rows">
         <tr class="bg2">
@@ -132,7 +131,9 @@
           {% endif %}
         {% endfor %}
         <tr>
-          <td colspan="2" style="text-align:right;"><input name="submitImmolation" value="Ugh!" type="submit" /></td>
+          <td colspan="2" style="text-align:right;">
+          <input type="hidden" name="action" value="immolateResources"/>
+          <input name="submitImmolation" value="Ugh!" type="submit" /></td>
         </tr>
       </table>
       </form>
@@ -165,7 +166,7 @@
        <td>{{ skill.skillFactor }}</td>
        <td>
         <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
-          <input type="hidden" name="action" value="skill_ability">
+          <input type="hidden" name="action" value="skill_ability"/>
           <input type="hidden" name="skillID" value="{{ skill.id }}"/>
           {% if skill.showEffects %}
             {% for item in skill.effect_values %}

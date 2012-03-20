@@ -587,7 +587,7 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
   if (!$ownCaves[$caveID]['hero']) {
     return array('messageID' => -24, 'value' =>0);
   }
-
+  
   $points = 0;
   foreach ($value_array as $resourceID => $value) {
     if ($value) {
