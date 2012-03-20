@@ -12,8 +12,6 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-define("RANKING_ROWS", 20);
-
 function ranking_getContent($caveID, $offset) {
   global $template;
 

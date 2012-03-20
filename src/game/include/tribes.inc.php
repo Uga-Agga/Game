@@ -1636,7 +1636,6 @@ function tribe_changeTribeAllowedForPlayerID($playerID) {
 
 
 function tribe_processLeave($playerID, $tag, $FORCE = 0) {
-  
   if (! $FORCE && ! relation_leaveTribeAllowed($tag)) {
     return -10;
   }
@@ -1645,16 +1644,10 @@ function tribe_processLeave($playerID, $tag, $FORCE = 0) {
     return -11;
   }
 
-  if (tribe_isLeaderOrJuniorLeader($playerID, $tag)) {
-     if (tribe_isLeader($playerID, $tag)) {
-       if (! $FORCE && !tribe_unmakeLeader($playerID, $tag)) {
-         return -8;
-       }   
-     } else {
-       if (! $FORCE && !tribe_unmakeJuniorLeader($playerID, $tag)) {
-        return -8;
-       }
-     }  
+  if (tribe_isLeader($playerID, $tag)) {
+    if (! $FORCE && !tribe_unmakeLeader($playerID, $tag)) {
+      return -8;
+    }   
   }
 
   if (!($player=getPlayerByID($playerID))) {

@@ -15,6 +15,8 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
+{% if confirm_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
+
 {% if is_auth_manage or is_auth_send_msg or is_auth_send_msg_ig %}
 <div class="ua-box small">
   <div class="ua-box-header">Stammesverwaltung</div>
@@ -29,7 +31,7 @@
       </div>
       
       <div class="ym-fbox-button center">
-        <input type="hidden" name="tribeAction" value="{{ tribe_action_message }}" />
+        <input type="hidden" name="action" value="{{ tribe_action_message }}" />
         {% if is_auth_send_msg %}<input type="submit" class="ym-button" value="Stammesnachricht" id="tribemsg" name="tribemsg"/>{% endif %}
         {% if is_auth_send_msg_ig %}<input type="submit" class="ym-button" value="Private Nachricht" id="ingame" name="ingame"/>{% endif %}
       </div>
@@ -126,9 +128,11 @@
       {% endfor %}
     </ul>
 
-    <form method="post" action="main.php?modus={{ tribe_link }}">
-      <p><input type="hidden" name="tribeAction" value="{{ tribe_action_leave }}" />
-      <input type="submit" value="Diesen Stamm verlassen!" onclick="return confirm('Wollen Sie den Stamm wirklich verlassen?');" /></p>
+    <form class="ym-form" id="tribeLeave" method="post" action="main.php?modus={{ tribe_link }}">
+      <div class="ym-fbox-button center">
+        <input type="hidden" name="action" value="{{ tribe_action_leave }}" />
+        <input type="submit" class="ym-button" value="Diesen Stamm verlassen!" id="tribeLeave" name="tribeLeave"/>
+      </div>
     </form>
   </div>
 </div>
@@ -167,7 +171,7 @@
         </tr>
       {% endfor %}
       {% if showTribeStorageDonations %}
-      <input type="hidden" name="tribeAction" value="{{ tribe_action_donate }}"/>
+      <input type="hidden" name="action" value="{{ tribe_action_donate }}"/>
       <td><input name="submitDonation" value="Ugh!" type="submit" /></td>
       {% endif %}
       </form>

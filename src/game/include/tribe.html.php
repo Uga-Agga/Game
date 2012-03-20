@@ -60,7 +60,7 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
 
   // process form data
   $messageID = 0;
-  $tribeAction =  Request::getVar('tribeAction', 0);
+  $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
       if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))) {
@@ -92,7 +92,17 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
         break;
       }
 
-      $messageID = tribe_processLeave($playerID, $tribe);
+      if (Request::isPost('cancelOrderConfirm')) {
+        $messageID = tribe_processLeave($playerID, $tribe);
+      } else {
+        $template->addVars(array(
+          'confirm_box' => true,
+          'confirm_action'  => TRIBE_ACTION_LEAVE,
+          'confirm_id'      => false,
+          'confirm_mode'    => TRIBE,
+          'confirm_msg'     => sprintf(_('Möchtest du den Stamm <span class="bold">%s</span> wirklich verlassen?'), $_SESSION['player']->tribe),
+        ));
+      }
     break;
 
     case TRIBE_ACTION_MESSAGE:
@@ -231,6 +241,38 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
 
       $template->addVar('tribe_messages', $messageAry);
     }
+    
+    /****************************************************************************************************
+    *
+    * Stammeslager
+    *
+    ****************************************************************************************************/
+      $tribeStorageValues = array();
+      foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
+        $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
+        $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
+        $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
+        $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
+      }
+      
+      $lastDonation = tribe_getLastDonationForTribeStorage($playerID);
+        $template->addVars(array(
+            'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
+            'tribeStorageValues' => $tribeStorageValues, 
+            'donationInterval' => TRIBE_STORAGE_DONATION_INTERVAL, 
+            'nextDonation' => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
+        ));
+      
+    /****************************************************************************************************
+    *
+    * Einzahlungen
+    *
+    ****************************************************************************************************/
+      $donations = tribe_getTribeStorageDonations($tribeData['tag']);
+      
+      $template->addVars(array(
+        'donations' => $donations
+      ));
   }
   
   if ($messageID && isset($messageText[$messageID])) {
@@ -243,38 +285,6 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
     'tribe_action_leave'   => TRIBE_ACTION_LEAVE,
     'tribe_action_message' => TRIBE_ACTION_MESSAGE,
     'tribe_action_donate'  => TRIBE_ACTION_DONATE
-  ));
-  
-/****************************************************************************************************
-*
-* Stammeslager
-*
-****************************************************************************************************/
-  $tribeStorageValues = array();
-  foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
-    $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
-    $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
-    $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
-    $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
-  }
-  
-  $lastDonation = tribe_getLastDonationForTribeStorage($playerID);
-    $template->addVars(array(
-        'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
-        'tribeStorageValues' => $tribeStorageValues, 
-        'donationInterval' => TRIBE_STORAGE_DONATION_INTERVAL, 
-        'nextDonation' => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
-    ));
-  
-/****************************************************************************************************
-*
-* Einzahlungen
-*
-****************************************************************************************************/
-  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
-  
-  $template->addVars(array(
-    'donations' => $donations
   ));
 }
 

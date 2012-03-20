@@ -3,7 +3,7 @@
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
  * Copyright (c) 2011-2012 David Unger
- Copyright (c) 2012 Georg Pitterle
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -169,192 +169,178 @@
 
 {% if is_auth_change_relation %}
 <div class="ua-box small">
-  <div class="ua-box-header">Neue Beziehungen</div>
+  <div class="ua-box-header">Stammesbeziehungen</div>
   <div class="ua-box-content">
-    <form class="ym-form ym-columnar" id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_admin_link }}">
-      <div class="ym-grid" style="padding-top: 0.8em;" >
-        <div class="ym-g50 ym-gl">
-          <div class="ym-fbox-text">
-            <label for="relationData_tag">Stammestag:</label>
-            <input type="text" name="relationData[tag]" id="relationData_tag" value="" maxlength="8" />
-          </div>
-        </div>
-
-        <div class="ym-g50 ym-gl">
-          <div class="ym-fbox-select">
-            <label for="relationData_id">Beziehung:</label>
-            <select name="relationData[relationID]" id="relationData_id" size="1">
-              {% for item in relation_list %}<option value="{{ item.relationID }}">{{ item.name }}</option>{% endfor %}
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="ym-fbox-button center">
-        <input type="hidden" name="action" value="updateRelation" />
-        <input type="submit" class="ym-button" value="Beziehung eingehen" id="submit5" name="submit"/>
-      </div>
-    </form>
-  </div>
-</div>
-
-<div class="ua-box small">
-  <div class="ua-box-header">Aktuelle Beziehungen</div>
-  <div class="ua-box-content">
-    {% if relations_info or relations  %}
-      <table>
-        <thead>
-        <tr>
-          <th class="left ua-td-name">Stamm</th>
-          <th class="left">Beziehungen</th>
-          <th>Sonstiges</th>
-        </tr>
-        </thead>
-        <tbody>
-          {% for item in relations_info %}
-          <tr>
-            <td class="ua-td-name">{{ item.tag }}</td>
-            <td>
-              Eigene: <span class="bold">{{ item.relation }}</span><br />
-              Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-              Bis: <span class="bold">{{ item.duration }}</span>
-            </td>
-            <td class="right" style="padding-right: 4px;">
-              {% if item.war %}
-                Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
-              {% endif %}
-            </td>
-          </tr>
-          {% endfor %}
-          {% for item in relations %}
-          <tr>
-            <td class="text-left">{{ item.tag }}</td>
-            <td class="text-left">
-              Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-              {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-            </td>
-            <td class="text-right">
-              {% if item.war %}
-                Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
-              {% endif %}
-              <form method="post" action="main.php?modus={{ tribe_admin_link }}">
-                <p><select name="relationData[relationID]">
-                  {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
-                </select>
-                <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
-                {% if item.isForcePossible %}
-                  <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
-                {% endif %}
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <div class="space center">Dein Stamm führt zur Zeit keine Beziehungen.</div>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
-
-{% if tribeStorage %}
-<div class="ua-box small">
-  <div class="ua-box-header">Stammeslager</div>
-  <div class="ua-box-content">
-    <table>
-      <thead>
-      <tr>
-        <th>&nbsp;</th>
-        <th>Rohstoff</th>
-        <th>Guthaben</th>
-      </tr>
-      </thead>
-      {% for item in tribeStorage %}
-      <tr>
-        <td><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.value }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-</div>
-{% endif %}
-
-<div class="ua-box small">
-  <div class="ua-box-header">Stammeswunder</div>
-  <div class="ua-box-content">
-    <table>
-      <tbody>
-        {% if tribeWonders %}
-          {% for item in tribeWonders %}
-            {% set bgID = (bgID+1)%2 %}
-            <tr class="bg{{ bgID }} object-row">
-              <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-              <td>
-                <dl>
-                  <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                  <dd>{% include "boxCost.tmpl" %} bei {{ memberNumber }} Mitgliedern</dd>
-                </dl>
-              </td>
-              <td class="right" style="vertical-align:center;">
-                {% if item.build_link %}
-                <form action="main.php?modus={{ tribe_admin_link }}" method="post">
-                  <div id="wonder">
-                    <input type="hidden" name="action" value="tribeWonder" />
-                    <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
-                    <input type="hidden" name="caveID" value="{{ cave_id }}" />
-                    <ul>
-                      <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
-                      <li style="float: right; text-align: left;">
-                        <ul class="clean_list" style="width: 300px;">
-                          <li>Name des Stammes: <input type="text" name="TribeName" size="10" maxlength="32" /></li>
-                        </ul>
-                      </li>
-                    </ul>
-                  </div>
-                </form>
-                {% else %}
-                  <span style="text-align: right;"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
-                {% endif %}
-              </td>
+    <div class="jquery_tabs">
+      <h6>Aktuelle</h6>
+      <div class="tabbody">
+        {% if relations_info or relations  %}
+          <table>
+            <thead>
+            <tr>
+              <th class="left ua-td-name">Stamm</th>
+              <th class="left">Beziehungen</th>
+              <th>Sonstiges</th>
             </tr>
-            <tr class="detail-row" style="display: none">
-              <td class="object-details" colspan="3">
-              </td>
-            </tr>  
-          {% endfor %}
+            </thead>
+            <tbody>
+              {% for item in relations_info %}
+              <tr>
+                <td class="ua-td-name">{{ item.tag }}</td>
+                <td>
+                  Eigene: <span class="bold">{{ item.relation }}</span><br />
+                  Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                  Bis: <span class="bold">{{ item.duration }}</span>
+                </td>
+                <td class="right" style="padding-right: 4px;">
+                  {% if item.war %}
+                    Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                    Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              {% for item in relations %}
+              <tr>
+                <td class="text-left">{{ item.tag }}</td>
+                <td class="text-left">
+                  Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                  {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                </td>
+                <td class="text-right">
+                  {% if item.war %}
+                    Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                    Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                  {% endif %}
+                  <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+                    <p><select name="relationData[relationID]">
+                      {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
+                    </select>
+                    <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
+                    {% if item.isForcePossible %}
+                      <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
+                    {% endif %}
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         {% else %}
-          <tr class="bg1"><td class="center">Dein Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</td></tr>
+          <div class="space center">Dein Stamm führt zur Zeit keine Beziehungen.</div>
         {% endif %}
-        {% set bgID = 0 %}
-      </tbody>
-    </table>
+      </div>
+
+      <h6>Neue</h6>
+      <div class="tabbody">
+        <form class="ym-form ym-columnar" id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_admin_link }}">
+          <div class="ym-grid" style="padding-top: 0.8em;" >
+            <div class="ym-g50 ym-gl">
+              <div class="ym-fbox-text">
+                <label for="relationData_tag">Stammestag:</label>
+                <input type="text" name="relationData[tag]" id="relationData_tag" value="" maxlength="8" />
+              </div>
+            </div>
+
+            <div class="ym-g50 ym-gl">
+              <div class="ym-fbox-select">
+                <label for="relationData_id">Beziehung:</label>
+                <select name="relationData[relationID]" id="relationData_id" size="1">
+                  {% for item in relation_list %}<option value="{{ item.relationID }}">{{ item.name }}</option>{% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="ym-fbox-button center">
+            <input type="hidden" name="action" value="updateRelation" />
+            <input type="submit" class="ym-button" value="Beziehung eingehen" id="submit5" name="submit"/>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
+{% endif %}
 
-<!--
-    {% if junior_leader_select and is_leader %}
-    <div class="notice nohover" style="width: 270px; float: right; margin-right: 5px; margin-top: 5px;">
-      <form method="post" action="main.php?modus={{ tribe_admin_link }}">
-      <ul>
-        <li class="text-center bold">Stellvertreter:</li>
-        <li>&nbsp;</li>
-        <li class="text-center">
-          <select name="juniorLeader[juniorLeaderID]">
-            {% for item in junior_leader_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-          </select>
-        </li>
-        <li>&nbsp;</li>
-        <li class="text-center"><input type="hidden" name="action" value="juniorLeader" /><input type="submit" value="Absenden" /></li>
-      </ul>
-      </form>
+<div class="ua-box small">
+  <div class="ua-box-header">Stammeswunder & Lager</div>
+  <div class="ua-box-content">
+    <div class="jquery_tabs">
+      {% if tribeStorage %}
+      <h6>Lager</h6>
+      <div class="tabbody">
+        <table>
+          <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>Rohstoff</th>
+            <th>Guthaben</th>
+          </tr>
+          </thead>
+          {% for item in tribeStorage %}
+          <tr>
+            <td class="ua-td-name"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.value }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% endif %}
+
+      <h6>Wunder</h6>
+      <div class="tabbody">
+        <table>
+          <tbody>
+            {% if tribeWonders %}
+              {% for item in tribeWonders %}
+                {% set bgID = (bgID+1)%2 %}
+                <tr class="bg{{ bgID }} object-row">
+                  <td class="ua-td-name"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                  <td>
+                    <dl>
+                      <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                      <dd>{% include "boxCost.tmpl" %} bei {{ memberNumber }} Mitgliedern</dd>
+                    </dl>
+                  </td>
+                  <td class="right" style="vertical-align:center;">
+                    {% if item.build_link %}
+                    <form action="main.php?modus={{ tribe_admin_link }}" method="post">
+                      <div id="wonder">
+                        <input type="hidden" name="action" value="tribeWonder" />
+                        <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
+                        <input type="hidden" name="caveID" value="{{ cave_id }}" />
+                        <ul>
+                          <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
+                          <li style="float: right; text-align: left;">
+                            <ul class="clean_list" style="width: 300px;">
+                              <li>Name des Stammes: <input type="text" name="TribeName" size="10" maxlength="32" /></li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </div>
+                    </form>
+                    {% else %}
+                      <span style="text-align: right;"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr class="detail-row" style="display: none">
+                  <td class="object-details" colspan="3">
+                  </td>
+                </tr>  
+              {% endfor %}
+            {% else %}
+              <tr class="bg1"><td class="center">Euer Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</td></tr>
+            {% endif %}
+            {% set bgID = 0 %}
+          </tbody>
+        </table>
+      </div>
     </div>
-    {% endif %}
--->
+  </div>
+</div>
 {% endif %}
 
 {% endblock %}

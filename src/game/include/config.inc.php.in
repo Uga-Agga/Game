@@ -133,11 +133,14 @@ define("STATS_WEEK_COUNT", 24);
 define("MAX_AVATAR_WIDTH", 600);
 define("MAX_AVATAR_HEIGHT", 200);
 
-/* ***** HERO ***** ********************************************************* */
+/* ***** HERO ***** ******************************************************** */
 define("HERO_DB_FIELD", "heroism");
 
-/* ***** TRIBE_STORAGE_DONATION ***** *************************************** */
+/* ***** TRIBE_STORAGE_DONATION ***** ************************************ */
 define("TRIBE_STORAGE_DONATION_INTERVAL", 24);
+
+/* ***** RANKING ***** ***************************************************** */
+define("RANKING_ROWS", 20);
 
 class Config {
   const RUN_TIMER           = 0;
