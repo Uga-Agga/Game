@@ -9,7 +9,7 @@
 <!ELEMENT ResourceTypes (Resource*)>
 <!ELEMENT BuildingTypes (Building*)>
 <!ELEMENT ScienceTypes (Science*)>
-<!ELEMENT UnitTypes (Unit*)>
+<!ELEMENT UnitTypes (unitCategories, Unit*)>
 <!ELEMENT DefenseSystemTypes (DefenseSystem*)>
 <!ELEMENT Resource (Name+, Remark+, RatingValue, TakeoverValue, StealRatio, DestroyRatio, SafeStorage, MaxStorage, Production, MaxTribeDonation)>
 <!ATTLIST Resource id ID #REQUIRED hidden (0 | 1) "0">
@@ -18,7 +18,15 @@
 <!ELEMENT Science (Name+, Description+, Position?, Cost*, ProductionTime, MaxDevelopmentLevel, (Requirement | EffectReq)*)>
 <!ATTLIST Science id ID #REQUIRED hidden (0 | 1) "0">
 <!ELEMENT Unit (Name+, Description+, Position?, Cost*, ProductionTime, MeleeDamage, RangedDamage, StructuralDamage, MeleeDamageResistance, RangedDamageResistance, HeavyDamageProbability?, CriticalDamageProbability?, Size, Encumbrance*, Visible, Velocity?, FuelUsage?, SpyValue?, SpyChance?, SpyQuality?, AntiSpyChance?, (Requirement | EffectReq)*, WarPoints?)>
-<!ATTLIST Unit id ID #REQUIRED hidden (0 | 1) "0">
+<!ATTLIST Unit 
+          id ID #REQUIRED 
+          hidden (0 | 1) "0"
+          unitCategory CDATA "other">
+<!ELEMENT unitCategories (unitCategory+)>
+<!ELEMENT unitCategory EMPTY>
+<!ATTLIST unitCategory
+          id CDATA #REQUIRED
+          name CDATA #REQUIRED>
 <!ELEMENT DefenseSystem (Name+, Description+, Remark+, Position?, Cost*, ProductionTime, MaxDevelopmentLevel, MeleeDamage, RangedDamage, StructuralDamageResistance, HeavyDamageProbability?, CriticalDamageProbability?, Size, AntiSpyChance?, (Requirement | EffectReq)*, WarPoints?)>
 <!ATTLIST DefenseSystem id ID #REQUIRED hidden (0 | 1) "0">
 <!--Terrains-->

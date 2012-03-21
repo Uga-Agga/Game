@@ -294,10 +294,12 @@ function init_sciences(){
   $GLOBALS['scienceTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
+
 <xsl:template match="UnitTypes">
 /********************** Unittypes *********************/
 class Unit {
   var $unitID;
+  var $unitCategory
   var $name;
   var $description;
   var $dbFieldName;
@@ -353,10 +355,11 @@ class Unit {
   var $nodocumentation         = 0;
   var $warpoints               = 0;
 
-  function Unit($unitID, $name, $description, $dbFieldName, $position, $ranking, $productionTimeFunction,
+  function Unit($unitID, $unitCategory, $name, $description, $dbFieldName, $position, $ranking, $productionTimeFunction,
                 $attackRange, $attackAreal, $attackRate, $defenseRate, $rangedDamageResistance, $hitPoints,
                 $encumbranceList, $visible){
   $this-&gt;unitID                 = $unitID;
+  $this-&gt;unitCategory           = $unitCategory;
   $this-&gt;name                   = $name;
   $this-&gt;description            = $description;
   $this-&gt;dbFieldName            = $dbFieldName;
@@ -375,14 +378,37 @@ class Unit {
   }
 }
 
+class UnitCategories {
+  var $id;
+  var $name;
+
+  function UnitCategories() {
+     $this-&gt;id             = "";
+     $this-&gt;name           = "";
+  }
+}
+
+function init_UnitCategories() {
+  <xsl:apply-templates select="unitCategories/unitCategory"/>
+}
+
 function init_units(){
   <xsl:apply-templates select="Unit"/>
 }
 </xsl:template>
 
+<xsl:template match="Config/UnitTypes/unitCategories/unitCategory">
+  $tmp = new TradeCategories();
+  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
+  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
+
+  $GLOBALS['unitCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
+
+</xsl:template>
+
 <xsl:template match="Config/UnitTypes/Unit">
   // <xsl:value-of select="Name"/>
-  $tmp = new Unit(<xsl:value-of select="count(preceding-sibling::*)"/>, '<xsl:value-of select="Name"/>',
+  $tmp = new Unit(<xsl:value-of select="count(preceding-sibling::*)"/>, '<xsl:value-of select="@unitCategory"/>', '<xsl:value-of select="Name"/>',
                   "<xsl:apply-templates select="Description[@lang='de_DE']"/>",
                   '<xsl:value-of select="@id"/>', <xsl:choose><xsl:when test="Position"><xsl:value-of select="Position"/></xsl:when><xsl:otherwise>0</xsl:otherwise></xsl:choose>, <xsl:value-of select="round((((RangedDamage div 10)*15)+((StructuralDamage div 15)*10)+((MeleeDamage div 15)*12.5)+(((RangedDamageResistance+2*MeleeDamageResistance) div (3*Size))*25)+((Size div 15)*10)+((0.5 div Velocity)*17.5))*((1 div (Visible+1))+0.5))"/>, '<xsl:apply-templates select="ProductionTime"/>', <xsl:value-of select="RangedDamage"/>, <xsl:value-of select="StructuralDamage"/>, <xsl:value-of select="MeleeDamage"/>, <xsl:value-of select="MeleeDamageResistance"/>, <xsl:value-of select="RangedDamageResistance"/>, <xsl:value-of select="Size"/>, array(<xsl:apply-templates select="Encumbrance"/>), <xsl:value-of select="Visible"/>);
 
