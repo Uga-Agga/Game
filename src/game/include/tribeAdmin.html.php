@@ -92,20 +92,14 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
   $isLeader = tribe_isLeader($playerID, $tag);
   if ($isLeader) {
     $leaderID = $playerID;
-    $juniorLeaderID = tribe_getJuniorLeaderID($tag);
   } else {
     $leaderID = tribe_getLeaderID($tag);
-    $juniorLeaderID = $playerID;
   }
 
   //seems to be leader, but not in tribe  
   if ($isLeader && !is_array($memberData[$leaderID])) {
-    tribe_unmakeLeaderJuniorLeader($leaderID, $tag);
-  }
-
-  //seems to be juniorleader, but not in tribe  
-  if (!$isLeader && !is_array($memberData[$leaderID])) {
-    tribe_unmakeJuniorLeader($leaderID, $tag);
+    tribe_unmakeLeader($leaderID, $tag);
+    $isLeader = false;
   }
 
   // init auth
@@ -214,35 +208,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
 
 /****************************************************************************************************
 *
-* Junior Leader ändern
-*
-****************************************************************************************************/
-    case 'juniorLeader':
-      $juniorLeader = Request::getVar('juniorLeader', array('' => ''));
-      $newleadership = array(0 => $leaderID, 1 => $juniorLeader['juniorLeaderID']);
-
-      if (!$isLeader) {
-        $messageID = -21;
-        break;
-      } elseif ($newleadership[1] && !is_array($memberData[$newleadership[1]])) {
-        $messageID = -22;
-        break;
-      } elseif ($newleadership[1] == $newleadership[0]) {
-       $messageID = -23;
-        break;
-      } elseif ($tribeGovernment['governmentID'] <> 2) {
-        $messageID = -24;
-        break;
-      } elseif (!tribe_ChangeLeader($tag, $newleadership, $leaderID, $juniorLeaderID)) {
-        $messageID = 2; //success
-        break;
-      } else {
-        $messageID = 0;
-      }
-    break;
-
-/****************************************************************************************************
-*
 * bye bye Member
 *
 ****************************************************************************************************/
@@ -303,34 +268,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
         break;
       }
   } // end action switch
-
-/****************************************************************************************************
-*
-* Auswahl des JuniorAdmins
-*
-****************************************************************************************************/
-  if ($isLeader && $tribeGovernment['governmentID'] == 2) {
-    $JuniorLeaderSelect = array();
-    $JuniorLeaderSelect[] = array(
-      'value'    => 0,
-      'selected' => ($tribeData['juniorLeaderID'] == 0 ? 'selected="selected"' : ''),
-      'name'     => _('keinen Stellvertreter wählen')
-    );
-
-    foreach($memberData AS $playerID => $playerData) {
-      if ($leaderID == $playerID) {
-        continue; 
-      }
-
-      $JuniorLeaderSelect[] = array(
-        'value'    => $playerID,
-        'selected' => ($tribeData['juniorLeaderID'] == $playerID ? 'selected="selected"' : ''),
-        'name'     => $playerData['name']
-      );
-    }
-
-    $template->addVar('junior_leader_select', $JuniorLeaderSelect);
-  }
 
 /****************************************************************************************************
 *

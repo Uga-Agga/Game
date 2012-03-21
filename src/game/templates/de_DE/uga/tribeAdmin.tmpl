@@ -79,26 +79,6 @@
             </div>
           </form>
         </div>
-
-        {% if junior_leader_select %}
-          <h6>Stellvertreter</h6>
-          <div class="tabbody">
-            <form class="ym-form ym-columnar" style="padding-top: 10px;" id="tribeJuniorLeaderUpdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
-              <div class="ym-fbox-select">
-                <label for="juniorLeader">Stellvertreter:</label>
-                <select name="juniorLeader[juniorLeaderID]" id="juniorLeader" size="1">
-                  {% for item in junior_leader_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-                </select>
-              </div>
-
-              <div class="ym-fbox-button center">
-                <input type="hidden" name="action" value="changeGoverment" />
-                <input type="submit" class="ym-button" value="Aktualisieren" id="submit3" name="submit"/>
-                <input type="reset" class="ym-button" value="Reset" id="reset3" name="reset" />
-              </div>
-            </form>
-          </div>
-        {% endif %}
       </div>
     {% endif %}
   </div>

@@ -158,13 +158,6 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
     $template->setFile('tribeMember.tmpl');
     $template->setShowRresource(true);
 
-    if ($tribeData['juniorLeaderID']) {
-      $juniorAdmin = new Player(getPlayerByID($tribeData['juniorLeaderID']));
-    }
-    else {
-      $juniorAdmin = array();
-    }
-    
     $isLeader = ($tribeData['leaderID'] == $_SESSION['player']->playerID) ? true : false;
 
     $template->addVars(array(
@@ -172,8 +165,6 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
       'tribe_tag'    => $tribeData['tag'],
       'leader_name'  => $tribeData['leaderName'],
       'leader_id'    => $tribeData['leaderID'],
-      'junior_leader_name' => (isset($juniorAdmin->name)) ? $juniorAdmin->name : '',
-      'junior_leader_id'   => (isset($juniorAdmin->playerID)) ? $juniorAdmin->playerID : 0,
       'government_name'    => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
 
       'is_auth_manage'   => ($auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth) ||

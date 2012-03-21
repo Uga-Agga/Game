@@ -1040,35 +1040,6 @@ function tribe_makeLeader($playerID, $tag) {
   return 1;
 }
 
-function tribe_makeJuniorLeader($playerID, $tag) {
-  global $db;
-  
-  $sql = $db->prepare("UPDATE ". TRIBE_TABLE . "
-                       SET juniorLeaderID = :playerID
-                       WHERE tag LIKE :tag ");
-  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
-    return 0;
-  }
-
-  return 1;
-}
-
-function tribe_unmakeJuniorLeader($playerID, $tag) {
-  global $db;
-  
-  $sql = $db->prepare("UPDATE ". TRIBE_TABLE . "
-                       SET juniorLeaderID = 0
-                       WHERE tag LIKE :tag ");
-  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
-    return 0;
-  }
-
-  return 1;
-}
-
 function tribe_unmakeLeader($playerID, $tag) {
   global $db;
   
@@ -1394,7 +1365,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
   return 1;
 }
 
-function tribe_recalcLeader($tag, $oldLeaderID, $oldJuniorLeaderID) {
+function tribe_recalcLeader($tag, $oldLeaderID) {
 
   // find the new leader
   if(!($government =
@@ -1410,25 +1381,18 @@ function tribe_recalcLeader($tag, $oldLeaderID, $oldJuniorLeaderID) {
       break;
     case 2:
       $newLeadership = tribe_recalcLeader2($tag);
-      if ($newLeadership[0]==$oldLeaderID) {
-        $newLeadership[1]=$oldJuniorLeaderID;
-      }
-
       break;
   }
   if (!is_array($newLeadership)) {
     return $newLeadership;
   }
-  //wihthout a Leader also no JuniorLeader
-  if ($newLeadership[0] == 0) {
-    $newLeadership[1] =0; 
-  }
+
   // change the leader
-  return tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID, $oldJuniorLeaderID);
+  return tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID);
 }
 
-function tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID, $oldJuniorLeaderID) {
-  if (($newLeadership[0] == $oldLeaderID) && ($newLeadership[1] == $oldJuniorLeaderID)) {
+function tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID) {
+  if ($newLeadership[0] == $oldLeaderID) {
     return 0;  //nothing changed
   }
 
@@ -1439,18 +1403,7 @@ function tribe_ChangeLeader($tag, $newLeadership, $oldLeaderID, $oldJuniorLeader
     if ($newLeadership[0] && !tribe_makeLeader($newLeadership[0], $tag)) {
       return -3;
     }
-  }
-
-  if ($newLeadership[1] <> $oldJuniorLeaderID) {
-    if ($oldJuniorLeaderID && !tribe_unmakeJuniorLeader($oldJuniorLeaderID, $tag))
-    {
-      return -4;
-    }
-    if ($newLeadership[1] && !tribe_makeJuniorLeader($newLeadership[1], $tag))
-    {
-      return -5;
-    }
-  }  
+  } 
 
   tribe_SendMessageLeaderChanged($tag, $newLeadership);
 
@@ -1471,14 +1424,12 @@ function tribe_SendMessageLeaderChanged($tag, $newLeadership) {
   $newLeadershipName = $player ? $player['name'] : $newLeadership[0];
   if ($newLeadership[0] && !$newLeadership[1]) {
     tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Stammesführung",
-      "Ihr Stamm hat eine neue Stammesführung:\nStammesanführer: ".$newLeadershipName."\nStellvertreter: [i]nicht vorhanden[/i]");
+      "Ihr Stamm hat eine neue Stammesführung:\nStammesanführer: ".$newLeadershipName);
   }
 
-  $player = getPlayerByID($newLeadership[1]);
-  $newJuniorLeaderName = $player ? $player['name'] : $newLeadership[1];
   if ($newLeadership[0] && $newLeadership[1]) {
     tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Stammesführung",
-      "Ihr Stamm hat eine neue Stammesführung:\nStammesanführer: ".$newLeadershipName."\nStellvertreter:  ".$newJuniorLeaderName);
+      "Ihr Stamm hat eine neue Stammesführung:\nStammesanführer: ".$newLeadershipName);
   }
 }
 
@@ -1886,24 +1837,6 @@ function tribe_getLeaderID($tribe) {
   }
   return $row['leaderID'];
 }
-
-function tribe_getJuniorLeaderID($tribe) {
-  global $db;
-  
-  $sql = $db->prepare("SELECT juniorLeaderID
-                       FROM ". TRIBE_TABLE . "
-                       WHERE tag LIKE :tribe");
-  $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
-
-  if (!$sql->execute()) {
-    return 0;
-  }
-  if (!$row = $sql->fetch()) {
-    return 0;
-  }
-  return $row['juniorLeaderID'];
-}
-
 
 function tribe_isLeader($playerID, $tribe) {
   global $db;

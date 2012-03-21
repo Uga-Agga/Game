@@ -70,9 +70,6 @@ echo $tag;
     }
   }
 
-  $row['junior_leader_name'] = $JuniorAdmin->name;
-  $row['junior_leader_id'] = $JuniorAdmin->playerID;
-  
   $row['rank_offset'] = rankingTribe_checkOffset($tag);
 
   // parse tribe message
