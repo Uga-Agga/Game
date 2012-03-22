@@ -252,19 +252,22 @@
       <div class="tabbody">
         <table>
           <thead>
-          <tr>
-            <th>&nbsp;</th>
-            <th>Rohstoff</th>
-            <th>Guthaben</th>
-          </tr>
+            <tr>
+              <th>&nbsp;</th>
+              <th>Rohstoff</th>
+              <th>Guthaben</th>
+            </tr>
           </thead>
-          {% for item in tribeStorage %}
-          <tr>
-            <td class="ua-td-name"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
-            <td>{{ item.name }}</td>
-            <td>{{ item.value }}</td>
-          </tr>
-          {% endfor %}
+          <tbody>
+            {% for item in tribeStorage %}
+            {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }}">
+              <td class="ua-td-name"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.value }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
       </div>
       {% endif %}

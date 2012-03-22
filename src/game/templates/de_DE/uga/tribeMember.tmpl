@@ -124,7 +124,7 @@
       {% endfor %}
     </ul>
 
-    <form class="ym-form" id="tribeLeave" method="post" action="main.php?modus={{ tribe_link }}">
+    <form class="ym-form" id="tribeLeaveForm" method="post" action="main.php?modus={{ tribe_link }}">
       <div class="ym-fbox-button center">
         <input type="hidden" name="action" value="{{ tribe_action_leave }}" />
         <input type="submit" class="ym-button" value="Diesen Stamm verlassen!" id="tribeLeave" name="tribeLeave"/>
@@ -136,60 +136,77 @@
 <div class="ua-box small">
   <div class="ua-box-header">Stammeslager</div>
   <div class="ua-box-content center">
-    <div class="notice" style="text-align:center">
+    <div class="notice center">
       Hier können Einzahlungen ins Stammeslager getätigt werden. <br />
       Die Rohstoffe werden für Stammeswunder benötigt.<br />
       Es kann alle {{ donationInterval }} Stunden EINE Einzahlung vorgenommen werden.<br />
       {% if nextDonation %}Nächste mögliche Einzahlung am {{ nextDonation }}. <br />{% endif %}
     </div>
 
-    <table class="table nohover" rules="rows">
-      <tr class="bg2">
-        <th class="bg">&nbsp;</th>
-        <th class="bg2">Rohstoff</th>
-        <th class="bg2">Vorhanden</th>
+    <div class="jquery_tabs">
+      <h6>Lager</h6>
+      <div class="tabbody">
+        <form class="ym-form ym-columnar" id="tribeStoreForm" method="post" action="main.php?modus={{ tribe_link }}">
+          <table>
+            <thead>
+            <tr>
+              <th>&nbsp;</th>
+              <th>Rohstoff</th>
+              <th>Vorhanden</th>
+              {% if showTribeStorageDonations %}
+                <th>Einzahlungsmenge</th>
+                <th>Maximale Menge pro Einzahlung</th>
+              {% endif %}
+            </tr>
+            </thead>
+            <tbody>
+              {% for resource in tribeStorageValues %}
+                {% set bgID = (bgID+1)%2 %}
+                <tr class="bg{{ bgID }}">
+                  <td class="ua-td-name"><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
+                  <td>{{ resource.name }}</td>
+                  <td>{{ resource.value }}</td>
+                  {% if showTribeStorageDonations %}
+                  <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /></td>
+                  <td>{{ resource.maxTribeDonation }}</td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         {% if showTribeStorageDonations %}
-        <th class="bg2">Einzahlungsmenge</th>
-        <th class="bg2">Maximale Menge pro Einzahlung</th>
+          <div class="ym-fbox-button left">
+            <input type="hidden" name="action" value="{{ tribe_action_donate }}" />
+            <input type="submit" class="ym-button" value="Ugh!" id="submitDonation" name="submitDonation"/>
+          </div>
         {% endif %}
-      </tr>
-      <form action="main.php?modus={{ tribe_link }}" method="post">
-      {% for resource in tribeStorageValues %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
-          <td>{{ resource.name }}</td>
-          <td>{{ resource.value }}</td>
-          {% if showTribeStorageDonations %}
-          <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /></td>
-          <td>{{ resource.maxTribeDonation }}</td>
-          {% endif %}
-        </tr>
-      {% endfor %}
-      {% if showTribeStorageDonations %}
-      <input type="hidden" name="action" value="{{ tribe_action_donate }}"/>
-      <td><input name="submitDonation" value="Ugh!" type="submit" /></td>
-      {% endif %}
-      </form>
-    </table>
-    <p>Einzahlungen insgesamt:</p>
-    <table>
-      <thead>
-      <tr>
-        <th>Spieler</th>
-        {% for item in tribeStorageValues %}
-        <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
-        {% endfor %}
-      </tr>
-      </thead>
-      {% for donation in donations %}
-      <tr>
-        {% for item in donation %}
-        <td>{{ item }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </table>
+        </form>
+      </div>
+
+      <h6>Einzahlungen insgesamt</h6>
+      <div class="tabbody">
+        <table>
+          <thead>
+            <tr>
+              <th class="ua-td-name">Spieler</th>
+              {% for item in tribeStorageValues %}
+              <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for donation in donations %}
+            {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }}">
+              {% for item in donation %}
+              <td class="ua-td-name">{{ item }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
