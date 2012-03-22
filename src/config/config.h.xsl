@@ -20,11 +20,11 @@
 
 #include "object.h"
 
-#define MAX_RESOURCE <xsl:value-of select="count(ResourceTypes/*)"/>
-#define MAX_BUILDING <xsl:value-of select="count(BuildingTypes/*)"/>
-#define MAX_SCIENCE <xsl:value-of select="count(ScienceTypes/*)"/>
-#define MAX_DEFENSESYSTEM <xsl:value-of select="count(DefenseSystemTypes/*)"/>
-#define MAX_UNIT <xsl:value-of select="count(UnitTypes/*)-1"/>
+#define MAX_RESOURCE <xsl:value-of select="count(//Resource)"/>
+#define MAX_BUILDING <xsl:value-of select="count(//Building)"/>
+#define MAX_SCIENCE <xsl:value-of select="count(//Science)"/>
+#define MAX_DEFENSESYSTEM <xsl:value-of select="count(//DefenseSystem)"/>
+#define MAX_UNIT <xsl:value-of select="count(//Unit)"/>
 #define MAX_EFFECT <xsl:value-of select="count(EffectTypes/*)"/>
 #define MAX_WONDER <xsl:value-of select="count(wonders/*)"/>
 #define MAX_WEATHER <xsl:value-of select="count(Weathers/*)"/>

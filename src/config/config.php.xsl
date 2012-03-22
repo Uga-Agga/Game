@@ -299,7 +299,7 @@ function init_sciences(){
 /********************** Unittypes *********************/
 class Unit {
   var $unitID;
-  var $unitCategory
+  var $unitCategory;
   var $name;
   var $description;
   var $dbFieldName;
