@@ -109,33 +109,41 @@
   {% if showImmolation %}
   <div class="ua-box small">
     <div class="ua-box-header">Rohstoffe opfern</div>
-    <div class="ua-box-content" style="padding:10px;">
-      <div class="notice" style="text-align:center;">
+    <div class="ua-box-content">
+      <div class="notice" style="text-align: center; padding-top: 10px;">
         Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln. <br/><br />
         Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!<br/>
         Mehrfacheintragung möglich!
       </div>
-      <form action="main.php?modus={{ hero_link }}" method="post">
-      <table class="table text-center" rules="rows">
-        <tr class="bg2">
-          <th class="bg2">Rohstoff</th>
-          <th class="bg2">Menge</th>
-        </tr>
-        {% for resource in resourceTypeList %}
-          {% if resource.takeoverValue > 0 %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-            <td>{{ resource.name }}</td>
-            <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /> x{{ resource.takeoverValue }}</td>
-          </tr>
-          {% endif %}
-        {% endfor %}
-        <tr>
-          <td colspan="2" style="text-align:right;">
+      <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ hero_link }}">
+        <table>
+          <thead>
+            <tr>
+              <th class="ua-td-name">Rohstoff</th>
+              <th>Menge</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for resource in resourceTypeList %}
+              {% if resource.takeoverValue > 0 %}
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
+                <td class="ua-td-name">{{ resource.name }}</td>
+                <td>
+                  <div class="ym-fbox-text">
+                    <input style="width: 100px" type="text" name="resource_{{ resource.resourceID }}" id="resource_{{ resource.resourceID }}" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
+                  </div>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="ym-fbox-button right">
           <input type="hidden" name="action" value="immolateResources"/>
-          <input name="submitImmolation" value="Ugh!" type="submit" /></td>
-        </tr>
-      </table>
+          <input type="submit" class="ym-button" value="Ugh!" id="submitImmolation" name="submitImmolation"/>
+          <input type="reset" class="ym-button" value="Reset" id="reset1" name="reset" />
+        </div>
       </form>
     </div>
   </div>
@@ -147,39 +155,43 @@
   <div class="ua-box small">
     <div class="ua-box-header">Fähigkeiten ausbilden</div>
     <div class="ua-box-content">
-      <table class="table" style="text-align:center" rules="all">
-      <tr class="bg2 nohover">
-       <th class="bg2 nohover" style="text-align: left;">Name</th>
-       <th class="bg2 nohover">Benötigtes Level</th>
-       <th class="bg2 nohover">Kosten</th>
-       <th class="bg2 nohover">Basisfaktor</th>
-       <th class="bg2 nohover">&nbsp;</th>
-      </tr>
-      {% for skill in skills %} 
-      {% set bgID = (bgID+1)%2 %}
-      <tr class="bg{{ bgID }}">
-       <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
-       <div class="text-small">{{ skill.description|raw }}</div>
-       </td>
-       <td>{{ skill.requiredLevel }}</td>
-       <td>{{ skill.costTP }} TP</td>
-       <td>{{ skill.skillFactor }}</td>
-       <td>
-        <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
-          <input type="hidden" name="action" value="skill_ability"/>
-          <input type="hidden" name="skillID" value="{{ skill.id }}"/>
-          {% if skill.showEffects %}
-            {% for item in skill.effect_values %}
-              {{ item }} <br />
-            {% endfor %} 
-          {% else %}
-            <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
-          {% endif %}
-        </form>
-       </td>
-      </tr>
-      {% endfor %}
-    </table>
+      <table class="bordertable">
+        <thead>
+          <tr>
+           <th class="ua-td-name left">Name</th>
+           <th>Benötigtes Level</th>
+           <th>Kosten</th>
+           <th>Basisfaktor</th>
+           <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for skill in skills %} 
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+           <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
+           <div class="text-small">{{ skill.description|raw }}</div>
+           </td>
+           <td>{{ skill.requiredLevel }}</td>
+           <td>{{ skill.costTP }} TP</td>
+           <td>{{ skill.skillFactor }}</td>
+           <td>
+            <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
+              <input type="hidden" name="action" value="skill_ability"/>
+              <input type="hidden" name="skillID" value="{{ skill.id }}"/>
+              {% if skill.showEffects %}
+                {% for item in skill.effect_values %}
+                  {{ item }} <br />
+                {% endfor %} 
+              {% else %}
+                <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
+              {% endif %}
+            </form>
+           </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
   {% endif %}
@@ -188,43 +200,47 @@
   <div class="ua-box small">
     <div class="ua-box-header">Tränke</div>
     <div class="ua-box-content">
-      <table class="table nohover" rules="rows">
-        <tr class="bg2">
-          <th class="bg2">Trank</th>
-          <th class="bg2">Name</th>
-          <th class="bg2 text-center">Bestand</th>
-          <th class="bg2 text-center">Benötigtes Level</th>
-          <th class="bg2">&nbsp;</th>
-          <th class="bg2">&nbsp;</th>
-        </tr>
-        {% for potion in potions %} 
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td><img src="{{ gfx }}/potions/{{ potion.dbFieldName }}.gif" class="td-mini-icon" alt="{{ potion.name }}" /></td>
-          <td>
-            <span class="bold">{{ potion.name }}</span><br />
-            <div class="text-small">{{ potion.description|raw }}</div>
-          </td>
-          <td class="text-center">{{ potion.value }}</td>
-          <td class="text-center">{{ potion.needed_level }}</td>
-          <td>
-            <form action="main.php?modus={{ hero_link }}" id="{{ potion.dbFieldName }}1" method="post">
-              <input type="hidden" name="action" value="usePotion">
-              <input type="hidden" name="potionID" value="{{ potion.potionID}}"/>
-              <input name="value" value="1x" type="submit"/>
-            </form>
-          </td>
-          <td>
-            <form action="main.php?modus={{ hero_link }}" id="{{ potion.name }}5" method="post">
-              <input type="hidden" name="action" value="usePotion" />
-              <input type="hidden" name="potionID" value="{{ potion.potionID }}"/>
-              <input name="value" value="5x" type="submit" />
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-    </table>
-   </div>
+      <table>
+        <thead>
+          <tr class="bg2">
+            <th>Trank</th>
+            <th>Name</th>
+            <th class="center">Bestand</th>
+            <th class="center">Benötigtes Level</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for potion in potions %} 
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td><img src="{{ gfx }}/potions/{{ potion.dbFieldName }}.gif" class="td-mini-icon" alt="{{ potion.name }}" /></td>
+            <td>
+              <span class="bold">{{ potion.name }}</span><br />
+              <div class="text-small">{{ potion.description|raw }}</div>
+            </td>
+            <td class="text-center">{{ potion.value }}</td>
+            <td class="text-center">{{ potion.needed_level }}</td>
+            <td>
+              <form action="main.php?modus={{ hero_link }}" id="{{ potion.dbFieldName }}1" method="post">
+                <input type="hidden" name="action" value="usePotion">
+                <input type="hidden" name="potionID" value="{{ potion.potionID}}"/>
+                <input name="value" value="1x" type="submit"/>
+              </form>
+            </td>
+            <td>
+              <form action="main.php?modus={{ hero_link }}" id="{{ potion.name }}5" method="post">
+                <input type="hidden" name="action" value="usePotion" />
+                <input type="hidden" name="potionID" value="{{ potion.potionID }}"/>
+                <input name="value" value="5x" type="submit" />
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
   {% endif %}
 {% endif %} {# end of hero.isAlive #}

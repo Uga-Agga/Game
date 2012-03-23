@@ -427,13 +427,14 @@
 	}
 
 	thead th {
+		background:#C2CF90;
 		text-align: left;
 		color:#000;
 		border-bottom:2px #000 solid;
 	}
 
 	.bordertable thead th {
-		background:#e0e0e0;
+		background:#C2CF90;
 		border-right:1px #000000 solid;
 		border-bottom:1px #000000 solid;
 	}
