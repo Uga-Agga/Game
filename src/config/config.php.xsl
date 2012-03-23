@@ -378,11 +378,11 @@ class Unit {
   }
 }
 
-class UnitCategories {
+class UnitCategory {
   var $id;
   var $name;
 
-  function UnitCategories() {
+  function UnitCategory() {
      $this-&gt;id             = "";
      $this-&gt;name           = "";
   }
@@ -398,7 +398,7 @@ function init_units(){
 </xsl:template>
 
 <xsl:template match="Config/UnitTypes/unitCategories/unitCategory">
-  $tmp = new TradeCategories();
+  $tmp = new UnitCategory();
   $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
   $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
 

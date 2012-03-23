@@ -11,6 +11,7 @@
 
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
+init_unitCategories();
 
 function unit_getUnitDetail($caveID, &$details) {
   global $template;
@@ -104,10 +105,11 @@ function unit_getUnitDetail($caveID, &$details) {
 ****************************************************************************************************/
 
     if ($result === TRUE) {
-      $units[$unit->unitID] = array(
+      $units[$unit->unitCategory]['items'][$unit->unitID] = array(
         'name'             => $unit->name,
         'dbFieldName'      => $unit->dbFieldName,
         'unit_id'          => $unit->unitID,
+        'unitCategory'     => $unit->unitCategory,
         'cave_id'          => $caveID,
         'time'             => time_formatDuration(eval('return ' . formula_parseToPHP($unit->productionTimeFunction . ";", '$details')) * BUILDING_TIME_BASE_FACTOR),
         'stock'            => "0" + $details[$unit->dbFieldName],
@@ -132,15 +134,15 @@ function unit_getUnitDetail($caveID, &$details) {
         'critical_damage_probability' => 100 * ($unit->criticalDamageProbability),
 
       );
-      $units[$unit->unitID] = array_merge($units[$unit->unitID], parseCost($unit, $details));
+      $units[$unit->unitCategory]['items'][$unit->unitID] = array_merge($units[$unit->unitCategory]['items'][$unit->unitID], parseCost($unit, $details));
 
       // show the building link ?!
       if (sizeof($queue))
-        $units[$unit->unitID]['no_build_msg'] = _('Ausbau im Gange');
-      else if ($units[$unit->unitID]['notenough'])
-        $units[$unit->unitID]['no_build_msg'] = _('Zu wenig Rohstoffe');
+        $units[$unit->unitCategory]['items'][$unit->unitID]['no_build_msg'] = _('Ausbau im Gange');
+      else if ($units[$unit->unitCategory]['items'][$unit->unitID]['notenough'])
+        $units[$unit->unitCategory]['items'][$unit->unitID]['no_build_msg'] = _('Zu wenig Rohstoffe');
       else {
-        $units[$unit->unitID]['build_link'] = true;
+        $units[$unit->unitCategory]['items'][$unit->unitID]['build_link'] = true;
       }
 
 /****************************************************************************************************
@@ -149,10 +151,11 @@ function unit_getUnitDetail($caveID, &$details) {
 *
 ****************************************************************************************************/
     } else if ($result !== FALSE && !$unit->nodocumentation) {
-      $unitsUnqualified[$unit->unitID] = array(
+      $unitsUnqualified[$unit->unitCategory]['items'][$unit->unitID] = array(
         'name'             => $unit->name,
         'dbFieldName'      => $unit->dbFieldName,
         'unit_id'          => $unit->unitID,
+        'unitCategory'     => $unit->unitCategory,
         'cave_id'          => $caveID,
         'dependencies'     => $result,
         'description'      => $unit->description,
@@ -175,7 +178,22 @@ function unit_getUnitDetail($caveID, &$details) {
         'heavy_damage_probability'    => 100 * ($unit->heavyDamageProbability),
         'critical_damage_probability' => 100 * ($unit->criticalDamageProbability),
       );
-      $unitsUnqualified[$unit->unitID] = array_merge($unitsUnqualified[$unit->unitID], parseCost($unit, $details));
+      $unitsUnqualified[$unit->unitCategory]['items'][$unit->unitID] = array_merge($unitsUnqualified[$unit->unitCategory]['items'][$unit->unitID], parseCost($unit, $details));
+    }
+  }
+
+/****************************************************************************************************
+*
+* Namen zu den Kategorien hinzufügen
+*
+****************************************************************************************************/
+  foreach ($GLOBALS['unitCategoryTypeList'] as $unitsCategory) {
+    if (isset($units[$unitsCategory->id])) {
+      $units[$unitsCategory->id]['name'] = $unitsCategory->name;
+    }
+
+    if (isset($unitsUnqualified[$unitsCategory->id])) {
+      $unitsUnqualified[$unitsCategory->id]['name'] = $unitsCategory->name;
     }
   }
 
@@ -207,7 +225,6 @@ function unit_getUnitDetail($caveID, &$details) {
     'units_unqualified' => $unitsUnqualified,
     'max_build_units'   => MAX_SIMULTAN_BUILDED_UNITS,
   ));
-
 }
 
 ?>

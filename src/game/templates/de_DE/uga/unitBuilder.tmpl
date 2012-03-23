@@ -43,76 +43,94 @@
 <div class="ua-box">
   <div class="ua-box-header">Einheiten</div>
   <div class="ua-box-content">
-    {% if units %}
-      <table>
-        <tbody>
-          {% for item in units %}
-          {% set bgID = (bgID+1)%2 %}
-            <tr class="bg{{ bgID }} object-row">
-              <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-              <td class="ua-td-smallicon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
-              <td>
-                <dl>
-                  <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                  <dd>{% include "boxCost.tmpl" %}</dd>
-                </dl>
-              </td>
-              <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
-              <td class="ua-td-count">Bestand: {{ item.stock }}</td>
-              <td class="ua-td-input">
-                <form method="post" action="main.php?modus={{unit_link }}&amp;action=build&amp;unitID={{ item.unit_id }}&amp;caveID={{ cave_id }}">
-                  {% if item.build_link %}
-                    Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
-                    <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
-                    <input id="unit_{{ item.unit_id }}" type="submit" name="quantity" value="max" alt="Baut die maximale Anzahl Einheiten"/>
-                  {% else %}
-                    {{ item.no_build_msg }}
-                  {% endif %}
-                </form>
-              </td>
-            </tr>
-            <tr class="bg{{ bgID }} detail-row" id="unit_{{ item.unit_id }}" style="display: none;"><td colspan="6" class="object-details"></td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <div class="space center">Zur Zeit kannst du leider noch keine Einheiten bauen.</div>
-    {% endif %}
-    {% set bgID = 0 %}
+    <div class="jquery_tabs">
+      {% for category in units %}
+        <h6>{{ category.name }}</h6>
+        <div class="tabbody">
+          {% if category.items %}
+            <table>
+              <tbody>
+                {% for item in category.items %}
+                {% set bgID = (bgID+1)%2 %}
+                  <tr class="bg{{ bgID }} object-row">
+                    <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                    <td class="ua-td-smallicon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+                    <td>
+                      <dl>
+                        <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                        <dd>{% include "boxCost.tmpl" %}</dd>
+                      </dl>
+                    </td>
+                    <td class="ua-td-time"><img src="{{ gfx }}/de_DE/t_uga/clock.gif" class="noborder" width="15" height="15" alt="Dauer:" />{{ item.time }}</td>
+                    <td class="ua-td-count">Bestand: {{ item.stock }}</td>
+                    <td class="ua-td-input">
+                      <form method="post" action="main.php?modus={{unit_link }}&amp;action=build&amp;unitID={{ item.unit_id }}&amp;caveID={{ cave_id }}">
+                        {% if item.build_link %}
+                          Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
+                          <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
+                          <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up_max.png" id="unit_{{ item.unit_id }}" name="quantity" value="max" alt="Ausbilden" title="Baut die maximale Anzahl Einheiten" />
+                        {% else %}
+                          {{ item.no_build_msg }}
+                        {% endif %}
+                      </form>
+                    </td>
+                  </tr>
+                  <tr class="bg{{ bgID }} detail-row" id="unit_{{ item.unit_id }}" style="display: none;"><td colspan="6" class="object-details"></td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="space center">Zur Zeit kannst du leider von dieser Kategorie noch keine Einheiten bauen.</div>
+          {% endif %}
+          {% set bgID = 0 %}
+        </div>
+      {% else %}
+        <div class="space center">Zur Zeit kannst du leider noch keine Einheiten bauen.</div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
 <div class="success"><a href="{{ rules_path }}?modus=misc&amp;miscID=1" class="new-window">Übersicht zu allen Einheiten</a></div>
 
-{% if units_unqualified %}
 <div class="ua-box">
   <div class="ua-box-header">Einheiten, die noch nicht gebaut werden können</div>
   <div id="unit_unqualified" class="ua-box-content box_toggle change_mouseover space center">Einheiten einblenden</div>
   <div id="unit_unqualified_content" class="ua-box-content" style="display: none;">
-    <table>
-      <tbody>
-        {% for item in units_unqualified %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }} object-row">
-            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-            <td class="ua-td-smallicon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
-            <td>
-              <dl>
-                <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                <dd>{{ item.dependencies }}</dd>
-              </dl>
-            </td>
-          </tr>
-          <tr class="bg{{ bgID }} detail-row" id="unit_{{ item.unit_id }}" style="display: none;">
-            <td colspan="3" class="object-details">
-            </td>
-          </tr>
-        {% endfor %}
-        {% set bgID = 0 %}
-      </tbody>
-    </table>
+    <div class="jquery_tabs">
+      {% for category in units_unqualified %}
+        <h6>{{ category.name }}</h6>
+        <div class="tabbody">
+          {% if category.items %}
+            <table>
+              <tbody>
+                {% for item in category.items %}
+                {% set bgID = (bgID+1)%2 %}
+                  <tr class="bg{{ bgID }} object-row">
+                    <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                    <td class="ua-td-smallicon"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+                    <td>
+                      <dl>
+                        <dt><a class="object-detail-link" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                        <dd>{{ item.dependencies }}</dd>
+                      </dl>
+                    </td>
+                  </tr>
+                  <tr class="bg{{ bgID }} detail-row" id="unit_{{ item.unit_id }}" style="display: none;">
+                    <td colspan="3" class="object-details">
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="space center">Aus dieser Kategorie kannst du bereits schon alle Einheiten bauen.</div>
+          {% endif %}
+          {% set bgID = 0 %}
+        </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
-{% endif %}
 
 {% endblock %}

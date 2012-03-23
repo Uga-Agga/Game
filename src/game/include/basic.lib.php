@@ -657,7 +657,7 @@ function checkAvatar($url) {
   // curl mit Url initialisieren
   $ch = curl_init($url);
 
-  // optionen setzen: nur header zur�ckliefern
+  // optionen setzen: nur header zurückliefern
   curl_setopt_array($ch, array(
     CURLOPT_HEADER         => true,
     CURLOPT_NOBODY         => true,
@@ -667,12 +667,12 @@ function checkAvatar($url) {
 
   curl_exec($ch);
 
-  // pr�fe ob der Content-Type einer der geforderten ist
+  // prüfe ob der Content-Type einer der geforderten ist
   if (eregi('^('. implode('|', $contentTypes). ')', curl_getinfo($ch, CURLINFO_CONTENT_TYPE))) {
     // bild infos holen
     $imageInfo = @getimagesize($url);
 
-    // Bild zu gro�?
+    // Bild zu groß?
     if ($imageInfo[0] > MAX_AVATAR_WIDTH || $imageInfo[1] > MAX_AVATAR_HEIGHT) {
       return false;
     }
