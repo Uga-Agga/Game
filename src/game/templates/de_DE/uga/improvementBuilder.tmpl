@@ -108,29 +108,29 @@
 {% endif %}
 
 {% if improvement_relict %}
-<div class="box">
-  <div class="box-header">Relikte</div>
-  <div class="box-content success inner">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      {% for item in improvement_relict %}
-      {% set bgID = (bgID+1)%2 %}
-      <tr class="bg{{ bgID }} object-row" id="building_{{ item.building_id }}">
-        <td class="td-mini-icon"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus"  /></a></td>
-        <td class="td-mini-icon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
-        <td>
-          <dl class="nodistance">
-            <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-            <dd>{{ item.dependencies }}</dd>
-          </dl>
-        </td>
-        <td class="td-size">Stufe: {{ item.currentlevel }}</td>
-        <td class="td-button-single text-right"><a href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
-      </tr>
-      <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;"><td>&nbsp;</td>
-        <td colspan="6" class="object-details">
-        </td>
-      </tr>
-      {% endfor %}
+<div class="ua-box">
+  <div class="ua-box-header">Relikte</div>
+  <div class="ua-box-content">
+    <table>
+      <tbody>
+        {% for item in improvement_relict %}
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }} object-row">
+            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="ua-td-smallicon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
+            <td>
+              <dl>
+                <dt><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dd>{{ item.dependencies }}</dd>
+              </dl>
+            </td>
+          </tr>
+          <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;">
+            <td colspan="3" class="object-details">
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
 </div>
