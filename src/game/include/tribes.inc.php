@@ -843,18 +843,20 @@ function relation_forceSurrender($tag, $relationData) {
     $surrenderId++;
   }
 
-  // tribe messages for forced surrender
-  tribe_sendTribeMessage($ownTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Zwangskapitulation über $target",
-    "Ihr Stammesanführer hat den Stamm $target zur Aufgabe gezwungen.");
-
-  tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Zwangskapitulation gegen $tag",
-    "Der Stammesanführer des Stammes $tag hat ihren Stamm zur Aufgabe gezwungen.");
-
   $relationDataLooser = array('tag' => $tag,
                               'relationID' => $surrenderId);
 
   // refresh relations                              
-  return relation_processRelationUpdate($target, $relationDataLooser);
+  $messageID = relation_processRelationUpdate($target, $relationDataLooser);
+  if ($messageID < 0) {
+    return $messageID;
+  }
+
+  // tribe messages for forced surrender
+  tribe_sendTribeMessage($ownTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Zwangskapitulation über $target", "Ihr Stammesanführer hat den Stamm $target zur Aufgabe gezwungen.");
+  tribe_sendTribeMessage($targetTribeInfo['tag'], TRIBE_MESSAGE_RELATION, "Zwangskapitulation gegen $tag", "Der Stammesanführer des Stammes $tag hat ihren Stamm zur Aufgabe gezwungen.");
+
+  return $messageID;
 }
 
 function tribe_processAdminUpdate($tag, $data) {

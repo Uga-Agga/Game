@@ -48,19 +48,19 @@ class Contacts_Show_View extends View {
         break;
 
       case CONTACTS_ERROR_MAXREACHED:
-        $message = array('type' => 'error', 'message' => sprintf('Sie dürfen nicht mehr als {entries} Einträge in ihr Adressbuch aufnehmen.', CONTACTS_MAX));
+        $message = array('type' => 'error', 'message' => sprintf('Sie dürfen nicht mehr als {entries} Spieler in ihr Adressbuch aufnehmen.', CONTACTS_MAX));
         break;
 
       case CONTACTS_ERROR_INSERTFAILED:
-        $message = array('type' => 'error', 'message' => _('Der Kontakt konnte nicht eingetragen werden oder war bereits vorhanden.'));
+        $message = array('type' => 'error', 'message' => _('Der Spieler konnte nicht eingetragen werden oder war bereits vorhanden.'));
         break;
 
       case CONTACTS_ERROR_DELETEFAILED:
-        $message = array('type' => 'error', 'message' => _('Der Eintrag konnte nicht entfernt werden.'));
+        $message = array('type' => 'error', 'message' => _('Der Spieler konnte nicht entfernt werden.'));
         break;
 
       case CONTACTS_ERROR_DUPLICATE_ENTRY:
-        $message = array('type' => 'error', 'message' => _('Der Eintrag ist schon in der Liste vorhanden.'));
+        $message = array('type' => 'error', 'message' => _('Der Spieler ist schon in der Liste vorhanden.'));
         break;
 
       default:

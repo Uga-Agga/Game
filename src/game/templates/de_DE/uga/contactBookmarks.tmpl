@@ -22,7 +22,7 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th>
+          <th class="ua-td-name">Name</th>
           <th>Stamm</th>
           {% if contacts %}<th style="width: 150px;">&nbsp;</th>{% endif %}
         </tr>
@@ -32,19 +32,25 @@
           {% for item in contacts %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.contactplayerID }}">{{ item.contactname }}</a></td>
+            <td class="ua-td-name"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.contactplayerID }}">{{ item.contactname }}</a></td>
             <td>{{ item.contacttribe }}</td>
-            <td style="width: 200px;">
-              <div style="float: right;"><form method="post" action="main.php?modus={{ messages_new_link }}">
-                <p><input type="hidden" name="recipient" value="{{ item.contactname }}" />
-                <input type="submit" value="Nachricht senden" /></p>
-              </form></div>
-
-              <div style="float: right;"><form method="post" action="main.php?modus={{ contact_bookmarks_link }}">
-                <p><input type="hidden" name="task" value="Delete" />
-                <input type="hidden" name="contactID" value="{{ item.contactID }}" />
-                <input type="submit" value="löschen" /></p>
-              </form></div>
+            <td style="width: 240px;">
+              <div style="float: left;">
+                <form class="ym-form" method="post" action="main.php?modus={{ messages_new_link }}">
+                <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
+                  <input type="hidden" name="recipient" value="{{ item.contactname }}" />
+                  <input type="submit" class="ym-button" style="margin: 0;" value="Nachricht senden" />
+                </div>
+                </form>
+              </div>
+              <div style="float: right;">
+                <form class="ym-form" method="post" action="main.php?modus={{ contact_bookmarks_link }}">
+                <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
+                  <input type="hidden" name="task" value="Delete" />
+                  <input type="submit" class="ym-button" style="margin: 0;" value="löschen" />
+                </div>
+                </form>
+              </div>
               <div style="clear: both;"></div>
             </td>
           </tr>

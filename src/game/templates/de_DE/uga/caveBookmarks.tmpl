@@ -22,7 +22,7 @@
     <table>
       <thead>
         <tr>
-          <th>Name</th>
+          <th class="ua-td-name">Name</th>
           <th>Koords</th>
           <th>Region</th>
           <th>Besitzer</th>
@@ -35,28 +35,35 @@
           {% for item in cave_bookmarks %}
           {% set bgID = (bgID+1)%2 %}
             <tr class="bg{{ bgID }}">
-              <td><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
+              <td class="ua-td-name"><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
               <td>({{ item.xCoord }}|{{ item.yCoord }})</td>
               <td>{{ item.region }}</td>
               <td><a href="?modus=player_detail&amp;detailID={{ item.playerID }}">{{ item.playerName }}</a></td>
               <td><a href="?modus=tribe_detail&amp;tribe={{ item.tribe }}">{{ item.tribe }}</a></td>
-              <td style="width: 150px;">
-                <div style="float: right;"><form method="post" action="main.php?modus={{ unit_movement_link }}">
-                  <p><input type="hidden" name="targetXCoord" value="{{ item.xCoord }}" />
+            <td style="width: 180px;">
+              <div style="float: left;">
+                <form class="ym-form" method="post" action="main.php?modus={{ unit_movement_link }}">
+                <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
+                  <input type="hidden" name="targetXCoord" value="{{ item.xCoord }}" />
                   <input type="hidden" name="targetYCoord" value="{{ item.yCoord }}" />
                   <input type="hidden" name="targetCaveName" value="{{ item.name }}" />
-                  <input type="submit" value="Bewegen!" /></p>
-                </form></div>
-
-                <div style="float: right;"><form method="post" action="main.php?modus={{ cave_bookmarks_link }}">
-                  <p><input type="hidden" name="modus" value="CaveBookmarks" />
+                  <input type="submit" class="ym-button" style="margin: 0;" value="Bewegen" />
+                </div>
+                </form>
+              </div>
+              <div style="float: right;">
+                <form class="ym-form" method="post" action="main.php?modus={{ cave_bookmarks_link }}">
+                <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
+                  <input type="hidden" name="modus" value="CaveBookmarks" />
                   <input type="hidden" name="task" value="Delete" />
                   <input type="hidden" name="bookmarkID" value="{{ item.bookmarkID }}" />
-                  <input type="submit" value="löschen" /></p>
-                </form></div>
-                <div style="clear: both;"></div>
-              </td>
-            </tr>
+                  <input type="submit" class="ym-button" style="margin: 0;" value="löschen" />
+                </div>
+                </form>
+              </div>
+              <div style="clear: both;"></div>
+            </td>
+          </tr>
           {% endfor %}
         {% else %}
           <tr><td class="center" colspan="6">Bisher keine Höhlen eingetragen.</td></tr>

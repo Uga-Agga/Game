@@ -13,16 +13,16 @@
 {% block title %}Spielerbeschreibung{% endblock %}
 {% block content %}
 
-<div class="box small">
-  <div class="box-header nohover">Spieler: {{ player_details.name }}</div>
-  <div class="box-content success inner">
+<div class="ua-box small">
+  <div class="ua-box-header">Spieler: {{ player_details.name }}</div>
+  <div class="ua-box-content">
     {% if player_avatar %}
-      <div class="notice" style="text-align: center; margin: 10px;">
+      <div class="notice" style="padding-top: 10px;">
         <img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" alt="Spielerbanner" />
       </div>
     {% endif %}
 
-    <div class="notice" style="width: 290px; float: left; margin-left: 10px;">
+    <div class="notice" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
       <ul>
         <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
 
@@ -75,7 +75,7 @@
       </ul>
     </div>
 
-    <div class="notice" style="width: 290px; float: right; margin-right: 10px;">
+    <div class="notice" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
       <ul>
         <li class="bold" style="padding-bottom: 10px; text-align: center;">Beschreibung:</li>
         <li style="padding-bottom: 10px;">{{ player_details.description|raw }}</li>
@@ -83,39 +83,46 @@
     </div>
     <div style="clear: both;"></div>
 
-    <div class="notice" style="margin: 0 10px 10px;">
-      <ul>
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Spieler-Geschichte:</li>
-        {% if player_history %}
+    <div style="margin: 0 10px 10px;">
+      <table>
+        <tbody>
+          <thead>
+            <tr><th class="center" colspan="4">Spieler-Geschichte</th></tr>
+          </thead>
+          <tbody>
           {% for item in player_history %}
-            <li class="player_detail_left" style="width: 140px;">{{ item.timestamp }}</li>
-            <li class="player_detail_right" style="width: 467px;">{{ item.entry|raw }}</li>
-            <li class="clr"><br class="clr" /></li>
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="left" style="width: 160px;">{{ item.timestamp }}</td>
+            <td class="left">{{ item.entry|raw }}</td>
+          </tr>
+          {% else %}
+            <tr><td>Dieser Spieler hat noch keine Geschichte</td></tr>
           {% endfor %}
-        {% else %}
-          <li>Keine Einträge</li>
-        {% endif %}
-      </ul>
+        </tbody>
+      </table>
     </div>
 
-    <div class="notice nohover" style="margin: 0 10px 10px;">
-      <ul>
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Höhlenliste:</li>
-        <li>
-          <table style="width: 100%">
-            {% for item in player_caves %}
-            <tr>
-              <td class="text-left"><a href="main.php?modus=map&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
-              <td class="text-left">{% if item.secureCave == false %} (Übernehmbar){% else %}&nbsp;{% endif %}</a></td>
-              <td class="text-right">
-                <a href="main.php?modus=unit_movement&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a>
-                <a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a>
-              </td>
-            </tr>
-            {% endfor %}
-          </table>
-        </li>
-      </ul>
+    <div style="margin: 0 10px 10px;">
+      <table>
+        <tbody>
+          <thead>
+            <tr><th class="center" colspan="4">Höhlenliste</th></tr>
+          </thead>
+          <tbody>
+          {% for item in player_caves %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="left"><a href="main.php?modus=map&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
+            <td class="left">{% if item.secureCave == false %} (Übernehmbar){% else %}&nbsp;{% endif %}</td>
+            <td class="right">
+              <a href="main.php?modus=unit_movement&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a>
+              <a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

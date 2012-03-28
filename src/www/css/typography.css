@@ -467,7 +467,7 @@
 	}
 
 	/* highlight row on mouse over */
-	tbody tr:hover th,
+/*	tbody tr:hover th,*/
 	tbody tr:hover td {
 		background:#f8f8f8;
 	}
