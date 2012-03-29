@@ -2,6 +2,7 @@
 /*
  * spreadVoid.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -50,27 +51,34 @@
   }
   
   $result = $sql->fetchAll();
+  if (empty($result)) {
+    echo "#1 Void does not spread this cycle.\n";
+    exit;
+  }
 
+  $caves = array();
   foreach($result AS $row) {
     $caves[$row['xCoord']][$row['yCoord']] = 1;
   }
 
   $caves_new  = spreadVoid($caves, $minX, $minY, $maxX, $maxY);
   
+  $caves_dif = array();
   if ($caves_new) {
     foreach($caves_new AS $x => $ar) {
       foreach($ar AS $y => $void) {
-        if ($caves[$x][$y] != $void) {
-          $caves_dif[$x][$y] = $void;
+        if (!isset($caves[$x][$y]) || $caves[$x][$y] != $void) {
+          $caves_dif[$x][$y] = 1;
         }
       }
     }
   }
 
-  if ($caves_dif == 0) {
-    echo "Void does not spread this cycle.\n";
+  if (empty($caves_dif)) {
+    echo "#2 Void does not spread this cycle.\n";
     exit;
   }
+
   foreach($caves_dif AS $x => $a) {
     foreach($a AS $y => $void) {
       $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
@@ -92,14 +100,14 @@ function spreadVoid($caves, $minX, $minY, $maxX, $maxY) {
   for ($x = $minX; $x <= $maxX; $x++) {
     for ($y = $minY; $y <= $maxY; $y++) {
       
-      if ($caves[$x][$y] == 1) {
+      if (isset($caves[$x][$y]) && $caves[$x][$y] == 1) {
         $caves_new[$x][$y] = 1;
       } else {
         $count = countVoid($caves, $x, $y);
-      
+
         // linearly increasing probability
         $prob = (MAX_PROB / 8.) * $count;
-      
+
         if (rand() / (double)getRandMax() < $prob) {
           $caves_new[$x][$y] = 1;
         }
@@ -114,10 +122,12 @@ function countVoid($caves, $x, $y) {
   for ($i=-1; $i <= 1; $i++) {
     for ($j=-1; $j <= 1; $j++) {
       if ($i != 0 || $j != 0) {
-        $count += $caves[$x+$i][$y+$j];
+        if (isset($caves[$x+$i][$y+$j])) {
+          $count += $caves[$x+$i][$y+$j];
+        }
       }
     }
-  } 
+  }
   return $count;
 }
 
