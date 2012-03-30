@@ -13,10 +13,9 @@
 {% block title %}Stamesmitglieder{% endblock %}
 {% block content %}
 
-<div class="box small">
-  <div class="box-header">Geschichte des Stammes {{ tribe_name }}</div>
-  <div class="box-content success inner text-center">
-    <span class="bold text-center">Geschichte</span><br />
+<div class="ua-box small">
+  <div class="ua-box-header">Geschichte des Stammes {{ tribe_name }}</div>
+  <div class="ua-box-content center">
     {% if tribe_history %}
       {% for item in tribe_history %}
         <div class="info text-left" style="margin-left: 10px; margin-right: 10px;">
@@ -25,9 +24,7 @@
         </div>
       {% endfor %}
     {% else %}
-      <div class="info text-left">
-        Dieser Stamm hat noch keine Geschichte.
-      </div>
+      <div class="space">Dieser Stamm hat noch keine Geschichte.</div>
     {% endif %}
   </div>
 </div>

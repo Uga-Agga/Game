@@ -166,7 +166,7 @@
             <tbody>
               {% for item in relations_info %}
               <tr>
-                <td class="ua-td-name">{{ item.tag }}</td>
+                <td>{{ item.tag }}</td>
                 <td>
                   Eigene: <span class="bold">{{ item.relation }}</span><br />
                   Ihre: <span class="bold">{{ item.their_relation }}</span><br />
@@ -262,7 +262,7 @@
             {% for item in tribeStorage %}
             {% set bgID = (bgID+1)%2 %}
             <tr class="bg{{ bgID }}">
-              <td class="ua-td-name"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
+              <td><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></td>
               <td>{{ item.name }}</td>
               <td>{{ item.value }}</td>
             </tr>
@@ -280,7 +280,7 @@
               {% for item in tribeWonders %}
                 {% set bgID = (bgID+1)%2 %}
                 <tr class="bg{{ bgID }} object-row">
-                  <td class="ua-td-name"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                  <td><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
                   <td>
                     <dl>
                       <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>

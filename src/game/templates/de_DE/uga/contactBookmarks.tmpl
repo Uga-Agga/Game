@@ -22,7 +22,7 @@
     <table>
       <thead>
         <tr>
-          <th class="ua-td-name">Name</th>
+          <th>Name</th>
           <th>Stamm</th>
           {% if contacts %}<th style="width: 150px;">&nbsp;</th>{% endif %}
         </tr>
@@ -32,7 +32,7 @@
           {% for item in contacts %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td class="ua-td-name"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.contactplayerID }}">{{ item.contactname }}</a></td>
+            <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.contactplayerID }}">{{ item.contactname }}</a></td>
             <td>{{ item.contacttribe }}</td>
             <td style="width: 240px;">
               <div style="float: left;">

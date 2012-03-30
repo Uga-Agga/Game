@@ -21,19 +21,8 @@ function tribeHistory_getContent($tag) {
 
   $history = relation_getTribeHistory($tag);
   $template->addVar('tribe_history', $history);
-  return;
-  
-  $i = 0;
-  foreach($history AS $key => $values) {
-    tmpl_iterate($template, 'ROWS');
 
-    if ($i++ % 2)
-      tmpl_set($template, 'ROWS/ROW_ALTERNATE', $values);
-    else
-      tmpl_set($template, 'ROWS/ROW',           $values);
-  }
-
-  return tmpl_parse($template);
+  $template->addVar('tribe_name', $tag);
 }
 
 ?>

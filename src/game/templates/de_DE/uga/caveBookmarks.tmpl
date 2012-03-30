@@ -22,7 +22,7 @@
     <table>
       <thead>
         <tr>
-          <th class="ua-td-name">Name</th>
+          <th>Name</th>
           <th>Koords</th>
           <th>Region</th>
           <th>Besitzer</th>
@@ -35,12 +35,12 @@
           {% for item in cave_bookmarks %}
           {% set bgID = (bgID+1)%2 %}
             <tr class="bg{{ bgID }}">
-              <td class="ua-td-name"><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
+              <td><a href="?modus=map_detail&amp;targetCaveID={{ item.caveID }}">{{ item.name }}</a></td>
               <td>({{ item.xCoord }}|{{ item.yCoord }})</td>
               <td>{{ item.region }}</td>
               <td><a href="?modus=player_detail&amp;detailID={{ item.playerID }}">{{ item.playerName }}</a></td>
               <td><a href="?modus=tribe_detail&amp;tribe={{ item.tribe }}">{{ item.tribe }}</a></td>
-            <td style="width: 180px;">
+            <td style="width: 190px;">
               <div style="float: left;">
                 <form class="ym-form" method="post" action="main.php?modus={{ unit_movement_link }}">
                 <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">

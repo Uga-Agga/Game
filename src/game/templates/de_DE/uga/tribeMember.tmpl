@@ -163,7 +163,7 @@
               {% for resource in tribeStorageValues %}
                 {% set bgID = (bgID+1)%2 %}
                 <tr class="bg{{ bgID }}">
-                  <td class="ua-td-name"><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
+                  <td><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
                   <td>{{ resource.name }}</td>
                   <td>{{ resource.value }}</td>
                   {% if showTribeStorageDonations %}
@@ -188,7 +188,7 @@
         <table>
           <thead>
             <tr>
-              <th class="ua-td-name">Spieler</th>
+              <th>Spieler</th>
               {% for item in tribeStorageValues %}
               <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
               {% endfor %}
@@ -199,7 +199,7 @@
             {% set bgID = (bgID+1)%2 %}
             <tr class="bg{{ bgID }}">
               {% for item in donation %}
-              <td class="ua-td-name">{{ item }}</td>
+              <td>{{ item }}</td>
               {% endfor %}
             </tr>
             {% endfor %}

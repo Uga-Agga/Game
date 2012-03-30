@@ -65,34 +65,42 @@
   <div class="ua-box-content">
     <div class="ym-grid">
       <div class="ym-g50 ym-gl">
-        <div class="notice" style="margin:2px;">
+        <div class="ym-gbox" style="padding-top: 10px;">
           <table>
-            <tr align="left">
-              <th width="230px">Gott</th>
-              <th width="50px">Anbeter</th>
-            </tr>
-            {% for god in GodStats %}
-            <tr>
-              <td align="left">{{ god.name }}</td>
-              <td align="right">{{ god.value }}</td>
-            </tr>
-          {% endfor %}
+            <thead>
+              <tr>
+                <th>Gott</th>
+                <th>Anbeter</th>
+              </tr>
+            </thead>
+            </tbody>
+              {% for god in GodStats %}
+              <tr>
+                <td>{{ god.name }}</td>
+                <td>{{ god.value }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
         </div>
       </div>
       <div class="ym-g50 ym-gl">
-        <div class="notice" style="margin:2px;">
+        <div class="ym-gbox" style="padding-top: 10px;">
           <table>
-            <tr align="left">
-              <th width="230px">Halbgott</th>
-              <th width="50px">Anbeter</th>
-            </tr>
-            {% for halfgod in HalfGodStats %}
+            <thead>
               <tr>
-                <td align="left">{{ halfgod.name }}</td>
-                <td align="right">{{ halfgod.value }}</td>
+                <th width="230px">Halbgott</th>
+                <th width="50px">Anbeter</th>
               </tr>
-            {% endfor %}
+            </thead>
+            </tbody>
+              {% for halfgod in HalfGodStats %}
+              <tr>
+                <td>{{ halfgod.name }}</td>
+                <td>{{ halfgod.value }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
         </div>
       </div>
@@ -105,34 +113,42 @@
   <div class="ua-box-content">
     <div class="ym-grid">
       <div class="ym-g50 ym-gl">
-        <div class="notice"  style="margin:2px;">
+        <div class="ym-gbox" style="padding-top: 10px;">
           <table>
-            <tr align="left">
-              <th width="230px">Name</th>
-              <th width="50px">Lebend</th>
-            </tr>
-            {% for unit in Units %}
-            <tr>
-              <td align="left"><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
-              <td align="right">{{ unit.value }}</td>
-            </tr>
-            {% endfor %}
+            <thead>
+              <tr>
+                <th width="230px">Name</th>
+                <th width="50px">Lebend</th>
+              </tr>
+            </thead>
+            </tbody>
+              {% for unit in Units %}
+              <tr>
+                <td><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
+                <td>{{ unit.value }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
         </div>
       </div>
       <div class="ym-g50 ym-gl">
-        <div class="notice" style="margin:2px;">
+        <div class="ym-gbox" style="padding-top: 10px;">
           <table>
-            <tr align="left">
-              <th width="230px">Lagerstufe</th>
-              <th width="50px">Anzahl</th>
-            </tr>
-            {% for storage in StorageStats %}
-            <tr>
-              <td align="left">{{ storage.name }}</td>
-              <td align="right">{{ storage.value }}</td>
-            </tr>
-            {% endfor %}
+            <thead>
+              <tr>
+                <th width="230px">Lagerstufe</th>
+                <th width="50px">Anzahl</th>
+              </tr>
+            </thead>
+            </tbody>
+              {% for storage in StorageStats %}
+              <tr>
+                <td>{{ storage.name }}</td>
+                <td>{{ storage.value }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
           </table>
         </div>
       </div>

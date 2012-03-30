@@ -421,6 +421,11 @@
 		margin-top: 0;
 	}
 
+	th:first-child,
+	td:first-child {
+		padding-left: 4px;
+	}
+
 	th.nowrap,
 	td.nowrap {
 		white-space: nowrap;

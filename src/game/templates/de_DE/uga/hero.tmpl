@@ -119,7 +119,7 @@
         <table>
           <thead>
             <tr>
-              <th class="ua-td-name">Rohstoff</th>
+              <th>Rohstoff</th>
               <th>Menge</th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
               {% if resource.takeoverValue > 0 %}
               {% set bgID = (bgID+1)%2 %}
               <tr class="bg{{ bgID }}">
-                <td class="ua-td-name">{{ resource.name }}</td>
+                <td>{{ resource.name }}</td>
                 <td>
                   <div class="ym-fbox-text">
                     <input style="width: 100px" type="text" name="resource_{{ resource.resourceID }}" id="resource_{{ resource.resourceID }}" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>

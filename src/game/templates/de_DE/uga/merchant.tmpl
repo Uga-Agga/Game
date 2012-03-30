@@ -36,7 +36,7 @@
       {% for item in cat.data %}
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
-          <td class="ua-td-name">
+          <td>
             <dl>
               <dt><span class="bold">{{ item.name }}</span></dt>
               <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
