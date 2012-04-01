@@ -16,38 +16,55 @@
 <div class="ua-box small">
   <div class="ua-box-header">Aktive Auswirkungen der Wunder</div>
   <div class="ua-box-content">
-  {% if wonder %}
-    <div class="ym-grid space">
-      {% for item in wonder %}
-      <div class="ym-g684-12 ym-gl">
-        <span class="bold">{{ item.name }}</span>, wirkt noch bis: {{ item.end }}
-      </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <div class="space center">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
-  {% endif %}
+    {% if wonder %}
+      <table>
+        <thead>
+          <tr>
+            <th>Wunder</th>
+            <th>Ende</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in effect %}
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="ym-g684-3">{{ item.name }}</td>
+            <td class="ym-g684-9">{{ item.end }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="space center">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
+    {% endif %}
   </div>
 </div>
 
 <div class="ua-box small">
   <div class="ua-box-header">In der Höhle wirkende Effekte</div>
-  {% if effect %}
-    <div class="ua-box-content">
-      <div class="ym-grid space">
-        <div class="ym-g684-12 ym-gl">
+  <div class="ua-box-content">
+    {% if effect %}
+      <table>
+        <thead>
+          <tr>
+            <th>Effekt</th>
+            <th>Faktor</th>
+          </tr>
+        </thead>
+        <tbody>
           {% for item in effect %}
-          <div class="ym-grid">
-            <div class="ym-g684-4 ym-gl">{{ item.name }}:</div>
-            <div class="ym-g684-8 ym-gl">{{ item.value }}</div>
-          </div>
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
+            <td class="ym-g684-3">{{ item.name }}</td>
+            <td class="ym-g684-9">{{ item.value }}</td>
+          </tr>
           {% endfor %}
-        </div>
-      </div>
-    </div>
-  {% else %}
-    <div class="space center">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
-  {% endif %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="space center">Derzeit wirken keinerlei Effekte auf Eure Höhle, Häuptling!</div>
+    {% endif %}
+  </div>
 </div>
 
 {% if hero %}

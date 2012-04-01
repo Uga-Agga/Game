@@ -184,7 +184,7 @@ function unit_getUnitDetail($caveID, &$details) {
 
 /****************************************************************************************************
 *
-* Namen zu den Kategorien hinzufügen
+* Namen zu den Kategorien hinzufügen & sortieren
 *
 ****************************************************************************************************/
   foreach ($GLOBALS['unitCategoryTypeList'] as $unitsCategory) {
@@ -196,6 +196,8 @@ function unit_getUnitDetail($caveID, &$details) {
       $unitsUnqualified[$unitsCategory->id]['name'] = $unitsCategory->name;
     }
   }
+  ksort($units);
+  ksort($unitsUnqualified);
 
 /****************************************************************************************************
 *

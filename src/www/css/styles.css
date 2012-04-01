@@ -48,7 +48,7 @@ dd { margin: 0; }
 .ua-td-smallicon { width: 34px; text-align: center; }
 .ua-td-time { width: 100px; text-align: right; }
 .ua-td-timer { width: 75px; text-align: right; padding-right: 4px; }
-.ua-td-open { width: 18px; text-align: center; }
+.ua-td-open { width: 16px; text-align: center; }
 .ua-td-padding { padding-left: 4px; padding-right: 4px; }
 
 /* farben fuer den terminkalender */

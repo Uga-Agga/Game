@@ -326,6 +326,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
   // if switching to the same relation of other clan towards us,
   // use their treaty's end_time!
   if ($relationType == $relation['other']['relationType'] && $relationType != 0) {
+    $duration = 0;
     $end_time = $relation['other']['duration'];
   } else {
     $duration = $GLOBALS['relationList'][$relationTypeActual]['transitions'][$relationType]['time'];
@@ -340,12 +341,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     $OtherFame = 0;
   }
 
-  if (!relation_setRelation($tag, $targetTribeInfo['tag'],
-          $relationType,
-          $duration, $end_time,
-          $relation['own']['tribe_rankingPoints'],
-          $relation['own']['target_rankingPoints'],
-          $OurFame)) {
+  if (!relation_setRelation($tag, $targetTribeInfo['tag'], $relationType, $duration, $end_time, $relation['own']['tribe_rankingPoints'], $relation['own']['target_rankingPoints'], $OurFame)) {
     return -3;
   }
 

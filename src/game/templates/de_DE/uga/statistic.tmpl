@@ -60,12 +60,12 @@
 
 <a class="export-link" href="export.php?modus=statistics&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><div id="export-dialog"></div>
 
-<div class="ua-box">
+<div class="ua-box small">
   <div class="ua-box-header">Halbgötter/Götter - Statistik</div>
   <div class="ua-box-content">
     <div class="ym-grid">
       <div class="ym-g50 ym-gl">
-        <div class="ym-gbox" style="padding-top: 10px;">
+        <div style="padding-right: 5px;">
           <table>
             <thead>
               <tr>
@@ -75,17 +75,19 @@
             </thead>
             </tbody>
               {% for god in GodStats %}
-              <tr>
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
                 <td>{{ god.name }}</td>
                 <td>{{ god.value }}</td>
               </tr>
               {% endfor %}
+              {% set bgID = 0 %}
             </tbody>
           </table>
         </div>
       </div>
       <div class="ym-g50 ym-gl">
-        <div class="ym-gbox" style="padding-top: 10px;">
+        <div style="padding-left: 5px;">
           <table>
             <thead>
               <tr>
@@ -95,11 +97,13 @@
             </thead>
             </tbody>
               {% for halfgod in HalfGodStats %}
-              <tr>
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
                 <td>{{ halfgod.name }}</td>
                 <td>{{ halfgod.value }}</td>
               </tr>
               {% endfor %}
+              {% set bgID = 0 %}
             </tbody>
           </table>
         </div>
@@ -108,12 +112,12 @@
   </div>
 </div>
 
-<div class="ua-box">
+<div class="ua-box small">
   <div class="ua-box-header">Einheiten/Lager - Statistik</div>
   <div class="ua-box-content">
     <div class="ym-grid">
       <div class="ym-g50 ym-gl">
-        <div class="ym-gbox" style="padding-top: 10px;">
+        <div style="padding-right: 5px;">
           <table>
             <thead>
               <tr>
@@ -123,17 +127,19 @@
             </thead>
             </tbody>
               {% for unit in Units %}
-              <tr>
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
                 <td><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
                 <td>{{ unit.value }}</td>
               </tr>
               {% endfor %}
+              {% set bgID = 0 %}
             </tbody>
           </table>
         </div>
       </div>
       <div class="ym-g50 ym-gl">
-        <div class="ym-gbox" style="padding-top: 10px;">
+        <div style="padding-left: 5px;">
           <table>
             <thead>
               <tr>
@@ -143,11 +149,13 @@
             </thead>
             </tbody>
               {% for storage in StorageStats %}
-              <tr>
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
                 <td>{{ storage.name }}</td>
                 <td>{{ storage.value }}</td>
               </tr>
               {% endfor %}
+              {% set bgID = 0 %}
             </tbody>
           </table>
         </div>

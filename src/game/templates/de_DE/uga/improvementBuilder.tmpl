@@ -86,7 +86,7 @@
         {% for item in improvement_unqualified %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }} object-row">
-            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td class="ua-td-smallicon"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" class="noborder" width="20" height="30" alt="" title="{{ item.name }}" /></td>
             <td>
               <dl>
