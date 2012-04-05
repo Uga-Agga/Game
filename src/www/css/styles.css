@@ -148,4 +148,12 @@ li.clr {clear: left; width: 1px; height: 1px;  margin: 0;}
 li.player_detail_left {float: left; width: 160px; font-weight: bold; margin: 0 5px 5px 0;}
 li.player_detail_right {float: left; width: 115px; padding: 0; margin: 0 0 5px 0;}
 
+/* Tribe */
+li.clr {clear: left; width: 1px; height: 1px;  margin: 0;}
+li.tribe_detail_left {float: left; width: 100px; font-weight: bold; margin: 0 5px 5px 0;}
+li.tribe_detail_right {float: left; width: 180px; padding: 0; margin: 0 0 5px 0;}
+
+/* Karte */
+.terrain {text-align: center; vertical-align: top; min-width: 60px; background-size: 100% 100% !important; -moz-background-size: 100% 100%; -o-background-size: 100% 100%; -webkit-background-size: 100% 100%; padding: 0px;}
+
 .detail-row:hover td {background: transparent;}

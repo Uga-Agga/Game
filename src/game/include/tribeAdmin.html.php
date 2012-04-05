@@ -76,9 +76,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');
     return;
   }
-  $tribeData['description'] = str_replace('<br />', '\n', $tribeData['description']);
-  $avatar = @unserialize($tribeData['avatar']);
-  $tribeData['avatar'] = $avatar['path'];
   $template->addVar('tribe_data', $tribeData);
 
   //get member Data
@@ -158,7 +155,6 @@ function tribeAdmin_getContent($playerID, $tag, $caveID) {
       $messageID = tribe_processAdminUpdate($tag, $postData);
       $tribeData = tribe_getTribeByTag($tag);
       $template->addVar('tribe_data', $tribeData);
-
     break;
 
 /****************************************************************************************************

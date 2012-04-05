@@ -13,16 +13,16 @@
 {% block title %}Stammesbeschreibung{% endblock %}
 {% block content %}
 
-<div class="box small">
-  <div class="box-header nohover">Stamm: {{ tribe_details.name }}</div>
-  <div class="box-content success inner text-left">
+<div class="ua-box small">
+  <div class="ua-box-header">Stamm: {{ tribe_details.name }}</div>
+  <div class="ua-box-content">
     {% if tribe_details.avatar %}
-      <div class="notice" style="text-align: center; margin: 10px;">
+      <div style="text-align: center; padding: 10px;">
         <img src="{{ tribe_details.avatar_path }}" width="{{ tribe_details.avatar_width }}" height="{{ tribe_details.avatar_height }}" alt="Stammesbanner" />
       </div>
     {% endif %}
 
-    <div style="width: 310px; float: left; margin-left: 10px;">
+    <div style="width: 310px; float: left; padding-left: 10px;">
       <div class="notice nohover">
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
@@ -46,8 +46,8 @@
       </div>
     </div>
 
-    <div style="width: 310px; float: right; margin-right: 10px;">
-      <div class="notice nohover">
+    <div style="width: 310px; float: right; padding-right: 10px;">
+      <div class="notice">
         <ul>
           <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
 
@@ -63,9 +63,9 @@
     </div>
     <div style="clear: both;"></div>
 
-    <div class="smallinner notice nohover" style="margin: 0 10px 10px;">
-      <ul>
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesbeschreibung</li>
+    <div style="padding: 0 10px 10px;">
+      <ul class="notice" style="margin: 0;">
+        <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesbeschreibung:</li>
         <li>{{ tribe_details.description|raw }}</li>
       </ul>
     </div>

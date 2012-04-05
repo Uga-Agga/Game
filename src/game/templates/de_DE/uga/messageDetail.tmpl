@@ -84,8 +84,8 @@
     </div>
 
     {% if reply or delete %}
-      <div style="float: left; width: 125px;">
-        {% if reply %}
+      {% if reply %}
+        <div style="float: left; width: 125px;">
           <form class="ym-form" method="post" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}">
             <div class="ym-fbox-button">
                 {% for item in reply %}
@@ -94,20 +94,22 @@
                 <input type="submit" class="ym-button" value="Antworten" id="Antworten" name="Antworten" />
             </div>
           </form>
-        {% endif %}
-      </div>
-      <div style="padding-left: 125px;">
-        {% if delete %}
-          <form class="ym-form" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}">
-            <div class="ym-fbox-button">
-              {% for item in delete.item %}
-                <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
-              {% endfor %}
-              <input type="submit" class="ym-button" value="{{ delete.name }}" id="mark_action" name="mark_action" />
-            </div>
-          </form>
-        {% endif %}
-      </div>
+        </div>
+        <div style="padding-left: 125px;">
+      {% endif %}
+      {% if delete %}
+        <form class="ym-form" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}">
+          <div class="ym-fbox-button">
+            {% for item in delete.item %}
+              <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
+            {% endfor %}
+            <input type="submit" class="ym-button" value="{{ delete.name }}" id="mark_action" name="mark_action" />
+          </div>
+        </form>
+      {% endif %}
+      {% if reply %}
+        </div>
+      {% endif %}
     {% endif %}
   </div>
 </div>

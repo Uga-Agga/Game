@@ -16,28 +16,32 @@
 {% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
 {% if show_page %}
-<div class="box small">
-  <div class="box-header">Beziehungsübersicht vom Stamme {{ tribe_name }}</div>
-  <div class="box-content success inner text-center">
-    <table class="table" cellpadding="3" cellspacing="0" rules="rows">
-      <tr>
-        <th class="text-left">Stamm</th>
-        <th>Haltung von {{ tribe_name }}</th>
-        <th>Haltung gegenüber {{ tribe_name }}</th>
-      </tr>
-      {% if relations_data %}
-        {% for item in relations_data %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-            <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
-            <td>{{ item.relation_to }}</td>
-            <td>{{ item.relation_from }}</td>
+<div class="ua-box small">
+  <div class="ua-box-header">Beziehungsübersicht vom Stamme {{ tribe_name }}</div>
+  <div class="ua-box-content">
+    {% if relations_data %}
+      <table>
+        <thead>
+          <tr>
+            <th class="text-left">Stamm</th>
+            <th>Haltung von {{ tribe_name }}</th>
+            <th>Haltung gegenüber {{ tribe_name }}</th>
           </tr>
-        {% endfor %}
-      {% else %}
-        <tr><td colspan="3">Zur Zeit hat dieser Stamm keine Beziehungen</td></tr>
-      {% endif %}
-    </table>
+        </thead>
+        <tbody>
+          {% for item in relations_data %}
+            {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }}">
+              <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
+              <td>{{ item.relation_to }}</td>
+              <td>{{ item.relation_from }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <div class="space center">Zur Zeit hat dieser Stamm keine Beziehungen zu einem anderen Stamm.</div>
+    {% endif %}
   </div>
 </div>
 {% endif %}

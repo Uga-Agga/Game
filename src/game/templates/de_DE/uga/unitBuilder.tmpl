@@ -43,7 +43,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Einheiten</div>
   <div class="ua-box-content">
-    <div class="jquery_tabs">
+    <div id="unitBuilder" class="jquery_tabs">
       {% for category in units %}
         <h6>{{ category.name }}</h6>
         <div class="tabbody">
@@ -97,7 +97,7 @@
   <div class="ua-box-header">Einheiten, die noch nicht gebaut werden können</div>
   <div id="unit_unqualified" class="ua-box-content box_toggle change_mouseover space center">Einheiten einblenden</div>
   <div id="unit_unqualified_content" class="ua-box-content" style="display: none;">
-    <div class="jquery_tabs">
+    <div id="unitBuilderUnqualified" class="jquery_tabs">
       {% for category in units_unqualified %}
         <h6>{{ category.name }}</h6>
         <div class="tabbody">

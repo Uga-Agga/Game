@@ -713,6 +713,7 @@ function init_potions() {
   // <xsl:value-of select="Name"/>
   $GLOBALS['terrainList'][<xsl:value-of select="@id"/>] = array('name' =&gt; '<xsl:value-of select="Name"/>',
                           'img' =&gt; '<xsl:value-of select="img"/>',
+                          'imgMap' =&gt; '<xsl:value-of select="imgMap"/>',
                           'takeoverByCombat' =&gt; <xsl:value-of select="@takeoverByCombat"/>,
                           'barren' =&gt; <xsl:value-of select="@barren"/>,
                           'color' =&gt; array(<xsl:apply-templates select="Color"/>),

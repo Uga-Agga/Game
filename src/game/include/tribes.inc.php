@@ -1020,6 +1020,10 @@ function tribe_getTribeByTag($tag) {
     return null;
   }
 
+  $result['description'] = str_replace('<br />', '\n', $result['description']);
+  $avatar = @unserialize($result['avatar']);
+  $result['avatar'] = $avatar['path'];
+
   return $result;
 }
 

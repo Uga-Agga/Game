@@ -229,8 +229,11 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 
     $cell = array(
       'terrain'   => 'terrain'.$cave['terrain'],
+      'imgMap'    => $GLOBALS['terrainList'][$cave['terrain']]['imgMap'],
+      'barren'    => $GLOBALS['terrainList'][$cave['terrain']]['barren'],
       'alt'       => "{$cave['cavename']} - ({$cave['xCoord']}|{$cave['yCoord']}) - {$cave['region']}",
-      'link'      => "modus=" . MAP_DETAIL . "&amp;targetCaveID={$cave['caveID']}");
+      'link'      => "modus=" . MAP_DETAIL . "&amp;targetCaveID={$cave['caveID']}",
+    );
 
     // unbewohnte Höhle
     if ($cave['playerID'] == 0) {

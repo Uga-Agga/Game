@@ -110,8 +110,9 @@ $(document).ready(function() {
   // ...and apply...
   $('#ua-head-menu-item').jqDock(dockOptions);
 
-  $('.jquery_tabs').accessibleTabs({
+  var tabs = $(".jquery_tabs").accessibleTabs({
     tabhead: 'h6',
-    fx:'fadeIn'
+    fx:'fadeIn',
+    saveState:true
   });
 });

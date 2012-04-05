@@ -20,7 +20,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Karte</div>
   <div class="ua-box-content">
-    <div class="ym-grid space">
+    <div class="ym-grid" style="padding: 10px 0;">
       <div class="ym-g33 ym-gl">
         <div class="ym-gbox center">
           <form id="searchCoords" method="post" action="main.php?modus={{modus}}">
@@ -84,6 +84,9 @@
               <td><a class="arrow" id="SE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SE.x}}&amp;yCoord={{SE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a></td>
             </tr>
           </thead>
+          <tbody>
+          <tr style="display: none;"><td></td></tr>
+          </tbody>
         </table>
 
         {% if minimap %} 
@@ -104,7 +107,7 @@
   </div>
 
   <div style="margin-right: 160px;">
-    <div class="ua-box">
+    <div id="mapBox" class="ua-box">
       <div class="ua-box-header">Karte</div>
       <div class="ua-box-content" id="map-view">{% include "mapRegion.tmpl" %}</div>
     </div>
