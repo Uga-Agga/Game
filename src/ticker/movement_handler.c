@@ -1185,10 +1185,13 @@ void movement_handler (db_t *database, db_result_t *result)
          " WHERE caveID = %d",
          cave1.player_id, target_caveID);
 
-  db_query(database, "DELETE FROM Event_science WHERE caveID = %d",
-     target_caveID);
+       db_query(database, "DELETE FROM Event_science WHERE caveID = %d",
+       target_caveID);
 
-  science_update_caves(database, cave1.player_id);
+       science_update_caves(database, cave1.player_id);
+
+       //kill hero in defenders cave
+       kill_hero(database, cave2.heroID);
       }
 
       //bodycount calculate
