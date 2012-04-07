@@ -11,6 +11,7 @@
 
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
+init_potions();
 
 function merchant_getMechantDetail($playerID, $caveID, &$details) {
   global $db, $template;
@@ -159,8 +160,10 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
   if ($GLOBALS['tradeTypeList'][$tradeID]->category == "potion") {
     foreach ($GLOBALS['tradeTypeList'][$tradeID]->impactList[0]['potions'] AS $potionID => $potion) {
       
-      if (!$GLOBALS['potionTypeList'][$potionID])
+      if (!$GLOBALS['potionTypeList'][$potionID]) {
+        processProductionCostSetBack($GLOBALS['tradeTypeList'][$tradeID], $caveID, $caveData);
         return -1;
+      }
       
       $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
                            SET " . $GLOBALS['potionTypeList'][$potionID]->dbFieldName . " =  " . $GLOBALS['potionTypeList'][$potionID]->dbFieldName . " + :absolute 
