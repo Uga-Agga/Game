@@ -13,6 +13,7 @@
 
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
+init_WonderCategories();
 
 function wonder_getWonderContent($caveID, &$details) {
   global $template;
@@ -78,20 +79,21 @@ function wonder_getWonderContent($caveID, &$details) {
 *
 ****************************************************************************************************/
     if (($result === TRUE) && (!$wonder->nodocumentation)) {
-      $wonders[$wonder->wonderID] = array(
-        'dbFieldName' => $wonder->wonderID, // Dummy. Wird für die boxCost.tmpl gebraucht.
-        'name'        => $wonder->name,
-        'wonder_id'   => $wonder->wonderID,
-        'description' => $wonder->description,
-        'same'        => ($wonder->target == 'same') ? true : false
+      $wonders[$wonder->wonderCategory]['items'][$wonder->wonderID] = array(
+        'dbFieldName'    => $wonder->wonderID, // Dummy. Wird für die boxCost.tmpl gebraucht.
+        'name'           => $wonder->name,
+        'wonder_id'      => $wonder->wonderID,
+        'wonderCategory' => $wonder->wonderCategory,
+        'description'    => $wonder->description,
+        'same'           => ($wonder->target == 'same') ? true : false
       );
-      $wonders[$wonder->wonderID] = array_merge($wonders[$wonder->wonderID], parseCost($wonder, $details));
+      $wonders[$wonder->wonderCategory]['items'][$wonder->wonderID] = array_merge($wonders[$wonder->wonderCategory]['items'][$wonder->wonderID], parseCost($wonder, $details));
 
       // show the building link ?!
-      if ($wonders[$wonder->wonderID]['notenough']) {
-        $wonders[$wonder->wonderID]['no_build_msg'] = _('Zu wenig Rohstoffe');
+      if ($wonders[$wonder->wonderCategory]['items'][$wonder->wonderID]['notenough']) {
+        $wonders[$wonder->wonderCategory]['items'][$wonder->wonderID]['no_build_msg'] = _('Zu wenig Rohstoffe');
       } else {
-        $wonders[$wonder->wonderID]['build_link'] = true;
+        $wonders[$wonder->wonderCategory]['items'][$wonder->wonderID]['build_link'] = true;
       }
 
 /****************************************************************************************************
@@ -100,14 +102,32 @@ function wonder_getWonderContent($caveID, &$details) {
 *
 ****************************************************************************************************/
     } else if ($result !== FALSE && !$wonder->nodocumentation) {
-      $wondersUnqualified[$wonder->wonderID] = array(
-        'name'         => $wonder->name,
-        'wonder_id'    => $wonder->wonderID,
-        'description'  => $wonder->description,
-        'dependencies' => $result
+      $wondersUnqualified[$wonder->wonderCategory]['items'][$wonder->wonderID] = array(
+        'name'           => $wonder->name,
+        'wonder_id'      => $wonder->wonderID,
+        'wonderCategory' => $wonder->wonderCategory,
+        'description'    => $wonder->description,
+        'dependencies'   => $result
       );
     }
   }
+
+/****************************************************************************************************
+*
+* Namen zu den Kategorien hinzufügen & sortieren
+*
+****************************************************************************************************/
+  foreach ($GLOBALS['wonderCategoryTypeList'] as $wonderCategory) {
+    if (isset($wonders[$wonderCategory->id])) {
+      $wonders[$wonderCategory->id]['name'] = $wonderCategory->name;
+    }
+
+    if (isset($wondersUnqualified[$wonderCategory->id])) {
+      $wondersUnqualified[$wonderCategory->id]['name'] = $wonderCategory->name;
+    }
+  }
+  ksort($wonders);
+  ksort($wondersUnqualified);
 
 /****************************************************************************************************
 *

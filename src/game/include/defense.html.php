@@ -12,7 +12,7 @@
 
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
-
+init_DefenseCategories();
 
 ################################################################################
 
@@ -151,7 +151,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     if ($result === TRUE) {
-      $defenseSystem[$defense->defenseSystemID] = array(
+      $defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID] = array(
         'name'             => $defense->name,
         'dbFieldName'      => $defense->dbFieldName,
         'defense_id'       => $defense->defenseSystemID,
@@ -162,17 +162,17 @@ function defense_builder($caveID, &$details) {
         'antiSpyChance'    => $defense->antiSpyChance,
         'breakdown_link'   => ($details[$defense->dbFieldName] > 0) ? true : false
       );
-      $defenseSystem[$defense->defenseSystemID] = array_merge($defenseSystem[$defense->defenseSystemID], parseCost($defense, $details));
+      $defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID] = array_merge($defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID], parseCost($defense, $details));
 
       // show the building link ?!
       if (sizeof($queue)) {
-        $defenseSystem[$defense->defenseSystemID]['no_build_msg'] = _('Ausbau im Gange');
-      } else if ($defenseSystem[$defense->defenseSystemID]['notenough'] && $maxLevel > $details[$defense->dbFieldName]) {
-        $defenseSystem[$defense->defenseSystemID]['no_build_msg'] = _('Zu wenig Rohstoffe');
+        $defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID]['no_build_msg'] = _('Ausbau im Gange');
+      } else if ($defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID]['notenough'] && $maxLevel > $details[$defense->dbFieldName]) {
+        $defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID]['no_build_msg'] = _('Zu wenig Rohstoffe');
       } else if ($maxLevel > $details[$defense->dbFieldName]) {
-        $defenseSystem[$defense->defenseSystemID]['build_link'] = true;
+        $defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID]['build_link'] = true;
       } else {
-        $defenseSystem[$defense->defenseSystemID]['no_build_msg'] = _('Max. Stufe');
+        $defenseSystem[$defense->defenseCategory]['items'][$defense->defenseSystemID]['no_build_msg'] = _('Max. Stufe');
       }
 
 /****************************************************************************************************
@@ -181,7 +181,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     } else if ($details[$defense->dbFieldName]){
-      $defenseSystemRelict[$defense->defenseSystemID] = array(
+      $defenseSystemRelict[$defense->defenseCategory]['items'][$defense->defenseSystemID] = array(
         'name'             => $defense->name,
         'dbFieldName'      => $defense->dbFieldName,
         'defense_id'       => $defense->defenseSystemID,
@@ -196,7 +196,7 @@ function defense_builder($caveID, &$details) {
 *
 ****************************************************************************************************/
     } else if ($result !== false && !$defense->nodocumentation){
-      $defenseSystemUnqualified[$defense->defenseSystemID] = array(
+      $defenseSystemUnqualified[$defense->defenseCategory]['items'][$defense->defenseSystemID] = array(
         'name'             => $defense->name,
         'dbFieldName'      => $defense->dbFieldName,
         'defense_id'       => $defense->defenseSystemID,
@@ -206,6 +206,28 @@ function defense_builder($caveID, &$details) {
       );
     }
   }
+
+/****************************************************************************************************
+*
+* Namen zu den Kategorien hinzufügen & sortieren
+*
+****************************************************************************************************/
+  foreach ($GLOBALS['defenseCategoryTypeList'] as $defenseCategory) {
+    if (isset($defenseSystem[$defenseCategory->id])) {
+      $defenseSystem[$defenseCategory->id]['name'] = $defenseCategory->name;
+    }
+
+    if (isset($defenseSystemRelict[$defenseCategory->id])) {
+      $defenseSystemRelict[$defenseCategory->id]['name'] = $defenseCategory->name;
+    }
+
+    if (isset($defenseSystemUnqualified[$defenseCategory->id])) {
+      $defenseSystemUnqualified[$defenseCategory->id]['name'] = $defenseCategory->name;
+    }
+  }
+  ksort($defenseSystem);
+  ksort($defenseSystemRelict);
+  ksort($defenseSystemUnqualified);
 
 /****************************************************************************************************
 *

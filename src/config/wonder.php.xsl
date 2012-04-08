@@ -165,12 +165,12 @@ function init_Wonders(){
 ?&gt;
 </xsl:template>
 
-<xsl:template match="wonders/wonder/WonderCategories/WonderCategory">
-  $tmp = new DefenseCategory();
+<xsl:template match="wonders/WonderCategories/WonderCategory">
+  $tmp = new WonderCategory();
   $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
   $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
 
-  $GLOBALS['defenseCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
+  $GLOBALS['wonderCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
 
 </xsl:template>
 
