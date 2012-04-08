@@ -147,10 +147,12 @@ class Wonder {
 
 class WonderCategory {
   var $id;
+  var $sortID;
   var $name;
 
   function WonderCategory() {
      $this-&gt;id             = "";
+     $this-&gt;sortID         = "";
      $this-&gt;name           = "";
   }
 }
@@ -168,6 +170,7 @@ function init_Wonders(){
 <xsl:template match="wonders/WonderCategories/WonderCategory">
   $tmp = new WonderCategory();
   $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
+  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
   $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
 
   $GLOBALS['wonderCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;

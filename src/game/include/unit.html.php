@@ -187,15 +187,28 @@ function unit_getUnitDetail($caveID, &$details) {
 * Namen zu den Kategorien hinzufügen & sortieren
 *
 ****************************************************************************************************/
+  $tmpUnits = $tmpUnitsUnqualified = array();
   foreach ($GLOBALS['unitCategoryTypeList'] as $unitsCategory) {
     if (isset($units[$unitsCategory->id])) {
-      $units[$unitsCategory->id]['name'] = $unitsCategory->name;
+      $tmpUnits[$unitsCategory->sortID] = array(
+        'name'  => $unitsCategory->name,
+        'items' => $units[$unitsCategory->id]['items']
+      );
+      unset($units[$unitsCategory->id]);
     }
 
     if (isset($unitsUnqualified[$unitsCategory->id])) {
-      $unitsUnqualified[$unitsCategory->id]['name'] = $unitsCategory->name;
+      $tmpUnitsUnqualified[$unitsCategory->sortID] = array(
+        'name'  => $unitsCategory->name,
+        'items' => $unitsUnqualified[$unitsCategory->id]['items']
+      );
+      unset($unitsUnqualified[$unitsCategory->id]);
     }
   }
+  $units            = $tmpUnits;
+  $unitsUnqualified = $tmpUnitsUnqualified;
+  unset($tmpUnits, $tmpUnitsUnqualified);
+
   ksort($units);
   ksort($unitsUnqualified);
 

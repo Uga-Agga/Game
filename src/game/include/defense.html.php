@@ -212,19 +212,37 @@ function defense_builder($caveID, &$details) {
 * Namen zu den Kategorien hinzufügen & sortieren
 *
 ****************************************************************************************************/
+  $tmpDefenseSystem = $tmpDefenseSystemRelict = $tmpDefenseSystemUnqualified = array();
   foreach ($GLOBALS['defenseCategoryTypeList'] as $defenseCategory) {
     if (isset($defenseSystem[$defenseCategory->id])) {
-      $defenseSystem[$defenseCategory->id]['name'] = $defenseCategory->name;
+      $tmpDefenseSystem[$defenseCategory->sortID] = array(
+        'name'  => $defenseCategory->name,
+        'items' => $defenseSystem[$defenseCategory->id]['items']
+      );
+      unset($defenseSystem[$defenseCategory->id]);
     }
 
     if (isset($defenseSystemRelict[$defenseCategory->id])) {
-      $defenseSystemRelict[$defenseCategory->id]['name'] = $defenseCategory->name;
+      $tmpDefenseSystemRelict[$defenseCategory->sortID] = array(
+        'name'  => $defenseCategory->name,
+        'items' => $defenseSystemRelict[$defenseCategory->id]['items']
+      );
+      unset($defenseSystemRelict[$defenseCategory->id]);
     }
 
     if (isset($defenseSystemUnqualified[$defenseCategory->id])) {
-      $defenseSystemUnqualified[$defenseCategory->id]['name'] = $defenseCategory->name;
+      $tmpDefenseSystemUnqualified[$defenseCategory->sortID] = array(
+        'name'  => $defenseCategory->name,
+        'items' => $defenseSystemUnqualified[$defenseCategory->id]['items']
+      );
+      unset($defenseSystemUnqualified[$defenseCategory->id]);
     }
   }
+  $defenseSystem            = $tmpDefenseSystem;
+  $defenseSystemRelict      = $tmpDefenseSystemRelict;
+  $defenseSystemUnqualified = $tmpDefenseSystemUnqualified;
+  unset($tmpDefenseSystem, $tmpDefenseSystemRelict, $tmpDefenseSystemUnqualified);
+
   ksort($defenseSystem);
   ksort($defenseSystemRelict);
   ksort($defenseSystemUnqualified);

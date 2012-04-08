@@ -117,15 +117,28 @@ function wonder_getWonderContent($caveID, &$details) {
 * Namen zu den Kategorien hinzufügen & sortieren
 *
 ****************************************************************************************************/
+  $tmpWonders = $tmpWondersUnqualified = array();
   foreach ($GLOBALS['wonderCategoryTypeList'] as $wonderCategory) {
     if (isset($wonders[$wonderCategory->id])) {
-      $wonders[$wonderCategory->id]['name'] = $wonderCategory->name;
+      $tmpWonders[$wonderCategory->sortID] = array(
+        'name'  => $wonderCategory->name,
+        'items' => $units[$wonderCategory->id]['items']
+      );
+      unset($units[$wonderCategory->id]);
     }
 
     if (isset($wondersUnqualified[$wonderCategory->id])) {
-      $wondersUnqualified[$wonderCategory->id]['name'] = $wonderCategory->name;
+      $tmpWondersUnqualified[$wonderCategory->sortID] = array(
+        'name'  => $wonderCategory->name,
+        'items' => $wondersUnqualified[$wonderCategory->id]['items']
+      );
+      unset($wondersUnqualified[$wonderCategory->id]);
     }
   }
+  $wonders            = $tmpWonders;
+  $wondersUnqualified = $tmpWondersUnqualified;
+  unset($tmpWonders, $tmpWondersUnqualified);
+
   ksort($wonders);
   ksort($wondersUnqualified);
 
