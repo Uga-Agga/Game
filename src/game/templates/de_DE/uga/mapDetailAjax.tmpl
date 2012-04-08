@@ -12,7 +12,7 @@
 
 <div class="ua-box">
   <div class="ua-box-header">Dies ist der Landstrich "{{ cave_details.name }}" ({{ cave_details.xCoord }}|{{ cave_details.yCoord }}) - {{ cave_details.terrain_name }}</div>
-  <div class="ua-box-content center">
+  <div class="ua-box-content text-center">
     <ul class="space">
       <li><img src="{{ gfx }}/de_DE/t_uga/map/{{ cave_details.terrain_img }}" alt="{{ cave_details.terrain_name }}" title="{{ cave_details.terrain_name }}" /></li>
       <li><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}&amp;targetCaveName={{ cave_details.name }}">dorthin bewegen!</a></li>
@@ -39,7 +39,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Alle Höhlen dieses Häuptlings</div>
   <div class="ua-box-content center">
-    <table class="space">
+    <table class="borderable space">
       <thead>
         <tr>
           <th>Höhle</th>

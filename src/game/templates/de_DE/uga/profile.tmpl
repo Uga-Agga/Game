@@ -24,7 +24,7 @@
     <form class="ym-form ym-columnar" id="profileupdate" method="post" action="main.php?modus={{ user_profile_link }}">
       <div class="jquery_tabs">
         {% for item in profile_data %}
-          <h6>{{ item.heading }}</h6>
+          <h4>{{ item.heading }}</h4>
           <div class="tabbody">
             {% if item.entry_info %}
               {% for item_info in item.entry_info %}
@@ -83,7 +83,7 @@
         {% endfor %}
       </div>
 
-      <div class="ym-fbox-button center">
+      <div class="ym-fbox-button text-center">
         <input type="hidden" name="action" value="change" />
         <input type="submit" class="ym-button" value="Speichern" id="safe" name="safe"/>
         <input type="reset" class="ym-button" value="Reset" id="reset" name="reset" />
@@ -96,8 +96,8 @@
   <div class="ua-box-header">Account Löschen</div>
   <div class="ua-box-content">
     <form class="ym-form ym-columnar" id="accountdelete" method="post" action="main.php?modus={{ user_profile_link }}">
-      <div class="space center bold">Ich habe keine Lust mehr!</div>
-      <div class="ym-fbox-button center">
+      <div class="space text-center bold">Ich habe keine Lust mehr!</div>
+      <div class="ym-fbox-button text-center">
         <input type="hidden" name="action" value="delete" />
         <input type="submit" class="ym-button" value="Den Account löschen!" id="delete" name="delete"/>
       </div>

@@ -48,7 +48,7 @@ function getCornerCell() {
 }
 
 function getLegendCell($name, $value){
-  return array('header' => array('text' => "<span class=\"text-small\">$name: $value</span>"));
+  return array('header' => array('text' => "$name: $value"));
 }
 
 function getMapCell($map, $xCoord, $yCoord){

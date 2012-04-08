@@ -9,8 +9,8 @@
 <!ELEMENT ResourceTypes (Resource*)>
 <!ELEMENT BuildingTypes (Building*)>
 <!ELEMENT ScienceTypes (Science*)>
-<!ELEMENT UnitTypes (unitCategories, Unit*)>
-<!ELEMENT DefenseSystemTypes (DefenseSystem*)>
+<!ELEMENT UnitTypes (UnitCategories, Unit*)>
+<!ELEMENT DefenseSystemTypes (DefenseCategories, DefenseSystem*)>
 <!ELEMENT Resource (Name+, Remark+, RatingValue, TakeoverValue, StealRatio, DestroyRatio, SafeStorage, MaxStorage, Production, MaxTribeDonation)>
 <!ATTLIST Resource id ID #REQUIRED hidden (0 | 1) "0">
 <!ELEMENT Building (Name+, Description+, Remark+, Position?, RatingValue, Cost*, ProductionTime, MaxDevelopmentLevel, (Requirement | EffectReq)*)>
@@ -21,14 +21,22 @@
 <!ATTLIST Unit 
           id ID #REQUIRED 
           hidden (0 | 1) "0"
-          unitCategory CDATA "other">
-<!ELEMENT unitCategories (unitCategory+)>
-<!ELEMENT unitCategory EMPTY>
-<!ATTLIST unitCategory
+          UnitCategory CDATA "other">
+<!ELEMENT UnitCategories (UnitCategory+)>
+<!ELEMENT UnitCategory EMPTY>
+<!ATTLIST UnitCategory
           id CDATA #REQUIRED
           name CDATA #REQUIRED>
 <!ELEMENT DefenseSystem (Name+, Description+, Remark+, Position?, Cost*, ProductionTime, MaxDevelopmentLevel, MeleeDamage, RangedDamage, StructuralDamageResistance, HeavyDamageProbability?, CriticalDamageProbability?, Size, AntiSpyChance?, (Requirement | EffectReq)*, WarPoints?)>
-<!ATTLIST DefenseSystem id ID #REQUIRED hidden (0 | 1) "0">
+<!ATTLIST DefenseSystem 
+          id ID #REQUIRED
+          hidden (0 | 1) "0"
+          DefenseCategory CDATA "other">
+<!ELEMENT DefenseCategories (DefenseCategory+)>
+<!ELEMENT DefenseCategory EMPTY>
+<!ATTLIST DefenseCategory
+          id CDATA #REQUIRED
+          name CDATA #REQUIRED>
 <!--Terrains-->
 <!ELEMENT Terrains (Terrain+)>
 <!ELEMENT Terrain (Name+, img+, imgMap+, Description+, Color, Effect*)>
@@ -90,15 +98,20 @@
   isResourceEffect (0 | 1) "0"
 >
 <!--wonders-->
-<!ELEMENT wonders (wonder+)>
+<!ELEMENT wonders (WonderCategories, wonder+)>
 <!ELEMENT wonder (Name+, Description+, Remark+, chance, impacts+, Cost*, (Requirement | EffectReq)*)>
 <!ATTLIST wonder
-  offensive (0 | 1) "0"
-  target (same | own | other | all) #REQUIRED
-  hidden (0 | 1) "0"
-  isTribeWonder (0 | 1) "0"
-  groupID CDATA "0"
->
+          offensive (0 | 1) "0"
+          target (same | own | other | all) #REQUIRED
+          hidden (0 | 1) "0"
+          isTribeWonder (0 | 1) "0"
+          groupID CDATA "0"
+          WonderCategory CDATA "other">
+<!ELEMENT WonderCategories (WonderCategory+)>
+<!ELEMENT WonderCategory EMPTY>
+<!ATTLIST WonderCategory
+          id CDATA #REQUIRED
+          name CDATA #REQUIRED>
 <!-- trades -->
 <!ELEMENT trades (tradecategories,trade+)>
 <!ELEMENT tradecategories (tradecategory+)>

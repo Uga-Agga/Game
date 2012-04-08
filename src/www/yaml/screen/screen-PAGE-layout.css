@@ -8,9 +8,9 @@
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
  * @package         yaml
- * @version         4.0
- * @revision        $Revision: 672 $
- * @lastmodified    $Date: 2012-01-18 10:30:19 +0100 (Mi, 18 Jan 2012) $
+ * @version         v4.0.1
+ * @revision        $Revision: 733 $
+ * @lastmodified    $Date: 2012-03-04 19:15:48 +0100 (So, 04 Mrz 2012) $
  */
 
 @media screen {
@@ -20,7 +20,7 @@
 		overflow-y: scroll;
 	}
 
-	/* Layout Module Configuration & fallback for media queries */
+	/* Layout Module Configuration & fallback for unsupported media queries */
 	.ym-wrapper {
 		min-width: 760px;
 		max-width: 80em;
@@ -59,21 +59,31 @@
 		margin: 0;
 	}
 
-	/* Column-Set Configuration: 1-3 (sidebar left) */
-	/* content */
-	.demo-2col .ym-col1 {
-		width: 75%;
-	}
-	/* sidebar */
-	.demo-2col .ym-col3 {
-		margin-left:75%;
-		margin-right:0;
+	/* Column-Set Configuration: 1-3 (sidebar right) */
+	.ym-column {
+		display:block;
+		overflow:hidden;
+		padding-right: 340px;
+		width:auto;
 	}
 
-	.demo-2col .ym-col1 .ym-cbox { padding: 0 0.75em 0 1.5em; }
-	.demo-2col .ym-col3 .ym-cbox { padding: 0 1.5em 0 0.75em; }
+	.ym-col1 { /* content */
+		float:left;
+		width: 100%;
+	}
 
-	.demo-2col .ym-gbox { padding: 0 1.5em 0 0; }
+	.ym-col3 { /* sidebar */
+		position:relative;
+		float:left;
+		width: 340px;
+		margin-left:0;
+		margin-right:-340px;
+	}
+
+	.ym-col1 .ym-cbox { padding: 0 0.75em 0 1.5em; }
+	.ym-col3 .ym-cbox { padding: 0 20px 0 12px; }
+
+	.ym-gbox { padding: 0 1.5em 0 0; }
 
 	/* skip links styling */
 	.ym-skiplinks a.ym-skip:focus,
@@ -94,22 +104,24 @@
 	}
 }
 
-@media screen and ( max-width: 740px )  {
+@media screen and ( max-width: 740px ) {
 
 	/* Linearisation for Grid- and Column-Module, based on CSS class .linearize-level-1 */
 	.linearize-level-1,
 	.linearize-level-1 > [class*="ym-g"],
 	.linearize-level-1 > [class*="ym-col"] {
-		display: table;
+		display: block;
 		float: none;
-		margin-left: 0;
-		margin-right: 0;
+		padding: 0;
+		margin: 0;
 		width: 100% !important;
 	}
 
 	.linearize-level-1 > [class*="ym-g"] > [class*="ym-gbox"],
 	.linearize-level-1 > [class*="ym-col"] > [class*="ym-cbox"] {
+		overflow: hidden; /* optional for containing floats */
 		padding: 0;
+		margin: 0;
 	}
 
 	nav .ym-hlist ul {
@@ -129,7 +141,7 @@
 	}
 }
 
-@media screen and ( max-width: 480px)  {
+@media screen and ( max-width: 480px) {
 
 	.ym-wbox {
 		padding: 0;
@@ -157,16 +169,18 @@
 	.linearize-level-2,
 	.linearize-level-2 > [class*="ym-g"],
 	.linearize-level-2 > [class*="ym-col"] {
-		display: table;
+		display: block;
 		float: none;
-		margin-left: 0;
-		margin-right: 0;
+		padding: 0;
+		margin: 0;
 		width: 100% !important;
 	}
 
 	.linearize-level-2 > [class*="ym-g"] > [class*="ym-gbox"],
 	.linearize-level-2 > [class*="ym-col"] > [class*="ym-cbox"] {
+		overflow: hidden; /* optional for containing floats */
 		padding: 0;
+		margin: 0;
 	}
 
 	.ym-searchform,

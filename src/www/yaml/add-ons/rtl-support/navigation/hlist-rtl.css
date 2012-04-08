@@ -11,9 +11,9 @@
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
  * @package         yaml
- * @version         v4.0
- * @revision        $Revision: 659 $
- * @lastmodified    $Date: 2012-01-12 00:26:56 +0100 (Do, 12 Jan 2012) $
+ * @version         v4.0.1
+ * @revision        $Revision: 724 $
+ * @lastmodified    $Date: 2012-03-03 11:45:41 +0100 (Sa, 03 Mrz 2012) $
  */
 
 @media all
@@ -29,7 +29,8 @@
 	*/
 
 	.ym-hlist * { direction:ltr !important; }
-	.ym-hlist a, .hlist strong { direction:rtl !important; }
+	.ym-hlist a,
+	.ym-hlist strong { direction:rtl !important; }
 
   	.ym-hlist ul {
 		position:relative;

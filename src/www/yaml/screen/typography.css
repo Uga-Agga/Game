@@ -9,9 +9,9 @@
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
  * @package         yaml
- * @version         4.0
- * @revision        $Revision: 677 $
- * @lastmodified    $Date: 2012-01-18 23:36:59 +0100 (Mi, 18 Jan 2012) $
+ * @version         v4.0.1
+ * @revision        $Revision: 724 $
+ * @lastmodified    $Date: 2012-03-03 11:45:41 +0100 (Sa, 03 Mrz 2012) $
  * @appdef yaml
  */
 
@@ -55,7 +55,7 @@
 		color:#444;
 
 		/* (en) Prevent auto-scaling of text in mobile webkit browsers */
-		/* (en) Automatische Schriftvergrößerung in mobilen Webkit-Browsern vermeiden */
+		/* (de) Automatische Schriftvergrößerung in mobilen Webkit-Browsern vermeiden */
 		-webkit-text-size-adjust:100%;
 	}
 
@@ -254,7 +254,7 @@
 	/* (en) Maximaler Kontrast für Tab Focus - Ändern Sie diese Regel mit Bedacht */
 	a:hover,
 	a:focus {
-		background-color: #800;
+		background-color: #4D87C7;
 		color:#fff;
 		text-decoration:none;
 	}
@@ -269,6 +269,7 @@
 	.flexible {
 		margin-top: 1.5em;
 		max-width: 100%;
+		height: auto;
 	}
 
 	* html .flexible {	/* IE6 support */
@@ -329,7 +330,7 @@
 		letter-spacing: normal;
 		white-space:nowrap;
 		-webkit-border-radius: 3px;
-		-moz-radius: 3px;
+		-moz-border-radius: 3px;
 		border-radius: 3px;
 		background: #06C;
 		color: #fff;

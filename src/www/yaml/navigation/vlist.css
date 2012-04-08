@@ -9,15 +9,22 @@
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
  * @package         yaml
- * @version         v4.0
- * @revision        $Revision: 677 $
- * @lastmodified    $Date: 2012-01-18 23:36:59 +0100 (Mi, 18 Jan 2012) $
+ * @version         v4.0.1
+ * @revision        $Revision: 724 $
+ * @lastmodified    $Date: 2012-03-03 11:45:41 +0100 (Sa, 03 Mrz 2012) $
  */
 
-@media all
-{
+@media all {
+
+	.ym-vlist {
+		margin:0 0 1.5em 0;
+		list-style-type:none;
+		background: transparent;
+		border: 0 none;
+	}
+
 	/* title */
-	h6.ym-vlist {
+	.ym-vtitle {
 		font-family:Arial, Helvetica, sans-serif;
 		font-weight:bold;
 		font-size:100%;
@@ -27,21 +34,24 @@
 		color:#444;
 		background-color:#fff;
 		border-top:2px #ddd solid;
-		border-bottom:4px #888 solid;
-	}
-
-	.ym-vlist {
-		width:100%;
-		overflow:hidden;
-		margin:0 0 1.5em 0;
-		list-style-type:none;
-		border-bottom:2px #ddd solid;
 	}
 
 	.ym-vlist ul {
 		list-style-type:none;
 		margin:0;
 		padding:0;
+		width:100%;
+		overflow:hidden;
+		border-top:2px #ddd solid;
+		border-bottom:2px #ddd solid;
+	}
+
+	.ym-vtitle + ul {
+		border-top:4px #888 solid;
+	}
+
+	.ym-vlist ul ul {
+		border: 0 none;
 	}
 
 	.ym-vlist li {
@@ -49,6 +59,7 @@
 		width:100%;
 		margin:0;
 		padding:0;
+		background-color:#fff;
 	}
 
 	.ym-vlist a,

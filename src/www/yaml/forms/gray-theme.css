@@ -8,9 +8,9 @@
  *                       YAML-CDL (http://www.yaml.de/license.html)
  * @link                 http://www.yaml.de
  * @package				 yaml
- * @version              v4.0
- * @revision             $Revision: 678 $
- * @lastmodified         $Date: 2012-01-19 13:43:37 +0100 (Do, 19 Jan 2012) $
+ * @version              v4.0.1
+ * @revision             $Revision: 729 $
+ * @lastmodified         $Date: 2012-03-03 13:20:39 +0100 (Sa, 03 Mrz 2012) $
  */
 
 @media screen and (min-width: 0px){
@@ -175,14 +175,14 @@
 	}
 
 	/* Highlight mandatory fields | Pflichtfeldkennzeichnung hervorheben */
-	.ym-form sup {
+	.ym-form .ym-required {
 		color:#800;
 		font-weight:bold;
 	}
 
 	/* form validation highlight colors */
 	.ym-form input:valid,
-‚	.ym-form textarea:valid { background-color: #fff; }
+	.ym-form textarea:valid { background-color: #fff; }
 	.ym-form input:invalid,
 	.ym-form textarea:invalid { background-color: #fdd; }
 
@@ -213,6 +213,8 @@
 
 	.ym-form .ym-error .ym-message {
 		color:#800;
+		font-weight: bold;
+		margin-top: 0;
 	}
 
 	/* :hover and :focus status on form fields | Effekt zur Hervorhebung von Formularfeldern bei :hover oder :focus */
@@ -367,8 +369,8 @@
 		cursor: default;
 		text-shadow: none;
 		position: static;
-		-moz-box-shadow: none;
 		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
 		box-shadow: none;
 	}
 

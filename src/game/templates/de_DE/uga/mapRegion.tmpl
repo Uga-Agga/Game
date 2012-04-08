@@ -23,28 +23,24 @@
   {% for row in mapregion.rows %}
     <tr>
       {% for cell in row %}
-        {% if cell.header %}
-          <td style="text-align:center;vertical-align:middle; padding:4px;">
-            {{ cell.header.text|raw }}
-          </td>
-        {% endif %}
-        {% if cell.empty %}
-          <td class="empty_cell">&nbsp;</td>
-        {% endif %}
-        {% if cell.corner %}
-          <td class="corner_cell">&nbsp;</td>
-        {% endif %}
+        {% if cell.header %}<td class="text-center" style="vertical-align: middle; padding: 4px;">{{ cell.header.text|raw }}</td>{% endif %}
+        {% if cell.empty %}<td class="empty_cell">&nbsp;</td>{% endif %}
+        {% if cell.corner %}<td class="corner_cell">&nbsp;</td>{% endif %}
         {% if cell.mapcell %}
-          <td style="background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}', sizingMethod='scale');" class="terrain {{ cell.mapcell.terrain }} t_{{ cell.mapcell.text_tribe }}">
-            <p><img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="{{ cell.mapcell.alt }}" /><br />
-            {% if cell.mapcell.link_tribe and not cell.mapcell.barren %}
-               <a href="main.php?{{ cell.mapcell.link_tribe|raw }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.text_tribe }}</small></a>
-            {% endif %}   
-               <br /> 
-            {% if cell.mapcell.link and not cell.mapcell.barren %}
-               <a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }}{% endif %} class="map-detail-link{% if cell.mapcell.unsecure %} unsecure{% endif %}"><small>{{ cell.mapcell.text|raw }}</small></a>
-            {% endif %}
-            </p>
+          <td style="height: 80px; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}', sizingMethod='scale');" class="terrain {{ cell.mapcell.terrain }} t_{{ cell.mapcell.text_tribe }}">
+            <div style="height: 80px; position: relative; width: 100%;">
+              <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="{{ cell.mapcell.alt }}" />
+              {% if (cell.mapcell.link or cell.mapcell.link) and not cell.mapcell.barren %}
+                <div style="position: absolute; bottom:0px; width: 100%;">
+                  {% if cell.mapcell.link_tribe and not cell.mapcell.barren %}
+                   <a href="main.php?{{ cell.mapcell.link_tribe|raw }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }} text-center"><small>{{ cell.mapcell.text_tribe }}</small></a><br />
+                  {% endif %}
+                  {% if cell.mapcell.link and not cell.mapcell.barren %}
+                    <a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }}{% endif %} class="map-detail-link{% if cell.mapcell.unsecure %} unsecure{% endif %} text-center"><small>{{ cell.mapcell.text|raw }}</small></a>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
           </td>
         {% endif %}
      {% endfor %} 

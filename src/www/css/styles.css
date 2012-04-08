@@ -1,9 +1,34 @@
+/* Übschreiben der yaml settings */
+table { margin: 0; }
+table.narrow { margin: 4px 4px 0 0; }
+tbody tr:hover th { background: transparent; }
+th, td { padding: 0.4em 0.5em; }
+
+.bordertable thead th { background: #C2CF90; }
+
+a { color: #000000; }
+a:hover, a:focus { background-color: transparent; color: #000000; text-decoration: underline; }
+
+dl { margin: 1.5em 0 0 0em; }
+
+h4 { margin: 0; }
+
+.ym-form { margin: 0; border: none; background:#E6EFC2; }
+.ym-form div.ym-fbox-button { background: #DDE5BC; }
+
+.jquery_tabs { margin: 0; }
+.jquery_tabs .content { clear: none; }
+.jquery_tabs ul.tabs-list li.current a, .jquery_tabs ul.tabs-list li.current a:focus, .jquery_tabs ul.tabs-list li.current a:hover, .jquery_tabs ul.tabs-list li.current a:active { background:#C2CF90; }
+.jquery_tabs ul.tabs-list li a { background: transparent; color: #000000; }
+.jquery_tabs .content { padding-top: 10px }
+
+/* css von UgaAgga */
 body { background: #FFFFFF; font-family: sans-serif; font-size: 12px; }
 
 ul { list-style-type: none; margin: 0; padding: 0; }
 ul.list-menu li { display: inline; margin: 0; padding: 0; width: 1px; }
 ul.list-space li { padding-bottom: 10px; }
-ul.movement li { margin: 0; }
+ul.movement li { margin: 0; list-style-type: none; }
 
 dd { margin: 0; }
 
@@ -12,9 +37,11 @@ dd { margin: 0; }
 .bold { font-weight: bold; }
 .space { padding: 10px; }
 .bg0 { background-color: #eee; }
-.bg1 {  }
-.left { text-align: left; }
-.text-small {font-size: x-small;}
+.bg1 { background-color: #E6EFC2 }
+.text-left { text-align: left !important; }
+.text-right { text-align: right !important; }
+.text-center { text-align: center !important; margin: 0; }
+.text-small { font-size: x-small; }
 
 .ym-wrapper { width: 100%; min-width: 980px; position: absolute; top: 0px; }
 .ym-col-head1 { min-width: 454px; width: 454px; height: 192px; text-align: left; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_left.png); background-repeat: no-repeat; } /* left column */
@@ -25,7 +52,7 @@ dd { margin: 0; }
     #ua-head-menu-item { padding: 10px; }
     #ua-head-menu-item div.jqDockWrap { margin: 0 auto; }
     #ua-head-menu-item div.jqDock { cursor:pointer; }
-      div.jqDockLabel { padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
+      div.jqDockLabel { bottom: -12px !important; padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
 
 .ym-col-con1 { width: 133px; text-align: left; } /* left column */
 .ym-col-con2 { width: 133px; text-align: right; } /* right column */

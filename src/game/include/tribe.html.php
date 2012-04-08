@@ -238,34 +238,71 @@ function tribe_getContent($playerID, $tribe, &$caveData, $caveID) {
     * Stammeslager
     *
     ****************************************************************************************************/
-      $tribeStorageValues = array();
-      foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
-        $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
-        $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
-        $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
-        $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
-      }
-      
-      $lastDonation = tribe_getLastDonationForTribeStorage($playerID);
-        $template->addVars(array(
-            'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
-            'tribeStorageValues' => $tribeStorageValues, 
-            'donationInterval' => TRIBE_STORAGE_DONATION_INTERVAL, 
-            'nextDonation' => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
-        ));
-      
+    $tribeStorageValues = array();
+    foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
+      $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
+      $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
+      $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
+      $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
+    }
+    
+    $lastDonation = tribe_getLastDonationForTribeStorage($playerID);
+      $template->addVars(array(
+          'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
+          'tribeStorageValues' => $tribeStorageValues, 
+          'donationInterval' => TRIBE_STORAGE_DONATION_INTERVAL, 
+          'nextDonation' => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
+      ));
+
     /****************************************************************************************************
     *
     * Einzahlungen
     *
     ****************************************************************************************************/
-      $donations = tribe_getTribeStorageDonations($tribeData['tag']);
-      
-      $template->addVars(array(
-        'donations' => $donations
-      ));
+    $donations = tribe_getTribeStorageDonations($tribeData['tag']);
+    
+    $template->addVars(array(
+      'donations' => $donations
+    ));
+
+    /****************************************************************************************************
+    *
+    * Auswahl der Regierungsformen
+    *
+    ****************************************************************************************************/
+    // get government
+    $tribeGovernment = government_getGovernmentForTribe($tribe);
+    if (empty($tribeGovernment)) {
+      $template->throwError('Fehler beim Auslesen der Regierungsform.');
+      return;
+    }
+    $tribeGovernment['name'] = $GLOBALS['governmentList'][$tribeGovernment['governmentID']]['name'];
+
+    if ($isLeader && $tribeGovernment['isChangeable']) {
+      $GovernmentSelect = array();
+      foreach($GLOBALS['governmentList'] AS $governmentID => $typeData) {
+        $GovernmentSelect[] = array(
+          'value'    => $governmentID,
+          'selected' => ($governmentID == $tribeGovernment['governmentID'] ? 'selected="selected"' : ''),
+          'name'     => $typeData['name']
+        );
+      }
+
+      $template->addVar('government_select', $GovernmentSelect);
+    } else {
+      $template->addVar('government_data', array('name' => $tribeGovernment['name'], 'duration' => $tribeGovernment['time']));
+    }
+
+    $template->addVars(array(
+      'tribe_members'         => tribe_getAllMembers($tribe),
+
+      'is_auth_change_settings' => $isLeader || $auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth['tribe']),
+      'is_auth_kick_player'     => $isLeader || $auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth['tribe']),
+      'is_auth_change_relation' => $isLeader || $auth->checkPermission('tribe', 'change_relation', $_SESSION['player']->auth['tribe']),
+      'is_leader'               => $isLeader
+    ));
   }
-  
+
   if ($messageID && isset($messageText[$messageID])) {
     $template->addVar('status_msg', $messageText[$messageID]);
   }

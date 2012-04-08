@@ -71,6 +71,7 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 /********************** Wondertypes *********************/
 class Wonder {
   var $wonderID;
+  var $wonderCategory;
   var $name;
   var $description;
   var $remark;
@@ -107,6 +108,7 @@ class Wonder {
 
   function Wonder() {
     $this-&gt;wonderID        = 0;
+    $this-&gt;wonderCategory  = "";
     $this-&gt;name            = "";
     $this-&gt;description     = "";
     $this-&gt;remark          = "";
@@ -143,10 +145,33 @@ class Wonder {
   }
 }
 
+class WonderCategory {
+  var $id;
+  var $name;
+
+  function WonderCategory() {
+     $this-&gt;id             = "";
+     $this-&gt;name           = "";
+  }
+}
+
+function init_WonderCategories() {
+  <xsl:apply-templates select="WonderCategories/WonderCategory"/>
+}
+
 function init_Wonders(){
   <xsl:apply-templates select="wonder"/>
 }
 ?&gt;
+</xsl:template>
+
+<xsl:template match="wonders/wonder/WonderCategories/WonderCategory">
+  $tmp = new DefenseCategory();
+  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
+  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
+
+  $GLOBALS['defenseCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
+
 </xsl:template>
 
 <!-- ***** Text elements ************************************************** -->
@@ -160,6 +185,7 @@ function init_Wonders(){
   $tmp = new Wonder();
 
   $tmp-&gt;wonderID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
+  $tmp-&gt;wonderCategory  = "<xsl:value-of select="@WonderCategory"/>";
   $tmp-&gt;name            = "<xsl:value-of select="Name"/>";
   $tmp-&gt;description     = "<xsl:apply-templates select="Description[@lang='de_DE']"/>";
   $tmp-&gt;remark          = "<xsl:apply-templates select="Remark[@lang='de_DE']"/>";

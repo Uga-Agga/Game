@@ -23,11 +23,11 @@
     <div class="ym-grid" style="padding: 10px 0;">
       <div class="ym-g33 ym-gl">
         <div class="ym-gbox center">
-          <form id="searchCoords" method="post" action="main.php?modus={{modus}}">
+          <form id="searchCoords" method="post" action="main.php?modus={{ modus }}">
             <p>(X/Y):
               <input type="text" name="xCoord" size="4" maxlength="4" />
               <input type="text" name="yCoord" size="4" maxlength="4" />
-              <input type="hidden" name="caveID" value="{{caveID}}" />
+              <input type="hidden" name="caveID" value="{{ caveID }}" />
               <input type="submit" value="go" />
             </p>
           </form>
@@ -48,10 +48,10 @@
       </div>
       <div class="ym-g33 ym-gl">
         <div class="ym-gbox center">
-          <form id="searchName" method="post" action="main.php?modus={{modus}}">
+          <form id="searchName" method="post" action="main.php?modus={{ modus }}">
             <p>Name:
               <input type="text" name="caveName" size="16" maxlength="50" />
-              <input type="hidden" name="caveID" value="{{caveID}}" />
+              <input type="hidden" name="caveID" value="{{ caveID }}" />
               <input type="submit" value="go" />
             </p>
           </form>
@@ -66,28 +66,39 @@
     <div class="ua-box">
       <div class="ua-box-header">Navigation</div>
       <div class="ua-box-content">
-        <table style="width: 140px; padding: 0;">
-          <thead>
-            <tr>
-              <td><a class="arrow" id="NW" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a></td>
-              <td><a class="arrow" id="N" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ N.x }}&amp;yCoord={{N.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png"  style="border:none;width:40px;hight:40px;" alt="nord" /></a></td>
-              <td><a class="arrow" id="NE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ NE.x }}&amp;yCoord={{NE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a></td>
-            </tr>
-            <tr>
-              <td><a class="arrow" id="W" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{W.x}}&amp;yCoord={{W.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png"  style="border:none;width:40px;hight:40px;" alt="west" /></a></td>
-              <td><a class="arrow" id="M" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{ cave_x_coord }}&amp;yCoord={{ cave_y_coord }}"><img src="{{ gfx }}/de_DE/t_uga/map/M.png"  style="border:none;width:40px;hight:40px;" alt="" /></a></td>
-              <td><a class="arrow" id="E" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{E.x}}&amp;yCoord={{E.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png"  style="border:none;width:40px;hight:40px;" alt="ost" /></a></td>
-            </tr>
-            <tr>
-              <td><a class="arrow" id="SW" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SW.x}}&amp;yCoord={{SW.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="südwest" /></a></td>
-              <td><a class="arrow" id="S" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{S.x}}&amp;yCoord={{S.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png"  style="border:none;width:40px;hight:40px;" alt="süd" /></a></td>
-              <td><a class="arrow" id="SE" href="./main.php?caveID={{caveID}}&amp;modus={{modus}}&amp;xCoord={{SE.x}}&amp;yCoord={{SE.y}}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a></td>
-            </tr>
-          </thead>
-          <tbody>
-          <tr style="display: none;"><td></td></tr>
-          </tbody>
-        </table>
+        <div class="ym-grid">
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="NW" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a>
+          </div>
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="N" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ N.x }}&amp;yCoord={{ N.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png" style="border:none;width:40px;hight:40px;" alt="nord" /></a>
+          </div>
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="NE" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NE.x }}&amp;yCoord={{ NE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a>
+          </div>
+        </div>
+        <div class="ym-grid">
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="W" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ W.x }}&amp;yCoord={{ W.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png" style="border:none;width:40px;hight:40px;" alt="west" /></a>
+          </div>
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="M" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ cave_x_coord }}&amp;yCoord={{ cave_y_coord }}"><img src="{{ gfx }}/de_DE/t_uga/map/M.png" style="border:none;width:40px;hight:40px;" alt="" /></a>
+          </div>
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="E" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ E.x }}&amp;yCoord={{ E.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png" style="border:none;width:40px;hight:40px;" alt="ost" /></a>
+          </div>
+        </div>
+        <div class="ym-grid">
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="SW" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SW.x }}&amp;yCoord={{ SW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="südwest" /></a>
+          </div>
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="S" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ S.x }}&amp;yCoord={{ S.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png" style="border:none;width:40px;hight:40px;" alt="süd" /></a>
+          </div>
+          <div class="ym-g33 ym-gl">
+            <a class="arrow" id="SE" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SE.x }}&amp;yCoord={{ SE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a>
+          </div>
+        </div>
 
         {% if minimap %} 
           <div id="minimap-base-url" style="display: none;">{{ minimap.file_base|raw }}</div>
@@ -95,9 +106,9 @@
             <form action="main.php" method="post" id="minimapform">
               <p>
                 <input id="minimap-image" name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
-                <input type="hidden" name="scaling" value="{{minimap.scaling}}" />
-                <input type="hidden" name="modus"  value="{{minimap.modus}}" />
-                <input type="hidden" name="caveID" value="{{caveID}}" />
+                <input type="hidden" name="scaling" value="{{ minimap.scaling }}" />
+                <input type="hidden" name="modus"  value="{{ minimap.modus }}" />
+                <input type="hidden" name="caveID" value="{{ caveID }}" />
               </p>
             </form>
           </div>
@@ -196,7 +207,7 @@
       
       if (xCoord === '' || yCoord ==='') return false;
       
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
+      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
       return false;
     });
     
@@ -206,14 +217,14 @@
       if (caveName === '') return false;
 
       caveNameEncode = encodeURIComponent(caveName);
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&caveName="+caveNameEncode);
+      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&caveName="+caveNameEncode);
       return false;
     });
     
     $('#searchID #targetCaveID').change(function () {
       var targetCaveID = $(this).val();
       if (targetCaveID < 0) return false;
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
+      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
       return false;
     });
     
@@ -221,8 +232,7 @@
       event.preventDefault();
       var x = event.pageX - $(this).offset().left;
       var y = event.pageY - $(this).offset().top;
-    //  alert ("Modus: {{minimap.modus}} scaling: {{minimap.scaling}}");
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&minimap_x="+x+"&minimap_y="+y+"&scaling={{minimap.scaling}}");
+      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&minimap_x="+x+"&minimap_y="+y+"&scaling={{ minimap.scaling }}");
 
       return false;
     });
@@ -253,7 +263,7 @@
       xCoord = parseInt(xCoord) + dx;
       yCoord = parseInt(yCoord) + dy;
             
-      loadMap("./main.php?caveID={{caveID}}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
+      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
 
     });
     

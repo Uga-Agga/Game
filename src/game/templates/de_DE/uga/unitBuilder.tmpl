@@ -45,7 +45,7 @@
   <div class="ua-box-content">
     <div id="unitBuilder" class="jquery_tabs">
       {% for category in units %}
-        <h6>{{ category.name }}</h6>
+        <h4>{{ category.name }}</h4>
         <div class="tabbody">
           {% if category.items %}
             <table>
@@ -80,12 +80,12 @@
               </tbody>
             </table>
           {% else %}
-            <div class="space center">Zur Zeit kannst du leider von dieser Kategorie noch keine Einheiten bauen.</div>
+            <div class="space text-center">Zur Zeit kannst du leider von dieser Kategorie noch keine Einheiten bauen.</div>
           {% endif %}
           {% set bgID = 0 %}
         </div>
       {% else %}
-        <div class="space center">Zur Zeit kannst du leider noch keine Einheiten bauen.</div>
+        <div class="space text-center">Zur Zeit kannst du leider noch keine Einheiten bauen.</div>
       {% endfor %}
     </div>
   </div>
@@ -95,11 +95,11 @@
 
 <div class="ua-box">
   <div class="ua-box-header">Einheiten, die noch nicht gebaut werden können</div>
-  <div id="unit_unqualified" class="ua-box-content box_toggle change_mouseover space center">Einheiten einblenden</div>
+  <div id="unit_unqualified" class="ua-box-content box_toggle change_mouseover space text-center">Einheiten einblenden</div>
   <div id="unit_unqualified_content" class="ua-box-content" style="display: none;">
     <div id="unitBuilderUnqualified" class="jquery_tabs">
       {% for category in units_unqualified %}
-        <h6>{{ category.name }}</h6>
+        <h4>{{ category.name }}</h4>
         <div class="tabbody">
           {% if category.items %}
             <table>
@@ -124,7 +124,7 @@
               </tbody>
             </table>
           {% else %}
-            <div class="space center">Aus dieser Kategorie kannst du bereits schon alle Einheiten bauen.</div>
+            <div class="space text-center">Aus dieser Kategorie kannst du bereits schon alle Einheiten bauen.</div>
           {% endif %}
           {% set bgID = 0 %}
         </div>

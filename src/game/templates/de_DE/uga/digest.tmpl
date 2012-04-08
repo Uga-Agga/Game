@@ -30,7 +30,7 @@
               {{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br />
               <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.source_xCoord }}&amp;targetYCoord={{ item.source_yCoord }}&amp;targetCaveName={{ item.source_cave_name|url_encode }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span>
             </td>
-            <td><span class="center">&gt; {{ item.movement_id_description }} &gt;</span></td>
+            <td><span class="text-center">&gt; {{ item.movement_id_description }} &gt;</span></td>
             <td>
               {{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br />
               <span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.target_cave_id }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
@@ -55,7 +55,7 @@
               <div style="padding-bottom: 10px;">
                 <ul>
                   {% for key, item_unit in item.units %}
-                    <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
+                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
                   {% endfor %}
                 </ul>
                 <br style="clear: both;" />
@@ -66,7 +66,7 @@
               <div style="padding-bottom: 10px;">
                 <ul>
                   {% for item_resource in item.resources %}
-                    <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
+                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
                   {% endfor %}
                 </ul>
                 <br style="clear: both;" />
@@ -77,7 +77,7 @@
               <div style="padding-bottom: 10px;">
                 <ul>
                   {% for item_artefact in item.artefact %}
-                    <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
+                    <li class="text-center text-small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
                   {% endfor %}
                 </ul>
                 <br style="clear: both;" />
@@ -104,7 +104,7 @@
               {{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br />
               <span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.cave_id }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span>
             </td>
-            <td><span class="center">&gt; {{ item.movement_id_description }} &gt;</span></td>
+            <td><span class="text-center">&gt; {{ item.movement_id_description }} &gt;</span></td>
             <td>
               {{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br />
               <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
@@ -129,7 +129,7 @@
               <div class="padding-bottom: 10px;">
                 <ul>
                   {% for item_unit in item.units %}
-                    <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
+                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
                   {% endfor %}
                 </ul>
                 <br style="clear: both;" />
@@ -140,7 +140,7 @@
               <div style="padding-bottom: 10px;">
                 <ul>
                   {% for item_resource in item.resources %}
-                    <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
+                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
                   {% endfor %}
                 </ul>
                 <br style="clear: both;" />
@@ -151,7 +151,7 @@
               <div style="padding-bottom: 10px;">
                 <ul>
                   {% for item_artefact in item.artefact %}
-                    <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
+                    <li class="text-center text-small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
                   {% endfor %}
                 </ul>
                 <br style="clear: both;" />
@@ -200,9 +200,10 @@
 <div class="ua-box">
   <div class="ua-box-header">Ausstehende Termine</div>
   <div class="ua-box-content">
-    {% for item in appointments %}
+    {% if appointments %}
       <table>
         <tbody>
+        {% for item in appointments %}
           <tr class="ua-digest-{{ item.category }}">
             <td>{{ item.event_name }}</td>
             <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
@@ -220,11 +221,12 @@
               <div id="timer_{{ item.category }}_appointment_{{ item.event_id }}"></div>
             </td>
           </tr>
+        {% endfor %}
         </tbody>
       </table>
     {% else %}
-      <div class="space center">Zur Zeit liegen keine Termine vor.</div>
-    {% endfor %}
+      <div class="space text-center">Zur Zeit liegen keine Termine vor.</div>
+    {% endif %}
   </div>
 </div>
 
@@ -235,20 +237,20 @@
     <table class="bordertable">
       <thead>
         <tr>
-          <th class="center">Erweiterungen</th>
-          <th class="center">Forschungen</th>
-          <th class="center">Einheiten</th>
-          <th class="center">Verteidigung</th>
+          <th class="text-center">Erweiterungen</th>
+          <th class="text-center">Forschungen</th>
+          <th class="text-center">Einheiten</th>
+          <th class="text-center">Verteidigung</th>
         </tr>
       </thead>
       <tbody>
         {% for item in cave_no_action %}
         {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td class="center"><a href="main.php?modus={{ item.buildings.modus }}&amp;caveID={{ item.buildings.caveID }}">{{ item.buildings.cave_name }}</a></td>
-            <td class="center"><a href="main.php?modus={{ item.sciences.modus }}&amp;caveID={{ item.sciences.caveID }}">{{ item.sciences.cave_name }}</a></td>
-            <td class="center"><a href="main.php?modus={{ item.unit.modus }}&amp;caveID={{ item.unit.caveID }}">{{ item.unit.cave_name }}</a></td>
-            <td class="center last"><a href="main.php?modus={{ item.defenses.modus }}&amp;caveID={{ item.defenses.caveID }}">{{ item.defenses.cave_name }}</a></td>
+            <td class="text-center"><a href="main.php?modus={{ item.buildings.modus }}&amp;caveID={{ item.buildings.caveID }}">{{ item.buildings.cave_name }}</a></td>
+            <td class="text-center"><a href="main.php?modus={{ item.sciences.modus }}&amp;caveID={{ item.sciences.caveID }}">{{ item.sciences.cave_name }}</a></td>
+            <td class="text-center"><a href="main.php?modus={{ item.unit.modus }}&amp;caveID={{ item.unit.caveID }}">{{ item.unit.cave_name }}</a></td>
+            <td class="text-center last"><a href="main.php?modus={{ item.defenses.modus }}&amp;caveID={{ item.defenses.caveID }}">{{ item.defenses.cave_name }}</a></td>
           </tr>
         {% endfor %}
       </tbody>

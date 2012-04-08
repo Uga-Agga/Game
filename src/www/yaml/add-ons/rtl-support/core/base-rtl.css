@@ -14,13 +14,13 @@
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
  * @package         yaml
- * @version         v4.0
- * @revision        $Revision: 617 $
- * @lastmodified    $Date: 2012-01-05 23:56:54 +0100 (Do, 05 Jan 2012) $
+ * @version         v4.0.1
+ * @revision        $Revision: 724 $
+ * @lastmodified    $Date: 2012-03-03 11:45:41 +0100 (Sa, 03 Mrz 2012) $
  */
 
-@media all
-{
+@media all {
+
 	/**
 	* @section browser normalisation
 	* Changing direction of text flow, paddings & margins ...

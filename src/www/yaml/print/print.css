@@ -8,14 +8,14 @@
  *                  YAML-CDL (http://www.yaml.de/license.html)
  * @link            http://www.yaml.de
  * @package         yaml
- * @version         v4.0
- * @revision        $Revision: 657 $
- * @lastmodified    $Date: 2012-01-11 21:36:23 +0100 (Mi, 11 Jan 2012) $
+ * @version         v4.0.1
+ * @revision        $Revision: 724 $
+ * @lastmodified    $Date: 2012-03-03 11:45:41 +0100 (Sa, 03 Mrz 2012) $
  */
 
 
-@media print
-{
+@media print {
+
 	/**
 	* @section basic layout preparation
 	*/
@@ -29,7 +29,8 @@
 
 	/* (en) Hide unneeded container of the screenlayout in print layout */
 	/* (de) Für den Druck nicht benötigte Container des Layouts abschalten */
-	nav, .ym-searchform {
+	nav,
+	.ym-searchform {
 		display:none;
 	}
 
