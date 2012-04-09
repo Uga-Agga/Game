@@ -31,7 +31,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Verteidigungsanlagen</div>
   <div class="ua-box-content">
-    <div id="defenseBuilder" class="jquery_tabs">
+    <div id="defenseBuilder" class="jquery_tabs nav1">
       {% for category in defense_system %}
         <h4>{{ category.name }}</h4>
         <div class="tabbody">
@@ -85,7 +85,7 @@
   <div class="ua-box-header">Verteidigungsanlagen, die noch nicht gebaut werden können.</div>
   <div id="defense_system_unqualified" class="ua-box-content box_toggle change_mouseover space text-center">Verteidigungsanlagen einblenden</div>
   <div id="defense_system_unqualified_content" class="ua-box-content" style="display: none;">
-    <div id="defenseBuilderUnqualified" class="jquery_tabs">
+    <div id="defenseBuilderUnqualified" class="jquery_tabs nav1">
       {% for category in defense_system_unqualified %}
         <h4>{{ category.name }}</h4>
         <div class="tabbody">
@@ -128,7 +128,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Relikte</div>
   <div class="ua-box-content">
-    <div id="defenseBuilderRelict" class="jquery_tabs">
+    <div id="defenseBuilderRelict" class="jquery_tabs nav1">
       {% for category in defense_system_relict %}
         <h4>{{ category.name }}</h4>
         <div class="tabbody">

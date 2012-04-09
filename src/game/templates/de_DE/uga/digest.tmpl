@@ -36,7 +36,7 @@
               <span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.target_cave_id }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
             </td>
             <td class="date-td">{{ item.event_end_date }}</td>
-            <td class="ua-td-timer right">
+            <td class="ua-td-timer text-right">
               <script type="text/javascript">
                 // <![CDATA[
                 $(function () {
@@ -110,7 +110,7 @@
               <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
             </td>
             <td class="date-td">{{ item.event_end_date }}</td>
-            <td class="ua-td-timer right">
+            <td class="ua-td-timer text-right">
               <script type="text/javascript">
                 // <![CDATA[
                 $(function () {
@@ -177,7 +177,7 @@
           <td>{{ item.artefactName }}</td>
           <td>{{ item.name }}</td>
           <td class="date-td">{{ item.event_end_date }}</td>
-          <td class="time-bar-td right">
+          <td class="time-bar-td text-right">
             <script type="text/javascript">
               // <![CDATA[
               $(function () {
@@ -207,7 +207,7 @@
           <tr class="ua-digest-{{ item.category }}">
             <td>{{ item.event_name }}</td>
             <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
-            <td class="right">{{ item.event_end_date }}</td>
+            <td class="text-right">{{ item.event_end_date }}</td>
             <td class="ua-td-timer">
               <script type="text/javascript">
                 // <![CDATA[
@@ -249,7 +249,7 @@
           <tr class="bg{{ bgID }}">
             <td class="text-center"><a href="main.php?modus={{ item.buildings.modus }}&amp;caveID={{ item.buildings.caveID }}">{{ item.buildings.cave_name }}</a></td>
             <td class="text-center"><a href="main.php?modus={{ item.sciences.modus }}&amp;caveID={{ item.sciences.caveID }}">{{ item.sciences.cave_name }}</a></td>
-            <td class="text-center"><a href="main.php?modus={{ item.unit.modus }}&amp;caveID={{ item.unit.caveID }}">{{ item.unit.cave_name }}</a></td>
+            <td class="text-center"><a href="main.php?modus={{ item.units.modus }}&amp;caveID={{ item.units.caveID }}">{{ item.units.cave_name }}</a></td>
             <td class="text-center last"><a href="main.php?modus={{ item.defenses.modus }}&amp;caveID={{ item.defenses.caveID }}">{{ item.defenses.cave_name }}</a></td>
           </tr>
         {% endfor %}

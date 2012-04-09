@@ -33,7 +33,8 @@
       {% else %}
         {% if takeoverable %}<li>Dieser Landstrich ist bewohnbar und kann <a class="bold" href="main.php?modus={{ takeover_link }}&amp;caveID={{ caveID }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}">missioniert</a> werden!</li><li>&nbsp;</li>{% endif %}
       {% endif %}
-      <li></li>
+      <li>&nbsp;</li>
+      <li><a href="main.php?modus={{ map_link }}&amp;xCoord={{ cave_details.xCoord }}&amp;yCoord={{ cave_details.yCoord }}">auf der Karte anzeigen!</a></li>
     </ul>
   </div>
 </div>

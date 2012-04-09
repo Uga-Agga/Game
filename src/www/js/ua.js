@@ -110,15 +110,17 @@ $(document).ready(function() {
   // ...and apply...
   $('#ua-head-menu-item').jqDock(dockOptions);
 
-  $(".jquery_tabs").accessibleTabs({
+  $(".nav1").accessibleTabs({
     tabhead: 'h4',
     fx:'fadeIn',
     saveState:true
   });
 
-  $(document).ready(function(){ 
-    $("ul.sf-menu").superfish({ 
-        pathClass:  'current' 
-    }); 
+  $(".nav2").accessibleTabs({
+    wrapperClass: 'content2', 
+    currentClass: 'current2',
+    tabhead: 'h5',
+    tabbody: '.tabbody2',
+    fx:'fadeIn'
   });
 });

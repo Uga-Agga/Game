@@ -114,8 +114,8 @@ function digest_getDigest($ownCaves) {
   $u = $b = $d = $s = 0;
   $caveNoAction = array();
   foreach ($ownCaves as $value) {
-    if (!isset($caveAction['unit'][$value['caveID']])) {
-      $caveNoAction[$u++]['unit'] = array(
+    if (!isset($caveAction['units'][$value['caveID']])) {
+      $caveNoAction[$u++]['units'] = array(
         'caveID'    => $value['caveID'],
         'cave_name' => $value['name'],
         'modus'     => UNIT_BUILDER);

@@ -113,11 +113,11 @@
           {% for item in player_caves %}
           {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td class="left"><a href="main.php?modus=map&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
+            <td class="left"><a href="main.php?modus={{ map_link }}&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
             <td class="left">{% if item.secureCave == false %} (Übernehmbar){% else %}&nbsp;{% endif %}</td>
             <td class="right">
-              <a href="main.php?modus=unit_movement&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a>
-              <a href="main.php?modus=CaveBookmarks&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a>
+              <a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a>
+              <a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a>
             </td>
           </tr>
           {% endfor %}

@@ -26,7 +26,7 @@
     <div class="ym-gr notice" style="margin:5px">
         <p class="text-center bold">Statuswerte</p>
         <br />
-        <table class="table nohover text-left" style="width: 320px;">
+        <table class="text-left" style="width: 320px;">
           <tr>
             <td class="bold">Name:</td>
             <td class="text-right" colspan="3">{{ hero.name }}</td>
@@ -257,7 +257,7 @@
       </ul>
     </div>
     {% endif %}
-    <table class="table nohover">
+    <table>
       <tr>
         <td><img src="{{ gfx }}/heroes/altar_large.gif" style="width: 225px; height: 140px;" alt="Altar der Auferstehung" /></td>
         <td>
@@ -298,7 +298,7 @@
 <div class="ua-box small">
     <div class="ua-box-header">Neue Art des Helden wählen:</div>
     <div class="ua-box-content">
-    <table class="table nohover" rules="rows">
+    <table>
       {% for item in heroTypesList %} 
       {% set bgID = (bgID+1)%2 %}
       <tr class="bg{{ bgID }}">
@@ -319,7 +319,7 @@
 <div class="ua-box small">
     <div class="ua-box-header">Art des Helden wählen:</div>
     <div class="ua-box-content">
-    <table class="table nohover" rules="rows">
+    <table>
       {% for item in heroTypesList %} 
       {% set bgID = (bgID+1)%2 %}
       <tr class="bg{{ bgID }}">

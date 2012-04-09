@@ -18,10 +18,10 @@
   <div class="box-header">Eigene Artefakte</div>
   <div class="box-content success inner text-center">
   <table class="table">
-    <tr class="bg2 nohover">
-      <th class="bg2 nohover">Name</th>
-      <th class="bg2 nohover">Höhle</th>
-      <th class="bg2 nohover">&nbsp;</th>
+    <tr class="bg2">
+      <th class="bg2">Name</th>
+      <th class="bg2">Höhle</th>
+      <th class="bg2">&nbsp;</th>
     </tr>
     {% for artefact in ownArtefactsList %}
     {% set bgID = (bgID+1)%2 %}
@@ -46,11 +46,11 @@
   <div class="box-header">Fremde Artefakte</div>
   <div class="box-content success inner text-center">
   <table class="table">
-    <tr class="bg2 nohover">
-      <th class="bg2 nohover">Name</th>
-      <th class="bg2 nohover">Höhle</th>
-      <th class="bg2 nohover">Besitzer</th>
-      <th class="bg2 nohover">Stamm</th>
+    <tr class="bg2">
+      <th class="bg2">Name</th>
+      <th class="bg2">Höhle</th>
+      <th class="bg2">Besitzer</th>
+      <th class="bg2">Stamm</th>
     </tr>
     {% for artefact in otherArtefactsList %}
     {% set bgID = (bgID+1)%2 %}
@@ -73,11 +73,11 @@
   <div class="box-header">Artefakte, die transportiert werden</div>
   <div class="box-content success inner text-center">
   <table class="table">
-    <tr class="bg2 nohover">
-      <th class="bg2 nohover">Name</th>
-      <th class="bg2 nohover">von</th>
-      <th class="bg2 nohover">nach</th>
-      <th class="bg2 nohover">Ankunft</th>
+    <tr class="bg2">
+      <th class="bg2">Name</th>
+      <th class="bg2">von</th>
+      <th class="bg2">nach</th>
+      <th class="bg2">Ankunft</th>
     </tr>
     {% for artefact in movedArtefactsList %}
     {% set bgID = (bgID+1)%2 %}

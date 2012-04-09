@@ -29,12 +29,16 @@ class auth {
     $this->perm['tribe']['change_relation'] = array(
       'value' => 4,  'desc'  => 'Beziehungen ändern'
     );
-    $this->perm['tribe']['kick_player'] = array(
+    $this->perm['tribe']['kick_member'] = array(
       'value' => 8,  'desc'  => 'Spieler kicken'
     );
     $this->perm['tribe']['change_settings'] = array(
       'value' => 16, 'desc'  => 'Gilden Informationen bearbeiten'
     );
+    $this->perm['tribe']['wonder'] = array(
+      'value' => 32, 'desc'  => 'Stammeswunder wirken'
+    );
+
   }
 
   public function checkPermission($authType, $authID, $userAuth) {

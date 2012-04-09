@@ -14,7 +14,7 @@
 {% block content %}
 
 {% if account %}
-<div class="success small nohover bottom_space">
+<div class="success small bottom_space">
    <span class="bold">Bisher erhaltene Schnecken:</span>
     <br />
     {{account.copper}}x
@@ -38,8 +38,8 @@
 <div class="box small">
 <form method="post" action="main.php">
 
-  <div class="box-header nohover">Fragebogen</div>
-  <div class="box-content success inner nohover">
+  <div class="box-header">Fragebogen</div>
+  <div class="box-content">
   <table>
   {% for question in questions.question %}
   <tr>
@@ -71,6 +71,6 @@
 {% endif %}
 <br />
 
-<div class="small success nohover"><a href="main.php?modus={{ questionaire_present_link }}">zu den Geschenken</a></div>
+<div class="small success"><a href="main.php?modus={{ questionaire_present_link }}">zu den Geschenken</a></div>
  
 {% endblock %}

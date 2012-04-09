@@ -19,7 +19,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Wunder</div>
   <div class="ua-box-content">
-    <div id="wonder" class="jquery_tabs">
+    <div id="wonder" class="jquery_tabs nav1">
       {% for category in wonders %}
         <h4>{{ category.name }}</h4>
         <div class="tabbody">
@@ -94,7 +94,7 @@
   <div class="ua-box-header">Wunder, die noch nicht erbeten werden können.</div>
   <div id="wonder_unqualified" class="ua-box-content box_toggle change_mouseover space text-center">Wunder einblenden</div>
   <div id="wonder_unqualified_content" class="ua-box-content" style="display: none;">
-    <div id="wonderUnqualified" class="jquery_tabs">
+    <div id="wonderUnqualified" class="jquery_tabs nav1">
       {% for category in wonders_unqualified %}
         <h4>{{ category.name }}</h4>
         <div class="tabbody">

@@ -64,26 +64,26 @@
               <table>
                 {% if bidding.resource %}
                   <tr>
-                    <th align="left" style="width: 125px;">Rohstoff</th>
-                    <th align="left" style="width: 125px;">Punkte</th>
+                    <th align="text-left" style="width: 125px;">Rohstoff</th>
+                    <th align="text-left" style="width: 125px;">Punkte</th>
                   </tr>
                   {% for item in bidding.resource %}
                   <tr>
-                    <td align="left" style="width: 125px;">{{ item.name }}</td>
-                    <td align="left" style="width: 125px;">{{ item.value }}</td>
+                    <td align="text-left" style="width: 125px;">{{ item.name }}</td>
+                    <td align="text-left" style="width: 125px;">{{ item.value }}</td>
                   </tr>
                   {% endfor %}
                   <tr>
-                    <td align="left" style="width: 125px;"><span class="bold">Punkte:</span></td>
-                    <td align="left" style="width: 125px;"><span class="bold">{{ bidding.sum }}</span></td>
+                    <td align="text-left" style="width: 125px;"><span class="bold">Punkte:</span></td>
+                    <td align="text-left" style="width: 125px;"><span class="bold">{{ bidding.sum }}</span></td>
                   </tr>
                   <tr>
-                    <td align="left" style="width: 125px;"><span class="bold">Verhältnis:</span></td>
-                    <td align="left" style="width: 125px;"><span class="bold">{{ bidding.proportion }}</span></td>
+                    <td align="text-left" style="width: 125px;"><span class="bold">Verhältnis:</span></td>
+                    <td align="text-left" style="width: 125px;"><span class="bold">{{ bidding.proportion }}</span></td>
                   </tr>
                 {% else %}
                   <tr>
-                    <td align="left" colspan="2" style="width: 250px;">Du hast noch keine Rohstoffe in die Höhle gebracht.</td>
+                    <td align="text-left" colspan="2" style="width: 250px;">Du hast noch keine Rohstoffe in die Höhle gebracht.</td>
                   </tr>
                 {% endif %}
               </table>
@@ -97,18 +97,18 @@
             <div class="box-content success inner">
               <table>
                   <tr>
-                    <th align="left" style="width: 125px;">Spieler</th>
-                    <th align="left" style="width: 125px;">Sterne</th>
+                    <th align="text-left" style="width: 125px;">Spieler</th>
+                    <th align="text-left" style="width: 125px;">Sterne</th>
                   </tr>
                   <tr>
-                    <td align="left" style="width: 125px;">Eigene:</td>
-                    <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ bidding.status_txt }}.gif" alt="{{ bidding.status_img }}" /></td>
+                    <td align="text-left" style="width: 125px;">Eigene:</td>
+                    <td align="text-left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ bidding.status_txt }}.gif" alt="{{ bidding.status_img }}" /></td>
                   </tr>
                 {% if bidding.bidder %}
                   {% for item in bidding.bidder %}
                   <tr>
-                    <td align="left" style="width: 125px;"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
-                    <td align="left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
+                    <td align="text-left" style="width: 125px;"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
+                    <td align="text-left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
                   </tr>
                   {% endfor %}
                 {% else %}
@@ -146,7 +146,7 @@
 
   <div class="ua-box">
     <div class="ua-box-header">Höhlenauswahl</div>
-    <div class="ua-box-content center space">
+    <div class="ua-box-content text-center space">
       <form id="confirm_change" method="post" action="main.php?modus={{ takeover_link }}"><p>
         Wähle eine Höhle, die du übernehmen möchtest:
         <br />
@@ -166,15 +166,15 @@
       <table>
         <thead>
           <tr>
-            <th class="center">Rohstoff</th>
-            <th class="center">Punkte</th>
+            <th class="text-center">Rohstoff</th>
+            <th class="text-center">Punkte</th>
           </tr>
         </thead>
         <tbody>
           {% for item in resource_ratings %}
           <tr>
-            <td class="center">{{ item.name }}</td>
-            <td class="center">{{ item.value }}</td>
+            <td class="text-center">{{ item.name }}</td>
+            <td class="text-center">{{ item.value }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -234,41 +234,41 @@
         <table>
           <thead>
             <tr>
-              <th colspan="2" class="center">Anzahl deiner Höhlen Mindestwertpunkte</th>
+              <th colspan="2" class="text-center">Anzahl deiner Höhlen Mindestwertpunkte</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="center"> 1 </td>
-              <td class="center"> 200 </td>
+              <td class="text-center"> 1 </td>
+              <td class="text-center"> 200 </td>
             </tr>
             <tr>
-              <td class="center"> 2 </td>
-              <td class="center">200 * 2<sup>2</sup> = 800</td>
+              <td class="text-center"> 2 </td>
+              <td class="text-center">200 * 2<sup>2</sup> = 800</td>
             </tr>
             <tr>
-              <td class="center"> 3 </td>
-              <td class="center">200 * 3<sup>2</sup> = 1800</td>
+              <td class="text-center"> 3 </td>
+              <td class="text-center">200 * 3<sup>2</sup> = 1800</td>
             </tr>
             <tr>
-              <td class="center"> 4 </td>
-              <td class="center">200 * 4<sup>2</sup> = 3200</td>
+              <td class="text-center"> 4 </td>
+              <td class="text-center">200 * 4<sup>2</sup> = 3200</td>
             </tr>
             <tr>
-              <td class="center"> 5 </td>
-              <td class="center">200 * 5<sup>2</sup> = 5000</td>
+              <td class="text-center"> 5 </td>
+              <td class="text-center">200 * 5<sup>2</sup> = 5000</td>
             </tr>
             <tr>
-              <td class="center"> 6 </td>
-              <td class="center"> 200 * 6<sup>2</sup> = 7200</td>
+              <td class="text-center"> 6 </td>
+              <td class="text-center"> 200 * 6<sup>2</sup> = 7200</td>
             </tr>
             <tr>
-              <td class="center"> 7 </td>
-              <td class="center"> 200 * 7<sup>2</sup> = 9800</td>
+              <td class="text-center"> 7 </td>
+              <td class="text-center"> 200 * 7<sup>2</sup> = 9800</td>
             </tr>
             <tr>
-              <td class="center"> 8 </td>
-              <td class="center"> --- </td>
+              <td class="text-center"> 8 </td>
+              <td class="text-center"> --- </td>
             </tr>
           </tbody>
         </table>
@@ -281,36 +281,36 @@
         <table class="bordertable">
           <thead>
             <tr>
-              <th class="center">Höhlen</th>
-              <th class="center">Berechnungswert</th>
-              <th class="center">Eingesetzte Ressourcen</th>
-              <th class="center">Verhältnis</th>
+              <th class="text-center">Höhlen</th>
+              <th class="text-center">Berechnungswert</th>
+              <th class="text-center">Eingesetzte Ressourcen</th>
+              <th class="text-center">Verhältnis</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="center bold">1</td>
-              <td class="center bold">200</td>
-              <td class="center bold">600</td>
-              <td class="center bold">3.0</td>
+              <td class="text-center bold">1</td>
+              <td class="text-center bold">200</td>
+              <td class="text-center bold">600</td>
+              <td class="text-center bold">3.0</td>
             </tr>
             <tr>
-              <td class="center">5</td>
-              <td class="center">5000</td>
-              <td class="center">7500</td>
-              <td class="center">1.5</td>
+              <td class="text-center">5</td>
+              <td class="text-center">5000</td>
+              <td class="text-center">7500</td>
+              <td class="text-center">1.5</td>
             </tr>
             <tr>
-              <td class="center">3</td>
-              <td class="center">1800</td>
-              <td class="center">1800</td>
-              <td class="center">1.0</td>
+              <td class="text-center">3</td>
+              <td class="text-center">1800</td>
+              <td class="text-center">1800</td>
+              <td class="text-center">1.0</td>
             </tr>
             <tr>
-              <td class="center">4</td>
-              <td class="center">3200</td>
-              <td class="center">8000</td>
-              <td class="center">2.5</td>
+              <td class="text-center">4</td>
+              <td class="text-center">3200</td>
+              <td class="text-center">8000</td>
+              <td class="text-center">2.5</td>
             </tr>
           </tbody>
         </table>

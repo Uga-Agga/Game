@@ -18,8 +18,10 @@ h4 { margin: 0; }
 
 .jquery_tabs { margin: 0; }
 .jquery_tabs .content { clear: none; }
-.jquery_tabs ul.tabs-list li.current a, .jquery_tabs ul.tabs-list li.current a:focus, .jquery_tabs ul.tabs-list li.current a:hover, .jquery_tabs ul.tabs-list li.current a:active { background:#C2CF90; }
+.jquery_tabs ul.tabs-list li.current a, .jquery_tabs ul.tabs-list li.current a:focus, .jquery_tabs ul.tabs-list li.current a:hover, .jquery_tabs ul.tabs-list li.current a:active { background: #C2CF90; }
 .jquery_tabs ul.tabs-list li a { background: transparent; color: #000000; }
+.jquery_tabs ul.tabs-list li.current2 a, .jquery_tabs ul.tabs-list li.current2 a:focus, .jquery_tabs ul.tabs-list li.current2 a:hover, .jquery_tabs ul.tabs-list li.current2 a:active { background: #C2CF90; border: 1px #ccc solid; border-bottom: 0 none; border-radius: 0.2em 0.2em 0 0; color: #000; font-weight: bold; text-decoration: none; }
+.jquery_tabs .content2 { border-top: 1px #ccc solid; padding: 0; position: relative; top: -1px; margin-bottom: -1px; }
 
 /* css von UgaAgga */
 body { background: #FFFFFF; font-family: sans-serif; font-size: 12px; }
@@ -28,6 +30,7 @@ ul { list-style-type: none; margin: 0; padding: 0; }
 ul.list-menu li { display: inline; margin: 0; padding: 0; width: 1px; }
 ul.list-space li { padding-bottom: 10px; }
 ul.movement li { margin: 0; list-style-type: none; }
+li { margin: 0; }
 
 dd { margin: 0; }
 
@@ -142,7 +145,7 @@ a.text-msg-previous:hover { color: #FFFFFF; text-decoration: underline; }
 .ym-g684-12 { width: 684px; }
 
 /* message boxen */
-.error, .alert, .notice, .success, .info, .tooltip {padding:0.8em; margin-bottom:1em; border: 2px solid #ddd; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;}
+.error, .alert, .notice, .success, .info, .tooltip { padding: 0.8em; border: 2px solid #ddd; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
 .error, .alert { background: #fbe3e4; color: #8a1f11; border-color: #fbc2c4; }
 .notice { background: #fff6bf; color: #514721; border-color: #ffd324; }
 .success { background: #e6efc2; color: #264409; border-color: #c6d880; }

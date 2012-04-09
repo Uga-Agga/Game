@@ -271,6 +271,7 @@ function hideWMTT() {
         </tr>
         </tbody>
       </table>
+
       <div class="ym-grid" style="padding-top: 5px;">
         <div class="ym-g33 ym-gl">
           <ul class="movement left">
@@ -306,7 +307,7 @@ function hideWMTT() {
           <ul class="clean_list">
             <li>
               <ul class="movement">
-                <li><strong>Bewegungsart:</strong></li>
+                <li>Bewegungsart:</li>
                 <li>
                   <div class="ym-fbox-check">
                     <input type="radio" name="movementID" value="0" id="movementID0" checked="checked" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
@@ -384,153 +385,163 @@ function hideWMTT() {
             {% endif %}
           </ul>
         </div>
-    </div>
+      </div>
 
-    <div class="ym-fbox-button right">
-      {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
-      <input type="submit" class="ym-button" value="und los geht's. UGH?" id="submit" name="submit"/>
-    </div>
-  </form>
+      <div class="ym-fbox-button right">
+        {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
+        <input type="submit" class="ym-button" value="und los geht's. UGH?" id="submit" name="submit"/>
+      </div>
+    </form>
   </div>
-  </div>
+</div>
 
 <div id="export-dialog"></div>
 {% if ownMovement %}
-<div class="box">
-  <div class="box-header">laufende Bewegungen eigener Verbände</div>
-  <div class="box-content success inner nohover">
-    <table class="table" rules="rows">
-      <tr class="bg2 nohover">
-        <td class="bg2 nohover">&nbsp;</td>
-        <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
-        <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
-        <td class="bg2 nohover" style="min-width:200px"><strong>Zielhöhle</strong></td>
-        <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
-        <td class="bg2 nohover">&nbsp;</td>    
-      </tr>
-      {% for item in ownMovement %}
-      {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{bgID}">
-          <td>&nbsp;</td>
-          <td>
-            <ul class="clean_list">
-              <li>{{ item.movement_id_description }}</li>
-              <li>
-                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
-              </li>
-            </ul>
-          </td>
-          <td>
-            <ul class="clean_list">
-              <li>Startzeitpunkt: {{ item.event_start_date }}</li>
-              <li>Endzeitpunkt: {{ item.event_end_date }}</li>
-            </ul>
-          </td>
-          <td>
-            <ul class="clean_list">
-              <li>{{ item.target_player_name }} - {{ item.target_player_tribe }}</li>
-              <li>aus {{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</li>
-            </ul>
-          </td>
-          <td>
-            <ul class="clean_list">
-              {% if item.units %}
-                {% for item_unit in item.units %}
-                  <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
-                {% endfor %}
-              {% endif %}
-              <li>&nbsp;</li>
-              {% if item.resources %}
-                {% for item_resource in item.resources %}
-                  <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
-                {% endfor %}
-              {% endif %}
-              {% if item.artefact %}
-                <li><span style="font-size: x-small; white-space:nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
-              {% endif %}
-              {% if item.hero %}
-                  <li><span style="font-size: x-small; white-space:nowrap;">{{ item.hero }}</span></li>
-              {% endif %}
-            </ul>
-          </td>
-          <td style="text-align:right; vertical-align:middle;">
-          {% if item.CANCEL %}
-          <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
-            <input type="hidden" name="eventID" value="{{ item.CANCEL.eventID }}" />
-            <input type="hidden" name="action" value="cancel" />
-            <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
-          </form>
-          {% endif %}
-          &nbsp;</td>
+<div class="ua-box">
+  <div class="ua-box-header">laufende Bewegungen eigener Verbände</div>
+  <div class="ua-box-content">
+    <table>
+      <thead>
+        <tr>
+          <th>&nbsp;</td>
+          <th style="min-width:120px">Bewegungsart</th>
+          <th" style="min-width:200px">Zeitraum</th>
+          <th style="min-width:200px">Zielhöhle</th>
+          <th style="width:200px">Einh./Ress.</th>
+          <th>&nbsp;</th> 
         </tr>
-      {% endfor %}
+      </thead>
+      <tbody>
+        {% for item in ownMovement %}
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{bgID}">
+            <td>&nbsp;</td>
+            <td>
+              <ul>
+                <li>{{ item.movement_id_description }}</li>
+                <li>
+                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
+                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>Startzeitpunkt: {{ item.event_start_date }}</li>
+                <li>Endzeitpunkt: {{ item.event_end_date }}</li>
+              </ul>
+            </td>
+            <td>
+              <ul class="clean_list">
+                <li>{{ item.target_player_name }} - {{ item.target_player_tribe }}</li>
+                <li>aus {{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</li>
+              </ul>
+            </td>
+            <td>
+              <ul class="clean_list">
+                {% if item.units %}
+                  {% for item_unit in item.units %}
+                    <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
+                  {% endfor %}
+                {% endif %}
+                <li>&nbsp;</li>
+                {% if item.resources %}
+                  {% for item_resource in item.resources %}
+                    <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
+                  {% endfor %}
+                {% endif %}
+                {% if item.artefact %}
+                  <li><span class="text-small" style="white-space: nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
+                {% endif %}
+                {% if item.hero %}
+                    <li><span class="text-small" style="white-space: nowrap;">{{ item.hero }}</span></li>
+                {% endif %}
+              </ul>
+            </td>
+            <td class="text-right" style="vertical-align: middle;">
+            {% if item.CANCEL %}
+            <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
+              <input type="hidden" name="eventID" value="{{ item.CANCEL.eventID }}" />
+              <input type="hidden" name="action" value="cancel" />
+              <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
+            </form>
+            {% endif %}
+            &nbsp;</td>
+          </tr>
+        {% endfor %}
+        {% set bgID = 0 %}
+      </tbody>
     </table>
   </div>
 </div>
 {% endif %}
 
 {% if oppMovement %}
-<div class="box">
-  <div class="box-header">ankommende Verbände</div>
-  <div class="box-content success inner nohover">
-   <table class="table" rules="rows">
-    <tr class="bg2 nohover">
-      <td class="bg2 nohover">&nbsp;</td>
-      <td class="bg2 nohover" style="min-width:120px"><strong>Bewegungsart</strong></td>
-      <td class="bg2 nohover" style="min-width:200px"><strong>Zeitraum</strong></td>
-      <td class="bg2 nohover" style="min-width:200px"><strong>Herkunft</strong></td>
-      <td class="bg2 nohover" style="width:200px"><strong>Einh./Ress.</strong></td>
-      <td class="bg2 nohover">&nbsp;</td>    
-    </tr>
-    {% for item in oppMovement %}
-      {% set bgID = (bgID+1)%2 %}
-      <tr class="bg{bgID}">
-        <td>&nbsp;</td> 
-        <td>
-          <ul class="clean_list">
-            <li>{{ item.movement_id_description }}</li>
-            <li>
-              <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-              <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-              <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
-            </li>
-          </ul>
-        </td>
-        <td>
-          <ul class="clean_list">
-            <li>Startzeitpunkt: {{ item.event_start_date }}</li>
-            <li>Endzeitpunkt: {{ item.event_end_date }}</li>
-          </ul>
-        </td>
-        <td>
-          <ul class="clean_list">
-            <li>{{ item.source_player_name }} - {{ item.source_player_tribe }}</li>
-            <li>aus {{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</li>
-          </ul>
-        </td>
-        <td>
-          <ul class="clean_list">
-          {% if item.units %}
-            {% for item_unit in item.units %}
-              <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
-            {% endfor %}
-          {% endif %}
-          <li>&nbsp;</li>
-          {% if item.resources %}
-            {% for item_resource in item.resources %}
-              <li><span style="font-size: x-small; white-space:nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
-            {% endfor %}
-          {% endif %}
-          {% if item.artefact %}
-            <li><span style="font-size: x-small; white-space:nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
-          {% endif %}
-          </ul>
-        </td>
-        <td>&nbsp;</td> 
-      </tr>
-      {% endfor %}
+<div class="ua-box">
+  <div class="ua-box-header">ankommende Verbände</div>
+  <div class="ua-box-content">
+    <table>
+      <thead>
+        <tr>
+          <th>&nbsp;</th>
+          <th style="min-width:120px">Bewegungsart</th>
+          <th style="min-width:200px">Zeitraum</th>
+          <th style="min-width:200px">Herkunft</th>
+          <th style="width:200px">Einh./Ress.</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in oppMovement %}
+        {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{bgID}">
+            <td>&nbsp;</td> 
+            <td>
+              <ul>
+                <li>{{ item.movement_id_description }}</li>
+                <li>
+                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
+                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>Startzeitpunkt: {{ item.event_start_date }}</li>
+                <li>Endzeitpunkt: {{ item.event_end_date }}</li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <li>{{ item.source_player_name }} - {{ item.source_player_tribe }}</li>
+                <li>aus {{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</li>
+              </ul>
+            </td>
+            <td>
+              <ul>
+              {% if item.units %}
+                {% for item_unit in item.units %}
+                  <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
+                {% endfor %}
+              {% endif %}
+              <li>&nbsp;</li>
+              {% if item.resources %}
+                {% for item_resource in item.resources %}
+                  <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
+                {% endfor %}
+              {% endif %}
+              {% if item.artefact %}
+                <li><span class="text-small" style="white-space: nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
+              {% endif %}
+              </ul>
+            </td>
+            <td>&nbsp;</td> 
+          </tr>
+        {% endfor %}
+        {% set bgID = 0 %}
+      </tbody>
     </table>
   </div>
 </div>
