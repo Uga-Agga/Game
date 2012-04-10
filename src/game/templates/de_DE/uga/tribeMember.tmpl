@@ -45,10 +45,10 @@
 
             <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
               <ul>
-                <li class="bold text-center" style="padding-bottom: 10px;">Verbündete Stämme:</li>
+                <li class="text-center bold" style="padding-bottom: 10px;">Verbündete Stämme:</li>
                 {% if relations_ally %}
                   {% for item in relations_ally %}
-                    <li><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a></li>
+                    <li>[<a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a>], seit {{ item.time }}</li>
                   {% endfor %}
                 {% else %}
                   <li>Zur Zeit seid ihr mit keinem Stamm verbündet.</li>
@@ -222,45 +222,50 @@
                 </thead>
                 <tbody>
                   {% for item in relations_info %}
-                  <tr>
-                    <td>{{ item.tag }}</td>
-                    <td>
-                      Eigene: <span class="bold">{{ item.relation }}</span><br />
-                      Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                      Bis: <span class="bold">{{ item.duration }}</span>
-                    </td>
-                    <td class="text-right" style="padding-right: 4px;">
-                      {% if item.war %}
-                        Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                        {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
-                      {% endif %}
-                    </td>
-                  </tr>
+                    {% set bgID = (bgID+1)%2 %}
+                    <tr class="bg{{ bgID }}">
+                      <td>{{ item.tag }}</td>
+                      <td>
+                        Eigene: <span class="bold">{{ item.relation }}</span><br />
+                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                        Bis: <span class="bold">{{ item.duration }}</span>
+                      </td>
+                      <td class="text-right" style="padding-right: 4px;">
+                        {% if item.war %}
+                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                          {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
+                        {% endif %}
+                      </td>
+                    </tr>
                   {% endfor %}
                   {% for item in relations %}
-                  <tr>
-                    <td class="text-left">{{ item.tag }}</td>
-                    <td class="text-left">
-                      Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                      {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-                    </td>
-                    <td class="text-right">
-                      {% if item.war %}
-                        Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                        Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
-                      {% endif %}
-                      <form method="post" action="main.php?modus={{ tribe_admin_link }}">
-                        <p><select name="relationData[relationID]">
-                          {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
-                        </select>
-                        <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
-                        {% if item.isForcePossible %}
-                          <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
+                    {% set bgID = (bgID+1)%2 %}
+                    <tr class="bg{{ bgID }}">
+                      <td class="text-left">{{ item.tag }}</td>
+                      <td class="text-left">
+                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                        {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                      </td>
+                      <td class="text-right">
+                        {% if item.war %}
+                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                          Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
                         {% endif %}
-                      </form>
-                    </td>
-                  </tr>
+                        {% if is_auth.change_relation or is_auth.isLeader %}
+                        <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+                          <p><select name="relationData[relationID]">
+                            {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
+                          </select>
+                          <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
+                          {% if item.isForcePossible %}
+                            <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
+                          {% endif %}
+                        </form>
+                        {% endif %}
+                      </td>
+                    </tr>
                   {% endfor %}
+                  {% set bgID = 0 %}
                 </tbody>
               </table>
             {% else %}
@@ -268,9 +273,10 @@
             {% endif %}
           </div>
 
+          {% if is_auth.change_relation or is_auth.isLeader %}
           <h5 class="hide_status_msg">Neue Beziehungen</h5>
           <div class="tabbody2">
-            <form class="ym-form ym-columnar" id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_admin_link }}">
+            <form class="ym-form ym-columnar" id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_link }}">
               <div class="ym-grid" style="padding-top: 0.8em;" >
                 <div class="ym-g50 ym-gl">
                   <div class="ym-fbox-text">
@@ -290,11 +296,12 @@
               </div>
 
               <div class="ym-fbox-button text-center">
-                <input type="hidden" name="action" value="updateRelation" />
+                <input type="hidden" name="action" value="{{ tribe_action_relation }}" />
                 <input type="submit" class="ym-button" value="Beziehung eingehen" id="submit5" name="submit"/>
               </div>
             </form>
           </div>
+          {% endif %}
 
           <h5 class="hide_status_msg">Stammesregierung</h5>
           <div class="tabbody2">
@@ -345,8 +352,8 @@
             {% else %}
               <div class="space text-center">
                 <h3 style="margin: 0;">{{ goverment_choice_name }}</h3>
-                <div class="notice" style="margin-top: 10px;">{{ goverment_choice_message }}</div>
                 {{ goverment_choice_description|raw }}
+                <div class="info" style="margin: 10px 10px 0;">{{ goverment_choice_message }}</div>
               </div>
             {% endif %}
           </div>

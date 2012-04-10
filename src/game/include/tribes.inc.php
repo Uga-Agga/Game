@@ -248,41 +248,40 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   if (!$FORCE) {
     if (strcasecmp($tag, $relationData['tag']) == 0) {
-      return -7;
+      return -14;
     }
 
     if (!($ownTribeInfo = tribe_getTribeByTag($tag))) {
-      return -6;
+      return -15;
     }
 
     if (!($targetTribeInfo = tribe_getTribeByTag($relationData['tag']))) {
-      return -6;
+      return -15;
     }
 
     if (!$ownTribeInfo['valid']) {
-      return -17;
+      return -16;
     }
 
     $relationType = $relationData['relationID'];
     $relationInfo = $GLOBALS['relationList'][$relationType];
 
     if (!($relation = relation_getRelation($tag, $relationData['tag']))) {
-      return -3;
+      return -17;
     }
     $relationTypeActual = $relation['own']['relationType'];
 
-    if ( $relationTypeActual == $relationType ) { // change to actual relation?
-      return -14;
+    if ($relationTypeActual == $relationType) { // change to actual relation?
+      return -18;
     }
 
     if (!$relation['own']['changeable']) {
-      return -4;
+      return -19;
     }
 
     // check if switching to same relation as target or relation is possible
-    if ($relation['other']['relationType'] != $relationType && !relation_isPossible($relationType, //to
-                              $relation['own']['relationType'])) {  //from 
-      return -5;
+    if ($relation['other']['relationType'] != $relationType && !relation_isPossible($relationType, $relation['own']['relationType'])) {
+      return -20;
     }
 
     $relationFrom = $relation['own']['relationType'];
@@ -290,34 +289,31 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
     if (!$FORCE && ($GLOBALS['relationList'][$relationTo]['isWarAlly'])) {
       //generally allowes?
-      if (! $GLOBALS['relationList'][$relationFrom]['isAlly']) 
-        return -18;
-      if (! $GLOBALS['relationList'][$relation['other']['relationType']]['isAlly']) 
-        return -19;
-      if (! relation_haveSameEnemy($ownTribeInfo['tag'], $targetTribeInfo['tag'], TRUE, TRUE)) 
-        return -20;
-    };
+      if (!$GLOBALS['relationList'][$relationFrom]['isAlly']) 
+        return -21;
+      if (!$GLOBALS['relationList'][$relation['other']['relationType']]['isAlly']) 
+        return -22;
+      if (!relation_haveSameEnemy($ownTribeInfo['tag'], $targetTribeInfo['tag'], TRUE, TRUE)) 
+        return -23;
+    }
 
     $relationTypeOtherActual = $relation['other']['relationType'];
     // check minimum size of target tribe if it's not an ultimatum
-    if ((($relationInfo['targetSizeDiffDown'] > 0) ||
-         ($relationInfo['targetSizeDiffUp'] > 0)) &&
-         (!$GLOBALS['relationList'][$relationTypeOtherActual]['isUltimatum'])) {
-
+    if ((($relationInfo['targetSizeDiffDown'] > 0) || ($relationInfo['targetSizeDiffUp'] > 0)) && (!$GLOBALS['relationList'][$relationTypeOtherActual]['isUltimatum'])) {
       $from_points   = max(0, tribe_getMight($tag));
       $target_points = max(0, tribe_getMight($relationData['tag']));
 
       if (!tribe_isTopTribe($relationData['tag'])) {
         if (($relationInfo['targetSizeDiffDown'] > 0) &&
             ($from_points - $relationInfo['targetSizeDiffDown'] > $target_points )) {
-          return -12;
+          return -24;
         }
       }
 
       if (!tribe_isTopTribe($relationData['tag'])) {
         if (($relationInfo['targetSizeDiffUp'] > 0) &&
             ($from_points + $relationInfo['targetSizeDiffUp'] < $target_points )) {
-          return -13;
+          return -25;
         }
       }
     }
@@ -347,16 +343,10 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   // calculate elo if war ended  
   if ($GLOBALS['relationList'][$relationType]['isWarWon']) {
-                            ranking_calculateElo($tag, 
-                            tribe_getMight($tag), 
-                            $relationData['tag'], 
-                            tribe_getMight($relationData['tag']));
-  ranking_updateWonLost($tag, $targetTribeInfo['tag'], false);
-
+    ranking_calculateElo($tag, tribe_getMight($tag), $relationData['tag'], tribe_getMight($relationData['tag']));
+    ranking_updateWonLost($tag, $targetTribeInfo['tag'], false);
   } else if ($GLOBALS['relationList'][$relationType]['isWarLost']) {
-      ranking_calculateElo($relationData['tag'], 
-                           tribe_getMight($relationData['tag']), 
-                           $tag, tribe_getMight($tag));
+    ranking_calculateElo($relationData['tag'], tribe_getMight($relationData['tag']), $tag, tribe_getMight($tag));
     ranking_updateWonLost($tag, $targetTribeInfo['tag'], true);
   }
 
@@ -374,13 +364,8 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   // switch other side if necessary (and not at this type already)
   if (!$end_time && ($oST = $relationInfo['otherSideTo']) >= 0) {
-    if (!relation_setRelation($targetTribeInfo['tag'], 
-            $tag,
-            $oST, $duration, 0,
-            $relation['other']['tribe_rankingPoints'],
-            $relation['other']['target_rankingPoints'],
-            $OtherFame)) {
-      return -3;
+    if (!relation_setRelation($targetTribeInfo['tag'], $tag, $oST, $duration, 0, $relation['other']['tribe_rankingPoints'], $relation['other']['target_rankingPoints'], $OtherFame)) {
+      return -17;
     }
 
     // insert history
@@ -809,29 +794,31 @@ function relation_getWarTargetsAndFame($tag) {
 function relation_forceSurrender($tag, $relationData) {
   // check conditions
   if(!$relationData){
-    return -3;
+    return -17;
   }
 
   if (strcasecmp($tag, $relationData['tag']) == 0) {
-    return -7;
+    return -14;
   }
 
   if (!($ownTribeInfo = tribe_getTribeByTag($tag))) {
-    return -6;
+    return -15;
   }
 
   if (!($targetTribeInfo = tribe_getTribeByTag($relationData['tag']))) {
-    return -6;
+    return -15;
   }
 
   $target = $relationData['tag'];
   $tribeWarTargets = relation_getWarTargetsAndFame($tag);
 
-  if(!($relation = $tribeWarTargets[strtoupper($target)]))
-    return -3; 
+  if(!($relation = $tribeWarTargets[strtoupper($target)])) {
+    return -17; 
+  }
 
-  if(!$relation['isForcedSurrenderPracticallyPossible'])
-    return -25;
+  if(!$relation['isForcedSurrenderPracticallyPossible']) {
+    return -26;
+  }
 
   // find surrender
   $surrenderId = 0;
@@ -839,8 +826,7 @@ function relation_forceSurrender($tag, $relationData) {
     $surrenderId++;
   }
 
-  $relationDataLooser = array('tag' => $tag,
-                              'relationID' => $surrenderId);
+  $relationDataLooser = array('tag' => $tag, 'relationID' => $surrenderId);
 
   // refresh relations                              
   $messageID = relation_processRelationUpdate($target, $relationDataLooser);

@@ -19,12 +19,26 @@ define('TRIBE_ACTION_LEAVE',         3);
 define('TRIBE_ACTION_MESSAGE',       4);
 define('TRIBE_ACTION_DONATE',        5);
 define('TRIBE_ACTION_UPDATE',        6);
+define('TRIBE_ACTION_RELATION',      7);
 
 function tribe_getContent() {
   global $template;
 
   // messages
   $messageText = array (
+    -26 => array('type' => 'error', 'message' => _('Ihr Kriegsanteil ist nicht hoch genug, um den Gegner zur Aufgabe zu zwingen.')),
+    -25 => array('type' => 'error', 'message' => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so großen Stamm einzugehen.')),
+    -24 => array('type' => 'error', 'message' => _('Eure Untergebenen weigern sich, diese Beziehung gegenüber einem so kleinen Stamm einzugehen.')),
+    -23 => array('type' => 'error', 'message' => _('Ihr habt mit dem anderen Stamm keinen gleichen Kriegsgegner.')),
+    -22 => array('type' => 'error', 'message' => _('Die Beziehung des anderen Stammes erlauben kein Kriegsbündniss.')),
+    -21 => array('type' => 'error', 'message' => _('Unsere aktuelle Beziehung erlaubt kein Kriegsbündniss.')),
+    -20 => array('type' => 'error', 'message' => _('Von der derzeitigen Beziehung kann nicht direkt auf die ausgewählte Beziehungsart gewechselt werden.')),
+    -19 => array('type' => 'error', 'message' => _('Die Mindestlaufzeit von der derzeitigen Beziehung läuft noch!')),
+    -18 => array('type' => 'error', 'message' => _('Die Beziehung wurde nicht geändert, weil der ausgewählte Beziehungstyp bereits eingestellt ist.')),
+    -17 => array('type' => 'error', 'message' => _('Die Beziehung konnte aufgrund eines Fehlers nicht aktualisiert werden.')),
+    -16 => array('type' => 'error', 'message' => _('Der Stamm hat noch nicht genug Mitglieder um Beziehungen eingehen zu dürfen')),
+    -15 => array('type' => 'error', 'message' => _('Den Stamm gibt es nicht!')),
+    -14 => array('type' => 'error', 'message' => _('Zu sich selber kann man keine Beziehungen aufnehmen!')),
     -13 => array('type' => 'error', 'message' => _('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!')),
     -12 => array('type' => 'error', 'message' => _('Ungültiges Passwort! (Mind. 6 Zeichen, ohne Sonderzeichen)')),
     -11 => array('type' => 'error', 'message' => _('Fehler beim Eintragen ins Stammeslager!')),
@@ -44,7 +58,7 @@ function tribe_getContent() {
       4 => array('type' => 'success', 'message' => _('Deine Rohstoffe wurden Erfolgreich ins Stammeslager eingezahlt!')),
       5 => array('type' => 'success', 'message' => _('Die Daten wurden erfolgreich aktualisiert.')),
       6 => array('type' => 'error', 'message' =>  _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.')),
-
+      7 => array('type' => 'success', 'message' => _('Die Beziehung zu dem anderen Stamm wurde erfolgreich geändert.')),
   );
 
 /*
@@ -98,11 +112,21 @@ function tribe_getContent() {
   $messageID = 0;
   $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
+/****************************************************************************************************
+*
+* Ressie Spende an den Stamm
+*
+****************************************************************************************************/
     case TRIBE_ACTION_DONATE: // msg ok
       $value = Request::getVar('value', array('' => ''));
       $messageID = tribe_donateResources($value, $caveID, $caveData);
     break;
 
+/****************************************************************************************************
+*
+* Bye Bye Stamm :(
+*
+****************************************************************************************************/
     case TRIBE_ACTION_LEAVE: // msg ok
       if (Request::isPost('cancelOrderConfirm')) {
         $messageID = tribe_processLeave($_SESSION['player']->playerID, $tribeTag);
@@ -124,6 +148,11 @@ function tribe_getContent() {
       }
     break;
 
+/****************************************************************************************************
+*
+* paar Spieler informieren über irgendwas
+*
+****************************************************************************************************/
     case TRIBE_ACTION_MESSAGE: // msg ok
       if (!$userAuth['msg_tribe'] && !$userAuth['msg_public'] && !$userAuth['isLeader']) {
         $messageID = -1;
@@ -144,6 +173,30 @@ function tribe_getContent() {
       }
     break;
 
+/****************************************************************************************************
+*
+* Krieg? Niederlage? Aktualisieren der Beziehung
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_RELATION:
+      if (!$userAuth['change_relation'] && !$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $relationData = Request::getVar('relationData', array('' => ''));
+      if (Request::isPost('forceSurrender')) {
+        $messageID = relation_forceSurrender($tribeTag, $relationData);
+      } else {
+        $messageID = relation_processRelationUpdate($tribeTag, $relationData);
+      }
+    break;
+
+/****************************************************************************************************
+*
+* Stammesinfos aktualisieren
+*
+****************************************************************************************************/
     case TRIBE_ACTION_UPDATE: // msg ok
       if (!$userAuth['change_settings'] && !$userAuth['isLeader']) {
         $messageID = -1;
@@ -249,12 +302,12 @@ function tribe_getContent() {
   // Regierung -> Beziehungen
   $relations = $relationAlly = $relations_info = array();
   foreach($relationsAll['own'] AS $target => $targetData) {
-    if (in_array($targetData['relationType'], Config::tribeRelationAlly)) {
+    if (in_array($targetData['relationType'], Config::$tribeRelationAlly)) {
       $relationAlly[] = $targetData;
     }
 
     if (!$targetData['changeable']) {
-      $relation_info[$target] = array(
+      $relations_info[$target] = array(
         'tag'            => $target,
         'relation'       => $GLOBALS['relationList'][$targetData['relationType']]['name'],
         'duration'       => $targetData['time'],
@@ -262,11 +315,11 @@ function tribe_getContent() {
       );
 
       // war?
-      if (array_key_exists($target, $tribeWarTargets)) {
+      if (array_key_exists($target, $relationsWar)) {
         $relations_info[$target]['war']            = true;
-        $relations_info[$target]['fame_own']       = $tribeWarTargets[$target]['fame_own'];
-        $relations_info[$target]['fame_target']    = $tribeWarTargets[$target]['fame_target'];
-        $relations_info[$target]['percent_actual'] = $tribeWarTargets[$target]['percent_actual'];
+        $relations_info[$target]['fame_own']       = $relationsWar[$target]['fame_own'];
+        $relations_info[$target]['fame_target']    = $relationsWar[$target]['fame_target'];
+        $relations_info[$target]['percent_actual'] = $relationsWar[$target]['percent_actual'];
       }
     } else {
       $relations[$target] = array(
@@ -279,13 +332,13 @@ function tribe_getContent() {
 
       if (isset($tribeWarTargets[$target])) {
         $relations[$target]['war']            = true;
-        $relations[$target]['fame_own']       = $tribeWarTargets[$target]['fame_own'];
-        $relations[$target]['fame_target']    = $tribeWarTargets[$target]['fame_target'];
-        $relations[$target]['percent_actual'] = $tribeWarTargets[$target]['percent_actual'];
+        $relations[$target]['fame_own']       = $relationsWar[$target]['fame_own'];
+        $relations[$target]['fame_target']    = $relationsWar[$target]['fame_target'];
+        $relations[$target]['percent_actual'] = $relationsWar[$target]['percent_actual'];
 
         if ($wartarget['isForcedSurrenderTheoreticallyPossible']) {
           $relations[$target]['isForcePossible'] = true;
-          $relations[$target]['percent_estimated'] = $tribeWarTargets[$target]['percent_estimated'];
+          $relations[$target]['percent_estimated'] = $relationsWar[$target]['percent_estimated'];
         }
       }
     }
@@ -402,13 +455,14 @@ function tribe_getContent() {
     'relations'           => (isset($relations)) ? $relations : array(),
     'relations_ally'      => $relationAlly,
     'relations_list'      => $GLOBALS['relationList'],
-    'relations_info'      => (isset($relations_info)) ? $relations_info : array(),
+    'relations_info'      => $relations_info,
     'relations_war'       => (!empty($relationsWar)) ? true : false,
 
-    'tribe_action_donate'  => TRIBE_ACTION_DONATE,
-    'tribe_action_leave'   => TRIBE_ACTION_LEAVE,
-    'tribe_action_message' => TRIBE_ACTION_MESSAGE,
-    'tribe_action_update'  => TRIBE_ACTION_UPDATE,
+    'tribe_action_relation' => TRIBE_ACTION_RELATION,
+    'tribe_action_donate'   => TRIBE_ACTION_DONATE,
+    'tribe_action_leave'    => TRIBE_ACTION_LEAVE,
+    'tribe_action_message'  => TRIBE_ACTION_MESSAGE,
+    'tribe_action_update'   => TRIBE_ACTION_UPDATE,
 
     'wonders'             => $wonders,
   ));

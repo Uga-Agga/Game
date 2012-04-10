@@ -115,7 +115,8 @@ $(document).ready(function() {
     tabhead: 'h4',
     fx:'fadeIn',
     saveState:true,
-    cssClassAvailable:true
+    cssClassAvailable:true,
+    autoAnchor:true
   });
 
   $(".nav2").accessibleTabs({
@@ -124,9 +125,10 @@ $(document).ready(function() {
     tabhead: 'h5',
     tabbody: '.tabbody2',
     fx:'fadeIn',
-    cssClassAvailable:true
+    cssClassAvailable:true,
+    autoAnchor:true
   });
-  
+
   // hide status msg
   $('a.hide_status_msg').click(function(){
     $(".status_msg").css('display', 'none');
