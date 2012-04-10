@@ -105,18 +105,16 @@ function checkall(){
     <table>
       <thead>
         <tr>
-          <th>&nbsp;</th>
-          <th>{{ from_to }}</th>
-          <th>Nachrichtenart</th>
-          <th>Betreff</th>
-          <th>Datum</th>
+          <td>&nbsp;</td>
+          <td class="bold" style="color: black;">{{ from_to }}</td>
+          <td class="bold" style="color: black;">Nachrichtenart</td>
+          <td class="bold" style="color: black;">Betreff</td>
+          <td class="bold" style="color: black;">Datum</td>
         </tr>
-      </thead>
-      <tbody>
         <tr>
-          <td class="ua-td-name"><input name="all" type="checkbox" value="check all" onclick="checkall();" /></td>
-          <td colspan="2"><span class="bold">alle auswählen</span></td>  
-          <td colspan="2" class="text-right">
+          <th class="ua-td-name"><input name="all" type="checkbox" value="check all" onclick="checkall();" /></th>
+          <th colspan="2"><span class="bold">alle auswählen</span></th>
+          <th colspan="2" class="text-right">
             Nachrichten {{ message_min }} - {{ message_max }} von {{ message_count }} &nbsp; 
             {% if message_prev %}
               <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}&amp;messageClass={{ message_prev.message_class }}">&lt;&lt;&lt; zurück</a>
@@ -129,11 +127,13 @@ function checkall(){
             {% else %}
               weiter &gt;&gt;&gt;
             {% endif %}
-          </td>
+          </th>
         </tr>
+      </thead>
+      <tbody>
         {% if messages %}
           {% for item in messages %}
-            <tr class="msg_{{ item.messageClass }} msg_read{{ item.read }}">
+            <tr class="msg_{{ item.messageClass }} msg_read{{ item.read }} nohover">
               <td class="ua-td-name"><input type="checkbox" name="deletebox[{{ item.messageID }}]" value="{{ item.messageID }}" /></td>
               <td>{{ item.absender_empfaenger }}</td>
               <td>{{ item.nachrichtenart }}</td>

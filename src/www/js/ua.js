@@ -110,10 +110,12 @@ $(document).ready(function() {
   // ...and apply...
   $('#ua-head-menu-item').jqDock(dockOptions);
 
+  // navigate options
   $(".nav1").accessibleTabs({
     tabhead: 'h4',
     fx:'fadeIn',
-    saveState:true
+    saveState:true,
+    cssClassAvailable:true
   });
 
   $(".nav2").accessibleTabs({
@@ -121,6 +123,12 @@ $(document).ready(function() {
     currentClass: 'current2',
     tabhead: 'h5',
     tabbody: '.tabbody2',
-    fx:'fadeIn'
+    fx:'fadeIn',
+    cssClassAvailable:true
+  });
+  
+  // hide status msg
+  $('a.hide_status_msg').click(function(){
+    $(".status_msg").css('display', 'none');
   });
 });

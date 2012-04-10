@@ -860,19 +860,15 @@ function tribe_processAdminUpdate($tag, $data) {
 
   $auth = new auth;
 
-  if (!$auth->checkPermission('tribe', 'change_settings', $_SESSION['player']->auth['tribe']) && !tribe_isLeader($_SESSION['player']->playerID, $tag)) {
-    return -30;
-  }
-
   if (!tribe_validatePassword($data['password'])){
-    return -29;
+    return -12;
   }
 
   // check if avatar is a image
   if (!empty($data['avatar'])) {
     $avatarInfo = checkAvatar($data['avatar']);
     if (!$avatarInfo) {
-      return -28;
+      return -13;
     } else {
       $data['avatar'] = $avatarInfo;
     }
@@ -890,10 +886,10 @@ function tribe_processAdminUpdate($tag, $data) {
   $sql->bindValue('avatar', $data['avatar'], PDO::PARAM_STR);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute() || $sql->rowCount() == 0) {
-    return 2;
+    return 6;
   }
 
-  return 0;
+  return 5;
 }
 
 
@@ -1188,31 +1184,31 @@ function tribe_createRanking($tag) {
   return 1;
 }
 
-function tribe_createTribe($tag, $name, $leaderID) {
+function tribe_createTribe($tag, $name, $password, $leaderID) {
   global $db;
   
   $sql = $db->prepare("INSERT INTO ". TRIBE_TABLE . "
-                         (tag, name, leaderID, created, governmentID, validatetime, valid)
+                         (tag, name, leaderID, created, password, governmentID, validatetime, valid)
                        values 
-                         (:tag, :name, 0, NOW() + 0, 1, ((NOW() + INTERVAL " . TRIBE_MINIMUM_LIVESPAN . " SECOND ) + 0),0)");
+                         (:tag, :name, 0, NOW() + 0, :password, 1, ((NOW() + INTERVAL " . TRIBE_MINIMUM_LIVESPAN . " SECOND ) + 0),0)");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('name', $name, PDO::PARAM_STR);
+  $sql->bindValue('password', $password, PDO::PARAM_STR);
   if (!$sql->execute()) {
-    return 0;
+    return false;
   }
 
   if(!tribe_createRanking($tag)) {
-    return 0;
+    return false;
   }
 
   if (!tribe_joinTribe($leaderID, $tag)) {
-    return 0;
+    return false;
   }
 
   if (!tribe_makeLeader($leaderID, $tag)) {
-  die('4');
     tribe_leaveTribe($leaderID, $tag);
-    return 0;
+    return false;
   }
 
   return 1;
@@ -1509,7 +1505,7 @@ function tribe_processJoin($playerID, $tag, $password) {
   $sql = $db->prepare("SELECT tag
                        FROM ". TRIBE_TABLE . "
                        WHERE tag LIKE :tag
-                         AND password = :password");
+                         AND password = BINARY :password");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('password', $password, PDO::PARAM_STR);
   if (!$sql->rowCountSelect()) {
@@ -1589,40 +1585,39 @@ function tribe_changeTribeAllowedForPlayerID($playerID) {
 
 
 function tribe_processLeave($playerID, $tag, $FORCE = 0) {
-  if (! $FORCE && ! relation_leaveTribeAllowed($tag)) {
-    return -10;
+  if (!$FORCE && !relation_leaveTribeAllowed($tag)) {
+    return -2;
   }
 
-  if (! $FORCE && ! tribe_changeTribeAllowedForPlayerID($playerID)) {
-    return -11;
+  if (!$FORCE && !tribe_changeTribeAllowedForPlayerID($playerID)) {
+    return -3;
   }
 
   if (tribe_isLeader($playerID, $tag)) {
-    if (! $FORCE && !tribe_unmakeLeader($playerID, $tag)) {
-      return -8;
-    }   
+    if (!$FORCE && !tribe_unmakeLeader($playerID, $tag)) {
+      return -4;
+    }
   }
 
-  if (!($player=getPlayerByID($playerID))) {
-    return -4;
+  if (!($player = getPlayerByID($playerID))) {
+    return -5;
   }
   if (!tribe_leaveTribe($playerID, $tag)) {
-    return -4;
+    return -5;
   }
 
   Player::addHistoryEntry($playerID, sprintf(_("verläßt den Stamm '%s'"), $tag));
 
   tribe_setBlockingPeriodPlayerID($playerID);
 
-  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieleraustritt",
-    "Der Spieler {$player['name']} ist soeben aus dem Stamm ausgetreten.");
+  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieleraustritt", "Der Spieler {$player['name']} ist soeben aus dem Stamm ausgetreten.");
 
   if (tribe_getNumberOfMembers($tag) == 0) {  // tribe has to be deleted
     tribe_deleteTribe($tag, $FORCE);
-    return 4;
+    return 2;
   }
 
-  return 2;
+  return 1;
 }
 
 function tribe_processKickMember($playerID, $tag) {
@@ -1681,25 +1676,25 @@ function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
 
   if(!$sql->execute()) {
-    return -9;
+    return -7;
   }
 
   while ($member = $sql->fetch(PDO::FETCH_ASSOC)) {
     if(!$messagesClass->insertMessageIntoDB($member['name'], "Nachricht vom Stammesanführer", $message, true, true)) {
-      return -9;
+      return -7;
     }
   }
 
-  return 5;
+  return 3;
 }
 
 function tribe_processSendTribeMessage($leaderID, $tag, $message) {
 
   if (!tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Nachricht vom Stammesanführer", $message)) {
-    return -9;
+    return -7;
   }
 
-  return 5;
+  return 3;
 }
 
 function tribe_sendTribeMessage($tag, $type, $heading, $message) {
@@ -1746,7 +1741,7 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
   global $db;
   
   if (!tribe_changeTribeAllowedForPlayerID($leaderID)) {
-    return -11;
+    return -10;
   }
 
   $sql = $db->prepare("SELECT name
@@ -1754,11 +1749,11 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
                        WHERE tag LIKE :tag");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if ($sql->rowCountSelect() > 0) {
-    return -5;
+    return -4;
   }
 
-  if (!tribe_createTribe($tag, $tag, $leaderID)) {
-    return -6;
+  if (!tribe_createTribe($tag, $tag, $password, $leaderID)) {
+    return -5;
   }
 
   if ($restore_rank) {
@@ -1771,19 +1766,9 @@ function tribe_processCreate($leaderID, $tag, $password, $restore_rank = false) 
     return -1;
   }
 
-  //ranking_sort($db);
-  
-  if (!tribe_setPassword($tag, $password)) {
-    return -7;
-  }
-
   Player::addHistoryEntry($leaderID, sprintf(_("gründet den Stamm '%s'"), $tag));
 
-  return 3;
-}
-
-function tribe_processCreateFailed() {
-  return -14;
+  return 2;
 }
 
 function tribe_setPassword($tag, $password) {
@@ -2092,30 +2077,25 @@ function tribe_getLastDonationForTribeStorage ($playerID) {
 
 function tribe_donateResources($value_array, $caveID, &$caveData) {
   global $db;
-  
+
   $playerID = $_SESSION['player']->playerID;
-  
+
   if (!sizeof($value_array)) {
-    return -19;
+    return -8;
   }
-  
-  $fields_cave = array();
-  $fields_storage = array();
-  $fields_donations = array();
-  $fields_resources = array();
-  $where = array();
-  
+
+  $fields_cave = $fields_storage = $fields_donations = $fields_resources = $where = array();
   foreach ($value_array as $resourceID => $value) {
     if ($value) {
       if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
         // check if resource is over maxDonation value
         if ($resource->maxTribeDonation < $value) {
-          return -21;
+          return -9;
         }
         // check for enough resources in cave
         if ($caveData[$resource->dbFieldName] < $value) {
-          return -22;
+          return -10;
         }
         $fields_cave[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " - " . $value;
         $fields_storage[] = $resource->dbFieldName . " = " . $resource->dbFieldName . " + " . $value;
@@ -2125,41 +2105,38 @@ function tribe_donateResources($value_array, $caveID, &$caveData) {
       }
     }
   }
-  
+
   $sql = $db->prepare("INSERT INTO " . TRIBE_STORAGE_DONATIONS_TABLE . 
                         "(playerID, tribe, timestamp, ".implode (", ", $fields_resources) . ")
                         VALUES (:playerID, :tribe, :timestamp, " . implode(", ", $fields_donations). ")");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
   $sql->bindValue('timestamp', time(), PDO::PARAM_INT);
-  
   if (!$sql->execute()) {
-    return -20;
+    return -11;
   }
   
   $sql = $db->prepare("UPDATE " . TRIBE_TABLE . " SET
                         " . implode(", ", $fields_storage) . "
                        WHERE tag LIKE :tribe");
   $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
-  
   if (!$sql->execute()) {
-    return -20;
+    return -11;
   }
-  
+
   $sql = $db->prepare("UPDATE " . CAVE_TABLE . " SET 
                         " . implode (", ", $fields_cave) . "
                         WHERE caveID = :caveID 
                         " . implode(" ", $where));
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-  
   if (!$sql->execute()) {
     return -20;
   }
-  
+
   // update caves
   $caveData = getCaveByID($caveID);
-  
-  return 11;
+
+  return 4;
 }
 
 ?>

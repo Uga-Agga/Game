@@ -18,31 +18,47 @@ define('TRIBE_ACTION_CREATE',        2);
 define('TRIBE_ACTION_LEAVE',         3);
 define('TRIBE_ACTION_MESSAGE',       4);
 define('TRIBE_ACTION_DONATE',        5);
+define('TRIBE_ACTION_UPDATE',        6);
 
-function tribe_getContent($i, $y, &$details) {
+function tribe_getContent() {
   global $template;
 
   // messages
   $messageText = array (
-   -22 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe vorhanden!')),
-   -21 => array('type' => 'error', 'message' => _('Eine Rohstoff hat den maximalen Einzahlungswert überschritten!')),
+    -13 => array('type' => 'error', 'message' => _('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!')),
+    -12 => array('type' => 'error', 'message' => _('Ungültiges Passwort! (Mind. 6 Zeichen, ohne Sonderzeichen)')),
+    -11 => array('type' => 'error', 'message' => _('Fehler beim Eintragen ins Stammeslager!')),
+    -10 => array('type' => 'error', 'message' => _('Nicht genug Rohstoffe vorhanden!')),
+     -9 => array('type' => 'error', 'message' => _('Eine Rohstoff hat den maximalen Einzahlungswert überschritten!')),
+     -8 => array('type' => 'info', 'message' => _('Bitte die gewünscht Menge an Rohstoffen die eingezahlt werden sollen angeben.')),
+     -7 => array('type' => 'error', 'message' => _('Die Nachricht konnte nicht verschickt werden.')),
+     -6 => array('type' => 'error', 'message' => _('Du mußt eine Nachricht schreiben um sie versenden zu können.')),
+     -5 => array('type' => 'error', 'message' => _('Sie konnten nicht austreten. Vermutlich gehören Sie gar keinem Stamm an.')),
+     -4 => array('type' => 'error', 'message' => _('Sie sind der Stammesanführer und konnten nicht entlassen werden.')),
+     -3 => array('type' => 'error', 'message' => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.')),
+     -2 => array('type' => 'error', 'message' => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.')),
+     -1 => array('type' => 'error', 'message' => _('Du hast keine Berechtigung dies zu tun.')),
+      1 => array('type' => 'success', 'message' => _('Du hast den Stamm verlassen.')),
+      2 => array('type' => 'success', 'message' => _('Du hast den Stamm erfolgreich verlassen.<br />Da du das letzte Mitglied warst, wurde der STamm aufgelöst.')),
+      3 => array('type' => 'success', 'message' => _('Die Nachricht wurde Erfolgreich verschickt.')),
+      4 => array('type' => 'success', 'message' => _('Deine Rohstoffe wurden Erfolgreich ins Stammeslager eingezahlt!')),
+      5 => array('type' => 'success', 'message' => _('Die Daten wurden erfolgreich aktualisiert.')),
+      6 => array('type' => 'error', 'message' =>  _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.')),
+
+  );
+
+/*
+  $messageText = array (
    -20 => array('type' => 'error', 'message' => _('Fehler beim Eintragen ins Stammeslager!')),
    -19 => array('type' => 'info', 'message' => _('Bitte Daten in das Formular eintragen.')),
-   -18 => array('type' => 'error', 'message' => _('Du keine Berechtigung eine Nachricht zu schreiben.')),
-   -17 => array('type' => 'error', 'message' => _('Du mußt eine Nachricht schreiben um sie versenden zu können.')),
    -16 => array('type' => 'error', 'message' => _('Du bist zur Zeit in keinem Stamm.')),
    -15 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen während du in einem Stamm bist.')),
    -14 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
    -13 => array('type' => 'error', 'message' => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.')),
    -12 => array('type' => 'error', 'message' => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.')),
-   -11 => array('type' => 'error', 'message' => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.')),
-   -10 => array('type' => 'error', 'message' => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.')),
-    -9 => array('type' => 'error', 'message' => _('Die Nachricht konnte nicht eingetragen werden.')),
-    -8 => array('type' => 'error', 'message' => _('Sie sind der Stammesanführer und konnten nicht entlassen werden.')),
     -7 => array('type' => 'error', 'message' => _('Das Passwort konnte nicht gesetzt werden!')),
     -6 => array('type' => 'error', 'message' => _('Der Stamm konnte nicht angelegt werden.')),
     -5 => array('type' => 'error', 'message' => _('Es gibt schon einen Stamm mit diesem Kürzel.')),
-    -4 => array('type' => 'error', 'message' => _('Sie konnten nicht austreten. Vermutlich gehören Sie gar keinem Stamm an.')),
     -3 => array('type' => 'error', 'message' => _('Sie konnten dem Stamm nicht beitreten. Vermutlich sind Sie schon bei einem anderen Stamm Mitglied.')),
     -2 => array('type' => 'error', 'message' => _('Stammeskürzel und Passwort stimmen nicht überein.')),
     -1 => array('type' => 'error', 'message' => _('Bei der Aktion ist ein unerwarteter Datenbankfehler aufgetreten!')),
@@ -52,18 +68,22 @@ function tribe_getContent($i, $y, &$details) {
      4 => array('type' => 'success', 'message' => _('Sie waren das letzte Mitglied, der Stamm wurde aufgelöst')),
      5 => array('type' => 'success', 'message' => _('Die Nachricht wurde eingetragen')),
     10 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!')), 
-    11 => array('type' => 'success', 'message' => _('Einzahlung in das Stammeslager erfolgreich durchgeführt!'))
   );
+*/
 
   if (!$_SESSION['player']->tribe) {
-    $template->throwError('Du bist zur Zeit in keinem Stamm.');
+    $template->addVar('status_msg', $messageText[-16]);
+    tribe_getContentNoTribe();
+    return;
   }
 
-  $tribeData = tribe_getTribeByTag($_SESSION['player']->tribe);
+  $tribeTag = $_SESSION['player']->tribe;
+  $tribeData = tribe_getTribeByTag($tribeTag);
   if ($tribeData == null) {
     $template->throwError('Der Stamm konnte nicht geladen werden.');
     return;
   }
+  $tribeMembers = tribe_getAllMembers($tribeTag);
 
   // open template
   $template->setFile('tribeMember.tmpl');
@@ -78,18 +98,20 @@ function tribe_getContent($i, $y, &$details) {
   $messageID = 0;
   $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
-    case TRIBE_ACTION_DONATE:
+    case TRIBE_ACTION_DONATE: // msg ok
       $value = Request::getVar('value', array('' => ''));
       $messageID = tribe_donateResources($value, $caveID, $caveData);
     break;
 
-    case TRIBE_ACTION_LEAVE:
+    case TRIBE_ACTION_LEAVE: // msg ok
       if (Request::isPost('cancelOrderConfirm')) {
-        $messageID = tribe_processLeave($playerID, $tribe);
+        $messageID = tribe_processLeave($_SESSION['player']->playerID, $tribeTag);
 
         if ($messageID > 0) {
           page_refreshUserData();
-          $template->throwMessage($messageText[$messageID]);
+          $template->addVar('status_msg', $messageText[$messageID]);
+          tribe_getContentNoTribe();
+          return;
         }
       } else {
         $template->addVars(array(
@@ -97,19 +119,19 @@ function tribe_getContent($i, $y, &$details) {
           'confirm_action'  => TRIBE_ACTION_LEAVE,
           'confirm_id'      => false,
           'confirm_mode'    => TRIBE,
-          'confirm_msg'     => sprintf(_('Möchtest du den Stamm <span class="bold">%s</span> wirklich verlassen?'), $_SESSION['player']->tribe),
+          'confirm_msg'     => sprintf(_('Möchtest du den Stamm <span class="bold">%s</span> wirklich verlassen?'), $tribeTag),
         ));
       }
     break;
 
-    case TRIBE_ACTION_MESSAGE:
+    case TRIBE_ACTION_MESSAGE: // msg ok
       if (!$userAuth['msg_tribe'] && !$userAuth['msg_public'] && !$userAuth['isLeader']) {
-        $messageID = -18;
+        $messageID = -1;
         break;
       }
       
       if (!Request::isPost('messageText', true)) {
-        $messageID = -17;
+        $messageID = -6;
         break;
       }
 
@@ -118,46 +140,35 @@ function tribe_getContent($i, $y, &$details) {
       } else if ($userAuth['msg_tribe'] || $userAuth['isLeader']) {
         $messageID = tribe_processSendTribeMessage($playerID, $tribe, Request::getVar('messageText', '', true));
       } else {
-        $messageID = -18;
+        $messageID = -1;
       }
     break;
+
+    case TRIBE_ACTION_UPDATE: // msg ok
+      if (!$userAuth['change_settings'] && !$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $password = Request::getVar('tribe_password', '');
+      $postData = array(
+        'name'        => Request::getVar('tribe_name', '', true),
+        'password'    => (!empty($password)) ? $password : $tribeData['password'],
+        'avatar'      => Request::getVar('tribe_avatar', ''),
+        'description' => Request::getVar('tribe_description', '', true)
+      );
+
+      $messageID = tribe_processAdminUpdate($tribeTag, $postData);
+      $tribeData = tribe_getTribeByTag($tribeTag);
+    break;
   }
-
-  /****************************************************************************************************
-  *
-  * Stammeslager
-  *
-  ****************************************************************************************************/
-  $tribeStorageValues = array();
-  foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
-    $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
-    $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
-    $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
-    $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
-  }
-
-  $lastDonation = tribe_getLastDonationForTribeStorage($_SESSION['player']->playerID);
-  $template->addVars(array(
-      'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
-      'tribeStorageValues'        => $tribeStorageValues, 
-      'donationInterval'          => TRIBE_STORAGE_DONATION_INTERVAL, 
-      'nextDonation'              => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
-  ));
-
-  /****************************************************************************************************
-  *
-  * Einzahlungen
-  *
-  ****************************************************************************************************/
-  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
-  $template->addVar('donations', $donations);
 
   /****************************************************************************************************
   *
   * Auswahl der Regierungsformen
   *
   ****************************************************************************************************/
-  $tribeGovernment = government_getGovernmentForTribe($_SESSION['player']->tribe);
+  $tribeGovernment = government_getGovernmentForTribe($tribeTag);
   if (empty($tribeGovernment)) {
     $template->throwError('Fehler beim Auslesen der Regierungsform.');
     return;
@@ -178,6 +189,33 @@ function tribe_getContent($i, $y, &$details) {
     $template->addVar('government_data', array('name' => $tribeGovernment['name'], 'duration' => $tribeGovernment['time']));
   }
 
+  if ($tribeGovernment['governmentID'] == 2) {
+    $choice = leaderChoose_getVoteOf($_SESSION['player']->playerID);
+    $votes  = leaderChoose_getElectionResultsForTribe($tribeTag);
+
+    $possibleChoices = $tribeMembers;
+    $possibleChoices[0] = array ('name' => _('Keiner'), 'playerID' => 0);
+    foreach ($possibleChoices AS $key => $value) {
+      if ($key == $choice) {
+        $possibleChoices[$key]['selected'] = 'selected="selected"';
+      }
+    }
+    ksort($possibleChoices);
+
+    $template->addVars(array(
+      'goverment_choice_list'        => $possibleChoices,
+      'goverment_choice_name'        => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['name'],
+      'goverment_choice_description' => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['description'],
+    ));
+  } else {
+    $template->addVars(array(
+      'choose'      => false,
+      'goverment_choice_message'     =>  _('Ihr habt keinen Einfluss auf die Bestimmung des Stammesanführers.'),
+      'goverment_choice_name'        => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['name'],
+      'goverment_choice_description' => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['description'],
+    ));
+  }
+
   /****************************************************************************************************
   *
   * Auslesen der Stammesnachrichten
@@ -186,7 +224,7 @@ function tribe_getContent($i, $y, &$details) {
   $messagesClass = new Messages;
 
   $messageAry = array();
-  $messages = tribe_getTribeMessages($_SESSION['player']->tribe);
+  $messages = tribe_getTribeMessages($tribeTag);
   if (sizeof($messages)) {
     foreach($messages AS $msgID => $messageData) {
       $messageAry[] = array(
@@ -204,8 +242,8 @@ function tribe_getContent($i, $y, &$details) {
   * Auslesen und Anzeigen der Beziehungen
   *
   ****************************************************************************************************/
-  $relationsAll = relation_getRelationsForTribe($_SESSION['player']->tribe);
-  $relationsWar = relation_getWarTargetsAndFame($_SESSION['player']->tribe);
+  $relationsAll = relation_getRelationsForTribe($tribeTag);
+  $relationsWar = relation_getWarTargetsAndFame($tribeTag);
 
   // Allgemein -> Allgemeines
   // Regierung -> Beziehungen
@@ -268,6 +306,78 @@ function tribe_getContent($i, $y, &$details) {
 
   /****************************************************************************************************
   *
+  * Stammeslager
+  *
+  ****************************************************************************************************/
+  $tribeStorageValues = $tribeStorage = array();
+  foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
+    $tribeStorage[$resource->dbFieldName] = $tribeData[$resource->dbFieldName];
+    $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
+    $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
+    $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
+    $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
+  }
+
+  $lastDonation = tribe_getLastDonationForTribeStorage($_SESSION['player']->playerID);
+  $template->addVars(array(
+      'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
+      'tribeStorageValues'        => $tribeStorageValues, 
+      'donationInterval'          => TRIBE_STORAGE_DONATION_INTERVAL, 
+      'nextDonation'              => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
+  ));
+
+  /****************************************************************************************************
+  *
+  * Einzahlungen
+  *
+  ****************************************************************************************************/
+  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
+  $template->addVar('donations', $donations);
+
+  /****************************************************************************************************
+  *
+  * Stammeswunder
+  *
+  ****************************************************************************************************/
+  $wonders = array();
+  $memberCount = count($tribeMembers);
+  foreach ($GLOBALS['wonderTypeList'] as $wonder) {
+    // exclude nonTribeWonders
+    if (!$wonder->isTribeWonder || $wonder->nodocumentation) {
+      continue;
+    }
+
+    // multiply costs with number of tribe members
+    foreach($wonder->resourceProductionCost as $prodID => $prod) {
+      $wonder->resourceProductionCost[$prodID] = $prod * $memberCount;
+    }
+
+    foreach($wonder->unitProductionCost as $prodID => $prod) {
+      $wonder->unitProductionCost[$prodID] = $prod * $memberCount;
+    }
+    
+    foreach($wonder->buildingProductionCost as $prodID => $prod) {
+      $wonder->buildingProductionCost[$prodID] = $prod * $memberCount;
+    }
+
+    $wonders[$wonder->wonderID] = array(
+      'dbFieldName' => $wonder->wonderID, // Dummy. Wird für die boxCost.tmpl gebraucht.
+      'name'        => $wonder->name,
+      'wonder_id'   => $wonder->wonderID,
+      'description' => $wonder->description
+    );
+    $wonders[$wonder->wonderID] = array_merge($wonders[$wonder->wonderID], parseCost($wonder, $tribeStorage));
+
+    // show the building link ?!
+    if ($wonders[$wonder->wonderID]['notenough']) {
+      $wonders[$wonder->wonderID]['no_build_msg'] = _('Zu wenig Rohstoffe');
+    } else {
+      $wonders[$wonder->wonderID]['build_link'] = true;
+    }
+  }
+
+  /****************************************************************************************************
+  *
   * Übergabe ans Template
   *
   ****************************************************************************************************/
@@ -276,63 +386,125 @@ function tribe_getContent($i, $y, &$details) {
   }
 
   $template->addVars(array(
-    'tribe_name'        => $tribeData['name'],
-    'tribe_tag'         => $tribeData['tag'],
-    'tribe_leader_name' => $tribeData['leaderName'],
-    'tribe_leader_id'   => $tribeData['leaderID'],
-    'tribe_members'     => tribe_getAllMembers($_SESSION['player']->tribe),
+    'tribe_name'          => $tribeData['name'],
+    'tribe_tag'           => $tribeData['tag'],
+    'tribe_avatar'        => $tribeData['avatar'],
+    'tribe_description'   => $tribeData['description'],
+    'tribe_leader_name'   => $tribeData['leaderName'],
+    'tribe_leader_id'     => $tribeData['leaderID'],
+    'tribe_members'       => $tribeMembers,
+    'tribe_members_count' => strval($memberCount),
 
-    'government_name'   => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
+    'government_name'     => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
 
-    'is_auth'           => $userAuth,
+    'is_auth'             => $userAuth,
 
-    'relations'         => (isset($relations)) ? $relations : array(),
-    'relations_ally'    => $relationAlly,
-    'relations_list'    => $GLOBALS['relationList'],
-    'relations_info'    => (isset($relations_info)) ? $relations_info : array(),
-    'relations_war'     => (!empty($relationsWar)) ? true : false,
+    'relations'           => (isset($relations)) ? $relations : array(),
+    'relations_ally'      => $relationAlly,
+    'relations_list'      => $GLOBALS['relationList'],
+    'relations_info'      => (isset($relations_info)) ? $relations_info : array(),
+    'relations_war'       => (!empty($relationsWar)) ? true : false,
 
+    'tribe_action_donate'  => TRIBE_ACTION_DONATE,
+    'tribe_action_leave'   => TRIBE_ACTION_LEAVE,
     'tribe_action_message' => TRIBE_ACTION_MESSAGE,
-    'tribe_action_donate'  => TRIBE_ACTION_DONATE
+    'tribe_action_update'  => TRIBE_ACTION_UPDATE,
+
+    'wonders'             => $wonders,
   ));
 }
 
+function tribe_getContentNoTribe() {
+  global $template;
 
+  $messageText = array (
+   -10 => array('type' => 'error', 'message' => _('Die Stammeszugehörigkeit hat sich erst vor kurzem geändert. Warten Sie, bis die Stammeszugehörigkeit geändert werden darf.')),
+    -9 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen während du in einem Stamm bist.')),
+    -8 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
+    -7 => array('type' => 'error', 'message' => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.')),
+    -6 => array('type' => 'error', 'message' => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.')),
+    -5 => array('type' => 'error', 'message' => _('Der Stamm konnte nicht angelegt werden.')),
+    -4 => array('type' => 'error', 'message' => _('Es gibt schon einen Stamm mit diesem Kürzel.')),
+    -3 => array('type' => 'error', 'message' => _('Du konntest dem Stamm nicht beitreten. Vermutlich bist du schon bei einem anderen Stamm Mitglied.')),
+    -2 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!')),
+    -1 => array('type' => 'error', 'message' => _('Stammeskürzel und Passwort stimmen nicht überein.')),
+     1 => array('type' => 'success', 'message' => _('Du bist dem Stamm beigetreten.')),
+     2 => array('type' => 'success', 'message' => _('Der Stamm wurde erfolgreich angelegt.')),
+  );
 
+  if (!empty($_SESSION['player']->tribe)) {
+    tribe_getContent();
+    return;
+  }
 
-/*
+  // open template
+  $template->setFile('tribe.tmpl');
+  $template->setShowRresource(false);
 
+  // process form data
+  $messageID = 0;
+  $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
       if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))) {
-        $messageID = tribe_processJoin($playerID, Request::getVar('tag', ''), Request::getVar('password', ''));
+        $messageID = tribe_processJoin($_SESSION['player']->playerID, Request::getVar('tag', ''), Request::getVar('password', ''));
         if ($messageID == 1) {
+          $auth = new auth;
           $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
+          page_refreshUserData();
+
+          $template->addVar('status_msg', $messageText[$messageID]);
+          tribe_getContent();
+          return;
         }
       } else {
-        $messageID = tribe_processJoinFailed();
+        $messageID = -8;
       }
     break;
 
     case TRIBE_ACTION_CREATE:
-      if (!empty($_SESSION['player']->tribe)) {
-        $messageID = -15;
-        break;
-      }
-
       if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))){
-        $messageID = tribe_processCreate($playerID, Request::getVar('tag', ''), Request::getVar('password', ''), Request::getVar('restore_rank', 'no') == 'yes');
+        $messageID = tribe_processCreate($_SESSION['player']->playerID, Request::getVar('tag', ''), Request::getVar('password', ''), Request::getVar('restore_rank', 'no') == 'yes');
       } else {
-        $messageID = tribe_processCreateFailed();
+        $messageID = -8;
+      }
+      
+      if ($messageID == 2) {
+        $auth = new auth;
+        $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
+        page_refreshUserData();
+
+        $template->addVar('status_msg', $messageText[$messageID]);
+        tribe_getContent();
+        return;
       }
     break;
-
   }
+
+  /****************************************************************************************************
+  *
+  * Übergabe ans Template
+  *
+  ****************************************************************************************************/
+  if ($messageID && isset($messageText[$messageID])) {
+    $template->addVar('status_msg', $messageText[$messageID]);
+  }
+
+  $template->addVars(array(
+    'tribe_action_create'  => TRIBE_ACTION_CREATE,
+    'tribe_action_join'    => TRIBE_ACTION_JOIN,
+  ));
+}
+
+
+/*
+
+
 
   if ($tribeAction == TRIBE_ACTION_JOIN  || $tribeAction == TRIBE_ACTION_LEAVE || $tribeAction == TRIBE_ACTION_CREATE) {
     // the tribe might have changed
     page_refreshUserData();
-    $tribe = $_SESSION['player']->tribe;
+    $tribe = $tribeTag;
   }
 
     }

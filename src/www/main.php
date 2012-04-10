@@ -327,7 +327,11 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case TRIBE:
-    tribe_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $ownCaves[$caveID], $caveID);
+    if (!empty($_SESSION['player']->tribe)) {
+      tribe_getContent();
+    } else {
+      tribe_getContentNoTribe();
+    }
     break;
 
   case TRIBE_ADMIN:

@@ -37,13 +37,16 @@ dd { margin: 0; }
 .small { width: 660px; margin: 20px auto; }
 .box { padding: 10px 0; }
 .bold { font-weight: bold; }
-.space { padding: 10px; }
+.space { padding: 10px !important; }
+.space_margin { margin: 10px !important; }
+
 .bg0 { background-color: #eee; }
 .bg1 { background-color: #E6EFC2 }
 .text-left { text-align: left !important; }
 .text-right { text-align: right !important; }
 .text-center { text-align: center !important; margin: 0; }
 .text-small { font-size: x-small; }
+tbody tr.nohover:hover td { background: transparent !important; }
 
 .ym-wrapper { width: 100%; min-width: 980px; position: absolute; top: 0px; }
 .ym-col-head1 { min-width: 454px; width: 454px; height: 192px; text-align: left; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_left.png); background-repeat: no-repeat; } /* left column */
@@ -145,7 +148,7 @@ a.text-msg-previous:hover { color: #FFFFFF; text-decoration: underline; }
 .ym-g684-12 { width: 684px; }
 
 /* message boxen */
-.error, .alert, .notice, .success, .info, .tooltip { padding: 0.8em; border: 2px solid #ddd; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
+.error, .alert, .notice, .success, .info, .tooltip { padding: 0.8em; margin-bottom: 10px; border: 2px solid #ddd; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; }
 .error, .alert { background: #fbe3e4; color: #8a1f11; border-color: #fbc2c4; }
 .notice { background: #fff6bf; color: #514721; border-color: #ffd324; }
 .success { background: #e6efc2; color: #264409; border-color: #c6d880; }
@@ -185,4 +188,4 @@ li.tribe_detail_right {float: left; width: 180px; padding: 0; margin: 0 0 5px 0;
 /* Karte */
 .terrain {text-align: center; vertical-align: top; min-width: 60px; background-size: 100% 100% !important; -moz-background-size: 100% 100%; -o-background-size: 100% 100%; -webkit-background-size: 100% 100%; padding: 0px;}
 
-.detail-row:hover td {background: transparent;}
+.detail-row:hover td { background: transparent; }
