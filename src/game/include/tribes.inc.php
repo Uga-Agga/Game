@@ -130,26 +130,27 @@ function government_setGovernment($tag, $governmentID) {
 }
 
 function government_processGovernmentUpdate($tag, $governmentData) {
-
   if (!tribe_isLeader($_SESSION['player']->playerID, $tag)) {
-    return -30;
+    return -1;
   }
 
-  if (!($oldGovernment = government_getGovernmentForTribe($tag))) {
-    return -8;
+  $oldGovernment = government_getGovernmentForTribe($tag);
+  if (empty($oldGovernment)) {
+    return -27;
   }
+
   if (!$oldGovernment['isChangeable']) {
-    return -9;
+    return -28;
   }
 
   if (!government_setGovernment($tag, $governmentData['governmentID'])) {
-    return -8;
+    return -27;
   }
 
   tribe_sendTribeMessage($tag, TRIBE_MESSAGE_LEADER, "Die Regierung wurde geändert",
     "Ihr Stammesanführer hat die Regierung Ihres Stammes auf " . $GLOBALS['governmentList'][$governmentData['governmentID']]['name'] . " geändert.");
 
-  return 4;
+  return 8;
 }
 
 function relation_checkForRelationAttrib($tag_tribe1, $tag_tribe2, $attribArray) {
@@ -925,10 +926,20 @@ function tribe_getAllMembers($tag) {
   return $members;
 }
 
-function tribe_getPlayerList($tag) {
+function tribe_getPlayerList($tag, $getGod=false, $getCaves=false) {
   global $db;
 
-  $sql = $db->prepare("SELECT p.playerID, p.name, p.awards, r.rank, r.average AS points, r.caves, r.religion, r.fame, r.fame as kp
+  $select = '';
+  if ($getGod) {
+    foreach (Config::$gods as $god) {
+      $select .= ', p.' . $god . ' as ' . $god;
+    }
+    foreach (Config::$halfGods as $halfGod) {
+      $select .= ', p.' . $halfGod . ' as ' . $halfGod;
+    }
+  }
+
+  $sql = $db->prepare("SELECT p.playerID, p.name, p.awards, r.rank, r.average AS points, r.caves, r.religion, r.fame, r.fame as kp {$select}
                        FROM ". PLAYER_TABLE ." p
                          LEFT JOIN ".RANKING_TABLE ." r
                            ON r.playerID = p.playerID
@@ -936,9 +947,46 @@ function tribe_getPlayerList($tag) {
                        ORDER BY r.rank ASC");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   if (!$sql->execute()) return array();
+  while ($member = $sql->fetch(PDO::FETCH_ASSOC)) {
+    $return[$member['playerID']] = $member;
 
-  $return = $sql->fetchAll(PDO::FETCH_ASSOC);
+    if ($getCaves) { $return[$member['playerID']]['caves'] = array(); }
+  }
   $sql->closeCursor();
+
+  if ($getGod) {
+    foreach ($GLOBALS['scienceTypeList'] AS $value)
+    {
+      $ScienceFieldsName[$value->dbFieldName] = $value->name;
+    }
+
+    foreach ($return as $id => $data) {
+      $return[$id]['god'] = 'keinen';
+      $return[$id]['halfgod'] = 'keinen';
+
+      foreach (Config::$gods as $god) {
+        if ($return[$id][$god] > 0) {
+          $return[$id]['god'] = $ScienceFieldsName[$god];
+        }
+      }
+      foreach (Config::$halfGods as $halfGod) {
+        if ($return[$id][$halfGod] > 0) {
+          $return[$id]['halfGod'] = $ScienceFieldsName[$halfGod];
+        }
+      }
+    }
+  }
+
+  if ($getCaves) {
+    $sql = $db->prepare("SELECT caveID, xCoord, yCoord, name, playerID
+                         FROM ". CAVE_TABLE ."
+                         WHERE playerID IN ('" . implode("', '", array_keys($return)) . "')");
+    if (!$sql->execute()) return array();
+    while ($caves = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $return[$caves['playerID']]['caves'][] = $caves;
+    }
+    $sql->closeCursor();
+  }
 
   return $return;
 }
@@ -1352,8 +1400,7 @@ function tribe_deleteTribe($tag, $FORCE = 0) {
 function tribe_recalcLeader($tag, $oldLeaderID) {
 
   // find the new leader
-  if(!($government =
-       government_getGovernmentForTribe($tag))) {
+  if(!($government = government_getGovernmentForTribe($tag))) {
     return -1;
   }
 
