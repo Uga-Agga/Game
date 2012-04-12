@@ -22,12 +22,22 @@ define('TRIBE_ACTION_UPDATE',        6);
 define('TRIBE_ACTION_RELATION',      7);
 define('TRIBE_ACTION_GOVERMENT',     8);
 define('TRIBE_ACTION_CHOOSE_LEADER', 9);
+define('TRIBE_ACTION_AUTH',         10);
+define('TRIBE_ACTION_WONDER',       11);
 
-function tribe_getContent() {
+function tribe_getContent($caveID, &$details) {
   global $template;
 
   // messages
   $messageText = array (
+    -37 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf andere Stämme gewundert werden!')),
+    -36 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf den eigenen Stamm gewundert werden!')),
+    -35 => array('type' => 'error', 'message' => _('Der gegnerische Stamm hat nicht genug Mitglieder um Stammeswunder bekommen zu können!')),
+    -34 => array('type' => 'error', 'message' => _('Ihr Stamm hat nicht genug Mitglieder um Stammeswunder sprechen zu können!')),
+    -33 => array('type' => 'error', 'message' => _('Beim erbitten des Stammeswunders ist ein Problem aufgetreten!')),
+    -32 => array('type' => 'error', 'message' => _('Das Stammeswunder konnte nicht gewirkt werden.')),
+    -31 => array('type' => 'error', 'message' => _('Die Rechte konnten nicht angewandt werden.')),
+    -30 => array('type' => 'error', 'message' => _('Fehler in den Formulardaten!')),
     -29 => array('type' => 'error', 'message' => _('Die Stimme konnte wegen eines Fehlers nicht abgegeben werden.')),
     -28 => array('type' => 'error', 'message' => _('Die Regierung konnte nicht geändert werden, weil sie erst vor kurzem geändert wurde.')),
     -27 => array('type' => 'error', 'message' => _('Die Regierung konnte aufgrund eines Fehlers nicht aktualisiert werden')),
@@ -65,7 +75,10 @@ function tribe_getContent() {
       6 => array('type' => 'error', 'message' =>  _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.')),
       7 => array('type' => 'success', 'message' => _('Die Beziehung zu dem anderen Stamm wurde erfolgreich geändert.')),
       8 => array('type' => 'success', 'message' => _('Die Regierung des Stammes wurde erfolgreich geändert.')),
-      9 => array('type' => 'success', 'message' => _('Die Stimme wurde erfolgreich gezählt.'))
+      9 => array('type' => 'success', 'message' => _('Die Stimme wurde erfolgreich gezählt.')),
+     10 => array('type' => 'success', 'message' => _('Der Spieler hat seine Rechte erfolgreich erhalten.')),
+     11 => array('type' => 'info', 'message' => _('Die Götter haben Ihr Flehen nicht erhört! Die eingesetzten Opfergaben sind natürlich dennoch verloren. Mehr Glück beim nächsten Mal!')),
+     12 => array('type' => 'success', 'message' => _('Das Erflehen des Wunders scheint Erfolg zu haben.')),
   );
 
 /*
@@ -121,6 +134,36 @@ function tribe_getContent() {
   switch ($tribeAction) {
 /****************************************************************************************************
 *
+* Spielerrechte Ändern
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_AUTH: // msg ok
+      if (!$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      if (!Request::isPost('player_id', true)) {
+        $messageID = -30;
+        break;
+      }
+
+      $authID = 0;
+      foreach ($auth->perm['tribe'] as $type => $data) {
+        $authID = $authID | Request::getVar($type, 0);
+      }
+
+      if ($auth->setPermission('tribe', $authID, Request::getVar('player_id', 0))) {
+        $messageID = 10;
+      } else {
+        $messageID = -31;
+      }
+
+      $tribeMembers = tribe_getAllMembers($tribeTag);
+    break;
+
+/****************************************************************************************************
+*
 * Auswahl des Anführers
 *
 ****************************************************************************************************/
@@ -136,7 +179,9 @@ function tribe_getContent() {
 ****************************************************************************************************/
     case TRIBE_ACTION_DONATE: // msg ok
       $value = Request::getVar('value', array('' => ''));
-      $messageID = tribe_donateResources($value, $caveID, $caveData);
+      $messageID = tribe_donateResources($value, $caveID, $details);
+
+      $tribeData = tribe_getTribeByTag($tribeTag);
     break;
 
 /****************************************************************************************************
@@ -144,7 +189,7 @@ function tribe_getContent() {
 * Regierungstyp ändern
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_GOVERMENT:
+    case TRIBE_ACTION_GOVERMENT: // msg ok
       if (!$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -246,6 +291,33 @@ function tribe_getContent() {
 
       $messageID = tribe_processAdminUpdate($tribeTag, $postData);
       $tribeData = tribe_getTribeByTag($tribeTag);
+    break;
+
+/****************************************************************************************************
+*
+* Stammeswunder?
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_WONDER: // msg ok
+      if (!$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $wonderID = Request::getVar('wonderID', -1);
+      $tribeName = Request::getVar('TribeName', '');
+
+      if ($wonderID != -1) {
+        if (!empty($tribeName)) {
+          $messageID = wonder_processTribeWonder($caveID, $wonderID, $tribeTag, $tribeName);
+          $tribeData = tribe_getTribeByTag($tribeTag);
+        } else {
+          $messageID = -15;
+        }
+      } else {
+        $messageID = -32;
+        break;
+      }
     break;
   }
 
@@ -499,6 +571,7 @@ function tribe_getContent() {
     'relations_info'      => $relations_info,
     'relations_war'       => (!empty($relationsWar)) ? true : false,
 
+    'tribe_action_auth'      => TRIBE_ACTION_AUTH,
     'tribe_action_choose_leader' => TRIBE_ACTION_CHOOSE_LEADER,
     'tribe_action_donate'    => TRIBE_ACTION_DONATE,
     'tribe_action_goverment' => TRIBE_ACTION_GOVERMENT,
@@ -506,6 +579,7 @@ function tribe_getContent() {
     'tribe_action_message'   => TRIBE_ACTION_MESSAGE,
     'tribe_action_relation'  => TRIBE_ACTION_RELATION,
     'tribe_action_update'    => TRIBE_ACTION_UPDATE,
+    'tribe_action_wonder'    => TRIBE_ACTION_WONDER,
 
     'wonders'             => $wonders,
   ));

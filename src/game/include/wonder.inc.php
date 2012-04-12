@@ -211,54 +211,56 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   return 1;
 }
 
-function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tribe) {
+function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTribe) {
   global $db;
-  
+
   // check if wonder exists and is TribeWonder
   if (isset($GLOBALS['wonderTypeList'][$wonderID]) || !$wonder->isTribeWonder) {
     $wonder = $GLOBALS['wonderTypeList'][$wonderID];
   } else {
-    return -35;
+    return -33;
   }
-  
+
   // check if tribes exist
-  $targetTribeData = tribe_getTribeByTag($target_tribe);
-  if (!$targetTribeData || !tribe_getTribeByTag($caster_tribe)) {
-    return -36;
+  $targetTribeData = tribe_getTribeByTag($targetTribe);
+  $casterTribeData = tribe_getTribeByTag($casterTribe);
+  if (!$targetTribeData || !$casterTribeData) {
+    return -15;
   }
-  
+
   // check if tribe is valid
   if (!$targetTribeData['valid']) {
-    return -39;
-  }
-  
-  // check if caster tribe ist valid
-  if (!tribe_)
-  
-  // check if player is leader
-  if (!tribe_isLeader($_SESSION['player']->playerID, $caster_tribe)) {
     return -34;
   }
-  
-  // check target
-  if ($wonder->target == "own" && $caster_tribe != $target_tribe) {
-    return -37;
-  }
-  
-  if ($wonder->target == "other" && $caster_tribe == $target_tribe) {
-    return -38;
-  }
-  
-  // take wonder Costs from TribeStorage
-  $memberNumber = tribe_getNumberOfMembers($caster_tribe);
-  if (!processProductionCost($wonder, 0, NULL, $memberNumber, true)) {
+
+  // check if caster tribe ist valid
+  if (!$casterTribeData['valid']) {
     return -35;
   }
-  
-  
+
+  // check if player is leader
+  if (!tribe_isLeader($_SESSION['player']->playerID, $casterTribe)) {
+    return -1;
+  }
+
+  // check target
+  if ($wonder->target == "own" && $casterTribe != $targetTribe) {
+    return -36;
+  }
+
+  if ($wonder->target == "other" && $casterTribe == $targetTribe) {
+    return -37;
+  }
+
+  // take wonder Costs from TribeStorage
+  $memberNumber = tribe_getNumberOfMembers($casterTribe);
+  if (!processProductionCost($wonder, 0, NULL, $memberNumber, true)) {
+    return -33;
+  }
+
   // does the wonder fail?
   if (((double)rand() / (double)getRandMax()) > $wonder->chance) {
-    return 6;          // wonder did fail
+    return 11; // wonder did fail
   }
 
   // schedule the wonder's impacts
@@ -266,15 +268,14 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
   // create a random factor between -0.3 and +0.3
   $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
   // now calculate the delayDelta depending on the first impact's delay
-  $delayDelta =
-    $wonder->impactList[0]['delay'] * $delayRandFactor;
-  
+  $delayDelta = $wonder->impactList[0]['delay'] * $delayRandFactor;
+
   // get targets
-  $targets = tribe_getTribeWonderTargets($target_tribe);
+  $targets = tribe_getTribeWonderTargets($targetTribe);
   if (!$targets || sizeof($targets) == 0) {
-    return -35;
+    return -33;
   }
-  
+
   $now = time();
   // loop over targets
   foreach ($targets as $target) {
@@ -296,16 +297,12 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
       $sql->execute();
     } // end foreach impactList
   } // end foreach target
-  
-  
+
   // send caster messages
   $messageClass = new Messages;
-  $sourceMessage = "Sie haben auf den Stamm \"$target_tribe\" ein Stammeswunder ".
-    $wonder->name." erwirkt.";
-  $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9,
-           "Stammeswunder erwirkt auf \"$target_tribe\"",
-           $sourceMessage);
-  
+  $sourceMessage = "Sie haben auf den Stamm \"$targetTribe\" ein Stammeswunder ". $wonder->name." erwirkt.";
+  $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, "Stammeswunder erwirkt auf \"$targetTribe\"", $sourceMessage);
+
   // send target messages
   $targetPlayersArray = array();
   foreach ($targets as $target) {
@@ -313,16 +310,13 @@ function wonder_processTribeWonder($caveID, $wonderID, $caster_tribe, $target_tr
       $targetPlayersArray[$target['playerID']] = $target;
     }
   }
-  
+
   foreach($targetPlayersArray as $target) {
-    $targetMessage = "Der Stamm \"$caster_tribe\" hat ein Stammeswunder auf deine Höhlen gewirkt";
-    $messageClass->sendSystemMessage($target['playerID'], 9,
-             "Wunder!",
-             $targetMessage);
+    $targetMessage = "Der Stamm \"$casterTribe\" hat ein Stammeswunder auf deine Höhlen gewirkt";
+    $messageClass->sendSystemMessage($target['playerID'], 9, "Wunder!", $targetMessage);
   }
-  
-  return -27;
-  
+
+  return 12;
 }
 
 ?>

@@ -145,7 +145,7 @@
                           {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
                         </select>
 
-                        <input type="submit" value="Go" name="tribeUnitMovement"/>
+                        <input type="submit" value="Go" name="tribeUnitMovement" />
                         </div>
                       </form>
                     </td>
@@ -205,7 +205,7 @@
           {% endif %}
 
           {% if is_auth.kick_member or is_auth.isLeader %}
-          <h5 class="hide_status_msg">Spielerverwaltung</h5>
+          <h5 id="changeAuth" class="hide_status_msg">Spielerverwaltung</h5>
           <div class="tabbody2">
             <table>
               <thead>
@@ -226,7 +226,7 @@
                   {% if is_auth.isLeader %}
                   <tr id="player_{{ item.playerID }}_content" class="nohover" style="display: none;">
                     <td colspan="3" class="text-left">
-                      <form class="ym-form ym-columnar" id="authupdate" method="post" action="main.php?modus={{ tribe_admin_link }}">
+                      <form class="ym-form ym-columnar" id="authupdate" method="post" action="main.php?modus={{ tribe_link }}#changeAuth">
                         <div class="ym-fbox-check">
                           <input type="checkbox" name="msg_tribe" id="msg_tribe" style="margin-left: 0;" value="1" {% if item.tribeAuth.msg_tribe %}checked="checked"{% endif %} />
                           <label for="msg_tribe">Stammesnachrichten schreiben</label>
@@ -249,7 +249,7 @@
                         </div>
 
                         <div class="ym-fbox-button text-center">
-                          <input type="hidden" name="action" value="changeAuth" />
+                          <input type="hidden" name="action" value="{{ tribe_action_auth }}" />
                           <input type="hidden" name="player_id" value="{{ item.playerID }}" />
                           <input type="submit" class="ym-button" value="Speichern" id="submit4" name="submit"/>
                           <input type="reset" class="ym-button" value="Reset" id="reset4" name="reset" />
@@ -444,9 +444,9 @@
           </div>
 
           {% if is_auth.msg_tribe or is_auth.msg_public or is_auth.isLeader %}
-          <h5 class="hide_status_msg">Neue Nachricht</h5>
+          <h5 id="sendMessage" class="hide_status_msg">Neue Nachricht</h5>
           <div class="tabbody2">
-            <form class="ym-form" id="tribeSendMsg" method="post" action="main.php?modus={{ tribe_link }}">
+            <form class="ym-form" id="tribeSendMsg" method="post" action="main.php?modus={{ tribe_link }}#sendMessage">
               <div class="ym-fbox-text">
                 <label for="messageText">Nachricht an alle Mitglieder</label>
                 <textarea name="messageText" id="messageText" cols="60" rows="8"></textarea>
@@ -465,7 +465,7 @@
 
       <h4 class="hide_status_msg">Wunder</h4>
       <div class="tabbody">
-        <div id="tribeWonder" class="jquery_tabs nav2">
+        <div id="tribeStorageWonder" class="jquery_tabs nav2">
           <h5 class="hide_status_msg">Lager</h5>
           <div class="tabbody2">
             <div class="notice text-center space_margin">
@@ -542,7 +542,7 @@
           </div>
 
           {% if is_auth.isLeader %}
-          <h5 class="hide_status_msg">Wunder</h5>
+          <h5 id="tribeWonder" class="hide_status_msg">Wunder</h5>
           <div class="tabbody2">
             {% if wonders %}
               <table>
@@ -559,18 +559,14 @@
                       </td>
                       <td class="text-right" style="vertical-align: center;">
                         {% if item.build_link %}
-                        <form action="main.php?modus={{ tribe_admin_link }}" method="post">
+                        <form id="tribeWonderForm" method="post" action="main.php?modus={{ tribe_link }}#tribeWonder">
                           <div id="wonder">
-                            <input type="hidden" name="action" value="tribeWonder" />
+                            <input type="hidden" name="action" value="{{ tribe_action_wonder }}" />
                             <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
                             <input type="hidden" name="caveID" value="{{ cave_id }}" />
                             <ul>
+                              <li class="text-right" style="float: right;">Name des Stammes: <input type="text" name="TribeName" size="10" maxlength="32" /></li>
                               <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
-                              <li class="text-left" style="float: right;">
-                                <ul class="clean_list" style="width: 300px;">
-                                  <li>Name des Stammes: <input type="text" name="TribeName" size="10" maxlength="32" /></li>
-                                </ul>
-                              </li>
                             </ul>
                           </div>
                         </form>

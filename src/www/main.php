@@ -328,14 +328,10 @@ switch ($modus) {
 
   case TRIBE:
     if (!empty($_SESSION['player']->tribe)) {
-      tribe_getContent();
+      tribe_getContent($caveID, $ownCaves[$caveID]);
     } else {
       tribe_getContentNoTribe();
     }
-    break;
-
-  case TRIBE_ADMIN:
-    tribeAdmin_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $caveID);
     break;
 
   case TRIBE_RELATION_LIST:
