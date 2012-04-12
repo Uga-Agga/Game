@@ -22,28 +22,33 @@
   <div class="ua-box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
   <div class="ua-box-content">
     <div id="tribeAll" class="jquery_tabs nav1">
-      <h4 class="hide_status_msg tipps" title="mal testen">Allgemein</h4>
+      <h4 class="hide_status_msg tipps" title="mal testen">Mein Stamm</h4>
       <div class="tabbody">
         <div id="tribeAllSub" class="jquery_tabs nav2">
           <h5 class="hide_status_msg">Allgemeines</h5>
           <div class="tabbody2">
-            <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
+            {% if tribe_avatar %}
+              <div style="text-align: center; padding: 10px;">
+                <img src="{{ tribe_avatar.path }}" width="{{ tribe_avatar.width }}" height="{{ tribe_avatar.height }}" alt="Stammesbanner" />
+              </div>
+            {% endif %}
+            <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px;">
               <ul>
                 <li class="bold text-center" style="padding-bottom: 10px;">Informationen:</li>
 
                 <li class="tribe_detail_left">Anführer:</li>
                 <li class="tribe_detail_right">{% if tribe_leader_name %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_leader_id }}">{{ tribe_leader_name }}</a>{% else %}Zur Zeit keinen Anführer.{% endif %}</li>
-                <li class="clr"><br class="clr" /></li>
+                <li class="clr"></li>
 
                 <li class="tribe_detail_left">Regierung:</li>
                 <li class="tribe_detail_right"><a href="http://game.uga-agga.de/rules/?modus=governments" onclick="open_page(this.href, 1); return false;">{{ government_name }}</a></li>
-                <li class="clr"><br class="clr" /></li>
+                <li class="clr"></li>
 
                 <li class="text-center"><a href="main.php?modus={{ tribe_player_list_link }}&amp;tag={{ tribe_tag|url_encode }}">Mitgliederliste</a></li>
               </ul>
             </div>
 
-            <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
+            <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px;">
               <ul>
                 <li class="text-center bold" style="padding-bottom: 10px;">Verbündete Stämme:</li>
                 {% if relations_ally %}
@@ -60,7 +65,7 @@
             <div style="clear: both;"></div>
 
             <div class="space">
-              <table class="bordertable">
+              <table>
                 <thead>
                 <tr>
                   <th class="text-left">Stamm</th>
@@ -70,9 +75,28 @@
                 </thead>
                 <tbody>
                   {% if relations_war %}
+                    {% for item in relations_info %}
+                      {% if item.war %}
+                      {% set bgID = (bgID+1)%2 %}
+                        <tr class="bg{{ bgID }}">
+                        <td class="text-left">{{ item.tag }}</td>
+                        <td class="text-left">
+                          Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                          {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                        </td>
+                        <td class="text-right">
+                          {% if item.war %}
+                            Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                            {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
+                          {% endif %}
+                        </td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
                     {% for item in relations %}
                       {% if item.war %}
-                      <tr>
+                      {% set bgID = (bgID+1)%2 %}
+                      <tr class="bg{{ bgID }}">
                         <td class="text-left">{{ item.tag }}</td>
                         <td class="text-left">
                           Ihre: <span class="bold">{{ item.their_relation }}</span><br />
@@ -104,7 +128,7 @@
                 <th class="text-left">Name</th>
                 <th>Gott</th>
                 <th>Halbgott</th>
-                <th class="text-center" style="min-width: 100px;">Höhlenliste</th>
+                <th class="text-center" style="width: 65px; white-space: nowrap;">Höhlenliste</th>
               </tr>
               </thead>
               <tbody>
@@ -114,19 +138,22 @@
                     <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
                     <td>{{ item.god }}</td>
                     <td>{{ item.halfgod }}</td>
-                    <td class="text-center" style="min-width: 100px;">
+                    <td class="text-center" style="width: 65px;">
                       <form method="post" action="main.php?modus={{ unit_movement_link }}">
+                        <div style="white-space: nowrap;">
                         <select name="targetCaveID">
                           {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
                         </select>
 
                         <input type="submit" value="Go" name="tribeUnitMovement"/>
+                        </div>
                       </form>
                     </td>
                   </tr>
                 {% else %}
                   <tr class="bg0"><td class="last text-center" colspan="3">Im Stamm befinden sich irgendwie keine Spieler Oo. (sollte nicht vorkommen xD)</td></tr>
                 {% endfor %}
+                {% set bgID = 0 %}
               </tbody>
             </table>
           </div>
@@ -161,7 +188,7 @@
               </div>
               <div class="ym-fbox-text">
                 <label for="tribe_avatar">Avatar URL</label>
-                <input type="text" name="tribe_avatar" id="tribe_avatar" value="{{ tribe_avatar }}" maxlength="90" />
+                <input type="text" name="tribe_avatar" id="tribe_avatar" value="{{ tribe_avatar.path }}" maxlength="90" />
               </div>
               <div class="ym-fbox-text">
                 <label for="tribe_description">Beschreibung</label>
@@ -232,6 +259,7 @@
                   </tr>
                   {% endif %}
                 {% endfor %}
+                {% set bgID = 0 %}
               </tbody>
             </table>
           </div>
@@ -286,11 +314,11 @@
                           Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
                         {% endif %}
                         {% if is_auth.change_relation or is_auth.isLeader %}
-                        <form method="post" action="main.php?modus={{ tribe_admin_link }}">
+                        <form method="post" action="main.php?modus={{ tribe_link }}">
                           <p><select name="relationData[relationID]">
-                            {% for item2 in relation_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
+                            {% for item2 in relations_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
                           </select>
-                          <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="updateRelation" /><input type="submit" value="Go" /></p>
+                          <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" /><input type="submit" value="Go" /></p>
                           {% if item.isForcePossible %}
                             <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
                           {% endif %}
@@ -362,7 +390,7 @@
             {% endif %}
           </div>
 
-          <h5 class="hide_status_msg">Anführer wählen</h5>
+          <h5 class="hide_status_msg" id="voteLeader">Anführer wählen</h5>
           <div class="tabbody2">
             {% if goverment_choice_list %}
               <div class="space text-center">
@@ -370,16 +398,16 @@
                 {{ goverment_choice_description|raw }}
               </div>
 
-              <form class="ym-form ym-columnar" id="tribeChooseLeader" method="post" action="main.php?modus={{ tribe_link }}">
+              <form class="ym-form ym-columnar" id="tribeChooseLeaderForm" method="post" action="main.php?modus={{ tribe_link }}#voteLeader">
                 <div class="ym-fbox-select">
                   <label for="relationData_id">Anführer:</label>
-                  <select name="chooseLeader[leaderID]" id="chooseLeader_id" size="1">
+                  <select name="chooseLeaderID" id="chooseLeader_id" size="1">
                     {% for item in goverment_choice_list %}<option value="{{ item.playerID }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
                   </select>
                 </div>
 
                 <div class="ym-fbox-button text-center">
-                  <input type="hidden" name="action" value="chooseLeader" />
+                  <input type="hidden" name="action" value="{{ tribe_action_choose_leader }}" />
                   <input type="submit" class="ym-button" value="Anführer wählen" id="submit5" name="submit"/>
                 </div>
               </form>
@@ -486,27 +514,31 @@
 
           <h5 class="hide_status_msg">Einzahlungen</h5>
           <div class="tabbody2">
-            <table>
-              <thead>
-                <tr>
-                  <th>Spieler</th>
-                  {% for item in tribeStorageValues %}
-                  <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
+            {% if donations %}
+              <table>
+                <thead>
+                  <tr>
+                    <th>Spieler</th>
+                    {% for item in tribeStorageValues %}
+                    <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for donation in donations %}
+                  {% set bgID = (bgID+1)%2 %}
+                  <tr class="bg{{ bgID }}">
+                    {% for item in donation %}
+                    <td>{{ item }}</td>
+                    {% endfor %}
+                  </tr>
                   {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for donation in donations %}
-                {% set bgID = (bgID+1)%2 %}
-                <tr class="bg{{ bgID }}">
-                  {% for item in donation %}
-                  <td>{{ item }}</td>
-                  {% endfor %}
-                </tr>
-                {% endfor %}
-                {% set bgID = 0 %}
-              </tbody>
-            </table>
+                  {% set bgID = 0 %}
+                </tbody>
+              </table>
+            {% else %}
+              <div class="space text-center">Bisher hat noch kein Spieler etwas ins Lager eingezahlt.</div>
+            {% endif %}
           </div>
 
           {% if is_auth.isLeader %}

@@ -358,10 +358,6 @@ switch ($modus) {
     tribeDelete_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $confirm);
     break;
 
-  case TRIBE_CHOOSE_LEADER:
-    tribeChooseLeader_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe);
-    break;
-
   /////////////////////////////////////////////////////////////////////////////
   // FRAGEBÖGEN                                                              //
   /////////////////////////////////////////////////////////////////////////////

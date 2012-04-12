@@ -10,8 +10,6 @@
  * the License, or (at your option) any later version.
  */
 
-// TODO: Wie sollen wir diese Datei I18n? Die Nachrichten gehen ja an den (potentiell gemischtsprachlichen) Stamm...
-
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
@@ -21,20 +19,20 @@ DEFINE("TRIBE_MESSAGE_MEMBER",   3);
 DEFINE("TRIBE_MESSAGE_RELATION", 4);
 DEFINE("TRIBE_MESSAGE_INFO",    10);
 
-function leaderChoose_processChoiceUpdate($voterID, $playerID, $tribe) {
+function leaderChoose_processChoiceUpdate($playerID, $voterID, $tag) {
   global $db;
 
   if ($playerID == 0) {
     if (!leaderChoose_deleteChoiceForPlayer($voterID)) {
-      return -1;
+      return -29;
     }
-    return 1;
+    return 9;
   }
 
   $player = new Player(getPlayerByID($playerID));
 
-  if (!$player || strcasecmp($player->tribe, $tribe)) {
-    return -1;
+  if (!$player || strcasecmp($player->tribe, $tag)) {
+    return -29;
   } else {
     $sql = $db->prepare("REPLACE ". ELECTION_TABLE." 
                          SET voterID = :voterID, 
@@ -42,11 +40,12 @@ function leaderChoose_processChoiceUpdate($voterID, $playerID, $tribe) {
                            tribe = :tribe");
     $sql->bindValue('voterID', $voterID, PDO::PARAM_INT);
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-    $sql->bindValue('tribe', $tribe, PDO::PARAM_STR);
+    $sql->bindValue('tribe', $tag, PDO::PARAM_STR);
     if (!$sql->execute() || $sql->rowCount() == 0) {
-      return -1;
+      return -29;
     }
-    return 1;
+
+    return 9;
   }
 }
 
@@ -384,7 +383,7 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
 
   tribe_generateMapStylesheet();
 
-  return 3;
+  return 7;
 }
 
 function relation_leaveTribeAllowed($tag) {
@@ -1051,8 +1050,7 @@ function tribe_getTribeByTag($tag) {
   }
 
   $result['description'] = str_replace('<br />', '\n', $result['description']);
-  $avatar = @unserialize($result['avatar']);
-  $result['avatar'] = $avatar['path'];
+  $result['avatar'] = @unserialize($result['avatar']);
 
   return $result;
 }

@@ -1,10 +1,9 @@
 /* Übschreiben der yaml settings */
 table { margin: 0; }
 table.narrow { margin: 4px 4px 0 0; }
+thead th { background: #C2CF90 !important; }
 tbody tr:hover th { background: transparent; }
 th, td { padding: 0.4em 0.5em; }
-
-.bordertable thead th { background: #C2CF90; }
 
 a { color: #000000; }
 a:hover, a:focus { background-color: transparent; color: #000000; text-decoration: underline; }

@@ -177,7 +177,6 @@ $require_files[TRIBE_ADMIN]                 = array('tribeAdmin.html.php', 'trib
 $require_files[TRIBE_DELETE]                = array('tribeDelete.html.php', 'tribes.inc.php', 'auth.inc.php', 'rules/relation.list.php', 'message.inc.php');
 $require_files[TRIBE_DETAIL]                = array('tribeDetail.html.php', 'tribes.inc.php', 'ranking.inc.php', 'messageParser.inc.php');
 $require_files[TRIBE_HISTORY]               = array('tribeHistory.html.php', 'tribes.inc.php');
-$require_files[TRIBE_CHOOSE_LEADER]         = array('tribeChooseLeader.html.php', 'rules/government.rules.php', 'tribes.inc.php');
 $require_files[TRIBE_PLAYER_LIST]           = array('tribePlayerList.html.php', 'tribes.inc.php');
 $require_files[TRIBE_RELATION_LIST]         = array('tribeRelationList.html.php', 'tribes.inc.php', 'rules/relation.list.php');
 $require_files[UNIT_BUILDER]                = array('unit.html.php', 'unit.inc.php');
