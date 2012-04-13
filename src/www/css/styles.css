@@ -48,11 +48,11 @@ dd { margin: 0; }
 tbody tr.nohover:hover td { background: transparent !important; }
 
 .ym-wrapper { width: 100%; min-width: 980px; position: absolute; top: 0px; }
-.ym-col-head1 { min-width: 454px; width: 454px; height: 192px; text-align: left; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_left.png); background-repeat: no-repeat; } /* left column */
-.ym-col-head2 { min-width: 446px; width: 446px; height: 192px; text-align: right; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/header_right.png); background-repeat: no-repeat; } /* right column */
+.ym-col-head1 { min-width: 454px; width: 454px; height: 192px; text-align: left; background-repeat: no-repeat; } /* left column */
+.ym-col-head2 { min-width: 446px; width: 446px; height: 192px; text-align: right; background-repeat: no-repeat; } /* right column */
 
 .ua-header-menu { z-index: 1; position: relative; width: 100%; min-width: 980px;  text-align: center; } /* center column */
-  .ua-head-menu { width: 500px; height: 54px; margin: 0 auto; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
+  .ua-head-menu { width: 500px; height: 54px; margin: 0 auto; background-repeat: no-repeat; }
     #ua-head-menu-item { padding: 10px; }
     #ua-head-menu-item div.jqDockWrap { margin: 0 auto; }
     #ua-head-menu-item div.jqDock { cursor:pointer; }
@@ -66,7 +66,7 @@ tbody tr.nohover:hover td { background: transparent !important; }
 .ym-col-footer2 { text-align: center; }
 .ym-col-footer3 { text-align: right; }
 
-.ua-box { background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important;}
+.ua-box { background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important;}
 .ua-box-header { color: #FFFFFF; line-height: 20px; text-align: center; font-weight: bold; }
 .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
 .ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
@@ -161,8 +161,9 @@ a.text-msg-previous:hover { color: #FFFFFF; text-decoration: underline; }
 
 /* tutroial */
 .ua-tutorial { position: absolute; top: 0px; z-index: 2; }
-.ua-tutorial-box { z-index: 2; width: 420px; background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px;}
-.ua-tutorial-button { z-index: 2; }
+.ua-tutorial-box { z-index: 2; width: 420px; background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px;}
+.ua-tutorial-button { z-index: 2; height: 20px; width: 120px; font-weight: bold; color: #FFFFFF; border: 1px solid #FFFFFF; background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; position: relative; left: 150px; cursor: pointer; text-align: center; }
+
 
 /* linearization for grid module */
 .linearize-level-1,

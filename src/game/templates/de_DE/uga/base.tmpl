@@ -28,9 +28,9 @@
     <link rel="stylesheet" href="yaml/screen/typography.css" type="text/css"/>
     <link rel="stylesheet" href="yaml/forms/gray-theme.css" type="text/css"/>
     <link rel="stylesheet" href="yaml/add-ons/accessible-tabs/tabs.css" type="text/css"/>
-    <link rel="stylesheet" href="css/jquery-ui-1.8.18.custom.css" type="text/css" />
-    <link rel="stylesheet" href="css/styles.css" type="text/css"/>
-    <!--[if lte IE 8]><link rel="stylesheet" href="css/ie.css" type="text/css"/><![endif]-->
+    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.8.18.custom.css" type="text/css" />
+    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/styles.css" type="text/css"/>
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/ie.css" type="text/css"/><![endif]-->
 
     <!-- javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -42,15 +42,17 @@
     <script type="text/javascript" src="js/ua.js"></script>
 
     <style type="text/css">
-      .box {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
+      .ua-box {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
       .error, .alert, .notice, .success, .info, .tooltip { behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);}
       .msg_read0 a {background-image: url('http://game.uga-agga.de/gfx/de_DE/t_uga/messages/mail.gif');}
 
-      .ua-tutorial-button { height: 20px; width: 120px; font-weight: bold; color: #FFFFFF; border: 1px solid #FFFFFF;
-        background-image: url({{ gfx }}/de_DE/t_uga/grass.png);
-        background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px;
-        behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);
-        position: relative; left: 150px; cursor: pointer; text-align: center; }
+      .ua-tutorial-box { background-image: url(http://gfx.uga-agga.de//de_DE/t_uga/grass.png); behavior: url(http://gfx.uga-agga.de//de_DE/t_uga/PIE.htc); }
+      .ua-tutorial-button { background-image: url({{ gfx }}/de_DE/t_uga/grass.png); behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc); }
+
+      .ym-col-head1 { background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); }
+      .ym-col-head2 { background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); }
+      
+      .ua-head-menu { background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); }
     </style>
 
     <script type="text/javascript">
