@@ -189,7 +189,7 @@ function loadMaxRes(resNr, resMax){
 var caveBookmarks = new Array();
 
 function disable_to(){
-  var r = document.getElementById("unitMoving").bookmarks_cave;
+  var r = document.getElementById("unitMoving").targetCaveID;
   var flag = false;
   for (var i = 0; i < r.length; i++)
     if (r[i].selected && r[i].value != -1){
@@ -369,7 +369,7 @@ function hideWMTT() {
             <li>
               <div class="ym-fbox-select">
                 <label for="bookmarks_cave"><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Show">Höhlenliste:</a></label>
-                <select name="bookmarks_cave" id="bookmarks_cave" size="1" onchange="disable_to(); return true;">
+                <select name="targetCaveID" id="targetCaveID" size="1" onchange="disable_to(); return true;">
                   <option value="-1" selected="selected">Bitte wählen</option>
                   {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
                 </select>
