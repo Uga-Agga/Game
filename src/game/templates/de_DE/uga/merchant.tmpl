@@ -27,35 +27,42 @@
   Vorbeischauen lohnt auf jeden Fall!
 </div>
 
-{% for cat in trades %}
 <div class="ua-box">
-  <div class="ua-box-header">{{ cat.name }}</div>
+  <div class="ua-box-header">Verteidigungsanlagen</div>
   <div class="ua-box-content">
-    <table>
-      <tbody>
-      {% for item in cat.data %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td>
-            <dl>
-              <dt><span class="bold">{{ item.name }}</span></dt>
-              <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
-             {% if item.description %}<dd style="padding-left: 10px">{{ item.description|raw }}</dd>{% endif %}
-            </dl>
-          </td>
-          <td class="ua-td-build">
-            {% if item.build_link %}
-              <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Kaufen" title="Kaufen" /></a>
-            {% else %}
-              <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
-            {% endif %}
-          </td>
-        </tr>
+    <div id="merchant" class="jquery_tabs nav1">
+      {% for cat in trades %}
+        <h4>{{ cat.name }}</h4>
+        <div class="tabbody">
+          <table>
+            <tbody>
+            {% for item in cat.data %}
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
+                <td>
+                  <dl>
+                    <dt><span class="bold">{{ item.name }}</span></dt>
+                    <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
+                   {% if item.description %}<dd style="padding-left: 10px">{{ item.description|raw }}</dd>{% endif %}
+                  </dl>
+                </td>
+                <td class="ua-td-build">
+                  {% if item.build_link %}
+                    <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Kaufen" title="Kaufen" /></a>
+                  {% else %}
+                    <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="space text-center">Zur Zeit hat der Händler leider nichts anzubieten.</div>
       {% endfor %}
-      </tbody>
-    </table>
+    </div>
   </div>
 </div>
-{% endfor %}
 
 {% endblock %}

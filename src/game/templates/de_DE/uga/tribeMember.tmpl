@@ -336,9 +336,9 @@
           </div>
 
           {% if is_auth.change_relation or is_auth.isLeader %}
-          <h5 class="hide_status_msg">Neue Beziehungen</h5>
+          <h5 id="newRelation" class="hide_status_msg">Neue Beziehungen</h5>
           <div class="tabbody2">
-            <form class="ym-form ym-columnar" id="tribeNewRelation" method="post" action="main.php?modus={{ tribe_link }}">
+            <form class="ym-form ym-columnar" id="tribeNewRelationForm" method="post" action="main.php?modus={{ tribe_link }}#newRelation">
               <div class="ym-grid" style="padding-top: 0.8em;" >
                 <div class="ym-g50 ym-gl">
                   <div class="ym-fbox-text">
@@ -560,13 +560,18 @@
                       <td class="text-right" style="vertical-align: center;">
                         {% if item.build_link %}
                         <form id="tribeWonderForm" method="post" action="main.php?modus={{ tribe_link }}#tribeWonder">
-                          <div id="wonder">
+                          <div>
                             <input type="hidden" name="action" value="{{ tribe_action_wonder }}" />
                             <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
                             <input type="hidden" name="caveID" value="{{ cave_id }}" />
                             <ul>
-                              <li class="text-right" style="float: right;">Name des Stammes: <input type="text" name="TribeName" size="10" maxlength="32" /></li>
                               <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
+                              <li style="float: right; text-align: left;">
+                                <ul class="clean_list" style="width: 125px;">
+                                  <li>Name des Stammes:</li>
+                                  <li><input type="text" name="tribeName" size="10" maxlength="32" /></li>
+                                </ul>
+                              </li>
                             </ul>
                           </div>
                         </form>

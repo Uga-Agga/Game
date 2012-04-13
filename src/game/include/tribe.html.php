@@ -81,32 +81,7 @@ function tribe_getContent($caveID, &$details) {
      12 => array('type' => 'success', 'message' => _('Das Erflehen des Wunders scheint Erfolg zu haben.')),
   );
 
-/*
-  $messageText = array (
-   -20 => array('type' => 'error', 'message' => _('Fehler beim Eintragen ins Stammeslager!')),
-   -19 => array('type' => 'info', 'message' => _('Bitte Daten in das Formular eintragen.')),
-   -16 => array('type' => 'error', 'message' => _('Du bist zur Zeit in keinem Stamm.')),
-   -15 => array('type' => 'error', 'message' => _('Du kannst keinen Stamm gründen während du in einem Stamm bist.')),
-   -14 => array('type' => 'error', 'message' => _('Nicht zulässiges Stammeskürzel oder Passwort.')),
-   -13 => array('type' => 'error', 'message' => _('Der Stamm hat schon die maximale Anzahl an Mitgliedern.')),
-   -12 => array('type' => 'error', 'message' => _('Der Stamm befindet sich gerade im Krieg und darf daher im Moment keine neuen Mitglieder aufnehmen.')),
-    -7 => array('type' => 'error', 'message' => _('Das Passwort konnte nicht gesetzt werden!')),
-    -6 => array('type' => 'error', 'message' => _('Der Stamm konnte nicht angelegt werden.')),
-    -5 => array('type' => 'error', 'message' => _('Es gibt schon einen Stamm mit diesem Kürzel.')),
-    -3 => array('type' => 'error', 'message' => _('Sie konnten dem Stamm nicht beitreten. Vermutlich sind Sie schon bei einem anderen Stamm Mitglied.')),
-    -2 => array('type' => 'error', 'message' => _('Stammeskürzel und Passwort stimmen nicht überein.')),
-    -1 => array('type' => 'error', 'message' => _('Bei der Aktion ist ein unerwarteter Datenbankfehler aufgetreten!')),
-     1 => array('type' => 'success', 'message' => _('Sie sind dem Stamm beigetreten.')),
-     2 => array('type' => 'success', 'message' => _('Sie haben den Stamm verlassen.')),
-     3 => array('type' => 'success', 'message' => _('Der Stamm wurde erfolgreich angelegt.')),
-     4 => array('type' => 'success', 'message' => _('Sie waren das letzte Mitglied, der Stamm wurde aufgelöst')),
-     5 => array('type' => 'success', 'message' => _('Die Nachricht wurde eingetragen')),
-    10 => array('type' => 'error', 'message' => _('Dieser Stammesname ist nicht erlaubt!')), 
-  );
-*/
-
   if (!$_SESSION['player']->tribe) {
-    $template->addVar('status_msg', $messageText[-16]);
     tribe_getContentNoTribe();
     return;
   }
@@ -305,7 +280,7 @@ function tribe_getContent($caveID, &$details) {
       }
 
       $wonderID = Request::getVar('wonderID', -1);
-      $tribeName = Request::getVar('TribeName', '');
+      $tribeName = Request::getVar('tribeName', '');
 
       if ($wonderID != -1) {
         if (!empty($tribeName)) {
@@ -667,17 +642,4 @@ function tribe_getContentNoTribe() {
   ));
 }
 
-
-/*
-
-
-
-  if ($tribeAction == TRIBE_ACTION_JOIN  || $tribeAction == TRIBE_ACTION_LEAVE || $tribeAction == TRIBE_ACTION_CREATE) {
-    // the tribe might have changed
-    page_refreshUserData();
-    $tribe = $tribeTag;
-  }
-
-    }
-*/
 ?>
