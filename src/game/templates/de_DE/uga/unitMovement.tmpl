@@ -189,7 +189,7 @@ function loadMaxRes(resNr, resMax){
 var caveBookmarks = new Array();
 
 function disable_to(){
-  var r = document.getElementById("unitMoving").targetCaveID;
+  var r = document.getElementById("unitMoving").bookmarks_cave;
   var flag = false;
   for (var i = 0; i < r.length; i++)
     if (r[i].selected && r[i].value != -1){
