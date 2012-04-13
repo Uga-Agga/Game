@@ -1,7 +1,6 @@
 {#
 /* error.tmpl -
- * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger
+ * Copyright (c) 2011-2012 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,59 +15,28 @@
     <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 
-    <link rel="shortcut icon" href="./images/favicon.ico" />
-    <link href="mapstyle.php" rel="stylesheet" type="text/css" />
-    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
-    <link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/base.css" rel="stylesheet" />
-    <!--[if lte IE 7]><link type="text/css" href="{{ gfx }}/de_DE/t_uga/css/ie.css" rel="stylesheet" /><![endif]-->
+    <!-- stylesheets -->
+    <link rel="stylesheet" href="yaml/core/base.min.css" type="text/css"/>
+    <!--[if lte IE 7]><link rel="stylesheet" href="yaml/core/iehacks.min.css" type="text/css"/><![endif]-->
+    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link rel="stylesheet" href="yaml/screen/typography.css" type="text/css"/>
+    <link rel="stylesheet" href="yaml/forms/gray-theme.css" type="text/css"/>
+    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/styles.css" type="text/css"/>
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/ie.css" type="text/css"/><![endif]-->
 
     <style type="text/css">
-    #overlay {
-       position: fixed;
-       z-index:199;
-       top: 0px;
-       left: 0px;
-       height:100%;
-       width:100%;
-    }
-    .overlayBG {
-       background-color:#FFFFFF;
-       -ms-filter: "Alpha(Opacity=50)"; /* IE 8 */
-       filter:alpha(opacity=50); /* IE5-7 */
-       -moz-opacity: 0.5; /* Mozilla */
-       opacity: 0.5;
-    }
+      #overlay { position: fixed; z-index:199; top: 0px; left: 0px; height:100%; width:100%; }
+      .overlayBG { background-color:#FFFFFF; -ms-filter: "Alpha(Opacity=50)"; /* IE 8 */ filter:alpha(opacity=50); /* IE5-7 */ -moz-opacity: 0.5; /* Mozilla */ opacity: 0.5; }
 
-    #lightBox {
-       position:fixed;
-       top: 200px;
-       left: 14%;
-       z-index: 200;
-       width: 70%;
-       text-align:center;
-       -webkit-border-radius: 10px;
-       -khtml-border-radius: 10px;
-       -moz-border-radius: 10px;
-       border-radius: 10px;
-       behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc);
-       background:#fbe3e4;
-       color: #000000;
-       border-color:#fbc2c4;
-       padding: 0.8em;
-       margin-bottom: 1em;
-       border: 2px solid #fbc2c4 
-       font-weight: bold;
-    }
+      #lightBox { position:fixed; top: 200px; left: 14%; z-index: 200; width: 70%; text-align: center; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; behavior: url({{ gfx }}/de_DE/t_uga/PIE.htc); background:#fbe3e4; color: #000000; border-color:#fbc2c4; padding: 0.8em; margin-bottom: 1em; border: 2px solid #fbc2c4; font-weight: bold; }
+      #lightBox a, a.hover, a.visited { color: #000000; }
 
-    #lightBox a, a.hover, a.visited {color: #000000;}
+      .ym-col-head1 { background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); }
+      .ym-col-head2 { background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); }
+      
+      .ua-head-menu { background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); }
     </style>
 
-    <script type="text/javascript" src="js/jquery-1.6.min.js"></script>
-    <script type='text/javascript' src='js/jquery.jqDock.min.js'></script>
-    <script type='text/javascript' src='js/jquery.countdown.min.js'></script>
-    <script type='text/javascript' src='js/jquery.hoverIntent.min.js'></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
-    <script type="text/javascript" src="js/ua.js"></script>
   {% endblock %}
 </head>
 <body>
@@ -83,71 +51,93 @@
     <div style="clear: both;"></div>
   </div>
 
-  <div id="page">
-    <div id="header">
-      <div id="header-middle" style="background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png);">
-        <div id="header-menu">
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' />
-          <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' />
-        </div>
-        <img id="header_round_name" src="./images/round_name.png" style="margin-top: 90px" alt="" />
+  <div class="ua-header-menu">
+    <div class="ua-head-menu">
+      <div id="ua-head-menu-item">
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' />
+        <img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' />
       </div>
-      <div id="header-left" style="background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat;">&nbsp;</div>
-      <div id="header-right" style="background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat;text-align:right;">&nbsp;</div>
-      <div style="clear: both;"></div>
+    </div>
+    <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
+  </div>
+
+  <div class="ym-wrapper">
+    <div class="ym-column">
+      <div class="ym-col1 ym-col-head1">
+          &nbsp;
+      </div>
+      <div class="ym-col2 ym-col-head2">
+          <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
+          <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
+          <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
+          <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
+          <div class="bold" style="margin-right: 10px ;margin-top: 5px">Farmpunkte: {{ player_fame }}</div>
+        </div>
+      <div class="ym-ie-clearing">&nbsp;</div>
     </div>
 
-    <div id="content-left">
-      <ul id="ul-menu-left">
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></li>
-        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
-      </ul>
+    <div id="main">
+      <div class="ym-column">
+        <div class="ym-col1 ym-col-con1">
+          <ul class="list-menu">
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
+          </ul>
+        </div>
+        <div class="ym-col2 ym-col-con2">
+          <ul class="list-menu">
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></li>
+            <li>><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></li>
+            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
+          </ul>
+        </div>
+        <div class="ym-col3 ym-col-con3">
+          <div class="ym-cbox">&nbsp;</div>
+        </div>
+        <div class="ym-ie-clearing">&nbsp;</div>
+      </div>
     </div>
-
-    <div id="content">&nbsp;</div>
-
-    <div id="content-right">
-      <ul id="ul-menu-right">
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></li>
-        <li><img src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
-      </ul>
-    </div>
-    <div style="clear: both;"></div>
 
     {% block footer %}
-    <div id="bottom" style="margin-top: 10px;">
-      <div id="bottom-left">Serverzeit: {{ time }}</div>
-      <div id="bottom-middle">&nbsp;</div>
-      <div id="bottom-right"><a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a></div>
-      <div style="clear: both;"></div>
-    </div>
+      <div class="ym-grid" style="padding-top: 10px;">
+        <div class="ym-g33 ym-gl ym-col-footer1">
+          Serverzeit: {{ time }}
+        </div>
+        <div class="ym-g33 ym-gl ym-col-footer2">&nbsp;</div>
+        <div class="ym-g33 ym-gr ym-col-footer3">
+          <a href="main.php?modus=statistic">Statistik</a> &amp;
+          <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
+          <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
+          <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
+        </div>
+      </div>
     {% endblock %}
   </div>
   {% include "extendsFooter.tmpl" %}
