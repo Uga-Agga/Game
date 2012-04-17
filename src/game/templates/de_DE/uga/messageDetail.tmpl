@@ -19,22 +19,22 @@
   <div class="ua-box-content">
     <div class="ym-grid" style="padding-top: 5px; padding-bottom: 5px;">
       <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
+        <div class="ym-gbox text-center">
           <a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a>
         </div>
       </div>
       <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
+        <div class="ym-gbox text-center">
           <a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a>
         </div>
       </div>
       <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
+        <div class="ym-gbox text-center">
           <a href="main.php?modus={{ messages_list_link }}&amp;box=3"><img src="{{ gfx }}/de_DE/t_uga/messages/trash.png" class="noborder" alt="Papierkorb" title="Papierkorb" /></a>
         </div>
       </div>
       <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
+        <div class="ym-gbox text-center">
           <a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a>
         </div>
       </div>
@@ -45,13 +45,13 @@
 <div class="ua-box">
   <div class="ua-box-header">
     <div class="ym-grid">
-      <div class="ym-g50 ym-gl left">
+      <div class="ym-g50 ym-gl text-left">
         <div class="ym-gbox">
           &nbsp;{% if previous_msg_id %}<a href="main.php?modus={{ messages_read_link }}&amp;messageID={{ previous_msg_id }}&amp;box={{ box }}&amp;filter={{ message_class }}" class="text-msg-next">&lt;&lt;&lt; vorherige</a>{% endif %}
         </div>
       </div>
       <div class="ym-g50 ym-gl">
-        <div class="ym-gbox right">
+        <div class="ym-gbox text-right">
           {% if next_msg_id %}<a href="main.php?modus={{ messages_read_link }}&amp;messageID={{ next_msg_id }}&amp;box={{ box }}&amp;filter={{ message_class }}" class="text-msg-previous">nächste &gt;&gt;&gt;</a>{% endif %}&nbsp;
         </div>
       </div>
@@ -72,7 +72,7 @@
         </div>
       </div>
       <div class="ym-g50 ym-gl">
-        <div class="ym-gbox right">
+        <div class="ym-gbox text-right">
           <iframe src="http://rcm-de.amazon.de/e/cm?t=ugag-21&amp;o=3&amp;p=20&amp;l=ez&amp;f=ifr&amp;f=ifr" width="120" height="90" scrolling="no" marginwidth="0" marginheight="0" border="0" frameborder="0" style="border:none; margin: 5px;"></iframe>
         </div>
       </div>
@@ -114,6 +114,6 @@
   </div>
 </div>
 
-<div class="center"><a href="main.php?modus={{ messages_list_link }}&amp;box={{ box }}">zurück zu den Nachrichten</a></div>
+<div class="text-center"><a href="main.php?modus={{ messages_list_link }}&amp;box={{ box }}">zurück zu den Nachrichten</a></div>
 
 {% endblock %}

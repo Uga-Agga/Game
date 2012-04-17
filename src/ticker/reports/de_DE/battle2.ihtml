@@ -19,89 +19,86 @@ hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
 {/if}
 </p>
 
+<table style="width: 650px; border-top: none; border-bottom: none;">
 <tmpl:ATTACK>
-<table frame="border" rules="all">
-<tr valign="top">
-<td><table frame="void" rules="groups" width="100%">
-<col><col align="right">
-<thead>
-<tr><th colspan="2">Angreifende Armee</th></tr>
-</thead>
-<tbody>
-<tmpl:BEFORE>
-<tr><td>{name}:</td><td>{num}</td></tr>
-</tmpl:BEFORE>
-</tbody>
-</table></td>
-<td><table frame="void" rules="groups" width="100%">
-<col><col align="right" span="2">
-<thead>
-<tr><th colspan="3">nach dem Kampf</th></tr>
-</thead>
-<tbody>
-<tmpl:AFTER>
-<tr><td>{name}:</td><td>{num}</td><td><tmpl:DELTA>({num})</tmpl:DELTA></td></tr>
-</tmpl:AFTER>
-</tbody>
-</table></td>
-<td><table frame="void" rules="groups" width="100%">
-<col><col align="right">
-<thead>
-<tr><th colspan="2">Kampfwerte</th></tr>
-</thead>
-<tbody>
-<tr><td>Fernschaden:</td><td>{range}</td></tr>
-<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
-<tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
-<tr><td>Größe:</td><td>{size}</td></tr>
-<tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
-<tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
-</tbody>
-</table></td>
-</tr>
+  <tr class="nohover">
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Angreifende Armee</th></tr>
+        </thead>
+        <tbody>
+          <tmpl:BEFORE><tr><td>{name}:</td><td v="text-right">{num}</td></tr></tmpl:BEFORE>
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="3">nach dem Kampf</th></tr>
+        </thead>
+        <tbody>
+          <tmpl:AFTER><tr><td>{name}:</td><td class="text-right">{num}</td><td class="text-right"><tmpl:DELTA>({num})</tmpl:DELTA></td></tr></tmpl:AFTER>
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Kampfwerte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fernschaden:</td><td>{range}</td></tr>
+          <tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+          <tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
+          <tr><td>Größe:</td><td>{size}</td></tr>
+          <tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
+          <tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
 </tmpl:ATTACK>
 <tmpl:DEFEND>
-<tr><td colspan="3"></td></tr>
-<tr valign="top">
-<td><table frame="void" rules="groups" width="100%">
-<col><col align="right">
-<thead>
-<tr><th colspan="2">Verteidigende Armee</th></tr>
-</thead>
-<tbody>
-<tmpl:BEFORE>
-<tr><td>{name}:</td><td>{num}</td></tr>
-</tmpl:BEFORE>
-</tbody>
-</table></td>
-<td><table frame="void" rules="groups" width="100%">
-<col><col align="right" span="2">
-<thead>
-<tr><th colspan="3">nach dem Kampf</th></tr>
-</thead>
-<tbody>
-<tmpl:AFTER>
-<tr><td>{name}:</td><td>{num}</td><td><tmpl:DELTA>({num})</tmpl:DELTA></td></tr>
-</tmpl:AFTER>
-</tbody>
-</table></td>
-<td><table frame="void" rules="groups" width="100%">
-<col><col align="right">
-<thead>
-<tr><th colspan="2">Kampfwerte</th></tr>
-</thead>
-<tbody>
-<tr><td>Fernschaden:</td><td>{range}</td></tr>
-<tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
-<tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
-<tr><td>Größe:</td><td>{size}</td></tr>
-<tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
-<tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
-</tbody>
-</table></td>
-</tr>
-</table>
+  <tr class="nohover">
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Verteidigende Armee</th></tr>
+        </thead>
+        <tbody>
+          <tmpl:BEFORE><tr><td>{name}:</td><td class="text-right">{num}</td></tr></tmpl:BEFORE>
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="3">nach dem Kampf</th></tr>
+        </thead>
+        <tbody>
+          <tmpl:AFTER><tr><td>{name}:</td><td class="text-right">{num}</td><td class="text-right"><tmpl:DELTA>({num})</tmpl:DELTA></td></tr></tmpl:AFTER>
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Kampfwerte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fernschaden:</td><td>{range}</td></tr>
+          <tr><td>Gebäudeschaden:</td><td>{struct}</td></tr>
+          <tr><td>Nahkampfschaden:</td><td>{melee}</td></tr>
+          <tr><td>Größe:</td><td>{size}</td></tr>
+          <tr><td>Beziehungsfaktor:</td><td>{relation}</td></tr>
+          <tr><td>Glaubensfaktor:</td><td>{religion}</td></tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
 </tmpl:DEFEND>
+</table>
 
 <tmpl:RESOURCES>
 <p>Ihr hattet folgende Ressourcen:</p>

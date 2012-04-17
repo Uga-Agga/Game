@@ -514,6 +514,10 @@ function tribe_getContent($caveID, &$details) {
     } else {
       $wonders[$wonder->wonderID]['build_link'] = true;
     }
+
+    if ($wonder->target == "own") {
+       $wonders[$wonder->wonderID]['ownTribe'] = true;
+    }
   }
 
   /****************************************************************************************************

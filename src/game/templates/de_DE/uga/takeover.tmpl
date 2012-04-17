@@ -60,7 +60,7 @@
         <div style="width: 250px; float: left;">
           <div class="box">
             <div class="box-header">Derzeitige Wertpunkte:</div>
-            <div class="box-content success inner">
+            <div class="box-content">
               <table>
                 {% if bidding.resource %}
                   <tr>
@@ -146,17 +146,19 @@
 
   <div class="ua-box">
     <div class="ua-box-header">Höhlenauswahl</div>
-    <div class="ua-box-content text-center space">
-      <form id="confirm_change" method="post" action="main.php?modus={{ takeover_link }}"><p>
-        Wähle eine Höhle, die du übernehmen möchtest:
-        <br />
-        x/y-Koordinate:
-        <input name="xCoord" type="text" size="4" maxlength="4" value="{{ target_x_coord }}" />
-        &nbsp;
-        <input name="yCoord" type="text" size="4" maxlength="4" value="{{ target_y_coord }}" />
-        <input name="action" type="hidden" value="change" />
-        <input type="submit" name="submit" value="die will ich, Ughh!" />
-      </p></form>
+    <div class="ua-box-content">
+      <form id="confirm_change" method="post" action="main.php?modus={{ takeover_link }}">
+        <div class="text-center space">
+          Wähle eine Höhle, die du übernehmen möchtest:
+          <br />
+          x/y-Koordinate:
+          <input name="xCoord" type="text" size="4" maxlength="4" value="{{ target_x_coord }}" />
+          &nbsp;
+          <input name="yCoord" type="text" size="4" maxlength="4" value="{{ target_y_coord }}" />
+          <input name="action" type="hidden" value="change" />
+          <input type="submit" name="submit" value="die will ich, Ughh!" />
+        </div>
+      </form>
     </div>
   </div>
 

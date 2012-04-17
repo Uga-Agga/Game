@@ -566,12 +566,16 @@
                             <input type="hidden" name="caveID" value="{{ cave_id }}" />
                             <ul>
                               <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
+                              {% if not item.ownTribe %}
                               <li style="float: right; text-align: left;">
-                                <ul class="clean_list" style="width: 125px;">
-                                  <li>Name des Stammes:</li>
+                                <ul class="clean_list" style="width: 100px;">
+                                  <li>Stammesname:</li>
                                   <li><input type="text" name="tribeName" size="10" maxlength="32" /></li>
                                 </ul>
                               </li>
+                              {% else %}
+                              <input type="hidden" name="tribeName" value="{{ tribe_tag }}" />
+                              {% endif %}
                             </ul>
                           </div>
                         </form>
