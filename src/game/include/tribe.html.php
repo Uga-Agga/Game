@@ -402,7 +402,7 @@ function tribe_getContent($caveID, &$details) {
       );
 
       // war?
-      if (array_key_exists($target, $relationsWar)) {
+      if (isset($relationsWar[$target])) {
         $relations_info[$target]['war']            = true;
         $relations_info[$target]['fame_own']       = $relationsWar[$target]['fame_own'];
         $relations_info[$target]['fame_target']    = $relationsWar[$target]['fame_target'];
@@ -417,7 +417,7 @@ function tribe_getContent($caveID, &$details) {
         'relation_type'  => $targetData['relationType'],
       );
 
-      if (array_key_exists($target, $relationsWar)) {
+      if (isset($relationsWar[$target])) {
         $relations[$target]['war']            = true;
         $relations[$target]['fame_own']       = $relationsWar[$target]['fame_own'];
         $relations[$target]['fame_target']    = $relationsWar[$target]['fame_target'];

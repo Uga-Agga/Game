@@ -218,12 +218,12 @@ function profile_update($db_login) {
 
   // validate language code
   $uaLanguageNames = LanguageNames::getLanguageNames();
-  if (!array_key_exists($data['language'], $uaLanguageNames)) {
+  if (!isset($uaLanguageNames[$data['language']])) {
     unset($data['language']);
   }
 
   // check if avatar is a image
-  if (array_key_exists('avatar', $data) && !empty($data['avatar'])) {
+  if (isset($data['avatar']) && !empty($data['avatar'])) {
     $avatarInfo = checkAvatar($data['avatar']);
     if (!$avatarInfo) {
       return array('type' => 'error', 'message' => ('Ungültiges Bild oder URL beim Avatar! Wird zurückgesetzt!'));

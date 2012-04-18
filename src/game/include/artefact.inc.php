@@ -255,7 +255,7 @@ function artefact_beginInitiation($artefact) {
   $costs = array();
   $temp = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['$defenseSystemTypeList']);
   foreach($temp as $val) {
-    if (array_key_exists($val->dbFieldName, $ritual)) {
+    if (isset($ritual[$val->dbFieldName])) {
       if ($ritual[$val->dbFieldName]) {
         $costs[$val->dbFieldName] = $ritual[$val->dbFieldName];
       }

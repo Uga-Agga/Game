@@ -2118,7 +2118,7 @@ function tribe_donateResources($value_array, $caveID, &$caveData) {
   $fields_cave = $fields_storage = $fields_donations = $fields_resources = $where = array();
   foreach ($value_array as $resourceID => $value) {
     if ($value) {
-      if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
+      if (isset($GLOBALS['resourceTypeList'][$resourceID])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
         // check if resource is over maxDonation value
         if ($resource->maxTribeDonation < $value) {

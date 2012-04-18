@@ -65,7 +65,7 @@ if (!$ownCaves) {
   // Keine neue Höhle ausgewählt.
   if ($caveID == 0) {
     // Bereits eine Höhle mal ausgewählt?
-    if (isset($_SESSION['caveID']) && array_key_exists($_SESSION['caveID'], $ownCaves)) {
+    if (isset($_SESSION['caveID']) && isset($ownCaves[$_SESSION['caveID']])) {
       $caveID = $_SESSION['caveID'];
     // erste Höhle nehmen
     } else {
@@ -75,7 +75,7 @@ if (!$ownCaves) {
   // Neue Höhle nehmen
   } else {
     // Höhle im eigenen besitz?
-    if (array_key_exists($caveID, $ownCaves)) {
+    if (isset($ownCaves[$caveID])) {
       $_SESSION['caveID'] = $caveID;
     // nein? erste Höhle nehmen!
     } else {

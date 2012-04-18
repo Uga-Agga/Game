@@ -25,7 +25,7 @@ $template = new template();
 
 /***** GET MODUS ***************************************************/
 $modus = request_var('modus', '');
-if (!array_key_exists($modus, $module_cfg['modules'])) {
+if (!isset($module_cfg['modules'][$modus])) {
   $modus = $module_cfg['default_module'];
 }
 

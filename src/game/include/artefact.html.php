@@ -66,7 +66,7 @@ function artefact_getDetail($caveID, &$myCaves) {
     $template->addVars(array('show_artefact' => $show_artefact));
     if ($show_artefact) {
       // eigene Höhle ...
-      if (array_key_exists($artefact['caveID'], $myCaves)) {
+      if (isset($myCaves[$artefact['caveID']])) {
         $showStatus = 1;
 
         // Ritual ausführen?
@@ -91,7 +91,7 @@ function artefact_getDetail($caveID, &$myCaves) {
 
             $cost = array();
             foreach($merged_game_rules as $val) {
-              if (array_key_exists($val->dbFieldName, $ritual)) {
+              if (isset($ritual[$val->dbFieldName])) {
                 if ($ritual[$val->dbFieldName]) {
                   $object_context = (ceil($ritual[$val->dbFieldName]) > floor($myCaves[$artefact['caveID']][$val->dbFieldName])) ?
                                     'less-' : 'enough ';
@@ -149,7 +149,7 @@ function artefact_getList($caveID, $ownCaves) {
   
   foreach ($artefacts AS $artefact) { 
     // eigenes Artefakt
-    if (array_key_exists($artefact['caveID'], $ownCaves)) {
+    if (isset($ownCaves[$artefact['caveID']])) {
       switch ($artefact['initiated']) {
         case ARTEFACT_UNINITIATED: 
           if ($artefact['caveID'] == $caveID) {

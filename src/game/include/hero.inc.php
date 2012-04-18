@@ -140,7 +140,7 @@ function skillForce($playerID, $hero) {
   foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
     if ($hero[$skill['dbFieldName']]) {
       foreach ($GLOBALS['effectTypeList'] as $effect) {
-        if (array_key_exists($effect->dbFieldName, $skill['effects'])) {
+        if (isset($skill['effects'][$effect->dbFieldName])) {
           $effectFactorArray[$effect->dbFieldName] +=  $skill['skillFactor'];
         }
       }

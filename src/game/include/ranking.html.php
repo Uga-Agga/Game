@@ -21,8 +21,8 @@ function ranking_getContent($caveID, $offset) {
 
   $religions = ranking_getReligiousDistribution();
 
-  if (!array_key_exists('uga', $religions)) $religions['uga'] = 0;
-  if (!array_key_exists('agga', $religions)) $religions['agga'] = 0;
+  if (!isset($religions['uga'])) $religions['uga'] = 0;
+  if (!isset($religions['agga'])) $religions['agga'] = 0;
 
   if($religions['uga']+$religions['agga'] != 0) {
     $ugapercent = round($religions['uga']/($religions['uga'] + $religions['agga'])*100);

@@ -125,8 +125,8 @@ function createTerrainMap($db){
                        ORDER BY yCoord, xCoord");
   if (!$sql->execute()) die("Fehler beim Auslesen des Terrains!\n");
 
-  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if(array_key_exists($row['terrain'], $terrain_colour)) {
+  while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+    if (isset($terrain_colour[$row['terrain']])) {
       ImageSetPixel($terrainMap, $row['xCoord'] - $size['minX'], $row['yCoord'] - $size['minY'], $terrain_colour[$row['terrain']]);
     }
   }

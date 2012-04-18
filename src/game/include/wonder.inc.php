@@ -306,7 +306,7 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
   // send target messages
   $targetPlayersArray = array();
   foreach ($targets as $target) {
-    if (!array_key_exists($target['playerID'], $targetPlayersArray)) {
+    if (!isset($targetPlayersArray[$target['playerID']])) {
       $targetPlayersArray[$target['playerID']] = $target;
     }
   }

@@ -140,8 +140,9 @@ function unit_Movement($caveID, &$ownCave) {
     foreach ($resource as $resKey => $aRes) {
       $capacity = 0;
       foreach ($unit as $unitKey => $aUnit) {
-        if (array_key_exists($resKey, $GLOBALS['unitTypeList'][$unitKey]->encumbranceList))
+        if (isset($GLOBALS['unitTypeList'][$unitKey]->encumbranceList[$resKey])) {
           $capacity += $aUnit * $GLOBALS['unitTypeList'][$unitKey]->encumbranceList[$resKey];
+        }
       }
 
       if ($capacity < $aRes) {
