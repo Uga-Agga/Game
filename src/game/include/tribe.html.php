@@ -417,13 +417,13 @@ function tribe_getContent($caveID, &$details) {
         'relation_type'  => $targetData['relationType'],
       );
 
-      if (isset($tribeWarTargets[$target])) {
+      if (array_key_exists($target, $relationsWar)) {
         $relations[$target]['war']            = true;
         $relations[$target]['fame_own']       = $relationsWar[$target]['fame_own'];
         $relations[$target]['fame_target']    = $relationsWar[$target]['fame_target'];
         $relations[$target]['percent_actual'] = $relationsWar[$target]['percent_actual'];
 
-        if ($wartarget['isForcedSurrenderTheoreticallyPossible']) {
+        if ($relationsWar[$target]['isForcedSurrenderTheoreticallyPossible']) {
           $relations[$target]['isForcePossible'] = true;
           $relations[$target]['percent_estimated'] = $relationsWar[$target]['percent_estimated'];
         }
