@@ -161,6 +161,18 @@ static char* transform_spy_values (int num, int type) {
   return value;
 }
 
+float Round(float Zahl, unsigned int Stellen)
+{
+    Zahl *= pow(10, Stellen);
+    if (Zahl >= 0) {
+        floor(Zahl + 0.5);
+    } else {
+        ceil(Zahl - 0.5);
+    }
+    Zahl /= pow(10, Stellen);
+    return Zahl;
+}
+
 static void report_units (template_t *template, int locale_id,
         const int units[])
 {
@@ -756,13 +768,13 @@ static char* battle_report_xml (db_t *database,
         const struct Relation *relation1,
         const struct Relation *relation2,
         int show_warpoints, int attacker_warpoints, int defender_warpoints, int show_defender,
-        int defender_size_guessed)
+        int defender_size_guessed, int isAttacker)
 {
   mxml_node_t *xml;
   mxml_node_t *battlereport;
   mxml_node_t *attacker, *defender;
   mxml_node_t *winner, *takeover, *takeoverMultiplier, *changeOwner;
-  mxml_node_t *caveName, *xCoord, *yCoord;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
   mxml_node_t *player, *tribe;
   mxml_node_t *curtime;
   mxml_node_t *units, *unit, *name, *before, *after, *delta, *guess;
@@ -771,6 +783,7 @@ static char* battle_report_xml (db_t *database,
   mxml_node_t *attackerWarpoints, *defenderWarpoints;
   mxml_node_t *plunder, *resource, *num, *resourcesLost;
   mxml_node_t *Artefact, *Lost;
+  mxml_node_t *selfAttack;
 
   int type = 0;
   char *xmlstring = "";
@@ -783,6 +796,9 @@ static char* battle_report_xml (db_t *database,
     mxmlNewInteger(curtime, (int) time(NULL));
   winner = mxmlNewElement(battlereport, "winner");
     mxmlNewText(winner, 0, (char*) (result->winner == FLAG_ATTACKER) ? "attacker" : "defender");
+
+  selfAttack = mxmlNewElement(battlereport, "selfAttack");
+    mxmlNewText(selfAttack, 0, (char*) (player1->name == player2->name) ? "true" : "false");
 
   takeover = mxmlNewElement(battlereport, "takeover");
     mxmlNewText(takeover, 0, (char*) (takeover_multiplier) ? "true" : "false");
@@ -807,6 +823,8 @@ static char* battle_report_xml (db_t *database,
       mxmlNewInteger(xCoord, (int) cave1->xpos);
     yCoord = mxmlNewElement(attacker, "yCoord");
       mxmlNewInteger(yCoord, (int) cave1->ypos);
+    caveID = mxmlNewElement(attacker, "caveID");
+      mxmlNewInteger(caveID, (int) cave1->cave_id);
 
     // units
     army = result->attackers;
@@ -840,9 +858,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewInteger(size, (int) result->attackers_acc_hitpoints_units_before +
                                    result->attackers_acc_hitpoints_defenseSystems_before);
       relation = mxmlNewElement(battleValues, "relation");
-        mxmlNewReal(relation, (float) result->attackers[0].relationMultiplicator);
+        mxmlNewReal(relation, (float) Round(result->attackers[0].relationMultiplicator, 2));
       religion = mxmlNewElement(battleValues, "religion");
-        mxmlNewReal(religion, (float) result->attackers[0].religion_bonus);
+        mxmlNewReal(religion, (float) Round(result->attackers[0].religion_bonus, 2));
 
 // defender
   // header
@@ -857,6 +875,8 @@ static char* battle_report_xml (db_t *database,
       mxmlNewInteger(xCoord, (int) cave2->xpos);
     yCoord = mxmlNewElement(defender, "yCoord");
       mxmlNewInteger(yCoord, (int) cave2->ypos);
+    caveID = mxmlNewElement(defender, "caveID");
+      mxmlNewInteger(caveID, (int) cave2->cave_id);
 
     // guess value
     if (!show_defender) {
@@ -920,9 +940,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewInteger(size, (int) result->defenders_acc_hitpoints_units_before +
                                    result->defenders_acc_hitpoints_defenseSystems_before);
       relation = mxmlNewElement(battleValues, "relation");
-        mxmlNewReal(relation, (float) result->defenders[0].relationMultiplicator);
+        mxmlNewReal(relation, (float) Round(result->defenders[0].relationMultiplicator, 2));
       religion = mxmlNewElement(battleValues, "religion");
-        mxmlNewReal(religion, (float) result->defenders[0].religion_bonus);
+        mxmlNewReal(religion, (float) Round(result->defenders[0].religion_bonus ,2));
     }
 
     // warpoints
@@ -939,12 +959,17 @@ static char* battle_report_xml (db_t *database,
       for (type = 0; type < MAX_RESOURCE; ++type) {
         int res1 = result->attackers->resourcesAfter[type];
         int res2 = result->attackers->resourcesBefore[type];
-        if (res1 - res2 > 0) {
+        int resDelta = res1 - res2;
+        if (resDelta > 0) {
           resource = mxmlNewElement(plunder, "resource");
             name = mxmlNewElement(resource, "name");
               mxmlNewText(name, 0, (char*) resource_type[type]->name[player1->locale_id]);
-            num = mxmlNewElement(resource, "num");
-              mxmlNewInteger(num, (int) res1 - res2);
+            if (!isAttacker) {
+              before = mxmlNewElement(resource, "before");
+                mxmlNewInteger(before, result->defenders->resourcesBefore[type]);
+            }
+            delta = mxmlNewElement(resource, "delta");
+              mxmlNewInteger(delta, (int) res1 - res2);
 
         }
       }
@@ -1063,7 +1088,7 @@ void battle_report (db_t *database,
                 change_owner, takeover_multiplier,
                 relation1,
                 relation2,
-                show_warpoints, attacker_warpoints, defender_warpoints, 0, defender_size_guessed);
+                show_warpoints, attacker_warpoints, defender_warpoints, 0, defender_size_guessed, 1);
   } else {
     report_army_table(template1, player1->locale_id, result);
     xml1 = battle_report_xml(database,
@@ -1073,7 +1098,7 @@ void battle_report (db_t *database,
                 change_owner, takeover_multiplier,
                 relation1,
                 relation2,
-                show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed);
+                show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 1);
   }
 
   report_army_table(template2, player2->locale_id, result);
@@ -1084,7 +1109,7 @@ void battle_report (db_t *database,
               change_owner, takeover_multiplier,
               relation1,
               relation2,
-              show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed);
+              show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 0);
 
   if (result->winner == FLAG_ATTACKER) {
     report_resources(template1, player1->locale_id,
@@ -1611,3 +1636,5 @@ void wonder_extend_report (db_t *database,
   if (impact->targetMessageType != WONDER_MESSAGE_none)
     wonder_extend_report_player(database, target, cave, wonder);
 }
+
+
