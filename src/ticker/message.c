@@ -768,7 +768,7 @@ static char* battle_report_xml (db_t *database,
         const struct Relation *relation1,
         const struct Relation *relation2,
         int show_warpoints, int attacker_warpoints, int defender_warpoints, int show_defender,
-        int defender_size_guessed, int isAttacker)
+        int defender_size_guessed, int IsAttacker)
 {
   mxml_node_t *xml;
   mxml_node_t *battlereport;
@@ -783,7 +783,7 @@ static char* battle_report_xml (db_t *database,
   mxml_node_t *attackerWarpoints, *defenderWarpoints;
   mxml_node_t *plunder, *resource, *num, *resourcesLost;
   mxml_node_t *Artefact, *Lost;
-  mxml_node_t *selfAttack;
+  mxml_node_t *selfAttack, *isAttacker;
 
   int type = 0;
   char *xmlstring = "";
@@ -794,6 +794,8 @@ static char* battle_report_xml (db_t *database,
   battlereport = mxmlNewElement(xml, "battlereport");
   curtime = mxmlNewElement(battlereport, "timestamp");
     mxmlNewInteger(curtime, (int) time(NULL));
+  isAttacker = mxmlNewElement(battlereport, "isAttacker");
+    mxmlNewText(isAttacker, 0, (char*) (IsAttacker) ? "true" : "false");
   winner = mxmlNewElement(battlereport, "winner");
     mxmlNewText(winner, 0, (char*) (result->winner == FLAG_ATTACKER) ? "attacker" : "defender");
 
@@ -964,7 +966,7 @@ static char* battle_report_xml (db_t *database,
           resource = mxmlNewElement(plunder, "resource");
             name = mxmlNewElement(resource, "name");
               mxmlNewText(name, 0, (char*) resource_type[type]->name[player1->locale_id]);
-            if (!isAttacker) {
+            if (!IsAttacker) {
               before = mxmlNewElement(resource, "before");
                 mxmlNewInteger(before, result->defenders->resourcesBefore[type]);
             }
