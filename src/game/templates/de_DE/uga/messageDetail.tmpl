@@ -61,7 +61,7 @@
     <div class="ym-grid" style="padding-top: 10px;">
       <div class="ym-g50 ym-gl">
         <div class="ym-gbox">
-          <dl>
+          <dl style="margin: 0;">
             <dt class="dt-msg">Betreff:</dt><dd class="dd-msg">{{ message.subject|raw }}</dd>
             <dt class="dt-msg">Von:</dt><dd class="dd-msg">{{ message.sender }}</dd>
             <dt class="dt-msg">An:</dt><dd class="dd-msg">{{ message.empfaenger }}</dd>
@@ -79,8 +79,8 @@
     </div>
 
     <div class="msg-body">
-      {% if message_img %}<div style="float: right"><img src="{{ gfx }}/de_DE/t_uga/{{ message_img }}" alt="" title="" /></div>{% endif %}
-      {{ message.nachricht|raw }}
+      {% if message_img %}<img class="float-right" src="{{ gfx }}/de_DE/t_uga/{{ message_img }}" alt="" title="" />{% endif %}
+      {% if message_xml %}<div>{% include "xml/baseReport.tmpl" %}</div>{% else %}{{ message.nachricht|raw }}{% endif %}
     </div>
 
     {% if reply or delete %}

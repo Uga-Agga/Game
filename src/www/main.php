@@ -164,7 +164,7 @@ switch ($modus) {
     $messageID = Request::getVar('messageID', 0);
     $box = Request::getVar('box', 1);
 
-    messages_showMessage($caveID, $messageID, $box);
+    messages_showMessage($caveID, $ownCaves, $messageID, $box);
     $requestKeys = array('messageID', 'box', 'filter');
     break;
 

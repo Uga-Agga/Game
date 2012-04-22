@@ -187,9 +187,13 @@ function messages_getMessages($caveID, $deletebox, $box) {
 // MESSAGESDETAIL                                                            //
 ///////////////////////////////////////////////////////////////////////////////
 
-function messages_showMessage($caveID, $messageID, $box) {
+function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
   global $template;
 
+  if (empty($messageID)) {
+    $template->throwError('Fehler beim Anzeigen der nachricht. ID wurde nicht übergeben!');
+    return;
+  }
   // init messages class
   $messagesClass = new Messages;
 
@@ -197,44 +201,42 @@ function messages_showMessage($caveID, $messageID, $box) {
   $template->setFile('messageDetail.tmpl');
   $template->setShowRresource(false);
 
-  if (!empty($messageID)) {
-    $message = $messagesClass->getMessageDetail($messageID);
+  $message = $messagesClass->getMessageDetail($messageID);
 
-    $antworten = $contacts = $loeschen = array();
-    if ($message['sender'] != "System" && $box == BOX_INCOMING){
+  $antworten = $contacts = $loeschen = array();
+  if ($message['sender'] != "System" && $box == BOX_INCOMING) {
+    $template->addVars(array(
+      'reply' => array(
+        array('arg' => "box",        'value' => BOX_INCOMING),
+        array('arg' => "subject",    'value' => $messagesClass->createSubject($message['subject'])),
+        array('arg' => "recipient", 'value' => $message['sender'])
+      )
+    ));
+    //$contacts = array('contact' => $message['sender']);
+  }
 
-      $template->addVars(array(
-        'reply' => array(
-          array('arg' => "box",        'value' => BOX_INCOMING),
-          array('arg' => "subject",    'value' => $messagesClass->createSubject($message['subject'])),
-          array('arg' => "recipient", 'value' => $message['sender'])
+  if ($message['nachrichtenart'] != 1001 && $box != BOX_TRASH) {
+    $template->addVars(array(
+      'delete' => array(
+        'name' => 'Löschen',
+        'item' => array(
+          array('arg' => "box", 'value' => $box),
+          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+          array('arg' => "mark_action_value", 'value' => 'delete'),
         )
-      ));
-      //$contacts = array('contact' => $message['sender']);
-    }
-    if ($message['nachrichtenart'] != 1001 && $box != BOX_TRASH) {
-      $template->addVars(array(
-        'delete' => array(
-          'name' => 'Löschen',
-          'item' => array(
-            array('arg' => "box", 'value' => $box),
-            array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
-            array('arg' => "mark_action_value", 'value' => 'delete'),
-          )
+      )
+    ));
+  } else if ($box == BOX_TRASH) {
+    $template->addVars(array(
+      'delete' => array(
+        'name' => 'Wiederherstellen',
+        'item' => array(
+          array('arg' => "box", 'value' => $box),
+          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+          array('arg' => "mark_action_value", 'value' => 'recover'),
         )
-      ));
-    } else if ($box == BOX_TRASH) {
-      $template->addVars(array(
-        'delete' => array(
-          'name' => 'Wiederherstellen',
-          'item' => array(
-            array('arg' => "box", 'value' => $box),
-            array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
-            array('arg' => "mark_action_value", 'value' => 'recover'),
-          )
-        )
-      ));
-    }
+      )
+    ));
   }
 
   // get next and privious messageID
@@ -260,6 +262,15 @@ function messages_showMessage($caveID, $messageID, $box) {
 
   if (array_key_exists(array_search($messageID, $messageIdList)-1, $messageIdList)) {
     $template->addVar('previous_msg_id', $messageIdList[array_search($messageID, $messageIdList)-1]);
+  }
+
+  if (!empty($message['messageXML']) && in_array($message['nachrichtenart'], array(2, 11, 20))) {
+    $messageXml = simplexml_load_string($message['messageXML']);
+    $template->addVars(array(
+      'message_report' => $message['nachrichtenart'],
+      'message_xml'    => $messageXml,
+      'list_cave_id'   => array_keys($myCaves),
+    ));
   }
 
 /****************************************************************************************************

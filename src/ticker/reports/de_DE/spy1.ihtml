@@ -18,10 +18,11 @@ etwas mehr Wert auf eine gute Ausbildung hättest legen sollen.
 <tmpl:DEAD>
 <tmpl:UNITS>
 <p>Du verlierst folgende Einheiten:</p>
-<table><col><col align="right">
+<table style="width: auto">
+  <thead><th class="text-center" colspan="2">Einheiten</th></thead><tbody>
 <tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
 </tmpl:UNIT>
-</table>
+</tbody></table>
 </tmpl:UNITS>
 </tmpl:DEAD>
 

@@ -14,8 +14,8 @@ bedauerlicherweise den Wachen entkommen.
 </p>
 
 <tmpl:UNITS>
-<p>Einheiten:</p>
-<table><col><col align="right">
+<table style="width: auto">
+  <thead><th class="text-center" colspan="2">Einheiten</th></thead><tbody>
 <tmpl:UNIT><tr><td>{name}:</td><td>
 {if     num <     5}ein kümmerlicher Haufen
 {elseif num <     9}eine Handvoll
@@ -37,7 +37,7 @@ bedauerlicherweise den Wachen entkommen.
 {/if}
 </td></tr>
 </tmpl:UNIT>
-</table>
+</tbody></table>
 </tmpl:UNITS>
 
 <tmpl:DEAD>
@@ -46,10 +46,11 @@ bedauerlicherweise den Wachen entkommen.
 Es ist Deinen aufmerksamen Wachen gelungen, einen Teil der Eindringlinge
 zu stellen:
 </p>
-<table><col><col align="right">
+<table style="width: auto">
+  <thead><th class="text-center" colspan="2">Einheiten</th></thead><tbody>
 <tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
 </tmpl:UNIT>
-</table>
+</tbody></table>
 <p>
 Da die Wachen es aber gewohnt sind, erst zuzuschlagen und dann Fragen zu
 stellen, ist niemand davon mehr am Leben, der dir berichten könnte, woher
@@ -62,10 +63,11 @@ sie kamen.
 <tmpl:RESOURCES>
 <p>Zu deiner Überraschung hatten sie einige Rohstoffe bei sich, die nun
 deine Lager füllen:</p>
-<table><col><col align="right">
+<table style="width: auto">
+  <thead><th class="text-center" colspan="2">Rohstoffe</th></thead><tbody>
 <tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
 </tmpl:RESOURCE>
-</table>
+</tbody></table>
 </tmpl:RESOURCES>
 
 <tmpl:ARTEFACT>

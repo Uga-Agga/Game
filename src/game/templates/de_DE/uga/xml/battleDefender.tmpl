@@ -1,0 +1,195 @@
+{#
+/* battleDefender.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2012 David Unger
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% spaceless %}
+
+{% if message_xml.winner == 'attacker' %}
+  Niederlage bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})!
+{% else %}
+  Sieg bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
+{% endif %}
+
+<p>
+  {% if message_xml.winner == 'attacker' %}
+    Ihr seht mit euren blutunterlaufenen Augen zu, wie ein fremder Stamm aus
+  {% else %}
+    Ihr seht vergnügt zu, wie ein fremder Stamm aus
+  {% endif %}
+
+  {% if message_xml.attacker.caveID in list_cave_id %}
+    eurer Höhle {{ message_xml.attacker.caveName }}
+  {% else %}
+    der Höhle {{ message_xml.attacker.caveName }} des Spielers {{ message_xml.defender.playerName }}
+  {% endif %}
+
+  {% if message_xml.winner == 'attacker' %}
+    eure Höhle {{ message_xml.defender.caveName }} plündert! Ihr habt den Kampf um eure Höhle verloren!
+  {% else %}
+    vor der überlegenen Streitmacht eurer Höhle {{ message_xml.defender.caveName }} flieht, nachdem sie versucht hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
+  {% endif %}
+</p>
+
+<table style="width: auto; border-top: none; border-bottom: none;">
+  <tr class="nohover">
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Angreifende Armee</th></tr>
+        </thead>
+        <tbody>
+          {% for units in message_xml.attacker.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.before }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="3">nach dem Kampf</th></tr>
+        </thead>
+        <tbody>
+          {% for units in message_xml.attacker.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}(-{{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Kampfwerte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fernschaden:</td><td class="text-right">{{ message_xml.attacker.battleValues.range }}</td></tr>
+          <tr><td>Gebäudeschaden:</td><td class="text-right">{{ message_xml.attacker.battleValues.areal }}</td></tr>
+          <tr><td>Nahkampfschaden:</td><td class="text-right">{{ message_xml.attacker.battleValues.melee }}</td></tr>
+          <tr><td>Größe:</td><td class="text-right">{{ message_xml.attacker.battleValues.size }}</td></tr>
+          <tr><td>Beziehungsfaktor:</td><td class="text-right">{{ message_xml.attacker.battleValues.relation }}</td></tr>
+          <tr><td>Glaubensfaktor:</td><td class="text-right">{{ message_xml.attacker.battleValues.religion }}</td></tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+  <tr class="nohover">
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Verteidigende Armee</th></tr>
+        </thead>
+        <tbody>
+          {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.before }}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="3">nach dem Kampf</th></tr>
+        </thead>
+        <tbody>
+          {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}(-{{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </td>
+    <td style="padding: 0; margin: 0;">
+      <table>
+        <thead>
+          <tr><th colspan="2">Kampfwerte</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Fernschaden:</td><td class="text-right">{{ message_xml.defender.battleValues.range }}</td></tr>
+          <tr><td>Gebäudeschaden:</td><td class="text-right">{{ message_xml.defender.battleValues.areal }}</td></tr>
+          <tr><td>Nahkampfschaden:</td><td class="text-right">{{ message_xml.defender.battleValues.melee }}</td></tr>
+          <tr><td>Größe:</td><td class="text-right">{{ message_xml.defender.battleValues.size }}</td></tr>
+          <tr><td>Beziehungsfaktor:</td><td class="text-right">{{ message_xml.defender.battleValues.relation }}</td></tr>
+          <tr><td>Glaubensfaktor:</td><td class="text-right">{{ message_xml.defender.battleValues.religion }}</td></tr>
+        </tbody>
+      </table>
+    </td>
+  </tr>
+</table>
+
+
+{% if message_xml.attacker.plunder %}
+<p>Der fremde Stamm hat eure Höhle geplündert. Einiges konntet ihr ja noch verstecken, trotzdem hat er folgende Ressourcen erbeutet:</p>
+<table class="bordertable" style="width: auto;">
+  <thead>
+    <th>Ressource</th>
+    <th>Vorher</th>
+    <th>Nachher</th>
+    <th>Verlust</th>
+  </thead>
+  <tbody>
+    {% for resource in message_xml.attacker.plunder.resource %}
+      <tr>
+        <td>{{ resource.name }}</td>
+        <td>{{ resource.before }}</td>
+        <td>{{ resource.before - resource.delta }}</td>
+        <td>-{{ resource.delta }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if message_xml.attacker.resourcesLost %}
+<p>Der fremde Stamm verliert auf seiner Flucht folgende Ressourcen:</p>
+<table class="bordertable" style="width: auto;">
+  <thead>
+    <th>Verloren</th>
+  </thead>
+  <tbody>
+    {% for resource in message_xml.attacker.resourcesLost.resource %}
+      <tr>
+        <td>{{ resource.name }}</td>
+        <td>{{ resource.num }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+
+{% if message_xml.attackerWarpoints or message_xml.defenderWarpoints %}
+<p>Der Kampf brachte dir {{ message_xml.defenderWarpoints }} und dem Gegner {{ message_xml.attackerWarpoints }} Kriegspunkte.</p>
+{% endif %}
+
+{% endspaceless %}
+
+<!--
+<tmpl:HERO>
+<br />
+<p>
+{if hero_dead}
+Mutig hat der Held bei der Verteidigung der Höhle mitgeholfen. Leider hat er das Gemetzel nicht überlebt. 
+{else}
+Ruhmreich hat dein Held in der Schlacht gekämpft und bei der Verteidigung geholfen.
+{/if}
+<p>Dein Held bekommt für die Verteidigung {hero_points_defender} Erfahrungspunkte und verliert {healPoints_defender} Lebenspunkte.</p>
+</p>
+</tmpl:HERO>
+
+
+<tmpl:ARTEFACT>
+<p>
+{if att_won}
+Der Angreifer hat aus eurer Höhle das Artefakt "{artefact}" gestohlen!
+{else}
+Zwischen den Überresten der getöteten Feinde habt ihr das Artefakt
+"{artefact}" gefunden!
+{/if}
+</p>
+</tmpl:ARTEFACT>
+
+<tmpl:ARTEFACT_LOST>
+<p>
+Bei dem Kampf ist euer Artefakt "{artefact}" verloren gegangen! Es muß
+irgendwo in der Nachbarschaft der Höhle liegen.
+</p>
+</tmpl:ARTEFACT_LOST>
+-->

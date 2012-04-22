@@ -10,18 +10,16 @@ wieder zurückgekehrt.
 </p>
 
 <tmpl:UNITS>
-<p>Einheiten:</p>
-<table><col><col align="right">
-<tmpl:UNIT><tr><td>{name}:</td><td>{num}</td></tr>
-</tmpl:UNIT>
+<table style="width: auto;">
+  <thead><th colspan="2">Einheiten</th></thead>
+  <tbody><tmpl:UNIT><tr><td>{name}:</td><td class="text-right">{num}</td></tr></tmpl:UNIT></tbody>
 </table>
 </tmpl:UNITS>
 
 <tmpl:RESOURCES>
-<p>Rohstoffe:</p>
-<table><col><col align="right">
-<tmpl:RESOURCE><tr><td>{name}:</td><td>{num}</td></tr>
-</tmpl:RESOURCE>
+<table style="width: auto;">
+  <thead><th colspan="2">Rohstoffe</th></thead>
+  <tbody><tmpl:RESOURCE><tr><td>{name}:</td><td class="text-right">{num}</td></tr></tmpl:RESOURCE></tbody>
 </table>
 </tmpl:RESOURCES>
 
