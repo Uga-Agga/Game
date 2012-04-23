@@ -958,8 +958,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewReal(relation, (float) Round(result->defenders[0].relationMultiplicator, 2));
       religion = mxmlNewElement(battleValues, "religion");
         mxmlNewReal(religion, (float) Round(result->defenders[0].religion_bonus ,2));
+    }
 
-    if (result->defenders->heroFights) {
+    if (result->defenders->heroFights && !IsAttacker) {
       hero = mxmlNewElement(defender, "hero");
         points = mxmlNewElement(hero, "points");
           mxmlNewInteger(points, (int) hero_points_defender);
@@ -967,9 +968,6 @@ static char* battle_report_xml (db_t *database,
           mxmlNewInteger(heal, (int) abs(result->defenders_acc_hitpoints_units_before - result->defenders_acc_hitpoints_units));
         death = mxmlNewElement(hero, "death");
           mxmlNewText(death, 0, (char*) (result->defenders_hero_died) ? "true" : "false");
-    }
-    
-
     }
 
     // warpoints
