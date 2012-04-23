@@ -593,14 +593,16 @@ static const char *artefact_name (db_t *database, int artefact_id) {
 static char* trade_report_xml(db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
-       const int resources[], const int units[], int artefact) {
+       const int resources[], const int units[], int artefact,
+       int IsSender, int heroID) {
 
   mxml_node_t *xml, *tradereport;
   mxml_node_t *curtime;
   mxml_node_t *source, *target, *player, *tribe;
-  mxml_node_t *caveName, *xCoord, *yCoord;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
   mxml_node_t *Units, *Unit, *name, *value;
   mxml_node_t *Resources, *Resource, *Artefact;
+  mxml_node_t *isSender, *heroSend, *heroDeath;
 
   char *xmlstring = "";
   int type = 0;
@@ -609,6 +611,8 @@ static char* trade_report_xml(db_t *database,
   tradereport = mxmlNewElement(xml, "tradereport");
   curtime = mxmlNewElement(tradereport, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
+  isSender = mxmlNewElement(tradereport, "isSender");
+    mxmlNewText(isSender, 0, (char*) (IsSender) ? "true" : "false");
 
   source = mxmlNewElement(tradereport, "source");
     player = mxmlNewElement(source, "playerName");
@@ -621,6 +625,8 @@ static char* trade_report_xml(db_t *database,
       mxmlNewInteger(xCoord, (int) cave1->xpos);
     yCoord = mxmlNewElement(source, "yCoord");
       mxmlNewInteger(yCoord, (int) cave1->ypos);
+    caveID = mxmlNewElement(source, "caveID");
+      mxmlNewInteger(caveID, (int) cave1->cave_id);
 
   target = mxmlNewElement(tradereport, "target");
     player = mxmlNewElement(target, "playerName");
@@ -633,6 +639,8 @@ static char* trade_report_xml(db_t *database,
       mxmlNewInteger(xCoord, (int) cave2->xpos);
     yCoord = mxmlNewElement(target, "yCoord");
       mxmlNewInteger(yCoord, (int) cave2->ypos);
+    caveID = mxmlNewElement(target, "caveID");
+      mxmlNewInteger(caveID, (int) cave2->cave_id);
 
   //units
   if (units) {
@@ -670,6 +678,12 @@ static char* trade_report_xml(db_t *database,
         mxmlNewText(name, 0, (char*) artefactName);
   }
 
+  if ((IsSender || player1->player_id == player2->player_id) && heroID) {
+    heroSend = mxmlNewElement(tradereport, "heroSend");
+      mxmlNewText(heroSend, 0, (char*) (heroID>0) ? "true" : "false");
+    heroDeath = mxmlNewElement(tradereport, "heroDeath");
+      mxmlNewText(heroDeath, 0, (char*) (heroID<0) ? "true" : "false");
+  }
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
   return xmlstring;
@@ -706,11 +720,6 @@ void trade_report (db_t *database,
     template_set(tmpl_trade2, "ARTEFACT/artefact", name);
   }
 
-  xml = trade_report_xml(database,
-       cave1, player1,
-       cave2, player2,
-       resources, units, artefact);
-
   // hero: heroID = -1 --> hero was killed
   if (heroID>0) {
     template_set(tmpl_trade2, "HERO/show", "");
@@ -720,12 +729,12 @@ void trade_report (db_t *database,
     template_set(tmpl_trade1, "HERO_DEAD/show", "");
   }
 
-  message_new(database, MSG_CLASS_TRADE,
-  cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
+  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, 0, heroID);
+  message_new(database, MSG_CLASS_TRADE, cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
 
   if (cave1->player_id != cave2->player_id) {
-    message_new(database, MSG_CLASS_TRADE,
-      cave1->player_id, subject1, template_eval(tmpl_trade1), xml);
+    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, 1, heroID);
+    message_new(database, MSG_CLASS_TRADE, cave1->player_id, subject1, template_eval(tmpl_trade1), xml);
   }
 }
 

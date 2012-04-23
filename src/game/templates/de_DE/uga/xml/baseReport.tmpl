@@ -30,6 +30,18 @@
 
   {#
   /* 
+   * Handelsbericht?
+   */
+  #}
+  {% elseif message_report == 6 %}
+    {% if message_xml.isSender == 'true' %}
+      {% include "xml/tradeSender.tmpl" %}
+    {% else %}
+      {% include "xml/tradeReceived.tmpl" %}
+    {% endif %}
+
+  {#
+  /* 
    * Spionage?
    */
   #}
