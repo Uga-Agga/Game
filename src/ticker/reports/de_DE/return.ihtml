@@ -17,7 +17,7 @@ wieder zurückgekehrt.
 </tmpl:UNITS>
 
 <tmpl:RESOURCES>
-<table style="width: auto;">
+<table style="width: auto; margin-top: 10px;">
   <thead><th colspan="2">Rohstoffe</th></thead>
   <tbody><tmpl:RESOURCE><tr><td>{name}:</td><td class="text-right">{num}</td></tr></tmpl:RESOURCE></tbody>
 </table>

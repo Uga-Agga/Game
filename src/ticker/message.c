@@ -161,16 +161,11 @@ static char* transform_spy_values (int num, int type) {
   return value;
 }
 
-float Round(float Zahl, unsigned int Stellen)
-{
-    Zahl *= pow(10, Stellen);
-    if (Zahl >= 0) {
-        floor(Zahl + 0.5);
-    } else {
-        ceil(Zahl - 0.5);
-    }
-    Zahl /= pow(10, Stellen);
-    return Zahl;
+static char* Round(float Zahl) {
+  char buf[20];
+  sprintf(buf, "%.2lf", Zahl);
+
+  return buf;
 }
 
 static void report_units (template_t *template, int locale_id,
@@ -862,9 +857,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewInteger(size, (int) result->attackers_acc_hitpoints_units_before +
                                    result->attackers_acc_hitpoints_defenseSystems_before);
       relation = mxmlNewElement(battleValues, "relation");
-        mxmlNewReal(relation, (float) Round(result->attackers[0].relationMultiplicator, 2));
+        mxmlNewText(relation, 0, (char*) Round(result->attackers[0].relationMultiplicator));
       religion = mxmlNewElement(battleValues, "religion");
-        mxmlNewReal(religion, (float) Round(result->attackers[0].religion_bonus, 2));
+        mxmlNewText(religion, 0, (char*) Round(result->attackers[0].religion_bonus));
 
     //hero
     if (result->attackers->heroFights && IsAttacker) {
@@ -955,9 +950,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewInteger(size, (int) result->defenders_acc_hitpoints_units_before +
                                    result->defenders_acc_hitpoints_defenseSystems_before);
       relation = mxmlNewElement(battleValues, "relation");
-        mxmlNewReal(relation, (float) Round(result->defenders[0].relationMultiplicator, 2));
+        mxmlNewText(relation, 0, (char*) Round(result->defenders[0].relationMultiplicator));
       religion = mxmlNewElement(battleValues, "religion");
-        mxmlNewReal(religion, (float) Round(result->defenders[0].religion_bonus ,2));
+        mxmlNewText(religion, 0, (char*) Round(result->defenders[0].religion_bonus));
     }
 
     if (result->defenders->heroFights && !IsAttacker) {

@@ -171,7 +171,7 @@
 
   {% if message_xml.attacker.hero %}
     <p>
-      {% if message_xml.attacker.hero.death %}
+      {% if message_xml.attacker.hero.death == 'true' %}
         Mutig hat der Held bei der Verteidigung der Höhle mitgeholfen. Leider hat er das Gemetzel nicht überlebt.
       {% else %}
         Ruhmreich hat dein Held in der Schlacht gekämpft und kehrt mit den Überlebenden zurück.
