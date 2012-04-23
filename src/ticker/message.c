@@ -768,7 +768,8 @@ static char* battle_report_xml (db_t *database,
         const struct Relation *relation1,
         const struct Relation *relation2,
         int show_warpoints, int attacker_warpoints, int defender_warpoints, int show_defender,
-        int defender_size_guessed, int IsAttacker)
+        int defender_size_guessed, int IsAttacker,
+        int hero_points_attacker, int hero_points_defender)
 {
   mxml_node_t *xml;
   mxml_node_t *battlereport;
@@ -784,6 +785,7 @@ static char* battle_report_xml (db_t *database,
   mxml_node_t *plunder, *resource, *num, *resourcesLost;
   mxml_node_t *Artefact, *Lost;
   mxml_node_t *selfAttack, *isAttacker;
+  mxml_node_t *hero, *points, *heal, *death;
 
   int type = 0;
   char *xmlstring = "";
@@ -863,6 +865,17 @@ static char* battle_report_xml (db_t *database,
         mxmlNewReal(relation, (float) Round(result->attackers[0].relationMultiplicator, 2));
       religion = mxmlNewElement(battleValues, "religion");
         mxmlNewReal(religion, (float) Round(result->attackers[0].religion_bonus, 2));
+
+    //hero
+    if (result->attackers->heroFights && IsAttacker) {
+      hero = mxmlNewElement(attacker, "hero");
+        points = mxmlNewElement(hero, "points");
+          mxmlNewInteger(points, (int) hero_points_attacker);
+        heal = mxmlNewElement(hero, "heal");
+          mxmlNewInteger(heal, (int) abs(result->attackers_acc_hitpoints_units_before - result->attackers_acc_hitpoints_units));
+        death = mxmlNewElement(hero, "death");
+          mxmlNewText(death, 0, (char*) (result->attackers_hero_died) ? "true" : "false");
+    }
 
 // defender
   // header
@@ -945,6 +958,18 @@ static char* battle_report_xml (db_t *database,
         mxmlNewReal(relation, (float) Round(result->defenders[0].relationMultiplicator, 2));
       religion = mxmlNewElement(battleValues, "religion");
         mxmlNewReal(religion, (float) Round(result->defenders[0].religion_bonus ,2));
+
+    if (result->defenders->heroFights) {
+      hero = mxmlNewElement(defender, "hero");
+        points = mxmlNewElement(hero, "points");
+          mxmlNewInteger(points, (int) hero_points_defender);
+        heal = mxmlNewElement(hero, "heal");
+          mxmlNewInteger(heal, (int) abs(result->defenders_acc_hitpoints_units_before - result->defenders_acc_hitpoints_units));
+        death = mxmlNewElement(hero, "death");
+          mxmlNewText(death, 0, (char*) (result->defenders_hero_died) ? "true" : "false");
+    }
+    
+
     }
 
     // warpoints
@@ -1090,7 +1115,8 @@ void battle_report (db_t *database,
                 change_owner, takeover_multiplier,
                 relation1,
                 relation2,
-                show_warpoints, attacker_warpoints, defender_warpoints, 0, defender_size_guessed, 1);
+                show_warpoints, attacker_warpoints, defender_warpoints, 0, defender_size_guessed, 1,
+                hero_points_attacker, hero_points_defender);
   } else {
     report_army_table(template1, player1->locale_id, result);
     xml1 = battle_report_xml(database,
@@ -1100,7 +1126,8 @@ void battle_report (db_t *database,
                 change_owner, takeover_multiplier,
                 relation1,
                 relation2,
-                show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 1);
+                show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 1,
+                hero_points_attacker, hero_points_defender);
   }
 
   report_army_table(template2, player2->locale_id, result);
@@ -1111,7 +1138,8 @@ void battle_report (db_t *database,
               change_owner, takeover_multiplier,
               relation1,
               relation2,
-              show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 0);
+              show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 0,
+              hero_points_attacker, hero_points_defender);
 
   if (result->winner == FLAG_ATTACKER) {
     report_resources(template1, player1->locale_id,
