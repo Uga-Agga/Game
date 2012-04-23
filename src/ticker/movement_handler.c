@@ -712,7 +712,7 @@ static void after_takeover_attacker_update(db_t *database,
 }
 
 struct Battle *hero_update_after_battle(db_t *database,
-    struct Battle *battle,
+    Battle *battle,
     int heroID,
     struct Cave *defender_cave,
     int war_points_attacker,
