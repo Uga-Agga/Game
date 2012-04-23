@@ -480,20 +480,20 @@ static void after_battle_change_artefact_ownership (
   if (winner == FLAG_ATTACKER) {
     if (*artefact == 0 && *artefact_def > 0) {
       try {
-  remove_effects_from_cave(database, *artefact_def);
-  uninitiate_artefact(database, *artefact_def);
-  remove_artefact_from_cave(database, *artefact_def);
-  *artefact_id = *artefact_def;
+        remove_effects_from_cave(database, *artefact_def);
+        uninitiate_artefact(database, *artefact_def);
+        remove_artefact_from_cave(database, *artefact_def);
+        *artefact_id = *artefact_def;
 
-  if (artefact_lost()) {
-    *lostTo = artefact_loose_to_cave(database, defender_cave);
-    if (*lostTo)
-      put_artefact_into_cave(database, *artefact_def, *lostTo);
-  } else {
-    *artefact = *artefact_def;
-  }
+        if (artefact_lost()) {
+          *lostTo = artefact_loose_to_cave(database, defender_cave);
+          if (*lostTo)
+            put_artefact_into_cave(database, *artefact_def, *lostTo);
+        } else {
+          *artefact = *artefact_def;
+        }
       } catch (SQL_EXCEPTION) {
-  warning("%s", except_msg);
+        warning("%s", except_msg);
       } end_try;
     }
   } else if (*artefact > 0) {
@@ -712,7 +712,7 @@ static void after_takeover_attacker_update(db_t *database,
 }
 
 struct Battle *hero_update_after_battle(db_t *database,
-    Battle *battle,
+    struct Battle *battle,
     int heroID,
     struct Cave *defender_cave,
     int war_points_attacker,
@@ -811,6 +811,7 @@ void movement_handler (db_t *database, db_result_t *result)
   Battle *battle;
   dstring_t *ds;
   double spy_result;
+  struct SpyReportReturnStruct srrs;
 
   /* time related issues */
   const float *battle_bonus;
@@ -1231,83 +1232,95 @@ void movement_handler (db_t *database, db_result_t *result)
     case SPIONAGE:
 
       /* generate spy report */
-      spy_result = spy_report(database, &cave1, &player1, &cave2, &player2,
+      srrs = spy_report(database, &cave1, &player1, &cave2, &player2,
             resources, units, artefact);
 
-      if (spy_result == 1)
-      {
-  /* send all units back */
-  ds = dstring_new("INSERT INTO Event_movement"
-       " (caveID, target_caveID, source_caveID, movementID,"
-       " speedFactor, start, end, artefactID, heroID");
+      // get Artefacts By Spy
+      if (artefact == 0 && srrs.artefactID > 0) { // get artefact only, if none is carried
 
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
-
-  dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-    source_caveID, source_caveID, target_caveID, RUECKKEHR,
-    speed_factor, return_start, return_end, artefact, heroID);
-
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, ",%d", resources[i]);
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%d", units[i]);
-
-  dstring_append(ds, ")");
-
-  db_query_dstring(database, ds);
-      }
-      else
-      {
-  /* send remaining units back */
-  int count = 0;
-
-  ds = dstring_new("INSERT INTO Event_movement"
-       " (caveID, target_caveID, source_caveID, movementID,"
-       " speedFactor, start, end, artefactID, heroID");
-
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
-
-  dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-    source_caveID, source_caveID, target_caveID, RUECKKEHR,
-    speed_factor, return_start, return_end, artefact, heroID);
-
-  for (i = 0; i < MAX_UNIT; ++i)
-  {
-    int num = units[i] * spy_result;
-
-    dstring_append(ds, ",%d", num);
-    count += num;
-      body_count += units[i] - num;
-  }
-
-  dstring_append(ds, ")");
-
-  if (count)
-    db_query_dstring(database, ds);
-
-  /* put resources into cave */
-  ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
-
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "",
-      resource_type[i]->dbFieldName,
-      resource_type[i]->dbFieldName, resources[i],
-      function_to_sql(resource_type[i]->maxLevel));
-
-  dstring_append(ds, " WHERE caveID = %d", target_caveID);
-
-  db_query_dstring(database, ds);
-
-  if (artefact > 0)
-    put_artefact_into_cave(database, artefact, target_caveID);
+        if (srrs.artefactID > 0) {
+          artefact = srrs.artefactID;
+          after_battle_change_artefact_ownership(
+                  database, FLAG_ATTACKER, &artefact, &artefact_id, &artefact_def,
+                  target_caveID, &cave2, &lostTo);
+        }
       }
 
-  if (heroID > 0)
-    put_hero_into_cave(database, heroID, target_caveID);
+      spy_result = srrs.value;
+
+      if (spy_result == 1) {
+        /* send all units back */
+        ds = dstring_new("INSERT INTO Event_movement"
+             " (caveID, target_caveID, source_caveID, movementID,"
+             " speedFactor, start, end, artefactID, heroID");
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
+          source_caveID, source_caveID, target_caveID, RUECKKEHR,
+          speed_factor, return_start, return_end, artefact, heroID);
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%d", resources[i]);
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%d", units[i]);
+
+        dstring_append(ds, ")");
+
+        db_query_dstring(database, ds);
+      } else {
+        /* send remaining units back */
+        int count = 0;
+
+        ds = dstring_new("INSERT INTO Event_movement"
+             " (caveID, target_caveID, source_caveID, movementID,"
+             " speedFactor, start, end, artefactID, heroID");
+
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
+          source_caveID, source_caveID, target_caveID, RUECKKEHR,
+          speed_factor, return_start, return_end, artefact, heroID);
+
+        for (i = 0; i < MAX_UNIT; ++i)
+        {
+          int num = units[i] * spy_result;
+
+          dstring_append(ds, ",%d", num);
+          count += num;
+            body_count += units[i] - num;
+        }
+
+        dstring_append(ds, ")");
+
+        if (count)
+          db_query_dstring(database, ds);
+
+        /* put resources into cave */
+        ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "",
+            resource_type[i]->dbFieldName,
+            resource_type[i]->dbFieldName, resources[i],
+            function_to_sql(resource_type[i]->maxLevel));
+
+        dstring_append(ds, " WHERE caveID = %d", target_caveID);
+
+        db_query_dstring(database, ds);
+
+        if (artefact > 0)
+          put_artefact_into_cave(database, artefact, target_caveID);
+      }
+
+      // update hero
+      if (heroID > 0) {
+        put_hero_into_cave(database, heroID, target_caveID);
+      }
 
       get_relation_info(database, player1.tribe, player2.tribe, &relation1);
       if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){   

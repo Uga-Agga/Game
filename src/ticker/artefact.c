@@ -52,7 +52,7 @@ void get_artefact_class_by_id (db_t *database, int artefactClassID,
   db_result_t *result;
   dstring_t *ds;
 
-  ds = dstring_new("SELECT * FROM Artefact_class"
+  ds = dstring_new("SELECT * FROM " DB_TABLE_ARTEFACT_CLASS
            " WHERE artefactClassID = %d", artefactClassID);
   result = db_query_dstring(database, ds);
   debug(DEBUG_ARTEFACT, "get_artefact_class_by_id: %s", dstring_str(ds));
@@ -69,6 +69,7 @@ void get_artefact_class_by_id (db_t *database, int artefactClassID,
   artefact_class->description           = db_result_get_string(result, "description");
   artefact_class->description_initiated = db_result_get_string(result, "description_initiated");
   artefact_class->initiationID          = db_result_get_int(result, "initiationID");
+  artefact_class->getArtefactBySpy      = db_result_get_int(result, "getArtefactBySpy");
   get_effect_list(result, artefact_class->effect);
 }
 
@@ -259,7 +260,7 @@ int new_artefact (db_t *database, int artefactClassID)
   dstring_t *ds;
 
   /* get artefact class */
-  ds = dstring_new("SELECT * FROM Artefact_class "
+  ds = dstring_new("SELECT * FROM " DB_TABLE_ARTEFACT_CLASS
             "WHERE artefactClassID = %d", artefactClassID);
   result = db_query_dstring(database, ds);
 
@@ -515,4 +516,32 @@ int merge_artefacts_general (db_t *database,
   }
 
   return 0;
+}
+
+int get_artefact_for_caveID(db_t *database, int caveID, int spyableOnly) {
+  dstring_t *ds;
+  db_result_t *result;
+  int artefactID = 0;
+
+  if (spyableOnly) {
+    ds = dstring_new("SELECT TOP 1 a.artefactID FROM " DB_TABLE_ARTEFACT
+                         " a LEFT JOIN " DB_TABLE_ARTEFACT_CLASS
+                         " ac ON a.ArtefactClassID = ac.ArtefactClassID "
+                           " WHERE a.caveID = %d AND ac.getArtefactBySpy = 1", caveID);
+        db_query_dstring(database, ds);
+
+        artefactID = db_result_get_int(result, "artefactID");
+
+  } else {
+    ds = dstring_new("SELECT TOP 1 artefactID FROM " DB_TABLE_ARTEFACT
+                     " WHERE caveID = %d", caveID);
+    db_query_dstring(database, ds);
+
+    artefactID = db_result_get_int(result, "artefactID");
+  }
+
+  debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: %s", dstring_str(ds));
+
+  return artefactID;
+
 }

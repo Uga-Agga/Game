@@ -1234,7 +1234,7 @@ static char* spy_report_xml(db_t *database,
     const struct Cave *cave1, const struct Player *player1,
     const struct Cave *cave2, const struct Player *player2,
     const int resources[], const int units[], int artefact,
-    int spyTypes[], const struct Cave cave) {
+    int spyTypes[], const struct Cave cave, int stolenArtefactID) {
 
   mxml_node_t *xml;
   mxml_node_t *spyreport;
@@ -1244,6 +1244,7 @@ static char* spy_report_xml(db_t *database,
   mxml_node_t *Units, *Unit, *name, *value;
   mxml_node_t *DefenseSystems, *DefenseSystem, *Resources, *Resource,
               *Buildings, *Building, *Sciences, *Science;
+  mxml_node_t *stolenArtefact;
 
   int type;
   char *xmlstring = "";
@@ -1348,16 +1349,26 @@ static char* spy_report_xml(db_t *database,
     }
   }
 
+  // stolen artefact
+  if (stolenArtefactID > 0) {
+
+    const char* name = artefact_name(database, stolenArtefactID);
+    stolenArtefact = mxmlNewElement(spyreport, "stolenArtefact");
+      mxmlNewText(stolenArtefact, 0, (char*) name);
+
+  }
+
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
   return xmlstring;
 }
 
-double spy_report (db_t *database,
+struct SpyReportReturnStruct spy_report (db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
        const int resources[], const int units[], int artefact)
 {
+  struct SpyReportReturnStruct srrs;
   struct SpyInfo spy[MAX_SPY];
   struct Monster monster;
   template_t *tmpl_spy1 = message_template(player1, "spy1");
@@ -1368,6 +1379,7 @@ double spy_report (db_t *database,
   char *xml = "";
   int spyTypes[5] = {0, 0, 0, 0, 0};
   struct Cave cave;
+  int artefactID = 0;
   #ifdef DEBUG
     int type;
   #endif
@@ -1378,7 +1390,16 @@ double spy_report (db_t *database,
   get_spy_values(spy, units, cave2->unit, cave2->defense_system);
   result = get_spy_chance(spy);
 
+  srrs.artefactID = 0;
+
   if (result > drand()) {
+
+    // getting artefact?
+    if (cave2->artefacts > 0 && ARTEFACT_SPY_PROBABILITY > drand()) {
+      int artefactID = get_artefact_for_caveID(database, cave2->cave_id, 1);
+      srrs.artefactID = artefactID;
+    }
+
     result = 1;
     template_set(tmpl_spy1, "report", "");
     #if 0  /* no monsters yet */
@@ -1389,28 +1410,30 @@ double spy_report (db_t *database,
         cave1, player1,
         cave2, player2,
         resources, units,
-        artefact, spyTypes, cave);
+        artefact, spyTypes, cave, artefactID);
+
 
   } else {
 
   if (0.5 > drand()) {
-      int dead_units[MAX_UNIT];
-      int type;
+    int dead_units[MAX_UNIT];
+    int type;
 
-      for (type = 0; type < MAX_UNIT; ++type)
-        dead_units[type] = units[type] - (int) (units[type] * result);
+    for (type = 0; type < MAX_UNIT; ++type)
+      dead_units[type] = units[type] - (int) (units[type] * result);
 
-      template_set(tmpl_spy1, "dead", "");
-      template_set(tmpl_spy2, "dead", "");
+    template_set(tmpl_spy1, "dead", "");
+    template_set(tmpl_spy2, "dead", "");
 
-      template_context(tmpl_spy1, "DEAD");
-      template_context(tmpl_spy2, "DEAD");
-      report_units(tmpl_spy1, player1->locale_id, dead_units);
-      report_units(tmpl_spy2, player2->locale_id, dead_units);
-      template_context(tmpl_spy1, "/MSG");
-      template_context(tmpl_spy2, "/MSG");
-    } else {
-      result = 1;
+    template_context(tmpl_spy1, "DEAD");
+    template_context(tmpl_spy2, "DEAD");
+    report_units(tmpl_spy1, player1->locale_id, dead_units);
+    report_units(tmpl_spy2, player2->locale_id, dead_units);
+    template_context(tmpl_spy1, "/MSG");
+    template_context(tmpl_spy2, "/MSG");
+
+  } else {
+    result = 1;
   }
 
   if (artefact) {
@@ -1439,7 +1462,9 @@ double spy_report (db_t *database,
 
     message_new(database, MSG_CLASS_SPY_REPORT,
     cave1->player_id, subject1, template_eval(tmpl_spy1), xml);
-    return result;
+
+    srrs.value = result;
+    return srrs;
 }
 
 void artefact_report (db_t *database,

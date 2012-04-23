@@ -23,6 +23,7 @@
 #define DEBUG_HERO (1 << 9)
 
 #define DB_TABLE_ARTEFACT "Artefact"
+#define DB_TABLE_ARTEFACT_CLASS "Artefact_class"
 #define DB_TABLE_CAVE "Cave"
 #define DB_TABLE_CAVE_TAKEOVER "Cave_takeover"
 #define DB_TABLE_PLAYER  "Player"

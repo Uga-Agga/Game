@@ -35,11 +35,18 @@
 #define MSG_CLASS_HERO 28
 #define MSG_CLASS_UGA_AGGA	99
 #define MSG_CLASS_ANNOUNCE	1001
+#define ARTEFACT_SPY_PROBABILITY 0.1
 
 struct ReportEntity
 {
-    const struct GameObject *object;
-    double value;
+  const struct GameObject *object;
+  double value;
+};
+
+struct SpyReportReturnStruct
+{
+  double value;
+  int artefactID;
 };
 
 extern void message_set_log_handler (log_handler_t *handler);
@@ -68,7 +75,7 @@ extern void protected_report (db_t *database,
 	const struct Cave *cave1, const struct Player *player1,
 	const struct Cave *cave2, const struct Player *player2);
 
-extern double spy_report (db_t *database,
+extern struct SpyReportReturnStruct spy_report (db_t *database,
 	const struct Cave *cave1, const struct Player *player1,
 	const struct Cave *cave2, const struct Player *player2,
 	const int resources[], const int units[], int artefact);
