@@ -678,7 +678,7 @@ static char* trade_report_xml(db_t *database,
         mxmlNewText(name, 0, (char*) artefactName);
   }
 
-  if ((IsSender || player1->player_id == player2->player_id) && heroID) {
+  if (IsSender && heroID) {
     heroSend = mxmlNewElement(tradereport, "heroSend");
       mxmlNewText(heroSend, 0, (char*) (heroID>0) ? "true" : "false");
     heroDeath = mxmlNewElement(tradereport, "heroDeath");
@@ -699,6 +699,7 @@ void trade_report (db_t *database,
   const char *subject1 = message_subject(tmpl_trade1, "TITLE", cave2);
   const char *subject2 = message_subject(tmpl_trade2, "TITLE", cave2);
   char *xml = "";
+  int IsSender = 0;
 
   message_setup(tmpl_trade1, cave1, player1, cave2, player2);
   message_setup(tmpl_trade2, cave1, player1, cave2, player2);
@@ -729,7 +730,10 @@ void trade_report (db_t *database,
     template_set(tmpl_trade1, "HERO_DEAD/show", "");
   }
 
-  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, 0, heroID);
+  if (cave1->player_id == cave2->player_id) {
+    IsSender = 1;
+  }
+  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, IsSender, heroID);
   message_new(database, MSG_CLASS_TRADE, cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
 
   if (cave1->player_id != cave2->player_id) {
