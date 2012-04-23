@@ -159,37 +159,30 @@
 <p>Der Kampf brachte dir {{ message_xml.defenderWarpoints }} und dem Gegner {{ message_xml.attackerWarpoints }} Kriegspunkte.</p>
 {% endif %}
 
+{% if message_xml.defender.hero %}
+  <p>
+    {% if message_xml.defender.hero.death %}
+      Mutig hat der Held bei der Verteidigung der Höhle mitgeholfen. Leider hat er das Gemetzel nicht überlebt.
+    {% else %}
+      Ruhmreich hat dein Held in der Schlacht gekämpft und bei der Verteidigung geholfen.
+    {% endif %}
+
+    <br />Dein Held bekommt für die Verteidigung {{ message_xml.defender.hero.points }} Erfahrungspunkte und verliert {{ message_xml.defender.hero.heal }} Lebenspunkte.
+  </p>
+{% endif %}
+
+{% if message_xml.artefact.name %}
+  <p>
+    {% if message_xml.winner == 'defender' %}
+      Zwischen den Überresten der getöteten Feinde habt ihr das Artefakt "{{ message_xml.artefact.name }}" gefunden!
+    {% else %}
+      Der Angreifer hat aus eurer Höhle das Artefakt "{{ message_xml.artefact.name }}" gestohlen!
+    {% endif %}
+
+    {% if message_xml.artefact.name %}
+      <br />Bei dem Kampf ist das Artefakt "{{ message_xml.artefact.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.
+    {% endif %}
+  </p>
+{% endif %}
+
 {% endspaceless %}
-
-<!--
-<tmpl:HERO>
-<br />
-<p>
-{if hero_dead}
-Mutig hat der Held bei der Verteidigung der Höhle mitgeholfen. Leider hat er das Gemetzel nicht überlebt. 
-{else}
-Ruhmreich hat dein Held in der Schlacht gekämpft und bei der Verteidigung geholfen.
-{/if}
-<p>Dein Held bekommt für die Verteidigung {hero_points_defender} Erfahrungspunkte und verliert {healPoints_defender} Lebenspunkte.</p>
-</p>
-</tmpl:HERO>
-
-
-<tmpl:ARTEFACT>
-<p>
-{if att_won}
-Der Angreifer hat aus eurer Höhle das Artefakt "{artefact}" gestohlen!
-{else}
-Zwischen den Überresten der getöteten Feinde habt ihr das Artefakt
-"{artefact}" gefunden!
-{/if}
-</p>
-</tmpl:ARTEFACT>
-
-<tmpl:ARTEFACT_LOST>
-<p>
-Bei dem Kampf ist euer Artefakt "{artefact}" verloren gegangen! Es muß
-irgendwo in der Nachbarschaft der Höhle liegen.
-</p>
-</tmpl:ARTEFACT_LOST>
--->

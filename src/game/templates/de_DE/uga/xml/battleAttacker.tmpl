@@ -166,33 +166,34 @@
 
 
   {% if message_xml.attackerWarpoints or message_xml.defenderWarpoints %}
-  <p>Der Kampf brachte dir {{ message_xml.defenderWarpoints }} und dem Gegner {{ message_xml.attackerWarpoints }} Kriegspunkte.</p>
+    <p>Der Kampf brachte dir {{ message_xml.defenderWarpoints }} und dem Gegner {{ message_xml.attackerWarpoints }} Kriegspunkte.</p>
+  {% endif %}
+
+  {% if message_xml.attacker.hero %}
+    <p>
+      {% if message_xml.attacker.hero.death %}
+        Mutig hat der Held bei der Verteidigung der Höhle mitgeholfen. Leider hat er das Gemetzel nicht überlebt.
+      {% else %}
+        Ruhmreich hat dein Held in der Schlacht gekämpft und kehrt mit den Überlebenden zurück.
+      {% endif %}
+
+      <br />Dein Held bekommt für die Verteidigung {{ message_xml.attacker.hero.points }} Erfahrungspunkte und verliert {{ message_xml.attacker.hero.heal }} Lebenspunkte.
+    </p>
+  {% endif %}
+
+  {% if message_xml.artefact.name %}
+    <p>
+      {% if message_xml.winner == 'attacker' %}
+        Bei der Plünderung der Höhle bist du auf ein Artefakt "{{ message_xml.artefact.name }}" gestoßen!
+      {% else %}
+        Das transportierte Artefakt "{{ message_xml.artefact.name }}" ist verloren!
+      {% endif %}
+
+      {% if message_xml.artefact.name %}
+        <br />Bei dem Kampf ist das Artefakt "{{ message_xml.artefact.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.
+      {% endif %}
+    </p>
   {% endif %}
 {% endif %}
 
 {% endspaceless %}
-<!--
-  <tmpl:HERO>
-  <br />
-  <p>
-  {if hero_dead}
-  Mutig hat der Held sich mit deinen Kämpfern in die Schlacht gestürtzt. Leider hat er das Gemetzel nicht überlebt. 
-  {else}
-  Ruhmreich hat dein Held in der Schlacht gekämpft und kehrt mit den Überlebenden zurück.
-  {/if}
-  <p>Dein Held bekommt für den Angriff {hero_points_attacker} Erfahrungspunkte und verliert {healPoints_attacker} Lebenspunkte.</p>
-  </p>
-  </tmpl:HERO>
-
-  <tmpl:ARTEFACT>
-  <p>
-  {if att_won}
-  Bei der Plünderung der Höhle bist du auf ein Artefakt "{artefact}" gestoßen!
-  {else}
-  Das transportierte Artefakt "{artefact}" ist verloren!
-  {/if}
-  </p>
-  </tmpl:ARTEFACT>
-
-  <tmpl:ARTEFACT_LOST><p>Bei dem Kampf ist das Artefakt "{artefact}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.</p></tmpl:ARTEFACT_LOST>
--->
