@@ -161,13 +161,6 @@ static char* transform_spy_values (int num, int type) {
   return value;
 }
 
-static char* Round(float Zahl) {
-  char buf[20];
-  sprintf(buf, "%.2lf", Zahl);
-
-  return buf;
-}
-
 static void report_units (template_t *template, int locale_id,
         const int units[])
 {
@@ -602,7 +595,7 @@ static char* trade_report_xml(db_t *database,
   mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
   mxml_node_t *Units, *Unit, *name, *value;
   mxml_node_t *Resources, *Resource, *Artefact;
-  mxml_node_t *isSender, *heroSend, *heroDeath;
+  mxml_node_t *isSender, *hero, *heroSend, *heroDeath;
 
   char *xmlstring = "";
   int type = 0;
@@ -612,7 +605,7 @@ static char* trade_report_xml(db_t *database,
   curtime = mxmlNewElement(tradereport, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
   isSender = mxmlNewElement(tradereport, "isSender");
-    mxmlNewText(isSender, 0, (char*) (IsSender) ? "true" : "false");
+    mxmlNewText(isSender, 0, (const char*) (IsSender ? "true" : "false"));
 
   source = mxmlNewElement(tradereport, "source");
     player = mxmlNewElement(source, "playerName");
@@ -679,10 +672,11 @@ static char* trade_report_xml(db_t *database,
   }
 
   if (IsSender && heroID) {
-    heroSend = mxmlNewElement(tradereport, "heroSend");
-      mxmlNewText(heroSend, 0, (char*) (heroID>0) ? "true" : "false");
-    heroDeath = mxmlNewElement(tradereport, "heroDeath");
-      mxmlNewText(heroDeath, 0, (char*) (heroID<0) ? "true" : "false");
+    hero = mxmlNewElement(tradereport, "source");
+      heroSend = mxmlNewElement(hero, "send");
+        mxmlNewText(heroSend, 0, (const char*) (heroID>0 ? "true" : "false"));
+      heroDeath = mxmlNewElement(hero, "death");
+        mxmlNewText(heroDeath, 0, (const char*) (heroID<0 ? "true" : "false"));
   }
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
@@ -797,6 +791,8 @@ static char* battle_report_xml (db_t *database,
 
   int type = 0;
   char *xmlstring = "";
+  char rel_bonus[100];
+  char god_bonus[100];
   const Army *army;
   const Army_unit *armyunit, *armydef;
 
@@ -805,21 +801,21 @@ static char* battle_report_xml (db_t *database,
   curtime = mxmlNewElement(battlereport, "timestamp");
     mxmlNewInteger(curtime, (int) time(NULL));
   isAttacker = mxmlNewElement(battlereport, "isAttacker");
-    mxmlNewText(isAttacker, 0, (char*) (IsAttacker) ? "true" : "false");
+    mxmlNewText(isAttacker, 0, (const char*) (IsAttacker ? "true" : "false"));
   winner = mxmlNewElement(battlereport, "winner");
-    mxmlNewText(winner, 0, (char*) (result->winner == FLAG_ATTACKER) ? "attacker" : "defender");
+    mxmlNewText(winner, 0, (const char*) (result->winner == FLAG_ATTACKER ? "attacker" : "defender"));
 
   selfAttack = mxmlNewElement(battlereport, "selfAttack");
-    mxmlNewText(selfAttack, 0, (char*) (player1->name == player2->name) ? "true" : "false");
+    mxmlNewText(selfAttack, 0, (const char*) (player1->name == player2->name ? "true" : "false"));
 
   takeover = mxmlNewElement(battlereport, "takeover");
-    mxmlNewText(takeover, 0, (char*) (takeover_multiplier) ? "true" : "false");
+    mxmlNewText(takeover, 0, (const char*) (takeover_multiplier ? "true" : "false"));
 
   if (takeover_multiplier) {
     takeoverMultiplier = mxmlNewElement(battlereport, "takeoverMultiplier");
       mxmlNewInteger(takeoverMultiplier, (int) takeover_multiplier);
     changeOwner = mxmlNewElement(battlereport, "changeOwner");
-      mxmlNewText(changeOwner, 0, (char*) (change_owner) ? "true" : "false");
+      mxmlNewText(changeOwner, 0, (const char*) (change_owner ? "true" : "false"));
   }
 
 //attacker
@@ -859,6 +855,9 @@ static char* battle_report_xml (db_t *database,
     }
 
     //battleValues
+    sprintf(rel_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
+    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
+
     battleValues = mxmlNewElement(attacker, "battleValues");
       range = mxmlNewElement(battleValues, "range");
         mxmlNewInteger(range, (int) result->attackers_acc_range_before);
@@ -870,9 +869,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewInteger(size, (int) result->attackers_acc_hitpoints_units_before +
                                    result->attackers_acc_hitpoints_defenseSystems_before);
       relation = mxmlNewElement(battleValues, "relation");
-        mxmlNewText(relation, 0, (char*) Round(result->attackers[0].relationMultiplicator));
+        mxmlNewText(relation, 0, (char*) rel_bonus);
       religion = mxmlNewElement(battleValues, "religion");
-        mxmlNewText(religion, 0, (char*) Round(result->attackers[0].religion_bonus));
+        mxmlNewText(religion, 0, (char*) god_bonus);
 
     //hero
     if (result->attackers->heroFights && IsAttacker) {
@@ -882,7 +881,7 @@ static char* battle_report_xml (db_t *database,
         heal = mxmlNewElement(hero, "heal");
           mxmlNewInteger(heal, (int) abs(result->attackers_acc_hitpoints_units_before - result->attackers_acc_hitpoints_units));
         death = mxmlNewElement(hero, "death");
-          mxmlNewText(death, 0, (char*) (result->attackers_hero_died) ? "true" : "false");
+          mxmlNewText(death, 0, (const char*) (result->attackers_hero_died ? "true" : "false"));
     }
 
 // defender
@@ -952,6 +951,9 @@ static char* battle_report_xml (db_t *database,
     }
 
     //battleValues
+    sprintf(rel_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
+    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
+
     battleValues = mxmlNewElement(defender, "battleValues");
       range = mxmlNewElement(battleValues, "range");
         mxmlNewInteger(range, (int) result->defenders_acc_range_before);
@@ -963,9 +965,9 @@ static char* battle_report_xml (db_t *database,
         mxmlNewInteger(size, (int) result->defenders_acc_hitpoints_units_before +
                                    result->defenders_acc_hitpoints_defenseSystems_before);
       relation = mxmlNewElement(battleValues, "relation");
-        mxmlNewText(relation, 0, (char*) Round(result->defenders[0].relationMultiplicator));
+        mxmlNewText(relation, 0, (char*) rel_bonus);
       religion = mxmlNewElement(battleValues, "religion");
-        mxmlNewText(religion, 0, (char*) Round(result->defenders[0].religion_bonus));
+        mxmlNewText(religion, 0, (char*) god_bonus);
     }
 
     if (result->defenders->heroFights && !IsAttacker) {
@@ -975,7 +977,7 @@ static char* battle_report_xml (db_t *database,
         heal = mxmlNewElement(hero, "heal");
           mxmlNewInteger(heal, (int) abs(result->defenders_acc_hitpoints_units_before - result->defenders_acc_hitpoints_units));
         death = mxmlNewElement(hero, "death");
-          mxmlNewText(death, 0, (char*) (result->defenders_hero_died) ? "true" : "false");
+          mxmlNewText(death, 0, (const char*) (result->defenders_hero_died ? "true" : "false"));
     }
 
     // warpoints
@@ -1027,11 +1029,8 @@ static char* battle_report_xml (db_t *database,
         name = mxmlNewElement(Artefact, "name");
           mxmlNewText(name, 0, (char*) artefactName);
         Lost = mxmlNewElement(Artefact, "lost");
-          mxmlNewText(Lost, 0, (char*) (lost) ? "true" : "false");
-
+          mxmlNewText(Lost, 0, (const char*) (lost ? "true" : "false"));
     }
-
-
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
@@ -1244,7 +1243,7 @@ static char* spy_report_xml(db_t *database,
   mxml_node_t *Units, *Unit, *name, *value;
   mxml_node_t *DefenseSystems, *DefenseSystem, *Resources, *Resource,
               *Buildings, *Building, *Sciences, *Science;
-  mxml_node_t *stolenArtefact;
+  mxml_node_t *Artefact, *Lost;
 
   int type;
   char *xmlstring = "";
@@ -1350,14 +1349,15 @@ static char* spy_report_xml(db_t *database,
   }
 
   // stolen artefact
-  if (stolenArtefactID > 0) {
-
-    const char* name = artefact_name(database, stolenArtefactID);
-    stolenArtefact = mxmlNewElement(spyreport, "stolenArtefact");
-      mxmlNewText(stolenArtefact, 0, (char*) name);
-
+  if (stolenArtefactID) {
+    int stolenArtefactLost = 0; //delete me
+    const char* ArtefactName = artefact_name(database, stolenArtefactID);
+    Artefact = mxmlNewElement(spyreport, "artefact");
+      name = mxmlNewElement(Artefact, "name");
+        mxmlNewText(name, 0, (char*) ArtefactName);
+      Lost = mxmlNewElement(Artefact, "lost");
+        mxmlNewText(Lost, 0, (const char*) (stolenArtefactLost ? "true" : "false"));
   }
-
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
   return xmlstring;

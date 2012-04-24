@@ -37,6 +37,16 @@
   {% endif %}
 </p>
 
+{% if message_xml.takeoverMultiplier %}
+<p>
+  {% if message_xml.takeoverMultiplier.changeOwner == 'true' %}
+    Du hast damit die Kontrolle über die Höhle an {{ message_xml.defender.playerName }} verloren.
+  {% else %}
+    Trotz der Niederlage konntest du im Besitz dieser Höhle bleiben!
+  {% endif %}
+</p>
+{% endif %}
+
 <table style="width: auto; border-top: none; border-bottom: none;">
   <tr class="nohover">
     <td style="padding: 0; margin: 0;">
@@ -137,7 +147,7 @@
 </table>
 {% endif %}
 
-{% if message_xml.attacker.resourcesLost %}
+{% if message_xml.attacker.resourcesLost.resource %}
 <p>Der fremde Stamm verliert auf seiner Flucht folgende Ressourcen:</p>
 <table class="bordertable" style="width: auto;">
   <thead>

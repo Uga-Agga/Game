@@ -11,7 +11,7 @@
 #}
 {% spaceless %}
 
-{% if message_xml.winner == 'deffender' %}
+{% if message_xml.winner == 'defender' %}
   Niederlage bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})!
 {% else %}
   Sieg bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
@@ -34,6 +34,16 @@
     verloren!
   {% endif %}
 </p>
+
+{% if message_xml.takeoverMultiplier %}
+<p>
+  {% if message_xml.takeoverMultiplier.changeOwner == 'true' %}
+    Du bist nun stolzer Besitzer der Höhle!
+  {% else %}
+    Du konntest aber trotz des Sieges keine Kontrolle über die Höhle erlangen. Vermutlich hast Du schon zu viele andere Höhlen, der ehemalige Besitzer hat die Höhle vor Deiner Ankunft aufgegeben oder es besteht eine Kriegsbeziehung, in die Du nicht involviert bist.
+  {% endif %}
+</p>
+{% endif %}
 
 {#
 /* Kampf wurder verloren. Keine Einheiten kommen zurück. -> Keine weitere Infos außer dem Schamanen!
@@ -181,7 +191,7 @@
     </p>
   {% endif %}
 
-  {% if message_xml.artefact.name %}
+  {% if message_xml.artefact %}
     <p>
       {% if message_xml.winner == 'attacker' %}
         Bei der Plünderung der Höhle bist du auf ein Artefakt "{{ message_xml.artefact.name }}" gestoßen!
@@ -189,7 +199,7 @@
         Das transportierte Artefakt "{{ message_xml.artefact.name }}" ist verloren!
       {% endif %}
 
-      {% if message_xml.artefact.name %}
+      {% if message_xml.artefact.lost %}
         <br />Bei dem Kampf ist das Artefakt "{{ message_xml.artefact.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.
       {% endif %}
     </p>

@@ -149,3 +149,10 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
   </tbody>
 </table>
 {% endif %}
+
+{% if message_xml.artefact %}
+  <p>Bei der Plünderung der Höhle bist du auf ein Artefakt "{{ message_xml.artefact.name }}" gestoßen!</p>
+  {% if message_xml.artefact.lost %}
+    <p>Bei der Spionage lief leider etwas schief und das Artefakt "{{ message_xml.artefact.name }}" ist verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.</p>
+  {% endif %}
+{% endif %}

@@ -61,13 +61,15 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
   <p>Du hast das Artefakt "{{ message_xml.artefact.name }}" bekommen!</p>
 {% endif %}
 
-{% if message_xml.heroSend == 'true' %}
-  <p>Dein Held ist in der Höhle eingetroffen.</p>
-{% endif %}
+{% if message_xml.hero.send == 'true' %}
+  {% if message_xml.hero.send == 'true' %}
+    <p>Dein Held ist in der Höhle eingetroffen.</p>
+  {% endif %}
 
-{% if message_xml.heroDeath == 'true' %}
-  <p>Die Schmach die dein Held ertragen musste, da du ihn aus deinen Höhlen weggeschickt hast, war unerträglich.</p>
-  <p>Dein Held hat sich daher zu den Göttern begeben.</p>
+  {% if message_xml.hero.death == 'true' %}
+    <p>Die Schmach die dein Held ertragen musste, da du ihn aus deinen Höhlen weggeschickt hast, war unerträglich.</p>
+    <p>Dein Held hat sich daher zu den Göttern begeben.</p>
+  {% endif %}
 {% endif %}
 
 {% endspaceless %}

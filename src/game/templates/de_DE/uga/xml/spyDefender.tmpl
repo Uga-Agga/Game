@@ -11,3 +11,10 @@
 #}
 
 <!-- TODO -->
+
+{% if message_xml.artefact %}
+  <p>Du mußtest soeben erschreckend feststellen, das deine Schamanen so besoffen waren, das sie nicht bemerkten wie fast unsichtbare Gestallten dein  Artefakt "{{ message_xml.stolenArtefact }}" mitgenommen haben!</p>
+  {% if message_xml.artefact.lost %}
+    <p>Du schaust dich um und mußt erstaunt feststellen das die Gestallten das Artefakt "{{ message_xml.artefact.name }}" irgendwo in einer der Nachbarschaftshöhle hat fallen lassen.</p>
+  {% endif %}
+{% endif %}
