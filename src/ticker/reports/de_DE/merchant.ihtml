@@ -7,9 +7,9 @@ In der Höhle {cave}:
 Es zeigten sich folgende Wirkungen:
 </p>
 
-<table><col><col align="right">
-<tmpl:VALUE><tr><td>{name}:</td><td>{amount}</td></tr>
-</tmpl:VALUE>
+<table style="width: auto;">
+  <thead><th colspan="2">Waren</th></thead>
+  <tbody><tmpl:VALUE><tr><td>{name}:</td><td class="text-right">{amount}</td></tr></tmpl:VALUE></tbody>
 </table>
 
 </tmpl:MSG>

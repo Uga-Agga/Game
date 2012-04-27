@@ -126,7 +126,7 @@ static char* transform_spy_values (int num, int type) {
     else if (num < 49153) value = "eine Armee";
     else if (num < 65537) value = "Heerscharen";
     else if (num < 98305) value = "eine haltlose Horde";
-    else  value = "darüber eine endlose wogende Masse";
+    else  value = "eine endlose wogende Masse";
   }
 
   //resources
@@ -1460,8 +1460,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
     }
 #endif
 
-    message_new(database, MSG_CLASS_SPY_REPORT,
-    cave1->player_id, subject1, template_eval(tmpl_spy1), xml);
+    message_new(database, MSG_CLASS_SPY_REPORT, cave1->player_id, subject1, template_eval(tmpl_spy1), xml);
 
     srrs.value = result;
     return srrs;

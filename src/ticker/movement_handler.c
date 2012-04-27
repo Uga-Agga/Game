@@ -1232,18 +1232,12 @@ void movement_handler (db_t *database, db_result_t *result)
     case SPIONAGE:
 
       /* generate spy report */
-      srrs = spy_report(database, &cave1, &player1, &cave2, &player2,
-            resources, units, artefact);
+      srrs = spy_report(database, &cave1, &player1, &cave2, &player2, resources, units, artefact);
 
       // get Artefacts By Spy
       if (artefact == 0 && srrs.artefactID > 0) { // get artefact only, if none is carried
-
-        if (srrs.artefactID > 0) {
-          artefact = srrs.artefactID;
-          after_battle_change_artefact_ownership(
-                  database, FLAG_ATTACKER, &artefact, &artefact_id, &artefact_def,
-                  target_caveID, &cave2, &lostTo);
-        }
+        artefact_def = srrs.artefactID;
+        after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefact, &artefact_id, &artefact_def, target_caveID, &cave2, &lostTo);
       }
 
       spy_result = srrs.value;

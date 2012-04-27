@@ -261,7 +261,7 @@ int new_artefact (db_t *database, int artefactClassID)
 
   /* get artefact class */
   ds = dstring_new("SELECT * FROM " DB_TABLE_ARTEFACT_CLASS
-            "WHERE artefactClassID = %d", artefactClassID);
+            " WHERE artefactClassID = %d", artefactClassID);
   result = db_query_dstring(database, ds);
 
   debug(DEBUG_ARTEFACT, "new_artefact: %s", dstring_str(ds));
@@ -462,7 +462,7 @@ int merge_artefacts_general (db_t *database,
 
     /* lock artefact */
     lock_artefact->artefactClassID =
-  db_result_get_int(result, "lockClassID");
+    db_result_get_int(result, "lockClassID");
 
     if (lock_artefact->artefactClassID == 0)
       break;
@@ -500,7 +500,7 @@ int merge_artefacts_general (db_t *database,
   {
     /* result artefact */
     result_artefact->artefactClassID =
-  db_result_get_int(result, "resultClassID");
+    db_result_get_int(result, "resultClassID");
 
     if (result_artefact->artefactClassID != 0)
       result_artefact->artefactID =
@@ -524,24 +524,25 @@ int get_artefact_for_caveID(db_t *database, int caveID, int spyableOnly) {
   int artefactID = 0;
 
   if (spyableOnly) {
-    ds = dstring_new("SELECT TOP 1 a.artefactID FROM " DB_TABLE_ARTEFACT
+    ds = dstring_new("SELECT a.artefactID FROM " DB_TABLE_ARTEFACT
                          " a LEFT JOIN " DB_TABLE_ARTEFACT_CLASS
                          " ac ON a.ArtefactClassID = ac.ArtefactClassID "
-                           " WHERE a.caveID = %d AND ac.getArtefactBySpy = 1", caveID);
-        db_query_dstring(database, ds);
-
-        artefactID = db_result_get_int(result, "artefactID");
-
+                           " WHERE a.caveID = %d AND ac.getArtefactBySpy = 1 ORDER BY RAND() LIMIT 1", caveID);
   } else {
-    ds = dstring_new("SELECT TOP 1 artefactID FROM " DB_TABLE_ARTEFACT
-                     " WHERE caveID = %d", caveID);
-    db_query_dstring(database, ds);
-
-    artefactID = db_result_get_int(result, "artefactID");
+    ds = dstring_new("SELECT artefactID FROM " DB_TABLE_ARTEFACT
+                     " WHERE caveID = %d ORDER BY RAND() LIMIT 1", caveID);
   }
+  result = db_query_dstring(database, ds);
 
   debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: %s", dstring_str(ds));
 
-  return artefactID;
+  if (db_result_num_rows(result) == 0) {
+    debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: fail... no artefact in cave %d", caveID);
+    return artefactID;
+  }
 
+  db_result_next_row(result);
+  artefactID = db_result_get_int(result, "artefactID");
+
+  return artefactID;
 }

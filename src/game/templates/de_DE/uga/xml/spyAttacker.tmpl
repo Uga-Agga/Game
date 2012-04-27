@@ -30,20 +30,8 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
   <tbody>
     {% for resource in message_xml.resources.resource %}
       <tr>
-        <td>{{ defenseSystem.name }}</td>
-        <td>
-          {% if resource.value < 257 %}fast gar nichts
-          {% elseif resource.value < 1025 %}ein winziger Haufen
-          {% elseif resource.value < 4097 %}ein kleiner Haufen
-          {% elseif resource.value < 16385 %}ein beachtlicher Haufen
-          {% elseif resource.value < 32769 %}eine Menge
-          {% elseif resource.value < 65537 %}eine große Menge
-          {% elseif resource.value < 131074 %}ein Berg
-          {% elseif resource.value < 262148 %}ein großer Berg
-          {% elseif resource.value < 524296 %}ein riesiger Berg
-          {% else %}unglaublicher Überfluss
-          {% endif %}
-        </td>
+        <td>{{ resource.name }}</td>
+        <td>{{ resource.value }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -59,15 +47,7 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
     {% for defenseSystem in message_xml.defenseSystems.defenseSystem %}
       <tr>
         <td>{{ defenseSystem.name }}</td>
-        <td>
-          {% if defenseSystem.value < 5 %}ein kümmerlicher Haufen
-          {% elseif defenseSystem.value < 9 %}eine Handvoll
-          {% elseif defenseSystem.value < 17 %}ein Dutzend
-          {% elseif defenseSystem.value < 33 %}ein Trupp
-          {% elseif defenseSystem.value < 65 %}eine Schar
-          {% else %}eine Menge
-          {% endif %}
-        </td>
+        <td>{{ defenseSystem.value }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -83,27 +63,7 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
     {% for unit in message_xml.units.unit %}
       <tr>
         <td>{{ unit.name }}</td>
-        <td>
-          {% if unit.value < 9 %}eine Handvoll
-          {% elseif unit.value < 17 %}ein Dutzend
-          {% elseif unit.value < 65 %}eine Schar
-          {% elseif unit.value < 257 %}eine Kompanie
-          {% elseif unit.value < 513 %}etliche
-          {% elseif unit.value < 1025 %}ein Bataillon 
-          {% elseif unit.value < 2049 %}viele
-          {% elseif unit.value < 4097 %}eine Menge
-          {% elseif unit.value < 6145 %}eine Legion
-          {% elseif unit.value < 8193 %}ein Haufen
-          {% elseif unit.value < 12289 %}ein großer Haufen
-          {% elseif unit.value < 16385 %}verdammt viele
-          {% elseif unit.value < 20481 %}Unmengen
-          {% elseif unit.value < 32769 %}eine Streitmacht 
-          {% elseif unit.value < 49153 %}eine Armee
-          {% elseif unit.value < 65537 %}Heerscharen
-          {% elseif unit.value < 98305 %}eine haltlose Horde 
-          {% else %}eine endlose wogende Masse
-          {% endif %}
-        </td>
+        <td>{{ unit.value }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -119,15 +79,7 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
     {% for building in message_xml.buildings.building %}
       <tr>
         <td>{{ building.name }}</td>
-        <td>
-          {% if building.value < 5 %}ein kümmerlicher Haufen
-          {% elseif building.value < 9 %}eine Handvoll
-          {% elseif building.value < 17 %}ein Dutzend
-          {% elseif building.value < 33 %}ein Trupp
-          {% elseif building.value < 65 %}eine Schar
-          {% else %}eine Menge
-          {% endif %}
-        </td>
+        <td>{{ building.value }}</td>
       </tr>
     {% endfor %}
   </tbody>
