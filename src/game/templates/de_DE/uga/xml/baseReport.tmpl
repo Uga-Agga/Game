@@ -15,12 +15,7 @@
  */
 #}
 {% if message_xml %}
-  {#
-  /* 
-   * Niederlage oder Sieg?
-   * Wurde man angegriffen oder hat man?
-   */
-  #}
+  {# /* Kampfberichte */ #}
   {% if message_report == 2 or message_report == 20 %}
     {% if message_xml.isAttacker == 'true' %}
       {% include "xml/battleAttacker.tmpl" %}
@@ -28,11 +23,8 @@
       {% include "xml/battleDefender.tmpl" %}
     {% endif %}
 
-  {#
-  /* 
-   * Handelsbericht?
-   */
-  #}
+
+  {# /* Handelsbericht? */ #}
   {% elseif message_report == 6 %}
     {% if message_xml.isSender == 'true' %}
       {% include "xml/tradeSender.tmpl" %}
@@ -40,11 +32,7 @@
       {% include "xml/tradeReceived.tmpl" %}
     {% endif %}
 
-  {#
-  /* 
-   * Spionage?
-   */
-  #}
+  {# /* Spionage? */ #}
   {% elseif message_report == 11 %}
     {% include "xml/spyAttacker.tmpl" %}
   {#
@@ -57,12 +45,11 @@
    */
   #}
 
+  {# /* Missionierung? */ #}
+  {% elseif message_report == 29 %}
+    {% include "xml/takeover.tmpl" %}
 
-  {#
-  /* 
-   * Es wurde kein passendes template gefunden.
-   */
-  #}
+  {# /* Es wurde kein passendes template gefunden. */ #}
   {% else %}
     Es wurde kein XML Template gefunden.
   {% endif %}

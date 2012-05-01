@@ -14,7 +14,6 @@
 /* ************************************************************************** */
 
 define("BACKUPFILENAME", "takeover/" . date("YmdHis", time()) . ".log");
-define("DEBUG", FALSE);
 
 /* ************************************************************************* */
 /* ***** TEMPLATES ********************************************************* */
@@ -27,47 +26,7 @@ DEFINE("_MSG_SUBJECT_BIDDINGTOOLOW",    "Missionierung: Geschenke wurden nicht b
 DEFINE("_MSG_SUBJECT_FAILEDCOMPLETELY", "Missionierung: Versagt!");
 DEFINE("_MSG_SUBJECT_CAVETRANSFER",     "Missionierung: Höhle unter Kontrolle!");
 
-DEFINE("_MSG_MAXCAVES",
-       "Du hast bereits die maximale Anzahl von {numCaves} Höhlen erreicht. ".
-       "Du kannst keine weiteren Höhlen missionieren.\n");
-
-DEFINE("_MSG_SUCCEEDEDONCE",
-       "Ein Bote bringt eine frohe Botschaft. Du hast in die freie Höhle ".
-       "'{name}' ({xCoord}|{yCoord}) Rohstoffe im Wert von {abs_bidding} ".
-       "Punkten geschafft. Die Bewohner von '{name}' betrachten diese Gaben ".
-       "und bewerten sie mit {rel_bidding} Punkten. Mehr hat ihnen heute ".
-       "niemand geschenkt, und ihr steigt in ihrer Gunst.");
-
-DEFINE("_MSG_FAILEDONCE",
-       "Ein Bote bringt eine schlechte Botschaft. Du hast in die freie Höhle ".
-       "'{name}' ({xCoord}|{yCoord}) Rohstoffe im Wert von {abs_bidding} ".
-       "Punkten geschafft. Die Bewohner von '{name}' betrachten diese Gaben ".
-       "und bewerten sie mit {rel_bidding} Punkten.<tmpl:WINNER> Die Gaben des ".
-       "Häuptlings '{player_name}' haben sie jedoch mit {rel_bidding} Punkten ".
-       " bewertet. Er hat heute ihre Gunst gewonnen.</tmpl:WINNER>");
-
-
-DEFINE("_MSG_BIDDINGTOOLOW",
-       "Ein Bote bringt eine schlechte Botschaft. Du hast in die freie Höhle ".
-       "'{name}' ({xCoord}|{yCoord}) Rohstoffe im Wert von {abs_bidding} ".
-       "Punkten geschafft. Die Bewohner von '{name}' betrachten diese Gaben ".
-       "und bewerten sie mit {rel_bidding} Punkten. Damit sie sich überhaupt ".
-       "an deine Geschenke erinnern, mußt du ihnen aber mindestens ".
-       "{takeoverminresourcevalue} schenken.<tmpl:WINNER> Die Gaben des ".
-       "Häuptlings '{player_name}' haben sie jedoch mit {rel_bidding} Punkten ".
-       " bewertet. Er hat heute ihre Gunst gewonnen.</tmpl:WINNER>");
-
-DEFINE("_MSG_FAILEDCOMPLETELY",
-       "Der Häuptling der freien Höhle '{name}' ({xCoord}|{yCoord}) hat ".
-       "heute entschieden, sich einem Häuptling unterzuordnen. ".
-       "Leider fiel die Wahl nicht auf Dich.".
-       "<tmpl:WINNER> Er folgt nun dem Häuptling '{name}'.</tmpl:Winner>\n");
-
-DEFINE("_MSG_CAVETRANSFER",
-       "Der Häuptling der freien Höhle '{name}' ({xCoord}|{yCoord}) hat ".
-       "heute entschieden, sich einem Häuptling unterzuordnen.".
-       "Die Wahl fiel dabei auf euch. Ihr habt ab nun die Kontrolle über ".
-       "'{name}'!");
+DEFINE("_MSG_XML", "<?xml version=\"1.0\" encoding=\"utf-8\"?><takeoverreport></takeoverreport>");
 
 /***** INIT *****/
 
@@ -487,16 +446,17 @@ function takeover_transfer_cave_to($caveID, $playerID) {
  *
  *  @return true if succes, false otherwise
  */
-function takeover_system_message($receiverID, $betreff, $nachricht) {
+function takeover_system_message($receiverID, $betreff, $nachricht, $xml) {
   global $db;
 
-  $type = 3; //information
+  $type = 29; // missionierung
   $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ."
                          (recipientID,
                          senderID,
                          messageClass,
                          messageSubject,
                          messageText,
+                         messageXML,
                          messageTime)
                        VALUES (
                          :recipientID,
@@ -504,12 +464,14 @@ function takeover_system_message($receiverID, $betreff, $nachricht) {
                          :messageClass,
                          :messageSubject,
                          :messageText,
+                         :messageXML,
                          NOW()+0)");
   $sql->bindValue('recipientID', $receiverID, PDO::PARAM_INT);
   $sql->bindValue('senderID', 0, PDO::PARAM_INT);
   $sql->bindValue('messageClass', $type, PDO::PARAM_INT);
   $sql->bindValue('messageSubject', $betreff, PDO::PARAM_STR);
   $sql->bindValue('messageText', $nachricht, PDO::PARAM_STR);
+  $sql->bindValue('messageXML', $xml, PDO::PARAM_STR);
   $sql->execute();
 }
 
@@ -522,9 +484,14 @@ function takeover_system_message($receiverID, $betreff, $nachricht) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_max_caves($receiverID, $numCaves) {
-  $template = tmpl_load(_MSG_MAXCAVES);
-  tmpl_set($template, compact('receiverID', 'numCaves'));
-  return takeover_system_message($receiverID, _MSG_SUBJECT_MAXCAVES, tmpl_parse($template));
+  $xml = new SimpleXMLElement(_MSG_XML);
+  $xml->addChild('success', 'false');
+  $xml->addChild('fail');
+  $xml->fail->addChild('failType', 'maxCaves');
+  $xml->fail->addChild('maxCaves', $numCaves);
+  $msgXML = $xml->asXML();
+
+  return takeover_system_message($receiverID, _MSG_SUBJECT_MAXCAVES, "xml Nachricht", $msgXML);
 }
 
 /** This function sends a message, that a bidding was the maximum bidding
@@ -535,9 +502,18 @@ function takeover_send_max_caves($receiverID, $numCaves) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_success($receiverID, $bidding) {
-  $template = tmpl_load(_MSG_SUCCEEDEDONCE);
-  tmpl_set($template, $bidding);
-  return takeover_system_message($receiverID, _MSG_SUBJECT_SUCCEEDEDONCE, tmpl_parse($template));
+  $xml = new SimpleXMLElement(_MSG_XML);
+  $xml->addChild('success', 'true');
+  $xml->addChild('successType', 'winPoint');
+  $xml->addChild('target');
+  $xml->target->addChild('caveName', $bidding['name']);
+  $xml->target->addChild('xCoord', $bidding['xCoord']);
+  $xml->target->addChild('yCoord', $bidding['yCoord']);
+  $xml->addChild('abs_bidding', $bidding['abs_bidding']);
+  $xml->addChild('rel_bidding', $bidding['rel_bidding']);
+  $msgXML = $xml->asXML();
+
+  return takeover_system_message($receiverID, _MSG_SUBJECT_SUCCEEDEDONCE, "xml Nachricht", $msgXML);
 }
 
 /** This function sends a message, that a bidding was lower than the maximum bidding
@@ -549,10 +525,22 @@ function takeover_send_success($receiverID, $bidding) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_failed($receiverID, $bidding, $winner) {
-  $template = tmpl_load(_MSG_FAILEDONCE);
-  tmpl_set($template, $bidding);
-  tmpl_set($template, 'WINNER', $winner);
-  return takeover_system_message($receiverID, _MSG_SUBJECT_FAILEDONCE, tmpl_parse($template));
+  $xml = new SimpleXMLElement(_MSG_XML);
+  $xml->addChild('success', 'false');
+  $xml->addChild('fail');
+  $xml->fail->addChild('failType', 'failedOnce');
+  $xml->fail->addChild('winner');
+  $xml->fail->winner->addChild('name', $winner['player_name']);
+  $xml->fail->winner->addChild('rel_bidding', $winner['rel_bidding']);
+  $xml->addChild('target');
+  $xml->target->addChild('caveName', $bidding['name']);
+  $xml->target->addChild('xCoord', $bidding['xCoord']);
+  $xml->target->addChild('yCoord', $bidding['yCoord']);
+  $xml->addChild('abs_bidding', $bidding['abs_bidding']);
+  $xml->addChild('rel_bidding', $bidding['rel_bidding']);
+  $msgXML = $xml->asXML();
+
+  return takeover_system_message($receiverID, _MSG_SUBJECT_FAILEDONCE, "xml Nachricht", $msgXML);
 }
 
 /** This function sends a message, that a bidding was lower than the minimum bidding
@@ -564,12 +552,25 @@ function takeover_send_failed($receiverID, $bidding, $winner) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_bidding_too_low($receiverID, $bidding, $winner) {
+  $xml = new SimpleXMLElement(_MSG_XML);
+  $xml->addChild('success', 'false');
+  $xml->addChild('fail');
+  $xml->fail->addChild('failType', 'biddingLow');
+  $xml->fail->addChild('min_points', GameConstants::TAKEOVER_MIN_RESOURCE_VALUE);
+  if ($winner != NULL) {
+    $xml->fail->addChild('winner');
+    $xml->fail->winner->addChild('name', $winner['player_name']);
+    $xml->fail->winner->addChild('rel_bidding', $winner['rel_bidding']);
+  }
+  $xml->addChild('target');
+  $xml->target->addChild('caveName', $bidding['name']);
+  $xml->target->addChild('xCoord', $bidding['xCoord']);
+  $xml->target->addChild('yCoord', $bidding['yCoord']);
+  $xml->addChild('abs_bidding', $bidding['abs_bidding']);
+  $xml->addChild('rel_bidding', $bidding['rel_bidding']);
+  $msgXML = $xml->asXML();
 
-  $template = tmpl_load(_MSG_BIDDINGTOOLOW);
-  tmpl_set($template, $bidding);
-  tmpl_set($template, 'takeoverminresourcevalue', GameConstants::TAKEOVER_MIN_RESOURCE_VALUE);
-  tmpl_set($template, 'WINNER', $winner);
-  return takeover_system_message($receiverID, _MSG_SUBJECT_BIDDINGTOOLOW, tmpl_parse($template));
+  return takeover_system_message($receiverID, _MSG_SUBJECT_BIDDINGTOOLOW, "xml Nachricht", $msgXML);
 }
 
 
@@ -582,10 +583,19 @@ function takeover_send_bidding_too_low($receiverID, $bidding, $winner) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_failed_completely($receiverID, $bidding, $winner) {
-  $template = tmpl_load(_MSG_FAILEDCOMPLETELY);
-  tmpl_set($template, $bidding);
-  tmpl_set($template, 'WINNER', $winner);
-  return takeover_system_message($receiverID, _MSG_SUBJECT_FAILEDCOMPLETELY, tmpl_parse($template));
+  $xml = new SimpleXMLElement(_MSG_XML);
+  $xml->addChild('success', 'false');
+  $xml->addChild('fail');
+  $xml->fail->addChild('failType', 'failedCompletely');
+  $xml->fail->addChild('winner');
+  $xml->fail->winner->addChild('name', $winner['player_name']);
+  $xml->addChild('target');
+  $xml->target->addChild('caveName', $bidding['name']);
+  $xml->target->addChild('xCoord', $bidding['xCoord']);
+  $xml->target->addChild('yCoord', $bidding['yCoord']);
+  $msgXML = $xml->asXML();
+
+  return takeover_system_message($receiverID, _MSG_SUBJECT_FAILEDCOMPLETELY, "xml Nachricht", $msgXML);
 }
 
 /** This function sends a message, that a bidding got a cave
@@ -596,9 +606,16 @@ function takeover_send_failed_completely($receiverID, $bidding, $winner) {
  *  @return true if succes, false otherwise
  */
 function takeover_send_transfer($receiverID, $cave) {
-  $template = tmpl_load(_MSG_CAVETRANSFER);
-  tmpl_set($template, $cave);
-  return takeover_system_message($receiverID, _MSG_SUBJECT_CAVETRANSFER, tmpl_parse($template));
+  $xml = new SimpleXMLElement(_MSG_XML);
+  $xml->addChild('success', 'true');
+  $xml->addChild('successType', 'winCave');
+  $xml->addChild('target');
+  $xml->target->addChild('caveName', $bidding['name']);
+  $xml->target->addChild('xCoord', $bidding['xCoord']);
+  $xml->target->addChild('yCoord', $bidding['yCoord']);
+  $msgXML = $xml->asXML();
+
+  return takeover_system_message($receiverID, _MSG_SUBJECT_CAVETRANSFER, "xml Nachricht", $msgXML);
 }
 
 ?>

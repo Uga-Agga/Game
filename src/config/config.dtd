@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitTypes?, DefenseSystemTypes?, EffectTypes?, wonders?, trades?, Potions?, HeroSkills?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
+<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitCategories?, UnitTypes?, DefenseCategories, DefenseSystemTypes?, EffectTypes?, WonderCategories?, wonders?, trades?, Potions?, HeroSkills?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
 <!ELEMENT Header (TakeoverMaxPopularityPoints, TakeoverMinResourceValue, WatchTowerVisionRange, ExposeInvisible, WonderResistance, FuelResourceID, MovementCost, MovementSpeed)>
 <!--Languages-->
 <!ELEMENT Languages (Language*)>
@@ -9,8 +9,8 @@
 <!ELEMENT ResourceTypes (Resource*)>
 <!ELEMENT BuildingTypes (Building*)>
 <!ELEMENT ScienceTypes (Science*)>
-<!ELEMENT UnitTypes (UnitCategories, Unit*)>
-<!ELEMENT DefenseSystemTypes (DefenseCategories, DefenseSystem*)>
+<!ELEMENT UnitTypes (Unit*)>
+<!ELEMENT DefenseSystemTypes (DefenseSystem*)>
 <!ELEMENT Resource (Name+, Remark+, RatingValue, TakeoverValue, StealRatio, DestroyRatio, SafeStorage, MaxStorage, Production, MaxTribeDonation)>
 <!ATTLIST Resource id ID #REQUIRED hidden (0 | 1) "0">
 <!ELEMENT Building (Name+, Description+, Remark+, Position?, RatingValue, Cost*, ProductionTime, MaxDevelopmentLevel, (Requirement | EffectReq)*)>
@@ -98,7 +98,7 @@
   isResourceEffect (0 | 1) "0"
 >
 <!--wonders-->
-<!ELEMENT wonders (WonderCategories, wonder+)>
+<!ELEMENT wonders (wonder+)>
 <!ELEMENT wonder (Name+, Description+, Remark+, chance, impacts+, Cost*, (Requirement | EffectReq)*)>
 <!ATTLIST wonder
           offensive (0 | 1) "0"

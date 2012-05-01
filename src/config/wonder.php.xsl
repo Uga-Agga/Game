@@ -5,6 +5,7 @@
 <!-- select wonders -->
 <xsl:template match="Config">
   <xsl:apply-templates select="wonders"/>
+  <xsl:apply-templates select="WonderCategories"/>
   <xsl:apply-templates select="Weathers"/>
    
 </xsl:template>
@@ -39,6 +40,37 @@ function init_Weathers(){
 ?&gt;
 </xsl:template>
 
+<!-- ***** Wonder Category ************************************************ -->
+<xsl:template match="WonderCategories">&lt;?php
+/********************** Wonder Category *****************/
+class WonderCategory {
+  var $id;
+  var $sortID;
+  var $name;
+
+  function WonderCategory() {
+     $this-&gt;id             = "";
+     $this-&gt;sortID         = "";
+     $this-&gt;name           = "";
+  }
+}
+
+function init_WonderCategories() {
+  <xsl:apply-templates select="WonderCategory"/>
+}
+?&gt;
+</xsl:template>
+
+<xsl:template match="WonderCategories/WonderCategory">
+  $tmp = new WonderCategory();
+  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
+  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
+  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
+
+  $GLOBALS['wonderCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
+
+</xsl:template>
+
 <!-- ***** Wonder ********************************************************* -->
 <xsl:template match="Weathers/Weather">
   // <xsl:value-of select="Name"/>
@@ -57,7 +89,7 @@ function init_Weathers(){
 /*
  * wonder.rules.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -145,36 +177,10 @@ class Wonder {
   }
 }
 
-class WonderCategory {
-  var $id;
-  var $sortID;
-  var $name;
-
-  function WonderCategory() {
-     $this-&gt;id             = "";
-     $this-&gt;sortID         = "";
-     $this-&gt;name           = "";
-  }
-}
-
-function init_WonderCategories() {
-  <xsl:apply-templates select="WonderCategories/WonderCategory"/>
-}
-
 function init_Wonders(){
   <xsl:apply-templates select="wonder"/>
 }
 ?&gt;
-</xsl:template>
-
-<xsl:template match="wonders/WonderCategories/WonderCategory">
-  $tmp = new WonderCategory();
-  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
-  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
-  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
-
-  $GLOBALS['wonderCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
-
 </xsl:template>
 
 <!-- ***** Text elements ************************************************** -->
