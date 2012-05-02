@@ -74,7 +74,7 @@ function checkall(){
             <input type="submit" name="mark_action" value="Go" />
           </div>
         </div>
-        <div class="ym-g50 ym-gr right">
+        <div class="ym-g50 ym-gr text-right">
           <div class="ym-gbox">
             <select name="messageClass">
               <option value="-1">Alle</option>
@@ -105,7 +105,7 @@ function checkall(){
     <table>
       <thead>
         <tr>
-          <th style="border-bottom: none;">&nbsp;</td>
+          <th style="border-bottom: none;">&nbsp;</th>
           <th style="border-bottom: none;">{{ from_to }}</th>
           <th style="border-bottom: none;">Nachrichtenart</th>
           <th style="border-bottom: none;">Betreff</th>
@@ -123,7 +123,7 @@ function checkall(){
             {% endif %}
             &nbsp;|&nbsp;
             {% if message_next %}
-             <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}&amp;messageClass={{ message_next.message_class }}">weiter &gt;&gt;&gt;</a></tmpl:NEXT>
+             <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}&amp;messageClass={{ message_next.message_class }}">weiter &gt;&gt;&gt;</a>
             {% else %}
               weiter &gt;&gt;&gt;
             {% endif %}
@@ -145,7 +145,7 @@ function checkall(){
             </tr>
           {% endfor %}
         {% else %}
-          <tr><td class="center" colspan="5">In diesem Postfach befinden sich zur Zeit keine Nachrichten.</td></tr>
+          <tr><td class="text-center" colspan="5">In diesem Postfach befinden sich zur Zeit keine Nachrichten.</td></tr>
         {% endif %}
       </tbody>
     </table>
