@@ -2,6 +2,7 @@
 /*
  * takeover.php - script handling the biddings on caves
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

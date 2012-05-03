@@ -7,7 +7,6 @@
   <xsl:apply-templates select="wonders"/>
   <xsl:apply-templates select="WonderCategories"/>
   <xsl:apply-templates select="Weathers"/>
-   
 </xsl:template>
 
 <!-- object -->

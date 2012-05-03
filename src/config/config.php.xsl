@@ -7,7 +7,7 @@
 /*
  * game.rules.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012  David Unger
  * Copyright (c) 2012  Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
