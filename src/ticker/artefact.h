@@ -80,6 +80,9 @@ extern void after_battle_change_artefact_ownership (
   struct Cave  *defender_cave,
   int          *lostTo);
 
+<<<<<<< Updated upstream
 extern const char *artefact_name (db_t *database, int artefact_id);
 
+=======
+>>>>>>> Stashed changes
 #endif /* _ARTEFACT_H_ */
