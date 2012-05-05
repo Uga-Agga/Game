@@ -37,6 +37,7 @@ class MessageClass {
                       //26 => _('Stammeswunder'),
                       //27 => _('Überraschendes Ereignis'),
                       28 => _('Held'),
+                      29 => _('Missionierung'),
                       99 => _('Uga-Agga Team'),
                       // special message class: can't be deleted, everybody can see
                       1001 => _('<b>ANKÜNDIGUNG</b>'));

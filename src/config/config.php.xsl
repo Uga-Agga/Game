@@ -7,7 +7,7 @@
 /*
  * game.rules.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012  David Unger
  * Copyright (c) 2012  Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
@@ -294,6 +294,32 @@ function init_sciences(){
   $GLOBALS['scienceTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 </xsl:template>
 
+<xsl:template match="UnitCategories">
+class UnitCategory {
+  var $id;
+  var $sortID;
+  var $name;
+
+  function UnitCategory() {
+     $this-&gt;id             = "";
+     $this-&gt;sortID         = "";
+     $this-&gt;name           = "";
+  }
+}
+
+function init_UnitCategories() {
+  <xsl:apply-templates select="UnitCategory"/>
+}
+</xsl:template>
+
+<xsl:template match="Config/UnitCategories/UnitCategory">
+  $tmp = new UnitCategory();
+  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
+  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
+  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
+
+  $GLOBALS['unitCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
+</xsl:template>
 
 <xsl:template match="UnitTypes">
 /********************** Unittypes *********************/
@@ -378,40 +404,15 @@ class Unit {
   }
 }
 
-class UnitCategory {
-  var $id;
-  var $sortID;
-  var $name;
-
-  function UnitCategory() {
-     $this-&gt;id             = "";
-     $this-&gt;sortID         = "";
-     $this-&gt;name           = "";
-  }
-}
-
-function init_UnitCategories() {
-  <xsl:apply-templates select="UnitCategories/UnitCategory"/>
-}
 
 function init_units(){
   <xsl:apply-templates select="Unit"/>
 }
 </xsl:template>
 
-<xsl:template match="Config/UnitTypes/UnitCategories/UnitCategory">
-  $tmp = new UnitCategory();
-  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
-  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
-  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
-
-  $GLOBALS['unitCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
-
-</xsl:template>
-
 <xsl:template match="Config/UnitTypes/Unit">
   // <xsl:value-of select="Name"/>
-  $tmp = new Unit(<xsl:value-of select="position()-1"/>, '<xsl:value-of select="@UnitCategory"/>', '<xsl:value-of select="Name"/>',
+  $tmp = new Unit(<xsl:value-of select="count(preceding-sibling::*)"/>, '<xsl:value-of select="@UnitCategory"/>', '<xsl:value-of select="Name"/>',
                   "<xsl:apply-templates select="Description[@lang='de_DE']"/>",
                   '<xsl:value-of select="@id"/>', <xsl:choose><xsl:when test="Position"><xsl:value-of select="Position"/></xsl:when><xsl:otherwise>0</xsl:otherwise></xsl:choose>, <xsl:value-of select="round((((RangedDamage div 10)*15)+((StructuralDamage div 15)*10)+((MeleeDamage div 15)*12.5)+(((RangedDamageResistance+2*MeleeDamageResistance) div (3*Size))*25)+((Size div 15)*10)+((0.5 div Velocity)*17.5))*((1 div (Visible+1))+0.5))"/>, '<xsl:apply-templates select="ProductionTime"/>', <xsl:value-of select="RangedDamage"/>, <xsl:value-of select="StructuralDamage"/>, <xsl:value-of select="MeleeDamage"/>, <xsl:value-of select="MeleeDamageResistance"/>, <xsl:value-of select="RangedDamageResistance"/>, <xsl:value-of select="Size"/>, array(<xsl:apply-templates select="Encumbrance"/>), <xsl:value-of select="Visible"/>);
 
@@ -477,7 +478,35 @@ function init_units(){
   </xsl:if>
   <xsl:if test="@hidden!=0">$tmp-&gt;nodocumentation = <xsl:apply-templates select="@hidden"/>;
   </xsl:if>
-  $GLOBALS['unitTypeList'][<xsl:value-of select="position()-1"/>] = $tmp;
+  $GLOBALS['unitTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
+</xsl:template>
+
+
+<xsl:template match="DefenseCategories">
+class DefenseCategory {
+  var $id;
+  var $sortID;
+  var $name;
+
+  function DefenseCategory() {
+     $this-&gt;id             = "";
+     $this-&gt;sortID         = "";
+     $this-&gt;name           = "";
+  }
+}
+
+function init_DefenseCategories() {
+  <xsl:apply-templates select="DefenseCategory"/>
+}
+</xsl:template>
+
+<xsl:template match="Config/DefenseCategories/DefenseCategory">
+  $tmp = new DefenseCategory();
+  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
+  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
+  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
+
+  $GLOBALS['defenseCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
 </xsl:template>
 
 <xsl:template match="DefenseSystemTypes">
@@ -548,35 +577,9 @@ class DefenseSystem {
   }
 }
 
-class DefenseCategory {
-  var $id;
-  var $sortID;
-  var $name;
-
-  function DefenseCategory() {
-     $this-&gt;id             = "";
-     $this-&gt;sortID         = "";
-     $this-&gt;name           = "";
-  }
-}
-
-function init_DefenseCategories() {
-  <xsl:apply-templates select="DefenseCategories/DefenseCategory"/>
-}
-
 function init_defenseSystems(){
  <xsl:apply-templates select="DefenseSystem"/>
 }
-</xsl:template>
-
-<xsl:template match="Config/DefenseSystemTypes/DefenseCategories/DefenseCategory">
-  $tmp = new DefenseCategory();
-  $tmp-&gt;id            = "<xsl:apply-templates select="@id"/>";
-  $tmp-&gt;sortID        = <xsl:value-of select="count(preceding-sibling::*)"/>;
-  $tmp-&gt;name          = "<xsl:apply-templates select="@name"/>";
-
-  $GLOBALS['defenseCategoryTypeList']["<xsl:apply-templates select="@id"/>"] = $tmp;
-
 </xsl:template>
 
 <xsl:template match="Config/DefenseSystemTypes/DefenseSystem">
