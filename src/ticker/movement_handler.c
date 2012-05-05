@@ -35,9 +35,6 @@
 #define RUECKKEHR    5
 #define TAKEOVER    6
 
-/* artefact constants */
-#define ARTEFACT_LOST_CHANCE  0.2
-#define ARTEFACT_LOST_RANGE  2
 
 /* resource constants */
 /* save resources at delivery for takeover (x of 100) */
@@ -408,104 +405,6 @@ static void prepare_battle(db_t *database,
   battle->defenders_hero_died = 0;
 }
 
-static int artefact_lost (void)
-{
-  return drand() < ARTEFACT_LOST_CHANCE;
-}
-
-static int map_get_bounds (db_t *database,
-         int *minX, int *maxX, int *minY, int *maxY)
-{
-  db_result_t *result = db_query(database,
-    "SELECT MIN(xCoord) AS minX, "
-    "       MAX(xCoord) AS maxX, "
-    "       MIN(yCoord) AS minY, "
-    "       MAX(yCoord) AS maxY  "
-    "FROM Cave");
-
-  if (!db_result_next_row(result)) return 0;
-
-  *minX = db_result_get_int(result, "minX");
-  *maxX = db_result_get_int(result, "maxX");
-  *minY = db_result_get_int(result, "minY");
-  *maxY = db_result_get_int(result, "maxY");
-  return 1;
-}
-
-static int artefact_loose_to_cave (db_t *database, struct Cave *cave)
-{
-  db_result_t *result;
-  dstring_t *query;
-  int x, y;
-  int minX, minY, maxX, maxY, rangeX, rangeY;
-
-  /* number between -ALR <= n <= ALR */
-  x = (int) ((ARTEFACT_LOST_RANGE * 2 + 1) * drand()) - ARTEFACT_LOST_RANGE;
-  y = (int) ((ARTEFACT_LOST_RANGE * 2 + 1) * drand()) - ARTEFACT_LOST_RANGE;
-
-  x += cave->xpos;
-  y += cave->ypos;   /* these numbers may be out of range */
-
-  if (! map_get_bounds(database, &minX, &maxX, &minY, &maxY)) {
-    return 0;
-  }
-  rangeX = maxX - minX +1;
-  rangeY = maxY - minY +1;
-
-  x = ( (x-minX+rangeX) % (rangeX) ) + minX;
-  y = ( (y-minY+rangeY) % (rangeY) ) + minY;
-
-  query = dstring_new("SELECT caveID FROM " DB_TABLE_CAVE
-          " WHERE xCoord = %d AND yCoord = %d", x, y);
-
-  debug(DEBUG_SQL, "%s", dstring_str(query));
-
-  result = db_query_dstring(database, query);
-
-  return db_result_next_row(result) ? db_result_get_int(result, "caveID") : 0;
-}
-
-static void after_battle_change_artefact_ownership (
-  db_t *database,
-  int          winner,
-  int          *artefact,
-  int          *artefact_id,
-  int          *artefact_def,
-  int          defender_cave_id,
-  struct Cave  *defender_cave,
-  int          *lostTo)
-{
-  *lostTo = 0;
-
-  if (winner == FLAG_ATTACKER) {
-    if (*artefact == 0 && *artefact_def > 0) {
-      try {
-        remove_effects_from_cave(database, *artefact_def);
-        uninitiate_artefact(database, *artefact_def);
-        remove_artefact_from_cave(database, *artefact_def);
-        *artefact_id = *artefact_def;
-
-        if (artefact_lost()) {
-          *lostTo = artefact_loose_to_cave(database, defender_cave);
-          if (*lostTo)
-            put_artefact_into_cave(database, *artefact_def, *lostTo);
-        } else {
-          *artefact = *artefact_def;
-        }
-      } catch (SQL_EXCEPTION) {
-        warning("%s", except_msg);
-      } end_try;
-    }
-  } else if (*artefact > 0) {
-    try {
-      put_artefact_into_cave(database, *artefact, defender_cave_id);
-      *artefact_id = *artefact;
-      *artefact = 0;
-    } catch (SQL_EXCEPTION) {
-      warning("%s", except_msg);
-    } end_try;
-  }
-}
 
 static void after_battle_defender_update(db_t *database,
            int             player_id,
@@ -1231,14 +1130,10 @@ void movement_handler (db_t *database, db_result_t *result)
     /**********************************************************************/
     case SPIONAGE:
 
-      /* generate spy report */
-      srrs = spy_report(database, &cave1, &player1, &cave2, &player2, resources, units, artefact);
 
-      // get Artefacts By Spy
-      if (artefact == 0 && srrs.artefactID > 0) { // get artefact only, if none is carried
-        artefact_def = srrs.artefactID;
-        after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefact, &artefact_id, &artefact_def, target_caveID, &cave2, &lostTo);
-      }
+
+      /* generate spy report */
+      srrs = spy_report(database, &cave1, &player1, &cave2, &player2, resources, units, &artefact);
 
       spy_result = srrs.value;
 

@@ -13,6 +13,7 @@
 
 #include "database.h"
 #include "game_rules.h"
+#include "cave.h"
 
 #define ARTEFACT_INITIATING  -1
 #define ARTEFACT_UNINITIATED  0
@@ -68,5 +69,17 @@ extern void merge_artefacts (db_t *database, int caveID, int keyArtefactID,
            int lockArtefactID, int resultArtefactID);
 
 extern int get_artefact_for_caveID(db_t *database, int caveID, int spyableOnly);
+
+extern void after_battle_change_artefact_ownership (
+  db_t *database,
+  int          winner,
+  int          *artefact,
+  int          *artefact_id,
+  int          *artefact_def,
+  int          defender_cave_id,
+  struct Cave  *defender_cave,
+  int          *lostTo);
+
+extern const char *artefact_name (db_t *database, int artefact_id);
 
 #endif /* _ARTEFACT_H_ */
