@@ -694,6 +694,101 @@ void trade_report (db_t *database,
   }
 }
 
+static char* return_report_xml (db_t *database,
+        const struct Cave *cave1, const struct Player *player1,
+        const struct Cave *cave2, const struct Player *player2,
+        const int resources[], const int units[], int artefact, int heroID)
+{
+
+  mxml_node_t *xml, *returnreport;
+  mxml_node_t *curtime;
+  mxml_node_t *source, *target, *player, *tribe;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+  mxml_node_t *Units, *Unit, *name, *value;
+  mxml_node_t *Resources, *Resource, *Artefact;
+  mxml_node_t *hero;
+
+  char *xmlstring = "";
+  int type = 0;
+
+  xml = mxmlNewXML("1.0");
+  returnreport = mxmlNewElement(xml, "returnreport");
+  curtime = mxmlNewElement(returnreport, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+  source = mxmlNewElement(returnreport, "source");
+    player = mxmlNewElement(source, "playerName");
+      mxmlNewText(player, 0, (char*) player1->name);
+    tribe = mxmlNewElement(source, "tribe");
+      mxmlNewText(tribe, 0, (char*) player1->tribe);
+    caveName = mxmlNewElement(source, "caveName");
+      mxmlNewText(caveName, 0, (char*) cave1->name);
+    xCoord = mxmlNewElement(source, "xCoord");
+      mxmlNewInteger(xCoord, (int) cave1->xpos);
+    yCoord = mxmlNewElement(source, "yCoord");
+      mxmlNewInteger(yCoord, (int) cave1->ypos);
+    caveID = mxmlNewElement(source, "caveID");
+      mxmlNewInteger(caveID, (int) cave1->cave_id);
+
+  target = mxmlNewElement(returnreport, "target");
+    player = mxmlNewElement(target, "playerName");
+      mxmlNewText(player, 0, (char*) player2->name);
+    tribe = mxmlNewElement(target, "tribe");
+      mxmlNewText(tribe, 0, (char*) player2->tribe);
+    caveName = mxmlNewElement(target, "caveName");
+      mxmlNewText(caveName, 0, (char*) cave2->name);
+    xCoord = mxmlNewElement(target, "xCoord");
+      mxmlNewInteger(xCoord, (int) cave2->xpos);
+    yCoord = mxmlNewElement(target, "yCoord");
+      mxmlNewInteger(yCoord, (int) cave2->ypos);
+    caveID = mxmlNewElement(target, "caveID");
+      mxmlNewInteger(caveID, (int) cave2->cave_id);
+
+  //units
+  if (units) {
+    Units = mxmlNewElement(returnreport, "units");
+    for (type = 0; type < MAX_UNIT; ++type) {
+      if (units[type] > 0) {
+        Unit = mxmlNewElement(Units, "unit");
+        name = mxmlNewElement(Unit, "name");
+          mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Unit, "value");
+          mxmlNewInteger(value, (int) units[type]);
+      }
+    }
+  }
+
+  //resources
+  if (resources) {
+    Resources = mxmlNewElement(returnreport, "resources");
+    for (type = 0; type < MAX_RESOURCE; ++type) {
+      if (resources[type] > 0) {
+        Resource = mxmlNewElement(Resources, "resource");
+        name = mxmlNewElement(Resource, "name");
+          mxmlNewText(name, 0, (char*) resource_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Resource, "value");
+          mxmlNewInteger(value, (int) resources[type]);
+      }
+    }
+  }
+
+  //artefacts
+  if (artefact) {
+    const char *artefactName = artefact_name(database, artefact);
+    Artefact = mxmlNewElement(returnreport, "artefact");
+      name = mxmlNewElement(Artefact, "name");
+        mxmlNewText(name, 0, (char*) artefactName);
+  }
+
+  // hero
+  hero = mxmlNewElement(returnreport, "hero");
+    mxmlNewText(hero, 0, (char*) ((heroID > 0) ? "true" : "false"));
+
+
+  xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    return xmlstring;
+}
+
 void return_report (db_t *database,
         const struct Cave *cave1, const struct Player *player1,
         const struct Cave *cave2, const struct Player *player2,
@@ -715,6 +810,8 @@ void return_report (db_t *database,
   if (heroID>0) {
     template_set(tmpl_return, "HERO/show", "");
   }
+
+  xml = return_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, heroID);
 
   message_new(database, MSG_CLASS_RETURN,
       cave2->player_id, subject, template_eval(tmpl_return), xml);
