@@ -57,64 +57,70 @@ extern void trade_report (db_t *database,
 	const int resources[], const int units[], int artefact, int heroID);
 
 extern void return_report (db_t *database,
-	const struct Cave *cave1, const struct Player *player1,
-	const struct Cave *cave2, const struct Player *player2,
-	const int resources[], const int units[], int artefact, int heroID);
+    const struct Cave *cave1, const struct Player *player1,
+    const struct Cave *cave2, const struct Player *player2,
+    const int resources[], const int units[], int artefact, int heroID);
 
 extern void battle_report (db_t *database,
-                    const struct Cave *cave1, const struct Player *player1,
-                    const struct Cave *cave2, const struct Player *player2,
-                    const Battle *result, int artefact, int lost,
-                    int change_owner, int takeover_multiplier,
-                    const struct Relation *relation1,
-                    const struct Relation *relation2,
-                    int show_warpoints, int attacker_warpoints, int defender_warpoints,
-                    int heroID, int hero_points_attacker, int hero_points_defender);
+    const struct Cave *cave1, const struct Player *player1,
+    const struct Cave *cave2, const struct Player *player2,
+    const Battle *result, int artefact, int lost,
+    int change_owner, int takeover_multiplier,
+    const struct Relation *relation1,
+    const struct Relation *relation2,
+    int show_warpoints, int attacker_warpoints, int defender_warpoints,
+    int heroID, int hero_points_attacker, int hero_points_defender);
 
 extern void protected_report (db_t *database,
-	const struct Cave *cave1, const struct Player *player1,
-	const struct Cave *cave2, const struct Player *player2);
+    const struct Cave *cave1, const struct Player *player1,
+    const struct Cave *cave2, const struct Player *player2);
 
 extern struct SpyReportReturnStruct spy_report (db_t *database,
+<<<<<<< Updated upstream
+    struct Cave *cave1, const struct Player *player1,
+    struct Cave *cave2, const struct Player *player2,
+    const int resources[], const int units[], int *artefact);
+=======
 	const struct Cave *cave1, const struct Player *player1,
 	const struct Cave *cave2, const struct Player *player2,
-	const int resources[], const int units[], int artefact);
+	const int resources[], const int units[], int *artefact);
+>>>>>>> Stashed changes
 
 extern void artefact_report (db_t *database,
-	const struct Cave *cave, const struct Player *player,
-	const char *artefact_name);
+    const struct Cave *cave, const struct Player *player,
+    const char *artefact_name);
 
 extern void hero_report (db_t *database,
     const struct Cave *cave, const struct Player *player);
 
 extern void artefact_merging_report (db_t *database,
-	const struct Cave *cave, const struct Player *player,
-	const struct Artefact *key_artefact,
-	const struct Artefact *lock_artefact,
-	const struct Artefact *result_artefact);
+    const struct Cave *cave, const struct Player *player,
+    const struct Artefact *key_artefact,
+    const struct Artefact *lock_artefact,
+    const struct Artefact *result_artefact);
 
 extern void wonder_report (db_t *database,
-	const struct Player *caster,
-	const struct Cave *cave, const struct Player *target,
-	const struct WonderImpact *impact,
-	const struct ReportEntity *values, int num);
+    const struct Player *caster,
+    const struct Cave *cave, const struct Player *target,
+    const struct WonderImpact *impact,
+    const struct ReportEntity *values, int num);
 
 extern void merchant_report (db_t *database,
-	const struct Player *caster,
-	const struct Cave *cave, const struct Player *target,
-	const struct WonderImpact *impact,
-	const struct ReportEntity *values, int num);
+    const struct Player *caster,
+    const struct Cave *cave, const struct Player *target,
+    const struct WonderImpact *impact,
+    const struct ReportEntity *values, int num);
 
 extern void wonder_end_report (db_t *database,
-	const struct Player *caster,
-	const struct Cave *cave, const struct Player *target,
-	const struct WonderImpact *impact,
-	const struct ReportEntity *values, int num);
+    const struct Player *caster,
+    const struct Cave *cave, const struct Player *target,
+    const struct WonderImpact *impact,
+    const struct ReportEntity *values, int num);
 
 extern void wonder_extend_report (db_t *database,
-	const struct Player *caster,
-	const struct Cave *cave, const struct Player *target,
-	const struct Wonder *wonder,
-	const struct WonderImpact *impact);
+    const struct Player *caster,
+    const struct Cave *cave, const struct Player *target,
+    const struct Wonder *wonder,
+    const struct WonderImpact *impact);
 
 #endif /* _MESSAGE_H_ */

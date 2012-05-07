@@ -8,6 +8,8 @@
  * the License, or (at your option) any later version.
  */
 
+#include <stdlib.h>
+
 #include "artefact.h"     /* artefact/artefact_class typedefs */
 #include "cave.h"    /* get_effect_list */
 #include "database.h"     /* db_result_get_int etc. */
@@ -15,6 +17,9 @@
 #include "logging.h"      /* debug function */
 #include "memory.h"       /* dstring et.al. */
 #include "ticker.h"       /* DB_TABLE_ARTEFACT */
+#include "calc_battle.h"  /* FLAG_ATTACKER */
+
+#define drand()    (rand() / (RAND_MAX+1.0))
 
 /*
  * Retrieve artefact for the given id.
@@ -546,3 +551,119 @@ int get_artefact_for_caveID(db_t *database, int caveID, int spyableOnly) {
 
   return artefactID;
 }
+
+static int map_get_bounds (db_t *database,
+         int *minX, int *maxX, int *minY, int *maxY)
+{
+  db_result_t *result = db_query(database,
+    "SELECT MIN(xCoord) AS minX, "
+    "       MAX(xCoord) AS maxX, "
+    "       MIN(yCoord) AS minY, "
+    "       MAX(yCoord) AS maxY  "
+    "FROM Cave");
+
+  if (!db_result_next_row(result)) return 0;
+
+  *minX = db_result_get_int(result, "minX");
+  *maxX = db_result_get_int(result, "maxX");
+  *minY = db_result_get_int(result, "minY");
+  *maxY = db_result_get_int(result, "maxY");
+  return 1;
+}
+
+static int artefact_lost (void)
+{
+  return drand() < ARTEFACT_LOST_CHANCE;
+}
+
+static int artefact_loose_to_cave (db_t *database, struct Cave *cave)
+{
+  db_result_t *result;
+  dstring_t *query;
+  int x, y;
+  int minX, minY, maxX, maxY, rangeX, rangeY;
+
+  /* number between -ALR <= n <= ALR */
+  x = (int) ((ARTEFACT_LOST_RANGE * 2 + 1) * drand()) - ARTEFACT_LOST_RANGE;
+  y = (int) ((ARTEFACT_LOST_RANGE * 2 + 1) * drand()) - ARTEFACT_LOST_RANGE;
+
+  x += cave->xpos;
+  y += cave->ypos;   /* these numbers may be out of range */
+
+  if (! map_get_bounds(database, &minX, &maxX, &minY, &maxY)) {
+    return 0;
+  }
+  rangeX = maxX - minX +1;
+  rangeY = maxY - minY +1;
+
+  x = ( (x-minX+rangeX) % (rangeX) ) + minX;
+  y = ( (y-minY+rangeY) % (rangeY) ) + minY;
+
+  query = dstring_new("SELECT caveID FROM " DB_TABLE_CAVE
+          " WHERE xCoord = %d AND yCoord = %d", x, y);
+
+  debug(DEBUG_SQL, "%s", dstring_str(query));
+
+  result = db_query_dstring(database, query);
+
+  return db_result_next_row(result) ? db_result_get_int(result, "caveID") : 0;
+}
+
+void after_battle_change_artefact_ownership (
+  db_t *database,
+  int          winner,
+  int          *artefact,
+  int          *artefact_id,
+  int          *artefact_def,
+  int          defender_cave_id,
+  struct Cave  *defender_cave,
+  int          *lostTo)
+{
+  *lostTo = 0;
+
+  if (winner == FLAG_ATTACKER) {
+    if (*artefact == 0 && *artefact_def > 0) {
+      try {
+        remove_effects_from_cave(database, *artefact_def);
+        uninitiate_artefact(database, *artefact_def);
+        remove_artefact_from_cave(database, *artefact_def);
+        *artefact_id = *artefact_def;
+
+        if (artefact_lost()) {
+          *lostTo = artefact_loose_to_cave(database, defender_cave);
+          if (*lostTo) {
+            put_artefact_into_cave(database, *artefact_def, *lostTo);
+          }
+        } else {
+          *artefact = *artefact_def;
+        }
+      } catch (SQL_EXCEPTION) {
+        warning("%s", except_msg);
+      } end_try;
+    }
+  } else if (*artefact > 0) {
+    try {
+      put_artefact_into_cave(database, *artefact, defender_cave_id);
+      *artefact_id = *artefact;
+      *artefact = 0;
+    } catch (SQL_EXCEPTION) {
+      warning("%s", except_msg);
+    } end_try;
+  }
+}
+<<<<<<< Updated upstream
+
+/*
+ * Return the class name of the artefact with the given id.
+ */
+const char *artefact_name (db_t *database, int artefact_id) {
+  struct Artefact artefact;
+  struct Artefact_class artefact_class;
+
+  get_artefact_by_id(database, artefact_id, &artefact);
+  get_artefact_class_by_id(database, artefact.artefactClassID,
+         &artefact_class);
+  return artefact_class.name;
+}
+=======
+>>>>>>> Stashed changes

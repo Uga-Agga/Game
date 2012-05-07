@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitCategories?, UnitTypes?, DefenseCategories, DefenseSystemTypes?, EffectTypes?, WonderCategories?, wonders?, trades?, Potions?, HeroSkills?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
+<!ELEMENT Config (Header, Languages?, ResourceTypes?, BuildingTypes?, ScienceTypes?, UnitCategories?, UnitTypes?, DefenseCategories?, DefenseSystemTypes?, EffectTypes?, WonderCategories?, wonders?, trades?, Potions?, HeroSkills?, Weathers?, incidentals?, regimes?, Terrains, Regions, Movements)>
 <!ELEMENT Header (TakeoverMaxPopularityPoints, TakeoverMinResourceValue, WatchTowerVisionRange, ExposeInvisible, WonderResistance, FuelResourceID, MovementCost, MovementSpeed)>
 <!--Languages-->
 <!ELEMENT Languages (Language*)>

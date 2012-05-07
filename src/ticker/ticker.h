@@ -39,4 +39,8 @@
 #define WONDER_TIME_BASE_FACTOR 40
 #define WEATHER_TIME_BASE_FACTOR 30
 
+/* artefact constants */
+#define ARTEFACT_LOST_CHANCE  0.2
+#define ARTEFACT_LOST_RANGE  2
+
 #endif /* _TICKER_H_ */
