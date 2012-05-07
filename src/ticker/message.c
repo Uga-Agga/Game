@@ -694,6 +694,101 @@ void trade_report (db_t *database,
   }
 }
 
+static char* return_report_xml (db_t *database,
+        const struct Cave *cave1, const struct Player *player1,
+        const struct Cave *cave2, const struct Player *player2,
+        const int resources[], const int units[], int artefact, int heroID)
+{
+
+  mxml_node_t *xml, *returnreport;
+  mxml_node_t *curtime;
+  mxml_node_t *source, *target, *player, *tribe;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+  mxml_node_t *Units, *Unit, *name, *value;
+  mxml_node_t *Resources, *Resource, *Artefact;
+  mxml_node_t *hero;
+
+  char *xmlstring = "";
+  int type = 0;
+
+  xml = mxmlNewXML("1.0");
+  returnreport = mxmlNewElement(xml, "returnreport");
+  curtime = mxmlNewElement(returnreport, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+  source = mxmlNewElement(returnreport, "source");
+    player = mxmlNewElement(source, "playerName");
+      mxmlNewText(player, 0, (char*) player1->name);
+    tribe = mxmlNewElement(source, "tribe");
+      mxmlNewText(tribe, 0, (char*) player1->tribe);
+    caveName = mxmlNewElement(source, "caveName");
+      mxmlNewText(caveName, 0, (char*) cave1->name);
+    xCoord = mxmlNewElement(source, "xCoord");
+      mxmlNewInteger(xCoord, (int) cave1->xpos);
+    yCoord = mxmlNewElement(source, "yCoord");
+      mxmlNewInteger(yCoord, (int) cave1->ypos);
+    caveID = mxmlNewElement(source, "caveID");
+      mxmlNewInteger(caveID, (int) cave1->cave_id);
+
+  target = mxmlNewElement(returnreport, "target");
+    player = mxmlNewElement(target, "playerName");
+      mxmlNewText(player, 0, (char*) player2->name);
+    tribe = mxmlNewElement(target, "tribe");
+      mxmlNewText(tribe, 0, (char*) player2->tribe);
+    caveName = mxmlNewElement(target, "caveName");
+      mxmlNewText(caveName, 0, (char*) cave2->name);
+    xCoord = mxmlNewElement(target, "xCoord");
+      mxmlNewInteger(xCoord, (int) cave2->xpos);
+    yCoord = mxmlNewElement(target, "yCoord");
+      mxmlNewInteger(yCoord, (int) cave2->ypos);
+    caveID = mxmlNewElement(target, "caveID");
+      mxmlNewInteger(caveID, (int) cave2->cave_id);
+
+  //units
+  if (units) {
+    Units = mxmlNewElement(returnreport, "units");
+    for (type = 0; type < MAX_UNIT; ++type) {
+      if (units[type] > 0) {
+        Unit = mxmlNewElement(Units, "unit");
+        name = mxmlNewElement(Unit, "name");
+          mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Unit, "value");
+          mxmlNewInteger(value, (int) units[type]);
+      }
+    }
+  }
+
+  //resources
+  if (resources) {
+    Resources = mxmlNewElement(returnreport, "resources");
+    for (type = 0; type < MAX_RESOURCE; ++type) {
+      if (resources[type] > 0) {
+        Resource = mxmlNewElement(Resources, "resource");
+        name = mxmlNewElement(Resource, "name");
+          mxmlNewText(name, 0, (char*) resource_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Resource, "value");
+          mxmlNewInteger(value, (int) resources[type]);
+      }
+    }
+  }
+
+  //artefacts
+  if (artefact) {
+    const char *artefactName = artefact_name(database, artefact);
+    Artefact = mxmlNewElement(returnreport, "artefact");
+      name = mxmlNewElement(Artefact, "name");
+        mxmlNewText(name, 0, (char*) artefactName);
+  }
+
+  // hero
+  hero = mxmlNewElement(returnreport, "hero");
+    mxmlNewText(hero, 0, (char*) ((heroID > 0) ? "true" : "false"));
+
+
+  xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    return xmlstring;
+}
+
 void return_report (db_t *database,
         const struct Cave *cave1, const struct Player *player1,
         const struct Cave *cave2, const struct Player *player2,
@@ -715,6 +810,8 @@ void return_report (db_t *database,
   if (heroID>0) {
     template_set(tmpl_return, "HERO/show", "");
   }
+
+  xml = return_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, heroID);
 
   message_new(database, MSG_CLASS_RETURN,
       cave2->player_id, subject, template_eval(tmpl_return), xml);
@@ -1192,7 +1289,7 @@ static char* spy_report_xml(db_t *database,
     const struct Cave *cave2, const struct Player *player2,
     const int resources[], const int units[], int artefact,
     int spyTypes[], const struct Cave cave, int stolenArtefactID,
-    int stolenArtefactLost, int *dead_units, int IsAttacker)
+    int stolenArtefactLost, const int dead_units[], int IsAttacker)
 {
 
   mxml_node_t *xml;
@@ -1325,10 +1422,18 @@ static char* spy_report_xml(db_t *database,
     }
   }
 
+  // lost carried artefact
+  if (artefact) {
+    const char* ArtefactName = artefact_name(database, stolenArtefactID);
+        Artefact = mxmlNewElement(spyreport, "artefactLost");
+          name = mxmlNewElement(Artefact, "name");
+            mxmlNewText(name, 0, (char*) ArtefactName);
+  }
+
   // stolen artefact
   if (stolenArtefactID) {
     const char* ArtefactName = artefact_name(database, stolenArtefactID);
-    Artefact = mxmlNewElement(spyreport, "artefact");
+    Artefact = mxmlNewElement(spyreport, "artefactStolen");
       name = mxmlNewElement(Artefact, "name");
         mxmlNewText(name, 0, (char*) ArtefactName);
       Lost = mxmlNewElement(Artefact, "lost");
@@ -1351,14 +1456,14 @@ struct SpyReportReturnStruct spy_report (db_t *database,
   const char *subject1 = message_subject(tmpl_spy1, "TITLE", cave2);
   const char *subject2 = message_subject(tmpl_spy2, "TITLE", cave2);
   double result;
-  char *xml_att = "", *xml_def = "";
+  char *xml = "";
   int spyTypes[5] = {0, 0, 0, 0, 0};
   struct Cave cave;
   int artefactID = 0;
   int artefact_def = 0;
   int lostTo = 0;
   int artefact_id = 0;
-  int dead_units[MAX_UNIT];
+  int dead_units[MAX_UNIT] = {0};
   int sendDefenderReport = 0;
 
   message_setup(tmpl_spy1, cave1, player1, cave2, player2);
@@ -1370,21 +1475,23 @@ struct SpyReportReturnStruct spy_report (db_t *database,
   srrs.artefactID = 0;
 
   if (result > drand()) {
-    // getting artefact?
-    if (cave2->artefacts > 0 && ARTEFACT_SPY_PROBABILITY > drand()) {
-      int artefactID = get_artefact_for_caveID(database, cave2->cave_id, 1);
-      after_battle_change_artefact_ownership(database, FLAG_ATTACKER, artefact, &artefact_id, &artefactID, cave2->cave_id, cave2, &lostTo);
-      srrs.artefactID = artefact_id;
-      if (srrs.artefactID > 0) {
-        sendDefenderReport = 1;
-      }
+    // getting artefact? no artefact carried?
+    if (cave2->artefacts > 0 && ARTEFACT_SPY_PROBABILITY > drand() && *artefact == 0) {
+      int artefact_def = get_artefact_for_caveID(database, cave2->cave_id, 1);
+
+      // artefactID -> Rückgabe der Artefact ID wenn es NICHT versprungen ist sonst 0
+      // artefact_id -> dummy. Wird hier im content nicht bnötigt!
+      // artefact_def -> artefactID was geklaut werden soll (wird oben random aus der Höhle gelesen)
+      after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefactID, &artefact_id, &artefact_def, cave2->cave_id, cave2, &lostTo);
+      srrs.artefactID = artefactID;
+
+      sendDefenderReport = 1;
     }
 
     result = 1;
     template_set(tmpl_spy1, "report", "");
 
     cave = report_spy_info(tmpl_spy1, player1->locale_id, spy, cave2, spyTypes);
-    
   } else {
     if (0.5 > drand()) {
       int type;
@@ -1417,14 +1524,18 @@ struct SpyReportReturnStruct spy_report (db_t *database,
     sendDefenderReport = 1;
   }
 
-  //generate messages
-  xml_att = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefactID, lostTo, *dead_units, 1);
-  message_new(database, MSG_CLASS_SPY_REPORT, cave1->player_id, subject1, template_eval(tmpl_spy1), xml_att);
+  /* Gnerate messages
+   *
+   * artefact_def anstatt srrs.artefactID benutzt.
+   * srrs.artefactID ist 0 wenn das artefact in einer nachbarhöhle verloren gegangen ist. artefact_def hat aber noch die ursprüngliche ID
+   * die für den Bericht benötigt wird
+   */
+  xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 1);
+  message_new(database, MSG_CLASS_SPY_REPORT, cave1->player_id, subject1, template_eval(tmpl_spy1), xml);
   if (sendDefenderReport) {
-    xml_att = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefactID, lostTo, *dead_units, 1);
-    message_new(database, MSG_CLASS_SPY_REPORT, cave2->player_id, subject2, template_eval(tmpl_spy2), xml_def);
+    xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 0);
+    message_new(database, MSG_CLASS_SPY_REPORT, cave2->player_id, subject2, template_eval(tmpl_spy2), xml);
   }
-
 
   srrs.value = result;
   return srrs;
@@ -1487,6 +1598,40 @@ void artefact_merging_report (db_t *database,
       cave->player_id, subject, template_eval(tmpl_merge), xml);
 }
 
+static char* hero_report_xml (db_t *database,
+          const struct Cave *cave1, const struct Player *player1)
+{
+  mxml_node_t *xml, *heroreport;
+  mxml_node_t *curtime;
+  mxml_node_t *player, *tribe;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+
+  char *xmlstring = "";
+
+  xml = mxmlNewXML("1.0");
+  heroreport = mxmlNewElement(xml, "heroreport");
+  curtime = mxmlNewElement(heroreport, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+  player = mxmlNewElement(heroreport, "playerName");
+    mxmlNewText(player, 0, (char*) player1->name);
+  tribe = mxmlNewElement(heroreport, "tribe");
+    mxmlNewText(tribe, 0, (char*) player1->tribe);
+  caveName = mxmlNewElement(heroreport, "caveName");
+    mxmlNewText(caveName, 0, (char*) cave1->name);
+  xCoord = mxmlNewElement(heroreport, "xCoord");
+    mxmlNewInteger(xCoord, (int) cave1->xpos);
+  yCoord = mxmlNewElement(heroreport, "yCoord");
+    mxmlNewInteger(yCoord, (int) cave1->ypos);
+  caveID = mxmlNewElement(heroreport, "caveID");
+    mxmlNewInteger(caveID, (int) cave1->cave_id);
+
+
+  xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    return xmlstring;
+
+
+}
 void hero_report (db_t *database,
           const struct Cave *cave, const struct Player *player)
 {
@@ -1505,17 +1650,44 @@ static void wonder_prepare_message (template_t *template,
             const char *message, float steal,
             const struct Cave *cave, int locale_id,
             const struct ReportEntity *values,
-            int num, int message_type)
+            int num, int message_type, mxml_node_t *xml)
 {
   int index;
+
+  mxml_node_t *report;
+  mxml_node_t *curtime, *caveInfo;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+  mxml_node_t *wonderInfo, *name, *Value;
+  mxml_node_t *valuesGuessed, *effects, *effect, *stealPercentage;
+
+  report = mxmlNewElement(xml, "wonderInfo");
+  curtime = mxmlNewElement(report, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+  caveInfo = mxmlNewElement(report, "targetCaveInfo");
+  caveName = mxmlNewElement(caveInfo, "caveName");
+    mxmlNewText(caveName, 0, (char*) cave->name);
+  xCoord = mxmlNewElement(caveInfo, "xCoord");
+    mxmlNewInteger(xCoord, (int) cave->xpos);
+  yCoord = mxmlNewElement(caveInfo, "yCoord");
+    mxmlNewInteger(yCoord, (int) cave->ypos);
+  caveID = mxmlNewElement(caveInfo, "caveID");
+    mxmlNewInteger(caveID, (int) cave->cave_id);
 
   template_context(template, "MSG");
   template_set(template, "cave", cave->name);
   template_set(template, "wonder_message", message);
 
-  if (message_type == WONDER_MESSAGE_note)
-    template_set(template, "note", "");
 
+  valuesGuessed = mxmlNewElement(wonderInfo, "valuesGuessed");
+  if (message_type == WONDER_MESSAGE_note) {
+    template_set(template, "note", "");
+    mxmlNewText(valuesGuessed, 0, (char*) "true");
+  } else {
+    mxmlNewText(valuesGuessed, 0, (char*) "false");
+  }
+
+  effects = mxmlNewElement(report, "effects");
   for (index = 0; index < num; ++index) {
     double value = values[index].value;
 
@@ -1524,14 +1696,22 @@ static void wonder_prepare_message (template_t *template,
 
     if (value) {
       template_iterate(template, "VALUE");
-      template_set(template, "VALUE/name",
-       values[index].object->name[locale_id]);
+      template_set(template, "VALUE/name", values[index].object->name[locale_id]);
       template_set_fmt(template, "VALUE/amount", "%+g", value);
+
+      effect = mxmlNewElement(effects, "effect");
+      name = mxmlNewElement(effect, "name");
+        mxmlNewText(name, 0, (char*) values[index].object->name[locale_id]);
+      Value = mxmlNewElement(effect, "value");
+        mxmlNewReal(Value, (float) value);
     }
   }
 
-  if (steal > 0)
+  if (steal > 0) {
     template_set_fmt(template, "STOLEN/steal", "%d", (int) (steal * 100));
+    stealPercentage = mxmlNewElement(wonderInfo, "stealPercentage");
+      mxmlNewInteger(stealPercentage, (int) steal*100);
+  }
 }
 
 void wonder_report (db_t *database,
@@ -1541,7 +1721,8 @@ void wonder_report (db_t *database,
         const struct ReportEntity *values, int num)
 {
 
-  char *xml = "";
+  char *xmlstring = "";
+  mxml_node_t *xml = mxmlNewXML("1.0");
 
   if (caster->player_id != target->player_id &&
       impact->sourceMessageType != WONDER_MESSAGE_none) {
@@ -1551,10 +1732,12 @@ void wonder_report (db_t *database,
     /* TODO localize impact->sourceMessage */
     wonder_prepare_message(template, impact->sourceMessage,
            impact->steal, cave, caster->locale_id,
-           values, num, impact->sourceMessageType);
+           values, num, impact->sourceMessageType, xml);
 
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+printf("xml = %s", xmlstring);
     message_new(database, MSG_CLASS_WONDER, caster->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
@@ -1564,10 +1747,12 @@ void wonder_report (db_t *database,
     /* TODO localize impact->targetMessage */
     wonder_prepare_message(template, impact->targetMessage,
            impact->steal, cave, target->locale_id,
-           values, num, impact->targetMessageType);
+           values, num, impact->targetMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_WONDER, target->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1578,7 +1763,8 @@ void merchant_report (db_t *database,
                     const struct WonderImpact *impact,
                     const struct ReportEntity *values, int num)
 {
-  char *xml = "";
+  char *xmlstring = "";
+  mxml_node_t *xml = mxmlNewXML("1.0");
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
     template_t *template = message_template(target, "merchant");
@@ -1587,10 +1773,12 @@ void merchant_report (db_t *database,
     /* TODO localize impact->targetMessage */
     wonder_prepare_message(template, impact->targetMessage,
                            impact->steal, cave, target->locale_id,
-                           values, num, impact->targetMessageType);
+                           values, num, impact->targetMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_TRADE, target->player_id,
-                subject, template_eval(template), xml);
+                subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1602,7 +1790,8 @@ void wonder_end_report (db_t *database,
       const struct WonderImpact *impact,
       const struct ReportEntity *values, int num)
 {
-  char *xml = "";
+  char *xmlstring = "";
+  mxml_node_t *xml = mxmlNewXML("1.0");
 
   if (caster->player_id != target->player_id &&
       impact->sourceMessageType != WONDER_MESSAGE_none) {
@@ -1611,10 +1800,12 @@ void wonder_end_report (db_t *database,
     const char *subject = message_subject(template, "TITLE", cave);
 
     wonder_prepare_message(template, "", 0, cave, caster->locale_id,
-           values, num, impact->sourceMessageType);
+           values, num, impact->sourceMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_WONDER, caster->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
@@ -1622,10 +1813,12 @@ void wonder_end_report (db_t *database,
     const char *subject = message_subject(template, "TITLE", cave);
 
     wonder_prepare_message(template, "", 0, cave, target->locale_id,
-           values, num, impact->targetMessageType);
+           values, num, impact->targetMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_WONDER, target->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 }
 

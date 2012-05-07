@@ -76,15 +76,10 @@ extern void protected_report (db_t *database,
     const struct Cave *cave2, const struct Player *player2);
 
 extern struct SpyReportReturnStruct spy_report (db_t *database,
-<<<<<<< Updated upstream
     struct Cave *cave1, const struct Player *player1,
     struct Cave *cave2, const struct Player *player2,
     const int resources[], const int units[], int *artefact);
-=======
-	const struct Cave *cave1, const struct Player *player1,
-	const struct Cave *cave2, const struct Player *player2,
-	const int resources[], const int units[], int *artefact);
->>>>>>> Stashed changes
+
 
 extern void artefact_report (db_t *database,
     const struct Cave *cave, const struct Player *player,
