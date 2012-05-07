@@ -1598,6 +1598,40 @@ void artefact_merging_report (db_t *database,
       cave->player_id, subject, template_eval(tmpl_merge), xml);
 }
 
+static char* hero_report_xml (db_t *database,
+          const struct Cave *cave1, const struct Player *player1)
+{
+  mxml_node_t *xml, *heroreport;
+  mxml_node_t *curtime;
+  mxml_node_t *player, *tribe;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+
+  char *xmlstring = "";
+
+  xml = mxmlNewXML("1.0");
+  heroreport = mxmlNewElement(xml, "heroreport");
+  curtime = mxmlNewElement(heroreport, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+  player = mxmlNewElement(heroreport, "playerName");
+    mxmlNewText(player, 0, (char*) player1->name);
+  tribe = mxmlNewElement(heroreport, "tribe");
+    mxmlNewText(tribe, 0, (char*) player1->tribe);
+  caveName = mxmlNewElement(heroreport, "caveName");
+    mxmlNewText(caveName, 0, (char*) cave1->name);
+  xCoord = mxmlNewElement(heroreport, "xCoord");
+    mxmlNewInteger(xCoord, (int) cave1->xpos);
+  yCoord = mxmlNewElement(heroreport, "yCoord");
+    mxmlNewInteger(yCoord, (int) cave1->ypos);
+  caveID = mxmlNewElement(heroreport, "caveID");
+    mxmlNewInteger(caveID, (int) cave1->cave_id);
+
+
+  xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    return xmlstring;
+
+
+}
 void hero_report (db_t *database,
           const struct Cave *cave, const struct Player *player)
 {
@@ -1616,17 +1650,44 @@ static void wonder_prepare_message (template_t *template,
             const char *message, float steal,
             const struct Cave *cave, int locale_id,
             const struct ReportEntity *values,
-            int num, int message_type)
+            int num, int message_type, mxml_node_t *xml)
 {
   int index;
+
+  mxml_node_t *report;
+  mxml_node_t *curtime, *caveInfo;
+  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+  mxml_node_t *wonderInfo, *name, *Value;
+  mxml_node_t *valuesGuessed, *effects, *effect, *stealPercentage;
+
+  report = mxmlNewElement(xml, "wonderInfo");
+  curtime = mxmlNewElement(report, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+  caveInfo = mxmlNewElement(report, "targetCaveInfo");
+  caveName = mxmlNewElement(caveInfo, "caveName");
+    mxmlNewText(caveName, 0, (char*) cave->name);
+  xCoord = mxmlNewElement(caveInfo, "xCoord");
+    mxmlNewInteger(xCoord, (int) cave->xpos);
+  yCoord = mxmlNewElement(caveInfo, "yCoord");
+    mxmlNewInteger(yCoord, (int) cave->ypos);
+  caveID = mxmlNewElement(caveInfo, "caveID");
+    mxmlNewInteger(caveID, (int) cave->cave_id);
 
   template_context(template, "MSG");
   template_set(template, "cave", cave->name);
   template_set(template, "wonder_message", message);
 
-  if (message_type == WONDER_MESSAGE_note)
-    template_set(template, "note", "");
 
+  valuesGuessed = mxmlNewElement(wonderInfo, "valuesGuessed");
+  if (message_type == WONDER_MESSAGE_note) {
+    template_set(template, "note", "");
+    mxmlNewText(valuesGuessed, 0, (char*) "true");
+  } else {
+    mxmlNewText(valuesGuessed, 0, (char*) "false");
+  }
+
+  effects = mxmlNewElement(report, "effects");
   for (index = 0; index < num; ++index) {
     double value = values[index].value;
 
@@ -1635,14 +1696,22 @@ static void wonder_prepare_message (template_t *template,
 
     if (value) {
       template_iterate(template, "VALUE");
-      template_set(template, "VALUE/name",
-       values[index].object->name[locale_id]);
+      template_set(template, "VALUE/name", values[index].object->name[locale_id]);
       template_set_fmt(template, "VALUE/amount", "%+g", value);
+
+      effect = mxmlNewElement(effects, "effect");
+      name = mxmlNewElement(effect, "name");
+        mxmlNewText(name, 0, (char*) values[index].object->name[locale_id]);
+      Value = mxmlNewElement(effect, "value");
+        mxmlNewReal(Value, (float) value);
     }
   }
 
-  if (steal > 0)
+  if (steal > 0) {
     template_set_fmt(template, "STOLEN/steal", "%d", (int) (steal * 100));
+    stealPercentage = mxmlNewElement(wonderInfo, "stealPercentage");
+      mxmlNewInteger(stealPercentage, (int) steal*100);
+  }
 }
 
 void wonder_report (db_t *database,
@@ -1652,7 +1721,8 @@ void wonder_report (db_t *database,
         const struct ReportEntity *values, int num)
 {
 
-  char *xml = "";
+  char *xmlstring = "";
+  mxml_node_t *xml = mxmlNewXML("1.0");
 
   if (caster->player_id != target->player_id &&
       impact->sourceMessageType != WONDER_MESSAGE_none) {
@@ -1662,10 +1732,12 @@ void wonder_report (db_t *database,
     /* TODO localize impact->sourceMessage */
     wonder_prepare_message(template, impact->sourceMessage,
            impact->steal, cave, caster->locale_id,
-           values, num, impact->sourceMessageType);
+           values, num, impact->sourceMessageType, xml);
 
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+printf("xml = %s", xmlstring);
     message_new(database, MSG_CLASS_WONDER, caster->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
@@ -1675,10 +1747,12 @@ void wonder_report (db_t *database,
     /* TODO localize impact->targetMessage */
     wonder_prepare_message(template, impact->targetMessage,
            impact->steal, cave, target->locale_id,
-           values, num, impact->targetMessageType);
+           values, num, impact->targetMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_WONDER, target->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1689,7 +1763,8 @@ void merchant_report (db_t *database,
                     const struct WonderImpact *impact,
                     const struct ReportEntity *values, int num)
 {
-  char *xml = "";
+  char *xmlstring = "";
+  mxml_node_t *xml = mxmlNewXML("1.0");
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
     template_t *template = message_template(target, "merchant");
@@ -1698,10 +1773,12 @@ void merchant_report (db_t *database,
     /* TODO localize impact->targetMessage */
     wonder_prepare_message(template, impact->targetMessage,
                            impact->steal, cave, target->locale_id,
-                           values, num, impact->targetMessageType);
+                           values, num, impact->targetMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_TRADE, target->player_id,
-                subject, template_eval(template), xml);
+                subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1713,7 +1790,8 @@ void wonder_end_report (db_t *database,
       const struct WonderImpact *impact,
       const struct ReportEntity *values, int num)
 {
-  char *xml = "";
+  char *xmlstring = "";
+  mxml_node_t *xml = mxmlNewXML("1.0");
 
   if (caster->player_id != target->player_id &&
       impact->sourceMessageType != WONDER_MESSAGE_none) {
@@ -1722,10 +1800,12 @@ void wonder_end_report (db_t *database,
     const char *subject = message_subject(template, "TITLE", cave);
 
     wonder_prepare_message(template, "", 0, cave, caster->locale_id,
-           values, num, impact->sourceMessageType);
+           values, num, impact->sourceMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_WONDER, caster->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
@@ -1733,10 +1813,12 @@ void wonder_end_report (db_t *database,
     const char *subject = message_subject(template, "TITLE", cave);
 
     wonder_prepare_message(template, "", 0, cave, target->locale_id,
-           values, num, impact->targetMessageType);
+           values, num, impact->targetMessageType, xml);
+
+    xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
     message_new(database, MSG_CLASS_WONDER, target->player_id,
-      subject, template_eval(template), xml);
+      subject, template_eval(template), xmlstring);
   }
 }
 
