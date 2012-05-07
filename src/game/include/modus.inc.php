@@ -189,6 +189,6 @@ $require_files[WONDER_DETAIL]               = array('rules/wonder.rules.php', 'w
 $require_files[DYK]                         = array('doYouKnow.html.php');
 $require_files[MERCHANT]                    = array('formula_parser.inc.php', 'merchant.html.php', 'rules/trade.rules.php');
 $require_files[NEWS]                        = array('rssFeedNews.html.php');
-$require_files[STATISTIC]                   = array('statistic.html.php');
+$require_files[STATISTIC]                   = array('statistic.html.php', 'rules/wonder.rules.php');
 
 ?>

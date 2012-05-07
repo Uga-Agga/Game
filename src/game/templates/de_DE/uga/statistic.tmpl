@@ -13,59 +13,14 @@
 {% block title %}Statistik{% endblock %}
 {% block content %}
 
-{% if showUnitDetails %}
-<fieldset style="text-align: left;">
-  <legend>{{ unitName }}</legend>
-
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Year');
-        data.addColumn('number', '{{ unitName }}');
-        data.addRows([
-        {% for unit in GraphDataHour %}
-        ['{{ unit.name }}', {{ unit.value}}],
-        {% endfor %}
-        ]);
-        var chart = new google.visualization.AreaChart(document.getElementById('UnitHourDiv'));
-        chart.draw(data, {width: 600, height: 240, legend: 'bottom', title: '{{ unitName }} der letzten 24 Std'});
-      }
-    </script>
-
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Year');
-        data.addColumn('number', '{{ unitName }}');
-        data.addRows([
-        {% for unit in GraphDataDay %}
-        ['{{ unit.name }}', {{ unit.value}}],
-        {% endfor %}
-        ]);
-        var chart = new google.visualization.AreaChart(document.getElementById('UnitDayDiv'));
-        chart.draw(data, {width: 600, height: 240, legend: 'bottom', title: '{{ unitName }} der letzten 24 Tage'});
-      }
-    </script>
- 
-  <div id="UnitHourDiv"></div>
-  <div id="UnitDayDiv"></div>
-</fieldset>
-{% endif %}
-
 <a class="export-link" href="export.php?modus=statistics&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><div id="export-dialog"></div>
 
 <div class="ua-box small">
-  <div class="ua-box-header">Halbgötter/Götter - Statistik</div>
+  <div class="ua-box-header">Statistik</div>
   <div class="ua-box-content">
-    <div class="ym-grid">
-      <div class="ym-g50 ym-gl">
-        <div style="padding-right: 5px;">
+    <div id="statistik" class="jquery_tabs nav1">
+        <h4>Götter</h4>
+        <div class="tabbody">
           <table>
             <thead>
               <tr>
@@ -85,9 +40,9 @@
             </tbody>
           </table>
         </div>
-      </div>
-      <div class="ym-g50 ym-gl">
-        <div style="padding-left: 5px;">
+
+        <h4>Halbgötter</h4>
+        <div class="tabbody">
           <table>
             <thead>
               <tr>
@@ -107,17 +62,52 @@
             </tbody>
           </table>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="ua-box small">
-  <div class="ua-box-header">Einheiten/Lager - Statistik</div>
-  <div class="ua-box-content">
-    <div class="ym-grid">
-      <div class="ym-g50 ym-gl">
-        <div style="padding-right: 5px;">
+        <h4>Einheiten</h4>
+        <div class="tabbody">
+          {% if showUnitDetails %}
+          <fieldset class="text-center">
+              <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+              <script type="text/javascript">
+                google.load("visualization", "1", {packages:["corechart"]});
+                google.setOnLoadCallback(drawChart);
+                function drawChart() {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Year');
+                  data.addColumn('number', '{{ unitName }}');
+                  data.addRows([
+                  {% for unit in GraphDataHour %}
+                  ['{{ unit.name }}', {{ unit.value}}],
+                  {% endfor %}
+                  ]);
+                  var chart = new google.visualization.AreaChart(document.getElementById('UnitHourDiv'));
+                  chart.draw(data, {width: 600, height: 240, legend: 'bottom', title: '{{ unitName }} der letzten 24 Std'});
+                }
+              </script>
+
+              <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+              <script type="text/javascript">
+                google.load("visualization", "1", {packages:["corechart"]});
+                google.setOnLoadCallback(drawChart);
+                function drawChart() {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('string', 'Year');
+                  data.addColumn('number', '{{ unitName }}');
+                  data.addRows([
+                  {% for unit in GraphDataDay %}
+                  ['{{ unit.name }}', {{ unit.value}}],
+                  {% endfor %}
+                  ]);
+                  var chart = new google.visualization.AreaChart(document.getElementById('UnitDayDiv'));
+                  chart.draw(data, {width: 600, height: 240, legend: 'bottom', title: '{{ unitName }} der letzten 24 Tage'});
+                }
+              </script>
+
+            <div id="UnitHourDiv"></div>
+            <div id="UnitDayDiv"></div>
+          </fieldset>
+          {% endif %}
+
           <table>
             <thead>
               <tr>
@@ -137,9 +127,9 @@
             </tbody>
           </table>
         </div>
-      </div>
-      <div class="ym-g50 ym-gl">
-        <div style="padding-left: 5px;">
+
+        <h4>Lager</h4>
+        <div class="tabbody">
           <table>
             <thead>
               <tr>
@@ -159,7 +149,30 @@
             </tbody>
           </table>
         </div>
-      </div>
+
+        <h4>Wunder</h4>
+        <div class="tabbody">
+          <table>
+            <thead>
+              <tr>
+                <th>Wunder</th>
+                <th class="text-center">erfolgreich</th>
+                <th class="text-center">daneben</th>
+              </tr>
+            </thead>
+            </tbody>
+              {% for wonder in WonderStats %}
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
+                <td>{{ wonder.name }}</td>
+                <td class="text-center">{{ wonder.success }}</td>
+                <td class="text-center">{{ wonder.fail }}</td>
+              </tr>
+              {% endfor %}
+              {% set bgID = 0 %}
+            </tbody>
+          </table>
+        </div>
     </div>
   </div>
 </div>

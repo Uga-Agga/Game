@@ -86,6 +86,25 @@ function statistic_getContent() {
   $template->addVars(array('StorageStats' => $StorageStatsList));
 
   /*
+  * print wonder stats
+  */
+  init_Wonders();
+
+  $WonderStatsList = array();
+  $WonderStats = $StatsData[WONDER_STATS];
+  ksort($WonderStats);
+  foreach ($WonderStats as $wonder => $value) {
+    $value = json_decode($value, true);
+
+    $WonderStatsList[] = array(
+      "name" => $GLOBALS['wonderTypeList'][$wonder]->name,
+      "success" => $value['success'],
+      "fail" => $value['success'],
+    );
+  }
+  $template->addVars(array('WonderStats' => $WonderStatsList));
+
+  /*
    * get Unit stats
    */
   $sql = $db->prepare("SELECT * FROM ". STATISTIC_UNIT_TABLE ." ORDER BY type_sub DESC");
