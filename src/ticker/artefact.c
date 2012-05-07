@@ -651,7 +651,6 @@ void after_battle_change_artefact_ownership (
     } end_try;
   }
 }
-<<<<<<< Updated upstream
 
 /*
  * Return the class name of the artefact with the given id.
@@ -665,5 +664,3 @@ const char *artefact_name (db_t *database, int artefact_id) {
          &artefact_class);
   return artefact_class.name;
 }
-=======
->>>>>>> Stashed changes

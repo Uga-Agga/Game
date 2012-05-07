@@ -1129,15 +1129,16 @@ void movement_handler (db_t *database, db_result_t *result)
     /*** Spionieren *******************************************************/
     /**********************************************************************/
     case SPIONAGE:
-
-
-
       /* generate spy report */
       srrs = spy_report(database, &cave1, &player1, &cave2, &player2, resources, units, &artefact);
-
       spy_result = srrs.value;
 
       if (spy_result == 1) {
+        // artefact sollte immer < 1 sein wenn srrs.artefactID > 0!!!
+        if (srrs.artefactID > 0 && artefact == 0) {
+          artefact = srrs.artefactID;
+        }
+
         /* send all units back */
         ds = dstring_new("INSERT INTO Event_movement"
              " (caveID, target_caveID, source_caveID, movementID,"
