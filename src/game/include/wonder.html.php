@@ -60,6 +60,10 @@ function wonder_getWonderContent($caveID, &$details) {
 
       $messageID = wonder_processOrder($_SESSION['player']->playerID, $wonderID, $caveID, $xCoord, $yCoord, $details);
       $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
+
+      if ($messageID == 1 || $messageID == 2) {
+        wonder_addStatistic($wonderID, $messageID);
+      }
     break;
   }
 
@@ -153,7 +157,6 @@ function wonder_getWonderContent($caveID, &$details) {
     'wonders'             => $wonders,
     'wonders_unqualified' => $wondersUnqualified,
   ));
-  
 }
 
 ?>

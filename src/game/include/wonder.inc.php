@@ -319,4 +319,53 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
   return 12;
 }
 
+function wonder_addStatistic($wonderID, $failSuccess) {
+  global $db;
+
+  $sql = $db->prepare("SELECT *
+                       FROM " . STATISTIC_TABLE . "
+                       WHERE type = :type
+                         AND name = :wonderID");
+  $sql->bindValue('type', WONDER_STATS, PDO::PARAM_INT);
+  $sql->bindValue('wonderID', $wonderID, PDO::PARAM_INT);
+  $sql->execute();
+
+  $wonderStats = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (empty($wonderStats)) {
+    if ($failSuccess == 1) {
+      $success = 1; $fail = 0;
+    } else {
+      $success = 0; $fail = 1;
+    }
+
+    $value = array('success' => $success, 'fail' => $fail);
+
+    $sql = $db->prepare("INSERT INTO ". STATISTIC_TABLE ."
+                           (type, name, value) 
+                         VALUES (:type, :name, :value)");
+    $sql->bindValue('type', WONDER_STATS, PDO::PARAM_INT);
+    $sql->bindValue('name', $wonderID, PDO::PARAM_INT);
+    $sql->bindValue('value', json_encode($value), PDO::PARAM_STR);;
+    $sql->execute();
+  } else {
+    $value = json_decode($wonderStats['value'], true);
+
+    if ($failSuccess == 1) {
+      $value['success']++;
+    } else {
+      $value['fail']++;
+    }
+
+    $sql = $db->prepare("UPDATE ". STATISTIC_TABLE ."
+                          SET value = :value
+                         WHERE type = :type
+                           AND name = :name");
+    $sql->bindValue('type', WONDER_STATS, PDO::PARAM_INT);
+    $sql->bindValue('name', $wonderID, PDO::PARAM_INT);
+    $sql->bindValue('value', json_encode($value), PDO::PARAM_STR);
+    $sql->execute();
+  }
+}
 ?>
