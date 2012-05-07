@@ -126,9 +126,9 @@ function wonder_getWonderContent($caveID, &$details) {
     if (isset($wonders[$wonderCategory->id])) {
       $tmpWonders[$wonderCategory->sortID] = array(
         'name'  => $wonderCategory->name,
-        'items' => $units[$wonderCategory->id]['items']
+        'items' => $wonders[$wonderCategory->id]['items']
       );
-      unset($units[$wonderCategory->id]);
+      unset($wonders[$wonderCategory->id]);
     }
 
     if (isset($wondersUnqualified[$wonderCategory->id])) {
