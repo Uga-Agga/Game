@@ -32,6 +32,10 @@
       {% include "xml/tradeReceived.tmpl" %}
     {% endif %}
 
+  {# /* Rückkehr?? */ #}
+  {% elseif message_report == 7 %}
+    {% include "xml/return.tmpl" %}
+
   {# /* Spionage? */ #}
   {% elseif message_report == 11 %}
     {% include "xml/spyAttacker.tmpl" %}

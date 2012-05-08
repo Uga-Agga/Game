@@ -1,5 +1,5 @@
 {#
-/* tradeSender.tmpl -
+/* return.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2012 David Unger
  *
@@ -9,12 +9,11 @@
  * the License, or (at your option) any later version. 
  */
 #}
-{% spaceless %}
 
-Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
+Rückkehr in Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
 
 <p>
-  Deine Lieferung ist in
+  Deine Einheiten sind von
 
   {% if message_xml.target.caveID in list_cave_id %}
     deiner Höhle  {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
@@ -22,7 +21,7 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
     der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) des Spielers {{ message_xml.target.playerName }}
   {% endif %}
 
-  eingetroffen.
+  wieder zurückgekehrt.
 </p>
 
 {% if message_xml.units.unit %}
@@ -58,17 +57,9 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
 {% endif %}
 
 {% if message_xml.artefact %}
-  <p>Das Artefakt "{{ message_xml.artefact.name }}" ist sicher angekommen.</p>
+  <p>Du hast das Artefakt "{{ message_xml.artefact.name }}" bekommen!</p>
 {% endif %}
 
-{% if message_xml.hero.send == 'true' %}
-  {% if message_xml.hero.send == 'true' %}
-    <p>Dein Held ist in der Höhle eingetroffen.</p>
-  {% endif %}
-
-  {% if message_xml.hero.death == 'true' %}
-    <p>Die Schmach die dein Held ertragen musste, da du ihn aus deinen Höhlen weggeschickt hast, war unerträglich.</p>
-    <p>Dein Held hat sich daher zu den Göttern begeben.</p>
-  {% endif %}
+{% if message_xml.hero == 'true' %}
+  <p>Dein Held ist in die Höhle zurückgekehrt!</p>
 {% endif %}
-{% endspaceless %}
