@@ -202,6 +202,10 @@ function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
   $template->setShowRresource(false);
 
   $message = $messagesClass->getMessageDetail($messageID);
+  if (empty($message)) {
+    $template->throwError('Es wurde keine Nachricht gefunden.');
+    return;
+  }
 
   $antworten = $contacts = $loeschen = array();
   if ($message['sender'] != "System" && $box == BOX_INCOMING) {
