@@ -122,6 +122,7 @@ define("HALFGOD_STATS", 2);
 define("UNIT_STATS",    3);
 define("STORAGE_STATS", 4);
 define("WONDER_STATS",  5);
+define("WONDER_STATS_CACHE", 6);
 
 define("STATS_HOUR", '1');
 define("STATS_HOUR_COUNT", 24);

@@ -326,7 +326,7 @@ function wonder_addStatistic($wonderID, $failSuccess) {
                        FROM " . STATISTIC_TABLE . "
                        WHERE type = :type
                          AND name = :wonderID");
-  $sql->bindValue('type', WONDER_STATS, PDO::PARAM_INT);
+  $sql->bindValue('type', WONDER_STATS_CACHE, PDO::PARAM_INT);
   $sql->bindValue('wonderID', $wonderID, PDO::PARAM_INT);
   $sql->execute();
 
@@ -345,7 +345,7 @@ function wonder_addStatistic($wonderID, $failSuccess) {
     $sql = $db->prepare("INSERT INTO ". STATISTIC_TABLE ."
                            (type, name, value) 
                          VALUES (:type, :name, :value)");
-    $sql->bindValue('type', WONDER_STATS, PDO::PARAM_INT);
+    $sql->bindValue('type', WONDER_STATS_CACHE, PDO::PARAM_INT);
     $sql->bindValue('name', $wonderID, PDO::PARAM_INT);
     $sql->bindValue('value', json_encode($value), PDO::PARAM_STR);;
     $sql->execute();
@@ -362,7 +362,7 @@ function wonder_addStatistic($wonderID, $failSuccess) {
                           SET value = :value
                          WHERE type = :type
                            AND name = :name");
-    $sql->bindValue('type', WONDER_STATS, PDO::PARAM_INT);
+    $sql->bindValue('type', WONDER_STATS_CACHE, PDO::PARAM_INT);
     $sql->bindValue('name', $wonderID, PDO::PARAM_INT);
     $sql->bindValue('value', json_encode($value), PDO::PARAM_STR);
     $sql->execute();
