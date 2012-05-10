@@ -89,7 +89,7 @@ function unit_processOrder($unitID, $quantity, $caveID, $details) {
   $sql->bindValue('quantity', $quantity, PDO::PARAM_INT);
   $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
   $sql->bindValue('end', time_toDatetime($now + $prodTime), PDO::PARAM_STR);
-  if (!$sql->execute() || !$sql->rowCount() == 1) {
+  if (!$sql->execute() || $sql->rowCount() == 0) {
     processProductionCostSetBack($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity);
     return 2;
   }
