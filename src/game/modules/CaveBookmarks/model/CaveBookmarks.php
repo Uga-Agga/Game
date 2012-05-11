@@ -2,6 +2,7 @@
 /*
  * CaveBookmarks.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2012  David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,55 +15,47 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 require_once('lib/Model.php');
 
-DEFINE('CAVEBOOKMARKS_NOERROR',             0x00);
-
-DEFINE('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x01);
-DEFINE('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x02);
-DEFINE('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x03);
-
-DEFINE('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x04);
+define('CAVEBOOKMARKS_NOERROR',             0x00);
+define('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x01);
+define('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x02);
+define('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x03);
+define('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x04);
 
 class CaveBookmarks_Model extends Model {
-
-  function CaveBookmarks_Model() {
-  }
-
-  function getCaveBookmarks($extended = false) {
+  function getCaveBookmarks($extended=false) {
     global $db;
 
     // init return value
-    $result = array();
-    $names = array();
+    $ret = $names = array();
+
     // prepare query
-    $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord, ".
-                   "p.playerID, p.name as playerName, p.tribe, ".
-                   "r.name as region ".
-                   "FROM ". CAVE_BOOKMARKS_TABLE ." cb ".
-                   "LEFT JOIN ". CAVE_TABLE ." c ON cb.caveID = c.caveID ".
-                   "LEFT JOIN ".PLAYER_TABLE ." p ON c.playerID = p.playerID ".
-                   "LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID ".
-                   "WHERE cb.playerID = :playerID ".
-                   "ORDER BY c.name");
+    $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord, p.playerID, p.name as playerName, p.tribe, r.name as region
+                         FROM " . CAVE_BOOKMARKS_TABLE . " cb
+                           LEFT JOIN " . CAVE_TABLE . " c ON cb.caveID = c.caveID
+                           LEFT JOIN " .PLAYER_TABLE . " p ON c.playerID = p.playerID
+                           LEFT JOIN " . REGIONS_TABLE . " r ON c.regionID = r.regionID
+                         WHERE cb.playerID = :playerID
+                         ORDER BY c.name");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) return array();
 
     // collect rows
     if ($sql->execute()) {
       while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
         $row['raw_name'] = unhtmlentities($row['name']);
-        $result[] = $row;
-        array_push($names,$row['name']);
+        $ret[] = $row;
+        array_push($names, $row['name']);
       }
+      $sql->closeCursor();
     }
 
     if ($extended) {
-      $sql = $db->prepare("SELECT c.caveID, c.name, c.xCoord, c.yCoord, ".
-               "p.playerID, p.name as playerName, p.tribe, ".
-               "r.name as region ".
-               "FROM ". CAVE_TABLE ." c ".
-               "LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID ".
-               "LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID ".
-               "WHERE c.playerID = :playerID ".
-               "ORDER BY c.name");
+      $sql = $db->prepare("SELECT c.caveID, c.name, c.xCoord, c.yCoord, p.playerID, p.name as playerName, p.tribe, r.name as region
+                           FROM " . CAVE_TABLE . " c
+                             LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                             LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID
+                           WHERE c.playerID = :playerID
+                           ORDER BY c.name");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
       // collect rows
@@ -70,31 +63,39 @@ class CaveBookmarks_Model extends Model {
         while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
           if (!in_array($row['name'], $names)) {
             $row['raw_name'] = unhtmlentities($row['name']);
-            $result[] = $row;
-          }  
+            $ret[] = $row;
+          }
         }
+        $sql->closeCursor();
       }
     }
 
-    return $result;
+    return $ret;
   }
 
   function getCaveBookmark($bookmarkID) {
     global $db;
 
-    $retval = NULL;
-    $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord ".
-                   "FROM ". CAVE_BOOKMARKS_TABLE ." cb ".
-                   "LEFT JOIN ". CAVE_TABLE ." c ON cb.caveID = c.playerID ".
-                   "WHERE cb.playerID = :playerID AND cb.bookmarkID = :bookmarkID 
-                   LIMIT 1");
+    $ret = NULL;
+
+    if (empty($bookmarkID)) {
+      return $ret;
+    }
+
+    $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord
+                         FROM " . CAVE_BOOKMARKS_TABLE . " cb
+                           LEFT JOIN " . CAVE_TABLE . " c ON cb.caveID = c.playerID
+                         WHERE cb.playerID = :playerID
+                           AND cb.bookmarkID = :bookmarkID 
+                         LIMIT 1");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('bookmarkID', $bookmarkID, PDO::PARAM_INT);
+    if (!$sql->execute()) return $ret;
 
-    if ($sql->execute())
-      $retval = $sql->fetch(PDO::FETCH_ASSOC);
+    $ret = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
 
-    return $retval;
+    return $ret;
   }
 
   function addCaveBookmark($caveID){
@@ -105,37 +106,39 @@ class CaveBookmarks_Model extends Model {
       return CAVEBOOKMARKS_ERROR_MAXREACHED;
 
     // insert cave
-    $sql = $db->prepare("INSERT INTO ". CAVE_BOOKMARKS_TABLE ." (playerID, caveID) ".
-                   "VALUES (:playerID, :caveID)");
+    $sql = $db->prepare("INSERT INTO " . CAVE_BOOKMARKS_TABLE . "
+                           (playerID, caveID)
+                         VALUES
+                           (:playerID, :caveID)");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-    
-    if (!$sql->execute())
+    if (!$sql->execute() || !$sql->rowCount() == 1) {
       return CAVEBOOKMARKS_ERROR_INSERTFAILED;
+    }
 
     return CAVEBOOKMARKS_NOERROR;
   }
 
   function addCaveBookmarkByName($name) {
+    if (!empty($name)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     // check cave name
     $cave = getCaveByName($name);
 
     // no such cave
-    if (!sizeof($cave))
-      return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
+    if (empty($cave)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     return $this->addCaveBookmark($cave['caveID']);
   }
 
   function addCaveBookmarkByCoord($xCoord, $yCoord){
+    if (!intval($xCoord) || !intval($yCoord)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     // check coords
     $cave = getCaveByCoords($xCoord, $yCoord);
 
     // no such cave
-    if (!sizeof($cave))
-      return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
+    if (!empty($cave)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     return $this->addCaveBookmark($cave['caveID']);
   }
@@ -143,18 +146,19 @@ class CaveBookmarks_Model extends Model {
   function deleteCaveBookmark($bookmarkID){
     global $db;
 
+    if (empty($bookmarkID)) return CAVEBOOKMARKS_ERROR_INSERTFAILED;
+
     // prepare query
-    $sql = $db->prepare("DELETE FROM ". CAVE_BOOKMARKS_TABLE ." WHERE playerID = :playerID ".
-                   "AND bookmarkID = :bookmarkID");
+    $sql = $db->prepare("DELETE FROM ". CAVE_BOOKMARKS_TABLE ."
+                         WHERE playerID = :playerID
+                           AND bookmarkID = :bookmarkID");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('bookmarkID', $bookmarkID, PDO::PARAM_INT);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return CAVEBOOKMARKS_ERROR_DELETEFAILED;
+    }
 
-    // send query
-    $sql->execute();
-
-    return ($sql->rowCount() == 1)
-           ? CAVEBOOKMARKS_NOERROR
-           : CAVEBOOKMARKS_ERROR_DELETEFAILED;
+    return CAVEBOOKMARKS_NOERROR;
   }
 }
 
