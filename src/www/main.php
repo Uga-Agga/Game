@@ -15,13 +15,16 @@ define("_VALID_UA", 1);
 
 require_once("config.inc.php");
 
+include('Lib/Autoloader.php');
+Lib\Autoloader::register();
+
 require_once("include/page.inc.php");
 require_once("include/template.inc.php");
 require_once("include/db.functions.php");
 require_once("include/time.inc.php");
 require_once("include/basic.lib.php");
 require_once("include/vote.html.php");
-require_once("modules/Messages/Messages.php");
+//require_once("modules/Messages/Messages.php");
 require_once("include/formula_parser.inc.php");
 
 date_default_timezone_set('Europe/Berlin'); // slange: added to fix warning in PHP5
@@ -181,7 +184,8 @@ switch ($modus) {
     break;
 
   case CAVE_BOOKMARKS:
-    list($pagetitle, $content) = cavebookmarks_main($caveID, $ownCaves);
+    $model = new Modules\CaveBookmarks\CaveBookmarks;
+    $model->execute();
     break;
 
   case DONATIONS:
@@ -503,7 +507,7 @@ if ($template->getShowRresource() && isset($resourceTypeList)) {
 }
 
 // prepare new mail
-$newMessageCount = messages_main($caveID, $ownCaves);
+//$newMessageCount = messages_main($caveID, $ownCaves);
 
 // set time
 $UgaAggaTime = getUgaAggaTime(time());

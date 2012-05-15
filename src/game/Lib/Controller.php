@@ -9,15 +9,19 @@
  * the License, or (at your option) any later version.
  */
 
+/** Set Namespace **/
+namespace lib;
+
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
+################################################################################
 abstract class Controller {
   private $message = array();
   public $template;
 
-  abstract function getContent();
-  abstract function submit();
+  abstract protected function getContent();
+  abstract protected function submit();
 
   public function __construct() {
     global $template;

@@ -10,19 +10,15 @@
  * the License, or (at your option) any later version.
  */
 
+/** Set Namespace **/
+namespace Modules\CaveBookmarks\Model;
+
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-require_once('lib/Model.php');
-
-define('CAVEBOOKMARKS_NOERROR',             0x00);
-define('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x01);
-define('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x02);
-define('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x03);
-define('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x04);
-
-class CaveBookmarks_Model extends Model {
-  function getCaveBookmarks($extended=false) {
+################################################################################
+class CaveBookmarks extends \Lib\Model {
+  public static function getCaveBookmarks($extended=false) {
     global $db;
 
     // init return value
@@ -36,12 +32,12 @@ class CaveBookmarks_Model extends Model {
                            LEFT JOIN " . REGIONS_TABLE . " r ON c.regionID = r.regionID
                          WHERE cb.playerID = :playerID
                          ORDER BY c.name");
-    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, \PDO::PARAM_INT);
     if (!$sql->execute()) return array();
 
     // collect rows
     if ($sql->execute()) {
-      while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      while($row = $sql->fetch(\PDO::FETCH_ASSOC)) {
         $row['raw_name'] = unhtmlentities($row['name']);
         $ret[] = $row;
         array_push($names, $row['name']);
@@ -56,7 +52,7 @@ class CaveBookmarks_Model extends Model {
                              LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID
                            WHERE c.playerID = :playerID
                            ORDER BY c.name");
-      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, \PDO::PARAM_INT);
 
       // collect rows
       if ($sql->execute()) {
@@ -73,7 +69,7 @@ class CaveBookmarks_Model extends Model {
     return $ret;
   }
 
-  function getCaveBookmark($bookmarkID) {
+  public static function getCaveBookmark($bookmarkID) {
     global $db;
 
     $ret = NULL;
@@ -98,20 +94,19 @@ class CaveBookmarks_Model extends Model {
     return $ret;
   }
 
-  function addCaveBookmark($caveID){
+  public static function addCaveBookmark($caveID){
     global $db;
 
     // no more than CAVESBOOKMARKS_MAX should be inserted
-    if (sizeof($this->getCaveBookmarks()) >= CAVESBOOKMARKS_MAX)
-      return CAVEBOOKMARKS_ERROR_MAXREACHED;
+    if (sizeof(self::getCaveBookmarks()) >= CAVESBOOKMARKS_MAX) return CAVEBOOKMARKS_ERROR_MAXREACHED;
 
     // insert cave
     $sql = $db->prepare("INSERT INTO " . CAVE_BOOKMARKS_TABLE . "
                            (playerID, caveID)
                          VALUES
                            (:playerID, :caveID)");
-    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, \PDO::PARAM_INT);
+    $sql->bindValue('caveID', $caveID, \PDO::PARAM_INT);
     if (!$sql->execute() || !$sql->rowCount() == 1) {
       return CAVEBOOKMARKS_ERROR_INSERTFAILED;
     }
@@ -119,7 +114,7 @@ class CaveBookmarks_Model extends Model {
     return CAVEBOOKMARKS_NOERROR;
   }
 
-  function addCaveBookmarkByName($name) {
+  public static function addCaveBookmarkByName($name) {
     if (!empty($name)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     // check cave name
@@ -131,19 +126,19 @@ class CaveBookmarks_Model extends Model {
     return $this->addCaveBookmark($cave['caveID']);
   }
 
-  function addCaveBookmarkByCoord($xCoord, $yCoord){
+  public static function addCaveBookmarkByCoord($xCoord, $yCoord) {
     if (!intval($xCoord) || !intval($yCoord)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     // check coords
-    $cave = getCaveByCoords($xCoord, $yCoord);
+    $cave = \Lib\Model\Cave::getCaveByCoords($xCoord, $yCoord);
 
     // no such cave
-    if (!empty($cave)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
+    if (empty($cave)) return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
-    return $this->addCaveBookmark($cave['caveID']);
+    return self::addCaveBookmark($cave['caveID']);
   }
 
-  function deleteCaveBookmark($bookmarkID){
+  public static function deleteCaveBookmark($bookmarkID) {
     global $db;
 
     if (empty($bookmarkID)) return CAVEBOOKMARKS_ERROR_INSERTFAILED;
@@ -152,8 +147,8 @@ class CaveBookmarks_Model extends Model {
     $sql = $db->prepare("DELETE FROM ". CAVE_BOOKMARKS_TABLE ."
                          WHERE playerID = :playerID
                            AND bookmarkID = :bookmarkID");
-    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-    $sql->bindValue('bookmarkID', $bookmarkID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, \PDO::PARAM_INT);
+    $sql->bindValue('bookmarkID', $bookmarkID, \PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return CAVEBOOKMARKS_ERROR_DELETEFAILED;
     }

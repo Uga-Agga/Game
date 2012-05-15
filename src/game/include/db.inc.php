@@ -90,11 +90,11 @@ class ePDO extends PDO {
     return $this->queryTime;
   }
 
-  private function increaseQueryCount() {
+  public function increaseQueryCount() {
     $this->queryCount++;
   }
 
-  private function incraseQueryTime($start, $end) {
+  public function incraseQueryTime($start, $end) {
     $this->queryTime += ($end - $start);
   }
 }
@@ -107,11 +107,11 @@ class ePDOStatement extends PDOStatement {
   }
 
   public function execute($params = null) {
-    //$this->pdo->increaseQueryCount();
+    $this->pdo->increaseQueryCount();
 
     $start = microtime();
     $data = parent::execute($params);
-    //$this->pdo->incraseQueryTime($start, microtime());
+    $this->pdo->incraseQueryTime($start, microtime());
 
     return $data;
   }
