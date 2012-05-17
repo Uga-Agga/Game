@@ -23,6 +23,7 @@ require_once("include/basic.lib.php");
 require_once("include/movement.lib.php");
 require_once("include/artefact.inc.php");
 require_once("include/template.inc.php");
+require_once("include/basic.lib.php");
 
 
 page_start();

@@ -692,4 +692,135 @@ function checkAvatar($url) {
   return $return;
 }
 
+
+########################################################
+###  common functions                   ################
+########################################################
+
+function export_getSingleMovement($movementID) {
+  global $db;
+
+  $sql = $db->prepare("SELECT * FROM ". EVENT_MOVEMENT_TABLE ." WHERE event_movementID = :movementID");
+  $sql->bindValue('movementID', $movementID, PDO::PARAM_INT);
+
+  if ($sql->execute()) {
+    $move = $sql->fetch(PDO::FETCH_ASSOC);
+  } else {
+    return array();
+  }
+  $sql->closeCursor();
+
+  if (!sizeof($move) || empty($move)) {
+    return array();
+  }
+
+  // check if it's own movement
+  $meineHoehlen = getCaves($_SESSION['player']->playerID);
+
+  $move['isOwnMovement'] = in_array($move['caveID'], array_keys($meineHoehlen));
+
+  return $move;
+}
+
+function XML2Array($xml) {
+  if ($xml instanceof SimpleXMLElement) {
+    $attributes = $xml->attributes();
+    $children   = $xml->children();
+  }else {
+    return false;
+  }
+  //get attributes as items
+  if($attributes) {
+    foreach($attributes as $name => $attribute) {
+      $thisNode[$name] = (String)$attribute;
+    }
+  }
+  //get children elements to array item
+  if($children) {
+    $newarray = array();
+    foreach($children as $name => $child) {
+    //have children. and atributes alway with the element have children;
+      if($child->children()) {
+        if($newarray[$name]) {
+          $newarray[$name]++;
+        }else {
+         $newarray[$name] = 1;
+        }
+      }else {
+      $thisNode[$name] = (string)$child;
+    }
+  }
+//to fix the version 0.1 always has a 0=>null to end the multi elements
+    foreach($newarray as $name => $value) {
+      if($value > 1) {
+        for($i = 0; $i < $value; $i++) {
+          $thisNode[$name][$i] = XML2Array($children->{$name}[$i]);
+        }
+      }else {
+        $thisNode[$name][] = XML2Array($children->$name);
+      }
+    }
+  }
+
+  if (count($thisNode) > 0) {
+    return $thisNode;
+  } else {
+    return false;
+  }
+}
+
+class mySimpleXML extends SimpleXMLElement {
+  
+  public function asPrettyXML() {
+    $string = ($this->asXML());
+      /**
+       * put each element on it's own line
+       */
+      $string =preg_replace("/>\s*</",">\n<",$string);
+
+      /**
+       * each element to own array
+       */
+      $xmlArray = explode("\n",$string);
+
+      /**
+       * holds indentation
+       */
+      $currIndent = 0;
+
+      /**
+       * set xml element first by shifting of initial element
+       */
+      $string = array_shift($xmlArray) . "\n";
+
+      foreach($xmlArray as $element) {
+        /** find open only tags... add name to stack, and print to string
+         * increment currIndent
+         */
+
+        if (preg_match('/^<([\w])+[^>\/]*>$/U',$element)) {
+          $string .=  str_repeat(' ', $currIndent) . $element . "\n";
+          $currIndent += 2;
+        }
+
+        /**
+         * find standalone closures, decrement currindent, print to string
+         */
+        elseif ( preg_match('/^<\/.+>$/',$element)) {
+          $currIndent -= 2;
+          $string .=  str_repeat(' ', $currIndent) . $element . "\n";
+        }
+        /**
+         * find open/closed tags on the same line print to string
+         */
+        else {
+          $string .=  str_repeat(' ', $currIndent) . $element . "\n";
+        }
+      }
+    return $string;
+  }
+}
+
+
+
 ?>

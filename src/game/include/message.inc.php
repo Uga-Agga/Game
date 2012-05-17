@@ -783,16 +783,17 @@ class Messages extends Parser {
     return $sql->rowCount();
   }
 
-  public function sendSystemMessage($receiverID, $type, $subject, $nachricht) {
+  public function sendSystemMessage($receiverID, $type, $subject, $nachricht, $xml = "") {
     global $db;
 
-    $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ." (recipientID, messageClass, senderID, messageSubject, messageText, messageTime) " .
-             "VALUES (:receiverID, :type, :senderID, :subject, :message, NOW()+0)");
+    $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ." (recipientID, messageClass, senderID, messageSubject, messageText, messageXML, messageTime) " .
+             "VALUES (:receiverID, :type, :senderID, :subject, :message, :xml, NOW()+0)");
     $sql->bindValue('receiverID', $receiverID, PDO::PARAM_INT);
     $sql->bindValue('type', $type, PDO::PARAM_INT);
     $sql->bindValue('senderID', (int) 0, PDO::PARAM_INT);
     $sql->bindValue('subject', $subject, PDO::PARAM_STR);
     $sql->bindValue('message', $nachricht, PDO::PARAM_STR);
+    $sql->bindValue('xml', $xml, PDO::PARAM_STR);
     if (!$sql->execute()) {
       return false;
     }

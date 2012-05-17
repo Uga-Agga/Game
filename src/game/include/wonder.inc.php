@@ -200,13 +200,28 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   $targetMessage =
     "Der Besitzer der H&ouml;hle in {$caveData['xCoord']}/{$caveData['yCoord']} ".
     "hat auf Ihre H&ouml;hle in $coordX/$coordY ein Wunder gewirkt.";
+  
+  // create xml message
+  $casterxml = new SimpleXMLElement("<?xml version='1.0' encoding='utf-8'?><wonderMessageCaster></wonderMessageCaster>");
+  $casterxml->addChild("xCoord", $coordX);
+  $casterxml->addChild("yCoord", $coordY);
+  $casterxml->addChild("wonderName", $GLOBALS['wonderTypeList'][$wonderID]->name);
+  
+  $targetxml = new SimpleXMLElement("<?xml version='1.0' encoding='utf-8'?><wonderMessageTarget></wonderMessageTarget>");
+  $targetxml->addChild("caster");
+  $targetxml->caster->addChild("xCoord", $caveData['xCoord']);
+  $targetxml->caster->addChild("yCoord", $caveData['yCoord']);
+  $targetxml->addChild("source");
+  $targetxml->source->addChild("xCoord", $coordX);
+  $targetxml->source->addChild("yCoord", $coordY);
+  
 
   $messageClass->sendSystemMessage($playerID, 9,
            "Wunder erwirkt auf $coordX/$coordY",
-           $sourceMessage);
+           $sourceMessage, $casterxml->asXML());
   $messageClass->sendSystemMessage($targetData['playerID'], 9,
            "Wunder!",
-           $targetMessage);
+           $targetMessage, $targetxml->asXML());
 
   return 1;
 }
