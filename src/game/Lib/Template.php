@@ -1,7 +1,7 @@
 <?php
 /*
  * Template.php -
- * Copyright (c) 2011-2012  David Unger
+ * Copyright (c) 2011-2012  David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,7 +26,7 @@ class Template {
 
   public function __construct($path='') {
     if (empty($path)) {
-      $path = $_SESSION['player']->getTemplatePath();
+      $path = sprintf('%s/templates/de_DE/%s/', \UA_GAME_DIR, Config::$template_paths[Session::$player->template]);
     }
 
     // include and register Twig auto-loader

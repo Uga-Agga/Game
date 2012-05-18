@@ -1,7 +1,6 @@
 <?php
 /*
  * Request.php -
- * Copyright (c) 2004  OGP Team
  * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or

@@ -1,7 +1,7 @@
 <?php
 /*
  * Controller.php -
- * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -10,7 +10,7 @@
  */
 
 /** Set Namespace **/
-namespace lib;
+namespace Lib;
 
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
@@ -24,15 +24,8 @@ abstract class Controller {
   abstract protected function submit();
 
   public function __construct() {
-    global $template;
-
     // init template and set file
-    if (empty($template)) {
-      $this->template = new Template;
-    } else {
-      $this->template = &$template;
-    }
-
+    $this->template = new Template;
     $this->template->setFile($this->templateFile);
   }
 

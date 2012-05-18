@@ -1,7 +1,7 @@
 <?php
 /*
  * CaveBookmarks.php -
- * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,10 +22,12 @@ define('ACTION_UPDATE', 0x02);
 define('ACTION_DELETE', 0x03);
 
 define('CAVEBOOKMARKS_NOERROR',             0x00);
-define('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x01);
-define('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x02);
-define('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x03);
-define('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x04);
+define('CAVEBOOKMARKS_SUCCESS_ADD',         0x01);
+define('CAVEBOOKMARKS_SUCCESS_DELETE',      0x02);
+define('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x03);
+define('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x04);
+define('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x05);
+define('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x06);
 
 class CaveBookmarks extends \Lib\Controller {
   public $templateFile = 'caveBookmarks.tmpl';
@@ -51,13 +53,13 @@ class CaveBookmarks extends \Lib\Controller {
         $messageID = Controller\Add::execute();
       break;
 
-      case ACTION_UPDATE:
-        // do something
-      break;
-
       case ACTION_DELETE:
         $messageID = Controller\Delete::execute();
       break;
+    }
+
+    if (isset($messageID)) {
+      $this->template->addVar('status_msg', Messages::getMessage($messageID));
     }
   }
 }

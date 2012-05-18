@@ -1,7 +1,7 @@
 <?php
 /*
- * View.php -
- * Copyright (c) 2004  Marcus Lunzenauer
+ * Digest.php -
+ * Copyright (c) 2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -9,22 +9,21 @@
  * the License, or (at your option) any later version.
  */
 
+/** Set Namespace **/
+namespace Modules\Digest;
+
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-class View {
+################################################################################
+class Digest extends \Lib\Controller {
+  public $templateFile = 'digest.tmpl';
 
-  var $template;
+  public function getContent() {
 
-  function openTemplate($language, $skin, $templateFile){
-    global $config, $template;
-
-    $template->setFile($templateFile);
   }
-  
-  function getTitle(){
-    //return $this->template ? tmpl_parse($this->template, '/TITLE') : __CLASS__;
-  }
+
+  public function submit() {}
 }
 
 ?>

@@ -14,7 +14,7 @@
 {% block title %}Höhlen Adressbuch{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %}
 
 <div class="ua-box small">
   <div class="ua-box-header">Höhlenliste</div>

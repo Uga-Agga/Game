@@ -14,48 +14,38 @@
 define("_VALID_UA", 1);
 
 require_once("config.inc.php");
+require_once("include/config.inc.php");
+require_once("include/Player.php");
 
 include('Lib/Autoloader.php');
 Lib\Autoloader::register();
 
+Lib\Session::start();
+Lib\Database::connect();
+
+// session valid?
+if (!Lib\Session::update()) {
+  header("Location: " . LibßConfig::GAME_END_URL . "?id=wrongSessionID");
+  exit;
+}
+Lib\Session::refreshPlayerData();
+
+/*
+ *compatibility with old code
+ */
 require_once("include/page.inc.php");
-require_once("include/template.inc.php");
 require_once("include/db.functions.php");
 require_once("include/time.inc.php");
 require_once("include/basic.lib.php");
 require_once("include/vote.html.php");
 //require_once("modules/Messages/Messages.php");
 require_once("include/formula_parser.inc.php");
-
-date_default_timezone_set('Europe/Berlin'); // slange: added to fix warning in PHP5
-
-page_start();
-
-// session expired?
-if (page_sessionExpired()) {
-  header("Location: " . Config::GAME_END_URL . "?id=inaktiv");
-  exit;
-} else {
-  $_SESSION['lastAction'] = time();
-}
-
-// session valid?
-if (!page_sessionValidate()) {
-  header("Location: " . Config::GAME_END_URL . "?id=wrongSessionID");
-  exit;
-}
-
-// refresh user data
-page_refreshUserData();
-
-// load template
-$template = new Template;
+$db = &Lib\Database::$db;
+$_SESSION['player'] = Lib\Session::$player;
+$ownCaves = Lib\Session::$caves;
 
 // get modus
 $modus = page_getModus();
-
-// get caves
-$ownCaves = getCaves($_SESSION['player']->playerID);
 
 // no caves left
 if (!$ownCaves) {
@@ -106,8 +96,18 @@ page_ore();
 ################################################################################
 
 $requestKeys = array();
-///////////////////////////////////////////////////////////////////////////////
 $showads = false;
+///////////////////////////////////////////////////////////////////////////////
+if (isset($namespaceModus[$modus])) {
+  $class = 'Modules\\' . $namespaceModus[$modus] . '\\' . $namespaceModus[$modus];
+  $controller = new $class;
+  $controller->execute();
+
+  $template = &$controller->template;
+} else {
+
+$template = new Lib\Template;
+
 switch ($modus) {
 
   /////////////////////////////////////////////////////////////////////////////
@@ -128,10 +128,6 @@ switch ($modus) {
 
   case ALL_CAVE_DETAIL:
     getAllCavesDetailsContent($ownCaves);
-    break;
-
-  case EASY_DIGEST:
-    digest_getDigest($ownCaves);
     break;
 
   case EVENT_REPORTS:
@@ -181,11 +177,6 @@ switch ($modus) {
 
   case CONTACTS_BOOKMARKS:
     list($pagetitle, $content) = contactsbookmarks_main($caveID, $ownCaves);
-    break;
-
-  case CAVE_BOOKMARKS:
-    $model = new Modules\CaveBookmarks\CaveBookmarks;
-    $model->execute();
     break;
 
   case DONATIONS:
@@ -463,6 +454,7 @@ switch ($modus) {
     $template->throwError("Modus " . $modus . "ist nicht verfügbar. CaveID :" . $caveID);
     break;
 }
+}
 
 // init tutorial
 $tutorial = new Tutorial;
@@ -569,8 +561,8 @@ $template->addVars(array(
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,
   'delete_account_link'     => DELETE_ACCOUNT,
+  'digest_link'             => DIGEST,
   'donations_link'          => DONATIONS,
-  'easy_digest_link'        => EASY_DIGEST,
   'effectwonder_detail_link' => EFFECTWONDER_DETAIL,
   'hero_link'               => HERO_DETAIL,
   'improvement_link'        => IMPROVEMENT_BUILDER,
@@ -630,20 +622,6 @@ if (sizeof($ownCaves)) {
 }
 
 $template->render();
-
-/*
-// prepare next and previous cave
-$keys = array_keys($ownCaves);
-$pos =  array_search($caveID, $keys);
-$prev = isset($keys[$pos - 1]) ? $keys[$pos - 1] : $keys[count($keys)-1];
-$next = isset($keys[$pos + 1]) ? $keys[$pos + 1] : $keys[0];
-
-if (!is_null($prev))
-  tmpl_set($template, '/PREVCAVE', array('id' => $prev, 'name' => $ownCaves[$prev]['name']));
-
-if (!is_null($next))
-  tmpl_set($template, '/NEXTCAVE', array('id' => $next, 'name' => $ownCaves[$next]['name']));
-*/
 
 // close page
 page_end();

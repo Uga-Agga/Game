@@ -85,13 +85,13 @@ DEFINE('ARTEFACT_LIST',               'artefact_list');
 DEFINE('AWARD_DETAIL',                'award_detail');
 DEFINE('CAVE_BOOKMARKS',              'CaveBookmarks');
 DEFINE('CAVE_DETAIL',                 'cave_detail');
-DEFINE('CONTACTS_BOOKMARKS',           'Contacts');
+DEFINE('CONTACTS_BOOKMARKS',          'Contacts');
 DEFINE('DEFENSE_BUILDER',             'defense_builder');
 DEFINE('DEFENSE_DETAIL',              'defense_detail');
 DEFINE('DELETE_ACCOUNT',              'delete_account');
+DEFINE('DIGEST',                      'digest');
 DEFINE('DONATIONS',                   'Donations');
 DEFINE('EVENT_REPORTS',               'EventReports');
-DEFINE('EASY_DIGEST',                 'easy_digest');
 DEFINE('EFFECTWONDER_DETAIL',         'effectwonder_detail');
 DEFINE('HERO_DETAIL',                 'hero_detail');
 DEFINE('IMPROVEMENT_BUILDER',         'improvement_builder');
@@ -142,14 +142,12 @@ $require_files[ALL_CAVE_DETAIL]             = array('cave.html.php', 'formula_pa
 $require_files[ARTEFACT_DETAIL]             = array('artefact.html.php', 'artefact.inc.php');
 $require_files[ARTEFACT_LIST]               = array('artefact.html.php', 'artefact.inc.php');
 $require_files[AWARD_DETAIL]                = array('award.html.php');
-$require_files[CAVE_BOOKMARKS]              = array();
 $require_files[CAVE_DETAIL]                 = array('cave.html.php', 'tribes.inc.php', 'rules/relation.list.php', 'rules/hero.rules.php', 'hero.inc.php');
 $require_files[CONTACTS_BOOKMARKS]          = array('../modules/Contacts/Contacts.php');
 $require_files[DEFENSE_BUILDER]             = array('defense.html.php', 'defense.inc.php');
 $require_files[DEFENSE_DETAIL]              = array('defenseDetail.html.php', 'defense.inc.php');
 $require_files[DONATIONS]                   = array('../modules/Donations/Donations.php');
 $require_files[DELETE_ACCOUNT]              = array('delete.html.php');
-$require_files[EASY_DIGEST]                 = array('artefact.inc.php', 'digest.html.php', 'digest.inc.php', 'movement.lib.php');
 $require_files[EFFECTWONDER_DETAIL]         = array('rules/wonder.rules.php', 'effectWonderDetail.html.php', 'wonder.inc.php', 'rules/hero.rules.php', 'hero.inc.php');
 $require_files[EVENT_REPORTS]               = array('../modules/EventReports/EventReports.php');
 $require_files[HERO_DETAIL]                 = array('hero.html.php', 'rules/hero.rules.php', 'hero.inc.php');
@@ -190,5 +188,9 @@ $require_files[DYK]                         = array('doYouKnow.html.php');
 $require_files[MERCHANT]                    = array('formula_parser.inc.php', 'merchant.html.php', 'rules/trade.rules.php');
 $require_files[NEWS]                        = array('rssFeedNews.html.php');
 $require_files[STATISTIC]                   = array('statistic.html.php', 'rules/wonder.rules.php');
+
+$namespaceModus                             = array();
+$namespaceModus[CAVE_BOOKMARKS]             = 'CaveBookmarks';
+$namespaceModus[DIGEST]                     = 'Digest';
 
 ?>
