@@ -1,0 +1,30 @@
+{#
+/* wonderEnd.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2012 David Unger <unger.dave@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+
+<p>Ein auf die Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) erwirktes Wunder verliert seine Wirkung.</p>
+
+<p>Es zeigten sich folgende Wirkungen:</p>
+{% if message_xml.effects.effect %}
+<table style="width: auto;">
+  <thead>
+    <th colspan="2">Wirkung</th>
+  </thead>
+  <tbody>
+    {% for effect in message_xml.effects.effect %}
+      <tr>
+        <td>{{ effect.name }}</td>
+        <td>{{ effect.value }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}

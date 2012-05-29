@@ -19,278 +19,274 @@
 <div class="ua-box small">
   <div class="ua-box-header">Held von {{ hero.name }}</div>
   <div class="ua-box-content">
-    <div class="ym-grid">
-    <div class="ym-gl" style="min-width:250px;">
-      <img src="{{ gfx }}/heroes/{{ hero.path }}" width="250px" height="250px" alt="Held" />
-    </div>
-    <div class="ym-gr notice" style="margin:5px">
-        <p class="text-center bold">Statuswerte</p>
-        <br />
-        <table class="text-left" style="width: 320px;">
-          <tr>
-            <td class="bold">Name:</td>
-            <td class="text-right" colspan="3">{{ hero.name }}</td>
-          </tr>
-          <tr>
-            <td class="bold">Typ:</td>
-            <td class="text-right" colspan="3">{{ hero.typeName }}</td>
-          </tr>
-          <tr>
-            <td class="bold">Level:</td>
-            <td class="text-right" colspan="3">{{ hero.lvl }}</td>
-          </tr>
-          <tr>
-            <td class="bold" style="vertical-align: top;">Erfahrung (Exp):</td>
-            <td class="text-right" colspan="3">{{ hero.exp }}<div class="text-small">({{ hero.expLeft }} Exp bis Lvlup)</div></td>
-          </tr>
-          {% if showLevelUp and hero.isAlive>0 %}
-            <tr>
-              <td class="bold">Levelup:</td>
-              <td class="text-right" colspan="3"><a href="main.php?modus={{ hero_link }}&amp;action=lvlUp"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20px" height="20px" alt="Level erhöhen" title="Level erhöhen" /></a></td>
-            </tr>
-          {% endif %}
-          <tr>
-            <td class="bold">Ort:</td>
-            <td class="text-right" colspan="3">{{ hero.location }}</td>
-          </tr>
-          <tr>
-            <td class="bold">Lebenspunkte (HP):</td>
-            <td class="text-center" colspan="3"><div class="{{ hero.HPbar }} inner">{{ hero.healPoints }} / {{ hero.maxHealPoints }}</div></td>
-          </tr>
-          <tr><td>&nbsp;</td></tr>
-          <tr>
-            <td class="bold">freie Talentpunkte (TP):</td>
-            <td class="text-right" colspan="3">{{ hero.tpFree }}</td>
-          </tr>
-          <tr>
-            <td class="bold">Stärke der Fertigkeit:</td>
-            <td class="text-right">{{ hero.force }}</td>
-            <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.forceLvl }}</span></td>
-            <td class="text-right" style="width: 18px;">
-              {% if hero.tpFree>0 and hero.isAlive>0 %}
-                <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=force"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
-              {% else %}
-                &nbsp;
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="bold">Maximale Lebenspunkte:</td>
-            <td class="text-right">{{ hero.maxHealPoints }}</td>
-            <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.maxHpLvl }}</span></td>
-            <td class="text-right" style="width: 18px;">
-              {% if hero.tpFree>0 and hero.isAlive>0 %}
-                <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=maxHP"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
-              {% else %}
-                &nbsp;
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="bold">Lebenspunkte Regeneration:</td>
-            <td class="text-right">{% if hero.regHP>0 %}+{% endif %}{{ hero.regHP }}</td>
-            <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.regHpLvl }}</span></td>
-            <td class="text-right" style="width: 18px;">
-              {% if hero.tpFree>0 and hero.isAlive>0 %}
-                <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=regHP"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
-              {% else %}
-                &nbsp;
-              {% endif %}
-            </td>
-          </tr>
-        </table>
-    </div>
-    <div style="clear: both;"></div>
-  </div>
-  </div>
-</div>
-
-{% if hero.isAlive>0 %}
-  {% if showImmolation %}
-  <div class="ua-box small">
-    <div class="ua-box-header">Rohstoffe opfern</div>
-    <div class="ua-box-content">
-      <div class="notice" style="text-align: center; padding-top: 10px;">
-        Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln. <br/><br />
-        Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!<br/>
-        Mehrfacheintragung möglich!
+    <div id="hero" class="jquery_tabs nav1">
+      <h4>Information</h4>
+      <div class="tabbody">
+        <div class="ym-grid">
+          <div class="ym-gl" style="min-width:250px;">
+            <img src="{{ gfx }}/heroes/{{ hero.path }}" width="250px" height="250px" alt="Held" />
+          </div>
+          <div class="ym-gr notice" style="margin:5px">
+              <p class="text-center bold">Statuswerte</p>
+              <br />
+              <table class="text-left" style="width: 320px;">
+                <tr>
+                  <td class="bold">Name:</td>
+                  <td class="text-right" colspan="3">{{ hero.name }}</td>
+                </tr>
+                <tr>
+                  <td class="bold">Typ:</td>
+                  <td class="text-right" colspan="3">{{ hero.typeName }}</td>
+                </tr>
+                <tr>
+                  <td class="bold">Level:</td>
+                  <td class="text-right" colspan="3">{{ hero.lvl }}</td>
+                </tr>
+                <tr>
+                  <td class="bold" style="vertical-align: top;">Erfahrung (Exp):</td>
+                  <td class="text-right" colspan="3">{{ hero.exp }}<div class="text-small">({{ hero.expLeft }} Exp bis Lvlup)</div></td>
+                </tr>
+                {% if showLevelUp and hero.isAlive>0 %}
+                  <tr>
+                    <td class="bold">Levelup:</td>
+                    <td class="text-right" colspan="3"><a href="main.php?modus={{ hero_link }}&amp;action=lvlUp"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20px" height="20px" alt="Level erhöhen" title="Level erhöhen" /></a></td>
+                  </tr>
+                {% endif %}
+                <tr>
+                  <td class="bold">Ort:</td>
+                  <td class="text-right" colspan="3">{{ hero.location }}</td>
+                </tr>
+                <tr>
+                  <td class="bold">Lebenspunkte (HP):</td>
+                  <td class="text-center" colspan="3"><div class="{{ hero.HPbar }} inner">{{ hero.healPoints }} / {{ hero.maxHealPoints }}</div></td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                  <td class="bold">freie Talentpunkte (TP):</td>
+                  <td class="text-right" colspan="3">{{ hero.tpFree }}</td>
+                </tr>
+                <tr>
+                  <td class="bold">Stärke der Fertigkeit:</td>
+                  <td class="text-right">{{ hero.force }}</td>
+                  <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.forceLvl }}</span></td>
+                  <td class="text-right" style="width: 18px;">
+                    {% if hero.tpFree>0 and hero.isAlive>0 %}
+                      <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=force"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
+                    {% else %}
+                      &nbsp;
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="bold">Maximale Lebenspunkte:</td>
+                  <td class="text-right">{{ hero.maxHealPoints }}</td>
+                  <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.maxHpLvl }}</span></td>
+                  <td class="text-right" style="width: 18px;">
+                    {% if hero.tpFree>0 and hero.isAlive>0 %}
+                      <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=maxHP"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
+                    {% else %}
+                      &nbsp;
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td class="bold">Lebenspunkte Regeneration:</td>
+                  <td class="text-right">{% if hero.regHP>0 %}+{% endif %}{{ hero.regHP }}</td>
+                  <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.regHpLvl }}</span></td>
+                  <td class="text-right" style="width: 18px;">
+                    {% if hero.tpFree>0 and hero.isAlive>0 %}
+                      <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=regHP"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
+                    {% else %}
+                      &nbsp;
+                    {% endif %}
+                  </td>
+                </tr>
+              </table>
+          </div>
+        </div>
       </div>
-      <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ hero_link }}">
-        <table>
-          <thead>
-            <tr>
-              <th>Rohstoff</th>
-              <th>Menge</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for resource in resourceTypeList %}
-              {% if resource.takeoverValue > 0 %}
+
+      {% if hero.isAlive > 0 %}
+      <h4>Rohstoffe opfern</h4>
+      <div class="tabbody">
+        {% if showImmolation %}
+          <div class="notice text-center space_margin">
+            Durch die Opferung von Rohstoffen kann dein Held Erfahrung sammeln. <br/><br />
+            Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!<br/>
+            Mehrfacheintragung möglich!
+          </div>
+          <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ hero_link }}">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rohstoff</th>
+                  <th>Menge</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for resource in resourceTypeList %}
+                  {% if resource.takeoverValue > 0 %}
+                  {% set bgID = (bgID+1)%2 %}
+                  <tr class="bg{{ bgID }}">
+                    <td>{{ resource.name }}</td>
+                    <td>
+                      <div class="ym-fbox-text">
+                        <input style="width: 100px" type="text" name="resource_{{ resource.resourceID }}" id="resource_{{ resource.resourceID }}" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+            <div class="ym-fbox-button right">
+              <input type="hidden" name="action" value="immolateResources"/>
+              <input type="submit" class="ym-button" value="Ugh!" id="submitImmolation" name="submitImmolation"/>
+              <input type="reset" class="ym-button" value="Reset" id="reset1" name="reset" />
+            </div>
+          </form>
+        {% else %}
+          <div class="space text-center">Zur Zeit kannst du leider keine Rohstoffe Opfern.</div>
+        {% endif %}
+      </div>
+
+      <h4>Fähigkeiten ausbilden</h4>
+      <div class="tabbody">
+        {% if skills %}
+          <table class="bordertable">
+            <thead>
+              <tr>
+               <th class="ua-td-name left">Name</th>
+               <th>Benötigtes Level</th>
+               <th>Kosten</th>
+               <th>Basisfaktor</th>
+               <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for skill in skills %} 
               {% set bgID = (bgID+1)%2 %}
               <tr class="bg{{ bgID }}">
-                <td>{{ resource.name }}</td>
+               <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
+               <div class="text-small">{{ skill.description|raw }}</div>
+               </td>
+               <td>{{ skill.requiredLevel }}</td>
+               <td>{{ skill.costTP }} TP</td>
+               <td>{{ skill.skillFactor }}</td>
+               <td>
+                <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
+                  <input type="hidden" name="action" value="skill_ability"/>
+                  <input type="hidden" name="skillID" value="{{ skill.id }}"/>
+                  {% if skill.showEffects %}
+                    {% for item in skill.effect_values %}
+                      {{ item }} <br />
+                    {% endfor %} 
+                  {% else %}
+                    <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
+                  {% endif %}
+                </form>
+               </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      </div>
+
+      <h4>Tränke</h4>
+      <div class="tabbody">
+        {% if potions %}
+          <table>
+            <thead>
+              <tr class="bg2">
+                <th>Trank</th>
+                <th>Name</th>
+                <th class="text-center">Bestand</th>
+                <th class="text-center">Benötigtes Level</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for potion in potions %} 
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
+                <td><img src="{{ gfx }}/potions/{{ potion.dbFieldName }}.gif" class="td-mini-icon" alt="{{ potion.name }}" /></td>
                 <td>
-                  <div class="ym-fbox-text">
-                    <input style="width: 100px" type="text" name="resource_{{ resource.resourceID }}" id="resource_{{ resource.resourceID }}" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
-                  </div>
+                  <span class="bold">{{ potion.name }}</span><br />
+                  <div class="text-small">{{ potion.description|raw }}</div>
+                </td>
+                <td class="text-center">{{ potion.value }}</td>
+                <td class="text-center">{{ potion.needed_level }}</td>
+                <td>
+                  <form action="main.php?modus={{ hero_link }}" id="{{ potion.dbFieldName }}1" method="post">
+                    <input type="hidden" name="action" value="usePotion">
+                    <input type="hidden" name="potionID" value="{{ potion.potionID}}"/>
+                    <input name="value" value="1x" type="submit"/>
+                  </form>
+                </td>
+                <td>
+                  <form action="main.php?modus={{ hero_link }}" id="{{ potion.name }}5" method="post">
+                    <input type="hidden" name="action" value="usePotion" />
+                    <input type="hidden" name="potionID" value="{{ potion.potionID }}"/>
+                    <input name="value" value="5x" type="submit" />
+                  </form>
                 </td>
               </tr>
-              {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
-        <div class="ym-fbox-button right">
-          <input type="hidden" name="action" value="immolateResources"/>
-          <input type="submit" class="ym-button" value="Ugh!" id="submitImmolation" name="submitImmolation"/>
-          <input type="reset" class="ym-button" value="Reset" id="reset1" name="reset" />
-        </div>
-      </form>
-    </div>
-  </div>
-  {% else %}
-  <div class="info small">Keine Opferung möglich!</div>
-  {% endif %}
-  
-  {% if skills %}
-  <div class="ua-box small">
-    <div class="ua-box-header">Fähigkeiten ausbilden</div>
-    <div class="ua-box-content">
-      <table class="bordertable">
-        <thead>
-          <tr>
-           <th class="ua-td-name left">Name</th>
-           <th>Benötigtes Level</th>
-           <th>Kosten</th>
-           <th>Basisfaktor</th>
-           <th>&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for skill in skills %} 
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-           <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
-           <div class="text-small">{{ skill.description|raw }}</div>
-           </td>
-           <td>{{ skill.requiredLevel }}</td>
-           <td>{{ skill.costTP }} TP</td>
-           <td>{{ skill.skillFactor }}</td>
-           <td>
-            <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
-              <input type="hidden" name="action" value="skill_ability"/>
-              <input type="hidden" name="skillID" value="{{ skill.id }}"/>
-              {% if skill.showEffects %}
-                {% for item in skill.effect_values %}
-                  {{ item }} <br />
-                {% endfor %} 
-              {% else %}
-                <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
-              {% endif %}
-            </form>
-           </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% endif %}
-
-  {% if potions %}
-  <div class="ua-box small">
-    <div class="ua-box-header">Tränke</div>
-    <div class="ua-box-content">
-      <table>
-        <thead>
-          <tr class="bg2">
-            <th>Trank</th>
-            <th>Name</th>
-            <th class="center">Bestand</th>
-            <th class="center">Benötigtes Level</th>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for potion in potions %} 
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
-            <td><img src="{{ gfx }}/potions/{{ potion.dbFieldName }}.gif" class="td-mini-icon" alt="{{ potion.name }}" /></td>
-            <td>
-              <span class="bold">{{ potion.name }}</span><br />
-              <div class="text-small">{{ potion.description|raw }}</div>
-            </td>
-            <td class="text-center">{{ potion.value }}</td>
-            <td class="text-center">{{ potion.needed_level }}</td>
-            <td>
-              <form action="main.php?modus={{ hero_link }}" id="{{ potion.dbFieldName }}1" method="post">
-                <input type="hidden" name="action" value="usePotion">
-                <input type="hidden" name="potionID" value="{{ potion.potionID}}"/>
-                <input name="value" value="1x" type="submit"/>
-              </form>
-            </td>
-            <td>
-              <form action="main.php?modus={{ hero_link }}" id="{{ potion.name }}5" method="post">
-                <input type="hidden" name="action" value="usePotion" />
-                <input type="hidden" name="potionID" value="{{ potion.potionID }}"/>
-                <input name="value" value="5x" type="submit" />
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% endif %}
-{% endif %} {# end of hero.isAlive #}
-
-{% if ritual %}
-<div class="ua-box small">
-    <div class="ua-box-header">Wiederbelebung</div>
-    <div class="ua-box-content">
-    {% if quene_show %}
-    <div class="notice" style="width: 600px; margin: 5px auto; text-align: center">
-      <ul>
-        <li>Momentan im Gange: Wiederbelebung von {{ hero.name }} auf Level {{ hero.lvl }} (fertig: {{ quene_finish }})</li>
-        <li><a href="main.php?modus=hero_detail&amp;action=cancelOrder&amp;caveID={{ cave_id }}">Abbrechen</a></li>
-      </ul>
-    </div>
-    {% endif %}
-    <table>
-      <tr>
-        <td><img src="{{ gfx }}/heroes/altar_large.gif" style="width: 225px; height: 140px;" alt="Altar der Auferstehung" /></td>
-        <td>
-          <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;">{{ ritual.description }}</p>
-          <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;"><strong>Kosten für Held auf Level {{ hero.lvl }}:</strong><br />&nbsp;&nbsp;
-          <table>
-            <tr>
-              <td>
-                {% for item in resource %} 
-                  {% if item.value %} <img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15px" height="15px" alt="{{ item.name }}" title="{{ item.name }}" /> 
-                    {% if item.enough %} 
-                      <span class="enough">{{ item.value }}</span> 
-                    {% else %} 
-                      <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}')" onmouseout="hideWMTT()">{{ item.value }}</span>
-                      <div id="missing_{{ item.dbFieldName }}" class="tooltip">Es fehlen noch: {{ item.missing }} {{ item.name }}</div> 
-                    {% endif %} &nbsp; 
-                  {% endif %} 
-                {% endfor %}
-              </td>
-              <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" style="width: 16px; height: 16px; vertical-align: bottom" />{{ delay }}</td>
-            </tr>
+              {% endfor %}
+            </tbody>
           </table>
-          <br /><br />
-          <form action="main.php?modus={{ hero_link }}" id="newhero" method="post">
-            <input type="hidden" name="action" value="reincarnate" />
-            <input type="submit" value="Wiederbeleben"{% if hero.isAlive %} disabled="disabled"{% endif %} />
-          </form>
-        </td>
-      </tr>
-    </table>
+        {% endif %}
+      </div>
+      {% endif %}{# end of hero.isAlive #}
+
+      {% if ritual %}
+      <h4>Wiederbelebung</h4>
+      <div class="tabbody">
+        {% if quene_show %}
+        <div class="notice text-center" style="width: 600px; margin: 5px auto;">
+          <ul>
+            <li>Momentan im Gange: Wiederbelebung von {{ hero.name }} auf Level {{ hero.lvl }} (fertig: {{ quene_finish }})</li>
+            <li><a href="main.php?modus=hero_detail&amp;action=cancelOrder&amp;caveID={{ cave_id }}">Abbrechen</a></li>
+          </ul>
+        </div>
+        {% endif %}
+        <table>
+          <tr>
+            <td><img src="{{ gfx }}/heroes/altar_large.gif" style="width: 225px; height: 140px;" alt="Altar der Auferstehung" /></td>
+            <td>
+              <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;">{{ ritual.description }}</p>
+              <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;"><strong>Kosten für Held auf Level {{ hero.lvl }}:</strong><br />&nbsp;&nbsp;
+              <table>
+                <tr>
+                  <td>
+                    {% for item in resource %} 
+                      {% if item.value %} <img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15px" height="15px" alt="{{ item.name }}" title="{{ item.name }}" /> 
+                        {% if item.enough %} 
+                          <span class="enough">{{ item.value }}</span> 
+                        {% else %} 
+                          <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}')" onmouseout="hideWMTT()">{{ item.value }}</span>
+                          <div id="missing_{{ item.dbFieldName }}" class="tooltip">Es fehlen noch: {{ item.missing }} {{ item.name }}</div> 
+                        {% endif %} &nbsp; 
+                      {% endif %} 
+                    {% endfor %}
+                  </td>
+                  <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" style="width: 16px; height: 16px; vertical-align: bottom" />{{ delay }}</td>
+                </tr>
+              </table>
+              <br /><br />
+              <form action="main.php?modus={{ hero_link }}" id="newhero" method="post">
+                <input type="hidden" name="action" value="reincarnate" />
+                <input type="submit" value="Wiederbeleben"{% if hero.isAlive %} disabled="disabled"{% endif %} />
+              </form>
+            </td>
+          </tr>
+        </table>
+      </div>
+      {% endif %}
+    </div>
   </div>
 </div>
-{% endif %}
 
 <div class="success small"><a href="http://faq.uga-agga.de/content/1/41/de/neu-in-hr12-%7C-heldentum.html" onclick="window.open(this.href); return false;">weitere Informationen zu den Helden</a></div>
 {% endif %}

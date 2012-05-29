@@ -1,0 +1,42 @@
+{#
+/* wonderNew.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2012 David Unger <unger.dave@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+
+<p>Ein Wunder zeigt in der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) seine Wirkung!<p/>
+{{ message_xml.wonderMessage|raw }}
+
+<p>
+  {% if message_xml.valuesGuessed == 'true' %}
+    Einer deiner Schamanen berichtet dir von folgenden Wirkungen, da eine göttliche Eingebung ausbleibt. Nun ja, an der Vollständigkeit und Korrektheit seines Berichts hegst du, aus Erfahrung schlau geworden, Zweifel.
+  {% else %}
+    Es zeigten sich folgende Wirkungen:
+  {% endif %}
+</p>
+
+{% if message_xml.effects.effect %}
+<table style="width: auto;">
+  <thead>
+    <th colspan="2">Wirkung</th>
+  </thead>
+  <tbody>
+    {% for effect in message_xml.effects.effect %}
+      <tr>
+        <td>{{ effect.name }}</td>
+        <td>{{ effect.value }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if message_xml.stealPercentage %}
+  <p>Es wurden ca. {{ message_xml.stealPercentage }}% der Veränderungen auf die Höhle desjenigen, der dieses Wunder erbeten hatte, übertragen.</p>
+{% endif %}

@@ -88,7 +88,6 @@ function wonder_recalc($caveID) {
 }
 
 function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $caveData) {
-
   global $db;
 
   if ($GLOBALS['wonderTypeList'][$wonderID]->target == "same") {
@@ -148,7 +147,7 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
   // if this wonder is offensive
   // calculate the wonder resistance and evaluate into $resistance
   // TODO: Wertebereich der Resistenz ist derzeit 0 - 1, also je höher desto resistenter
-  if ($GLOBALS['wonderTypeList'][$wonderID]->offensiveness == "offensive"){
+  if ($GLOBALS['wonderTypeList'][$wonderID]->offensiveness == "offensive") {
     $resistance_eval_formula = formula_parseToPHP(GameConstants::WONDER_RESISTANCE, '$targetData');
     $resistance_eval_formula = "\$resistance=$resistance_eval_formula;";
     eval($resistance_eval_formula);
@@ -165,9 +164,9 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
 
   // create a random factor between -0.3 and +0.3
   $delayRandFactor = (rand(0,getrandmax()) / getrandmax()) * 0.6 - 0.3;
+
   // now calculate the delayDelta depending on the first impact's delay
-  $delayDelta =
-    $GLOBALS['wonderTypeList'][$wonderID]->impactList[0]['delay'] * $delayRandFactor;
+  $delayDelta = $GLOBALS['wonderTypeList'][$wonderID]->impactList[0]['delay'] * $delayRandFactor;
 
   foreach($GLOBALS['wonderTypeList'][$wonderID]->impactList AS $impactID => $impact) {
     $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
@@ -194,34 +193,37 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
 
   // create messages
   $messageClass = new Messages;
-  $sourceMessage =
-    "Sie haben auf die H&ouml;hle in $coordX/$coordY ein Wunder ".
-    $GLOBALS['wonderTypeList'][$wonderID]->name." erwirkt.";
-  $targetMessage =
-    "Der Besitzer der H&ouml;hle in {$caveData['xCoord']}/{$caveData['yCoord']} ".
-    "hat auf Ihre H&ouml;hle in $coordX/$coordY ein Wunder gewirkt.";
-  
-  // create xml message
-  $casterxml = new SimpleXMLElement("<?xml version='1.0' encoding='utf-8'?><wonderMessageCaster></wonderMessageCaster>");
-  $casterxml->addChild("xCoord", $coordX);
-  $casterxml->addChild("yCoord", $coordY);
-  $casterxml->addChild("wonderName", $GLOBALS['wonderTypeList'][$wonderID]->name);
-  
-  $targetxml = new SimpleXMLElement("<?xml version='1.0' encoding='utf-8'?><wonderMessageTarget></wonderMessageTarget>");
-  $targetxml->addChild("caster");
-  $targetxml->caster->addChild("xCoord", $caveData['xCoord']);
-  $targetxml->caster->addChild("yCoord", $caveData['yCoord']);
-  $targetxml->addChild("source");
-  $targetxml->source->addChild("xCoord", $coordX);
-  $targetxml->source->addChild("yCoord", $coordY);
-  
+  $sourceMessage = 'Sie haben auf die Höhle in ' . $coordX . '/' . $coordY . ' ein Wunder ' . $GLOBALS['wonderTypeList'][$wonderID]->name . ' erwirkt.';
+  $targetMessage = 'Der Besitzer der Höhle in ' . $caveData['xCoord'] . '/' . $caveData['yCoord'] . ' hat auf Ihre Höhle in ' . $coordX . '/' . $coordY . ' ein Wunder gewirkt.';
 
-  $messageClass->sendSystemMessage($playerID, 9,
-           "Wunder erwirkt auf $coordX/$coordY",
-           $sourceMessage, $casterxml->asXML());
-  $messageClass->sendSystemMessage($targetData['playerID'], 9,
-           "Wunder!",
-           $targetMessage, $targetxml->asXML());
+  // create xml message
+  $casterxml = new SimpleXMLElement('<?xml version=\'1.0\' encoding=\'utf-8\'?><wonderMessageCaster></wonderMessageCaster>');
+  $casterxml->addChild('timestamp', time());
+  $casterxml->addChild('wonderType', 'caster');
+  $casterxml->addChild('source');
+  $casterxml->source->addChild('xCoord', $caveData['xCoord']);
+  $casterxml->source->addChild('yCoord', $caveData['yCoord']);
+  $casterxml->source->addChild('caveName', $caveData['name']);
+  $casterxml->addChild('target');
+  $casterxml->target->addChild('xCoord', $targetData['xCoord']);
+  $casterxml->target->addChild('yCoord', $targetData['yCoord']);
+  $casterxml->target->addChild('caveName', $targetData['name']);
+  $casterxml->addChild('wonderName', $GLOBALS['wonderTypeList'][$wonderID]->name);
+
+  $targetxml = new SimpleXMLElement('<?xml version=\'1.0\' encoding=\'utf-8\'?><wonderMessageTarget></wonderMessageTarget>');
+  $targetxml->addChild('timestamp', time());
+  $targetxml->addChild('wonderType', 'target');
+  $targetxml->addChild('source');
+  $targetxml->source->addChild('xCoord', $caveData['xCoord']);
+  $targetxml->source->addChild('yCoord', $caveData['yCoord']);
+  $targetxml->source->addChild('caveName', $caveData['name']);
+  $targetxml->addChild('target');
+  $targetxml->target->addChild('xCoord', $targetData['xCoord']);
+  $targetxml->target->addChild('yCoord', $targetData['yCoord']);
+  $targetxml->target->addChild('caveName', $targetData['name']);
+
+  $messageClass->sendSystemMessage($playerID, 9, 'Wunder erwirkt auf ' . $coordX . '/' . $coordY, $sourceMessage, $casterxml->asXML());
+  $messageClass->sendSystemMessage($targetData['playerID'], 9, 'Wunder!', $targetMessage, $targetxml->asXML());
 
   return 1;
 }

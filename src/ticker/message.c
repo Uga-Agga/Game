@@ -1655,31 +1655,30 @@ static void wonder_prepare_message (template_t *template,
             int num, int message_type, mxml_node_t *xml)
 {
   int index;
+  char value_new[100];
 
-  mxml_node_t *report;
-  mxml_node_t *caveInfo;
-  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+  mxml_node_t *target, *caveName, *xCoord, *yCoord, *caveID;
   mxml_node_t *name, *Value;
-  mxml_node_t *valuesGuessed, *effects, *effect, *stealPercentage;
+  mxml_node_t *valuesGuessed, *wonderMessage, *effects, *effect, *stealPercentage;
 
-  report = mxmlNewElement(xml, "wonderInfo");
-
-  caveInfo = mxmlNewElement(report, "targetCaveInfo");
-  caveName = mxmlNewElement(caveInfo, "caveName");
-    mxmlNewText(caveName, 0, (char*) cave->name);
-  xCoord = mxmlNewElement(caveInfo, "xCoord");
-    mxmlNewInteger(xCoord, (int) cave->xpos);
-  yCoord = mxmlNewElement(caveInfo, "yCoord");
-    mxmlNewInteger(yCoord, (int) cave->ypos);
-  caveID = mxmlNewElement(caveInfo, "caveID");
-    mxmlNewInteger(caveID, (int) cave->cave_id);
+  target = mxmlNewElement(xml, "target");
+    caveName = mxmlNewElement(target, "caveName");
+      mxmlNewText(caveName, 0, (char*) cave->name);
+    xCoord = mxmlNewElement(target, "xCoord");
+      mxmlNewInteger(xCoord, (int) cave->xpos);
+    yCoord = mxmlNewElement(target, "yCoord");
+      mxmlNewInteger(yCoord, (int) cave->ypos);
+    caveID = mxmlNewElement(target, "caveID");
+      mxmlNewInteger(caveID, (int) cave->cave_id);
 
   template_context(template, "MSG");
   template_set(template, "cave", cave->name);
   template_set(template, "wonder_message", message);
 
+  wonderMessage = mxmlNewElement(xml, "wonderMessage");
+    mxmlNewText(wonderMessage, 0, (char*) message);
 
-  valuesGuessed = mxmlNewElement(report, "valuesGuessed");
+  valuesGuessed = mxmlNewElement(xml, "valuesGuessed");
   if (message_type == WONDER_MESSAGE_note) {
     template_set(template, "note", "");
     mxmlNewText(valuesGuessed, 0, (char*) "true");
@@ -1687,7 +1686,7 @@ static void wonder_prepare_message (template_t *template,
     mxmlNewText(valuesGuessed, 0, (char*) "false");
   }
 
-  effects = mxmlNewElement(report, "effects");
+  effects = mxmlNewElement(xml, "effects");
   for (index = 0; index < num; ++index) {
     double value = values[index].value;
 
@@ -1699,17 +1698,19 @@ static void wonder_prepare_message (template_t *template,
       template_set(template, "VALUE/name", values[index].object->name[locale_id]);
       template_set_fmt(template, "VALUE/amount", "%+g", value);
 
+      sprintf(value_new, "%+g", (float) value);
+
       effect = mxmlNewElement(effects, "effect");
       name = mxmlNewElement(effect, "name");
         mxmlNewText(name, 0, (char*) values[index].object->name[locale_id]);
       Value = mxmlNewElement(effect, "value");
-        mxmlNewReal(Value, (float) value);
+        mxmlNewText(Value, 0, (char*) value_new);
     }
   }
 
   if (steal > 0) {
     template_set_fmt(template, "STOLEN/steal", "%d", (int) (steal * 100));
-    stealPercentage = mxmlNewElement(report, "stealPercentage");
+    stealPercentage = mxmlNewElement(xml, "stealPercentage");
       mxmlNewInteger(stealPercentage, (int) steal*100);
   }
 }
@@ -1720,51 +1721,68 @@ void wonder_report (db_t *database,
         const struct WonderImpact *impact,
         const struct ReportEntity *values, int num)
 {
-
   char *xmlstring = "";
-  mxml_node_t *xml = mxmlNewXML("1.0");
-  mxml_node_t *report;
-  mxml_node_t *curtime, *player, *tribe;
 
-  // prepare xml
-  report = mxmlNewElement(xml, "wonderreport");
-  curtime = mxmlNewElement(report, "timestamp");
+  if (caster->player_id != target->player_id && impact->sourceMessageType != WONDER_MESSAGE_none) {
+    mxml_node_t *xml = mxmlNewXML("1.0");
+    mxml_node_t *report;
+    mxml_node_t *curtime, *wonderType;
+    mxml_node_t *source, *playerName, *playerTribe;
+  
+    // prepare xml
+    report = mxmlNewElement(xml, "wonderreport");
+    curtime = mxmlNewElement(report, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
+  
+    wonderType = mxmlNewElement(report, "wonderType");
+      mxmlNewText(wonderType, 0, (char*) "new");
+  
+    source = mxmlNewElement(report, "source");
+      playerName = mxmlNewElement(source, "playerName");
+        mxmlNewText(playerName, 0, (char*) caster->name);
+      playerTribe = mxmlNewElement(source, "playerTribe");
+        mxmlNewText(playerTribe, 0, (char*) caster->tribe);
 
-  player = mxmlNewElement(report, "caster");
-      mxmlNewText(player, 0, (char*) caster->name);
-  tribe = mxmlNewElement(report, "tribe");
-    mxmlNewText(tribe, 0, (char*) caster->tribe);
-
-  if (caster->player_id != target->player_id &&
-      impact->sourceMessageType != WONDER_MESSAGE_none) {
     template_t *template = message_template(caster, "wonder");
     const char *subject = message_subject(template, "TITLE", cave);
 
-    /* TODO localize impact->sourceMessage */
-    wonder_prepare_message(template, impact->sourceMessage,
-           impact->steal, cave, caster->locale_id,
-           values, num, impact->sourceMessageType, report);
+    wonder_prepare_message(template, impact->sourceMessage, impact->steal, cave, caster->locale_id, values, num, impact->sourceMessageType, report);
 
     xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    mxmlDelete(xml);
 
-    message_new(database, MSG_CLASS_WONDER, caster->player_id,
-      subject, template_eval(template), xmlstring);
+    message_new(database, MSG_CLASS_WONDER, caster->player_id, subject, template_eval(template), xmlstring);
   }
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
+    mxml_node_t *xml = mxmlNewXML("1.0");
+    mxml_node_t *report;
+    mxml_node_t *curtime, *wonderType;
+    mxml_node_t *source, *playerName, *playerTribe;
+  
+    // prepare xml
+    report = mxmlNewElement(xml, "wonderreport");
+    curtime = mxmlNewElement(report, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+  
+    wonderType = mxmlNewElement(report, "wonderType");
+      mxmlNewText(wonderType, 0, (char*) "new");
+  
+    source = mxmlNewElement(report, "source");
+      playerName = mxmlNewElement(source, "playerName");
+        mxmlNewText(playerName, 0, (char*) caster->name);
+      playerTribe = mxmlNewElement(source, "playerTribe");
+        mxmlNewText(playerTribe, 0, (char*) caster->tribe);
+
     template_t *template = message_template(target, "wonder");
     const char *subject = message_subject(template, "TITLE", cave);
 
-    /* TODO localize impact->targetMessage */
-    wonder_prepare_message(template, impact->targetMessage,
-           impact->steal, cave, target->locale_id,
-           values, num, impact->targetMessageType, report);
+    wonder_prepare_message(template, impact->targetMessage, impact->steal, cave, target->locale_id, values, num, impact->targetMessageType, report);
 
     xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    mxmlDelete(xml);
 
-    message_new(database, MSG_CLASS_WONDER, target->player_id,
-      subject, template_eval(template), xmlstring);
+    message_new(database, MSG_CLASS_WONDER, target->player_id, subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1796,14 +1814,11 @@ void merchant_report (db_t *database,
     const char *subject = message_subject(template, "TITLE", cave);
 
     /* TODO localize impact->targetMessage */
-    wonder_prepare_message(template, impact->targetMessage,
-                           impact->steal, cave, target->locale_id,
-                           values, num, impact->targetMessageType, report);
+    wonder_prepare_message(template, impact->targetMessage, impact->steal, cave, target->locale_id, values, num, impact->targetMessageType, report);
 
     xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
-    message_new(database, MSG_CLASS_TRADE, target->player_id,
-                subject, template_eval(template), xmlstring);
+    message_new(database, MSG_CLASS_TRADE, target->player_id, subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1816,46 +1831,65 @@ void wonder_end_report (db_t *database,
       const struct ReportEntity *values, int num)
 {
   char *xmlstring = "";
-  mxml_node_t *xml = mxmlNewXML("1.0");
-  mxml_node_t *report;
-  mxml_node_t *curtime, *player, *tribe;
 
-  // prepare xml
-  report = mxmlNewElement(xml, "wonderEndReport");
-  curtime = mxmlNewElement(report, "timestamp");
+  if (caster->player_id != target->player_id && impact->sourceMessageType != WONDER_MESSAGE_none) {
+    mxml_node_t *xml = mxmlNewXML("1.0");
+    mxml_node_t *report;
+    mxml_node_t *curtime, *wonderType, *source, *caveName, *playerTribe;
+
+    // prepare xml
+    report = mxmlNewElement(xml, "wonderEndReport");
+    curtime = mxmlNewElement(report, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
 
-  player = mxmlNewElement(report, "caster");
-      mxmlNewText(player, 0, (char*) caster->name);
-  tribe = mxmlNewElement(report, "tribe");
-    mxmlNewText(tribe, 0, (char*) caster->tribe);
+    wonderType = mxmlNewElement(report, "wonderType");
+      mxmlNewText(wonderType, 0, (char*) "end");
 
-  if (caster->player_id != target->player_id &&
-      impact->sourceMessageType != WONDER_MESSAGE_none) {
+    source = mxmlNewElement(report, "source");
+      caveName = mxmlNewElement(source, "playerName");
+        mxmlNewText(caveName, 0, (char*) caster->name);
+      playerTribe = mxmlNewElement(source, "playerTribe");
+        mxmlNewText(playerTribe, 0, (char*) caster->tribe);
 
     template_t *template = message_template(caster, "wonder_end");
     const char *subject = message_subject(template, "TITLE", cave);
 
-    wonder_prepare_message(template, "", 0, cave, caster->locale_id,
-           values, num, impact->sourceMessageType, report);
+    wonder_prepare_message(template, "", 0, cave, caster->locale_id, values, num, impact->sourceMessageType, report);
 
     xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    mxmlDelete(xml);
 
-    message_new(database, MSG_CLASS_WONDER, caster->player_id,
-      subject, template_eval(template), xmlstring);
+    message_new(database, MSG_CLASS_WONDER, caster->player_id,subject, template_eval(template), xmlstring);
   }
 
   if (impact->targetMessageType != WONDER_MESSAGE_none) {
+    mxml_node_t *xml = mxmlNewXML("1.0");
+    mxml_node_t *report;
+    mxml_node_t *curtime, *wonderType, *source, *caveName, *playerTribe;
+
+    // prepare xml
+    report = mxmlNewElement(xml, "wonderEndReport");
+    curtime = mxmlNewElement(report, "timestamp");
+      mxmlNewInteger(curtime, (int) time(NULL));
+
+    wonderType = mxmlNewElement(report, "wonderType");
+      mxmlNewText(wonderType, 0, (char*) "end");
+
+    source = mxmlNewElement(report, "source");
+      caveName = mxmlNewElement(source, "playerName");
+        mxmlNewText(caveName, 0, (char*) caster->name);
+      playerTribe = mxmlNewElement(source, "playerTribe");
+        mxmlNewText(playerTribe, 0, (char*) caster->tribe);
+
     template_t *template = message_template(target, "wonder_end");
     const char *subject = message_subject(template, "TITLE", cave);
 
-    wonder_prepare_message(template, "", 0, cave, target->locale_id,
-           values, num, impact->targetMessageType, xml);
+    wonder_prepare_message(template, "", 0, cave, target->locale_id, values, num, impact->targetMessageType, report);
 
     xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
+    mxmlDelete(xml);
 
-    message_new(database, MSG_CLASS_WONDER, target->player_id,
-      subject, template_eval(template), xmlstring);
+    message_new(database, MSG_CLASS_WONDER, target->player_id, subject, template_eval(template), xmlstring);
   }
 }
 
@@ -1866,8 +1900,8 @@ static char* wonder_extend_report_xml (db_t *database,
 {
   mxml_node_t *xml = mxmlNewXML("1.0");
   mxml_node_t *report;
-  mxml_node_t *curtime;
-  mxml_node_t *caveName, *xCoord, *yCoord, *caveID;
+  mxml_node_t *curtime, *wonderType;
+  mxml_node_t *target, *caveName, *xCoord, *yCoord, *caveID;
   mxml_node_t *wonder;
   const struct GameObject *object = (struct GameObject *) Wonder;
   char *xmlstring = "";
@@ -1876,20 +1910,24 @@ static char* wonder_extend_report_xml (db_t *database,
   curtime = mxmlNewElement(report, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
 
-  caveName = mxmlNewElement(report, "caveName");
-    mxmlNewText(caveName, 0, (char*) cave->name);
-  xCoord = mxmlNewElement(report, "xCoord");
-    mxmlNewInteger(xCoord, (int) cave->xpos);
-  yCoord = mxmlNewElement(report, "yCoord");
-    mxmlNewInteger(yCoord, (int) cave->ypos);
-  caveID = mxmlNewElement(report, "caveID");
-    mxmlNewInteger(caveID, (int) cave->cave_id);
+  wonderType = mxmlNewElement(report, "wonderType");
+    mxmlNewText(wonderType, 0, (char*) "extend");
 
-  wonder = mxmlNewElement(report, "extendedWonderName");
-    mxmlNewText(wonder, 0, (char*) object->name[player->locale_id]);
+  target = mxmlNewElement(report, "target");
+    caveName = mxmlNewElement(target, "caveName");
+      mxmlNewText(caveName, 0, (char*) cave->name);
+    xCoord = mxmlNewElement(target, "xCoord");
+      mxmlNewInteger(xCoord, (int) cave->xpos);
+    yCoord = mxmlNewElement(target, "yCoord");
+      mxmlNewInteger(yCoord, (int) cave->ypos);
+    caveID = mxmlNewElement(target, "caveID");
+      mxmlNewInteger(caveID, (int) cave->cave_id);
+
+  wonder = mxmlNewElement(report, "extendedWonderName"); mxmlNewText(wonder, 0, (char*) object->name[player->locale_id]);
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
-    return xmlstring;
+
+  return xmlstring;
 }
 
 
@@ -1919,11 +1957,13 @@ void wonder_extend_report (db_t *database,
          const struct Wonder *wonder,
          const struct WonderImpact *impact)
 {
-  if (caster->player_id != target->player_id &&
-      impact->sourceMessageType != WONDER_MESSAGE_none)
+  if (caster->player_id != target->player_id && impact->sourceMessageType != WONDER_MESSAGE_none) {
     wonder_extend_report_player(database, caster, cave, wonder);
-  if (impact->targetMessageType != WONDER_MESSAGE_none)
+  }
+
+  if (impact->targetMessageType != WONDER_MESSAGE_none) {
     wonder_extend_report_player(database, target, cave, wonder);
+  }
 }
 
 

@@ -32,9 +32,23 @@
       {% include "xml/tradeReceived.tmpl" %}
     {% endif %}
 
-  {# /* Rückkehr?? */ #}
+  {# /* Rückkehr? */ #}
   {% elseif message_report == 7 %}
     {% include "xml/return.tmpl" %}
+
+  {# /* Wunder? */ #}
+  {% elseif message_report == 9 %}
+    {% if message_xml.wonderType == 'new' %}
+      {% include "xml/wonderNew.tmpl" %}
+    {% elseif message_xml.wonderType == 'caster' %}
+      {% include "xml/wonderCaster.tmpl" %}
+    {% elseif message_xml.wonderType == 'target' %}
+      {% include "xml/wonderTarget.tmpl" %}
+    {% elseif message_xml.wonderType == 'extend' %}
+      {% include "xml/wonderExtend.tmpl" %}
+    {% elseif message_xml.wonderType == 'end' %}
+      {% include "xml/wonderEnd.tmpl" %}
+    {% endif %}
 
   {# /* Spionage? */ #}
   {% elseif message_report == 11 %}
