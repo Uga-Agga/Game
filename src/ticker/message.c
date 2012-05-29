@@ -1628,9 +1628,8 @@ static char* hero_report_xml (db_t *database,
 
 
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
-    return xmlstring;
 
-
+  return xmlstring;
 }
 void hero_report (db_t *database,
           const struct Cave *cave, const struct Player *player)
@@ -1644,8 +1643,7 @@ void hero_report (db_t *database,
 
   xml = hero_report_xml(database,cave, player);
 
-  message_new(database, MSG_CLASS_HERO,
-      player->player_id, subject, template_eval(tmpl_hero), xml);
+  message_new(database, MSG_CLASS_HERO, player->player_id, subject, template_eval(tmpl_hero), xml);
 }
 
 static void wonder_prepare_message (template_t *template,
