@@ -3,6 +3,7 @@
  * parser.inc.php -
  * Copyright (c) 2003  OGP-Team
  * Copyright (c) 2011  David Unger
+ * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,6 +19,7 @@ require_once('rules/effects.list.php');
 require_once('rules/wonder.rules.php');
 require_once('rules/government.rules.php');
 require_once('rules/relation.list.php');
+require_once('rules/hero.rules.php');
 require_once("config.inc.php");
 
 init_Buildings();
@@ -26,6 +28,7 @@ init_Resources();
 init_Sciences();
 init_DefenseSystems();
 init_Effects();
+init_heroSkills();
 
 function sign($value){
   if ($value > 0) return 1;
