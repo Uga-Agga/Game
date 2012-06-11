@@ -14,10 +14,9 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function resources_getSelector() {
-  global $resourceTypeList;
 
   $resources = array();
-  foreach ($resourceTypeList AS $key => $value) {
+  foreach ($GLOBALS['resourceTypeList'] AS $key => $value) {
     if (!$value->nodocumentation) {
       $resourceID = request_var('resourcesID', 0);
 
@@ -39,16 +38,16 @@ function resources_getSelector() {
 }
 
 function resources_getContent(){
-  global $template, $resourceTypeList;
+  global $template;
 
   // open template
   $template->setFile('resource.tmpl');
 
   $id = request_var('resourcesID', 0);
-  if (!isset($resourceTypeList[$id]) || $resourceTypeList[$id]->nodocumentation) {
-    $resource = $resourceTypeList[0];
+  if (!isset($GLOBALS['resourceTypeList'][$id]) || $GLOBALS['resourceTypeList'][$id]->nodocumentation) {
+    $resource = $GLOBALS['resourceTypeList'][0];
   } else {
-    $resource = $resourceTypeList[$id];
+    $resource = $GLOBALS['resourceTypeList'][$id];
   }
 
   $template->addVars(array(

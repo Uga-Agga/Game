@@ -37,12 +37,12 @@ function sign($value){
 }
 
 $FORMULA_SYMBOLS = array(
-  "R" => $resourceTypeList,
-  "B" => $buildingTypeList,
-  "U" => $unitTypeList,
-  "S" => $scienceTypeList,
-  "D" => $defenseSystemTypeList,
-  "E" => $effectTypeList
+  "R" => $GLOBALS['resourceTypeList'],
+  "B" => $GLOBALS['buildingTypeList'],
+  "U" => $GLOBALS['unitTypeList'],
+  "S" => $GLOBALS['scienceTypeList'],
+  "D" => $GLOBALS['defenseSystemTypeList'],
+  "E" => $GLOBALS['effectTypeList']
 );
 
 $FORMULA_READABLE = array(
@@ -133,23 +133,23 @@ function formula_parseBasic($formula){
 }
 
 function rules_checkDependencies($object){
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList, $effectTypeList;
+  global $buildingTypeList;
 
   $dependencies = array();
 
   if (isset($object->buildingDepList) && is_array($object->buildingDepList))
     foreach($object->buildingDepList as $key => $value)
       if ($value != "" && $value != "0")
-        array_push($dependencies, array('name'     => $buildingTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['buildingTypeList'][$key]->name,
                                         'category' => "buildings",
-                                        'id'       => $buildingTypeList[$key]->buildingID,
+                                        'id'       => $GLOBALS['buildingTypeList'][$key]->buildingID,
                                         'level'    => "&gt;= " . $value));
   if (isset($object->maxBuildingDepList) && is_array($object->maxBuildingDepList))
     foreach($object->maxBuildingDepList as $key => $value)
       if ($value != -1)
-        array_push($dependencies, array('name'     => $buildingTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['buildingTypeList'][$key]->name,
                                         'category' => "buildings",
-                                        'id'       => $buildingTypeList[$key]->buildingID,
+                                        'id'       => $GLOBALS['buildingTypeList'][$key]->buildingID,
                                         'level'    => "&lt;= " . $value));
 
   if (isset($object->scienceDepList) && is_array($object->scienceDepList))
@@ -170,61 +170,61 @@ function rules_checkDependencies($object){
   if (isset($object->defenseSystemDepList) && is_array($object->defenseSystemDepList))
     foreach($object->defenseSystemDepList as $key => $value)
       if ($value != "" && $value != "0")
-        array_push($dependencies, array('name'     => $defenseSystemTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['defenseSystemTypeList'][$key]->name,
                                         'category' => "defenses",
-                                        'id'       => $defenseSystemTypeList[$key]->defenseSystemID,
+                                        'id'       => $GLOBALS['defenseSystemTypeList'][$key]->defenseSystemID,
                                         'level'    => "&gt;= " . $value));
   if (isset($object->maxDefenseSystemDepList) && is_array($object->maxDefenseSystemDepList))
     foreach($object->maxDefenseSystemDepList as $key => $value)
       if ($value != -1)
-        array_push($dependencies, array('name'     => $defenseSystemTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['defenseSystemTypeList'][$key]->name,
                                         'category' => "defenses",
-                                        'id'       => $defenseSystemTypeList[$key]->defenseSystemID,
+                                        'id'       => $GLOBALS['defenseSystemTypeList'][$key]->defenseSystemID,
                                         'level'    => "&lt;= " . $value));
 
   if (isset($object->resourceDepList) && is_array($object->resourceDepList))
     foreach($object->resourceDepList as $key => $value)
       if ($value != "" && $value != "0")
-        array_push($dependencies, array('name'     => $resourceTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['resourceTypeList'][$key]->name,
                                         'category' => "resources",
-                                        'id'       => $resourceTypeList[$key]->resourceID,
+                                        'id'       => $GLOBALS['resourceTypeList'][$key]->resourceID,
                                         'level'    => "&gt;= " . $value));
   if (isset($object->maxResourceDepList) && is_array($object->maxResourceDepList))
     foreach($object->maxResourceDepList as $key => $value)
       if ($value != -1)
-        array_push($dependencies, array('name'     => $resourceTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['resourceTypeList'][$key]->name,
                                         'category' => "resources",
-                                        'id'       => $resourceTypeList[$key]->resourceID,
+                                        'id'       => $GLOBALS['resourceTypeList'][$key]->resourceID,
                                         'level'    => "&lt;= " . $value));
 
   if (isset($object->unitDepList) && is_array($object->unitDepList))
     foreach($object->unitDepList as $key => $value)
       if ($value != "" && $value != "0")
-        array_push($dependencies, array('name'     => $unitTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['unitTypeList'][$key]->name,
                                         'category' => "units",
-                                        'id'       => $unitTypeList[$key]->unitID,
+                                        'id'       => $GLOBALS['unitTypeList'][$key]->unitID,
                                         'level'    => "&gt;= " . $value));
   if (isset($object->maxUnitDepList) && is_array($object->maxUnitDepList))
     foreach($object->maxUnitDepList as $key => $value)
       if ($value != -1)
-        array_push($dependencies, array('name'     => $unitTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['unitTypeList'][$key]->name,
                                         'category' => "units",
-                                        'id'       => $unitTypeList[$key]->unitID,
+                                        'id'       => $GLOBALS['unitTypeList'][$key]->unitID,
                                         'level'    => "&lt;= " . $value));
 
   if (isset($object->effectDepList) && is_array($object->effectDepList))
     foreach($object->effectDepList as $key => $value)
       if (!is_null($value))
-        array_push($dependencies, array('name'     => $effectTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['effectTypeList'][$key]->name,
                                         'category' => "effects",
-                                        'id'       => $effectTypeList[$key]->effectID,
+                                        'id'       => $GLOBALS['effectTypeList'][$key]->effectID,
                                         'level'    => "&gt;= " . $value));
   if (isset($object->maxEffectDepList) && is_array($object->maxEffectDepList))
     foreach($object->maxEffectDepList as $key => $value)
       if (!is_null($value))
-        array_push($dependencies, array('name'     => $effectTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['effectTypeList'][$key]->name,
                                         'category' => "effects",
-                                        'id'       => $effectTypeList[$key]->effectID,
+                                        'id'       => $GLOBALS['effectTypeList'][$key]->effectID,
                                         'level'    => "&lt= " . $value));
   return $dependencies;
 }

@@ -13,11 +13,10 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function units_getSelector() {
-  global $unitTypeList;
+function units_getSelector() {;
 
   $units = array();
-  foreach ($unitTypeList AS $key => $value) {
+  foreach ($GLOBALS['unitTypeList'] AS $key => $value) {
     if (!$value->nodocumentation) {
       $unitID = request_var('unitsID', 0);
 
@@ -39,24 +38,24 @@ function units_getSelector() {
 }
 
 function units_getContent() {
-  global $template, $unitTypeList, $resourceTypeList;
+  global $template;
 
   // open template
   $template->setFile('unit.tmpl');
 
   $id = request_var('unitsID', 0);
-  if (!isset($unitTypeList[$id]) || $unitTypeList[$id]->nodocumentation) {
-    $unit = $unitTypeList[0];
+  if (!isset($GLOBALS['unitTypeList'][$id]) || $GLOBALS['unitTypeList'][$id]->nodocumentation) {
+    $unit = $GLOBALS['unitTypeList'][0];
   } else {
-    $unit = $unitTypeList[$id];
+    $unit = $GLOBALS['unitTypeList'][$id];
   }
 
   $resourceCost = array();
   foreach ($unit->resourceProductionCost as $key => $value) {
     if ($value != "" && $value != 0) {
       array_push($resourceCost, array(
-        'dbFieldName' => $resourceTypeList[$key]->dbFieldName,
-        'name'        => $resourceTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['resourceTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['resourceTypeList'][$key]->name,
         'amount'      => $value
       ));
     }
@@ -66,8 +65,8 @@ function units_getContent() {
   foreach ($unit->unitProductionCost as $key => $value) {
     if ($value != "" && $value != 0) {
       array_push($unitCost, array(
-        'dbFieldName' => $unitTypeList[$key]->dbFieldName,
-        'name'        => $unitTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['unitTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['unitTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
@@ -77,8 +76,8 @@ function units_getContent() {
   foreach ($unit->defenseProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($defenseCost, array(
-        'dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
-        'name'        => $defenseSystemTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['defenseSystemTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['defenseSystemTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
@@ -88,8 +87,8 @@ function units_getContent() {
   foreach ($unit->buildingProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($externalCost, array(
-        'dbFieldName' => $buildingTypeList[$key]->dbFieldName,
-        'name'        => $buildingTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['buildingTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['buildingTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }

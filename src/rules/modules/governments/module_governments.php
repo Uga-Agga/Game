@@ -19,15 +19,15 @@ function governments_getMenu() {
 }
 
 function governments_getContent(){
-  global $template, $governmentList, $leaderDeterminationList;
+  global $template;
 
   // open template
   $template->setFile('governments.tmpl');
-  $template->addVar('leaderDeterminationList', $leaderDeterminationList);
+  $template->addVar('leaderDeterminationList', $GLOBALS['leaderDeterminationList']);
 
-  foreach($governmentList as $governmentData) {
-    $governmentList[$governmentData['leaderDeterminationID']]['leaderDetermination'] = $leaderDeterminationList[$governmentData['leaderDeterminationID']]['name'];
+  foreach($GLOBALS['governmentList'] as $governmentData) {
+    $GLOBALS['governmentList'][$governmentData['leaderDeterminationID']]['leaderDetermination'] = $GLOBALS['leaderDeterminationList'][$governmentData['leaderDeterminationID']]['name'];
   }
-  $template->addVar('government_data', $governmentList);
+  $template->addVar('government_data', $GLOBALS['governmentList']);
 }
 ?>

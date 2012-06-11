@@ -14,10 +14,9 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function sciences_getSelector() {
-  global $scienceTypeList;
 
   $sciences = array();
-  foreach ($scienceTypeList AS $key => $value) {
+  foreach ($GLOBALS['scienceTypeList'] AS $key => $value) {
     if (!$value->nodocumentation) {
       $scienceID = request_var('sciencesID', 0);
 
@@ -39,24 +38,24 @@ function sciences_getSelector() {
 }
 
 function sciences_getContent() {
-  global $template, $scienceTypeList, $resourceTypeList, $unitTypeList;
+  global $template;
 
   // open template
   $template->setFile('science.tmpl');
 
   $id = request_var('sciencesID', 0);
-  if (!isset($scienceTypeList[$id]) || $scienceTypeList[$id]->nodocumentation) {
-    $science = $scienceTypeList[0];
+  if (!isset($GLOBALS['scienceTypeList'][$id]) || $GLOBALS['scienceTypeList'][$id]->nodocumentation) {
+    $science = $GLOBALS['scienceTypeList'][0];
   } else {
-    $science = $scienceTypeList[$id];
+    $science = $GLOBALS['scienceTypeList'][$id];
   }
 
   $resourceCost = array();
   foreach ($science->resourceProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($resourceCost, array(
-        'dbFieldName' => $resourceTypeList[$key]->dbFieldName,
-        'name'        => $resourceTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['resourceTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['resourceTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
@@ -66,8 +65,8 @@ function sciences_getContent() {
   foreach ($science->unitProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($unitCost, array(
-        'dbFieldName' => $unitTypeList[$key]->dbFieldName,
-        'name'        => $unitTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['unitTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['unitTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
@@ -77,8 +76,8 @@ function sciences_getContent() {
   foreach ($science->defenseProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($defenseCost, array(
-        'dbFieldName' => $defenseSystemTypeList[$key]->dbFieldName,
-        'name'        => $defenseSystemTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['defenseSystemTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['defenseSystemTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
@@ -88,8 +87,8 @@ function sciences_getContent() {
   foreach ($science->buildingProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($externalCost, array(
-        'dbFieldName' => $buildingTypeList[$key]->dbFieldName,
-        'name'        => $buildingTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['buildingTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['buildingTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }

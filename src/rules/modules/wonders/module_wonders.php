@@ -15,10 +15,9 @@ require_once('wonder.inc.php');
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function wonders_getSelector() {
-  global $wonderTypeList;
 
   $wonders = array();
-  foreach ($wonderTypeList AS $key => $value) {
+  foreach ($GLOBALS['wonderTypeList'] AS $key => $value) {
     if (!$value->nodocumentation) {
       $wonderID = request_var('wondersID', 0);
 
@@ -40,16 +39,16 @@ function wonders_getSelector() {
 }
 
 function wonders_getContent() {
-  global $template, $scienceTypeList, $resourceTypeList, $unitTypeList, $wonderTypeList;
+  global $template;
 
   // open template
   $template->setFile('wonder.tmpl');
 
   $id = request_var('wondersID', 0);
-  if (!isset($wonderTypeList[$id]) || $wonderTypeList[$id]->nodocumentation) {
-    $wonder = $wonderTypeList[0];
+  if (!isset($GLOBALS['wonderTypeList'][$id]) || $GLOBALS['wonderTypeList'][$id]->nodocumentation) {
+    $wonder = $GLOBALS['wonderTypeList'][0];
   } else {
-    $wonder = $wonderTypeList[$id];
+    $wonder = $GLOBALS['wonderTypeList'][$id];
   }
 
   $uaWonderTargetText = WonderTarget::getWonderTargets();
@@ -58,8 +57,8 @@ function wonders_getContent() {
   foreach ($wonder->resourceProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($resourceCost, array(
-        'dbFieldName' => $resourceTypeList[$key]->dbFieldName,
-        'name'        => $resourceTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['resourceTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['resourceTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
@@ -69,8 +68,8 @@ function wonders_getContent() {
   foreach ($wonder->unitProductionCost as $key => $value) {
     if ($value != "" && $value != "0") {
       array_push($unitCost, array(
-        'dbFieldName' => $unitTypeList[$key]->dbFieldName,
-        'name'        => $unitTypeList[$key]->name,
+        'dbFieldName' => $GLOBALS['unitTypeList'][$key]->dbFieldName,
+        'name'        => $GLOBALS['unitTypeList'][$key]->name,
         'amount'      => formula_parseToReadable($value)
       ));
     }
