@@ -1,0 +1,48 @@
+{#
+/* wondersStats.tmpl
+ * Copyright (c) 2012 Georg Pitterle
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Helden Fähigkeiten Übersicht{% endblock %}
+{% block content %}
+<table cellpadding="3" cellspacing="0" class="box">
+<colgroup>
+    <col />
+    <col span="3" width="100" />
+ </colgroup>
+  <tr>
+    <th align="left">Name</th>
+    <th>Benötigtes Level</th>
+    <th>Kosten (TP)</th>
+    <th>Heldentypen</th>
+    <th>Multiplikator</th>
+    <th>Effekte</th>
+  </tr>
+  {% for skill in skill_list %}
+  {% set bgID = (bgID+1)%2 %}
+  <tr align="left"  class="row{{ bgID }}">
+    <td><a href="index.php?modus=skill&amp;skillID={{ skill.skillID }}">{{ skill.name }}</a></td>
+    <td align="center">{{ skill.requiredLevel }}</td>
+    <td align="center">{{ skill.costTP }}</td>
+    <td align="center">
+    {% for typ in skill.typeList %}
+      {{ typ }}<br />
+    {% endfor %}
+    </td>
+    <td align="center">{{ skill.skillFactor }}</td>
+    <td align="left">
+    {% for effect in skill.effectList %}
+      {{ effect }}<br />
+    {% endfor %}
+      </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock %}

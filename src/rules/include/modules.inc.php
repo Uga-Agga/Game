@@ -80,4 +80,11 @@ $module_cfg['modules']['governments']['view']         = 1;
 $module_cfg['modules']['governments']['showSelector'] = 1;
 $module_cfg['modules']['governments']['weight']       = 300;
 
+$module_cfg['modules']['skill']['modus']        = "skill";
+$module_cfg['modules']['skill']['custom_title'] = "Helden Fähigkeiten";
+$module_cfg['modules']['skill']['active']       = 1;
+$module_cfg['modules']['skill']['view']         = 1;
+$module_cfg['modules']['skill']['showSelector'] = 1;
+$module_cfg['modules']['skill']['weight']       = 200;
+
 ?>

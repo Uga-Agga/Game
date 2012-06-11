@@ -1,0 +1,69 @@
+{#
+/* wonder.tmpl -
+ * Copyright (c) 2011 David Unger
+ * Copyright (c) 2012 Georg Pitterle
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Helden Fähigkeit Information{% endblock %}
+{% block content %}
+<table width="100%" border="0" cellspacing="0" cellpadding="1">
+  <tr>
+    <td colspan="2" valign="top" class="title"><strong>{{ skill.name }}</strong></td>
+  </tr>
+  
+  <tr>
+    <td valign="top">
+      <fieldset>
+        <legend>Beschreibung</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>{{ skill.description|raw }}&nbsp;</td>
+          </tr>
+        </table>
+      </fieldset>
+      
+      <fieldset>
+        <legend>Voraussetzungen</legend>
+        <p>Level: {{ skill.requiredLevel }}</p>
+        <p>Fähigkeit kann von folgenden Heldentypen erforscht werden: 
+        <ul>
+          {% for type in typeList %}
+          <li>{{ type }}&nbsp;</li>
+          {% endfor %}
+        </ul>
+      </fieldset>
+      <br />
+      
+      <br />
+      <fieldset>
+        <legend>Effekte</legend>
+          <p>Multiplikator: {{ skill.skillFactor }}</p>
+          <ul>
+          {% for effect in effectList %}
+            <li>{{ effect }}</li>
+          {% endfor %}
+          </ul>
+      </fieldset>
+      <br />
+
+      
+      <fieldset>
+        <legend>Kosten</legend>
+        <table border="0" cellspacing="0" cellpadding="3">
+          <tr>
+            <td>Talentpunkte (TP): {{ skill.costTP }}&nbsp;</td>
+          </tr>
+        </table>
+      </fieldset>
+      <br />
+    </td>
+  </tr>
+</table>
+
+{% endblock %}

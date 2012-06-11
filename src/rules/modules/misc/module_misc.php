@@ -17,6 +17,7 @@ function misc_getMenu() {
   $result[] = array('link' => "?modus=misc&amp;miscID=5", 'content' => "Erweiterungen");
   $result[] = array('link' => "?modus=misc&amp;miscID=4", 'content' => "Wunder");
   $result[] = array('link' => "?modus=misc&amp;miscID=3", 'content' => "Traglasten");
+  $result[] = array('link' => "?modus=misc&amp;miscID=7", 'content' => "Held Fähigkeiten");
 
   return $result;
 }
@@ -38,6 +39,7 @@ function misc_getContent(){
              break;
     case 6:  $result = getResourcesStats();
              break;
+    case 7: $result = getSkillStats();
   }
   return $result;
 }
@@ -238,5 +240,48 @@ function getUnitsEncumbrance(){
   }
 
   $template->addVar('units_list', $units);
+}
+
+function getSkillStats () {
+  global $template;
+  
+  // open template
+  $template->setFile('skillStats.tmpl');
+  
+  // get hero Type names
+  $heroTypeNames = array();
+  foreach ($GLOBALS['heroTypesList'] as $type) {
+    $heroTypeNames[$type['id']] = $type['name'];
+  }
+  
+  $skills = array();
+  foreach ($GLOBALS['heroSkillTypeList'] as $skillID => $skill) { 
+
+    $typeList = array();
+    foreach ($skill['requiredType'] as $type) {
+      $typeList[] = $heroTypeNames[$type];
+    }
+    
+    $effectList = array();
+    foreach ($GLOBALS['effectTypeList'] as $effect) {
+      foreach ($skill['effects'] as $heroEffectName => $heroEffect) {
+        if ($effect->dbFieldName == $heroEffectName) {
+          $effectList[] = $effect->name;
+        }
+      }
+    }
+    
+    $skills[] = array(
+      'skillID' => $skillID,
+      'name' => $skill['name'], 
+      'costTP' => $skill['costTP'],
+      'requiredLevel' => $skill['requiredLevel'], 
+      'skillFactor' => $skill['skillFactor'], 
+      'effectList' => $effectList, 
+      'typeList' => $typeList
+    );
+  }
+  ;
+  $template->addVar('skill_list', $skills);
 }
 ?>
