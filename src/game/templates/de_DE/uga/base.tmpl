@@ -53,6 +53,34 @@
       .ym-col-head2 { background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); }
       
       .ua-head-menu { background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); }
+
+      #footerSlideContainer {
+        position: fixed;
+        bottom:0;
+        width: 100%;
+        z-index: 1;
+      }
+      #footerSlideButton {
+        background: url(http://return-true.com/examples/sliderButton.png) {% if tutorial.open == 'true' %}bottom{% else %}top{% endif %} left no-repeat transparent;
+        position: absolute;
+        top: -55px;
+        right: 20px;
+        width:50px;
+        height:50px;
+        border: none;
+        cursor: pointer;
+        
+      }
+      #footerSlideContent {
+        width: 100%;
+        height: 0px;
+        background: #251b15;
+        color: #CCCCCC;
+        border: none;
+        font-family: DejaVuSansBook, Sans-Serif;
+        {% if tutorial.open == 'true' %}height: 200px;{% endif %}
+      }
+      #footerSlideText { }
     </style>
 
     <script type="text/javascript">
@@ -61,34 +89,29 @@
         time = new Date("{{ countdown_time }}"); 
         return time; 
       }
+
+      $(function() {
+      var open = {% if tutorial.open == 'true' %}true{% else %}false{% endif %};
+        $('#footerSlideButton').click(function() {
+        	if(open === false) {
+        		$('#footerSlideContent').animate({ height: '200px' });
+        		$(this).css('backgroundPosition', 'bottom left');
+            $('#tutorialButton').show();
+        		open = true;
+        	} else {
+        		$('#footerSlideContent').animate({ height: '0px' });
+        		$(this).css('backgroundPosition', 'top left');
+            $('#tutorialButton').hide();
+        		open = false;
+        	}
+        });
+      });
+
     </script>
 
   {% endblock %}
 </head>
 <body>
-  {% if tutorial_show %}
-  <div class="ua-tutorial">
-    <div class="ua-tutorial-box" {% if not tutorial_open %}style="display: none;"{% endif %}>
-      <div class="ua-box-header">{{ tutorial_name|raw }}</div>
-      <div class="ua-box-content">
-        <form method="post" action="main.php?{{ query_string|raw }}&amp;caveID={{ cave_id }}" class="ym-form">
-          <div class="ym-grid linearize-level-2">
-            <div style="padding: 10px" class="ym-gbox">
-              {{ tutorial_msg|raw }}
-            </div>
-          </div>
-          {% if tutorial_finish %}
-          <div class="ym-fbox-button center">
-            <input type="hidden" name="nextTutorial" value="next" />
-            <input type="submit" value="zum nächstes Tutorial" class="submit" id="submit" name="submit" />
-          </div>
-          {% endif %}
-        </form>
-      </div>
-    </div>
-    <div class="ua-tutorial-button">Tutorial</div>
-  </div>
-  {% endif %}
   <div class="ua-header-menu">
     <div class="ua-head-menu">
       <div id="ua-head-menu-item">
@@ -197,6 +220,37 @@
       </div>
     {% endblock %}
   </div>
+
+  {% if tutorial.show %}
+    <div id="footerSlideContainer">
+      <div id="footerSlideButton"></div>
+      <div id="footerSlideContent">
+        <div id="footerSlideText">
+          <h2 class="text-center" style="color: #FFFFFF;">{{ tutorial.content.header }}</h2>
+
+          <div class="ym-grid">
+            {% for item in tutorial.content.tabs %}
+              <div class="ym-{{ item.width }} ym-gl">
+                <div class="ym-gbox">
+                  <h3 style="color: #FFFFFF;">{{ item.header }}</h3><br />{{ item.txt|raw }}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if tutorial.finish %}
+          <div id="tutorialButton" class="text-center" style="bottom: 0px; position: absolute; width: 100%;">
+            <form method="post" action="main.php?{{ query_string|raw }}&amp;caveID={{ cave_id }}">
+              <input type="hidden" name="nextTutorial" value="next" />
+              <input type="submit" value="zum nächstes Tutorial" class="submit" id="submit" name="submit" />
+            </form>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
   {% include "extendsFooter.tmpl" %}
 </body>
 </html>

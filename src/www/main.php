@@ -469,15 +469,14 @@ if (!$tutorial->noTutorial) {
     $tutorialFinish = $tutorial->checkFinish($ownCaves[$caveID]);
   }
 
-  $template->addVars(array(
-    'tutorial_show'        => true,
-    'tutorial_name'        => $tutorial->name,
-    'tutorial_msg'         => ($tutorialFinish) ? $tutorial->finishMsg : $tutorial->description,
-    'tutorial_finish'      => $tutorialFinish,
-    'tutorial_open'        => ($tutorialFinish || Request::isPost('nextTutorial')) ? true : false,
+  $template->addVar('tutorial', array(
+    'show'    => true,
+    'content' => ($tutorialFinish) ? $tutorial->finishMsg : $tutorial->startMsg,
+    'finish'  => $tutorialFinish,
+    'open'    => ($tutorialFinish || Request::isPost('nextTutorial')) ? 'true' : 'false'
   ));
 } else {
-  $template->addVar('tutorial_show', false);
+  $template->addVar('tutorial', array('show' => false));
 }
 
 // prepare resource bar
