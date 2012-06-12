@@ -32,7 +32,8 @@
                 <img src="{{ tribe_avatar.path }}" width="{{ tribe_avatar.width }}" height="{{ tribe_avatar.height }}" alt="Stammesbanner" />
               </div>
             {% endif %}
-            <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px;">
+
+            <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
               <ul>
                 <li class="bold text-center" style="padding-bottom: 10px;">Informationen:</li>
 
@@ -48,7 +49,7 @@
               </ul>
             </div>
 
-            <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px;">
+            <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
               <ul>
                 <li class="text-center bold" style="padding-bottom: 10px;">Verbündete Stämme:</li>
                 {% if relations_ally %}
@@ -151,7 +152,7 @@
                     </td>
                   </tr>
                 {% else %}
-                  <tr class="bg0"><td class="last text-center" colspan="3">Im Stamm befinden sich irgendwie keine Spieler Oo. (sollte nicht vorkommen xD)</td></tr>
+                  <tr class="bg0"><td class="last text-center" colspan="4">Im Stamm befinden sich irgendwie keine Spieler Oo. (sollte nicht vorkommen xD)</td></tr>
                 {% endfor %}
                 {% set bgID = 0 %}
               </tbody>
@@ -463,6 +464,7 @@
         </div>
       </div>
 
+{% if show_wonder %}
       <h4 class="hide_status_msg">Wunder</h4>
       <div class="tabbody">
         <div id="tribeStorageWonder" class="jquery_tabs nav2">
@@ -600,6 +602,8 @@
           {% endif %}
         </div>
       </div>
+{% endif %}
+
     </div>
   </div>
 </div>

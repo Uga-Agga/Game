@@ -142,10 +142,11 @@ install-game: configtest $(CONFIG)
 	    www/images/religious_distribution/*.php \
 	    $(GAMEDIR)/images/religious_distribution
 	$(INSTALL) -d $(UA_WEBAPP_DIR) $(UA_WEBAPP_DIR)/cache \
-	    $(UA_WEBAPP_DIR)/include $(UA_WEBAPP_DIR)/include/languages \
+	    $(UA_WEBAPP_DIR)/include $(UA_WEBAPP_DIR)/include/languages $(UA_WEBAPP_DIR)/include/rules \
 	    $(UA_WEBAPP_DIR)/lib $(UA_WEBAPP_DIR)/modules
 	chown $(WWWRUN) $(UA_WEBAPP_DIR)/cache
 	$(INSTALL_DATA) game/include/*.php $(UA_WEBAPP_DIR)/include
+	$(INSTALL_DATA) game/include/rules/*.php $(UA_WEBAPP_DIR)/include/rules
 	$(INSTALL_DATA) game/include/languages/*.php \
 	    $(UA_WEBAPP_DIR)/include/languages
 	$(INSTALL_DATA) game/lib/*.php $(UA_WEBAPP_DIR)/lib
@@ -159,16 +160,12 @@ install-game: configtest $(CONFIG)
 		    $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
 	    done; \
 	done
-#	for lang in $(LANGUAGES); do \
-#	    $(INSTALL) -d $(UA_WEBAPP_DIR)/include/languages/$$lang \
-#	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES; \
-#	    $(INSTALL_DATA) game/include/languages/$$lang/LC_MESSAGES/ugaagga.mo \
-#	        $(UA_WEBAPP_DIR)/include/languages/$$lang/LC_MESSAGES/; \
-	for tmpl in $(TEMPLATES); do \
-		$(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
-		$(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl \
-		    $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
-	    done; \
+	for lang in $(LANGUAGES); do \
+    for tmpl in $(TEMPLATES); do \
+      $(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl/xml; \
+      $(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
+      $(INSTALL_DATA) game/templates/$$lang/$$tmpl/xml/*.tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl/xml; \
+        done; \
 	done
 	chown -R $(WWWRUN):$(WWWRUN) $(UA_WEBAPP_DIR)
 

@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `Artefact_class` (
   `description` text COLLATE utf8_unicode_ci NOT NULL,
   `description_initiated` text COLLATE utf8_unicode_ci NOT NULL,
   `initiationID` int(11) NOT NULL DEFAULT '1',
-  `getArtefactBySpy` int(4) UNSIGNED NOT NULL DEFAULT '0'
+  `getArtefactBySpy` int(4) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`artefactClassID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 

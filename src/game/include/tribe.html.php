@@ -217,10 +217,10 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      if (Request::isPost('ingame') && ($userAuth['msg_public']) || $userAuth['isLeader']) {
-        $messageID = tribe_processSendTribeIngameMessage($playerID, $tribe, Request::getVar('messageText', '', true));
+      if (Request::isPost('ingame') && ($userAuth['msg_public'] || $userAuth['isLeader'])) {
+        $messageID = tribe_processSendTribeIngameMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
       } else if ($userAuth['msg_tribe'] || $userAuth['isLeader']) {
-        $messageID = tribe_processSendTribeMessage($playerID, $tribe, Request::getVar('messageText', '', true));
+        $messageID = tribe_processSendTribeMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
       } else {
         $messageID = -1;
       }
