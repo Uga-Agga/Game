@@ -13,8 +13,9 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function defenses_getSelector(){
-  global $defenseSystemTypeList;
+function defenses_getSelector() {
+  
+  $defenseSystemTypeList = $GLOBALS['defenseSystemTypeList'];
 
   $defenses = array();
   foreach ($defenseSystemTypeList AS $key => $value) {
@@ -39,7 +40,11 @@ function defenses_getSelector(){
 }
 
 function defenses_getContent(){
-  global $template, $defenseSystemTypeList, $resourceTypeList, $unitTypeList;
+  global $template;
+  
+  $defenseSystemTypeList = $GLOBALS['defenseSystemTypeList'];
+  $resourceTypeList = $GLOBALS['resourceTypeList'];
+  $unitTypeList = $GLOBALS['unitTypeList'];
 
   // open template
   $template->setFile('defenseSystem.tmpl');

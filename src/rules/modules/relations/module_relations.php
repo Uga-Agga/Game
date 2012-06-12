@@ -19,15 +19,16 @@ function relations_getMenu() {
 }
 
 function relations_getContent() {
-  global $template, $relationList;
+  global $template;
 
   // open template
   $template->setFile('relations.tmpl');
 
-  foreach($relationList as $relationData) {
-    $relationData['otherSideToName'] = (isset($relationList[$relationData['otherSideTo']]['name']) && $relationData['otherSideTo']) ? $relationList[$relationData['otherSideTo']]['name'] : '';
+  foreach($GLOBALS['relationList'] as $relationData) {
+    $relationData['otherSideToName'] = (isset($GLOBALS['relationList'][$relationData['otherSideTo']]['name']) && 
+            $relationData['otherSideTo']) ? $GLOBALS['relationList'][$relationData['otherSideTo']]['name'] : '';
     foreach($relationData['transitions'] as $relationID => $v) {
-      $relationData['transitions'][$relationID]['name'] = $relationList[$relationID]['name'];
+      $relationData['transitions'][$relationID]['name'] = $GLOBALS['relationList'][$relationID]['name'];
     }
     $relations[] = $relationData;
   }

@@ -14,7 +14,8 @@
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function buildings_getSelector() {
-  global $buildingTypeList;
+  
+  $buildingTypeList = $GLOBALS['buildingTypeList'];
 
   $buildings = array();
   foreach ($buildingTypeList AS $key => $value) {
@@ -39,8 +40,12 @@ function buildings_getSelector() {
 }
 
 function buildings_getContent() {
-  global $template, $buildingTypeList, $resourceTypeList, $unitTypeList;
+  global $template;
 
+  $buildingTypeList = $GLOBALS['buildingTypeList'];
+  $resourceTypeList = $GLOBALS['resourceTypeList'];
+  $unitTypeList = $GLOBALS['unitTypeList'];
+  
   // open template
   $template->setFile('building.tmpl');
 

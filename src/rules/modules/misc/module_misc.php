@@ -45,13 +45,13 @@ function misc_getContent(){
 }
 
 function getUnitStats(){
-  global $template, $unitTypeList;
+  global $template;
 
   // open template
   $template->setFile('unitStats.tmpl');
 
   // get a copy of the unitTypeList
-  $unitList = $unitTypeList;
+  $unitList = $GLOBALS['unitTypeList'];
 
   // sort that units by names
   usort($unitList, "nameCompare");
@@ -81,13 +81,13 @@ function getUnitStats(){
 }
 
 function getDefenseStats(){
-  global $template, $defenseSystemTypeList;
+  global $template;
 
   // open template
   $template->setFile('defensesStats.tmpl');
 
   // get a copy of the defenseSystemTypeList
-  $defensesList = $defenseSystemTypeList;
+  $defensesList = $GLOBALS['defenseSystemTypeList'];
 
   // sort that copy by names
   usort($defensesList, "nameCompare");
@@ -112,7 +112,7 @@ function getDefenseStats(){
 }
 
 function getWondersStats() {
-  global $template, $wonderTypeList;
+  global $template;
 
   require_once('wonder.inc.php');
   $uaWonderTargetText = WonderTarget::getWonderTargets();
@@ -121,7 +121,7 @@ function getWondersStats() {
   $template->setFile('wondersStats.tmpl');
 
   // get a copy of the wonderTypeList
-  $wondersList = $wonderTypeList;
+  $wondersList = $GLOBALS['wonderTypeList'];
 
   // sort that copy by names
   usort($wondersList, "nameCompare");
@@ -150,7 +150,7 @@ function getBuildingsStats(){
   $template->setFile('buildingsStats.tmpl');
 
   // get a copy of the buildingTypeList
-  $buildingsList = $buildingTypeList;
+  $buildingsList = $GLOBALS['buildingTypeList'];
 
   // sort that copy by names
   usort($buildingsList, "nameCompare");
@@ -171,13 +171,13 @@ function getBuildingsStats(){
 }
 
 function getResourcesStats(){
-  global $template, $resourceTypeList;
+  global $template;
 
   // open template
   $template->setFile('resourcesStats.tmpl');
 
   // get a copy of the $resourceTypeList
-  $resourcesList = $resourceTypeList;
+  $resourcesList = $GLOBALS['resourceTypeList'];
 
   // sort that copy by names
   usort($resourcesList, "nameCompare");
@@ -199,19 +199,19 @@ function getResourcesStats(){
 
 
 function getUnitsEncumbrance(){
-  global $template, $resourceTypeList, $unitTypeList;
+  global $template;
 
   // open template
   $template->setFile('unitsEncumbrance.tmpl');
 
   // get a copy of the unitTypeList
-  $unitsList = $unitTypeList;
+  $unitsList = $GLOBALS['unitTypeList'];
 
   // sort that copy by unit names
   usort($unitsList, "nameCompare");
 
   $resources = array();
-  foreach ($resourceTypeList AS $resource){
+  foreach ($GLOBALS['resourceTypeList'] AS $resource){
     if (!$resource->nodocumentation) {
       $resources[] = array(
         'name'        => $resource->name,
@@ -225,7 +225,7 @@ function getUnitsEncumbrance(){
   foreach ($unitsList AS $unit) {
     if (!$unit->nodocumentation ){
       $encumbrances = array();
-      foreach ($resourceTypeList AS $resource) {
+      foreach ($GLOBALS['resourceTypeList'] AS $resource) {
         if (!$resource->nodocumentation) {
           $encumbrances[] = array('value' => (isset($unit->encumbranceList[$resource->resourceID])) ? intval($unit->encumbranceList[$resource->resourceID]) : 0);
         }
