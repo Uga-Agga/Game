@@ -54,33 +54,8 @@
       
       .ua-head-menu { background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); }
 
-      #footerSlideContainer {
-        position: fixed;
-        bottom:0;
-        width: 100%;
-        z-index: 1;
-      }
-      #footerSlideButton {
-        background: url(http://return-true.com/examples/sliderButton.png) {% if tutorial.open == 'true' %}bottom{% else %}top{% endif %} left no-repeat transparent;
-        position: absolute;
-        top: -55px;
-        right: 20px;
-        width:50px;
-        height:50px;
-        border: none;
-        cursor: pointer;
-        
-      }
-      #footerSlideContent {
-        width: 100%;
-        height: 0px;
-        background: #251b15;
-        color: #CCCCCC;
-        border: none;
-        font-family: DejaVuSansBook, Sans-Serif;
-        {% if tutorial.open == 'true' %}height: 200px;{% endif %}
-      }
-      #footerSlideText { }
+      #footerSlideButton { background: url(http://return-true.com/examples/sliderButton.png) {% if tutorial.open == 'true' %}bottom{% else %}top{% endif %} left no-repeat transparent;}
+      {% if tutorial.open == 'true' %}#footerSlideContent { height: 200px; }{% endif %}
     </style>
 
     <script type="text/javascript">
@@ -93,17 +68,17 @@
       $(function() {
       var open = {% if tutorial.open == 'true' %}true{% else %}false{% endif %};
         $('#footerSlideButton').click(function() {
-        	if(open === false) {
-        		$('#footerSlideContent').animate({ height: '200px' });
-        		$(this).css('backgroundPosition', 'bottom left');
+          if(open === false) {
+            $('#footerSlideContent').animate({ height: '200px' });
+            $(this).css('backgroundPosition', 'bottom left');
             $('#tutorialButton').show();
-        		open = true;
-        	} else {
-        		$('#footerSlideContent').animate({ height: '0px' });
-        		$(this).css('backgroundPosition', 'top left');
+            open = true;
+          } else {
+            $('#footerSlideContent').animate({ height: '0px' });
+            $(this).css('backgroundPosition', 'top left');
             $('#tutorialButton').hide();
-        		open = false;
-        	}
+            open = false;
+          }
         });
       });
 
@@ -112,36 +87,35 @@
   {% endblock %}
 </head>
 <body>
-  <div class="ua-header-menu">
-    <div class="ua-head-menu">
-      <div id="ua-head-menu-item">
-        <a href="main.php?modus=hero_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>
-        <a href="main.php?modus=cave_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
-        <a href="main.php?modus=CaveBookmarks"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
-        <a href="main.php?modus=questionnaire"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
-        <a href="main.php?modus=Donations"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
-        <a href="main.php?modus=tribe"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
-        <a href="main.php?modus=Contacts"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
-        <a href="main.php?modus=effectwonder_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
-        <a href="main.php?modus=user_profile"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
-        <a href="main.php?modus=artefact_list"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
-        <a href="main.php?modus=news"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
-        <a href="http://faq.uga-agga.de" class="new-window"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
-      </div>
-    </div>
-    <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
-  </div>
-  <div class="ua-header-logout">
-    <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
-    <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
-    <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
-    <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
-    <div class="bold" style="margin-right: 10px ;margin-top: 5px">Farmpunkte: {{ player_fame }}</div>
-  </div>
   <div class="ym-wrapper">
     <div class="ym-column">
+      <div class="ym-col-head-middle">
+        <div class="ua-head-menu">
+          <div id="ua-head-menu-item">
+            <a href="main.php?modus=hero_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>
+            <a href="main.php?modus=cave_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
+            <a href="main.php?modus=CaveBookmarks"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
+            <a href="main.php?modus=questionnaire"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
+            <a href="main.php?modus=Donations"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
+            <a href="main.php?modus=tribe"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
+            <a href="main.php?modus=Contacts"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
+            <a href="main.php?modus=effectwonder_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
+            <a href="main.php?modus=user_profile"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
+            <a href="main.php?modus=artefact_list"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
+            <a href="main.php?modus=news"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
+            <a href="http://faq.uga-agga.de" class="new-window"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
+          </div>
+        </div>
+        <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
+      </div>
       <div class="ym-col1 ym-col-head1">&nbsp;</div>
-      <div class="ym-col2 ym-col-head2">&nbsp; </div>
+      <div class="ym-col2 ym-col-head2">
+         <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
+        <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
+        <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
+        <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
+        <div class="bold" style="margin-right: 10px ;margin-top: 5px">Farmpunkte: {{ player_fame }}</div>
+      </div>
     </div>
 
     <div id="main">
@@ -196,7 +170,7 @@
                 <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
               </li>
             </ul>
-            <div class="notice small">Fehler bitte im Spiel an Support melden.</div>
+            <div class="notice small">Fehler bitte im Spiel an den Spieler <a href="http://game.uga-agga.com/main.php?modus=message_new&recipient=Support">"Support"</a> melden.</div>
             {% block content %}{% endblock %}
           </div>
         </div>

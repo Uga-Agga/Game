@@ -19,7 +19,7 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
   {% if message_xml.source.caveID in list_cave_id %}
     deiner Höhle  {{ message_xml.source.caveName }} ({{ message_xml.source.xCoord }}/{{ message_xml.source.yCoord }})
   {% else %}
-    der Höhle {{ message_xml.source.caveName }} ({{ message_xml.source.xCoord }}/{{ message_xml.source.yCoord }}) des Spielers {{ message_xml.source.playerName }}
+    der Höhle {{ message_xml.source.caveName }} ({{ message_xml.source.xCoord }}/{{ message_xml.source.yCoord }}) {% if message_xml.source.playerName != '' %}des Spielers {{ message_xml.source.playerName }}{% endif %}
   {% endif %}
 
   ist ein Transport eingetroffen.

@@ -254,7 +254,7 @@ function profile_update($db_login) {
   $sql->bindValue('email2', $data['email2'], PDO::PARAM_STR);
   $sql->bindValue('avatar', $data['avatar'], PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
+  if (!$sql->execute()) {
     return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
   }
 
@@ -403,7 +403,7 @@ class ProfileElementPassword extends ProfileElementInput {
   }
 
   function getTmplContext() {
-    return 'entry_input';
+    return 'entry_input_pwd';
   }
 }
 

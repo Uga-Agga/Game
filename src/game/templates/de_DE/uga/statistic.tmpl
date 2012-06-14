@@ -35,6 +35,8 @@
                 <td>{{ god.name }}</td>
                 <td>{{ god.value }}</td>
               </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="3">Zur Zeit gibt es keine Götter Statistik.</td></tr>
               {% endfor %}
               {% set bgID = 0 %}
             </tbody>
@@ -57,6 +59,8 @@
                 <td>{{ halfgod.name }}</td>
                 <td>{{ halfgod.value }}</td>
               </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="3">Zur Zeit gibt es keine Halbgötter Statistik.</td></tr>
               {% endfor %}
               {% set bgID = 0 %}
             </tbody>
@@ -122,6 +126,8 @@
                 <td><a href="main.php?modus=statistic&amp;show=unit_detail&amp;unit={{ unit.unit }}">{{ unit.name }}</a></td>
                 <td>{{ unit.value }}</td>
               </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="3">Zur Zeit gibt es keine Einheiten Statistik.</td></tr>
               {% endfor %}
               {% set bgID = 0 %}
             </tbody>
@@ -144,6 +150,8 @@
                 <td>{{ storage.name }}</td>
                 <td>{{ storage.value }}</td>
               </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="3">Zur Zeit gibt es keine Lager Statistik.</td></tr>
               {% endfor %}
               {% set bgID = 0 %}
             </tbody>
@@ -168,6 +176,8 @@
                 <td class="text-center">{{ wonder.success }}</td>
                 <td class="text-center">{{ wonder.fail }}</td>
               </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="3">Zur Zeit gibt es keine Wunder Statistik.</td></tr>
               {% endfor %}
               {% set bgID = 0 %}
             </tbody>

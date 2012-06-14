@@ -22,7 +22,7 @@ $messageText = array (
   'default' => _('Es ist ein Fehler aufgetreten. Bitte erneut einloggen um weiterspielen zu können.'),
   'db'      => _('Es konnte keine Verbindung zur Datenbank hergestellt werden!<br />Bitte wende dich an einen Administrator oder versuche es später erneut.'),
   'inaktiv' => sprintf(_('Sie waren für %s Minuten oder mehr inaktiv. Bitte loggen sie sich erneut ins Spiel ein um weiterspielen zu können.'), ((int)(SESSION_MAX_LIFETIME/60))),
-  'logout'  => _('Du bist jetzt ausgeloggt und können den Browser schließen oder weitersurfen.<br /><br />Vielen Dank für das Spielen von Uga-Agga!'),
+  'logout'  => _('Du bist jetzt ausgeloggt und kannst den Browser schließen oder weitersurfen.<br /><br />Vielen Dank für das Spielen von Uga-Agga!'),
   'wrongSessionID' => _('Falsche oder ungültige SessionID.'),
 );
 

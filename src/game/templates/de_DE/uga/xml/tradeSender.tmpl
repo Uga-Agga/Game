@@ -19,7 +19,7 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
   {% if message_xml.target.caveID in list_cave_id %}
     deiner Höhle  {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
   {% else %}
-    der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) des Spielers {{ message_xml.target.playerName }}
+    der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) {% if message_xml.target.playerName != '' %}des Spielers {{ message_xml.target.playerName }}{% endif %}
   {% endif %}
 
   eingetroffen.
