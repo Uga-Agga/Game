@@ -115,7 +115,7 @@
             Die Rohstoffe werden nach der gleichen Grundlage wie beim Missionieren bewertet!<br/>
             Mehrfacheintragung möglich!
           </div>
-          <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ hero_link }}">
+          <form class="ym-form ym-columnar" id="heroImmolation" method="post" action="main.php?modus={{ hero_link }}">
             <table>
               <thead>
                 <tr>
@@ -131,7 +131,7 @@
                     <td>{{ resource.name }}</td>
                     <td>
                       <div class="ym-fbox-text">
-                        <input style="width: 100px" type="text" name="resource_{{ resource.resourceID }}" id="resource_{{ resource.resourceID }}" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
+                        <input style="width: 100px" type="text" name="value[{{ resource.resourceID }}]" id="value[{{ resource.resourceID }}]" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
                       </div>
                     </td>
                   </tr>
@@ -195,7 +195,6 @@
 
       <h4>Tränke</h4>
       <div class="tabbody">
-        {% if potions %}
           <table>
             <thead>
               <tr class="bg2">
@@ -233,10 +232,11 @@
                   </form>
                 </td>
               </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="6">Zur Zeit befinden sich keine Tränke in deinem Besitz.</td></tr>
               {% endfor %}
             </tbody>
           </table>
-        {% endif %}
       </div>
       {% endif %}{# end of hero.isAlive #}
 
@@ -251,37 +251,40 @@
           </ul>
         </div>
         {% endif %}
-        <table>
-          <tr>
-            <td><img src="{{ gfx }}/heroes/altar_large.gif" style="width: 225px; height: 140px;" alt="Altar der Auferstehung" /></td>
-            <td>
-              <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;">{{ ritual.description }}</p>
-              <p style="text-align: justify; margin-left: 5px; margin-bottom: 15px;"><strong>Kosten für Held auf Level {{ hero.lvl }}:</strong><br />&nbsp;&nbsp;
+        <div style="float: left; width: 230px;"><img src="{{ gfx }}/heroes/altar_large.gif" style="width: 225px; height: 140px;" alt="Altar der Auferstehung" /></div>
+        <div style="float: left;">
+          <ul style="margin-top: 10px;">
+            <li>{{ ritual.description }}</li>
+            <li class="bold">Die Kosten für die Wiederbelebung des Helden auf Level {{ hero.lvl }} beträgt:</li>
+            <li>
               <table>
                 <tr>
                   <td>
-                    {% for item in resource %} 
-                      {% if item.value %} <img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15px" height="15px" alt="{{ item.name }}" title="{{ item.name }}" /> 
-                        {% if item.enough %} 
-                          <span class="enough">{{ item.value }}</span> 
-                        {% else %} 
-                          <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}')" onmouseout="hideWMTT()">{{ item.value }}</span>
-                          <div id="missing_{{ item.dbFieldName }}" class="tooltip">Es fehlen noch: {{ item.missing }} {{ item.name }}</div> 
-                        {% endif %} &nbsp; 
-                      {% endif %} 
-                    {% endfor %}
+                  {% for item in resource %} 
+                    {% if item.value %} <img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15px" height="15px" alt="{{ item.name }}" title="{{ item.name }}" /> 
+                      {% if item.enough %} 
+                        <span class="enough">{{ item.value }}</span> 
+                      {% else %} 
+                        <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}')" onmouseout="hideWMTT()">{{ item.value }}</span>
+                        <div id="missing_{{ item.dbFieldName }}" class="tooltip">Es fehlen noch: {{ item.missing }} {{ item.name }}</div> 
+                      {% endif %} &nbsp; 
+                    {% endif %} 
+                  {% endfor %}
                   </td>
                   <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" style="width: 16px; height: 16px; vertical-align: bottom" />{{ delay }}</td>
                 </tr>
               </table>
-              <br /><br />
-              <form action="main.php?modus={{ hero_link }}" id="newhero" method="post">
-                <input type="hidden" name="action" value="reincarnate" />
-                <input type="submit" value="Wiederbeleben"{% if hero.isAlive %} disabled="disabled"{% endif %} />
-              </form>
-            </td>
-          </tr>
-        </table>
+            </li>
+          </ul>
+        </div>
+        <div style="clear: both;">&nbsp;</div>
+
+        <div class="text-center">
+          <form class="ym-form" action="main.php?modus={{ hero_link }}" id="newhero" method="post">
+            <input type="hidden" name="action" value="reincarnate" />
+            <input type="submit" class="ym-button" value="Wiederbeleben" id="submit" name="submit" {% if hero.isAlive %} disabled="disabled"{% endif %} />
+          </form>
+        </div>
       </div>
       {% endif %}
     </div>
