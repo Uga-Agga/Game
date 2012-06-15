@@ -821,6 +821,4 @@ class mySimpleXML extends SimpleXMLElement {
   }
 }
 
-
-
 ?>

@@ -280,7 +280,6 @@ switch ($modus) {
     unit_getUnitDetail($caveID, $ownCaves[$caveID]);
     break;
 
-
   case UNIT_DETAIL:
     $unitID = Request::getVar('unitID', 0);
     $method = Request::getVar('method', '');
@@ -330,7 +329,7 @@ switch ($modus) {
     if (!empty($_SESSION['player']->tribe)) {
       tribe_getContent($caveID, $ownCaves[$caveID]);
     } else {
-      tribe_getContentNoTribe();
+      tribe_getContentNoTribe($caveID, $ownCaves[$caveID]);
     }
     break;
 
@@ -418,7 +417,7 @@ switch ($modus) {
     break;
 
   case PLAYER_DETAIL:
-    $playerID = Request::getVar('playerID', 0);
+    $playerID = Request::getVar('detailID', 0);
 
     player_getContent($caveID, $playerID);
     $requestKeys = array('detailID');

@@ -65,60 +65,58 @@
             </div>
             <div style="clear: both;"></div>
 
-            <div class="space">
-              <table>
-                <thead>
-                <tr>
-                  <th class="text-left">Stamm</th>
-                  <th class="text-left">Beziehungen</th>
-                  <th>Sonstiges</th>
-                </tr>
-                </thead>
-                <tbody>
-                  {% if relations_war %}
-                    {% for item in relations_info %}
-                      {% if item.war %}
-                      {% set bgID = (bgID+1)%2 %}
-                        <tr class="bg{{ bgID }}">
-                        <td class="text-left">{{ item.tag }}</td>
-                        <td class="text-left">
-                          Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                          {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-                        </td>
-                        <td class="text-right">
-                          {% if item.war %}
-                            Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                            {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
-                          {% endif %}
-                        </td>
-                      </tr>
-                      {% endif %}
-                    {% endfor %}
-                    {% for item in relations %}
-                      {% if item.war %}
-                      {% set bgID = (bgID+1)%2 %}
+            <table>
+              <thead>
+              <tr>
+                <th class="text-left">Stamm</th>
+                <th class="text-left">Beziehungen</th>
+                <th>Sonstiges</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% if relations_war %}
+                  {% for item in relations_info %}
+                    {% if item.war %}
+                    {% set bgID = (bgID+1)%2 %}
                       <tr class="bg{{ bgID }}">
-                        <td class="text-left">{{ item.tag }}</td>
-                        <td class="text-left">
-                          Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                          {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-                        </td>
-                        <td class="text-right">
-                          {% if item.war %}
-                            Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                            Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
-                          {% endif %}
-                        </td>
-                      </tr>
-                      {% endif %}
-                    {% endfor %}
-                    {% set bgID = 0 %}
-                  {% else %}
-                    <tr class="bg0"><td class="last text-center" colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
-                  {% endif %}
-                </tbody>
-              </table>
-            </div>
+                      <td class="text-left">{{ item.tag }}</td>
+                      <td class="text-left">
+                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                        {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                      </td>
+                      <td class="text-right">
+                        {% if item.war %}
+                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                          {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% for item in relations %}
+                    {% if item.war %}
+                    {% set bgID = (bgID+1)%2 %}
+                    <tr class="bg{{ bgID }}">
+                      <td class="text-left">{{ item.tag }}</td>
+                      <td class="text-left">
+                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                        {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                      </td>
+                      <td class="text-right">
+                        {% if item.war %}
+                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                          Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% set bgID = 0 %}
+                {% else %}
+                  <tr class="bg0"><td class="last text-center" colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
           </div>
 
           <h5 class="hide_status_msg">Mitgliederliste</h5>

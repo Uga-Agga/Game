@@ -1527,10 +1527,10 @@ function tribe_processJoin($playerID, $tag, $password) {
   global $db;
 
   if (!tribe_changeTribeAllowedForPlayerID($playerID)) {
-    return -11;
+    return -10;
   }
   if (!relation_leaveTribeAllowed($tag) ) {
-    return -12;
+    return -6;
   }
 
   $sql = $db->prepare("SELECT tag
@@ -1540,7 +1540,7 @@ function tribe_processJoin($playerID, $tag, $password) {
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('password', $password, PDO::PARAM_STR);
   if (!$sql->rowCountSelect()) {
-    return -2;
+    return -1;
   }
 
   if (!($player = getPlayerByID($playerID))) {
@@ -1555,13 +1555,13 @@ function tribe_processJoin($playerID, $tag, $password) {
                          WHERE tribe LIKE :tag");
     $sql->bindValue('tag', $tribeData['tag'], PDO::PARAM_STR);
     if (!$sql->execute()) {
-      return -13;
+      return -7;
     }
     $row = $sql->fetch(PDO::FETCH_ASSOC);
     $sql->closeCursor();
 
     if (!$row['IsOk']) {
-      return -13;
+      return -7;
     }
   }
 
@@ -1573,8 +1573,7 @@ function tribe_processJoin($playerID, $tag, $password) {
 
   Player::addHistoryEntry($playerID, sprintf(_("tritt dem Stamm '%s' bei"), $tribeData['tag']));
 
-  tribe_sendTribeMessage($tribeData['tag'], TRIBE_MESSAGE_MEMBER, "Spielerbeitritt",
-    "Der Spieler {$player['name']} ist soeben dem Stamm beigetreten.");
+  tribe_sendTribeMessage($tribeData['tag'], TRIBE_MESSAGE_MEMBER, "Spielerbeitritt", "Der Spieler {$player['name']} ist soeben dem Stamm beigetreten.");
 
   return 1;
 }

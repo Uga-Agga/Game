@@ -22,7 +22,7 @@ function player_getContent($caveID, $playerID) {
 
   // workaround, if no playerID is submitted! TODO
   if ($playerID == 0) $playerID = $_SESSION['player']->playerID;
-  
+
   $playerDetails = Player::getPlayer($playerID, true);
   if (!$playerDetails) {
     $template->throwError('Da wollte irgendwie was nicht aus der Datenbank ausgelesen werden :(');

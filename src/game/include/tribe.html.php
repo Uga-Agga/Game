@@ -82,7 +82,7 @@ function tribe_getContent($caveID, &$details) {
   );
 
   if (!$_SESSION['player']->tribe) {
-    tribe_getContentNoTribe();
+    tribe_getContentNoTribe($caveID, $details);
     return;
   }
 
@@ -187,7 +187,7 @@ function tribe_getContent($caveID, &$details) {
         if ($messageID > 0) {
           page_refreshUserData();
           $template->addVar('status_msg', $messageText[$messageID]);
-          tribe_getContentNoTribe();
+          tribe_getContentNoTribe($caveID, $details);
           return;
         }
       } else {
@@ -564,7 +564,7 @@ function tribe_getContent($caveID, &$details) {
   ));
 }
 
-function tribe_getContentNoTribe() {
+function tribe_getContentNoTribe($caveID, &$details) {
   global $template;
 
   $messageText = array (
@@ -583,7 +583,7 @@ function tribe_getContentNoTribe() {
   );
 
   if (!empty($_SESSION['player']->tribe)) {
-    tribe_getContent();
+    tribe_getContent($caveID, $details);
     return;
   }
 
@@ -604,7 +604,7 @@ function tribe_getContentNoTribe() {
           page_refreshUserData();
 
           $template->addVar('status_msg', $messageText[$messageID]);
-          tribe_getContent();
+          tribe_getContent($caveID, $details);
           return;
         }
       } else {
@@ -618,14 +618,14 @@ function tribe_getContentNoTribe() {
       } else {
         $messageID = -8;
       }
-      
+
       if ($messageID == 2) {
         $auth = new auth;
         $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
         page_refreshUserData();
 
         $template->addVar('status_msg', $messageText[$messageID]);
-        tribe_getContent();
+        tribe_getContent($caveID, $details);
         return;
       }
     break;
