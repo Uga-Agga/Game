@@ -131,6 +131,7 @@ install-game: configtest $(CONFIG)
 	chmod 777 $(GAMEDIR)/images/temp
 	$(INSTALL_DATA) www/*.php $(GAMEDIR)
 	$(INSTALL_DATA) www/js/*.js $(GAMEDIR)/js
+	$(INSTALL_DATA) www/js/PIE.htc $(GAMEDIR)/js
 	$(INSTALL_DATA) www/yaml/core/base.min.css $(GAMEDIR)/yaml/core
 	$(INSTALL_DATA) www/yaml/core/iehacks.min.css $(GAMEDIR)/yaml/core
 	$(INSTALL_DATA) www/yaml/add-ons/accessible-tabs/jquery.tabs.js $(GAMEDIR)/yaml/add-ons/accessible-tabs

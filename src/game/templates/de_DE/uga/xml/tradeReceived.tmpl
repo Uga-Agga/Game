@@ -13,6 +13,7 @@
 
 Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
 
+{% if message_xml.source %}
 <p>
   Aus
 
@@ -24,6 +25,26 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
 
   ist ein Transport eingetroffen.
 </p>
+{% endif %}
+
+
+{% if message_xml.wonderMessage %}{{ message_xml.wonderMessage|raw }}{% endif %}
+
+{% if message_xml.effects.effect %}
+<table style="width: auto; margin-top: 10px;">
+  <thead>
+    <th colspan="2">Wirkung</th>
+  </thead>
+  <tbody>
+    {% for effect in message_xml.effects.effect %}
+      <tr>
+        <td>{{ effect.name }}</td>
+        <td>{{ effect.value }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
 
 {% if message_xml.units.unit %}
 <table style="width: auto; margin-top: 10px;">

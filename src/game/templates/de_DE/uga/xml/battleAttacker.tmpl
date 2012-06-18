@@ -12,9 +12,9 @@
 {% spaceless %}
 
 {% if message_xml.winner == 'defender' %}
-  Niederlage bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})!
+  Niederlage bei Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})!
 {% else %}
-  Sieg bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
+  Sieg bei Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})!
 {% endif %}
 <br /><br />
 
@@ -22,10 +22,10 @@
   Dein Oberkeulenschwinger berichtet direkt vom Schlachtfeld:<br />
   Mein oberster Stammesführer! Du hast den Kampf um
 
-  {% if message_xml.attacker.caveID in list_cave_id %}
-    deiner Höhle  {{ message_xml.attacker.caveName }}
+  {% if message_xml.defender.caveID in list_cave_id %}
+    deine Höhle  {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})
   {% else %}
-    der Höhle {{ message_xml.attacker.caveName }} des Spielers {{ message_xml.defender.playerName }}
+    die Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }}) {% if message_xml.defender.playerName != '' %}des Spielers {{ message_xml.defender.playerName }}{% endif %}
   {% endif %}
 
   {% if message_xml.winner == 'attacker' %}

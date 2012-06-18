@@ -22,56 +22,56 @@
       </div>
     {% endif %}
 
-    <div class="notice" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
+    <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
       <ul>
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesdaten</li>
+        <li class="bold text-center" style="padding-bottom: 10px;">Stammesdaten</li>
 
         <li class="player_detail_left">Name:</li>
         <li class="player_detail_right">{{ player_details.name }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Stamm:</li>
         <li class="player_detail_right"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe }}">{{ player_details.tribe }}</a></li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Awards:</li>
-        <li class="player_detail_right">{% if player_details.award %}<a href="main.php?modus={award_modus}&amp;award={tag}"><img src="images/awards/{tag}.png" width="15" height="15" border="0" hspace="1"></a>{% endif %}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="player_detail_right">{% if player_details.award %}<a href="main.php?modus={award_modus}&amp;award={tag}"><img src="images/awards/{tag}.png" width="15" height="15" border="0" hspace="1"></a>{% else %}&nbsp;{% endif %}</li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Geschlecht:</li>
         <li class="player_detail_right">{{ player_details.sex }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Herkunft:</li>
         <li class="player_detail_right">{{ player_details.origin }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Uga-Agga-Alter:</li>
         <li class="player_detail_right">{{ player_details.age }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">ICQ:</li>
         <li class="player_detail_right">{{ player_details.icq }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Knüppelpunkte gewonnen:</li>
         <li class="player_detail_right">{{ player_details.warpoints_pos }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">Knüppelpunkte verloren:</li>
         <li class="player_detail_right">{{ player_details.warpoints_neg }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left">geknüppelte Gegner:</li>
         <li class="player_detail_right">{{ player_details.body_count }}</li>
-        <li class="clr"><br class="clr" /></li>
+        <li class="clr"></li>
 
         <li class="player_detail_left"><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ player_details.rank }}">Aktuelles Ranking:</a></li>
-        <li class="player_detail_right">{{ player_details.rank }}</li>
-        <li class="clr"><br class="clr" /></li>
-        
-        <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus={{ contact_bookmarks_link }}&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
-        <li style="padding-bottom: 10px; text-align: center;"><a href="main.php?modus={{ messages_new_link }}&amp;recipient={{ player_details.mail_receiver }}">Nachricht senden</a></li>
+        <li class="player_detail_right">{% if player_details.rank %}{{ player_details.rank }}{% else %}&nbsp;{% endif %}</li>
+        <li class="clr"></li>
+
+        <li class="text-center"><a href="main.php?modus={{ contact_bookmarks_link }}&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
+        <li class="text-center"><a href="main.php?modus={{ messages_new_link }}&amp;recipient={{ player_details.mail_receiver }}">Nachricht senden</a></li>
       </ul>
     </div>
 

@@ -4,31 +4,33 @@
 
 {% if categories %}
   {% for category in categories %}
-  <div class="box" style="float: left;">
-    <div class="box-header">{{ category.name }}</div>
-    <div class="box-content success inner">
-      <table cellpadding="3" cellspacing="0" rules="rows">
-        <tr>
-          <th>Einheit:</th>
-          {% for cave in category.cave %}
-            <th><a href="main.php?caveID={{ cave.caveID }}" target="_top"><img src="images/stringup.png.php?cave_id={{ cave.caveID }}" alt="{{ cave.name }}" title="{{ cave.name }}" border="0"></a></th>
-          {% endfor %}
-          <th>&sum;</th>
-        </tr>
-        {% for unit in category.unit %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr>
-            <td><img src="{{ gfx }}/units/{{ unit.dbFieldName }}_small.gif" width="40" height="50" alt="{{ unit.name }}" title="{{ unit.name }}"></td>
-            {% for cave in unit.cave %}
-              <td>{{ cave.amount }}</td>
+    <div class="ua-box ua-box-center">
+      <div class="ua-box-header">{{ category.name }}</div>
+      <div class="ua-box-content">
+        <table cellpadding="3" cellspacing="0" rules="all">
+          <thead>
+            <tr style="padding-left: 4px; padding-right: 4px;">
+              <th>Einheit:</th>
+              {% for cave in category.cave %}<th><a href="main.php?caveID={{ cave.caveID }}" target="_top"><img src="images/stringup.png.php?cave_id={{ cave.caveID }}" alt="{{ cave.name }}" title="{{ cave.name }}" border="0"></a></th>{% endfor %}
+              <th class="text-center">&sum;</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for unit in category.unit %}
+              {% set bgID = (bgID+1)%2 %}
+              <tr>
+                <td><img src="{{ gfx }}/units/{{ unit.dbFieldName }}_small.gif" width="40" height="50" alt="{{ unit.name }}" title="{{ unit.name }}"></td>
+                {% for cave in unit.cave %}
+                  <td>{{ cave.amount }}</td>
+                {% endfor %}
+                <td>{{ unit.sum }}</td>
+              </tr>
             {% endfor %}
-            <td>{{ unit.sum }}</td>
-          </tr>
-        {% endfor %}
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
-  <div style="clear:both;"></div>
+    <div style="clear: both;"></div>
   {% endfor %}
 {% else %}
 <div class="notice">Zur Zeit gibt es keine Bewegungen.</div>

@@ -12,29 +12,29 @@
 {% spaceless %}
 
 {% if message_xml.winner == 'attacker' %}
-  Niederlage bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})!
+  Niederlage bei Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})!
 {% else %}
-  Sieg bei Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
+  Sieg bei Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})
 {% endif %}
 
 <p>
-  {% if message_xml.winner == 'attacker' %}
-    Ihr seht mit euren blutunterlaufenen Augen zu, wie ein fremder Stamm aus
-  {% else %}
-    Ihr seht vergnügt zu, wie ein fremder Stamm aus
-  {% endif %}
+{% if message_xml.winner == 'attacker' %}
+  Ihr seht mit euren blutunterlaufenen Augen zu, wie ein fremder Stamm aus
+{% else %}
+  Ihr seht vergnügt zu, wie ein fremder Stamm aus
+{% endif %}
 
-  {% if message_xml.attacker.caveID in list_cave_id %}
-    eurer Höhle {{ message_xml.attacker.caveName }}
-  {% else %}
-    der Höhle {{ message_xml.attacker.caveName }} des Spielers {{ message_xml.defender.playerName }}
-  {% endif %}
+{% if message_xml.attacker.caveID in list_cave_id %}
+  eurer Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
+{% else %}
+  der Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }}) {% if message_xml.attacker.playerName != '' %}des Spielers {{ message_xml.attacker.playerName }}{% endif %}
+{% endif %}
 
-  {% if message_xml.winner == 'attacker' %}
-    eure Höhle {{ message_xml.defender.caveName }} plündert! Ihr habt den Kampf um eure Höhle verloren!
-  {% else %}
-    vor der überlegenen Streitmacht eurer Höhle {{ message_xml.defender.caveName }} flieht, nachdem sie versucht hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
-  {% endif %}
+{% if message_xml.winner == 'attacker' %}
+  eure Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }}) plündert! Ihr habt den Kampf um eure Höhle verloren!
+{% else %}
+  vor der überlegenen Streitmacht eurer Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }}) flieht, nachdem sie versucht hatten, eure Höhle zu plündern! Ihr habt den Kampf um eure Höhle gewonnen!
+{% endif %}
 </p>
 
 {% if message_xml.takeoverMultiplier %}

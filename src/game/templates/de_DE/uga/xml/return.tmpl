@@ -15,10 +15,10 @@ Rückkehr in Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCo
 <p>
   Deine Einheiten sind von
 
-  {% if message_xml.target.caveID in list_cave_id %}
-    deiner Höhle  {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
+  {% if message_xml.source.caveID in list_cave_id %}
+    deiner Höhle  {{ message_xml.source.caveName }} ({{ message_xml.source.xCoord }}/{{ message_xml.source.yCoord }})
   {% else %}
-    der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) {% if message_xml.target.playerName != '' %}des Spielers {{ message_xml.target.playerName }}{% endif %}
+    der Höhle {{ message_xml.source.caveName }} ({{ message_xml.source.xCoord }}/{{ message_xml.source.yCoord }}) {% if message_xml.source.playerName != '' %}des Spielers {{ message_xml.source.playerName }}{% endif %}
   {% endif %}
 
   wieder zurückgekehrt.

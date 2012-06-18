@@ -938,6 +938,7 @@ function tribe_getPlayerList($tag, $getGod=false, $getCaves=false) {
     }
   }
 
+  $return = array();
   $sql = $db->prepare("SELECT p.playerID, p.name, p.awards, r.rank, r.average AS points, r.caves, r.religion, r.fame, r.fame as kp {$select}
                        FROM ". PLAYER_TABLE ." p
                          LEFT JOIN ".RANKING_TABLE ." r
