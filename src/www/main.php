@@ -333,20 +333,6 @@ switch ($modus) {
     }
     break;
 
-  case TRIBE_RELATION_LIST:
-    $tag = Request::getVar('tag', '');
-
-    tribeRelationList_getContent($tag);
-    $requestKeys = array('tag');
-    break;
-
-  case TRIBE_HISTORY:
-    $tag = Request::getVar('tag', '');
-
-    tribeHistory_getContent($tag);
-    $requestKeys = array('tag');
-    break;
-
   case TRIBE_DELETE:
     $confirm = Request::isPost('confirm');
 
@@ -427,13 +413,6 @@ switch ($modus) {
     $tribe = Request::getVar('tribe', '');
 
     tribe_getContent($caveID, $tribe);
-    $requestKeys = array('tribe');
-    break;
-
-  case TRIBE_PLAYER_LIST:
-    $tribe = Request::getVar('tribe', '');
-
-    tribePlayerList_getContent($caveID, $tribe);
     $requestKeys = array('tribe');
     break;
 
@@ -589,11 +568,7 @@ $template->addVars(array(
   'takeover_link'           => TAKEOVER,
   'tribe_link'              => TRIBE,
   'tribe_admin_link'        => TRIBE_ADMIN,
-  'tribe_choose_leader_link' => TRIBE_CHOOSE_LEADER,
   'tribe_detail_link'       => TRIBE_DETAIL,
-  'tribe_history_link'      => TRIBE_HISTORY,
-  'tribe_relation_link'     => TRIBE_RELATION_LIST,
-  'tribe_player_list_link'  => TRIBE_PLAYER_LIST,
   'unit_link'               => UNIT_BUILDER,
   'unit_detail_link'        => UNIT_DETAIL,
   'unit_movement_link'      => UNIT_MOVEMENT,

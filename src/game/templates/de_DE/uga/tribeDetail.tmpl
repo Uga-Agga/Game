@@ -1,7 +1,8 @@
 {#
 /* tribeDetail.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,54 +17,133 @@
 <div class="ua-box small">
   <div class="ua-box-header">Stamm: {{ tribe_details.name }}</div>
   <div class="ua-box-content">
-    {% if tribe_details.avatar %}
-      <div style="text-align: center; padding: 10px;">
-        <img src="{{ tribe_details.avatar_path }}" width="{{ tribe_details.avatar_width }}" height="{{ tribe_details.avatar_height }}" alt="Stammesbanner" />
+    <div id="tribeDetail" class="jquery_tabs nav2">
+      <h5>Stammesübersicht</h5>
+      <div class="tabbody2">
+        {% if tribe_details.avatar %}
+          <div style="text-align: center; padding: 10px;">
+            <img src="{{ tribe_details.avatar_path }}" width="{{ tribe_details.avatar_width }}" height="{{ tribe_details.avatar_height }}" alt="Stammesbanner" />
+          </div>
+        {% endif %}
+
+        <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
+          <ul>
+            <li class="bold text-center" style="padding-bottom: 10px;">Stammesdaten</li>
+
+            <li class="tribe_detail_left">Stammestag:</li>
+            <li class="tribe_detail_right">{{ tribe_details.tag }}</li>
+            <li class="clr"></li>
+
+            <li class="tribe_detail_left">Stammesname:</li>
+            <li class="tribe_detail_right">{{ tribe_details.name }}</li>
+            <li class="clr"></li>
+
+            <li class="tribe_detail_left">Anführer:</li>
+            <li class="tribe_detail_right">{% if tribe_details.leader_name != 'k.A.' %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a>{% else %}{{ tribe_details.leader_name }}{% endif %}</li>
+            <li class="clr"></li>
+
+            <li class="tribe_detail_left"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">Ranking:</a></li>
+            <li class="tribe_detail_right"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">{{ tribe_details.rank }}</a></li>
+            <li class="clr"></li>
+          </ul>
+        </div>
+
+        <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
+          <ul>
+            <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
+
+            <li style="padding-bottom: 10px;">Knüppelpunkte gewonnen: {{ tribe_details.warpoints_pos }}</li>
+            <li style="padding-bottom: 10px;">Knüppelpunkte verloren: {{ tribe_details.warpoints_neg }}</li>
+
+            {% if tribe_details.award_tag %}<li><a href="main.php?modus={{ award_details_link }}&amp;award={{ tribe_details.award_tag }}"><img src="images/awards/{{ tribe_details.award_tag }}_large.png" width="128" height="128" border="0" hspace="8" /></a></li>{% endif %}
+          </ul>
+        </div>
+        <div style="clear: both;"></div>
+
+        <div style="padding: 0 10px 10px;">
+          <ul class="notice" style="margin: 0;">
+            <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesbeschreibung:</li>
+            <li>{{ tribe_details.description|raw }}</li>
+          </ul>
+        </div>
       </div>
-    {% endif %}
 
-    <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
-      <ul>
-        <li class="bold text-center" style="padding-bottom: 10px;">Stammesdaten</li>
+      <h5>Mitglieder</h5>
+      <div class="tabbody2">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>&nbsp;</th>
+              <th>Punktzahl</th>
+              <th>Knüppelpunkte</th>
+              <th>Höhlen</th>
+              <th>&nbsp;</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in tribe_player_list %}
+              <tr>
+                <td><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ item.rank }}">{{ item.rank }}</a></td>
+                <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
+                <td>{% if item.religion %}<img src="{{ gfx }}/de_DE/t_uga/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
+                <td>{{ item.points }}</td>
+                <td>{{ item.kp }}</td>
+                <td>{{ item.caves }}</td>
+                <td>
+                  {% if item.award %}
+                    {% for item2 in item.award %}
+                      <a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>
+                    {% endfor %}
+                  {% else %}&nbsp;{% endif %}
+                </td>
+              </tr>
+            {% else %}
+              <tr class="bg0"><td class="last text-center" colspan="7">Dieser Stamm hat keine Mitglieder mehr.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
 
-        <li class="tribe_detail_left">Stammestag:</li>
-        <li class="tribe_detail_right">{{ tribe_details.tag }}</li>
-        <li class="clr"></li>
+      <h5>Stammes-Geschichte</h5>
+      <div class="tabbody2">
+        {% if tribe_history %}
+          {% for item in tribe_history %}
+            <div class="info text-left" style="margin-left: 10px; margin-right: 10px;">
+              <h3 class="loud">{{ item.ingameTime }}</h3>
+              {{ item.message }}
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="space text-center">Dieser Stamm hat noch keine Geschichte.</div>
+        {% endif %}
+      </div>
 
-        <li class="tribe_detail_left">Stammesname:</li>
-        <li class="tribe_detail_right">{{ tribe_details.name }}</li>
-        <li class="clr"></li>
-
-        <li class="tribe_detail_left">Anführer:</li>
-        <li class="tribe_detail_right"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a></li>
-        <li class="clr"></li>
-
-        <li class="tribe_detail_left"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">Ranking:</a></li>
-        <li class="tribe_detail_right"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">{{ tribe_details.rank }}</a></li>
-        <li class="clr"></li>
-      </ul>
-    </div>
-
-    <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
-      <ul>
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
-
-        <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_player_list_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Mitglieder anzeigen</a></li>
-        <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_history_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Stammesgeschichte anzeigen</a></li>
-        <li style="padding-bottom: 10px;"><a href="main.php?modus={{ tribe_relation_link }}&amp;tag={{ tribe_details.tag|url_encode }}">Beziehungen anzeigen</a></li>
-        <li style="padding-bottom: 10px;">Knüppelpunkte gewonnen: {{ tribe_details.warpoints_pos }}</li>
-        <li style="padding-bottom: 10px;">Knüppelpunkte verloren: {{ tribe_details.warpoints_neg }}</li>
-
-        {% if tribe_details.award_tag %}<li><a href="main.php?modus={{ award_details_link }}&amp;award={{ tribe_details.award_tag }}"><img src="images/awards/{{ tribe_details.award_tag }}_large.png" width="128" height="128" border="0" hspace="8" /></a></li>{% endif %}
-      </ul>
-    </div>
-    <div style="clear: both;"></div>
-
-    <div style="padding: 0 10px 10px;">
-      <ul class="notice" style="margin: 0;">
-        <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesbeschreibung:</li>
-        <li>{{ tribe_details.description|raw }}</li>
-      </ul>
+      <h5>Beziehungen</h5>
+      <div class="tabbody2">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-left">Stamm</th>
+              <th>Haltung von {{ tribe_name }}</th>
+              <th>Haltung gegenüber {{ tribe_name }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in relations_data %}
+              {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
+                <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
+                <td>{{ item.relation_to }}</td>
+                <td>{{ item.relation_from }}</td>
+              </tr>
+            {% else %}
+              <tr class="bg0"><td class="last text-center" colspan="3">Zur Zeit hat dieser Stamm keine Beziehungen zu einem anderen Stamm.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>

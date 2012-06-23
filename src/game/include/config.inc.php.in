@@ -176,9 +176,8 @@ class Config {
                                               MESSAGE_READ,         MESSAGE_NEW,
                                               NEW_MESSAGE_RESPONSE, PLAYER_DETAIL,
                                               RANKING_PLAYER,       RANKING_TRIBE,
-                                              TRIBE_DETAIL,         TRIBE_HISTORY,
-                                              TRIBE_PLAYER_LIST,    TRIBE_RELATION_LIST,
-                                              USER_PROFILE,         WEATHER_REPORT);
+                                              TRIBE_DETAIL,         USER_PROFILE,
+                                              WEATHER_REPORT);
 
   // only this modi will be logged
   public static $logModusInclude = array(UNIT_MOVEMENT, DELETE_ACCOUNT,

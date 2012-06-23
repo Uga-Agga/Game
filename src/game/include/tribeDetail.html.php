@@ -92,6 +92,69 @@ function tribe_getContent($caveID, $tag) {
   }
 
   $template->addVar('tribe_details', $row);
+
+  // history
+  $history = relation_getTribeHistory($tag);
+  $template->addVar('tribe_history', $history);
+
+  // player list
+  $playerList = tribe_getPlayerList($tag);
+  foreach($playerList AS $id => $playerData) {
+    if (!empty($playerData['awards'])) {
+      $playerData['awards'] = explode('|', $playerData['awards']);
+
+      $awards = array();
+      foreach ($playerData['awards'] AS $award) {
+        $awards[] = array('tag' => $award, 'award_modus' => AWARD_DETAIL);
+      }
+
+      $playerData['award'] = $awards;
+    }
+
+    foreach($playerData as $k => $v) {
+      if ($k == 'awards' || $k == 'religion') {
+        continue;
+      }
+
+      if (!$v) {
+        $playerData[$k] = _('k.A.');
+      }
+    }
+
+    $playerList[$id] = $playerData;
+  }
+
+  $template->addVar('tribe_player_list', $playerList);
+
+  // relations
+  $relations = relation_getRelationsForTribe($tag);
+  $relationsData = array();
+  if (isset($relations['own'])) {
+    foreach($relations['own'] AS $target => $relationData) {
+      $relationsData[$target] = array (
+        'tribe'         => $relationData['tribe_target'],
+        'relation_to'   => $relationList[$relationData['relationType']]['name'],
+        'relation_from' => (isset($relations['other'][$target]) && $relations['other'][$target]) ? $relationList[$relations['other'][$target]['relationType']]['name'] : $relationList[0]['name'],
+      );
+    }
+  }
+
+  if (isset($relations['other'])) {
+    foreach($relations['other'] AS $target => $relationData) {
+      // already printed out this relation
+      if (isset($relationsData[$target])) {
+        continue;
+      }
+
+      $relationsData[$target] = array (
+        'tribe'         => $relationData['tribe'],
+        'relation_to'   => $relationList[0]['name'],
+        'relation_from' => $relationList[$relationData['relationType']]['name'],
+      );
+    }
+  }
+
+  $template->addVar('relations_data', $relationsData);
 }
 
 ?>
