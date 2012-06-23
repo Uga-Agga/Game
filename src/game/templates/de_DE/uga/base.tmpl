@@ -51,8 +51,8 @@
       
       .ua-head-menu { background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); }
 
-      #footerSlideButton { background: url(http://return-true.com/examples/sliderButton.png) {% if tutorial.open == 'true' %}bottom{% else %}top{% endif %} left no-repeat transparent;}
-      {% if tutorial.open == 'true' %}#footerSlideContent { height: 200px; }{% endif %}
+      #footerSlideButton { background: url(http://return-true.com/examples/sliderButton.png) {% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}bottom{% else %}top{% endif %} left no-repeat transparent;}
+      {% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}#footerSlideContent { height: 200px; }{% endif %}
     </style>
 
     <script type="text/javascript">
@@ -63,7 +63,7 @@
       }
 
       $(function() {
-      var open = {% if tutorial.open == 'true' %}true{% else %}false{% endif %};
+      var open = {% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}true{% else %}false{% endif %};
         $('#footerSlideButton').click(function() {
           if(open === false) {
             $('#footerSlideContent').animate({ height: '200px' });
@@ -167,7 +167,6 @@
                 <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
               </li>
             </ul>
-            <div class="notice small">Fehler bitte im Spiel an den Spieler <a href="http://game.uga-agga.com/main.php?modus=message_new&recipient=Support">"Support"</a> melden.</div>
             {% block content %}{% endblock %}
           </div>
         </div>

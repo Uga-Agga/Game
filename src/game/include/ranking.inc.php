@@ -31,7 +31,7 @@ function ranking_checkOffset($playerID, $offset) {
 
   // eingegbener offset ist eine zahl?
   if (strval(intval($offset)) == $offset) {
-    return $num_rows - $offset - floor(RANKING_ROWS/2);
+    return ($offset < $num_rows) ? $offset : $num_rows;
   }
 
   if (empty($offset)) {
