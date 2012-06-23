@@ -155,7 +155,7 @@ function merchant_processOrder($tradeID, $caveID, $caveData) {
     return 0;
   }
 
-  $now = time() + $_SESSION['player']->getTimeCorrection();
+  $now = time();
   
   if ($GLOBALS['tradeTypeList'][$tradeID]->category == "potion") {
     foreach ($GLOBALS['tradeTypeList'][$tradeID]->impactList[0]['potions'] AS $potionID => $potion) {

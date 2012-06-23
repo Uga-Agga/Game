@@ -382,7 +382,7 @@
             {% else %}
               <div class="space text-center">
                 <h3 style="margin: 0;">Regierungsform</h3>
-                <div style="padding-top: 10px">{{ government_data.name }} bis mindestens {{ government_data.duration }}</div>
+                <div style="padding-top: 10px">{{ government_data.name }} {% if government_data.duration %}bis mindestens {{ government_data.duration }}{% endif %}</div>
               </div>
             {% endif %}
           </div>

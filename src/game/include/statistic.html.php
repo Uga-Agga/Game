@@ -1,7 +1,7 @@
 <?php
 /*
  * statistic.html.php -
- * Copyright (c) 2010  David Unger
+ * Copyright (c) 2010-2012  David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -44,6 +44,34 @@ function statistic_getContent() {
   if (!sizeof($StatsData)) {
     return;
   }
+
+  /*
+  * Game stats
+  */
+
+  // Online in der letzten Std:
+  $time = time() - 1800;
+  $lastActionTime = gmdate("Y-m-d H:i:s", $time);
+
+  $sql = $db->prepare("SELECT count(*) as count
+                       FROM " . SESSION_TABLE . "
+                       WHERE lastAction > :lastAction");
+  $sql->bindValue('lastAction', $lastActionTime, PDO::PARAM_INT);
+  if (!$sql->execute()) return;
+  $userOnline = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  // erstelle Accounts
+  $sql = $db->prepare("SELECT count(*) as count FROM " . PLAYER_TABLE);
+  if (!$sql->execute()) return;
+  $accounts = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  $template->addVars(array(
+    'user_online'   => $userOnline['count'],
+    'accounts_all'  => $accounts['count'],
+    'accounts_free' => 508-$accounts['count']
+  ));
 
   /*
   * print god stats

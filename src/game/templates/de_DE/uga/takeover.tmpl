@@ -53,95 +53,100 @@
   <div class="info">Höhlen sind die Basis der Macht eines jeden Stammeshäuptlings. Je mehr er davon kontrolliert, umso mächtiger und gefährlicher kann er werden. Jede zusätzlich errungene Höhle dient als Ausbildungsstätte für Truppen und als Quelle göttlicher Wunder.</div>
 
   {% if chosen %}
-    <div class="success">
-      <p class="bold">Du leistest derzeit "Überzeugungsarbeit" in Höhle {{ current_name }} ({{ current_x_coord }}|{{ current_y_Coord }}).</p>
-      <br />
-      <div style="width: 550px; margin: 0 auto;">
-        <div style="width: 250px; float: left;">
-          <div class="box">
-            <div class="box-header">Derzeitige Wertpunkte:</div>
-            <div class="box-content">
-              <table>
+  <div class="ua-box">
+    <div class="ua-box-header">Missionierung</div>
+    <div class="ua-box-content">
+      <div class="text-center bold">Du leistest derzeit "Überzeugungsarbeit" in Höhle {{ current_name }} ({{ current_x_coord }}|{{ current_y_Coord }}).</div>
+      <div class="ym-grid" style="padding-top: 10px">
+        <div class="ym-g50 ym-gl">
+          <div class="ym-gbox">
+            <div class="ua-box">
+              <div class="ua-box-header">Derzeitige Wertpunkte</div>
+              <div class="ua-box-content">
                 {% if bidding.resource %}
-                  <tr>
-                    <th align="text-left" style="width: 125px;">Rohstoff</th>
-                    <th align="text-left" style="width: 125px;">Punkte</th>
-                  </tr>
-                  {% for item in bidding.resource %}
-                  <tr>
-                    <td align="text-left" style="width: 125px;">{{ item.name }}</td>
-                    <td align="text-left" style="width: 125px;">{{ item.value }}</td>
-                  </tr>
-                  {% endfor %}
-                  <tr>
-                    <td align="text-left" style="width: 125px;"><span class="bold">Punkte:</span></td>
-                    <td align="text-left" style="width: 125px;"><span class="bold">{{ bidding.sum }}</span></td>
-                  </tr>
-                  <tr>
-                    <td align="text-left" style="width: 125px;"><span class="bold">Verhältnis:</span></td>
-                    <td align="text-left" style="width: 125px;"><span class="bold">{{ bidding.proportion }}</span></td>
-                  </tr>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th class="text-left">Rohstoff</th>
+                        <th class="text-center">Punkte</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for item in bidding.resource %}
+                      <tr>
+                        <td class="text-left">{{ item.name }}</td>
+                        <td class="text-center">{{ item.value }}</td>
+                      </tr>
+                      {% endfor %}
+                      <tr>
+                        <td class="text-left">Punkte:</td>
+                        <td class="text-center">{{ bidding.sum }}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-left">Verhältnis:</td>
+                        <td class="text-center">{{ bidding.proportion }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 {% else %}
-                  <tr>
-                    <td align="text-left" colspan="2" style="width: 250px;">Du hast noch keine Rohstoffe in die Höhle gebracht.</td>
-                  </tr>
+                  <div class="space">Du hast noch keine Rohstoffe in die Höhle gebracht.</div>
                 {% endif %}
-              </table>
+              </div>
             </div>
           </div>
         </div>
-
-        <div style="float: right; width: 250px;">
-          <div class="box">
-            <div class="box-header">Mitstreiter:</div>
-            <div class="box-content success inner">
-              <table>
-                  <tr>
-                    <th align="text-left" style="width: 125px;">Spieler</th>
-                    <th align="text-left" style="width: 125px;">Sterne</th>
-                  </tr>
-                  <tr>
-                    <td align="text-left" style="width: 125px;">Eigene:</td>
-                    <td align="text-left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ bidding.status_txt }}.gif" alt="{{ bidding.status_img }}" /></td>
-                  </tr>
+        <div class="ym-g50 ym-gr">
+          <div class="ym-gbox">
+            <div class="ua-box">
+              <div class="ua-box-header">Derzeitige Wertpunkte</div>
+              <div class="ua-box-content">
                 {% if bidding.bidder %}
-                  {% for item in bidding.bidder %}
-                  <tr>
-                    <td align="text-left" style="width: 125px;"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
-                    <td align="text-left" style="width: 125px;"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
-                  </tr>
-                  {% endfor %}
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="text-center">Spieler</th>
+                      <th class="text-center">Sterne</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in bidding.bidder %}
+                      <tr>
+                        <td class="text-center"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
+                        <td class="text-center"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
                 {% else %}
-                  <tr>
-                    <td colspan="2" class="text-center" style="width: 250px;">Niemand ist dumm genug, gegen euch anzutreten.</td>
-                  </tr>
+                  <div class="space">Niemand ist dumm genug, gegen euch anzutreten.</div>
                 {% endif %}
-              </table>
+              </div>
             </div>
           </div>
-        </div>
-        <div style="clear:both;"></div>
-
-        <div style="width: 550px; margin: 0 auto;">
-          <div style="width: 250px; float: left;">
-            <form id="unit_movement" method="post" action="main.php?modus={{ unit_movement_link }}">
-              <div><input name="targetXCoord" type="hidden" value="{{ current_x_coord }}" />
-              <input name="targetYCoord" type="hidden" value="{{ current_y_Coord }}" />
-              <input name="targetCaveName" type="hidden" value="{{ uh_caveName }}" />
-              <input type="submit" name="submit" value="Dorthin bewegen!" /></div>
-            </form>
-          </div>
-
-          <div style="float: right; width: 250px;">
-            <form id="confirm_withdrawal" method="post" action="main.php?modus={{ takeover_link }}">
-              <div><input name="action" type="hidden" value="withdrawal" />
-              <input type="submit" name="submit" value="'Überzeugungsarbeit' beenden" /></div>
-            </form>
-          </div>
-          <div style="clear:both;"></div>
         </div>
       </div>
+
+      <div style="float: left; width: 165px;">
+        <form class="ym-form" method="post" action="main.php?modus={{ unit_movement_link }}">
+          <div class="ym-fbox-button">
+            <input name="targetXCoord" type="hidden" value="{{ current_x_coord }}" />
+            <input name="targetYCoord" type="hidden" value="{{ current_y_Coord }}" />
+            <input name="targetCaveName" type="hidden" value="{{ uh_caveName }}" />
+            <input type="submit" class="ym-button" value="Dorthin bewegen!" id="go" name="go" />
+          </div>
+        </form>
+      </div>
+      <div style="padding-left: 165px;">
+        <form class="ym-form" method="post" action="main.php?modus={{ takeover_link }}">
+          <div class="ym-fbox-button">
+            <input name="action" type="hidden" value="withdrawal" />
+            <input type="submit" class="ym-button" value="'Überzeugungsarbeit' beenden" id="withdrawal" name="withdrawal" />
+          </div>
+        </form>
+      </div>
+
     </div>
+  </div>
   {% endif %}
 
   <div class="ua-box">
