@@ -403,6 +403,26 @@
                   </select>
                 </div>
 
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Spieler</th>
+                      <th>Stimmen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in goverment_votes_list %}
+                      {% set bgID = (bgID+1)%2 %}
+                      <tr class="bg{{ bgID }}">
+                        <td class="text-left">{{ item.name }}</td>
+                        <td>{{ item.votes }}</td>
+                      </tr>
+                    {% else %}
+                      <tr class="bg0"><td class="last text-center" colspan="2">Bisher hat noch keine einen Anführer gewählt.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
                 <div class="ym-fbox-button text-center">
                   <input type="hidden" name="action" value="{{ tribe_action_choose_leader }}" />
                   <input type="submit" class="ym-button" value="Anführer wählen" id="submit5" name="submit"/>

@@ -100,26 +100,29 @@
             <div class="ua-box">
               <div class="ua-box-header">Derzeitige Wertpunkte</div>
               <div class="ua-box-content">
-                {% if bidding.bidder %}
                 <table>
                   <thead>
                     <tr>
-                      <th class="text-center">Spieler</th>
+                      <th class="text-left">Spieler</th>
                       <th class="text-center">Sterne</th>
                     </tr>
                   </thead>
                   <tbody>
+                    <tr>
+                      <td class="text-left">Eigene:</a></td>
+                      <td class="text-center"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ bidding.status_txt }}.gif" alt="{{ bidding.status_img }}" /></td>
+                    </tr>
                     {% for item in bidding.bidder %}
-                      <tr>
+                    {% set bgID = (bgID+1)%2 %}
+                      <tr class="bg{{ bgID }}">
                         <td class="text-center"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
                         <td class="text-center"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
                       </tr>
+                    {% else %}
+                      <tr class="bg0"><td class="last text-center" colspan="2">Niemand ist dumm genug, gegen euch anzutreten.</td></tr>
                     {% endfor %}
                   </tbody>
                 </table>
-                {% else %}
-                  <div class="space">Niemand ist dumm genug, gegen euch anzutreten.</div>
-                {% endif %}
               </div>
             </div>
           </div>
@@ -179,7 +182,8 @@
         </thead>
         <tbody>
           {% for item in resource_ratings %}
-          <tr>
+          {% set bgID = (bgID+1)%2 %}
+          <tr class="bg{{ bgID }}">
             <td class="text-center">{{ item.name }}</td>
             <td class="text-center">{{ item.value }}</td>
           </tr>
@@ -245,35 +249,35 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr class="bg1">
               <td class="text-center"> 1 </td>
               <td class="text-center"> 200 </td>
             </tr>
-            <tr>
+            <tr class="bg0">
               <td class="text-center"> 2 </td>
               <td class="text-center">200 * 2<sup>2</sup> = 800</td>
             </tr>
-            <tr>
+            <tr class="bg0">
               <td class="text-center"> 3 </td>
               <td class="text-center">200 * 3<sup>2</sup> = 1800</td>
             </tr>
-            <tr>
+            <tr class="bg1">
               <td class="text-center"> 4 </td>
               <td class="text-center">200 * 4<sup>2</sup> = 3200</td>
             </tr>
-            <tr>
+            <tr class="bg0">
               <td class="text-center"> 5 </td>
               <td class="text-center">200 * 5<sup>2</sup> = 5000</td>
             </tr>
-            <tr>
+            <tr class="bg1">
               <td class="text-center"> 6 </td>
               <td class="text-center"> 200 * 6<sup>2</sup> = 7200</td>
             </tr>
-            <tr>
+            <tr class="bg0">
               <td class="text-center"> 7 </td>
               <td class="text-center"> 200 * 7<sup>2</sup> = 9800</td>
             </tr>
-            <tr>
+            <tr class="bg1">
               <td class="text-center"> 8 </td>
               <td class="text-center"> --- </td>
             </tr>
@@ -295,25 +299,25 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr class="bg1">
               <td class="text-center bold">1</td>
               <td class="text-center bold">200</td>
               <td class="text-center bold">600</td>
               <td class="text-center bold">3.0</td>
             </tr>
-            <tr>
+            <tr class="bg0">
               <td class="text-center">5</td>
               <td class="text-center">5000</td>
               <td class="text-center">7500</td>
               <td class="text-center">1.5</td>
             </tr>
-            <tr>
+            <tr class="bg1">
               <td class="text-center">3</td>
               <td class="text-center">1800</td>
               <td class="text-center">1800</td>
               <td class="text-center">1.0</td>
             </tr>
-            <tr>
+            <tr class="bg0">
               <td class="text-center">4</td>
               <td class="text-center">3200</td>
               <td class="text-center">8000</td>

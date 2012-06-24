@@ -336,13 +336,14 @@ function tribe_getContent($caveID, &$details) {
     ksort($possibleChoices);
 
     $template->addVars(array(
+      'goverment_votes_list'         => $votes,
       'goverment_choice_list'        => $possibleChoices,
       'goverment_choice_name'        => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['name'],
       'goverment_choice_description' => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['description'],
     ));
   } else {
     $template->addVars(array(
-      'choose'      => false,
+      'choose'                       => false,
       'goverment_choice_message'     =>  _('Ihr habt keinen Einfluss auf die Bestimmung des Stammesanführers.'),
       'goverment_choice_name'        => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['name'],
       'goverment_choice_description' => $GLOBALS['leaderDeterminationList'][$tribeGovernment['governmentID']]['description'],
