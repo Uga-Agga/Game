@@ -19,7 +19,7 @@
 #include "ticker.h"       /* DB_TABLE_ARTEFACT */
 #include "calc_battle.h"  /* FLAG_ATTACKER */
 
-#define drand()    (rand() / (RAND_MAX+1.0))
+#define drand()    (rand() / (RAND_MAX+0.01))
 
 /*
  * Retrieve artefact for the given id.

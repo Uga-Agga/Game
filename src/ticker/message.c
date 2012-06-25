@@ -23,6 +23,8 @@
 #include "template.h"
 #include "hero.h"
 #include "artefact.h"
+#include "ticker.h"
+#include "logging.h"
 
 #define SPY_DEFENSE  0  /*  1 */
 #define SPY_UNIT  1  /*  2 */
@@ -1510,7 +1512,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
       result = 1;
     }
 
-    if (artefact) {
+    if (*artefact) {
       const char *lostArtefactName = artefact_name(database, *artefact);
 
       template_set(tmpl_spy1, "ARTEFACT/artefact", lostArtefactName);
