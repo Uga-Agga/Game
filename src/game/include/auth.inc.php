@@ -33,7 +33,7 @@ class auth {
       'value' => 8,  'desc'  => 'Spieler kicken'
     );
     $this->perm['tribe']['change_settings'] = array(
-      'value' => 16, 'desc'  => 'Gilden Informationen bearbeiten'
+      'value' => 16, 'desc'  => 'Stammes-Informationen bearbeiten'
     );
   }
 

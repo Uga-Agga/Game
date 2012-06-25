@@ -18,7 +18,7 @@
       Ein Bote bringt eine schlechte Botschaft. Du hast in die freie Höhle
       {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}|{{ message_xml.target.yCoord }}) Rohstoffe im Wert von {{ message_xml.abs_bidding }}
       Punkten geschafft. Die Bewohner von "{{ message_xml.target.caveName }}" betrachten diese Gaben und bewerten sie mit {{ message_xml.rel_bidding }} Punkten.
-      Die Gaben des Häuptlings '{{ message_xml.winner.player_name }}' haben sie jedoch mit {{ message_xml.winner.rel_bidding }} Punkten bewertet. Er hat heute ihre Gunst gewonnen.
+      Die Gaben des Häuptlings '{{ message_xml.fail.winner.name }}' haben sie jedoch mit {{ message_xml.fail.winner.rel_bidding }} Punkten bewertet. Er hat heute ihre Gunst gewonnen.
     </p>
   {% elseif message_xml.fail.failType == 'biddingLow' %}
     <p>
@@ -26,8 +26,8 @@
       {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}|{{ message_xml.target.yCoord }}) Rohstoffe im Wert von {{ message_xml.abs_bidding }}
       Punkten geschafft. Die Bewohner von "{{ message_xml.target.caveName }}" betrachten diese Gaben und bewerten sie mit {{ message_xml.rel_bidding }} Punkten.
       Damit sie sich überhaupt an deine Geschenke erinnern, mußt du ihnen aber mindestens {{ message_xml.fail.min_points }} schenken.
-      {% if message_xml.winner %}
-        Die Gaben des Häuptlings "{{ message_xml.winner.player_name }}" haben sie jedoch mit {{ message_xml.winner.rel_bidding }} Punkten bewertet. Er hat heute ihre Gunst gewonnen.
+      {% if message_xml.fail.winner %}
+        Die Gaben des Häuptlings "{{ message_xml.fail.winner.name }}" haben sie jedoch mit {{ message_xml.fail.winner.rel_bidding }} Punkten bewertet. Er hat heute ihre Gunst gewonnen.
       {% endif %}
     </p>
   {% elseif message_xml.fail.failType == 'failedCompletely' %}
@@ -35,7 +35,7 @@
       Ein Bote bringt eine schlechte Botschaft. Der Häuptling der freien Höhle
       {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}|{{ message_xml.target.yCoord }})
       hat heute entschieden, sich einem Häuptling unterzuordnen. Leider fiel die Wahl nicht auf Dich.
-      Er folgt nun dem Häuptling "{{ message_xml.winner.player_name }}".
+      Er folgt nun dem Häuptling "{{ message_xml.fail.winner.name }}".
     </p>
   {% endif %}
 {% elseif message_xml.success == 'true' %}
