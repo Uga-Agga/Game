@@ -47,6 +47,7 @@
                 <form class="ym-form" method="post" action="main.php?modus={{ contact_bookmarks_link }}">
                 <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
                   <input type="hidden" name="task" value="Delete" />
+                  <input type="hidden" name="contactID" value="{{ item.contactID }}" />
                   <input type="submit" class="ym-button" style="margin: 0;" value="löschen" />
                 </div>
                 </form>

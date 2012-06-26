@@ -1653,33 +1653,34 @@ function tribe_processLeave($playerID, $tag, $FORCE = 0) {
 
 function tribe_processKickMember($playerID, $tag) {
 
-  // init messages class
-  $messagesClass = new Messages;
+  if (empty($playerID)) {
+    return -38;
+  }
 
-  // leader must not be kicked
-  if (!$auth->checkPermission('tribe', 'kick_player', $_SESSION['player']->auth['tribe']) && !tribe_isLeader($_SESSION['player']->playerID, $tag)) {
-    return -30;
+  if (tribe_isLeader($playerID, $tag)) {
+    return -39;
   }
 
   // do not kick in wartime
   if (!relation_leaveTribeAllowed($tag))
-    return -15;
+    return -40;
 
   // blocked
-  if (!tribe_changeTribeAllowedForPlayerID($playerID))
-    return -16;
+  if (!tribe_changeTribeAllowedForPlayerID($playerID)) {
+    return -3;
+  }
 
   // get player
   $player = getPlayerByID($playerID);
 
   // no such player
   if (!$player) {
-    return -1;
+    return -41;
   }
 
   // remove player
   if (!tribe_leaveTribe($playerID, $tag)) {
-    return -1;
+    return -41;
   }
 
   Player::addHistoryEntry($playerID, sprintf(_("wird aus dem Stamm '%s' geworfen"), $tag));
@@ -1687,13 +1688,12 @@ function tribe_processKickMember($playerID, $tag) {
   // block player
   tribe_setBlockingPeriodPlayerID($playerID);
 
-  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieler rausgeschmissen",
-    "Der Spieler {$player['name']} wurde soeben vom Anführer aus dem Stamm ausgeschlossen.");
+  tribe_sendTribeMessage($tag, TRIBE_MESSAGE_MEMBER, "Spieler rausgeschmissen", "Der Spieler {$player['name']} wurde soeben vom Anführer aus dem Stamm ausgeschlossen.");
 
-  $messagesClass->sendSystemMessage($playerID, 8, "Stammausschluss.",
-    "Sie wurden aus dem Stamm $tag ausgeschlossen. Bitte loggen Sie sich aus und melden Sie sich wieder an, damit das Stammesmenü bei Ihnen wieder richtig funktioniert.");
+  $messagesClass = new Messages;
+  $messagesClass->sendSystemMessage($playerID, 8, "Stammausschluss.", "Sie wurden aus dem Stamm $tag ausgeschlossen. Bitte loggen Sie sich aus und melden Sie sich wieder an, damit das Stammesmenü bei Ihnen wieder richtig funktioniert.");
 
-  return 1;
+  return 13;
 }
 
 function tribe_processSendTribeIngameMessage($leaderID, $tag, $message) {

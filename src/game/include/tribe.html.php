@@ -24,12 +24,17 @@ define('TRIBE_ACTION_GOVERMENT',     8);
 define('TRIBE_ACTION_CHOOSE_LEADER', 9);
 define('TRIBE_ACTION_AUTH',         10);
 define('TRIBE_ACTION_WONDER',       11);
+define('TRIBE_ACTION_KICK',         12);
 
 function tribe_getContent($caveID, &$details) {
   global $template;
 
   // messages
   $messageText = array (
+    -41 => array('type' => 'error', 'message' => _('Beim kicken das Spielers ist ein Fehler aufgetreten.')),
+    -40 => array('type' => 'error', 'message' => _('Der Stamm befindet sich zur Zeit in einem Krieg und es kann kein Spieler gekickt werden.')),
+    -39 => array('type' => 'error', 'message' => _('Der Stammesführer kann nicht entlassen werden.')),
+    -38 => array('type' => 'error', 'message' => _('Der Spieler wurde in dem Stamm nicht gefunden!')),
     -37 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf andere Stämme gewundert werden!')),
     -36 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf den eigenen Stamm gewundert werden!')),
     -35 => array('type' => 'error', 'message' => _('Der gegnerische Stamm hat nicht genug Mitglieder um Stammeswunder bekommen zu können!')),
@@ -79,6 +84,7 @@ function tribe_getContent($caveID, &$details) {
      10 => array('type' => 'success', 'message' => _('Der Spieler hat seine Rechte erfolgreich erhalten.')),
      11 => array('type' => 'info', 'message' => _('Die Götter haben Ihr Flehen nicht erhört! Die eingesetzten Opfergaben sind natürlich dennoch verloren. Mehr Glück beim nächsten Mal!')),
      12 => array('type' => 'success', 'message' => _('Das Erflehen des Wunders scheint Erfolg zu haben.')),
+     13 => array('type' => 'success', 'message' => _('Der Spieler wurde erfolgreich gekickt.')),
   );
 
   if (!$_SESSION['player']->tribe) {
@@ -174,6 +180,21 @@ function tribe_getContent($caveID, &$details) {
       $messageID = government_processGovernmentUpdate($tribeTag, $governmentData);
     break;
 
+/****************************************************************************************************
+*
+* bye bye Spieler
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_KICK: // msg ok
+      if (!$userAuth['kick_member'] && !$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $playerID = Request::getVar('playerID', 0);
+      $messageID = tribe_processKickMember($playerID, $tribeTag);
+      $tribeMembers = tribe_getAllMembers($tribeTag);
+    break;
 
 /****************************************************************************************************
 *
@@ -560,6 +581,7 @@ function tribe_getContent($caveID, &$details) {
     'tribe_action_relation'  => TRIBE_ACTION_RELATION,
     'tribe_action_update'    => TRIBE_ACTION_UPDATE,
     'tribe_action_wonder'    => TRIBE_ACTION_WONDER,
+    'tribe_action_kick'      => TRIBE_ACTION_KICK,
 
     'wonders'             => $wonders,
   ));
