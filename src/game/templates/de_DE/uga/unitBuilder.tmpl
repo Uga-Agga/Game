@@ -68,7 +68,7 @@
                         <form method="post" action="main.php?modus={{unit_link }}&amp;action=build&amp;unitID={{ item.unit_id }}&amp;caveID={{ cave_id }}">
                           Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
                           <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
-                          <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up_max.png" id="unit_{{ item.unit_id }}" name="quantity" value="max" alt="Ausbilden" title="Baut die maximale Anzahl Einheiten" />
+                          <input style="padding-left: 10px;" type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up_max.png" id="unit_{{ item.unit_id }}" name="quantity" value="max" alt="Ausbilden" title="Baut die maximale Anzahl Einheiten" />
                         </form>
                       {% else %}
                         {{ item.no_build_msg }}

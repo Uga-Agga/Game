@@ -34,7 +34,7 @@
           <tr class="bg{{ bgID }}">
             <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.contactplayerID }}">{{ item.contactname }}</a></td>
             <td>{{ item.contacttribe }}</td>
-            <td style="width: 240px;">
+            <td style="width: 245px;">
               <div style="float: left;">
                 <form class="ym-form" method="post" action="main.php?modus={{ messages_new_link }}">
                 <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
@@ -56,7 +56,7 @@
           </tr>
           {% endfor %}
         {% else %}
-          <tr><td class="center" colspan="6">Bisher keine Höhlen eingetragen.</td></tr>
+          <tr><td class="text-center" colspan="6">Bisher keine Spieler eingetragen.</td></tr>
         {% endif %}
       </tbody>
     </table>

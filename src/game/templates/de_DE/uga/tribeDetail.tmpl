@@ -77,9 +77,9 @@
               <th>Name</th>
               <th>&nbsp;</th>
               <th>Punktzahl</th>
-              <th>Knüppelpunkte</th>
-              <th>Höhlen</th>
-              <th>&nbsp;</th>
+              <th style="width: 90px;">Knüppelpunkte</th>
+              {% if item.award %}<th>&nbsp;</th>{% endif %}
+              <th class="text-center" style="width: 205px;">Höhlen</th>
             </tr>
           </thead>
           <tbody>
@@ -88,15 +88,31 @@
                 <td><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ item.rank }}">{{ item.rank }}</a></td>
                 <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
                 <td>{% if item.religion %}<img src="{{ gfx }}/de_DE/t_uga/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
-                <td>{{ item.points }}</td>
+                <td style="width: 90px;">{{ item.points }}</td>
                 <td>{{ item.kp }}</td>
-                <td>{{ item.caves }}</td>
+                
+                {% if item.award %}
                 <td>
-                  {% if item.award %}
-                    {% for item2 in item.award %}
-                      <a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>
-                    {% endfor %}
-                  {% else %}&nbsp;{% endif %}
+                  {% for item2 in item.award %}
+                    <a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>
+                  {% endfor %}
+                </td>
+                {% endif %}
+
+                <td class="text-right" style="width: 205px;">
+                  {% if item.caves %}
+                    <form method="post" action="main.php?modus={{ unit_movement_link }}">
+                      <div style="white-space: nowrap;">
+                      <select name="targetCaveID" style="width: 165px;">
+                        {% for cave in item.caves %}<option value="{{ cave.caveID }}">{{ cave.name }} ({{ cave.xCoord }}/{{ cave.yCoord }})</option>{% endfor %}
+                      </select>
+
+                      <input type="submit" value="Go" name="tribeUnitMovement" />
+                      </div>
+                    </form>
+                  {% else %}
+                    Keine Höhle
+                  {% endif %}
                 </td>
               </tr>
             {% else %}

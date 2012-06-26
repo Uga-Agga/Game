@@ -98,7 +98,7 @@ function tribe_getContent($caveID, $tag) {
   $template->addVar('tribe_history', $history);
 
   // player list
-  $playerList = tribe_getPlayerList($tag);
+  $playerList = tribe_getPlayerList($tag, true, true);
   foreach($playerList AS $id => $playerData) {
     if (!empty($playerData['awards'])) {
       $playerData['awards'] = explode('|', $playerData['awards']);

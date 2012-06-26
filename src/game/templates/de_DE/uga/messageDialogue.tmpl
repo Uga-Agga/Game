@@ -15,14 +15,17 @@
 {% block content %}
 
 <script type="text/javascript">
-// <![CDATA[
-  function disable_to(){
-    var r = document.newMessage.contactID;
-    var flag = false;
-    for (var i = 0; i < r.length; i++) if (r[i].selected && r[i].value != -1){ flag = true; break; }
-    document.newMessage.empfaenger.disabled = flag;
-  }
-// ]]>
+  $(function() {
+    $('#contactID').change(function () {
+      if ($(this).val() == -1) {
+        $('#recipient').removeAttr('disabled');
+        $('#recipient').val('');
+      } else {
+        $('#recipient').attr('disabled', true);
+        $('#recipient').val($('#contactID option:selected').text());
+      }
+    })
+  });
 </script>
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
@@ -63,9 +66,9 @@
       <div class="ym-grid">
         <div class="ym-g684-7 ym-gl">
           <div class="ym-gbox ym-fbox-select">
-            <label for="select-1" style="width: 90px;">Adressbuch:</label>
-            <select name="select-1" id="select-1" size="1">
-              <option value="-1" selected="selected" disabled="disabled">Bitte wählen</option>
+            <label for="contactID" style="width: 90px;">Adressbuch:</label>
+            <select name="contactID" id="contactID" size="1">
+              <option value="-1" selected="selected">Bitte wählen</option>
               {% if contacts %}{% for item in contacts %}<option value="{{ item.contactID }}">{{ item.contactname }}</option>{% endfor %}{% endif %}
             </select>
           </div>
