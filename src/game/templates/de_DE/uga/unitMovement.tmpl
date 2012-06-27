@@ -403,7 +403,6 @@ function hideWMTT() {
     <table>
       <thead>
         <tr>
-          <th>&nbsp;</td>
           <th style="min-width:120px">Bewegungsart</th>
           <th style="min-width:200px">Zeitraum</th>
           <th style="min-width:200px">Zielhöhle</th>
@@ -415,7 +414,6 @@ function hideWMTT() {
         {% for item in ownMovement %}
         {% set bgID = (bgID+1)%2 %}
           <tr class="bg{bgID}">
-            <td>&nbsp;</td>
             <td>
               <ul>
                 <li>{{ item.movement_id_description }}</li>
@@ -484,19 +482,16 @@ function hideWMTT() {
     <table>
       <thead>
         <tr>
-          <th>&nbsp;</th>
           <th style="min-width:120px">Bewegungsart</th>
           <th style="min-width:200px">Zeitraum</th>
           <th style="min-width:200px">Herkunft</th>
           <th style="width:200px">Einh./Ress.</th>
-          <th>&nbsp;</th>
         </tr>
       </thead>
       <tbody>
         {% for item in oppMovement %}
         {% set bgID = (bgID+1)%2 %}
           <tr class="bg{bgID}">
-            <td>&nbsp;</td> 
             <td>
               <ul>
                 <li>{{ item.movement_id_description }}</li>
@@ -537,7 +532,6 @@ function hideWMTT() {
               {% endif %}
               </ul>
             </td>
-            <td>&nbsp;</td> 
           </tr>
         {% endfor %}
         {% set bgID = 0 %}

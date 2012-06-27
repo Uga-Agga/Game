@@ -78,7 +78,7 @@
               <th>&nbsp;</th>
               <th>Punktzahl</th>
               <th style="width: 90px;">Knüppelpunkte</th>
-              {% if item.award %}<th>&nbsp;</th>{% endif %}
+              <th>&nbsp;</th>
               <th class="text-center" style="width: 205px;">Höhlen</th>
             </tr>
           </thead>
@@ -90,19 +90,18 @@
                 <td>{% if item.religion %}<img src="{{ gfx }}/de_DE/t_uga/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
                 <td style="width: 90px;">{{ item.points }}</td>
                 <td>{{ item.kp }}</td>
-                
-                {% if item.award %}
+
                 <td>
                   {% for item2 in item.award %}
                     <a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>
-                  {% endfor %}
+                  {% else %}&nbsp;{% endfor %}
                 </td>
-                {% endif %}
 
-                <td class="text-right" style="width: 205px;">
+                <td class="text-right" style="width: 215px; white-space: nowrap;">
                   {% if item.caves %}
                     <form method="post" action="main.php?modus={{ unit_movement_link }}">
                       <div style="white-space: nowrap;">
+                      [{{ item.caves_count }}]&nbsp;
                       <select name="targetCaveID" style="width: 165px;">
                         {% for cave in item.caves %}<option value="{{ cave.caveID }}">{{ cave.name }} ({{ cave.xCoord }}/{{ cave.yCoord }})</option>{% endfor %}
                       </select>

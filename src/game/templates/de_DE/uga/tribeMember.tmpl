@@ -58,7 +58,7 @@
                   <li>Zur Zeit seid ihr mit keinem Stamm verbündet.</li>
                 {% endif %}
                 <li>&nbsp;</li>
-                <li class="text-center" style="font-size: 11px;"><a href="main.php?modus={{ tribe_relation_link }}&amp;tag={{ tribe_tag|url_encode }}">Alle Beziehungen anzeigen.</a></li>
+                <li class="text-center" style="font-size: 11px;"><a href="main.php?modus={{ tribe_link }}&tribe={{ tribe_tag }}#tabTribeRelation">Alle Beziehungen anzeigen.</a></li>
               </ul>
             </div>
             <div style="clear: both;"></div>
@@ -265,7 +265,7 @@
       </div>
       {% endif %}
 
-      <h4 class="hide_status_msg">Regierung</h4>
+      <h4 class="hide_status_msg" id="tabTribeRelation">Regierung</h4>
       <div class="tabbody">
         <div id="tribeRelation" class="jquery_tabs nav2">
           <h5 class="hide_status_msg">Beziehungen</h5>
