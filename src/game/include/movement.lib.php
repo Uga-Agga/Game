@@ -46,19 +46,16 @@ function getDistanceByCoords($srcX, $srcY, $tarX, $tarY){
  *  three caves in any direction.
  */
 function getVisionRange($cave_data){
-  global $WATCHTOWERVISIONRANGE;
-  return eval('return '.formula_parseToPHP($WATCHTOWERVISIONRANGE.";", '$cave_data'));
+  return eval('return '.formula_parseToPHP(GameConstants::WATCHTOWER_VISION_RANGE.";", '$cave_data'));
 }
 
 /** This function computes the amount of food needed to move with
  *  given units from one cave to its direct neighbour.
  */
 function calcRequiredFood($units){
-  global $unitTypeList;
-
   $foodPerCave = 0;
   foreach ($units as $unitID => $amount) {
-    $foodPerCave += $unitTypeList[$unitID]->foodCost * $amount;
+    $foodPerCave += $GLOBALS['unitTypeList'][$unitID]->foodCost * $amount;
   }
 
   return $foodPerCave;
@@ -68,13 +65,11 @@ function calcRequiredFood($units){
  *  set of units. A greater speed factor means a slower movement.
  */
 function getMaxSpeedFactor($units){
-  global $unitTypeList;
-
   $maxSpeed = 0;
 
   foreach ($units as $unitID => $amount) {
-    if ($amount > 0 && $unitTypeList[$unitID]->wayCost > $maxSpeed) {
-      $maxSpeed = $unitTypeList[$unitID]->wayCost;
+    if ($amount > 0 && $GLOBALS['unitTypeList'][$unitID]->wayCost > $maxSpeed) {
+      $maxSpeed = $GLOBALS['unitTypeList'][$unitID]->wayCost;
     }
   }
 
