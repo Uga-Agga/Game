@@ -125,7 +125,7 @@
                 <th class="text-left">Name</th>
                 <th>Gott</th>
                 <th>Halbgott</th>
-                <th class="text-center" style="width: 65px; white-space: nowrap;">Höhlenliste</th>
+                <th class="text-center" style="width: 215px;">Höhlenliste</th>
               </tr>
               </thead>
               <tbody>
@@ -135,10 +135,11 @@
                     <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
                     <td>{{ item.god }}</td>
                     <td>{{ item.halfgod }}</td>
-                    <td class="text-center" style="width: 65px;">
+                    <td class="text-right" style="width: 215px; white-space: nowrap;">
                       <form method="post" action="main.php?modus={{ unit_movement_link }}">
                         <div style="white-space: nowrap;">
-                        <select name="targetCaveID">
+                        [{{ item.caves|length }}]&nbsp;
+                        <select name="targetCaveID" style="width: 165px;">
                           {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
                         </select>
 

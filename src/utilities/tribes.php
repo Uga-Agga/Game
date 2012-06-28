@@ -19,6 +19,7 @@ include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 include INC_DIR."rules/game.rules.php";
 include INC_DIR."tribes.inc.php";
+include INC_DIR."auth.inc.php";
 include INC_DIR."message.inc.php";
 include INC_DIR."db.functions.php";
 include INC_DIR."basic.lib.php";

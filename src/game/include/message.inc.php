@@ -49,12 +49,10 @@ class MessageClass {
 
 class Messages extends Parser {
   var $MessageClass;
-  var $selfPlayerID;
 
   function __construct() {
 
     $this->MessageClass = MessageClass::getMessageClasses();
-    $this->selfPlayerID = $_SESSION['player']->playerID;
     
     parent::__construct();
   }
@@ -71,14 +69,14 @@ class Messages extends Parser {
                            WHERE recipientID = :playerID
                              AND recipientDeleted != 1
                              AND messageClass = :messageClass");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
     } else {
       $sql = $db->prepare("SELECT COUNT(*) as num
                            FROM ". MESSAGE_TABLE . "
                            WHERE recipientID = :playerID
                              AND recipientDeleted != 1");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -102,7 +100,7 @@ class Messages extends Parser {
                            WHERE senderID = :playerID
                              AND senderDeleted != 1
                              AND messageClass = :messageClass");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       
     } else {
@@ -110,7 +108,7 @@ class Messages extends Parser {
                            FROM ". MESSAGE_TABLE ."
                            WHERE senderID = :playerID
                              AND senderDeleted != 1");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -134,7 +132,7 @@ class Messages extends Parser {
                            WHERE recipientID = :playerID
                              AND recipientDeleted = 1
                              AND messageClass = :messageClass");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       
     } else {
@@ -142,7 +140,7 @@ class Messages extends Parser {
                            FROM ". MESSAGE_TABLE ."
                            WHERE recipientID = :playerID
                              AND recipientDeleted = 1");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -163,7 +161,7 @@ class Messages extends Parser {
     $sql = $db->prepare("SELECT COUNT(*) as num
                          FROM " . MESSAGE_TABLE . "
                          WHERE senderID = :playerID");
-    $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
     if (!$sql->execute()) {
       return 0;
@@ -187,7 +185,7 @@ class Messages extends Parser {
                              AND recipientDeleted != 1
                              AND messageClass = :messageClass
                            ORDER BY messageID DESC");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       
     } else {
@@ -196,7 +194,7 @@ class Messages extends Parser {
                            WHERE recipientID = :playerID
                              AND recipientDeleted != 1
                            ORDER BY messageID DESC");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -227,7 +225,7 @@ class Messages extends Parser {
                              AND senderDeleted != 1
                              AND messageClass = :messageClass
                            ORDER BY messageID DESC");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
     } else {
       $sql = $db->prepare("SELECT messageID
@@ -235,7 +233,7 @@ class Messages extends Parser {
                            WHERE senderID = :playerID
                              AND senderDeleted != 1
                            ORDER BY messageID DESC");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -266,7 +264,7 @@ class Messages extends Parser {
                              AND recipientDeleted = 1
                              AND messageClass = :messageClass
                            ORDER BY messageID DESC");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       
     } else {
@@ -275,7 +273,7 @@ class Messages extends Parser {
                            WHERE recipientID = :playerID
                              AND recipientDeleted = 1
                            ORDER BY messageID DESC");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -338,7 +336,7 @@ class Messages extends Parser {
                              AND messageClass = :messageClass
                            ORDER BY m.messageTime DESC, m.messageID DESC 
                            LIMIT :offset, :rowCount");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
@@ -351,7 +349,7 @@ class Messages extends Parser {
                              AND recipientDeleted != 1 
                            ORDER BY m.messageTime DESC, m.messageID DESC 
                            LIMIT :offset, :rowCount");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     }
@@ -411,7 +409,7 @@ class Messages extends Parser {
                           AND messageClass = :messageClass
                           ORDER BY m.messageTime DESC 
                           LIMIT :offset, :rowCount");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
@@ -436,7 +434,7 @@ class Messages extends Parser {
                           AND senderDeleted != 1 
                           ORDER BY m.messageTime DESC 
                           LIMIT :offset, :rowCount");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     }
@@ -478,7 +476,7 @@ class Messages extends Parser {
                              AND messageClass = :messageClass
                            ORDER BY m.messageTime DESC, m.messageID DESC 
                            LIMIT :offset, :rowCount");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
@@ -491,7 +489,7 @@ class Messages extends Parser {
                              AND recipientDeleted = 1 
                            ORDER BY m.messageTime DESC, m.messageID DESC 
                            LIMIT :offset, :rowCount");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     }
@@ -532,7 +530,7 @@ class Messages extends Parser {
                            recipientDeleted = recipientDeleted OR (recipientID = :playerID)
                          WHERE messageID = :ID
                            AND messageClass != 1001");
-    $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $deleted = 0;
 
     if(is_array($messageIDs)) {
@@ -563,7 +561,7 @@ class Messages extends Parser {
                            `read` = 0
                          WHERE messageID = :ID
                            AND messageClass != 1001");
-    $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $recover = 0;
 
     if(is_array($messageIDs)) {
@@ -611,7 +609,7 @@ class Messages extends Parser {
                        WHERE messageClass != 1001 
                        AND messageClass = :messageClass 
                        AND {$deletor}ID = :playerID");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       
     } else {
@@ -620,7 +618,7 @@ class Messages extends Parser {
                        recipientDeleted = recipientDeleted OR (recipientID = :playerID) 
                        WHERE messageClass != 1001
                        AND {$deletor}ID = :playerID");
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     }
 
     if (!$sql->execute()) {
@@ -645,7 +643,7 @@ class Messages extends Parser {
                              IF (m.recipientID = :playerID, m.senderID = p.playerID, m.recipientID = p.playerID)
                           WHERE messageID IN (" . $IDs . ") AND
                             IF (m.recipientID = :playerID, m.recipientDeleted = 0 AND m.recipientID = :playerID, m.senderDeleted = 0 AND m.senderID = :playerID)");
-    $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
     $sql->execute();
     if ($sql->rowCount() == 0) {
@@ -672,7 +670,7 @@ class Messages extends Parser {
                            AND messageClass != 1001 
                            AND recipientID = :playerID");
     foreach ($messageIDs as $messageID) {
-      $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageID', (int) $messageID, PDO::PARAM_INT);
       if (!$sql->execute()) {
         return 0;
@@ -702,7 +700,7 @@ class Messages extends Parser {
                            AND (recipientID  = :playerID
                              OR senderID = :playerID
                              OR messageClass = 1001)");
-    $sql->bindValue('playerID', $this->selfPlayerID);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID);
     $sql->bindValue('messageID', $messageID);
     
     if ($sql->rowCountSelect() == 0) return array();
@@ -713,7 +711,7 @@ class Messages extends Parser {
     $row = $sql->fetch(PDO::FETCH_ASSOC);
     $sql->closeCursor();
 
-    if ($row['senderID'] == $this->selfPlayerID) {
+    if ($row['senderID'] == $_SESSION['player']->playerID) {
       $row['sender']     = $_SESSION['player']->name;
       $row['empfaenger'] = $row['dummy'];
     } else {
@@ -732,7 +730,7 @@ class Messages extends Parser {
                          WHERE messageID = :messageID
                            AND recipientID = :playerID");
     $sql->bindValue('messageID', $messageID, PDO::PARAM_INT);
-    $sql->bindValue('playerID', $this->selfPlayerID, PDO::PARAM_INT);
+    $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->execute();
 
     return $row;
@@ -771,7 +769,7 @@ class Messages extends Parser {
                            NOW()+0,
                            :senderDelete)");
     $sql->bindValue('recipientID', $row['playerID'], PDO::PARAM_INT);
-    $sql->bindValue('senderID', $this->selfPlayerID, PDO::PARAM_INT);
+    $sql->bindValue('senderID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('messageClass', ($isTribeMessage) ? 8 : 10, PDO::PARAM_INT);
     $sql->bindValue('messageSubject', $subject, PDO::PARAM_STR);
     $sql->bindValue('messageText', $nachricht, PDO::PARAM_STR);
@@ -828,7 +826,7 @@ class Messages extends Parser {
                            WHERE flag = 0
                              AND recipientID = :recipientID
                              AND messageID = :messageID");
-      $sql->bindValue('recipientID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageID', $mID, PDO::PARAM_INT);
       
       $sql->execute();
@@ -840,7 +838,7 @@ class Messages extends Parser {
                              AND messageID = :messageID");
       foreach ($mID as $ID) {
         $sql->bindValue('messageID', $ID, PDO::PARAM_INT);
-        $sql->bindValue('recipientID', $this->selfPlayerID, PDO::PARAM_INT);
+        $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
         $sql->execute();
       }
     }
@@ -859,7 +857,7 @@ class Messages extends Parser {
                            WHERE flag = 1
                              AND recipientID = :recipientID
                              AND messageID = :messageID");
-      $sql->bindValue('recipientID', $this->selfPlayerID, PDO::PARAM_INT);
+      $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageID', $mID, PDO::PARAM_INT);
       
       $sql->execute();
@@ -871,7 +869,7 @@ class Messages extends Parser {
                              AND messageID = :messageID");
       foreach ($mID as $ID) {
         $sql->bindValue('messageID', $ID, PDO::PARAM_INT);
-        $sql->bindValue('recipientID', $this->selfPlayerID, PDO::PARAM_INT);
+        $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
         $sql->execute();
       }
     }

@@ -121,8 +121,6 @@ function tribe_getContent($caveID, $tag) {
       }
     }
 
-    $playerData['caves_count'] = count($playerData['caves']);
-
     $playerList[$id] = $playerData;
   }
 

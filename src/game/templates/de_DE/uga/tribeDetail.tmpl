@@ -101,7 +101,7 @@
                   {% if item.caves %}
                     <form method="post" action="main.php?modus={{ unit_movement_link }}">
                       <div style="white-space: nowrap;">
-                      [{{ item.caves_count }}]&nbsp;
+                      [{{ item.caves|length }}]&nbsp;
                       <select name="targetCaveID" style="width: 165px;">
                         {% for cave in item.caves %}<option value="{{ cave.caveID }}">{{ cave.name }} ({{ cave.xCoord }}/{{ cave.yCoord }})</option>{% endfor %}
                       </select>
