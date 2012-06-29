@@ -12,9 +12,39 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-class Controller {
-  function execute($caveID, $caves){
-    return '';
+abstract class Controller {
+  private $message = array();
+  public $template;
+
+  abstract function getContent();
+  abstract function submit();
+
+  public function __construct() {
+    global $template;
+
+    // init template and set file
+    if (empty($template)) {
+      $this->template = new Template;
+    } else {
+      $this->template = &$template;
+    }
+
+    $this->template->setFile($this->templateFile);
+  }
+
+  public function getMessage() {
+    return self::$message;
+  }
+
+  function setMessage($message) {
+    self::$message[] = $message;
+  }
+
+  function execute() {
+    $this->submit();
+    $this->getContent();
+
+    //$this->template->render();
   }
 }
 
