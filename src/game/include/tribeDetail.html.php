@@ -133,8 +133,8 @@ function tribe_getContent($caveID, $tag) {
     foreach($relations['own'] AS $target => $relationData) {
       $relationsData[$target] = array (
         'tribe'         => $relationData['tribe_target'],
-        'relation_to'   => $relationList[$relationData['relationType']]['name'],
-        'relation_from' => (isset($relations['other'][$target]) && $relations['other'][$target]) ? $relationList[$relations['other'][$target]['relationType']]['name'] : $relationList[0]['name'],
+        'relation_to'   => $GLOBALS['relationList'][$relationData['relationType']]['name'],
+        'relation_from' => (isset($relations['other'][$target]) && $relations['other'][$target]) ? $GLOBALS['relationList'][$relations['other'][$target]['relationType']]['name'] : $GLOBALS['relationList'][0]['name'],
       );
     }
   }
@@ -148,8 +148,8 @@ function tribe_getContent($caveID, $tag) {
 
       $relationsData[$target] = array (
         'tribe'         => $relationData['tribe'],
-        'relation_to'   => $relationList[0]['name'],
-        'relation_from' => $relationList[$relationData['relationType']]['name'],
+        'relation_to'   => $GLOBALS['relationList'][0]['name'],
+        'relation_from' => $GLOBALS['relationList'][$relationData['relationType']]['name'],
       );
     }
   }

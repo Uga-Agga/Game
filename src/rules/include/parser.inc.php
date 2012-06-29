@@ -155,16 +155,16 @@ function rules_checkDependencies($object){
   if (isset($object->scienceDepList) && is_array($object->scienceDepList))
     foreach($object->scienceDepList as $key => $value)
       if ($value != "" && $value != "0")
-        array_push($dependencies, array('name'     => $scienceTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['scienceTypeList'][$key]->name,
                                         'category' => "sciences",
-                                        'id'       => $scienceTypeList[$key]->scienceID,
+                                        'id'       => $GLOBALS['scienceTypeList'][$key]->scienceID,
                                         'level'    => "&gt;= " . $value));
   if (isset($object->maxScienceDepList) && is_array($object->maxScienceDepList))
     foreach($object->maxScienceDepList as $key => $value)
       if ($value != -1)
-        array_push($dependencies, array('name'     => $scienceTypeList[$key]->name,
+        array_push($dependencies, array('name'     => $GLOBALS['scienceTypeList'][$key]->name,
                                         'category' => "sciences",
-                                        'id'       => $scienceTypeList[$key]->scienceID,
+                                        'id'       => $GLOBALS['scienceTypeList'][$key]->scienceID,
                                         'level'    => "&lt;= " . $value));
 
   if (isset($object->defenseSystemDepList) && is_array($object->defenseSystemDepList))

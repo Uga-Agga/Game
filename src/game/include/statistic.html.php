@@ -116,19 +116,21 @@ function statistic_getContent() {
   /*
   * print wonder stats
   */
-  init_Wonders();
-
   $WonderStatsList = array();
-  $WonderStats = $StatsData[WONDER_STATS];
-  ksort($WonderStats);
-  foreach ($WonderStats as $wonder => $value) {
-    $value = json_decode($value, true);
+  if (isset($StatsData[WONDER_STATS]) && !empty($StatsData[WONDER_STATS])) {
+    init_Wonders();
 
-    $WonderStatsList[] = array(
-      "name" => $GLOBALS['wonderTypeList'][$wonder]->name,
-      "success" => $value['success'],
-      "fail" => $value['success'],
-    );
+    $WonderStats = $StatsData[WONDER_STATS];
+    ksort($WonderStats);
+    foreach ($WonderStats as $wonder => $value) {
+      $value = json_decode($value, true);
+
+      $WonderStatsList[] = array(
+        "name" => $GLOBALS['wonderTypeList'][$wonder]->name,
+        "success" => $value['success'],
+        "fail" => $value['success'],
+      );
+    }
   }
   $template->addVars(array('WonderStats' => $WonderStatsList));
 

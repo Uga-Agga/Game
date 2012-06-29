@@ -22,8 +22,4 @@ $includes[] = ini_get('include_path');
 // don't forget to add current include_path
 ini_set('include_path', implode(PATH_SEPARATOR, $includes));
 
-define('DEBUG', true);
-define('TEMPLATE_CACHE', false);
-define('TEMPLATE_RELOAD', false);
-
 ?>
