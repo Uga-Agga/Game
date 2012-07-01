@@ -589,7 +589,7 @@ function takeover_send_failed_completely($receiverID, $bidding, $winner) {
   $xml->addChild('fail');
   $xml->fail->addChild('failType', 'failedCompletely');
   $xml->fail->addChild('winner');
-  $xml->fail->winner->addChild('name', $winner['player_name']);
+  $xml->fail->winner->addChild('name', $winner['name']);
   $xml->addChild('target');
   $xml->target->addChild('caveName', $bidding['name']);
   $xml->target->addChild('xCoord', $bidding['xCoord']);

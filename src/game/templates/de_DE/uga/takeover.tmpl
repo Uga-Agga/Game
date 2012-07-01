@@ -115,7 +115,7 @@
                     {% for item in bidding.bidder %}
                     {% set bgID = (bgID+1)%2 %}
                       <tr class="bg{{ bgID }}">
-                        <td class="text-center"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
+                        <td class="text-left"><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.playername }}:</a></td>
                         <td class="text-center"><img src="{{ gfx }}/de_DE/t_uga/takeover/star00{{ item.status_txt }}.gif" alt="{{ item.status_img }}" /></td>
                       </tr>
                     {% else %}

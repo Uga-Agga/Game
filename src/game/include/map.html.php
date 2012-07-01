@@ -251,26 +251,28 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
     } else {
 
       // eigene Höhle
-      if ($cave['playerID'] == $_SESSION['player']->playerID)
+      if ($cave['playerID'] == $_SESSION['player']->playerID) {
         $file = "icon_cave_own";
       // fremde Höhle
-      else
+      } else {
         $file = "icon_cave_other";
+      }
 
       // mit Artefakt
-      if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY))
+      if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
         $file .= "_artefact";
-
+      }
 
       // link zum Tribe einfügen
       $cell['link_tribe'] = "modus=" . TRIBE_DETAIL . "&amp;tribe=".urlencode(unhtmlentities($cave['tribe']));
 
       // Stamm abkürzen
       $decodedTribe = unhtmlentities($cave['tribe']);
-      if (strlen($decodedTribe) > 10)
+      if (strlen($decodedTribe) > 10) {
         $cell['text_tribe'] = htmlentities(substr($decodedTribe, 0, 8)) . "..";
-      else
+      } else {
         $cell['text_tribe'] = $cave['tribe'];
+      }
 
       // Besitzer
       $decodedOwner = unhtmlentities($cave['name']);
