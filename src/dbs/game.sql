@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS `Artefact_class` (
   `artefactClassID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `resref` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'artefact_test',
+  `initiationImg` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'dummy.gif',
+  `uninitiationImg` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'dummy.gif',
   `description` text COLLATE utf8_unicode_ci NOT NULL,
   `description_initiated` text COLLATE utf8_unicode_ci NOT NULL,
   `initiationID` int(11) NOT NULL DEFAULT '1',

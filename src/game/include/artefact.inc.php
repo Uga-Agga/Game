@@ -253,7 +253,7 @@ function artefact_beginInitiation($artefact) {
 
   // get initiation costs
   $costs = array();
-  $temp = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['$defenseSystemTypeList']);
+  $temp = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['defenseSystemTypeList']);
   foreach($temp as $val) {
     if (isset($ritual[$val->dbFieldName])) {
       if ($ritual[$val->dbFieldName]) {
