@@ -363,7 +363,7 @@ function unit_Movement($caveID, &$ownCave) {
   // resources
   $resources = array();
   foreach ($GLOBALS['resourceTypeList'] as $resourceID => $dummy) {
-    if (!$GLOBALS['resourceTypeList'][$res]->nodocumentation) {
+    if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation) {
       $resources[] = array(
         'resource_id'    => $GLOBALS['resourceTypeList'][$resourceID]->resourceID,
         'name'           => $GLOBALS['resourceTypeList'][$resourceID]->name,
