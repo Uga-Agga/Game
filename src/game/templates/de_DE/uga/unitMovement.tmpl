@@ -15,223 +15,219 @@
 {% block content %}
 
 <script type="text/javascript">
-// <![CDATA[
-var uamoves = new Array();
-var units = new Array();
-{% for item in unit_list %}units[{{ item.unit_id }}] = {maxWarriorAnzahl:{{ item.max_warrior_count }}, foodCost:{{ item.food_cost }}, speedFactor:{{ item.speed_factor }}, resourceLoad:[{{ item.resource_load }}], hitPoints:{{ item.hitPoints }}};{% endfor %}
-var domcomp = document.childNodes ? true : false;
-function getMovementID(){
-  var r = document.getElementById("unitMoving").movementID;
-  for (var i=0; i<r.length; i++) if (!r[i].checked) continue; else return r[i].value;
-  return null;
-}
-
-function TimeString(duration)
-{
-  var time = duration * 60;
-  var hours = Math.floor(time/3600);
-  var minutes = Math.floor((time%3600)/60);
-  if(!hours) return minutes+" Min";
-  var text = duration + " Min ("+hours+" Std";
-  if (minutes) text = text + " "+((minutes<10)?"0":"")+minutes+" Min";
-  text = text + ")";
-  return text;
-}
-
-
-function dur() {
-
-  var MINUTESPERCAVE = {{ speed }};
-  var FOODPERCAVE    = {{ movement_cost_constant }};
-  
-  /* Using torus edge condition */
-  var xCoord = {{ dim_x }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetXCoord.value ) - {{ currentX }}) - {{ dim_x }});
-  var yCoord = {{ dim_y }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetYCoord.value ) - {{ currentY }}) - {{ dim_y }});
-
-  var movementID = parseInt(getMovementID());
-  if (isNaN(movementID) || typeof(uamoves[movementID]) == 'undefined') return;
-
-  var i, amount;
-
-  var maxSpeedFactor = 0;
-  for (i = 0; i < units.length; ++i){
-    amount = document.getElementById("unit_" + i + "");
-    if (!amount) continue;
-    else amount = amount.value;
-    if (amount != "" && Number(amount) > 0)
-      maxSpeedFactor = Math.max(maxSpeedFactor, units[i]['speedFactor']);
-  }
-  var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));  
-  // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor
-  var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) * MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']);
-
-  var movementspeed =  maxSpeedFactor * uamoves[movementID]['speedfactor'];
-  if (isNaN(maxSpeedFactor)){
-    if (domcomp) document.getElementById("movementspeed").innerHTML = "-";
-    else document.getElementById("movementspeed").value = "-";
-  } else {
-    if (domcomp) document.getElementById("movementspeed").innerHTML = movementspeed;
-    else document.getElementById("movementspeed").value = movementspeed ;
-  }
-  if (isNaN(duration)){
-    if (domcomp) document.getElementById("duration").innerHTML = "- Min";
-    else document.getElementById("duration").value = "- Min";
-  } else {
-    if (domcomp) document.getElementById("duration").innerHTML = TimeString(duration);
-    else document.getElementById("duration").value =  TimeString(duration); 
+  var uamoves = new Array();
+  var units = new Array();
+  {% for item in unit_list %}units[{{ item.unit_id }}] = {maxWarriorAnzahl:{{ item.max_warrior_count }}, foodCost:{{ item.food_cost }}, speedFactor:{{ item.speed_factor }}, resourceLoad:[{{ item.resource_load }}], hitPoints:{{ item.hitPoints }}};{% endfor %}
+  var domcomp = document.childNodes ? true : false;
+  function getMovementID(){
+    var r = document.getElementById("unitMoving").movementID;
+    for (var i=0; i<r.length; i++) if (!r[i].checked) continue; else return r[i].value;
+    return null;
   }
 
-  var unitRations = 0;
-  for (i = 0; i < units.length; ++i) {
-    amount = document.getElementById("unit_" + i + "");
-    if (!amount) continue;
-    else amount = amount.value;
-    if (amount != "" && Number(amount) > 0)
-      unitRations += amount * units[i]['foodCost'];
-  }
-  var tmpdist = 0;
-  var i = 0;
-  if(distance > 15){
-    distance = distance - 15;
-    tmpdist = 15;
-    if(Math.floor(distance/5)<11)
-      tmpdist += (distance % 5) * (1-0.1*Math.floor(distance/5));
-
-    for(i = 1; i <= Math.floor( distance / 5) && i < 11; i++) {
-      tmpdist += 5*(1-0.1*(i-1));
-    }
-  }else{
-      tmpdist = distance;
+  function TimeString(duration)
+  {
+    var time = duration * 60;
+    var hours = Math.floor(time/3600);
+    var minutes = Math.floor((time%3600)/60);
+    if(!hours) return minutes+" Min";
+    var text = duration + " Min ("+hours+" Std";
+    if (minutes) text = text + " "+((minutes<10)?"0":"")+minutes+" Min";
+    text = text + ")";
+    return text;
   }
 
-  // Dauer x Rationen x Größe einer Ration x Bewegungsfaktor
-//  var food = Math.ceil(duration * unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
-  var food = Math.ceil(MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']* tmpdist *
-                       unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
 
+  function dur() {
 
-  if (isNaN(food)){
-    if (domcomp) document.getElementById("food").innerHTML = "- Nahrung";
-    else document.getElementById("food").value = "- Nahrung";
-  } else {
-    if (domcomp) document.getElementById("food").innerHTML = food + " Nahrung";
-    else document.getElementById("food").value = food + " Nahrung";
-  }
-}
+    var MINUTESPERCAVE = {{ speed }};
+    var FOODPERCAVE    = {{ movement_cost_constant }};
+    
+    /* Using torus edge condition */
+    var xCoord = {{ dim_x }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetXCoord.value ) - {{ currentX }}) - {{ dim_x }});
+    var yCoord = {{ dim_y }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetYCoord.value ) - {{ currentY }}) - {{ dim_y }});
 
-function getMaxLoad(){
-  var i, j, amount;
-  var maxLoad;
-  for (i = 0; i < {{ resource_types }}; ++i){
-    maxLoad = 0;
-    for (j = 0; j < units.length; ++j){
-      if (typeof(units[j]) == "undefined") continue;
-      amount = document.getElementById("unit_" + j + "");
+    var movementID = parseInt(getMovementID());
+    if (isNaN(movementID) || typeof(uamoves[movementID]) == 'undefined') return;
+
+    var i, amount;
+
+    var maxSpeedFactor = 0;
+    for (i = 0; i < units.length; ++i){
+      amount = document.getElementById("unit_" + i + "");
       if (!amount) continue;
       else amount = amount.value;
       if (amount != "" && Number(amount) > 0)
-        maxLoad += amount * units[j]['resourceLoad'][i];
+        maxSpeedFactor = Math.max(maxSpeedFactor, units[i]['speedFactor']);
     }
-    if (domcomp) document.getElementById("resource" + i).innerHTML = maxLoad;
-    else document.getElementById("resource" + i).value = maxLoad;
-  } 
-}
+    var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));  
+    // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor
+    var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) * MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']);
 
-{% if hero %}
-function getArmySize(){
-  var i, amount;
-  var armySize = 0;
-  for (i = 0; i < units.length; ++i){
-    if (typeof(units[i]) == "undefined") continue;
-    amount = document.getElementById("unit_"+ i + "");
-    if (!amount) continue;
-    else amount = amount.value;
-    if (amount != "" && Number(amount) > 0)
-      armySize += amount*units[i]['hitPoints'];
-  }
-  if (domcomp) document.getElementById("armySize").innerHTML = "Größe Armee: "+armySize;
-  else document.getElementById("armySize").value = "Größe Armee: "+armySize;
-}
-{% endif %}
-
-function checkall(){
-  var i, amount;
-  var allchecked = document.getElementById("all")
-  for (i = 0; i < units.length; ++i){
-    amount = document.getElementById("unit_" + i + "");
-    if (!amount) continue;
-    if (allchecked.checked) amount.value = units[i]['maxWarriorAnzahl'];
-    else amount.value = "";
-  }
-  dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}
-}
-
-function markAll(unitID){
-  var amount;
-  amount = document.getElementById("unit_" + unitID + "");
-  if (amount.value == "")
-    amount.value = units[unitID]['maxWarriorAnzahl'];
-  else
-    amount.value = "";
-  dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}
-}
-
-function loadMaxRes(resNr, resMax){
-  var value = domcomp
-              ? document.getElementById("resource" + resNr).innerHTML
-              : document.getElementById("resource" + resNr).value;
-  if (isNaN(value))
-    return;
-  var amount = document.getElementById("rohstoff_" + resNr + "");
-  amount.value = (amount.value == "") ? Math.min(value, resMax) : "";
-}
-
-var caveBookmarks = new Array();
-
-function disable_to(){
-  var r = document.getElementById("unitMoving").targetCaveID;
-  var flag = false;
-  for (var i = 0; i < r.length; i++)
-    if (r[i].selected && r[i].value != -1){
-      flag = true; break;
+    var movementspeed =  maxSpeedFactor * uamoves[movementID]['speedfactor'];
+    if (isNaN(maxSpeedFactor)){
+      if (domcomp) document.getElementById("movementspeed").innerHTML = "-";
+      else document.getElementById("movementspeed").value = "-";
+    } else {
+      if (domcomp) document.getElementById("movementspeed").innerHTML = movementspeed;
+      else document.getElementById("movementspeed").value = movementspeed ;
     }
-  document.getElementById("unitMoving").targetXCoord.disabled =
-    document.getElementById("unitMoving").targetYCoord.disabled =
-    document.getElementById("unitMoving").targetCaveName.disabled = flag;
-  if (flag){
-    document.getElementById("unitMoving").targetXCoord.value = caveBookmarks[r[i].value][0];
-    document.getElementById("unitMoving").targetYCoord.value = caveBookmarks[r[i].value][1];
-    document.getElementById("unitMoving").targetCaveName.value = caveBookmarks[r[i].value][2];
-  } else {
-    document.getElementById("unitMoving").targetXCoord.value =
-      document.getElementById("unitMoving").targetYCoord.value =
-      document.getElementById("unitMoving").targetCaveName.value = '';
+    if (isNaN(duration)){
+      if (domcomp) document.getElementById("duration").innerHTML = "- Min";
+      else document.getElementById("duration").value = "- Min";
+    } else {
+      if (domcomp) document.getElementById("duration").innerHTML = TimeString(duration);
+      else document.getElementById("duration").value =  TimeString(duration); 
+    }
+
+    var unitRations = 0;
+    for (i = 0; i < units.length; ++i) {
+      amount = document.getElementById("unit_" + i + "");
+      if (!amount) continue;
+      else amount = amount.value;
+      if (amount != "" && Number(amount) > 0)
+        unitRations += amount * units[i]['foodCost'];
+    }
+    var tmpdist = 0;
+    var i = 0;
+    if(distance > 15){
+      distance = distance - 15;
+      tmpdist = 15;
+      if(Math.floor(distance/5)<11)
+        tmpdist += (distance % 5) * (1-0.1*Math.floor(distance/5));
+
+      for(i = 1; i <= Math.floor( distance / 5) && i < 11; i++) {
+        tmpdist += 5*(1-0.1*(i-1));
+      }
+    }else{
+        tmpdist = distance;
+    }
+
+    // Dauer x Rationen x Größe einer Ration x Bewegungsfaktor
+  //  var food = Math.ceil(duration * unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
+    var food = Math.ceil(MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']* tmpdist *
+                         unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
+
+
+    if (isNaN(food)){
+      if (domcomp) document.getElementById("food").innerHTML = "- Nahrung";
+      else document.getElementById("food").value = "- Nahrung";
+    } else {
+      if (domcomp) document.getElementById("food").innerHTML = food + " Nahrung";
+      else document.getElementById("food").value = food + " Nahrung";
+    }
   }
-  dur();
-}
-// ]]>
+
+  function getMaxLoad(){
+    var i, j, amount;
+    var maxLoad;
+    for (i = 0; i < {{ resource_types }}; ++i){
+      maxLoad = 0;
+      for (j = 0; j < units.length; ++j){
+        if (typeof(units[j]) == "undefined") continue;
+        amount = document.getElementById("unit_" + j + "");
+        if (!amount) continue;
+        else amount = amount.value;
+        if (amount != "" && Number(amount) > 0)
+          maxLoad += amount * units[j]['resourceLoad'][i];
+      }
+      if (domcomp) document.getElementById("resource" + i).innerHTML = maxLoad;
+      else document.getElementById("resource" + i).value = maxLoad;
+    } 
+  }
+
+  {% if hero %}
+  function getArmySize(){
+    var i, amount;
+    var armySize = 0;
+    for (i = 0; i < units.length; ++i){
+      if (typeof(units[i]) == "undefined") continue;
+      amount = document.getElementById("unit_"+ i + "");
+      if (!amount) continue;
+      else amount = amount.value;
+      if (amount != "" && Number(amount) > 0)
+        armySize += amount*units[i]['hitPoints'];
+    }
+    if (domcomp) document.getElementById("armySize").innerHTML = "Größe Armee: "+armySize;
+    else document.getElementById("armySize").value = "Größe Armee: "+armySize;
+  }
+  {% endif %}
+
+  function checkall(){
+    var i, amount;
+    var allchecked = document.getElementById("all")
+    for (i = 0; i < units.length; ++i){
+      amount = document.getElementById("unit_" + i + "");
+      if (!amount) continue;
+      if (allchecked.checked) amount.value = units[i]['maxWarriorAnzahl'];
+      else amount.value = "";
+    }
+    dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}
+  }
+
+  function markAll(unitID){
+    var amount;
+    amount = document.getElementById("unit_" + unitID + "");
+    if (amount.value == "")
+      amount.value = units[unitID]['maxWarriorAnzahl'];
+    else
+      amount.value = "";
+    dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}
+  }
+
+  function loadMaxRes(resNr, resMax){
+    var value = domcomp
+                ? document.getElementById("resource" + resNr).innerHTML
+                : document.getElementById("resource" + resNr).value;
+    if (isNaN(value))
+      return;
+    var amount = document.getElementById("rohstoff_" + resNr + "");
+    amount.value = (amount.value == "") ? Math.min(value, resMax) : "";
+  }
+
+  var caveBookmarks = new Array();
+
+  function disable_to(){
+    var r = document.getElementById("unitMoving").targetCaveID;
+    var flag = false;
+    for (var i = 0; i < r.length; i++)
+      if (r[i].selected && r[i].value != -1){
+        flag = true; break;
+      }
+    document.getElementById("unitMoving").targetXCoord.disabled =
+      document.getElementById("unitMoving").targetYCoord.disabled =
+      document.getElementById("unitMoving").targetCaveName.disabled = flag;
+    if (flag){
+      document.getElementById("unitMoving").targetXCoord.value = caveBookmarks[r[i].value][0];
+      document.getElementById("unitMoving").targetYCoord.value = caveBookmarks[r[i].value][1];
+      document.getElementById("unitMoving").targetCaveName.value = caveBookmarks[r[i].value][2];
+    } else {
+      document.getElementById("unitMoving").targetXCoord.value =
+        document.getElementById("unitMoving").targetYCoord.value =
+        document.getElementById("unitMoving").targetCaveName.value = '';
+    }
+    dur();
+  }
 </script>
 
 <script type="text/javascript">
-// <![CDATA[
-wmtt = null;
-document.onmousemove = updateWMTT;
-function updateWMTT(e) {
-  if (wmtt != null && wmtt.style.display == 'block') {
-    x = (e.pageX ? e.pageX : window.event.x) + wmtt.offsetParent.scrollLeft - wmtt.offsetParent.offsetLeft;
-    y = (e.pageY ? e.pageY : window.event.y) + wmtt.offsetParent.scrollTop - wmtt.offsetParent.offsetTop;
-    wmtt.style.left = (x + 20) + "px";
-    wmtt.style.top   = (y + 20) + "px";
+  wmtt = null;
+  document.onmousemove = updateWMTT;
+  function updateWMTT(e) {
+    if (wmtt != null && wmtt.style.display == 'block') {
+      x = (e.pageX ? e.pageX : window.event.x) + wmtt.offsetParent.scrollLeft - wmtt.offsetParent.offsetLeft;
+      y = (e.pageY ? e.pageY : window.event.y) + wmtt.offsetParent.scrollTop - wmtt.offsetParent.offsetTop;
+      wmtt.style.left = (x + 20) + "px";
+      wmtt.style.top   = (y + 20) + "px";
+    }
   }
-}
-function showWMTT(id) {
-  wmtt = document.getElementById(id);
-  wmtt.style.display = "block";
-}
-function hideWMTT() {
-  wmtt.style.display = "none";
-}
-// ]]>
+  function showWMTT(id) {
+    wmtt = document.getElementById(id);
+    wmtt.style.display = "block";
+  }
+  function hideWMTT() {
+    wmtt.style.display = "none";
+  }
 </script>
 
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
@@ -258,7 +254,7 @@ function hideWMTT() {
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
           <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
-          <td><input id="unit_{{ item.warrior_id }}" style="width: 90%" name="unit[{{ item.warrior_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.warrior_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
+          <td><input style="width: 90%" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.unit_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
           <td>{{ item.max_warrior_count }}</td>
           {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
         </tr>
@@ -280,7 +276,7 @@ function hideWMTT() {
             <li>
               <div class="ym-grid">
               <div class="ym-gl" style="width: 22px;"><label for="rohstoff_{{ item.resource_id }}"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></label></div>
-              <div class="ym-gl" style="width: 50px;"><input style="width: 50px;" id="rohstoff_{{ item.resource_id }}" name="rohstoff[{{ item.resource_id }}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
+              <div class="ym-gl" style="width: 50px;"><input style="width: 50px;" id="rohstoff_{{ item.resource_id }}" value="{{ item.value }}" name="rohstoff[{{ item.resource_id }}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
               <div class="ym-gl left" style="width: 75px; padding-left: 3px;"><label for="rohstoff_{{ item.resource_id }}">({{ item.current_amount }})</label></div>
               </div>
             </li>
