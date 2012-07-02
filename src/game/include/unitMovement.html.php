@@ -2,6 +2,7 @@
 /*
  * unitaction.html.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,7 +18,6 @@ require_once('lib/Movement.php');
 
 function unit_Movement($caveID, &$ownCave) {
   global $db, $template;
-
 
   $safeForm = true;
 
@@ -400,7 +400,7 @@ function unit_Movement($caveID, &$ownCave) {
       'food_cost'         => $GLOBALS['unitTypeList'][$unitID]->foodCost,
       'resource_load'     => implode(",", $temp),
       'speed_factor'      => $GLOBALS['unitTypeList'][$unitID]->wayCost,
-      'max_warrior_count' => $details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName],
+      'max_unit_count'    => $details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName],
       'encumbrance'       => $encumbrance,
       'hitPoints'         => $GLOBALS['unitTypeList'][$unitID]->hitPoints,
       'value'             => ($safeForm && isset($unit[$unitID])) ? $unit[$unitID] : '',

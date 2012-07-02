@@ -2,7 +2,7 @@
 /* unitMovement.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,7 +17,7 @@
 <script type="text/javascript">
   var uamoves = new Array();
   var units = new Array();
-  {% for item in unit_list %}units[{{ item.unit_id }}] = {maxWarriorAnzahl:{{ item.max_warrior_count }}, foodCost:{{ item.food_cost }}, speedFactor:{{ item.speed_factor }}, resourceLoad:[{{ item.resource_load }}], hitPoints:{{ item.hitPoints }}};{% endfor %}
+  {% for item in unit_list %}units[{{ item.unit_id }}] = {maxWarriorAnzahl:{{ item.max_unit_count }}, foodCost:{{ item.food_cost }}, speedFactor:{{ item.speed_factor }}, resourceLoad:[{{ item.resource_load }}], hitPoints:{{ item.hitPoints }}};{% endfor %}
   var domcomp = document.childNodes ? true : false;
   function getMovementID(){
     var r = document.getElementById("unitMoving").movementID;
@@ -36,7 +36,6 @@
     text = text + ")";
     return text;
   }
-
 
   function dur() {
 
@@ -255,7 +254,7 @@
         <tr class="bg{{ bgID }}">
           <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
           <td><input style="width: 90%" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.unit_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
-          <td>{{ item.max_warrior_count }}</td>
+          <td>{{ item.max_unit_count }}</td>
           {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
         </tr>
         {% endfor %}
