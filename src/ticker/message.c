@@ -1291,12 +1291,13 @@ static char* spy_report_xml(db_t *database,
     const struct Cave *cave2, const struct Player *player2,
     const int resources[], const int units[], int artefact,
     int spyTypes[], const struct Cave cave, int stolenArtefactID,
-    int stolenArtefactLost, const int dead_units[], int IsAttacker)
+    int stolenArtefactLost, const int dead_units[], int IsAttacker,
+    const char *Status)
 {
 
   mxml_node_t *xml;
   mxml_node_t *spyreport;
-  mxml_node_t *curtime, *isAttacker;
+  mxml_node_t *curtime, *isAttacker, *status;
   mxml_node_t *source, *target, *player, *tribe;
   mxml_node_t *caveName, *xCoord, *yCoord;
   mxml_node_t *Units, *Unit, *name, *value;
@@ -1313,6 +1314,8 @@ static char* spy_report_xml(db_t *database,
       mxmlNewInteger(curtime, (int) time(NULL));
   isAttacker = mxmlNewElement(spyreport, "isAttacker");
     mxmlNewText(isAttacker, 0, (const char*) (IsAttacker ? "true" : "false"));
+  status = mxmlNewElement(spyreport, "status");
+    mxmlNewText(status, 0, (char*) Status);
 
   if (IsAttacker) {
     source = mxmlNewElement(spyreport, "source");
@@ -1473,6 +1476,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
   const char *subject2 = message_subject(tmpl_spy2, "TITLE", cave2);
   double result;
   char *xml = "";
+  char *status = "";
   int spyTypes[5] = {0, 0, 0, 0, 0};
   struct Cave cave;
   int artefactID = 0;
@@ -1491,6 +1495,8 @@ struct SpyReportReturnStruct spy_report (db_t *database,
   srrs.artefactID = 0;
 
   if (result > drand()) {
+    status = "success";
+
     // getting artefact? no artefact carried?
     if (cave2->artefacts > 0 && ARTEFACT_SPY_PROBABILITY > drand() && *artefact == 0) {
       int artefact_def = get_artefact_for_caveID(database, cave2->cave_id, 1);
@@ -1510,6 +1516,8 @@ struct SpyReportReturnStruct spy_report (db_t *database,
     cave = report_spy_info(tmpl_spy1, player1->locale_id, spy, cave2, spyTypes);
   } else {
     if (0.5 > drand()) {
+      status = "death";
+
       int type;
 
       for (type = 0; type < MAX_UNIT; ++type) {
@@ -1523,6 +1531,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
       template_context(tmpl_spy1, "/MSG");
       template_context(tmpl_spy2, "/MSG");
     } else {
+      status = "escape";
       result = 1;
     }
 
@@ -1546,10 +1555,10 @@ struct SpyReportReturnStruct spy_report (db_t *database,
    * srrs.artefactID ist 0 wenn das artefact in einer nachbarhöhle verloren gegangen ist. artefact_def hat aber noch die ursprüngliche ID
    * die für den Bericht benötigt wird
    */
-  xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 1);
+  xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 1, status);
   message_new(database, MSG_CLASS_SPY_REPORT, cave1->player_id, subject1, template_eval(tmpl_spy1), xml);
   if (sendDefenderReport) {
-    xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 0);
+    xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 0, status);
     message_new(database, MSG_CLASS_SPY_REPORT, cave2->player_id, subject2, template_eval(tmpl_spy2), xml);
   }
 

@@ -16,7 +16,7 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
   Deine Spione berichten von der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) {% if message_xml.target.playerName != '' %}des Spielers {{ message_xml.target.playerName }}{% endif %}.
 </p>
 
-{% if message_xml.status = 'death' %}
+{% if message_xml.status == 'death' %}
   <p>Leider waren deine Kundschafter etwas zu ungeschickt, so daß sie von den gegnerischen Wachen bemerkt worden sind und ein Teil von ihnen einen schnellen Tod gefunden hat. Es beschleicht dich das Gefühl, daß du vielleicht doch etwas mehr Wert auf eine gute Ausbildung hättest legen sollen.</p>
   <p>Du verlierst folgende Einheiten:</p>
 
@@ -25,14 +25,14 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
     <tbody>{% for unit in message_xml.deadUnits.deadUnit %}<tr><td>{{ unit.name }}:</td><td class="text-right">{{ unit.value }}</td></tr>{% endfor %}</tbody>
   </table>
 
-{% else if message_xml.status = 'escape' %}
+{% elseif message_xml.status == 'escape' %}
   <p>Leider waren deine Kundschafter etwas zu ungeschickt, so daß sie von den gegnerischen Wachen bemerkt worden sind, bevor sie Informationen über die Höhle sammeln konnten. Zum Glück konnten sie sich aber durch eine schnelle Flucht der Gefangennahme entziehen.</p>
 
-  {% else if message_xml.artefactLost %}
+  {% if message_xml.artefactLost %}
     <p>Das transportierte Artefakt "{{ message_xml.artefactLost.name }}" ist verloren!</p>
   {% endif %}
 
-{% else if message_xml.status = 'success' %}
+{% elseif message_xml.status == 'success' %}
    {% if message_xml.resources.resource %}
   <table style="width: auto; margin-top: 10px;">
     <thead>
@@ -113,7 +113,7 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
   </table>
   {% endif %}
 
-  {% else if message_xml.artefactStolen %}
+  {% if message_xml.artefactStolen %}
     <p>
       Bei der Spionage der Höhle bist du auf ein Artefakt "{{ message_xml.artefactStolen.name }}" gestoßen!<br />
       {% if message_xml.artefactStolen.lost %}Bei dem Kampf ist das Artefakt "{{ message_xml.artefactStolen.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.{% endif %}
