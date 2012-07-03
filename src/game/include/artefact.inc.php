@@ -408,7 +408,7 @@ function artefact_uninitiateArtefact($artefactID) {
 
   $sql = $db->prepare("DELETE FROM ". EVENT_ARTEFACT_TABLE ." WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
+  if (!$sql->execute()) {
     return false;
   }
 

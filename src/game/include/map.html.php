@@ -391,17 +391,21 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
 
   $caveDetails   = array();
   $playerDetails = array();
+  $showArtePossible = false;
+
   if ($cave['playerID'] != 0) {
     $caveDetails   = getCaves($cave['playerID']);
     $playerDetails = getPlayerByID($cave['playerID']);
+
+    $showArtePossible = ($playerDetails['tribe'] != GOD_ALLY) ? true : false;
   }
 
   $cave['terrain_name'] = $GLOBALS['terrainList'][$cave['terrain']]['name'];
   $cave['terrain_img'] = $GLOBALS['terrainList'][$cave['terrain']]['img'];
   $region = getRegionByID($cave['regionID']);
 
-  if ($cave['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
-    $temp['artefact'] = true;
+  if ($cave['artefacts'] != 0 && ($showArtePossible || $_SESSION['player']->tribe == GOD_ALLY)) {
+    $cave['artefact'] = true;
   }
 
   $template->addVar('cave_details', $cave);

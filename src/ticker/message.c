@@ -1312,9 +1312,10 @@ static char* spy_report_xml(db_t *database,
   curtime = mxmlNewElement(spyreport, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
   isAttacker = mxmlNewElement(spyreport, "isAttacker");
-    mxmlNewText(isAttacker, 0, (char*) "true");
+    mxmlNewText(isAttacker, 0, (const char*) (IsAttacker ? "true" : "false"));
 
-  source = mxmlNewElement(spyreport, "source");
+  if (IsAttacker) {
+    source = mxmlNewElement(spyreport, "source");
       player = mxmlNewElement(source, "playerName");
         mxmlNewText(player, 0, (char*) player1->name);
       tribe = mxmlNewElement(source, "tribe");
@@ -1325,6 +1326,7 @@ static char* spy_report_xml(db_t *database,
         mxmlNewInteger(xCoord, (int) cave1->xpos);
       yCoord = mxmlNewElement(source, "yCoord");
         mxmlNewInteger(yCoord, (int) cave1->ypos);
+  }
 
   target = mxmlNewElement(spyreport, "target");
       player = mxmlNewElement(target, "playerName");
@@ -1339,7 +1341,6 @@ static char* spy_report_xml(db_t *database,
         mxmlNewInteger(yCoord, (int) cave2->ypos);
 
   if (IsAttacker) {
-
     //defenseSystems
     if (spyTypes[0] == 1) {
       DefenseSystems = mxmlNewElement(spyreport, "defenseSystems");
@@ -1351,7 +1352,6 @@ static char* spy_report_xml(db_t *database,
           value = mxmlNewElement(DefenseSystem, "value");
             mxmlNewText(value, 0, (char*) transform_spy_values(cave.defense_system[type], 0));
         }
-
       }
     }
 
@@ -1412,15 +1412,29 @@ static char* spy_report_xml(db_t *database,
     }
   } // end IsAttacker
 
+  if (!IsAttacker) {
+    //units
+    Units = mxmlNewElement(spyreport, "units");
+    for (type = 0; type < MAX_UNIT; ++type) {
+      if (units[type] > 0) {
+        Unit = mxmlNewElement(Units, "unit");
+        name = mxmlNewElement(Unit, "name");
+          mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Unit, "value");
+          mxmlNewText(value, 0, (char*) transform_spy_values(cave.unit[type], 1));
+      }
+    }
+  }
+
   // dead units
   deadUnits = mxmlNewElement(spyreport, "deadUnits");
   for (type = 0; type < MAX_UNIT; ++type) {
     if (dead_units[type] > 0) {
-      Unit = mxmlNewElement(deadUnits, "");
-                name = mxmlNewElement(Unit, "name");
-                  mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
-                value = mxmlNewElement(Unit, "value");
-                  mxmlNewInteger(value, dead_units[type]);
+      Unit = mxmlNewElement(deadUnits, "deadUnit");
+        name = mxmlNewElement(Unit, "name");
+          mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Unit, "value");
+          mxmlNewInteger(value, dead_units[type]);
     }
   }
 
