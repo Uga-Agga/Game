@@ -137,6 +137,8 @@ class Wonder {
   var $effectDepList;
   var $maxEffectDepList;
 
+  var $targetsPossible;
+
   function Wonder() {
     $this-&gt;wonderID        = 0;
     $this-&gt;wonderCategory  = "";
@@ -173,6 +175,7 @@ class Wonder {
     $this-&gt;effectDepList    = array();
     $this-&gt;maxEffectDepList = array();
 
+    $this-&gt;targetsPossible = array();
   }
 }
 
@@ -234,6 +237,8 @@ function init_Wonders(){
 
   $tmp-&gt;effectDepList    = array(<xsl:apply-templates select="EffectReq[name(id(@id))='EffectType']" mode="min"/>);
   $tmp-&gt;maxEffectDepList = array(<xsl:apply-templates select="EffectReq[name(id(@id))='EffectType']" mode="max"/>);
+
+  $tmp-&gt;targetsPossible = array(<xsl:apply-templates select="targetsPossible/target"/>);
 
   $GLOBALS['wonderTypeList'][<xsl:value-of select="count(preceding-sibling::*)"/>] = $tmp;
 
@@ -302,5 +307,11 @@ function init_Wonders(){
 <xsl:template match="Requirement|EffectReq" mode="max">
 <xsl:value-of select="count(id(@id)/preceding-sibling::*)"/> => <xsl:choose><xsl:when test="@max"><xsl:value-of select="@max"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose>,
 </xsl:template>
+
+<!-- Targets possible -->
+<xsl:template match="target">array('target' => '<xsl:value-of select="@target"/>', 'relation' => array(<xsl:apply-templates select="relation"/>))<xsl:if test="position()!=last()">, </xsl:if></xsl:template>
+
+<!-- Relation for targetsPossible -->
+<xsl:template match="relation">array('target' => '<xsl:value-of select="@target"/>', 'negate' => <xsl:value-of select="@negate"/>, 'relationID' => <xsl:value-of select="@relationID"/>)<xsl:if test="position()!=last()">, </xsl:if></xsl:template>
 
 </xsl:stylesheet>
