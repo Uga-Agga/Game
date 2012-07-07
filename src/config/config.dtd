@@ -106,7 +106,8 @@
   hidden (0 | 1) "0"
   isTribeWonder (0 | 1) "0"
   groupID CDATA "0"
-  WonderCategory CDATA "other">
+  WonderCategory CDATA "other"
+  secondsBetween CDATA "0">
 <!ELEMENT WonderCategories (WonderCategory+)>
 <!ELEMENT WonderCategory EMPTY>
 <!ATTLIST WonderCategory
