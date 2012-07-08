@@ -116,7 +116,7 @@ Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.tar
   {% if message_xml.artefactStolen %}
     <p>
       Bei der Spionage der Höhle bist du auf ein Artefakt "{{ message_xml.artefactStolen.name }}" gestoßen!<br />
-      {% if message_xml.artefactStolen.lost %}Bei dem Kampf ist das Artefakt "{{ message_xml.artefactStolen.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.{% endif %}
+      {% if message_xml.artefactStolen.lost == 'true' %}Leider waren deine Kundschafter zu sehr auf die Spionage fixiert und haben das Artefakt "{{ message_xml.artefactStolen.name }}" verloren! Es muß irgendwo in der Nachbarschaft der Höhle liegen.{% endif %}
     </p>
   {% endif %}
 {% endif %}

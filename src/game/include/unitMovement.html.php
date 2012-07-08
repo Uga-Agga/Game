@@ -410,7 +410,7 @@ function unit_Movement($caveID, &$ownCave) {
 
   // weitergereichte Koordinaten
   if (!Request::getVar('movementID', 0) || $safeForm) {
-    if (Request::getVar('targetCaveID', 0)) {
+    if (Request::getVar('targetCaveID', 0) > 0) {
       $caveData = getCaveByID(Request::getVar('targetCaveID', 0));
 
       $template->addVars(array(

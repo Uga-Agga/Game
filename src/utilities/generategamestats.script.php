@@ -42,20 +42,13 @@ foreach ($GLOBALS['unitTypeList'] AS $value)
 }
 
 /*
- * init hidden player
+ * get secret player and cace
  */
-$SecretCave = array();
-$sqlHiddenUser = "";
-if (sizeof(Config::$hiddenUser)) {
-  $sqlHiddenUser = "WHERE Player.name IN ('" . implode("', '", Config::$hiddenUser) . "')";
-}
-
 $sql = $db->prepare("SELECT caveID 
                      FROM ". CAVE_TABLE ."
                        LEFT JOIN ". PLAYER_TABLE . " 
-                         ON Cave.playerID = Player.playerID 
-         {$sqlHiddenUser}");
-         
+                         ON Cave.playerID = Player.playerID
+                     WHERE Player.noStatistic = 1 OR Cave.noStatistic = 1");
 if ($sql->execute()) {
     while ($row = $sql->fetch()) {
       $SecretCave[$row['caveID']] = TRUE;

@@ -73,7 +73,7 @@ function tribe_getContent($caveID, &$details) {
      -2 => array('type' => 'error', 'message' => _('Ihr Stamm befindet sich im Krieg. Sie dürfen derzeit nicht austreten.')),
      -1 => array('type' => 'error', 'message' => _('Du hast keine Berechtigung dies zu tun.')),
       1 => array('type' => 'success', 'message' => _('Du hast den Stamm verlassen.')),
-      2 => array('type' => 'success', 'message' => _('Du hast den Stamm erfolgreich verlassen.<br />Da du das letzte Mitglied warst, wurde der STamm aufgelöst.')),
+      2 => array('type' => 'success', 'message' => _('Du hast den Stamm erfolgreich verlassen.<br />Da du das letzte Mitglied warst, wurde der Stamm aufgelöst.')),
       3 => array('type' => 'success', 'message' => _('Die Nachricht wurde Erfolgreich verschickt.')),
       4 => array('type' => 'success', 'message' => _('Deine Rohstoffe wurden Erfolgreich ins Stammeslager eingezahlt!')),
       5 => array('type' => 'success', 'message' => _('Die Daten wurden erfolgreich aktualisiert.')),
