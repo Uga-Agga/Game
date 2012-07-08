@@ -99,19 +99,31 @@
 >
 <!--wonders-->
 <!ELEMENT wonders (wonder+)>
-<!ELEMENT wonder (Name+, Description+, Remark+, chance, impacts+, Cost*, (Requirement | EffectReq)*)>
+<!ELEMENT wonder (Name+, Description+, Remark+, chance, impacts+, Cost*, (Requirement | EffectReq)*, targetsPossible*)>
 <!ATTLIST wonder
-          offensive (0 | 1) "0"
-          target (same | own | other | all) #REQUIRED
-          hidden (0 | 1) "0"
-          isTribeWonder (0 | 1) "0"
-          groupID CDATA "0"
-          WonderCategory CDATA "other">
+  offensive (0 | 1) "0"
+  target (same | own | other | all) #REQUIRED
+  hidden (0 | 1) "0"
+  isTribeWonder (0 | 1) "0"
+  groupID CDATA "0"
+  WonderCategory CDATA "other"
+  secondsBetween CDATA "0">
 <!ELEMENT WonderCategories (WonderCategory+)>
 <!ELEMENT WonderCategory EMPTY>
 <!ATTLIST WonderCategory
           id CDATA #REQUIRED
           name CDATA #REQUIRED>
+<!ELEMENT targetsPossible (target+)>
+<!ELEMENT target (relation*)>
+<!ATTLIST target
+  target (own | between | other) #REQUIRED
+>
+<!ELEMENT relation EMPTY>
+<!ATTLIST relation 
+  target (own | between | other ) #REQUIRED
+  negate CDATA "0"
+  relationID CDATA #REQUIRED
+>
 <!-- trades -->
 <!ELEMENT trades (tradecategories,trade+)>
 <!ELEMENT tradecategories (tradecategory+)>
@@ -353,6 +365,8 @@
 <!ELEMENT Visible (#PCDATA)>
 <!ELEMENT WatchTowerVisionRange (#PCDATA | object)*>
 <!ELEMENT WonderResistance (#PCDATA | object)*>
+<!ELEMENT negate (#PCDATA)>
+
 <!--entities-->
 <!ENTITY apst "&amp;#39;">
 <!ENTITY auml "&amp;auml;">
