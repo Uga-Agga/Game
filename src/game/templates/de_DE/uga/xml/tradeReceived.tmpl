@@ -82,6 +82,13 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
   <p>Du hast das Artefakt "{{ message_xml.artefact.name }}" bekommen!</p>
 {% endif %}
 
+{% if message_xml.artefact_destroy %}
+  <p>
+    Nachdem du dir die Augen gewischt hast, siehst du, das dir keine Artefakt sondern nur etwas Asche geliefert worden ist.<br />
+    Ob das alles so richtig war?<br />Dein Artefakt "{{ message_xml.artefact_destroy.name }}" ist verloren.
+  <p>
+{% endif %}
+
 {% if message_xml.hero.send == 'true' %}
   {% if message_xml.hero.send == 'true' %}
     <p>Dein Held ist in der Höhle eingetroffen.</p>

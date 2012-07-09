@@ -2,7 +2,7 @@
 /* wonderDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -58,13 +58,35 @@
             </thead>
             <tbody>
               <tr><td>Erfolgswahrscheinlichkeit:</td><td>{{ chance }}</td></tr>
-              <tr><td>Mögliche Ziele:</td><td>{{ target|raw }}</td></tr>
+              {% if not tribe_wonder %}<tr><td>Mögliche Ziele:</td><td>{{ target|raw }}</td></tr>{% endif %}
               <tr><td>Art:</td><td>{{ offensiveness }}</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
+
+    {% if tribe_wonder and targets_possible %}
+    <div class="ym-grid" style="padding-top: 10px;">
+      <div class="ym-gl">
+        <div class="ym-gbox">
+          <table>
+            <thead>
+              <tr><th>Ziel</th><th>Bedingung</th></tr>
+            </thead>
+            <tbody>
+              {% for targets in targets_possible %}
+                <tr>
+                  <td>{% if targets.type == 'own' %}Eigener{% else %}Fremder{% endif %}</td>
+                  <td>{% for item in targets.msg %}{{ item }}<br />{% endfor %}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
 </div>
 

@@ -314,6 +314,6 @@ function init_Wonders(){
 <xsl:template match="target">array('target' => '<xsl:value-of select="@target"/>', 'relation' => array(<xsl:apply-templates select="relation"/>))<xsl:if test="position()!=last()">, </xsl:if></xsl:template>
 
 <!-- Relation for targetsPossible -->
-<xsl:template match="relation">array('target' => '<xsl:value-of select="@target"/>', 'negate' => <xsl:value-of select="@negate"/>, 'relationID' => <xsl:value-of select="@relationID"/>)<xsl:if test="position()!=last()">, </xsl:if></xsl:template>
+<xsl:template match="relation">array('type' => '<xsl:value-of select="@type"/>', 'negate' => <xsl:value-of select="@negate"/>, 'relationID' => <xsl:value-of select="@relationID"/>)<xsl:if test="position()!=last()">, </xsl:if></xsl:template>
 
 </xsl:stylesheet>

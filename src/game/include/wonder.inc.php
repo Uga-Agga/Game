@@ -19,10 +19,10 @@ class WonderTarget {
     static $result = NULL;
 
     if ($result === NULL) {
-      $result = array("same"  => _('Wirkungshöle'),
-                      "own"   => _('eigene Höhlen'),
-                      "other" => _('fremde Höhlen'),
-                      "all"   => _('jede Höhle'));
+      $result = array('same'  => _('Wirkungshöle'),
+                       'own'   => _('eigene Höhlen'),
+                       'other' => _('fremde Höhlen'),
+                       'all'   => _('jede Höhle'));
     }
 
     return $result;
@@ -255,17 +255,30 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
     return -35;
   }
 
-  // check if player is leader
-  if (!tribe_isLeader($_SESSION['player']->playerID, $casterTribe)) {
-    return -1;
+  $targetTribeRelations = relation_getRelationsForTribe($targetTribe);
+  $casterTribeRelations = relation_getRelationsForTribe($casterTribe);
+
+  $wonderPossible = false;
+  foreach ($wonder->targetsPossible as $targetsPossible) {
+    // check target
+    if ($targetsPossible['target'] == 'own' && $casterTribe != $targetTribe) {
+      continue;
+    }
+
+    if ($targetsPossible['target'] == 'other' && $casterTribe == $targetTribe) {
+      continue;
+    }
+
+    // check relation
+    $check = wonder_checkRelations($targetsPossible['relation'], $targetTribe, $casterTribe, $casterTribeRelations, $targetTribeRelations);
+
+    if ($check == true) {
+      $wonderPossible = true;
+      break;
+    }
   }
 
-  // check target
-  if ($wonder->target == "own" && $casterTribe != $targetTribe) {
-    return -36;
-  }
-
-  if ($wonder->target == "other" && $casterTribe == $targetTribe) {
+  if ($wonderPossible == false) {
     return -37;
   }
 
@@ -336,6 +349,82 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
   return 12;
 }
 
+function wonder_checkRelations($relations, $targetTribe, $casterTribe, $casterTribeRelations, $targetTribeRelations) {
+  $targetTribe = strtoupper($targetTribe);
+  $casterTribe = strtoupper($casterTribe);
+
+  foreach ($relations as $relation) {
+    $valid = false;
+    switch ($relation['type']) {
+      case 'own2other':
+        $check = (isset($casterTribeRelations['own'][$targetTribe]) && $casterTribeRelations['own'][$targetTribe]['relationType'] == $relation['relationID']) ? true : false;
+
+        if (!$relation['negate'] && $check) {
+          $valid = true;
+        } else if ($relation['negate'] && !$check) {
+          $valid = true;
+        }
+      break;
+
+      case 'own2any':
+        $check = tribe_hasRelation($relation['relationID'], $casterTribeRelations['own']);
+
+        if (!$relation['negate'] && $check) {
+          $valid = true;
+        } else if ($relation['negate'] && !$check) {
+          $valid = true;
+        }
+      break;
+
+      case 'other2own':
+        $check = (isset($casterTribeRelations['other'][$targetTribe]) && $casterTribeRelations['other'][$targetTribe]['relationType'] == $relation['relationID']) ? true : false;
+
+        if (!$relation['negate'] && $check) {
+          $valid = true;
+        } else if ($relation['negate'] && !$check) {
+          $valid = true;
+        }
+      break;
+
+      case 'other2any':
+        $check = tribe_hasRelation($relation['relationID'], $targetTribeRelations['own']);
+
+        if (!$relation['negate'] && $check) {
+          $valid = true;
+        } else if ($relation['negate'] && !$check) {
+          $valid = true;
+        }
+      break;
+
+      case 'any2own':
+        $check = tribe_hasRelation($relation['relationID'], $casterTribeRelations['other']);
+
+        if (!$relation['negate'] && $check) {
+          $valid = true;
+        } else if ($relation['negate'] && !$check) {
+          $valid = true;
+        }
+      break;
+
+      case 'any2other':
+        $check = tribe_hasRelation($relation['relationID'], $targetTribeRelations['other']);
+
+        if (!$relation['negate'] && $check) {
+          $valid = true;
+        } else if ($relation['negate'] && !$check) {
+          $valid = true;
+        }
+      break;
+    }
+
+    if ($valid == false) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function wonder_addStatistic($wonderID, $failSuccess) {
   global $db;
 
@@ -383,6 +472,21 @@ function wonder_addStatistic($wonderID, $failSuccess) {
     $sql->bindValue('name', $wonderID, PDO::PARAM_INT);
     $sql->bindValue('value', json_encode($value), PDO::PARAM_STR);
     $sql->execute();
+  }
+}
+
+function wonder_updateTribeLocked($tag, $wonderID, $locked) {
+  global $db;
+
+  $locked[$wonderID] = time() + $GLOBALS['wonderTypeList'][$wonderID]->secondsBetween;
+
+  $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
+                        SET wonderLocked = :wonderLocked
+                        WHERE tag = :tag");
+  $sql->bindValue('wonderLocked', serialize($locked), PDO::PARAM_STR);
+  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  if (!$sql->execute() || $sql->rowCount() == 0) {
+    return 6;
   }
 }
 ?>

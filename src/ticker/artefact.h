@@ -28,6 +28,8 @@ typedef struct Artefact_class
     const char *description_initiated;
     int         initiationID;
     int         getArtefactBySpy;
+    int         noZeroFood;
+    int         destroyOnMove;
     float       effect[MAX_EFFECT];
 } Artefact_class;
 
