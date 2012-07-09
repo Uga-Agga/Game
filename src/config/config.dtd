@@ -120,7 +120,7 @@
 >
 <!ELEMENT relation EMPTY>
 <!ATTLIST relation 
-  target (own | between | other ) #REQUIRED
+  target (own2other | own2any | other2any | other2own | any2own | any2other ) #REQUIRED
   negate CDATA "0"
   relationID CDATA #REQUIRED
 >
