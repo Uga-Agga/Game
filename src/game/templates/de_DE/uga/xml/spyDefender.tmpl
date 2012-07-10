@@ -36,7 +36,7 @@ Spionageabwehr bei Höhle {{ message_xml.target.caveName }} ({{ message_xml.targ
 
 {% if message_xml.artefactStolen %}
   <p>Du mußtest soeben erschreckend feststellen, das deine Schamanen so besoffen waren, das sie nicht bemerkten wie fast unsichtbare Gestallten dein  Artefakt "{{ message_xml.stolenArtefact }}" mitgenommen haben!</p>
-  {% if message_xml.artefactStolen.lost %}
+  {% if message_xml.artefactStolen.lost == 'true' %}
     <p>Du schaust dich um und mußt erstaunt feststellen, das die Gestallten das Artefakt "{{ message_xml.artefact.name }}" irgendwo in einer der Nachbarschaftshöhle fallen gelassen haben.</p>
   {% endif %}
 {% endif %}

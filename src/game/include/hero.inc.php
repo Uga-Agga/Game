@@ -198,6 +198,7 @@ function skillMaxHp($playerID, $hero) {
   $hero['maxHpLvl'] = $hero['maxHpLvl']++;
   $maxHP = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
   // set database query with playerID
+  
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                      SET maxHpLvl = maxHpLvl + 1,
                        tpFree = tpFree - 1,
@@ -213,15 +214,18 @@ function skillRegHp($playerID, $hero) {
   
   $hero['regHpLvl'] = ++$hero['regHpLvl'];
   $regHP = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['regHP_formula']) . ";");
+  $maxHealPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
 
   // set database query with playerID
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET regHpLvl = regHpLvl + 1,
                          tpFree = tpFree - 1,
-                         regHP = :regHP
+                         regHP = :regHP, 
+                         maxHealPoints = :maxHealPoints
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('regHP', $regHP, PDO::PARAM_INT);
+  $sql->bindValue('maxHealPoints', $maxHealPoints, PDO::PARAM_INT);
   
   return $sql->execute();
 
@@ -562,12 +566,16 @@ function hero_levelUp($hero) {
   if ($hero['exp'] < $hero['lvlUp']) {
     return -12;
   }
+  
+  $maxHealPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE ."
                        SET lvl = lvl +1,
-                         tpFree = tpFree +1 
+                         tpFree = tpFree +1, 
+                         maxHealPoints = :maxHealPoints
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
+  $sql->bindValue('maxHealPoints', $maxHealPoints, PDO::PARAM_INT);
 
   if (!$sql->execute()) {
     return -12;

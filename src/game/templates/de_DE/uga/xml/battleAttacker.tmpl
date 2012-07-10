@@ -141,7 +141,7 @@
     </tr>
   </table>
 
-  {% if message_xml.attacker.plunder %}
+  {% if message_xml.attacker.plunder.resource %}
   <p>Du hast folgende Ressourcen mitgenommen:</p>
   <table style="width: auto;">
     <thead>
@@ -158,8 +158,8 @@
   </table>
   {% endif %}
 
-  {% if message_xml.attacker.resourcesLost %}
-  <p>Der fremde Stamm verliert auf seiner Flucht folgende Ressourcen:</p>
+  {% if message_xml.attacker.resourcesLost.resource %}
+  <p>Auf deiner Flucht hast du alle mitgebrachten Ressourcen verloren:</p>
   <table style="width: auto;">
     <thead>
       <th>Ressource</th>
@@ -201,7 +201,7 @@
         Das transportierte Artefakt "{{ message_xml.artefact.name }}" ist verloren!
       {% endif %}
 
-      {% if message_xml.artefact.lost %}
+      {% if message_xml.artefact.lost == 'true' %}
         <br />Bei dem Kampf ist das Artefakt "{{ message_xml.artefact.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.
       {% endif %}
     </p>
