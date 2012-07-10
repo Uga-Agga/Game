@@ -497,7 +497,7 @@ function tribe_getContent($caveID, &$details) {
       $tribeStorageValues[$resource->dbFieldName]['donatePossible'] = true;
       $dontePossible = true;
     } else {
-      $tribeStorageValues[$resource->dbFieldName]['lastDonate'] = date("d. m. H:i:s", $_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName]);
+      $tribeStorageValues[$resource->dbFieldName]['lastDonate'] = date("d.m. H:i:s", $_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName]);
 
       if ($_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName] < time()) {
         $tribeStorageValues[$resource->dbFieldName]['donatePossible'] = true;
