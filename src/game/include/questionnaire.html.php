@@ -139,27 +139,19 @@ function questionnaire_giveAnswers() {
     return array('type' => 'error', 'message' => _('Fehler beim auslesen der Fragen'));
   }
 
-  $valid = array();
+  $choises = array();
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if (!isset($valid[$row['questionID']])) {
-      $valid[$row['questionID']] = array();
+    if (!isset($choises[$row['questionID']])) {
+      $choises[$row['questionID']] = array();
     }
-    $valid[$row['questionID']][$row['choiceID']] = $row;
+    $choises[$row['questionID']][$row['choiceID']] = $row;
   }
 
   // validate given answers
   foreach ($answers AS $questionID => $choiceID) {
-    if (!isset($valid[$questionID][$choiceID])) {
+    if (!isset($choises[$questionID][$choiceID])) {
       unset($answers[$questionID]);
     }
-  }
-
-  $valid = array();
-  while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    if (!isset($valid[$row['questionID']])) {
-      $valid[$row['questionID']] = array();
-    }
-    $valid[$row['questionID']][$row['choiceID']] = $row;
   }
 
   // answers now contains valid answers
@@ -197,7 +189,8 @@ function questionnaire_giveAnswers() {
       continue;
     }
     $sql->closeCursor();
-    $rewards += $questions[$questionID]['credits'];
+    //$rewards += $questions[$questionID]['credits'];
+    $rewards += $choises[$questionID][$choiceID]['credits'];
   }
   
   // now update playerstats

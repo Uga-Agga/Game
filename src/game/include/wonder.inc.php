@@ -310,9 +310,9 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
   // loop over targets
   foreach ($targets as $target) {
     // loop over impacts
-    foreach($wonder->impactList as $impactID =>$impact) {
+    foreach ($wonder->impactList as $impactID => $impact) {
       $delay = (int)(($delayDelta + $impact['delay']) * WONDER_TIME_BASE_FACTOR);
-      
+
       $sql = $db->prepare("INSERT INTO ". EVENT_WONDER_TABLE ." (casterID, sourceID, targetID, 
                        wonderID, impactID, start, end) 
                        VALUES (:playerID, :caveID, :targetID, :wonderID, :impactID, :start, :end)");
@@ -323,15 +323,15 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
       $sql->bindValue('impactID', $impactID, PDO::PARAM_INT);
       $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
       $sql->bindValue('end', time_toDatetime($now + $delay), PDO::PARAM_STR);
-      
+
       $sql->execute();
     } // end foreach impactList
   } // end foreach target
 
   // send caster messages
   $messageClass = new Messages;
-  $sourceMessage = "Sie haben auf den Stamm \"$targetTribe\" ein Stammeswunder ". $wonder->name." erwirkt.";
-  $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, "Stammeswunder erwirkt auf \"$targetTribe\"", $sourceMessage);
+  $sourceMessage = 'Sie haben auf den Stamm "' . $targetTribe . '" ein Stammeswunder ' . $wonder->name . ' erwirkt.';
+  $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, 'Stammeswunder erwirkt auf "' . $targetTribe . '"', $sourceMessage);
 
   // send target messages
   $targetPlayersArray = array();
@@ -342,8 +342,8 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
   }
 
   foreach($targetPlayersArray as $target) {
-    $targetMessage = "Der Stamm \"$casterTribe\" hat ein Stammeswunder auf deine Höhlen gewirkt";
-    $messageClass->sendSystemMessage($target['playerID'], 9, "Wunder!", $targetMessage);
+    $targetMessage = 'Der Stamm "' . $casterTribe . '" hat ein Stammeswunder auf deine Höhlen gewirkt';
+    $messageClass->sendSystemMessage($target['playerID'], 9, 'Stammeswunder!', $targetMessage);
   }
 
   return 12;

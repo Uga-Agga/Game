@@ -321,7 +321,11 @@ function tribe_getContent($caveID, &$details) {
 
       $messageID = wonder_processTribeWonder($caveID, $wonderID, $tribeTag, $tribeName);
       if ($messageID > 0) {
-       wonder_updateTribeLocked($tribeTag, $wonderID, $tribeData['wonderLocked']);
+        wonder_updateTribeLocked($tribeTag, $wonderID, $tribeData['wonderLocked']);
+      }
+
+      if ($messageID == 11 || $messageID == 12) {
+        wonder_addStatistic($wonderID, $messageID);
       }
 
       $tribeData = tribe_getTribeByTag($tribeTag);

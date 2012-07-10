@@ -209,7 +209,7 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
     } else {
       $tmpMsg = array();
       foreach ($target['relation'] as $relation) {
-        if (!$relation['negate']) {
+        if ($relation['negate']) {
           switch ($relation['type']) {
             case 'own2other':
               $tmpMsg[] = sprintf(_('Dein Stamm darf die Beziehung %s gegenüber den Zielstamm nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
@@ -280,6 +280,7 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
     'dependencies'     => $dependencies,
     'tribe_wonder'     => $wonder->isTribeWonder,
     'targets_possible' => $targetsPossible,
+    'delay'            => date("H:i:s", $wonder->secondsBetween),
   ));
 }
 

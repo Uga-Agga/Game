@@ -59,6 +59,7 @@
             <tbody>
               <tr><td>Erfolgswahrscheinlichkeit:</td><td>{{ chance }}</td></tr>
               {% if not tribe_wonder %}<tr><td>Mögliche Ziele:</td><td>{{ target|raw }}</td></tr>{% endif %}
+              {% if delay %}<tr><td>Cooldown:</td><td>{{ delay }}</td></tr>{% endif %}
               <tr><td>Art:</td><td>{{ offensiveness }}</td></tr>
             </tbody>
           </table>
