@@ -261,11 +261,11 @@ function wonder_processTribeWonder($caveID, $wonderID, $casterTribe, $targetTrib
   $wonderPossible = false;
   foreach ($wonder->targetsPossible as $targetsPossible) {
     // check target
-    if ($targetsPossible['target'] == 'own' && $casterTribe != $targetTribe) {
+    if ($targetsPossible['target'] == 'own' && strtoupper($casterTribe) != strtoupper($targetTribe)) {
       continue;
     }
 
-    if ($targetsPossible['target'] == 'other' && $casterTribe == $targetTribe) {
+    if ($targetsPossible['target'] == 'other' && strtoupper($casterTribe) == strtoupper($targetTribe)) {
       continue;
     }
 

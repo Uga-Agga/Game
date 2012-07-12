@@ -1,7 +1,8 @@
 {#
 /* questionairePresents.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,121 +14,96 @@
 {% block title %}Geschenke{% endblock %}
 {% block content %}
 
-{% if account %}
-<div class="small success nohover">
-   <strong>Bisher erhaltene Schnecken:</strong>
+{% if credits %}
+<div class="success small bottom_space">
+   <span class="bold">Bisher erhaltene Schnecken:</span>
     <br />
-    {{account.copper}}x
+    {{credits.copper}}x
     <img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" style="vertical-align:middle" />
-    {% if account.silver %}
+    {% if credits.silver %}
       {{account.silver}}x
       <img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" style="vertical-align:middle" />
     {% endif %}
-    {% if account.gold %}
+    {% if credits.gold %}
       {{account.gold}}x
       <img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" style="vertical-align:middle" />
     {% endif %}
-    
 </div>
-<br />
 {% endif %}
 
-{% if message %}
-<div class="box small">
- <div class="box-header nohover">&nbsp;</div>
- <div class="smallinner notice nohover" > 
-  {{ message|raw }}
- </div>
-</div> 
-{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %}
 
-<form method="post" action="main.php">
-<div class="box small">
-  <div class="box-header nohover">
-    <strong>Geschenke</strong>
-  </div>
-  <div class="smallinner inner success nohover text-left">
-  <table class="table">
-  <tr>
-    <td>&nbsp;</td>
-    <td>
-      <p style="text-align:justify;">Ihr unterhaltet euch kurz mit der Weisen Alten Frau eures Stammes. Sie
-      erklärt euch, dass ihr eure wertvollen Schnecken gegen interessante
-      Kostbarkeiten eintauschen könnt.<br />
-      &quot;Allerdings geb ich euch nicht mehr, als in eure Höhle passt. (Die Schnecken behalt' ich aber trotzdem..)&quot;<br /><br /></p>
-      {% if presents %}
-        <p style="text-align:center;">Zur Zeit hat sie folgende Angebote: </p>
-      {% endif %}
-    </td>
-	<td>&nbsp;</td>
-  </tr>
-  </table>
-  <table class="table">
-  {% if presents %}
-  <tr>
-    <td style="width:20px"><input type="radio" name="presentID" id="presentID0" value="0" checked="checked" /></td>
-    <td colspan="2"><label for="presentID0">W&auml;hle eine Kostbarkeit</label></td>
-  </tr>
-  {% for present in presents.present %}
-  <tr>
-    <td style="width:20px"><input type="radio" name="presentID" id="presentID{{present.presentID}}" value="{{present.presentID}}" /></td>
-    <td>
+<div class="ua-box small">
+  <div class="ua-box-header">Geschenke</div>
+  <div class="ua-box-content">
+      <div class="notice text-center">
+        Ihr unterhaltet euch kurz mit der Weisen Alten Frau eures Stammes. Sie erklärt euch, dass ihr eure wertvollen Schnecken gegen interessante Kostbarkeiten eintauschen könnt.
+        Allerdings geb ich euch nicht mehr, als in eure Höhle passt. (Die Schnecken behalt' ich aber trotzdem.)
+      </div>
+      
       <table>
-        <tr>
-          {% if present.copper %}
-          <td><label for="presentID{{present.presentID}}">{{present.copper}}x</label></td>
-          <td><img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" /></td>
-          {% endif %}
+        <thead>
+          <tr>
+            <th>Geschenk</th>
+            <th class="text-right">Kosten</th>
+            <th>&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for present in presents %}
+          {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }}">
+              <td>
+                {{present.name}}
+                <ul style="padding-left: 10px" class="text-small">
+                  {% if present.defenseSystem or present.resource or present.unit %}
+                    {% for external in present.defenseSystem %}
+                      <li>{{external.amount}}x {{external.name}}</li>
+                    {% endfor %}
+                    {% for resource in present.resource %}
+                      <li>{{resource.amount}}x {{resource.name}}</li>
+                    {% endfor %}
+                    {% for unit in present.unit %}
+                      <li>{{unit.amount}}x {{unit.name}}</li>
+                    {% endfor %}
+                  {% endif %}
+                </ul>
+              </td>
+              <td class="text-right">
+                {% if present.copper %}
+                <label for="presentID{{present.presentID}}">{{present.copper}}x</label>
+                <img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" />
+                {% endif %}
 
-          {% if present.silver %}
-          <td><label for="presentID{{present.presentID}}">{{present.silver}}x</label></td>
-          <td><img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" /></td>
-          {% endif %}
+                {% if present.silver %}
+                <label for="presentID{{present.presentID}}">{{present.silver}}x</label>
+                <img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" />
+                {% endif %}
 
-          {% if present.gold %}
-          <td><label for="presentID{{present.presentID}}">{{present.gold}}x</label></td>
-          <td><img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" /></td>
-          {% endif %}
-        </tr>
+                {% if present.gold %}
+                <label for="presentID{{present.presentID}}">{{present.gold}}x</label>
+                <img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" />
+                {% endif %}
+              </td>
+              <td style="width: 25px;" class="text-right">
+                <form action="main.php?modus={{ questionaire_present_link }}" method="post">
+                  <div id="wonder">
+                    <input type="hidden" name="action" value="present" />
+                    <input type="hidden" name="presentID" value="{{ present.presentID }}" />
+                    <input type="hidden" name="caveID" value="{{ cave_id }}" />
+                    <input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Eintauschen" alt="Eintauschen" title="Eintauschen" />
+                  </div>
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr class="bg0"><td class="text-center" colspan="2">Zur Zeit habe ich leider nichts für euch im Angebot.</td></tr>
+          {% endfor %}
+        </tbody>
       </table>
-    </td>
-    <td><label for="presentID{{present.presentID}}">{{present.name}}</label></td>
-    <td>
-    {% for external in present.EXTERNAL %}
-      <label for="presentID{{present.presentID}}">{{external.amount}}x {{external.name}}</label><br />
-    {% endfor %}
-    {% for resource in present.RESOURCE %}
-      <label for="presentID{{present.presentID}}">{{resource.amount}}x {{resource.name}}</label><br />
-    {% endfor %}
-    {% for unit in present.UNIT %}
-      <label for="presentID{{present.presentID}}">{{unit.amount}}x {{unit.name}}</label><br />
-    {% endfor %}
-    </td>
-  </tr>
-  {% endfor %}
-  <tr>
-    <td>
-      <input type="submit" value="UGH!" />
-      {% for param in presents.params %}
-        <input type="hidden" name="{{param.name}}" value="{{param.value}}" />
-      {% endfor %}
-    </td>
-  </tr>
-  {% endif %}
-  </table>
-  
-  {% if NO_PRESENT %}
-  <table class="table">
-  <tr align="center">
-    <td colspan="3"><strong>"Im Moment kann ich euch leider nichts anbieten!"</strong></td>
-  </tr>
-  </table>
-  {% endif %}
-  
- </div>
+  </div>
 </div>
-</form>
-<br />
-<div class="small success nohover"><a href="main.php?modus={{ questionaire_link }}">zu den Fragen</a></div>
+
+<div class="small success"><a href="main.php?modus={{ questionaire_link }}">zu den Fragen</a></div>
 
 {% endblock %}

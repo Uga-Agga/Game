@@ -569,7 +569,7 @@
             {% endif %}
           </div>
 
-          {% if is_auth.isLeader %}
+          {% if is_auth.isLeader or is_auth.wonder %}
           <h5 id="tribeWonder" class="hide_status_msg">Wunder</h5>
           <div class="tabbody2">
             {% if wonders %}

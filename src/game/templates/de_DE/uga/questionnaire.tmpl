@@ -14,45 +14,45 @@
 {% block title %}Umfrage{% endblock %}
 {% block content %}
 
-{% if account %}
+{% if credits %}
 <div class="success small bottom_space">
    <span class="bold">Bisher erhaltene Schnecken:</span>
     <br />
-    {{account.copper}}x
+    {{credits.copper}}x
     <img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" style="vertical-align:middle" />
-    {% if account.silver %}
+    {% if credits.silver %}
       {{account.silver}}x
       <img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" style="vertical-align:middle" />
     {% endif %}
-    {% if account.gold %}
+    {% if credits.gold %}
       {{account.gold}}x
       <img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" style="vertical-align:middle" />
     {% endif %}
-    
+
+    <div class="text-small" style="padding-top: 5px;"><a href="main.php?modus={{ questionaire_present_link }}">Schnecken einlösen</a></div>
 </div>
 {% endif %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %}
 
-{% if questions %}
 <div class="ua-box small">
   <div class="ua-box-header">Fragebogen</div>
   <div class="ua-box-content">
-    <form class="ym-form" id="unitMoving" method="post" action="main.php?modus={{ unit_movement_link }}">
+    {% if questions %}
+    <form class="ym-form" id="unitMoving" method="post" action="main.php?modus={{ questionaire_link }}">
       <table>
         <thead>
-          <tr><th colspan="2">Frage</th><th>Antwort</th></tr>
+          <tr><th>Frage</th><th>Antwort</th></tr>
         </thead>
         <tbody>
-          {% for question in questions.question %}
-            <tr>
+          {% for question in questions %}
+          {% set bgID = (bgID+1)%2 %}
+            <tr class="bg{{ bgID }}">
               <td>Nr. {{ question.questionID }}:&nbsp;{{ question.questionText }}</td>
-              <td>{{ question.message }}</td>
               <td>
                 <select name="question[{{question.questionID}}]">
-                  <option value="-1" selected="selected">Wähle eine Antwort</option>
-                  <option value="-1">-----------------------</option>
-                  {% for choice in question.CHOICE %}<option value="{{ choice.choiceID }}">{{ choice.choiceText }}</option>{% endfor %}
+                  <option value="-1" selected="selected" disabled="disabled">Wähle eine Antwort</option>
+                  {% for choice in question.choice %}<option value="{{ choice.choiceID }}">{{ choice.choiceText }}</option>{% endfor %}
                 </select>
               </td>
             </tr>
@@ -61,14 +61,16 @@
       </table>
 
       <div class="ym-fbox-button">
-        {% for item in questions.params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
+        <input type="hidden" name="action" value="answers" />
+        <input type="hidden" name="caveID" value="{{ cave_id }}" />
         <input type="submit" class="ym-button" value="UGH?" id="submit" name="submit"/>
       </div>
     </form>
+    {% else %}
+      <div class="space text-center">Derzeit liegen keine neuen Fragen vor.</div>
+    {% endif %}
   </div>
 </div>
-{% endif %}
-<br />
 
 <div class="small success"><a href="main.php?modus={{ questionaire_present_link }}">zu den Geschenken</a></div>
  

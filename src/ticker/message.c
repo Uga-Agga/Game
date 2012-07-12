@@ -920,8 +920,8 @@ static char* battle_report_xml (db_t *database,
 
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
-    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
-
+    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].religion_bonus);
+      
     battleValues = mxmlNewElement(attacker, "battleValues");
       range = mxmlNewElement(battleValues, "range");
         mxmlNewInteger(range, (int) result->attackers_acc_range_before);
@@ -1016,7 +1016,7 @@ static char* battle_report_xml (db_t *database,
 
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
-    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
+    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].religion_bonus);
 
     battleValues = mxmlNewElement(defender, "battleValues");
       range = mxmlNewElement(battleValues, "range");

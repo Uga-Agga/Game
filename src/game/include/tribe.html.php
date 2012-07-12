@@ -325,7 +325,8 @@ function tribe_getContent($caveID, &$details) {
       }
 
       if ($messageID == 11 || $messageID == 12) {
-        wonder_addStatistic($wonderID, $messageID);
+        $success = ($messageID == 12) ? 1 : 2;
+        wonder_addStatistic($wonderID, $success);
       }
 
       $tribeData = tribe_getTribeByTag($tribeTag);
