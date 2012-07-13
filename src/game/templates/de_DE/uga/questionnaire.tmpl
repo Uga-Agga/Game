@@ -14,18 +14,18 @@
 {% block title %}Umfrage{% endblock %}
 {% block content %}
 
-{% if credits %}
+{% if credits.credits %}
 <div class="success small bottom_space">
    <span class="bold">Bisher erhaltene Schnecken:</span>
     <br />
-    {{credits.copper}}x
+    {{ credits.copper }}x
     <img src="{{ gfx }}/questionnaire/copper.gif" alt="Kupfer" title="Kupfer" style="vertical-align:middle" />
     {% if credits.silver %}
-      {{account.silver}}x
+      {{ credits.silver }}x
       <img src="{{ gfx }}/questionnaire/silver.gif" alt="Silber" title="Silber" style="vertical-align:middle" />
     {% endif %}
     {% if credits.gold %}
-      {{account.gold}}x
+      {{ credits.gold }}x
       <img src="{{ gfx }}/questionnaire/gold.gif" alt="Gold" title="Gold" style="vertical-align:middle" />
     {% endif %}
 
