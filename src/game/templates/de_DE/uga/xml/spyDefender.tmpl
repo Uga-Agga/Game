@@ -10,12 +10,18 @@
  */
 #}
 
-Spionageabwehr bei Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}).
+{% if message_xml.status != 'success' %}
+  Spionageabwehr bei Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}).
+{% else %}
+  Spionagebericht bei Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}).
+{% endif %}
 
 {% if message_xml.status == 'death' %}
   <p>Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten aufgestöbert, die sich auffällig für deine Höhle interessiert haben.</p>
 {% elseif message_xml.status == 'escape' %}
   <p>Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten gesichtet, die sich an deine Höhle heranschleichen wollten. Sie hatten zwar noch keine Gelegenheit, etwas in Erfahrung zu bringen, konnten aber bedauerlicherweise den Wachen entkommen.</p>
+{% elseif message_xml.status == 'success' %}
+  <p>Deine Wachen haben eine Gruppe äußerst zwielichtiger Gestalten gesichtet, die sich aus deiner Höhle herrausgeschlichen haben.</p>
 {% endif %}
 
 {% if message_xml.units.unit %}
@@ -35,9 +41,9 @@ Spionageabwehr bei Höhle {{ message_xml.target.caveName }} ({{ message_xml.targ
 {% endif %}
 
 {% if message_xml.artefactStolen %}
-  <p>Du mußtest soeben erschreckend feststellen, das deine Schamanen so besoffen waren, das sie nicht bemerkten wie fast unsichtbare Gestallten dein  Artefakt "{{ message_xml.stolenArtefact }}" mitgenommen haben!</p>
+  <p>Du mußtest soeben erschreckend feststellen, das deine Schamanen so besoffen waren, das sie nicht bemerkten wie die unsichtbaren Gestalten auf ihrer Flucht dein Artefakt "{{ message_xml.artefactStolen.name }}" mitgenommen haben!</p>
   {% if message_xml.artefactStolen.lost == 'true' %}
-    <p>Du schaust dich um und mußt erstaunt feststellen, das die Gestallten das Artefakt "{{ message_xml.artefact.name }}" irgendwo in einer der Nachbarschaftshöhle fallen gelassen haben.</p>
+    <p>Du schaust dich um und mußt erstaunt feststellen, das die Gestallten das Artefakt "{{ message_xml.artefactStolen.name }}" irgendwo in einer der Nachbarschaftshöhle fallen gelassen haben.</p>
   {% endif %}
 {% endif %}
 

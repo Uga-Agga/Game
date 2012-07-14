@@ -1450,7 +1450,7 @@ static char* spy_report_xml(db_t *database,
 
   // lost carried artefact
   if (artefact) {
-    const char* ArtefactName = artefact_name(database, stolenArtefactID);
+    const char* ArtefactName = artefact_name(database, artefact);
         Artefact = mxmlNewElement(spyreport, "artefactLost");
           name = mxmlNewElement(Artefact, "name");
             mxmlNewText(name, 0, (char*) ArtefactName);
@@ -1506,15 +1506,17 @@ struct SpyReportReturnStruct spy_report (db_t *database,
 
     // getting artefact? no artefact carried?
     if (cave2->artefacts > 0 && ARTEFACT_SPY_PROBABILITY > drand() && *artefact == 0) {
-      int artefact_def = get_artefact_for_caveID(database, cave2->cave_id, 1);
+      artefact_def = get_artefact_for_caveID(database, cave2->cave_id, 1);
 
-      // artefactID -> Rückgabe der Artefact ID wenn es NICHT versprungen ist sonst 0
-      // artefact_id -> dummy. Wird hier im content nicht bnötigt!
-      // artefact_def -> artefactID was geklaut werden soll (wird oben random aus der Höhle gelesen)
-      after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefactID, &artefact_id, &artefact_def, cave2->cave_id, cave2, &lostTo);
-      srrs.artefactID = artefactID;
+      if (artefact_def>0) {
+        // artefactID -> Rückgabe der Artefact ID wenn es NICHT versprungen ist sonst 0
+        // artefact_id -> dummy. Wird hier im content nicht bnötigt!
+        // artefact_def -> artefactID was geklaut werden soll (wird oben random aus der Höhle gelesen)
+        after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefactID, &artefact_id, &artefact_def, cave2->cave_id, cave2, &lostTo);
+        srrs.artefactID = artefactID;
 
-      sendDefenderReport = 1;
+        sendDefenderReport = 1;
+      }
     }
 
     result = 1;
