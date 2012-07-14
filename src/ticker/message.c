@@ -547,7 +547,7 @@ static char* trade_report_xml(db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
        const int resources[], const int units[], int artefact,
-       int IsSender, int heroID) {
+       int artefact_kill, int IsSender, int heroID) {
 
   mxml_node_t *xml, *tradereport;
   mxml_node_t *curtime;
@@ -626,9 +626,16 @@ static char* trade_report_xml(db_t *database,
   //artefacts
   if (artefact) {
     const char *artefactName = artefact_name(database, artefact);
-    Artefact = mxmlNewElement(tradereport, "artefact");
-      name = mxmlNewElement(Artefact, "name");
-        mxmlNewText(name, 0, (char*) artefactName);
+
+    if (artefact_kill) {
+      Artefact = mxmlNewElement(tradereport, "artefact_destroy");
+        name = mxmlNewElement(Artefact, "name");
+          mxmlNewText(name, 0, (char*) artefactName);
+    } else {
+      Artefact = mxmlNewElement(tradereport, "artefact");
+        name = mxmlNewElement(Artefact, "name");
+          mxmlNewText(name, 0, (char*) artefactName);
+    }
   }
 
   if (IsSender && heroID) {
@@ -646,7 +653,7 @@ static char* trade_report_xml(db_t *database,
 void trade_report (db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
-       const int resources[], const int units[], int artefact, int heroID)
+       const int resources[], const int units[], int artefact, int artefact_kill, int heroID)
 {
   template_t *tmpl_trade1 = message_template(player1, "trade1");
   template_t *tmpl_trade2 = message_template(player2, "trade2");
@@ -687,11 +694,11 @@ void trade_report (db_t *database,
   if (cave1->player_id == cave2->player_id) {
     IsSender = 1;
   }
-  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, IsSender, heroID);
+  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, IsSender, heroID);
   message_new(database, MSG_CLASS_TRADE, cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
 
   if (cave1->player_id != cave2->player_id) {
-    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, 1, heroID);
+    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, 1, heroID);
     message_new(database, MSG_CLASS_TRADE, cave1->player_id, subject1, template_eval(tmpl_trade1), xml);
   }
 }
@@ -913,8 +920,8 @@ static char* battle_report_xml (db_t *database,
 
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
-    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
-
+    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].religion_bonus);
+      
     battleValues = mxmlNewElement(attacker, "battleValues");
       range = mxmlNewElement(battleValues, "range");
         mxmlNewInteger(range, (int) result->attackers_acc_range_before);
@@ -1009,7 +1016,7 @@ static char* battle_report_xml (db_t *database,
 
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
-    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
+    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].religion_bonus);
 
     battleValues = mxmlNewElement(defender, "battleValues");
       range = mxmlNewElement(battleValues, "range");
@@ -1621,6 +1628,22 @@ void artefact_merging_report (db_t *database,
 
   message_new(database, MSG_CLASS_ARTEFACT,
       cave->player_id, subject, template_eval(tmpl_merge), xml);
+}
+
+void artefact_zero_food_report (db_t *database,
+            const struct Cave *cave, const struct Player *player,
+            int artefactID, int caveID)
+{
+  template_t *tmpl_artefact = message_template(player, "zeroFood");
+  const char *subject = message_subject(tmpl_artefact, "TITLE", cave);
+  char *xml = "";
+
+  const char* ArtefactName = artefact_name(database, artefactID);
+
+  template_context(tmpl_artefact, "MSG");
+  template_set(tmpl_artefact, "artefact", ArtefactName);
+
+  message_new(database, MSG_CLASS_ARTEFACT, cave->player_id, subject, template_eval(tmpl_artefact), xml);
 }
 
 static char* hero_report_xml (db_t *database,

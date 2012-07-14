@@ -1052,6 +1052,10 @@ function tribe_getTribeByTag($tag) {
 
   $result['description'] = str_replace('<br />', '\n', $result['description']);
   $result['avatar'] = @unserialize($result['avatar']);
+  $result['wonderLocked'] = (empty($result['wonderLocked'])) ? array() : @unserialize($result['wonderLocked']);
+  if (!is_array($result['wonderLocked'])) {
+    $result['wonderLocked'] = array();
+  }
 
   return $result;
 }
@@ -2120,6 +2124,12 @@ function tribe_donateResources($value_array, $caveID, &$caveData) {
     if ($value) {
       if (isset($GLOBALS['resourceTypeList'][$resourceID])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
+
+        // wartezeit einer Ressource nicht abgewartet? Abbruch!
+        if (isset($_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName]) && $_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName] > time()) {
+          return -9;
+        }
+
         // check if resource is over maxDonation value
         if ($resource->maxTribeDonation < $value) {
           return -9;
@@ -2167,7 +2177,28 @@ function tribe_donateResources($value_array, $caveID, &$caveData) {
   // update caves
   $caveData = getCaveByID($caveID);
 
+  // update Timeout
+  foreach ($value_array as $resourceID => $value) {
+    if ($value) {
+      if (isset($GLOBALS['resourceTypeList'][$resourceID])) {
+        $newTime = time() + (TRIBE_STORAGE_DONATION_INTERVAL*60*60);
+        Player::setDonateLocked($_SESSION['player']->playerID, 'tribe', $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName, $newTime);
+      }
+    }
+  }
+
   return 4;
+}
+
+
+function tribe_hasRelation($relationID, $relations) {
+  foreach ($relations as $checkRelation) {
+    if ($checkRelation['relationType'] == $relationID) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 ?>

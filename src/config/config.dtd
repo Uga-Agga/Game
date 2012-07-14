@@ -116,11 +116,11 @@
 <!ELEMENT targetsPossible (target+)>
 <!ELEMENT target (relation*)>
 <!ATTLIST target
-  target (own | between | other) #REQUIRED
+  target (own | other) #REQUIRED
 >
 <!ELEMENT relation EMPTY>
 <!ATTLIST relation 
-  target (own2other | own2any | other2any | other2own | any2own | any2other ) #REQUIRED
+  type (own2other | own2any | other2any | other2own | any2own | any2other ) #REQUIRED
   negate CDATA "0"
   relationID CDATA #REQUIRED
 >

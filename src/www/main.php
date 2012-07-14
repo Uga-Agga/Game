@@ -348,7 +348,7 @@ switch ($modus) {
     break;
 
   case QUESTIONNAIRE_PRESENTS:
-    questionnaire_presents($caveID, $ownCaves);
+    questionnaire_getQuestionnairePresents($caveID, $ownCaves);
     break;
 
   case SUGGESTIONS:

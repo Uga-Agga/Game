@@ -1,0 +1,9 @@
+<tmpl:TITLE>Verschundenes Artefakt in Höhle {cave} ({xpos}/{ypos})</tmpl:TITLE>
+
+<tmpl:MSG>
+<p>
+  Nachdem du dir die Augen gewischt hast, siehst du, dass dort, wo eben noch dein Artefakte "{artefact}" lag, jetzt nur noch ein Häufchen Asche liegt.<br />
+  Du fragst deine Schamanen ob das seine Richtigkeit hat und mit einem breiten Grinsen sagen sie dir, dass das Artefakt keine Nahrung mehr hatte.
+</p>
+<p>Dein Artefakt "{artefact}" ist verloren.</p>
+</tmpl:MSG>

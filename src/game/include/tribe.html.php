@@ -31,12 +31,13 @@ function tribe_getContent($caveID, &$details) {
 
   // messages
   $messageText = array (
+    -42 => array('type' => 'error', 'message' => _('Ein Rohstoff wurde erst vor kurzen eingelagert. Bitte warte bis du es erneut versucht.')),
     -41 => array('type' => 'error', 'message' => _('Beim kicken das Spielers ist ein Fehler aufgetreten.')),
     -40 => array('type' => 'error', 'message' => _('Der Stamm befindet sich zur Zeit in einem Krieg und es kann kein Spieler gekickt werden.')),
     -39 => array('type' => 'error', 'message' => _('Der Stammesführer kann nicht entlassen werden.')),
     -38 => array('type' => 'error', 'message' => _('Der Spieler wurde in dem Stamm nicht gefunden!')),
-    -37 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf andere Stämme gewundert werden!')),
-    -36 => array('type' => 'error', 'message' => _('Das Stammeswunder kann nur auf den eigenen Stamm gewundert werden!')),
+    -37 => array('type' => 'error', 'message' => _('Der Zielstamm besitzt nicht die benötigte Vorraussetzung um das Wunder erwirken zu können.')),
+    -36 => array('type' => 'error', 'message' => _('Dieses Wunder wurde erst vor kurzen gewundert. Bitte warte etwas bevor du es erneut wunderst.')),
     -35 => array('type' => 'error', 'message' => _('Der gegnerische Stamm hat nicht genug Mitglieder um Stammeswunder bekommen zu können!')),
     -34 => array('type' => 'error', 'message' => _('Ihr Stamm hat nicht genug Mitglieder um Stammeswunder sprechen zu können!')),
     -33 => array('type' => 'error', 'message' => _('Beim erbitten des Stammeswunders ist ein Problem aufgetreten!')),
@@ -118,7 +119,7 @@ function tribe_getContent($caveID, &$details) {
 * Spielerrechte Ändern
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_AUTH: // msg ok
+    case TRIBE_ACTION_AUTH:
       if (!$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -148,7 +149,7 @@ function tribe_getContent($caveID, &$details) {
 * Auswahl des Anführers
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_CHOOSE_LEADER: // msg ok
+    case TRIBE_ACTION_CHOOSE_LEADER:
       $voteID = Request::getVar('chooseLeaderID', 0);
       $messageID = leaderChoose_processChoiceUpdate($voteID, $_SESSION['player']->playerID, $tribeTag);
     break;
@@ -158,7 +159,7 @@ function tribe_getContent($caveID, &$details) {
 * Ressie Spende an den Stamm
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_DONATE: // msg ok
+    case TRIBE_ACTION_DONATE:
       $value = Request::getVar('value', array('' => ''));
       $messageID = tribe_donateResources($value, $caveID, $details);
 
@@ -170,7 +171,7 @@ function tribe_getContent($caveID, &$details) {
 * Regierungstyp ändern
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_GOVERMENT: // msg ok
+    case TRIBE_ACTION_GOVERMENT:
       if (!$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -185,7 +186,7 @@ function tribe_getContent($caveID, &$details) {
 * bye bye Spieler
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_KICK: // msg ok
+    case TRIBE_ACTION_KICK:
       if (!$userAuth['kick_member'] && !$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -201,7 +202,7 @@ function tribe_getContent($caveID, &$details) {
 * Bye Bye Stamm :(
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_LEAVE: // msg ok
+    case TRIBE_ACTION_LEAVE:
       if (Request::isPost('cancelOrderConfirm')) {
         $messageID = tribe_processLeave($_SESSION['player']->playerID, $tribeTag);
 
@@ -227,7 +228,7 @@ function tribe_getContent($caveID, &$details) {
 * paar Spieler informieren über irgendwas
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_MESSAGE: // msg ok
+    case TRIBE_ACTION_MESSAGE:
       if (!$userAuth['msg_tribe'] && !$userAuth['msg_public'] && !$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -252,7 +253,7 @@ function tribe_getContent($caveID, &$details) {
 * Krieg? Niederlage? Verbünden? Aktualisieren der Beziehung
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_RELATION: // msg ok
+    case TRIBE_ACTION_RELATION:
       if (!$userAuth['change_relation'] && !$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -271,7 +272,7 @@ function tribe_getContent($caveID, &$details) {
 * Stammesinfos aktualisieren
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_UPDATE: // msg ok
+    case TRIBE_ACTION_UPDATE:
       if (!$userAuth['change_settings'] && !$userAuth['isLeader']) {
         $messageID = -1;
         break;
@@ -294,8 +295,8 @@ function tribe_getContent($caveID, &$details) {
 * Stammeswunder?
 *
 ****************************************************************************************************/
-    case TRIBE_ACTION_WONDER: // msg ok
-      if (!$userAuth['isLeader']) {
+    case TRIBE_ACTION_WONDER:
+      if (!$userAuth['wonder'] && !$userAuth['isLeader']) {
         $messageID = -1;
         break;
       }
@@ -303,17 +304,32 @@ function tribe_getContent($caveID, &$details) {
       $wonderID = Request::getVar('wonderID', -1);
       $tribeName = Request::getVar('tribeName', '');
 
-      if ($wonderID != -1) {
-        if (!empty($tribeName)) {
-          $messageID = wonder_processTribeWonder($caveID, $wonderID, $tribeTag, $tribeName);
-          $tribeData = tribe_getTribeByTag($tribeTag);
-        } else {
-          $messageID = -15;
-        }
-      } else {
+      if ($wonderID == -1) {
         $messageID = -32;
         break;
       }
+
+      if (empty($tribeName)) {
+        $messageID = -15;
+        break;
+      }
+
+      if (isset($tribeData['wonderLocked'][$wonderID]) && $tribeData['wonderLocked'][$wonderID] > time()) {
+        $messageID = -36;
+        break;
+      }
+
+      $messageID = wonder_processTribeWonder($caveID, $wonderID, $tribeTag, $tribeName);
+      if ($messageID > 0) {
+        wonder_updateTribeLocked($tribeTag, $wonderID, $tribeData['wonderLocked']);
+      }
+
+      if ($messageID == 11 || $messageID == 12) {
+        $success = ($messageID == 12) ? 1 : 2;
+        wonder_addStatistic($wonderID, $success);
+      }
+
+      $tribeData = tribe_getTribeByTag($tribeTag);
     break;
   }
 
@@ -472,20 +488,35 @@ function tribe_getContent($caveID, &$details) {
   *
   ****************************************************************************************************/
   $tribeStorageValues = $tribeStorage = array();
+  $dontePossible = false;
   foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
     $tribeStorage[$resource->dbFieldName] = $tribeData[$resource->dbFieldName];
+    $tribeStorageValues[$resource->dbFieldName]['resourceID'] = $resource->resourceID;
     $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;
     $tribeStorageValues[$resource->dbFieldName]['value'] = $tribeData[$resource->dbFieldName];
     $tribeStorageValues[$resource->dbFieldName]['dbFieldName'] = $resource->dbFieldName;
     $tribeStorageValues[$resource->dbFieldName]['maxTribeDonation'] = $resource->maxTribeDonation;
+
+    if (!isset($_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName]) || empty($_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName])) {
+      $tribeStorageValues[$resource->dbFieldName]['lastDonate'] = '';
+      $tribeStorageValues[$resource->dbFieldName]['donatePossible'] = true;
+      $dontePossible = true;
+    } else {
+      $tribeStorageValues[$resource->dbFieldName]['lastDonate'] = date("d.m. H:i:s", $_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName]);
+
+      if ($_SESSION['player']->donateLocked['tribe'][$resource->dbFieldName] < time()) {
+        $tribeStorageValues[$resource->dbFieldName]['donatePossible'] = true;
+        $dontePossible = true;
+      } else {
+        $tribeStorageValues[$resource->dbFieldName]['donatePossible'] = false;
+      }
+    }
   }
 
-  $lastDonation = tribe_getLastDonationForTribeStorage($_SESSION['player']->playerID);
   $template->addVars(array(
-      'showTribeStorageDonations' => ($lastDonation == NULL || time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)), 
       'tribeStorageValues'        => $tribeStorageValues, 
       'donationInterval'          => TRIBE_STORAGE_DONATION_INTERVAL, 
-      'nextDonation'              => (!(time() >= ($lastDonation + TRIBE_STORAGE_DONATION_INTERVAL*60*60)) ? date("d.m.Y H:i:s",$lastDonation+TRIBE_STORAGE_DONATION_INTERVAL*60*60) : NULL)
+      'showTribeStorageDonations' => $dontePossible
   ));
 
   /****************************************************************************************************
@@ -531,14 +562,12 @@ function tribe_getContent($caveID, &$details) {
     $wonders[$wonder->wonderID] = array_merge($wonders[$wonder->wonderID], parseCost($wonder, $tribeStorage));
 
     // show the building link ?!
-    if ($wonders[$wonder->wonderID]['notenough']) {
+    if (isset($tribeData['wonderLocked'][$wonder->wonderID]) && $tribeData['wonderLocked'][$wonder->wonderID] > time()) {
+      $wonders[$wonder->wonderID]['no_build_msg'] = sprintf(_('Das Wunder ist noch gesperrt bis: %s'), date("d. m. H:i:s", $tribeData['wonderLocked'][$wonder->wonderID]));
+    } else if ($wonders[$wonder->wonderID]['notenough']) {
       $wonders[$wonder->wonderID]['no_build_msg'] = _('Zu wenig Rohstoffe');
     } else {
       $wonders[$wonder->wonderID]['build_link'] = true;
-    }
-
-    if ($wonder->target == "own") {
-       $wonders[$wonder->wonderID]['ownTribe'] = true;
     }
   }
 

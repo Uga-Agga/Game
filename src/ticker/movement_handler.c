@@ -719,6 +719,7 @@ void movement_handler (db_t *database, db_result_t *result)
   int artefact = 0;
   int artefact_def = 0;
   int artefact_id = 0;
+  int artefact_kill = 0;
   int lostTo = 0;
 
   int heroID = 0;
@@ -817,8 +818,17 @@ void movement_handler (db_t *database, db_result_t *result)
 
       db_query_dstring(database, ds);
 
-      if (artefact > 0)
-        put_artefact_into_cave(database, artefact, target_caveID);
+      if (artefact > 0) {
+        struct Artefact_class artefact_class;
+ 
+        // auslesen des Artefaktes. Sollte das Verschieben nicht erlaubt sein wird das Artefact nicht in die neue Höhle verschoben
+        get_artefact_class_by_artefact_id(database, artefact, &artefact_class);
+        if (artefact_class.destroyOnMove) {
+          artefact_kill = 1;
+        } else {
+          put_artefact_into_cave(database, artefact, target_caveID);
+        }
+      }
 
       /* send all units back */
       dstring_set(ds, "INSERT INTO Event_movement"
@@ -841,7 +851,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, NULL, artefact, 0);
+       resources, NULL, artefact, artefact_kill, 0);
       break;
 
     /**********************************************************************/
@@ -914,9 +924,17 @@ void movement_handler (db_t *database, db_result_t *result)
         dstring_append(ds, " WHERE caveID = %d", target_caveID);
 
       db_query_dstring(database, ds);
+      if (artefact > 0) {
+        struct Artefact_class artefact_class;
 
-      if (artefact > 0)
-        put_artefact_into_cave(database, artefact, target_caveID);
+        // auslesen des Artefaktes. Sollte das Verschieben nicht erlaubt sein wird das Artefact nicht in die neue Höhle verschoben
+        get_artefact_class_by_artefact_id(database, artefact, &artefact_class);
+        if (artefact_class.destroyOnMove) {
+          artefact_kill = 1;
+        } else {
+          put_artefact_into_cave(database, artefact, target_caveID);
+        }
+      }
       
       if (heroID > 0)
       {
@@ -933,7 +951,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, units, artefact, heroID);
+       resources, units, artefact, artefact_kill, heroID);
       break;
 
     /**********************************************************************/

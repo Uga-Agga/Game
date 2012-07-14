@@ -1,8 +1,9 @@
+
 <?php
 /*
  * wonderDetail.html.php -
  * Copyright (c) 2004  OGP-Team
- * Copyright (c) 2011-2012  David Unger
+ * Copyright (c) 2011-2012  David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -196,18 +197,91 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
     ));
   }
 
-  $template->addVars(array(
-    'name'          => $wonder->name,
-    'wonder_id'     => $wonder->wonderID,
-    'chance'        => eval('return '. formula_parseToPHP($wonder->chance . ';', '$caveData')),
-    'offensiveness' => $wonder->offensiveness,
-    'target'        => $uaWonderTargetText[$wonder->target],
-    'description'   => $wonder->description,
-    'resource_cost' => $resourceCost,
-    'unit_cost'     => $unitcost,
-    'dependencies'  => $dependencies,
-    'rules_path'    => RULES_PATH));
+  $targetsPossible = array();
 
+  foreach ($wonder->targetsPossible as $target) {
+    if (sizeof($target['relation']) == 0) {
+      if ($target['target'] == 'own') {
+        $tmpMsg[] = _('Das wundern auf den eigenen Stamm ist immer erlaubt');
+      } else if ($target['target'] == 'other') {
+        $tmpMsg[] = _('Das wundern auf einen fremden Stamm ist immer erlaubt');
+      }
+    } else {
+      $tmpMsg = array();
+      foreach ($target['relation'] as $relation) {
+        if ($relation['negate']) {
+          switch ($relation['type']) {
+            case 'own2other':
+              $tmpMsg[] = sprintf(_('Dein Stamm darf die Beziehung %s gegenüber den Zielstamm nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'own2any':
+              $tmpMsg[] = sprintf(_('Dein Stamm darf die Beziehung %s gegenüber irgendeinem Stamm nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'other2own':
+              $tmpMsg[] = sprintf(_('Der Zielstamm darf die Beziehung %s gegenüber deinem Stamm nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'other2any':
+              $tmpMsg[] = sprintf(_('Der Zielstamm darf die Beziehung %s gegenüber eines anderen Stammes nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'any2own':
+              $tmpMsg[] = sprintf(_('Irgendein Stammdarf die Beziehung %s gegenüber deinem Stamm nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'any2other':
+              $tmpMsg[] = sprintf(_('Irgendein Stamm darf die Beziehung %s gegenüber dem Zielstamm nicht haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+          }
+        } else {
+          switch ($relation['type']) {
+            case 'own2other':
+              $tmpMsg[] = sprintf(_('Dein Stamm muß die Beziehung %s gegenüber den Zielstamm haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'own2any':
+              $tmpMsg[] = sprintf(_('Dein Stamm muß die Beziehung %s gegenüber irgendeinem Stamm haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'other2own':
+              $tmpMsg[] = sprintf(_('Der Zielstamm muß die Beziehung %s gegenüber deinem Stamm haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'other2any':
+              $tmpMsg[] = sprintf(_('Der Zielstamm muß die Beziehung %s gegenüber eines anderen Stammes haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'any2own':
+              $tmpMsg[] = sprintf(_('Irgendein Stamm muß die Beziehung %s gegenüber deinem Stamm haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+
+            case 'any2other':
+              $tmpMsg[] = sprintf(_('Irgendein Stamm muß die Beziehung %s gegenüber dem Zielstamm haben.'), $GLOBALS['relationList'][$relation['relationID']]['name']);
+            break;
+          }
+        }
+      }
+    }
+
+    $targetsPossible[] = array('type' => $target['target'], 'msg' => $tmpMsg);
+  }
+
+  $template->addVars(array(
+    'name'             => $wonder->name,
+    'wonder_id'        => $wonder->wonderID,
+    'chance'           => eval('return '. formula_parseToPHP($wonder->chance . ';', '$caveData')),
+    'offensiveness'    => $wonder->offensiveness,
+    'target'           => $uaWonderTargetText[$wonder->target],
+    'description'      => $wonder->description,
+    'resource_cost'    => $resourceCost,
+    'unit_cost'        => $unitcost,
+    'dependencies'     => $dependencies,
+    'tribe_wonder'     => $wonder->isTribeWonder,
+    'targets_possible' => $targetsPossible,
+    'delay'            => date("H:i:s", $wonder->secondsBetween),
+  ));
 }
 
 ?>
