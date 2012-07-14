@@ -37,7 +37,7 @@
 
 {% if message_xml.takeoverMultiplier %}
 <p>
-  {% if message_xml.takeoverMultiplier.changeOwner == 'true' %}
+  {% if message_xml.changeOwner == 'true' %}
     Du bist nun stolzer Besitzer der Höhle!
   {% else %}
     Du konntest aber trotz des Sieges keine Kontrolle über die Höhle erlangen. Vermutlich hast Du schon zu viele andere Höhlen, der ehemalige Besitzer hat die Höhle vor Deiner Ankunft aufgegeben oder es besteht eine Kriegsbeziehung, in die Du nicht involviert bist.
@@ -62,6 +62,7 @@
  */
 #}
 {% else %}
+  {% if message_xml.takeoverMultiplier %}Der Gegner kämpfte mit {{ message_xml.takeoverMultiplier }}-facher Kampfstärke!{% endif %}
   <table style="width: 650px; border-top: none; border-bottom: none;">
     <tr class="nohover">
       <td style="padding: 0; margin: 0;">
