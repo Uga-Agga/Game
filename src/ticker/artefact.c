@@ -578,7 +578,11 @@ int get_artefact_for_caveID(db_t *database, int caveID, int spyableOnly) {
   debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: %s", dstring_str(ds));
 
   if (db_result_num_rows(result) == 0) {
-    debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: fail... no artefact in cave %d", caveID);
+    if (!spyableOnly) {
+      debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: fail... no artefact in cave %d", caveID);
+    } else {
+      debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: no spyable artefact left in cave %d", caveID);
+    }
     return artefactID;
   }
 
