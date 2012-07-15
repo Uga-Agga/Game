@@ -2058,6 +2058,10 @@ function tribe_getTribeStorageDonations ($tag) {
   // Resourcenstring zusammenbasteln
   $fields = array();
   foreach($GLOBALS['resourceTypeList'] as $resource) {
+    if ($resource->maxTribeDonation == 0) {
+      continue;
+    }
+
     $fields[] = "SUM(t." . $resource->dbFieldName . ") as " . $resource->dbFieldName;
   }
   

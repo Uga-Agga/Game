@@ -191,7 +191,7 @@ foreach ($statsData as $type => $data) {
 }
 
 echo "GAME STATS: Wonder Stats.\n";
-$sql->exec("REPLACE INTO ". STATISTIC_TABLE ." (type, name, value)
+$db->exec("REPLACE INTO ". STATISTIC_TABLE ." (type, name, value)
             SELECT " . WONDER_STATS . ", sc.name, sc.value FROM ". STATISTIC_TABLE ." AS sc WHERE sc.type = " . WONDER_STATS_CACHE);
 
 echo "GAME STATS: Finish.\n";

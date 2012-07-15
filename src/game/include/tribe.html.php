@@ -490,6 +490,10 @@ function tribe_getContent($caveID, &$details) {
   $tribeStorageValues = $tribeStorage = array();
   $dontePossible = false;
   foreach ($GLOBALS['resourceTypeList'] as $resourceID => $resource) {
+    if ($resource->maxTribeDonation == 0) {
+      continue;
+    }
+
     $tribeStorage[$resource->dbFieldName] = $tribeData[$resource->dbFieldName];
     $tribeStorageValues[$resource->dbFieldName]['resourceID'] = $resource->resourceID;
     $tribeStorageValues[$resource->dbFieldName]['name'] = $resource->name;

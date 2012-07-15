@@ -250,7 +250,7 @@
                           <label for="wonder">Kann Stammeswunder erwirken</label>
                         </div>
                         <div class="ym-fbox-check">
-                          <input type="checkbox" name="see_online" id="see_online" style="margin-left: 0;"  value="32" {% if item.tribeAuth.see_online %}checked="checked"{% endif %} />
+                          <input type="checkbox" name="see_online" id="see_online" style="margin-left: 0;"  value="64" {% if item.tribeAuth.see_online %}checked="checked"{% endif %} />
                           <label for="see_online">Kann die letzte Online Zeit sehen</label>
                         </div>
 
@@ -572,8 +572,6 @@
           {% if is_auth.isLeader or is_auth.wonder %}
           <h5 id="tribeWonder" class="hide_status_msg">Wunder</h5>
           <div class="tabbody2">
-            <div class="space text-center">Wegen einer Überarbeitung der Stammeswunder ist das wundern zur Zeit nicht möglich.</div>
-<!--
             {% if wonders %}
               <table>
                 <tbody>
@@ -624,7 +622,6 @@
             {% set bgID = 0 %}
           </div>
           {% endif %}
--->
         </div>
       </div>
     </div>
