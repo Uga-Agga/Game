@@ -280,7 +280,7 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
     'dependencies'     => $dependencies,
     'tribe_wonder'     => $wonder->isTribeWonder,
     'targets_possible' => $targetsPossible,
-    'delay'            => date("H:i:s", $wonder->secondsBetween),
+    'delay'            => ($wonder->secondsBetween) ? date("H:i:s", $wonder->secondsBetween) : '',
   ));
 }
 
