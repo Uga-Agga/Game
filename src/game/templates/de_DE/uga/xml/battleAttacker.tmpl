@@ -120,7 +120,7 @@
           </thead>
           <tbody>
             {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}(-{{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
-            {% for defenseSystem in message_xml.defender.defenseSystems.defenseSystem %}<tr><td>{{ defenseSystem.name }}:</td><td class="text-right">{{ defenseSystem.after }}</td><td class="text-right">{% if defenseSystem.delta > 0 %}({{ defenseSystem.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+            {% for defenseSystem in message_xml.defender.defenseSystems.defenseSystem %}<tr><td>{{ defenseSystem.name }}:</td><td class="text-right">{{ defenseSystem.after }}</td><td class="text-right">{% if defenseSystem.delta > 0 %}(-{{ defenseSystem.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
           </tbody>
         </table>
       </td>
@@ -179,7 +179,7 @@
 
 
   {% if message_xml.attackerWarpoints or message_xml.defenderWarpoints %}
-    <p>Der Kampf brachte dir {{ message_xml.defenderWarpoints }} und dem Gegner {{ message_xml.attackerWarpoints }} Kriegspunkte.</p>
+    <p>Der Kampf brachte dir {{ message_xml.attackerWarpoints }} und dem Gegner {{ message_xml.defenderWarpoints }} Kriegspunkte.</p>
   {% endif %}
 
   {% if message_xml.attacker.hero %}

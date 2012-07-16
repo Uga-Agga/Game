@@ -775,8 +775,7 @@ void movement_handler (db_t *database, db_result_t *result)
     memset(&player2, 0, sizeof player2);
     player2.tribe = "";
   }
-  debug(DEBUG_TICKER, "caveID = %d, movementID = %d",
-  target_caveID, movementID);
+  debug(DEBUG_TICKER, "sourceCaveID = %d, targetCaveID = %d, movementID = %d", source_caveID, target_caveID, movementID);
 
   /**********************************************************************/
   /*** THE INFAMOUS GIANT SWITCH ****************************************/

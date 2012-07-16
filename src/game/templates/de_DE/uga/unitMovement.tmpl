@@ -253,16 +253,16 @@
         {% set bgID = (bgID+1)%2 %}
         <tr class="bg{{ bgID }}">
           <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
-          <td><input style="width: 90%" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" type="text" size="6" maxlength="6" ondblclick="markAll({{ item.unit_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
-          <td>{{ item.max_unit_count }}</td>
-          {% for item2 in item.encumbrance %}<td style="width:30px;" align="center">{{ item2.load }}</td>{% endfor %}
+          <td><input style="width: 90%" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" type="text" pattern="\d*" size="6" maxlength="6" ondblclick="markAll({{ item.unit_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
+          <td><div class="change_mouseover" onclick="markAll({{ item.unit_id }})">{{ item.max_unit_count }}</div></td>
+          {% for item2 in item.encumbrance %}<td style="width:30px;" class="text-center">{{ item2.load }}</td>{% endfor %}
         </tr>
         {% endfor %}
         <tr>
         <td><label for="all">Alle Auswählen</label></td>
           <td><input name="all" id="all" type="checkbox" value="check all" onclick="checkall();" /></td>
           <td>&nbsp;</td>
-          {% for item in resource %}<td style="width:30px;" align="center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
+          {% for item in resource %}<td style="width:30px;" class="text-center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
         </tr>
         </tbody>
       </table>
@@ -275,8 +275,8 @@
             <li>
               <div class="ym-grid">
               <div class="ym-gl" style="width: 22px;"><label for="rohstoff_{{ item.resource_id }}"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></label></div>
-              <div class="ym-gl" style="width: 50px;"><input style="width: 50px;" id="rohstoff_{{ item.resource_id }}" value="{{ item.value }}" name="rohstoff[{{ item.resource_id }}]" type="text" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
-              <div class="ym-gl left" style="width: 75px; padding-left: 3px;"><label for="rohstoff_{{ item.resource_id }}">({{ item.current_amount }})</label></div>
+              <div class="ym-gl" style="width: 50px;"><input style="width: 50px;" id="rohstoff_{{ item.resource_id }}" value="{{ item.value }}" name="rohstoff[{{ item.resource_id }}]" type="text" pattern="\d*" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
+              <div class="ym-gl left" style="width: 75px; padding-left: 3px;"><div class="change_mouseover" onclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});">({{ item.current_amount }})</div></div>
               </div>
             </li>
             {% endfor %}
@@ -345,13 +345,13 @@
             <li>
               <div class="ym-fbox-text">
                 <label for="targetXCoord">x:</label>
-                <input type="text" name="targetXCoord" id="targetXCoord" value="{{ target_x_coord }}" size="4" maxlength="4" autocomplete="off" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+                <input type="text" pattern="\d*" name="targetXCoord" id="targetXCoord" value="{{ target_x_coord }}" size="4" maxlength="4" autocomplete="off" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
               </div>
             </li>
             <li>
               <div class="ym-fbox-text">
                 <label for="targetYCoord">y:</label>
-                <input type="text" name="targetYCoord" id="targetYCoord" value="{{ target_y_coord }}" size="4" maxlength="4" autocomplete="off" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
+                <input type="text" pattern="\d*" name="targetYCoord" id="targetYCoord" value="{{ target_y_coord }}" size="4" maxlength="4" autocomplete="off" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
               </div>
             </li>
             <li>
@@ -363,7 +363,7 @@
             {% if bookmarks_cave %}
             <li>
               <div class="ym-fbox-select">
-                <label for="bookmarks_cave"><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Show">Höhlenliste:</a></label>
+                <a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Show">Höhlenliste:</a>
                 <select name="targetCaveID" id="targetCaveID" size="1" onchange="disable_to(); return true;">
                   <option value="-1" selected="selected">Bitte wählen</option>
                   {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}

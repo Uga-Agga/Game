@@ -68,7 +68,7 @@
                         <div class="ym-gl text-right" style="width: 120px"><form method="post" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
                           <input type="hidden" name="action" value="build" />
                           <input type="hidden" name="unitID" value="{{ item.unit_id }}" />
-                          Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
+                          Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" pattern="\d*" name="quantity" size="2" maxlength="2" />
                           <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
                         </form></div>
 

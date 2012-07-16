@@ -45,6 +45,8 @@ extern void get_artefact_by_id (db_t *database, int artefactID,
         struct Artefact *artefact);
 extern void get_artefact_class_by_id (db_t *database, int artefactClassID,
               struct Artefact_class *artefact_class);
+extern void get_artefact_class_by_artefact_id (db_t *database, int artefactID,
+              struct Artefact_class *artefact_class);
 
 extern void put_artefact_into_cave (db_t *database, int artefactID,
             int caveID);

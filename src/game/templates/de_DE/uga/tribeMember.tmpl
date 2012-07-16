@@ -521,7 +521,7 @@
                       <td>{{ resource.name }}</td>
                       <td>{{ resource.value }}</td>
                       {% if resource.donatePossible %}
-                        <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /></td>
+                        <td><input name="value[{{ resource.resourceID }}]" type="text" pattern="\d*" size="10" /></td>
                         <td>{{ resource.maxTribeDonation }}</td>
                       {% else %}
                         <td colspan="2">Letzte Einlagerung: {{ resource.lastDonate }}</td>

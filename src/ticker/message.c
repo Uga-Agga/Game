@@ -1515,6 +1515,10 @@ struct SpyReportReturnStruct spy_report (db_t *database,
         after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefactID, &artefact_id, &artefact_def, cave2->cave_id, cave2, &lostTo);
         srrs.artefactID = artefactID;
 
+        if (lostTo) {
+          debug(DEBUG_ARTEFACT, "get_arte_by_spio: artefact jump from %d to %d", cave1->cave_id, lostTo);
+        }
+
         sendDefenderReport = 1;
       }
     }
