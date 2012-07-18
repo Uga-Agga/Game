@@ -35,11 +35,11 @@
   {% endif %}
 </p>
 
-{% if message_xml.takeoverMultiplier %}
+{% if message_xml.takeover == 'true' %}
 <p>
-  {% if message_xml.changeOwner == 'true' %}
+  {% if message_xml.changeOwner == 'true' and message_xml.winner == 'attacker' %}
     Du bist nun stolzer Besitzer der Höhle!
-  {% else %}
+  {% elseif message_xml.changeOwner == 'true' and message_xml.winner == 'attacker'  %}
     Du konntest aber trotz des Sieges keine Kontrolle über die Höhle erlangen. Vermutlich hast Du schon zu viele andere Höhlen, der ehemalige Besitzer hat die Höhle vor Deiner Ankunft aufgegeben oder es besteht eine Kriegsbeziehung, in die Du nicht involviert bist.
   {% endif %}
 </p>

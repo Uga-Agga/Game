@@ -933,8 +933,8 @@ function tribe_getPlayerList($tag, $getGod=false, $getCaves=false) {
     foreach (Config::$gods as $god) {
       $select .= ', p.' . $god . ' as ' . $god;
     }
-    foreach (Config::$halfGods as $halfGod) {
-      $select .= ', p.' . $halfGod . ' as ' . $halfGod;
+    foreach (Config::$halfGods as $halfgod) {
+      $select .= ', p.' . $halfgod . ' as ' . $halfgod;
     }
   }
 
@@ -969,9 +969,9 @@ function tribe_getPlayerList($tag, $getGod=false, $getCaves=false) {
           $return[$id]['god'] = $ScienceFieldsName[$god];
         }
       }
-      foreach (Config::$halfGods as $halfGod) {
-        if ($return[$id][$halfGod] > 0) {
-          $return[$id]['halfGod'] = $ScienceFieldsName[$halfGod];
+      foreach (Config::$halfGods as $halfgod) {
+        if ($return[$id][$halfgod] > 0) {
+          $return[$id]['halfgod'] = $ScienceFieldsName[$halfgod];
         }
       }
     }

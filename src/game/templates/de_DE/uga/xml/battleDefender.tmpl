@@ -37,11 +37,11 @@
 {% endif %}
 </p>
 
-{% if message_xml.takeoverMultiplier %}
+{% if message_xml.takeover == 'true' %}
 <p>
-  {% if message_xml.changeOwner == 'true' %}
+  {% if message_xml.changeOwner == 'true' and message_xml.winner == 'attacker' %}
     Du hast damit die Kontrolle über die Höhle an {{ message_xml.attacker.playerName }} verloren.
-  {% else %}
+  {% elseif message_xml.changeOwner == 'false' and message_xml.winner == 'attacker' %}
     Trotz der Niederlage konntest du im Besitz dieser Höhle bleiben!
   {% endif %}
 </p>
@@ -128,7 +128,7 @@
 </table>
 
 
-{% if message_xml.attacker.plunder %}
+{% if message_xml.attacker.plunder.resource %}
 <p>Der fremde Stamm hat eure Höhle geplündert. Einiges konntet ihr ja noch verstecken, trotzdem hat er folgende Ressourcen erbeutet:</p>
 <table class="bordertable" style="width: auto;">
   <thead>
