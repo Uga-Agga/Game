@@ -103,7 +103,7 @@
                       <td class="text-right">
                         {% if item.war %}
                           Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                          Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
                         {% endif %}
                       </td>
                     </tr>
@@ -317,7 +317,7 @@
                       <td class="text-right">
                         {% if item.war %}
                           Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                          Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
                         {% endif %}
                         {% if is_auth.change_relation or is_auth.isLeader %}
                         <form method="post" action="main.php?modus={{ tribe_link }}">

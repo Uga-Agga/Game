@@ -453,9 +453,9 @@
               </ul>
             </td>
             <td class="text-right" style="vertical-align: middle;">
-            {% if item.CANCEL %}
+            {% if item.cancel %}
             <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
-              <input type="hidden" name="eventID" value="{{ item.CANCEL.eventID }}" />
+              <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
               <input type="hidden" name="action" value="cancel" />
               <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
             </form>

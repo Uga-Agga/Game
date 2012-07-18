@@ -2,7 +2,7 @@
 /* easyDigest.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -110,7 +110,7 @@
               <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
             </td>
             <td class="date-td text-right">{{ item.event_end_date }}</td>
-            <td class="ua-td-timer text-right">
+            <td colspan="5" class="ua-td-timer text-right">
               <script type="text/javascript">
                 // <![CDATA[
                 $(function () {
@@ -124,7 +124,7 @@
             </td>
           </tr>
           <tr id="digest_mov_{{ item.event_id }}_content" style="display: none;">
-            <td colspan="5" >
+            <td colspan="5">
               {% if item.units %}
               <div class="padding-bottom: 10px;">
                 <ul>
@@ -156,6 +156,15 @@
                 </ul>
                 <br style="clear: both;" />
               </div>
+              {% endif %}
+            </td>
+            <td class="text-right" style="vertical-align: middle; width: 30px">
+              {% if item.cancel %}
+              <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
+                <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
+                <input type="hidden" name="action" value="cancel" />
+                <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
+              </form>
               {% endif %}
             </td>
           </tr>
