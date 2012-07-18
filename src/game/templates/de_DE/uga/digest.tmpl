@@ -110,7 +110,7 @@
               <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
             </td>
             <td class="date-td text-right">{{ item.event_end_date }}</td>
-            <td colspan="5" class="ua-td-timer text-right">
+            <td class="ua-td-timer text-right">
               <script type="text/javascript">
                 // <![CDATA[
                 $(function () {
@@ -125,47 +125,49 @@
           </tr>
           <tr id="digest_mov_{{ item.event_id }}_content" style="display: none;">
             <td colspan="5">
-              {% if item.units %}
-              <div class="padding-bottom: 10px;">
-                <ul>
-                  {% for item_unit in item.units %}
-                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
-                  {% endfor %}
-                </ul>
-                <br style="clear: both;" />
-              </div>
-              {% endif %}
+              <div class="ym-gl">
+                {% if item.units %}
+                <div class="padding-bottom: 10px;">
+                  <ul>
+                    {% for item_unit in item.units %}
+                      <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
+                    {% endfor %}
+                  </ul>
+                  <br style="clear: both;" />
+                </div>
+                {% endif %}
 
-              {% if item.resources %}
-              <div style="padding-bottom: 10px;">
-                <ul>
-                  {% for item_resource in item.resources %}
-                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
-                  {% endfor %}
-                </ul>
-                <br style="clear: both;" />
-              </div>
-              {% endif %}
+                {% if item.resources %}
+                <div style="padding-bottom: 10px;">
+                  <ul>
+                    {% for item_resource in item.resources %}
+                      <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
+                    {% endfor %}
+                  </ul>
+                  <br style="clear: both;" />
+                </div>
+                {% endif %}
 
-              {% if item.artefact %}
-              <div style="padding-bottom: 10px;">
-                <ul>
-                  {% for item_artefact in item.artefact %}
-                    <li class="text-center text-small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
-                  {% endfor %}
-                </ul>
-                <br style="clear: both;" />
+                {% if item.artefact %}
+                <div style="padding-bottom: 10px;">
+                  <ul>
+                    {% for item_artefact in item.artefact %}
+                      <li class="text-center text-small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
+                    {% endfor %}
+                  </ul>
+                  <br style="clear: both;" />
+                </div>
+                {% endif %}
               </div>
-              {% endif %}
-            </td>
-            <td class="text-right" style="vertical-align: middle; width: 30px">
-              {% if item.cancel %}
-              <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
-                <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
-                <input type="hidden" name="action" value="cancel" />
-                <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
-              </form>
-              {% endif %}
+              <div class="ym-gr">
+                {% if item.cancel %}
+                <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
+                  <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
+                  <input type="hidden" name="action" value="cancel" />
+                  <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
+                </form>
+                {% else %}&nbsp;{% endif %}
+              </div>
             </td>
           </tr>
           {% endfor %}
