@@ -25,6 +25,9 @@ function unit_Movement($caveID, &$ownCave) {
   $ua_movements = Movement::getMovements();
 
   $details = $ownCave[$caveID];
+  if ($details['heroID'] > 0) {
+    $hero = getHeroByPlayer($_SESSION['player']->playerID);
+  }
 
   /***************************************************************************/
   /**                                                                       **/

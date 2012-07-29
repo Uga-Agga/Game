@@ -234,6 +234,10 @@ function profile_update($db_login) {
     $data['avatar'] = '';
   }
 
+  if (filter_var($data['email2'], FILTER_VALIDATE_EMAIL) === false) {
+    return array('type' => 'error', 'message' => ('Ungültiges E-Mail Adresse. Bitte nimm deine Eingaben erneut vor!'));
+  }
+
   $sql = $db->prepare("UPDATE " . PLAYER_TABLE . " 
                        SET origin = :origin, 
                          icq = :icq,

@@ -1763,7 +1763,7 @@ static void wonder_prepare_message (template_t *template,
   if (steal > 0) {
     template_set_fmt(template, "STOLEN/steal", "%d", (int) (steal * 100));
     stealPercentage = mxmlNewElement(xml, "stealPercentage");
-      mxmlNewInteger(stealPercentage, (int) steal*100);
+      mxmlNewInteger(stealPercentage, (int) (steal * 100));
   }
 }
 

@@ -45,7 +45,7 @@
                 </tr>
                 <tr>
                   <td class="bold" style="vertical-align: top;">Erfahrung (Exp):</td>
-                  <td class="text-right" colspan="3">{{ hero.exp }}<div class="text-small">({{ hero.expLeft }} Exp bis Lvlup)</div></td>
+                  <td class="text-right" colspan="3">{{ hero.exp|number_format(0, ',', '.') }}<div class="text-small">({{ hero.expLeft|number_format(2, ',', '.') }} Exp bis Lvlup)</div></td>
                 </tr>
                 {% if showLevelUp and hero.isAlive>0 %}
                   <tr>
@@ -168,7 +168,7 @@
               {% for skill in skills %} 
               {% set bgID = (bgID+1)%2 %}
               <tr class="bg{{ bgID }}">
-               <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
+               <td style="text-align: left;"><a href="{{ rules_path }}?modus=skill&amp;skillID={{ skill.dbFieldName }}" class="bold new-window">{{ skill.name }}</a>
                <div class="text-small">{{ skill.description|raw }}</div>
                </td>
                <td>{{ skill.requiredLevel }}</td>
