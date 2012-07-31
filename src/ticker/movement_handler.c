@@ -510,11 +510,12 @@ static void after_battle_attacker_update (
   int i;
 
   /* construct attacker update */
-  for (i = 0; i < MAX_UNIT; ++i)
+  for (i = 0; i < MAX_UNIT; ++i) {
     if (battle->attackers[0].units[i].amount_after > 0) {
       update = 1;
       break;
     }
+  }
 
   if (update) {
     dstring_t *ds;
@@ -546,7 +547,9 @@ static void after_battle_attacker_update (
   else
   {
     /* kill hero if no units left */
-    kill_hero(database, heroID);
+    if (heroID > 0) {
+      kill_hero(database, heroID);
+    }
   }
 }
 
@@ -606,7 +609,9 @@ static void after_takeover_attacker_update(db_t *database,
   else
   {
     /* kill hero if no units left */
-    kill_hero(database, heroID);
+    if (heroID > 0) {
+      kill_hero(database, heroID);
+    }
   }
 }
 
