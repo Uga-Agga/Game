@@ -24,7 +24,7 @@
   Ihr seht vergnügt zu, wie ein fremder Stamm aus
 {% endif %}
 
-{% if message_xml.attacker.caveID in list_cave_id %}
+{% if message_xml.attacker.playerName == message_xml.defender.playerName %}
   eurer Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
 {% else %}
   der Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }}) {% if message_xml.attacker.playerName != '' %}des Spielers {{ message_xml.attacker.playerName }}{% endif %}

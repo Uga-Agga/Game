@@ -22,7 +22,7 @@
   Dein Oberkeulenschwinger berichtet direkt vom Schlachtfeld:<br />
   Mein oberster Stammesführer! Du hast den Kampf um
 
-  {% if message_xml.defender.caveID in list_cave_id %}
+  {% if message_xml.attacker.playerName == message_xml.defender.playerName %}
     deine Höhle  {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})
   {% else %}
     die Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }}) {% if message_xml.defender.playerName != '' %}des Spielers {{ message_xml.defender.playerName }}{% endif %}
