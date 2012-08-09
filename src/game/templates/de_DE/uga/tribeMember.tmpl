@@ -498,7 +498,6 @@
               Hier können Einzahlungen ins Stammeslager getätigt werden. <br />
               Die Rohstoffe werden für Stammeswunder benötigt.<br />
               Es kann alle {{ donationInterval }} Stunden EINE Einzahlung von JEDER Rohstoffart vorgenommen werden.<br />
-              {% if nextDonation %}Nächste mögliche Einzahlung am {{ nextDonation }}. <br />{% endif %}
             </div>
             <form class="ym-form ym-columnar" id="tribeStoreForm" method="post" action="main.php?modus={{ tribe_link }}">
               <table>
@@ -524,7 +523,7 @@
                         <td><input id="resource_{{ resource.resourceID }}_input" name="value[{{ resource.resourceID }}]" type="text" pattern="\d*" size="10" /></td>
                         <td><div id="resource_{{ resource.resourceID }}" class="load_max change_mouseover">{{ resource.maxTribeDonation }}</div></td>
                       {% else %}
-                        <td colspan="2">Letzte Einlagerung: {{ resource.lastDonate }}</td>
+                        <td colspan="2">Nächste Einlagerung: {{ resource.lastDonate }}</td>
                       {% endif %}
                     </tr>
                   {% endfor %}
