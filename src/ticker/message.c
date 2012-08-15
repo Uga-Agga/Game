@@ -112,7 +112,7 @@ static char* transform_spy_values (int num, int type) {
 
   //units
   if (type == 1) {
-    if(     num <     9) value = "eine Handvoll";
+    if (     num <     9) value = "eine Handvoll";
     else if (num <    17) value = "ein Dutzend";
     else if (num <    65) value = "eine Schar";
     else if (num <   257) value = "eine Kompanie";
@@ -134,12 +134,12 @@ static char* transform_spy_values (int num, int type) {
 
   //resources
   if (type == 2) {
-    if (num < 257) value = "fast gar nichts";
-    else if (num < 1025) value = "ein winziger Haufen";
-    else if (num < 4097) value = "ein kleiner Haufen";
-    else if (num < 16385) value = "ein beachtlicher Haufen";
-    else if (num < 32769) value = "eine Menge";
-    else if (num < 65537) value = "eine große Menge";
+    if (     num < 257)    value = "fast gar nichts";
+    else if (num < 1025)   value = "ein winziger Haufen";
+    else if (num < 4097)   value = "ein kleiner Haufen";
+    else if (num < 16385)  value = "ein beachtlicher Haufen";
+    else if (num < 32769)  value = "eine Menge";
+    else if (num < 65537)  value = "eine große Menge";
     else if (num < 131074) value = "ein Berg";
     else if (num < 262148) value = "ein großer Berg";
     else if (num < 524296) value = "ein riesiger Berg";
