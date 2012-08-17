@@ -54,7 +54,8 @@ extern void message_set_log_handler (log_handler_t *handler);
 extern void trade_report (db_t *database,
 	const struct Cave *cave1, const struct Player *player1,
 	const struct Cave *cave2, const struct Player *player2,
-	const int resources[], const int units[], int artefact, int artefact_kill, int heroID);
+	const int resources[], const int units[], int artefact,
+	int artefact_kill, int heroID, int war_points_trade);
 
 extern void return_report (db_t *database,
     const struct Cave *cave1, const struct Player *player1,

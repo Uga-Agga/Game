@@ -855,7 +855,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, NULL, artefact, artefact_kill, 0);
+       resources, NULL, artefact, artefact_kill, 0, 0);
       break;
 
     /**********************************************************************/
@@ -924,6 +924,8 @@ void movement_handler (db_t *database, db_result_t *result)
         }
         if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
           war_points_update_verschieben(database, &player1, &player2, -1* war_points_sender);
+        } else {
+          war_points_sender = 0;
         }
         dstring_append(ds, " WHERE caveID = %d", target_caveID);
 
@@ -955,7 +957,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, units, artefact, artefact_kill, heroID);
+       resources, units, artefact, artefact_kill, heroID, war_points_sender);
       break;
 
     /**********************************************************************/

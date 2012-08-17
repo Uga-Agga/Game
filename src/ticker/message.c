@@ -547,7 +547,7 @@ static char* trade_report_xml(db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
        const int resources[], const int units[], int artefact,
-       int artefact_kill, int IsSender, int heroID) {
+       int artefact_kill, int IsSender, int heroID, int war_points_trade) {
 
   mxml_node_t *xml, *tradereport;
   mxml_node_t *curtime;
@@ -646,6 +646,11 @@ static char* trade_report_xml(db_t *database,
         mxmlNewText(heroDeath, 0, (const char*) (heroID<0 ? "true" : "false"));
   }
 
+  if (war_points_trade) {
+    name = mxmlNewElement(tradereport, "warpoints_trade");
+      mxmlNewInteger(name, (int) war_points_trade);
+  }
+
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
   return xmlstring;
 }
@@ -653,7 +658,8 @@ static char* trade_report_xml(db_t *database,
 void trade_report (db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
-       const int resources[], const int units[], int artefact, int artefact_kill, int heroID)
+       const int resources[], const int units[], int artefact,
+       int artefact_kill, int heroID, int war_points_trade)
 {
   template_t *tmpl_trade1 = message_template(player1, "trade1");
   template_t *tmpl_trade2 = message_template(player2, "trade2");
@@ -694,11 +700,11 @@ void trade_report (db_t *database,
   if (cave1->player_id == cave2->player_id) {
     IsSender = 1;
   }
-  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, IsSender, heroID);
+  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, IsSender, heroID, war_points_trade);
   message_new(database, MSG_CLASS_TRADE, cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
 
   if (cave1->player_id != cave2->player_id) {
-    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, 1, heroID);
+    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, 1, heroID, war_points_trade);
     message_new(database, MSG_CLASS_TRADE, cave1->player_id, subject1, template_eval(tmpl_trade1), xml);
   }
 }
