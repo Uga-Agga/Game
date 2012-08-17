@@ -161,6 +161,27 @@ static char* transform_spy_values (int num, int type) {
 
   }
 
+  //spy defense
+  if (type == 5) {
+    if     (num <     5) value = "ein kümmerlicher Haufen";
+    else if (num <     9) value = "eine Handvoll";
+    else if (num <    17) value = "ein Dutzend";
+    else if (num <    33) value = "ein Trupp";
+    else if (num <    65) value = "eine Schar";
+    else if (num <   129) value = "eine Menge";
+    else if (num <   257) value = "ein Haufen";
+    else if (num <   513) value = "viele";
+    else if (num <  1025) value = "etliche";
+    else if (num <  2049) value = "verdammt viele";
+    else if (num <  4097) value = "Unmengen";
+    else if (num <  6145) value = "eine Legion";
+    else if (num <  8193) value = "eine Streitmacht";
+    else if (num < 12289) value = "eine Armee";
+    else if (num < 16385) value = "Heerscharen";
+    else if (num < 2048) value = "eine haltlose Horde";
+    else value = "eine endlose wogende Masse";
+  }
+
   return value;
 }
 
@@ -1318,6 +1339,8 @@ static char* spy_report_xml(db_t *database,
               *Buildings, *Building, *Sciences, *Science;
   mxml_node_t *Artefact, *Lost, *deadUnits;
 
+  struct Cave tmp_cave = cave;
+
   int type;
   char *xmlstring = "";
 
@@ -1437,9 +1460,10 @@ static char* spy_report_xml(db_t *database,
         name = mxmlNewElement(Unit, "name");
           mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
         value = mxmlNewElement(Unit, "value");
-          mxmlNewText(value, 0, (char*) transform_spy_values(cave.unit[type], 1));
+          mxmlNewText(value, 0, (char*) transform_spy_values(units[type], 5));
       }
     }
+
   }
 
   // dead units
@@ -1568,7 +1592,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
     sendDefenderReport = 1;
   }
 
-  /* Gnerate messages
+  /* Generate messages
    *
    * artefact_def anstatt srrs.artefactID benutzt.
    * srrs.artefactID ist 0 wenn das artefact in einer nachbarhöhle verloren gegangen ist. artefact_def hat aber noch die ursprüngliche ID
