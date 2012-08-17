@@ -178,7 +178,7 @@ static char* transform_spy_values (int num, int type) {
     else if (num <  8193) value = "eine Streitmacht";
     else if (num < 12289) value = "eine Armee";
     else if (num < 16385) value = "Heerscharen";
-    else if (num < 2048) value = "eine haltlose Horde";
+    else if (num < 20481) value = "eine haltlose Horde";
     else value = "eine endlose wogende Masse";
   }
 
@@ -1339,7 +1339,6 @@ static char* spy_report_xml(db_t *database,
               *Buildings, *Building, *Sciences, *Science;
   mxml_node_t *Artefact, *Lost, *deadUnits;
 
-  struct Cave tmp_cave = cave;
 
   int type;
   char *xmlstring = "";
