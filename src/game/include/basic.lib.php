@@ -692,6 +692,41 @@ function checkAvatar($url) {
   return $return;
 }
 
+function getWarpointsByCaveData($cave) {
+  global $db;
+
+  if (!isset($GLOBALS['unitTypeList']) || !isset($GLOBALS['defenseSystemTypeList'])) {
+    return array();
+  }
+
+  $warpoints = $warpointsUnits = $warpointsDefense = $countUnits = $countDefense = 0;
+
+  foreach ($GLOBALS['unitTypeList'] AS $unit) {
+    if ($cave[$unit->dbFieldName] == 0) {
+      continue;
+    }
+    $countUnits++;
+
+    if ($unit->warpoints != 0) {
+      $warpointsUnits += ($unit->warpoints * $cave[$unit->dbFieldName]);
+    }
+  }
+
+  foreach ($GLOBALS['defenseSystemTypeList'] AS $defense) {
+    if ($cave[$defense->dbFieldName] == 0) {
+      continue;
+    }
+    $countDefense++;
+
+    if ($defense->warPoints != 0) {
+      $warpointsDefense += ($defense->warPoints * $cave[$defense->dbFieldName]);
+    }
+  }
+
+  $warpoints = ($countUnits > 0 || $countDefense > 11) ? ($warpointsUnits + $warpointsDefense) : 0;
+
+  return array('warpoints' => $warpoints, 'warpointsUnits' => $warpointsUnits, 'warpointsDefense' => $warpointsDefense);
+}
 
 ########################################################
 ###  common functions                   ################

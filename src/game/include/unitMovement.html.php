@@ -76,6 +76,14 @@ function unit_Movement($caveID, &$ownCave) {
    */
   
   $moveHero = 0;
+
+  if ($details['hero'] != 0) {
+    $hero = getHeroByPlayer($_SESSION['player']->playerID);
+    if ($hero['isAlive'] != 1) {
+      $details['hero'] = 0;
+    }
+  }
+
   if ($details['hero'] != 0 && Request::getVar('moveHero', false) == true) {
     $moveHero = $details['hero'];
   }
@@ -178,7 +186,6 @@ function unit_Movement($caveID, &$ownCave) {
     // check if army is small enough for hero
     $denymovement_hero = false;
     if ($moveHero && (Request::getVar('movementID', 0) == 3 || Request::getVar('movementID', 0) == 6)) {
-      $hero = getHeroByPlayer($_SESSION['player']->playerID);
       //calculate size of army
       $armySize = 0;
       foreach ($unit as $unitID => $value) {
@@ -459,7 +466,7 @@ function unit_Movement($caveID, &$ownCave) {
 
   // hero
   if ($details['hero'] != 0) {
-    $template->addVar('hero', getHeroByPlayer($_SESSION['player']->playerID));
+    $template->addVar('hero', $hero);
   }
 
   // Module "CaveBookmarks" Integration
