@@ -78,4 +78,8 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
     <p>Dein Held hat sich daher zu den Göttern begeben.</p>
   {% endif %}
 {% endif %}
+
+{% if message_xml.warpoints_trade %}
+  Da du dich zur Zeit mit {{ message_xml.target.playerName }} im Krieg befindest, warst du nicht nur so nett ihm seine Einheiten zu schenken, sondern dein Stamm verliert auch noch {{ message_xml.warpoints_trade }} Kriegspunkte.
+{% endif %}
 {% endspaceless %}
