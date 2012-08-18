@@ -345,9 +345,9 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
     foreach ($ownRelations['own'] as $actRelation) {
       $ownType = $actRelation['relationType'];
 
-      if ($GLOBALS['relationList'][$ownType]['isPrepareForWar'] || $v[$ownType]['isWar']) {
+      if ($GLOBALS['relationList'][$ownType]['isPrepareForWar'] || $GLOBALS['relationList'][$ownType]['isWar']) {
         $newfame = $actRelation['fame'] - (NONSECURE_CAVE_VAlUE * NONSECURE_CAVE_GIVEUP_FAKTOR);
-        
+
         $sql = $db->prepare("UPDATE ". RELATION_TABLE ."
                              SET fame = :newfame
                              WHERE tribe = :actTribeRelation

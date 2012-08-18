@@ -81,6 +81,14 @@ $(document).ready(function() {
     function() { $(this).css('cursor', 'default'); }
   );
 
+  $('.load_max').click(function(){
+    if ($('#'+$(this).attr('id')+'_input').val() == '') {
+      $('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);
+    } else {
+      $('#'+$(this).attr('id')+'_input').val('');
+    }
+  });
+
   //function for tutorial form dropdown
   function tutorial() {
     if ($(".ua-tutorial-box").is(":hidden")){

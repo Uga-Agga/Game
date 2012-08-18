@@ -21,7 +21,7 @@ function rssFeedNews_getContent() {
   $rss = new Rss;
   $rss->cache_dir = realpath(dirname(__FILE__) . '/../cache'); //path to cache directory on your server from this script. Chmod 777!
   $rss->date_format = 'd M Y g:i:s A'; //date format of RSS item. See PHP date() function for possible input.
-  $rss->cache_time = 3000;
+  $rss->cache_time = 300;
   $rss->CDATA = 'strip';
 
   // -------------------------------------------------------------------

@@ -24,7 +24,7 @@
   Ihr seht vergnügt zu, wie ein fremder Stamm aus
 {% endif %}
 
-{% if message_xml.attacker.caveID in list_cave_id %}
+{% if message_xml.attacker.playerName == message_xml.defender.playerName %}
   eurer Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }})
 {% else %}
   der Höhle {{ message_xml.attacker.caveName }} ({{ message_xml.attacker.xCoord }}/{{ message_xml.attacker.yCoord }}) {% if message_xml.attacker.playerName != '' %}des Spielers {{ message_xml.attacker.playerName }}{% endif %}
@@ -37,16 +37,17 @@
 {% endif %}
 </p>
 
-{% if message_xml.takeoverMultiplier %}
+{% if message_xml.takeover == 'true' %}
 <p>
-  {% if message_xml.takeoverMultiplier.changeOwner == 'true' %}
-    Du hast damit die Kontrolle über die Höhle an {{ message_xml.defender.playerName }} verloren.
-  {% else %}
+  {% if message_xml.changeOwner == 'true' and message_xml.winner == 'attacker' %}
+    Du hast damit die Kontrolle über die Höhle an {{ message_xml.attacker.playerName }} verloren.
+  {% elseif message_xml.changeOwner == 'false' and message_xml.winner == 'attacker' %}
     Trotz der Niederlage konntest du im Besitz dieser Höhle bleiben!
   {% endif %}
 </p>
 {% endif %}
 
+{% if message_xml.takeoverMultiplier %}Deine Höhlenbewohner haben mit {{ message_xml.takeoverMultiplier }}-facher Kampfstärke gekämpft!{% endif %}
 <table style="width: auto; border-top: none; border-bottom: none;">
   <tr class="nohover">
     <td style="padding: 0; margin: 0;">
@@ -93,6 +94,7 @@
         </thead>
         <tbody>
           {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.before }}</td></tr>{% endfor %}
+          {% for defenseSystem in message_xml.defender.defenseSystems.defenseSystem %}<tr><td>{{ defenseSystem.name }}:</td><td class="text-right">{{ defenseSystem.before }}</td></tr>{% endfor %}
         </tbody>
       </table>
     </td>
@@ -103,6 +105,7 @@
         </thead>
         <tbody>
           {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}(-{{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+          {% for defenseSystem in message_xml.defender.defenseSystems.defenseSystem %}<tr><td>{{ defenseSystem.name }}:</td><td class="text-right">{{ defenseSystem.after }}</td><td class="text-right">{% if defenseSystem.delta > 0 %}(-{{ defenseSystem.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
         </tbody>
       </table>
     </td>
@@ -125,7 +128,7 @@
 </table>
 
 
-{% if message_xml.attacker.plunder %}
+{% if message_xml.attacker.plunder.resource %}
 <p>Der fremde Stamm hat eure Höhle geplündert. Einiges konntet ihr ja noch verstecken, trotzdem hat er folgende Ressourcen erbeutet:</p>
 <table class="bordertable" style="width: auto;">
   <thead>

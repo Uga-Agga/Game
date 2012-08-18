@@ -126,9 +126,9 @@ function statistic_getContent() {
       $value = json_decode($value, true);
 
       $WonderStatsList[] = array(
-        "name" => $GLOBALS['wonderTypeList'][$wonder]->name,
-        "success" => $value['success'],
-        "fail" => $value['success'],
+        'name'    => $GLOBALS['wonderTypeList'][$wonder]->name,
+        'success' => $value['success'],
+        'fail'    => $value['fail'],
       );
     }
   }

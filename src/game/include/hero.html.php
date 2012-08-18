@@ -205,8 +205,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           
         }
       break;
-      
-      
+
       case 'lvlUp':
         if ($hero['isAlive'] != 1) {
           $messageID = -18;
@@ -272,7 +271,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       $showTypesList = false;
       $hero = getHeroByPlayer($playerID);
     }
-  
+
   } else {
     $player = getPlayerByID($playerID);
     if ($player['heroism'] >= 1){
@@ -329,7 +328,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         'heroTypesList' => $GLOBALS['heroTypesList']
     ));
   }
-  
+
   if ($showTypesList) {
     $template->addVars(array(
       'changeType' => $changeType,
@@ -342,13 +341,12 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $showImmolation = true;
   }
   $template->addVar('showImmolation', $showImmolation);
-  
+
   if (isset($potions) && $potions) {
     $template->addVar('potions', $potions);
   }
 
   if ($GLOBALS['heroSkillTypeList']) {
-    
     $skills = array();
     foreach ($GLOBALS['heroSkillTypeList'] as $skillID => $skill) {
       
@@ -360,10 +358,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
             break;
           }
         }
-        
+
         $skill['effect_values'][] = $name . ": " . ($skill['skillFactor']*$hero['forceLvl']);
       }
-      
+
     // filter skills by hero type
       foreach ($skill['requiredType'] as $rt) {
         if ($rt == $hero['id']) {
@@ -371,7 +369,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         }
       }
     }
-    
+
     // check if send button is disabled
     foreach ($skills as $skillID => $skill) {
       if ($hero[$skill['dbFieldName']] || 
@@ -379,12 +377,12 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           $skill['requiredLevel'] > $hero['lvl']) {
         $skills[$skillID]['disableButton'] = true;
       }
-      
+
       if ($hero[$skill['dbFieldName']]) {
         $skills[$skillID]['showEffects'] = true;
       }
     }
-    
+
     $template->addVar('skills', $skills);
   }
 }

@@ -18,6 +18,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 
   // open template
   $template->setFile('merchant.tmpl');
+  @require_once('rules/rndMessages.php');
 
   // messages
   $messageText = array (
@@ -110,6 +111,15 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
         $trades[$j]['data'][$id]['build_link'] = true;
       }
     }
+  }
+
+  if (isset($GLOBALS['rndMerchantMessageText'])) {
+    if (!isset($_SESSION['merchant_text_id']) || !isset($_SESSION['merchant_text_time']) || $_SESSION['merchant_text_time']<time()) {
+      $_SESSION['merchant_text_id'] = array_rand($GLOBALS['rndMerchantMessageText'], 1);
+      $_SESSION['merchant_text_time'] = time()+900;
+    }
+
+    $template->addVar('rndMessage', $GLOBALS['rndMerchantMessageText'][$_SESSION['merchant_text_id']]);
   }
 
 /****************************************************************************************************

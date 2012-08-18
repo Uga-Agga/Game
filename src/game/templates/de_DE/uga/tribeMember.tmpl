@@ -2,7 +2,7 @@
 /* tribeMember.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -103,7 +103,7 @@
                       <td class="text-right">
                         {% if item.war %}
                           Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                          Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
                         {% endif %}
                       </td>
                     </tr>
@@ -168,7 +168,7 @@
         </div>
       </div>
 
-      {% if is_auth.change_settings or is_auth.kick_member or is_auth.isLeader %}
+      {% if is_auth.change_settings or is_auth.kick_member or is_auth.see_online or is_auth.isLeader %}
       <h4 class="hide_status_msg">Verwaltung</h4>
       <div class="tabbody">
         <div id="tribeProfile" class="jquery_tabs nav2">
@@ -202,7 +202,7 @@
           </div>
           {% endif %}
 
-          {% if is_auth.kick_member or is_auth.isLeader %}
+          {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}
           <h5 id="changeAuth" class="hide_status_msg">Spielerverwaltung</h5>
           <div class="tabbody2">
             <table>
@@ -218,7 +218,7 @@
                 {% set bgID = (bgID+1)%2 %}
                   <tr class="bg{{ bgID }}">
                     <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
-                    <td>{{ item.lastAction }}</td>
+                    <td>{% if is_auth.see_online or is_auth.isLeader %}{{ item.lastAction }}{% endif %}</td>
                     <td class="text-right" style="padding-right: 4px;">{% if is_auth.isLeader %}<span id="player_{{ item.playerID }}" class="box_show_hide change_mouseover" style="padding-right: 5px">Berechtigungen anzeigen</span>{% endif %}{% if is_auth.kick_member or is_auth.isLeader %}<a href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_kick }}&amp;playerID={{ item.playerID }}">Rauswerfen</a>{% endif %}</td>
                   </tr>
                   {% if is_auth.isLeader %}
@@ -244,6 +244,14 @@
                         <div class="ym-fbox-check">
                           <input type="checkbox" name="change_settings" id="change_settings" style="margin-left: 0;"  value="16" {% if item.tribeAuth.change_settings %}checked="checked"{% endif %} />
                           <label for="change_settings">Stammes-Informationen bearbeiten</label>
+                        </div>
+                        <div class="ym-fbox-check">
+                          <input type="checkbox" name="wonder" id="wonder" style="margin-left: 0;"  value="32" {% if item.tribeAuth.wonder %}checked="checked"{% endif %} />
+                          <label for="wonder">Kann Stammeswunder erwirken</label>
+                        </div>
+                        <div class="ym-fbox-check">
+                          <input type="checkbox" name="see_online" id="see_online" style="margin-left: 0;"  value="64" {% if item.tribeAuth.see_online %}checked="checked"{% endif %} />
+                          <label for="see_online">Kann die letzte Online Zeit sehen</label>
                         </div>
 
                         <div class="ym-fbox-button text-center">
@@ -309,7 +317,7 @@
                       <td class="text-right">
                         {% if item.war %}
                           Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />
+                          Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
                         {% endif %}
                         {% if is_auth.change_relation or is_auth.isLeader %}
                         <form method="post" action="main.php?modus={{ tribe_link }}">
@@ -489,8 +497,7 @@
             <div class="notice text-center space_margin">
               Hier können Einzahlungen ins Stammeslager getätigt werden. <br />
               Die Rohstoffe werden für Stammeswunder benötigt.<br />
-              Es kann alle {{ donationInterval }} Stunden EINE Einzahlung vorgenommen werden.<br />
-              {% if nextDonation %}Nächste mögliche Einzahlung am {{ nextDonation }}. <br />{% endif %}
+              Es kann alle {{ donationInterval }} Stunden EINE Einzahlung von JEDER Rohstoffart vorgenommen werden.<br />
             </div>
             <form class="ym-form ym-columnar" id="tribeStoreForm" method="post" action="main.php?modus={{ tribe_link }}">
               <table>
@@ -512,9 +519,11 @@
                       <td><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
                       <td>{{ resource.name }}</td>
                       <td>{{ resource.value }}</td>
-                      {% if showTribeStorageDonations %}
-                      <td><input name="value[{{ resource.resourceID }}]" type="text" size="10" /></td>
-                      <td>{{ resource.maxTribeDonation }}</td>
+                      {% if resource.donatePossible %}
+                        <td><input id="resource_{{ resource.resourceID }}_input" name="value[{{ resource.resourceID }}]" type="text" pattern="\d*" size="10" /></td>
+                        <td><div id="resource_{{ resource.resourceID }}" class="load_max change_mouseover">{{ resource.maxTribeDonation }}</div></td>
+                      {% else %}
+                        <td colspan="2">Nächste Einlagerung: {{ resource.lastDonate }}</td>
                       {% endif %}
                     </tr>
                   {% endfor %}
@@ -559,7 +568,7 @@
             {% endif %}
           </div>
 
-          {% if is_auth.isLeader %}
+          {% if is_auth.isLeader or is_auth.wonder %}
           <h5 id="tribeWonder" class="hide_status_msg">Wunder</h5>
           <div class="tabbody2">
             {% if wonders %}
@@ -584,16 +593,12 @@
                             <input type="hidden" name="caveID" value="{{ cave_id }}" />
                             <ul>
                               <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
-                              {% if not item.ownTribe %}
                               <li style="float: right; text-align: left;">
                                 <ul class="clean_list" style="width: 100px;">
                                   <li>Stammesname:</li>
                                   <li><input type="text" name="tribeName" size="10" maxlength="32" /></li>
                                 </ul>
                               </li>
-                              {% else %}
-                              <input type="hidden" name="tribeName" value="{{ tribe_tag }}" />
-                              {% endif %}
                             </ul>
                           </div>
                         </form>

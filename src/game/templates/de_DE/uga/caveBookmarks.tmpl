@@ -2,7 +2,7 @@
 /* caveBookmarks.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -84,11 +84,11 @@
 
       <div class="ym-gbox ym-fbox-text">
         <label for="xCoord" style="width: 50px;">x:</label>
-        <input style="width: 50px; type="text" name="xCoord" id="xCoord" size="4" maxlength="4" tabindex="2" />
+        <input style="width: 50px; type="text" pattern="\d*" name="xCoord" id="xCoord" size="4" maxlength="4" tabindex="2" />
       </div>
       <div class="ym-gbox ym-fbox-text">
         <label for="yCoord" style="width: 50px;">y:</label>
-        <input style="width: 50px; type="text" name="yCoord" id="yCoord" size="4" maxlength="4" tabindex="3" />
+        <input style="width: 50px; type="text" pattern="\d*" name="yCoord" id="yCoord" size="4" maxlength="4" tabindex="3" />
       </div>
 
       <div class="ym-fbox-button">

@@ -510,11 +510,12 @@ static void after_battle_attacker_update (
   int i;
 
   /* construct attacker update */
-  for (i = 0; i < MAX_UNIT; ++i)
+  for (i = 0; i < MAX_UNIT; ++i) {
     if (battle->attackers[0].units[i].amount_after > 0) {
       update = 1;
       break;
     }
+  }
 
   if (update) {
     dstring_t *ds;
@@ -546,7 +547,9 @@ static void after_battle_attacker_update (
   else
   {
     /* kill hero if no units left */
-    kill_hero(database, heroID);
+    if (heroID > 0) {
+      kill_hero(database, heroID);
+    }
   }
 }
 
@@ -606,7 +609,9 @@ static void after_takeover_attacker_update(db_t *database,
   else
   {
     /* kill hero if no units left */
-    kill_hero(database, heroID);
+    if (heroID > 0) {
+      kill_hero(database, heroID);
+    }
   }
 }
 
@@ -719,6 +724,7 @@ void movement_handler (db_t *database, db_result_t *result)
   int artefact = 0;
   int artefact_def = 0;
   int artefact_id = 0;
+  int artefact_kill = 0;
   int lostTo = 0;
 
   int heroID = 0;
@@ -774,8 +780,7 @@ void movement_handler (db_t *database, db_result_t *result)
     memset(&player2, 0, sizeof player2);
     player2.tribe = "";
   }
-  debug(DEBUG_TICKER, "caveID = %d, movementID = %d",
-  target_caveID, movementID);
+  debug(DEBUG_TICKER, "sourceCaveID = %d, targetCaveID = %d, movementID = %d", source_caveID, target_caveID, movementID);
 
   /**********************************************************************/
   /*** THE INFAMOUS GIANT SWITCH ****************************************/
@@ -817,8 +822,17 @@ void movement_handler (db_t *database, db_result_t *result)
 
       db_query_dstring(database, ds);
 
-      if (artefact > 0)
-        put_artefact_into_cave(database, artefact, target_caveID);
+      if (artefact > 0) {
+        struct Artefact_class artefact_class;
+ 
+        // auslesen des Artefaktes. Sollte das Verschieben nicht erlaubt sein wird das Artefact nicht in die neue Höhle verschoben
+        get_artefact_class_by_artefact_id(database, artefact, &artefact_class);
+        if (artefact_class.destroyOnMove) {
+          artefact_kill = 1;
+        } else {
+          put_artefact_into_cave(database, artefact, target_caveID);
+        }
+      }
 
       /* send all units back */
       dstring_set(ds, "INSERT INTO Event_movement"
@@ -841,7 +855,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, NULL, artefact, 0);
+       resources, NULL, artefact, artefact_kill, 0, 0);
       break;
 
     /**********************************************************************/
@@ -910,13 +924,23 @@ void movement_handler (db_t *database, db_result_t *result)
         }
         if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
           war_points_update_verschieben(database, &player1, &player2, -1* war_points_sender);
+        } else {
+          war_points_sender = 0;
         }
         dstring_append(ds, " WHERE caveID = %d", target_caveID);
 
       db_query_dstring(database, ds);
+      if (artefact > 0) {
+        struct Artefact_class artefact_class;
 
-      if (artefact > 0)
-        put_artefact_into_cave(database, artefact, target_caveID);
+        // auslesen des Artefaktes. Sollte das Verschieben nicht erlaubt sein wird das Artefact nicht in die neue Höhle verschoben
+        get_artefact_class_by_artefact_id(database, artefact, &artefact_class);
+        if (artefact_class.destroyOnMove) {
+          artefact_kill = 1;
+        } else {
+          put_artefact_into_cave(database, artefact, target_caveID);
+        }
+      }
       
       if (heroID > 0)
       {
@@ -933,7 +957,7 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, units, artefact, heroID);
+       resources, units, artefact, artefact_kill, heroID, war_points_sender);
       break;
 
     /**********************************************************************/

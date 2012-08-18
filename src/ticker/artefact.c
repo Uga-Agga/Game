@@ -74,7 +74,43 @@ void get_artefact_class_by_id (db_t *database, int artefactClassID,
   artefact_class->description           = db_result_get_string(result, "description");
   artefact_class->description_initiated = db_result_get_string(result, "description_initiated");
   artefact_class->initiationID          = db_result_get_int(result, "initiationID");
-  artefact_class->getArtefactBySpy      = db_result_get_int(result, "getArtefactBySpy");
+  artefact_class->noZeroFood            = db_result_get_int(result, "noZeroFood");
+  artefact_class->destroyOnMove         = db_result_get_int(result, "destroyOnMove");
+  get_effect_list(result, artefact_class->effect);
+}
+
+/*
+ * Retrieve artefact_class for the given id.
+ */
+void get_artefact_class_by_artefact_id (db_t *database, int artefactID,
+             struct Artefact_class *artefact_class)
+{
+  db_result_t *result;
+  dstring_t *ds;
+
+  ds = dstring_new("SELECT ac.* FROM " DB_TABLE_ARTEFACT_CLASS
+                    " ac LEFT JOIN " DB_TABLE_ARTEFACT
+                    " a ON ac.ArtefactClassID = a.ArtefactClassID "
+                    " WHERE a.artefactID = %d "
+                    " AND caveID = 0 "
+                    " AND initiated = %d", artefactID, ARTEFACT_UNINITIATED);
+  result = db_query_dstring(database, ds);
+  debug(DEBUG_ARTEFACT, "get_artefact_class_by_artefact_id: %s", dstring_str(ds));
+
+  /* Bedingung: ArtefaktID muss vorhanden sein */
+  if (db_result_num_rows(result) != 1)
+    throw(SQL_EXCEPTION, "get_artefact_class_by_artefact_id: no such artefactID");
+
+  db_result_next_row(result);
+
+  artefact_class->artefactClassID       = db_result_get_int(result, "artefactClassID");
+  artefact_class->name                  = db_result_get_string(result, "name");
+  artefact_class->resref                = db_result_get_string(result, "resref");
+  artefact_class->description           = db_result_get_string(result, "description");
+  artefact_class->description_initiated = db_result_get_string(result, "description_initiated");
+  artefact_class->initiationID          = db_result_get_int(result, "initiationID");
+  artefact_class->noZeroFood            = db_result_get_int(result, "noZeroFood");
+  artefact_class->destroyOnMove         = db_result_get_int(result, "destroyOnMove");
   get_effect_list(result, artefact_class->effect);
 }
 
@@ -542,7 +578,11 @@ int get_artefact_for_caveID(db_t *database, int caveID, int spyableOnly) {
   debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: %s", dstring_str(ds));
 
   if (db_result_num_rows(result) == 0) {
-    debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: fail... no artefact in cave %d", caveID);
+    if (!spyableOnly) {
+      debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: fail... no artefact in cave %d", caveID);
+    } else {
+      debug(DEBUG_ARTEFACT, "get_artefact_for_caveID: no spyable artefact left in cave %d", caveID);
+    }
     return artefactID;
   }
 

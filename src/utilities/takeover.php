@@ -589,7 +589,7 @@ function takeover_send_failed_completely($receiverID, $bidding, $winner) {
   $xml->addChild('fail');
   $xml->fail->addChild('failType', 'failedCompletely');
   $xml->fail->addChild('winner');
-  $xml->fail->winner->addChild('name', $winner['player_name']);
+  $xml->fail->winner->addChild('name', $winner['name']);
   $xml->addChild('target');
   $xml->target->addChild('caveName', $bidding['name']);
   $xml->target->addChild('xCoord', $bidding['xCoord']);
@@ -611,9 +611,9 @@ function takeover_send_transfer($receiverID, $cave) {
   $xml->addChild('success', 'true');
   $xml->addChild('successType', 'winCave');
   $xml->addChild('target');
-  $xml->target->addChild('caveName', $bidding['name']);
-  $xml->target->addChild('xCoord', $bidding['xCoord']);
-  $xml->target->addChild('yCoord', $bidding['yCoord']);
+  $xml->target->addChild('caveName', $cave['name']);
+  $xml->target->addChild('xCoord', $cave['xCoord']);
+  $xml->target->addChild('yCoord', $cave['yCoord']);
   $msgXML = $xml->asXML();
 
   return takeover_system_message($receiverID, _MSG_SUBJECT_CAVETRANSFER, "xml Nachricht", $msgXML);

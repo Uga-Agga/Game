@@ -55,7 +55,7 @@ function unit_cancelOrder($event_unitID, $caveID) {
 function unit_processOrder($unitID, $quantity, $caveID, $details) {
   global $db;
 
-  if ($quantity == 'max') {
+  if ($quantity == -1) {
     $quantity = MAX_SIMULTAN_BUILDED_UNITS;
     while (!processProductionCost($GLOBALS['unitTypeList'][$unitID], $caveID, $details, $quantity) && $quantity != 0) {
       $quantity--;

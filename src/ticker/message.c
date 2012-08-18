@@ -112,7 +112,7 @@ static char* transform_spy_values (int num, int type) {
 
   //units
   if (type == 1) {
-    if(     num <     9) value = "eine Handvoll";
+    if (     num <     9) value = "eine Handvoll";
     else if (num <    17) value = "ein Dutzend";
     else if (num <    65) value = "eine Schar";
     else if (num <   257) value = "eine Kompanie";
@@ -134,12 +134,12 @@ static char* transform_spy_values (int num, int type) {
 
   //resources
   if (type == 2) {
-    if (num < 257) value = "fast gar nichts";
-    else if (num < 1025) value = "ein winziger Haufen";
-    else if (num < 4097) value = "ein kleiner Haufen";
-    else if (num < 16385) value = "ein beachtlicher Haufen";
-    else if (num < 32769) value = "eine Menge";
-    else if (num < 65537) value = "eine große Menge";
+    if (     num < 257)    value = "fast gar nichts";
+    else if (num < 1025)   value = "ein winziger Haufen";
+    else if (num < 4097)   value = "ein kleiner Haufen";
+    else if (num < 16385)  value = "ein beachtlicher Haufen";
+    else if (num < 32769)  value = "eine Menge";
+    else if (num < 65537)  value = "eine große Menge";
     else if (num < 131074) value = "ein Berg";
     else if (num < 262148) value = "ein großer Berg";
     else if (num < 524296) value = "ein riesiger Berg";
@@ -159,6 +159,27 @@ static char* transform_spy_values (int num, int type) {
   //sciences
   if (type == 4) {
 
+  }
+
+  //spy defense
+  if (type == 5) {
+    if     (num <     5) value = "ein kümmerlicher Haufen";
+    else if (num <     9) value = "eine Handvoll";
+    else if (num <    17) value = "ein Dutzend";
+    else if (num <    33) value = "ein Trupp";
+    else if (num <    65) value = "eine Schar";
+    else if (num <   129) value = "eine Menge";
+    else if (num <   257) value = "ein Haufen";
+    else if (num <   513) value = "viele";
+    else if (num <  1025) value = "etliche";
+    else if (num <  2049) value = "verdammt viele";
+    else if (num <  4097) value = "Unmengen";
+    else if (num <  6145) value = "eine Legion";
+    else if (num <  8193) value = "eine Streitmacht";
+    else if (num < 12289) value = "eine Armee";
+    else if (num < 16385) value = "Heerscharen";
+    else if (num < 20481) value = "eine haltlose Horde";
+    else value = "eine endlose wogende Masse";
   }
 
   return value;
@@ -547,7 +568,7 @@ static char* trade_report_xml(db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
        const int resources[], const int units[], int artefact,
-       int IsSender, int heroID) {
+       int artefact_kill, int IsSender, int heroID, int war_points_trade) {
 
   mxml_node_t *xml, *tradereport;
   mxml_node_t *curtime;
@@ -626,9 +647,16 @@ static char* trade_report_xml(db_t *database,
   //artefacts
   if (artefact) {
     const char *artefactName = artefact_name(database, artefact);
-    Artefact = mxmlNewElement(tradereport, "artefact");
-      name = mxmlNewElement(Artefact, "name");
-        mxmlNewText(name, 0, (char*) artefactName);
+
+    if (artefact_kill) {
+      Artefact = mxmlNewElement(tradereport, "artefact_destroy");
+        name = mxmlNewElement(Artefact, "name");
+          mxmlNewText(name, 0, (char*) artefactName);
+    } else {
+      Artefact = mxmlNewElement(tradereport, "artefact");
+        name = mxmlNewElement(Artefact, "name");
+          mxmlNewText(name, 0, (char*) artefactName);
+    }
   }
 
   if (IsSender && heroID) {
@@ -639,6 +667,11 @@ static char* trade_report_xml(db_t *database,
         mxmlNewText(heroDeath, 0, (const char*) (heroID<0 ? "true" : "false"));
   }
 
+  if (war_points_trade) {
+    name = mxmlNewElement(tradereport, "warpoints_trade");
+      mxmlNewInteger(name, (int) war_points_trade);
+  }
+
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
   return xmlstring;
 }
@@ -646,7 +679,8 @@ static char* trade_report_xml(db_t *database,
 void trade_report (db_t *database,
        const struct Cave *cave1, const struct Player *player1,
        const struct Cave *cave2, const struct Player *player2,
-       const int resources[], const int units[], int artefact, int heroID)
+       const int resources[], const int units[], int artefact,
+       int artefact_kill, int heroID, int war_points_trade)
 {
   template_t *tmpl_trade1 = message_template(player1, "trade1");
   template_t *tmpl_trade2 = message_template(player2, "trade2");
@@ -687,11 +721,11 @@ void trade_report (db_t *database,
   if (cave1->player_id == cave2->player_id) {
     IsSender = 1;
   }
-  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, IsSender, heroID);
+  xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, IsSender, heroID, war_points_trade);
   message_new(database, MSG_CLASS_TRADE, cave2->player_id, subject2, template_eval(tmpl_trade2), xml);
 
   if (cave1->player_id != cave2->player_id) {
-    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, 1, heroID);
+    xml = trade_report_xml(database, cave1, player1, cave2, player2, resources, units, artefact, artefact_kill, 1, heroID, war_points_trade);
     message_new(database, MSG_CLASS_TRADE, cave1->player_id, subject1, template_eval(tmpl_trade1), xml);
   }
 }
@@ -913,8 +947,8 @@ static char* battle_report_xml (db_t *database,
 
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
-    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
-
+    sprintf(god_bonus, "%.2lf", (float) result->attackers[0].religion_bonus);
+      
     battleValues = mxmlNewElement(attacker, "battleValues");
       range = mxmlNewElement(battleValues, "range");
         mxmlNewInteger(range, (int) result->attackers_acc_range_before);
@@ -1009,7 +1043,7 @@ static char* battle_report_xml (db_t *database,
 
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
-    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].relationMultiplicator);
+    sprintf(god_bonus, "%.2lf", (float) result->defenders[0].religion_bonus);
 
     battleValues = mxmlNewElement(defender, "battleValues");
       range = mxmlNewElement(battleValues, "range");
@@ -1291,18 +1325,20 @@ static char* spy_report_xml(db_t *database,
     const struct Cave *cave2, const struct Player *player2,
     const int resources[], const int units[], int artefact,
     int spyTypes[], const struct Cave cave, int stolenArtefactID,
-    int stolenArtefactLost, const int dead_units[], int IsAttacker)
+    int stolenArtefactLost, const int dead_units[], int IsAttacker,
+    const char *Status)
 {
 
   mxml_node_t *xml;
   mxml_node_t *spyreport;
-  mxml_node_t *curtime, *isAttacker;
+  mxml_node_t *curtime, *isAttacker, *status;
   mxml_node_t *source, *target, *player, *tribe;
   mxml_node_t *caveName, *xCoord, *yCoord;
   mxml_node_t *Units, *Unit, *name, *value;
   mxml_node_t *DefenseSystems, *DefenseSystem, *Resources, *Resource,
               *Buildings, *Building, *Sciences, *Science;
   mxml_node_t *Artefact, *Lost, *deadUnits;
+
 
   int type;
   char *xmlstring = "";
@@ -1312,9 +1348,12 @@ static char* spy_report_xml(db_t *database,
   curtime = mxmlNewElement(spyreport, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
   isAttacker = mxmlNewElement(spyreport, "isAttacker");
-    mxmlNewText(isAttacker, 0, (char*) "true");
+    mxmlNewText(isAttacker, 0, (const char*) (IsAttacker ? "true" : "false"));
+  status = mxmlNewElement(spyreport, "status");
+    mxmlNewText(status, 0, (char*) Status);
 
-  source = mxmlNewElement(spyreport, "source");
+  if (IsAttacker) {
+    source = mxmlNewElement(spyreport, "source");
       player = mxmlNewElement(source, "playerName");
         mxmlNewText(player, 0, (char*) player1->name);
       tribe = mxmlNewElement(source, "tribe");
@@ -1325,6 +1364,7 @@ static char* spy_report_xml(db_t *database,
         mxmlNewInteger(xCoord, (int) cave1->xpos);
       yCoord = mxmlNewElement(source, "yCoord");
         mxmlNewInteger(yCoord, (int) cave1->ypos);
+  }
 
   target = mxmlNewElement(spyreport, "target");
       player = mxmlNewElement(target, "playerName");
@@ -1339,7 +1379,6 @@ static char* spy_report_xml(db_t *database,
         mxmlNewInteger(yCoord, (int) cave2->ypos);
 
   if (IsAttacker) {
-
     //defenseSystems
     if (spyTypes[0] == 1) {
       DefenseSystems = mxmlNewElement(spyreport, "defenseSystems");
@@ -1351,7 +1390,6 @@ static char* spy_report_xml(db_t *database,
           value = mxmlNewElement(DefenseSystem, "value");
             mxmlNewText(value, 0, (char*) transform_spy_values(cave.defense_system[type], 0));
         }
-
       }
     }
 
@@ -1412,21 +1450,36 @@ static char* spy_report_xml(db_t *database,
     }
   } // end IsAttacker
 
+  if (!IsAttacker) {
+    //units
+    Units = mxmlNewElement(spyreport, "units");
+    for (type = 0; type < MAX_UNIT; ++type) {
+      if (units[type] > 0) {
+        Unit = mxmlNewElement(Units, "unit");
+        name = mxmlNewElement(Unit, "name");
+          mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Unit, "value");
+          mxmlNewText(value, 0, (char*) transform_spy_values(units[type], 5));
+      }
+    }
+
+  }
+
   // dead units
   deadUnits = mxmlNewElement(spyreport, "deadUnits");
   for (type = 0; type < MAX_UNIT; ++type) {
     if (dead_units[type] > 0) {
-      Unit = mxmlNewElement(deadUnits, "");
-                name = mxmlNewElement(Unit, "name");
-                  mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
-                value = mxmlNewElement(Unit, "value");
-                  mxmlNewInteger(value, dead_units[type]);
+      Unit = mxmlNewElement(deadUnits, "deadUnit");
+        name = mxmlNewElement(Unit, "name");
+          mxmlNewText(name, 0, (char*) unit_type[type]->name[player1->locale_id]);
+        value = mxmlNewElement(Unit, "value");
+          mxmlNewInteger(value, dead_units[type]);
     }
   }
 
   // lost carried artefact
   if (artefact) {
-    const char* ArtefactName = artefact_name(database, stolenArtefactID);
+    const char* ArtefactName = artefact_name(database, artefact);
         Artefact = mxmlNewElement(spyreport, "artefactLost");
           name = mxmlNewElement(Artefact, "name");
             mxmlNewText(name, 0, (char*) ArtefactName);
@@ -1459,6 +1512,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
   const char *subject2 = message_subject(tmpl_spy2, "TITLE", cave2);
   double result;
   char *xml = "";
+  char *status = "";
   int spyTypes[5] = {0, 0, 0, 0, 0};
   struct Cave cave;
   int artefactID = 0;
@@ -1477,17 +1531,25 @@ struct SpyReportReturnStruct spy_report (db_t *database,
   srrs.artefactID = 0;
 
   if (result > drand()) {
+    status = "success";
+
     // getting artefact? no artefact carried?
     if (cave2->artefacts > 0 && ARTEFACT_SPY_PROBABILITY > drand() && *artefact == 0) {
-      int artefact_def = get_artefact_for_caveID(database, cave2->cave_id, 1);
+      artefact_def = get_artefact_for_caveID(database, cave2->cave_id, 1);
 
-      // artefactID -> Rückgabe der Artefact ID wenn es NICHT versprungen ist sonst 0
-      // artefact_id -> dummy. Wird hier im content nicht bnötigt!
-      // artefact_def -> artefactID was geklaut werden soll (wird oben random aus der Höhle gelesen)
-      after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefactID, &artefact_id, &artefact_def, cave2->cave_id, cave2, &lostTo);
-      srrs.artefactID = artefactID;
+      if (artefact_def>0) {
+        // artefactID -> Rückgabe der Artefact ID wenn es NICHT versprungen ist sonst 0
+        // artefact_id -> dummy. Wird hier im content nicht bnötigt!
+        // artefact_def -> artefactID was geklaut werden soll (wird oben random aus der Höhle gelesen)
+        after_battle_change_artefact_ownership(database, FLAG_ATTACKER, &artefactID, &artefact_id, &artefact_def, cave2->cave_id, cave2, &lostTo);
+        srrs.artefactID = artefactID;
 
-      sendDefenderReport = 1;
+        if (lostTo) {
+          debug(DEBUG_ARTEFACT, "get_arte_by_spio: artefact jump from %d to %d", cave1->cave_id, lostTo);
+        }
+
+        sendDefenderReport = 1;
+      }
     }
 
     result = 1;
@@ -1496,6 +1558,8 @@ struct SpyReportReturnStruct spy_report (db_t *database,
     cave = report_spy_info(tmpl_spy1, player1->locale_id, spy, cave2, spyTypes);
   } else {
     if (0.5 > drand()) {
+      status = "death";
+
       int type;
 
       for (type = 0; type < MAX_UNIT; ++type) {
@@ -1509,6 +1573,7 @@ struct SpyReportReturnStruct spy_report (db_t *database,
       template_context(tmpl_spy1, "/MSG");
       template_context(tmpl_spy2, "/MSG");
     } else {
+      status = "escape";
       result = 1;
     }
 
@@ -1526,16 +1591,16 @@ struct SpyReportReturnStruct spy_report (db_t *database,
     sendDefenderReport = 1;
   }
 
-  /* Gnerate messages
+  /* Generate messages
    *
    * artefact_def anstatt srrs.artefactID benutzt.
    * srrs.artefactID ist 0 wenn das artefact in einer nachbarhöhle verloren gegangen ist. artefact_def hat aber noch die ursprüngliche ID
    * die für den Bericht benötigt wird
    */
-  xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 1);
+  xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 1, status);
   message_new(database, MSG_CLASS_SPY_REPORT, cave1->player_id, subject1, template_eval(tmpl_spy1), xml);
   if (sendDefenderReport) {
-    xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 0);
+    xml = spy_report_xml(database, cave1, player1, cave2, player2, resources, units, *artefact, spyTypes, cave, artefact_def, lostTo, dead_units, 0, status);
     message_new(database, MSG_CLASS_SPY_REPORT, cave2->player_id, subject2, template_eval(tmpl_spy2), xml);
   }
 
@@ -1598,6 +1663,22 @@ void artefact_merging_report (db_t *database,
 
   message_new(database, MSG_CLASS_ARTEFACT,
       cave->player_id, subject, template_eval(tmpl_merge), xml);
+}
+
+void artefact_zero_food_report (db_t *database,
+            const struct Cave *cave, const struct Player *player,
+            int artefactID, int caveID)
+{
+  template_t *tmpl_artefact = message_template(player, "zeroFood");
+  const char *subject = message_subject(tmpl_artefact, "TITLE", cave);
+  char *xml = "";
+
+  const char* ArtefactName = artefact_name(database, artefactID);
+
+  template_context(tmpl_artefact, "MSG");
+  template_set(tmpl_artefact, "artefact", ArtefactName);
+
+  message_new(database, MSG_CLASS_ARTEFACT, cave->player_id, subject, template_eval(tmpl_artefact), xml);
 }
 
 static char* hero_report_xml (db_t *database,
@@ -1711,7 +1792,7 @@ static void wonder_prepare_message (template_t *template,
   if (steal > 0) {
     template_set_fmt(template, "STOLEN/steal", "%d", (int) (steal * 100));
     stealPercentage = mxmlNewElement(xml, "stealPercentage");
-      mxmlNewInteger(stealPercentage, (int) steal*100);
+      mxmlNewInteger(stealPercentage, (int) (steal * 100));
   }
 }
 

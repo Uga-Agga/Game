@@ -21,6 +21,9 @@
 #include "resource_ticker.h"
 #include "ticker.h"
 #include "ugatime.h"
+#include "artefact.h"
+#include "cave.h"
+#include "message.h"
 
 /* configuration parameters */
 
@@ -86,49 +89,80 @@ time_t tick_advance (void)
  */
 void resource_ticker (db_t *database, time_t timeval)
 {
-    const struct ugatime *uga_time = get_ugatime(timeval);
-    float uga_bonus  = get_bonus(RELIGION_UGA,  uga_time)->production;
-    float agga_bonus = get_bonus(RELIGION_AGGA, uga_time)->production;
-    dstring_t *ds;
-    int i;
+  const struct ugatime *uga_time = get_ugatime(timeval);
+  float uga_bonus  = get_bonus(RELIGION_UGA,  uga_time)->production;
+  float agga_bonus = get_bonus(RELIGION_AGGA, uga_time)->production;
+  dstring_t *ds;
+  db_result_t *result;
+  int i;
+  int row;
 
-    /* create start of the SQL statement */
-    ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
+  /* create start of the SQL statement */
+  ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
 
-    /* update each resource delta */
-    for (i = 0; i < MAX_RESOURCE; ++i)
-    {
+  /* update each resource delta */
+  for (i = 0; i < MAX_RESOURCE; ++i)
+  {
 printf("%d",i);
-	/* the function for the actual resource */
-	const char *function =
-	    function_to_sql(((struct Resource *) resource_type[i])->production);
+    /* the function for the actual resource */
+    const char *function = function_to_sql(((struct Resource *) resource_type[i])->production);
 
-	/* update the delta and value for this resource */
-	dstring_append(ds, "%s%s_delta = (%s) * IF((%s) <= 0, 1, 1 + SIGN(%s)*%g + SIGN(%s)*%g), %s = GREATEST(LEAST(%s + %s_delta, %s), 0)",
-		i > 0 ? "," : "",
-		resource_type[i]->dbFieldName, function, function,
+    /* update the delta and value for this resource */
+    dstring_append(ds, "%s%s_delta = (%s) * IF((%s) <= 0, 1, 1 + SIGN(%s)*%g + SIGN(%s)*%g), %s = GREATEST(LEAST(%s + %s_delta, %s), 0)",
+    i > 0 ? "," : "",
+    resource_type[i]->dbFieldName, function, function,
 #if defined(ID_SCIENCE_UGA) && defined(ID_SCIENCE_AGGA)
-		science_type[ID_SCIENCE_UGA]->dbFieldName, uga_bonus,
-		science_type[ID_SCIENCE_AGGA]->dbFieldName, agga_bonus,
+    science_type[ID_SCIENCE_UGA]->dbFieldName, uga_bonus,
+    science_type[ID_SCIENCE_AGGA]->dbFieldName, agga_bonus,
 #else
-		"0", 0.0,
-		"0", 0.0,
+    "0", 0.0,
+    "0", 0.0,
 #endif
-		resource_type[i]->dbFieldName,
-		resource_type[i]->dbFieldName,
-		resource_type[i]->dbFieldName,
-		function_to_sql(resource_type[i]->maxLevel));
-    }
+    resource_type[i]->dbFieldName,
+    resource_type[i]->dbFieldName,
+    resource_type[i]->dbFieldName,
+    function_to_sql(resource_type[i]->maxLevel));
+  }
 
-    /* end of the SQL statement */
-    dstring_append(ds, " WHERE playerID != 0");
+  /* end of the SQL statement */
+  dstring_append(ds, " WHERE playerID != 0");
 
-    debug(DEBUG_SQL, "%s", dstring_str(ds));
-    db_query_dstring(database, ds);
+  debug(DEBUG_SQL, "%s", dstring_str(ds));
+  db_query_dstring(database, ds);
 
-    /* Update Hero Heal Points */
-    ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(healPoints + regHP, maxHealPoints) WHERE isAlive > 0 ");
-    debug(DEBUG_SQL, "%s", dstring_str(ds));
-    db_query_dstring(database, ds);
-    
+  /* Update Hero Heal Points */
+  ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(healPoints + regHP, maxHealPoints) WHERE isAlive > 0 ");
+  debug(DEBUG_SQL, "%s", dstring_str(ds));
+  db_query_dstring(database, ds);
+
+  /* nun lassen wir die Artes mal verhungern */
+  ds = dstring_new("SELECT a.artefactID, c.caveID FROM " DB_TABLE_ARTEFACT
+                " a LEFT JOIN " DB_TABLE_ARTEFACT_CLASS
+                " ac ON ac.ArtefactClassID = a.ArtefactClassID "
+                " LEFT JOIN " DB_TABLE_CAVE
+                " c ON c.caveID = a.caveID "
+                " WHERE a.initiated = 1 "
+                " AND c.food = 0 "
+                " AND c.playerID != 0 "
+                " AND ac.noZeroFood = 1");
+  result = db_query_dstring(database, ds);
+
+  while ((row = db_result_next_row(result))) {
+    struct Player player;
+    struct Cave   cave;
+
+    int artefactID;
+    int caveID;
+
+    artefactID = db_result_get_int(result, "artefactID");
+    caveID = db_result_get_int(result, "caveID");
+
+    get_cave_info(database, caveID, &cave);
+    get_player_info(database, cave.player_id, &player);
+
+    remove_effects_from_cave(database,  artefactID);
+    uninitiate_artefact(database,       artefactID);
+    remove_artefact_from_cave(database, artefactID);
+    artefact_zero_food_report(database, &cave, &player, artefactID, caveID);
+  }
 }

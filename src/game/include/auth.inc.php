@@ -35,6 +35,12 @@ class auth {
     $this->perm['tribe']['change_settings'] = array(
       'value' => 16, 'desc'  => 'Stammes-Informationen bearbeiten'
     );
+    $this->perm['tribe']['wonder'] = array(
+      'value' => 32, 'desc'  => 'Kann Stammeswunder wirken'
+    );
+    $this->perm['tribe']['see_online'] = array(
+      'value' => 64, 'desc'  => 'Kann die letzte Online Zeit sehen'
+    );
   }
 
   public function checkPermission($authType, $authID, $userAuth) {

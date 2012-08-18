@@ -2,7 +2,7 @@
 /* base.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger,
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -10,8 +10,8 @@
  * the License, or (at your option) any later version. 
  */
 #}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="de" xml:lang="de">
+<!DOCTYPE html>
+<html dir="ltr" lang="de">
 <head>
   {% block head %}
     <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
@@ -105,7 +105,10 @@
         </div>
         <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
       </div>
-      <div class="ym-col1 ym-col-head1">&nbsp;</div>
+      <div class="ym-col1 ym-col-head1">
+        <div class="bold" style="margin-left: 10px ;margin-top: 154px" onmouseover="showWMTT('warpoints')" onmouseout="hideWMTT()">Kriegspunkte der Höhle: {{ war_points.warpoints }}</div>
+        <div id="warpoints" class="tooltip2">Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest.<br />Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden.<br />Unten sind alle Kriegspunkte aufgeführt!<br/ ><br/ >Einheiten: {{ war_points.warpointsUnits }}<br />Verteidigungsanlagen: {{ war_points.warpointsDefense }}</div>
+      </div>
       <div class="ym-col2 ym-col-head2">
          <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
         <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />

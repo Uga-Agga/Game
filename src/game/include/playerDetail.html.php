@@ -42,7 +42,7 @@ function player_getContent($caveID, $playerID) {
   if (!empty($playerDetails['awards'])) {
     $tmp = explode('|', $playerDetails['awards']);
     $awards = array();
-    foreach ($tmp AS $tag) $awards[] = array('tag' => $tag, 'award_modus' => AWARD_DETAIL);
+    foreach ($tmp AS $tag) $awards[] = $tag;
     $playerDetails['award'] = $awards;
   }
   unset($playerDetails['awards']);

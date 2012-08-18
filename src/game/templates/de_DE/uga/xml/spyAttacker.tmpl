@@ -13,98 +13,113 @@
 Spionagebericht von Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
 
 <p>
-  Deine Spione berichten von
-
-  {% if message_xml.target.caveID in list_cave_id %}
-    deiner Höhle  {{ message_xml.source.caveName }}
-  {% else %}
-    der Höhle {{ message_xml.target.caveName }} des Spielers {{ message_xml.target.playerName }}
-  {% endif %}
+  Deine Spione berichten von der Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }}) {% if message_xml.target.playerName != '' %}des Spielers {{ message_xml.target.playerName }}{% endif %}.
 </p>
 
-{% if message_xml.resources.resource %}
-<table style="width: auto; margin-top: 10px;">
-  <thead>
-    <th colspan="2">Rohstoffe</th>
-  </thead>
-  <tbody>
-    {% for resource in message_xml.resources.resource %}
-      <tr>
-        <td>{{ resource.name }}</td>
-        <td>{{ resource.value }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+{% if message_xml.status == 'death' %}
+  <p>Leider waren deine Kundschafter etwas zu ungeschickt, so daß sie von den gegnerischen Wachen bemerkt worden sind und ein Teil von ihnen einen schnellen Tod gefunden hat. Es beschleicht dich das Gefühl, daß du vielleicht doch etwas mehr Wert auf eine gute Ausbildung hättest legen sollen.</p>
+  {% if message_xml.deadUnits.deadUnit %}
+    <p>Du verlierst folgende Einheiten:</p>
 
-{% if message_xml.defenseSystems.defenseSystem %}
-<table style="width: auto; margin-top: 10px;">
-  <thead>
-    <th colspan="2">Verteidigungsanlagen</th>
-  </thead>
-  <tbody>
-    {% for defenseSystem in message_xml.defenseSystems.defenseSystem %}
-      <tr>
-        <td>{{ defenseSystem.name }}</td>
-        <td>{{ defenseSystem.value }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+    <table style="width: auto">
+      <thead><th colspan="2">Verlorene Einheiten</th></thead>
+      <tbody>{% for unit in message_xml.deadUnits.deadUnit %}<tr><td>{{ unit.name }}:</td><td class="text-right">{{ unit.value }}</td></tr>{% endfor %}</tbody>
+    </table>
+  {% endif %}
+{% elseif message_xml.status == 'escape' %}
+  <p>Leider waren deine Kundschafter etwas zu ungeschickt, so daß sie von den gegnerischen Wachen bemerkt worden sind, bevor sie Informationen über die Höhle sammeln konnten. Zum Glück konnten sie sich aber durch eine schnelle Flucht der Gefangennahme entziehen.</p>
 
-{% if message_xml.units.unit %}
-<table style="width: auto; margin-top: 10px;">
-  <thead>
-    <th colspan="2">Einheiten</th>
-  </thead>
-  <tbody>
-    {% for unit in message_xml.units.unit %}
-      <tr>
-        <td>{{ unit.name }}</td>
-        <td>{{ unit.value }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+  {% if message_xml.artefactLost %}
+    <p>Das transportierte Artefakt "{{ message_xml.artefactLost.name }}" ist verloren!</p>
+  {% endif %}
 
-{% if message_xml.buildings.building %}
-<table style="width: auto; margin-top: 10px;">
-  <thead>
-    <th colspan="2">Erweiterungen</th>
-  </thead>
-  <tbody>
-    {% for building in message_xml.buildings.building %}
-      <tr>
-        <td>{{ building.name }}</td>
-        <td>{{ building.value }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+{% elseif message_xml.status == 'success' %}
+   {% if message_xml.resources.resource %}
+  <table style="width: auto; margin-top: 10px;">
+    <thead>
+      <th colspan="2">Rohstoffe</th>
+    </thead>
+    <tbody>
+      {% for resource in message_xml.resources.resource %}
+        <tr>
+          <td>{{ resource.name }}</td>
+          <td>{{ resource.value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
 
-{% if message_xml.sciences.science %}
-<table style="width: auto; margin-top: 10px;">
-  <thead>
-    <th colspan="2">Forschungen</th>
-  </thead>
-  <tbody>
-    {% for science in message_xml.sciences.science %}
-      <tr>
-        <td>{{ science.name }}</td>
-        <td>{{ science.value }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-{% endif %}
+  {% if message_xml.defenseSystems.defenseSystem %}
+  <table style="width: auto; margin-top: 10px;">
+    <thead>
+      <th colspan="2">Verteidigungsanlagen</th>
+    </thead>
+    <tbody>
+      {% for defenseSystem in message_xml.defenseSystems.defenseSystem %}
+        <tr>
+          <td>{{ defenseSystem.name }}</td>
+          <td>{{ defenseSystem.value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
 
-{% if message_xml.artefact %}
-  <p>Bei der Plünderung der Höhle bist du auf ein Artefakt "{{ message_xml.artefact.name }}" gestoßen!</p>
-  {% if message_xml.artefact.lost %}
-    <p>Bei der Spionage lief leider etwas schief und das Artefakt "{{ message_xml.artefact.name }}" ist verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.</p>
+  {% if message_xml.units.unit %}
+  <table style="width: auto; margin-top: 10px;">
+    <thead>
+      <th colspan="2">Einheiten</th>
+    </thead>
+    <tbody>
+      {% for unit in message_xml.units.unit %}
+        <tr>
+          <td>{{ unit.name }}</td>
+          <td>{{ unit.value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if message_xml.buildings.building %}
+  <table style="width: auto; margin-top: 10px;">
+    <thead>
+      <th colspan="2">Erweiterungen</th>
+    </thead>
+    <tbody>
+      {% for building in message_xml.buildings.building %}
+        <tr>
+          <td>{{ building.name }}</td>
+          <td>{{ building.value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if message_xml.sciences.science %}
+  <table style="width: auto; margin-top: 10px;">
+    <thead>
+      <th colspan="2">Forschungen</th>
+    </thead>
+    <tbody>
+      {% for science in message_xml.sciences.science %}
+        <tr>
+          <td>{{ science.name }}</td>
+          <td>{{ science.value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if message_xml.artefactStolen %}
+    <p>
+      Bei der Spionage der Höhle bist du auf ein Artefakt "{{ message_xml.artefactStolen.name }}" gestoßen!<br />
+      {% if message_xml.artefactStolen.lost == 'true' %}Leider waren deine Kundschafter zu sehr auf die Spionage fixiert und haben das Artefakt "{{ message_xml.artefactStolen.name }}" verloren! Es muß irgendwo in der Nachbarschaft der Höhle liegen.{% endif %}
+    </p>
   {% endif %}
 {% endif %}
+
+

@@ -42,6 +42,7 @@ class Player {
   var $tribe;
   var $tribeBlockEnd;
   var $auth;
+  var $donateLocked;
   var $tutorialID;
 
   function Player($record) {
@@ -69,6 +70,7 @@ class Player {
     $this->tribe              = $record['tribe'];
     $this->tribeBlockEnd      = $record['tribeBlockEnd'];
     $this->auth               = unserialize($record['auth']);
+    $this->donateLocked       = unserialize($record['donateLocked']);
     $this->tutorialID         = $record['tutorialID'];
   }
 
@@ -133,6 +135,44 @@ class Player {
     $sql->bindValue('entry', $entry, PDO::PARAM_STR);
     
     return $sql->execute();
+  }
+
+  public static function setDonateLocked($playerID, $type, $name, $newTime) {
+    global $db;
+
+    if (empty($playerID) || empty($type)) {
+      return false;
+    }
+
+    // read user auth
+    $sql = $db->prepare("SELECT donateLocked
+                         FROM " . PLAYER_TABLE . "
+                         WHERE playerID = :playerID");
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) return false;
+
+    $ret = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    // parse & update
+    $donateLocked = @unserialize($ret['donateLocked']);
+    $donateLocked[$type][$name] = $newTime;
+
+    // update new permission
+    $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
+                         SET donateLocked = :donateLocked
+                         WHERE playerID = :playerID");
+    $sql->bindValue('donateLocked', serialize($donateLocked), PDO::PARAM_STR);
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) {
+      return false;
+    }
+
+    if ($_SESSION['player']->playerID == $playerID) {
+      $_SESSION['player']->donateLocked[$type][$name] = $newTime;
+    }
+
+    return true;
   }
 
   /** This function returns the difference between UTC and the

@@ -22,7 +22,7 @@
   Dein Oberkeulenschwinger berichtet direkt vom Schlachtfeld:<br />
   Mein oberster Stammesführer! Du hast den Kampf um
 
-  {% if message_xml.defender.caveID in list_cave_id %}
+  {% if message_xml.attacker.playerName == message_xml.defender.playerName %}
     deine Höhle  {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})
   {% else %}
     die Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }}) {% if message_xml.defender.playerName != '' %}des Spielers {{ message_xml.defender.playerName }}{% endif %}
@@ -35,11 +35,11 @@
   {% endif %}
 </p>
 
-{% if message_xml.takeoverMultiplier %}
+{% if message_xml.takeover == 'true' %}
 <p>
-  {% if message_xml.takeoverMultiplier.changeOwner == 'true' %}
+  {% if message_xml.changeOwner == 'true' and message_xml.winner == 'attacker' %}
     Du bist nun stolzer Besitzer der Höhle!
-  {% else %}
+  {% elseif message_xml.changeOwner == 'true' and message_xml.winner == 'attacker'  %}
     Du konntest aber trotz des Sieges keine Kontrolle über die Höhle erlangen. Vermutlich hast Du schon zu viele andere Höhlen, der ehemalige Besitzer hat die Höhle vor Deiner Ankunft aufgegeben oder es besteht eine Kriegsbeziehung, in die Du nicht involviert bist.
   {% endif %}
 </p>
@@ -62,6 +62,7 @@
  */
 #}
 {% else %}
+  {% if message_xml.takeoverMultiplier %}Der Gegner kämpfte mit {{ message_xml.takeoverMultiplier }}-facher Kampfstärke!{% endif %}
   <table style="width: 650px; border-top: none; border-bottom: none;">
     <tr class="nohover">
       <td style="padding: 0; margin: 0;">
@@ -80,7 +81,7 @@
             <tr><th colspan="3">nach dem Kampf</th></tr>
           </thead>
           <tbody>
-            {% for units in message_xml.attacker.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}({{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+            {% for units in message_xml.attacker.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}(-{{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
           </tbody>
         </table>
       </td>
@@ -118,8 +119,8 @@
             <tr><th colspan="3">nach dem Kampf</th></tr>
           </thead>
           <tbody>
-            {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}({{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
-            {% for defenseSystem in message_xml.defender.defenseSystems.defenseSystem %}<tr><td>{{ defenseSystem.name }}:</td><td class="text-right">{{ defenseSystem.after }}</td><td class="text-right">{% if defenseSystem.delta > 0 %}({{ defenseSystem.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+            {% for units in message_xml.defender.units.unit %}<tr><td>{{ units.name }}:</td><td class="text-right">{{ units.after }}</td><td class="text-right">{% if units.delta > 0 %}(-{{ units.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
+            {% for defenseSystem in message_xml.defender.defenseSystems.defenseSystem %}<tr><td>{{ defenseSystem.name }}:</td><td class="text-right">{{ defenseSystem.after }}</td><td class="text-right">{% if defenseSystem.delta > 0 %}(-{{ defenseSystem.delta }}){% else %}&nbsp;{% endif %}</td></tr>{% endfor %}
           </tbody>
         </table>
       </td>
@@ -141,7 +142,7 @@
     </tr>
   </table>
 
-  {% if message_xml.attacker.plunder %}
+  {% if message_xml.attacker.plunder.resource %}
   <p>Du hast folgende Ressourcen mitgenommen:</p>
   <table style="width: auto;">
     <thead>
@@ -158,8 +159,8 @@
   </table>
   {% endif %}
 
-  {% if message_xml.attacker.resourcesLost %}
-  <p>Der fremde Stamm verliert auf seiner Flucht folgende Ressourcen:</p>
+  {% if message_xml.attacker.resourcesLost.resource %}
+  <p>Auf deiner Flucht hast du alle mitgebrachten Ressourcen verloren:</p>
   <table style="width: auto;">
     <thead>
       <th>Ressource</th>
@@ -178,7 +179,7 @@
 
 
   {% if message_xml.attackerWarpoints or message_xml.defenderWarpoints %}
-    <p>Der Kampf brachte dir {{ message_xml.defenderWarpoints }} und dem Gegner {{ message_xml.attackerWarpoints }} Kriegspunkte.</p>
+    <p>Der Kampf brachte dir {{ message_xml.attackerWarpoints }} und dem Gegner {{ message_xml.defenderWarpoints }} Kriegspunkte.</p>
   {% endif %}
 
   {% if message_xml.attacker.hero %}
@@ -201,7 +202,7 @@
         Das transportierte Artefakt "{{ message_xml.artefact.name }}" ist verloren!
       {% endif %}
 
-      {% if message_xml.artefact.lost %}
+      {% if message_xml.artefact.lost == 'true' %}
         <br />Bei dem Kampf ist das Artefakt "{{ message_xml.artefact.name }}" verloren gegangen! Es muß irgendwo in der Nachbarschaft der Höhle liegen.
       {% endif %}
     </p>

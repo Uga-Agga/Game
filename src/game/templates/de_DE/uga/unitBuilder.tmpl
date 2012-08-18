@@ -2,7 +2,7 @@
 /* unitBuilder.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -65,11 +65,19 @@
                     <td class="ua-td-count">Bestand: {{ item.stock }}</td>
                     <td class="ua-td-input">
                       {% if item.build_link %}
-                        <form method="post" action="main.php?modus={{unit_link }}&amp;action=build&amp;unitID={{ item.unit_id }}&amp;caveID={{ cave_id }}">
-                          Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" name="quantity" size="2" maxlength="2" />
+                        <div class="ym-gl text-right" style="width: 120px"><form method="post" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
+                          <input type="hidden" name="action" value="build" />
+                          <input type="hidden" name="unitID" value="{{ item.unit_id }}" />
+                          Anzahl: <input id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" pattern="\d*" name="quantity" size="2" maxlength="2" />
                           <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
-                          <input style="padding-left: 10px;" type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up_max.png" id="unit_{{ item.unit_id }}" name="quantity" value="max" alt="Ausbilden" title="Baut die maximale Anzahl Einheiten" />
-                        </form>
+                        </form></div>
+
+                        <div class="ym-gr text-right" style="width: 30px"><form method="post" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
+                          <input type="hidden" name="action" value="build" />
+                          <input type="hidden" name="unitID" value="{{ item.unit_id }}" />
+                          <input type="hidden" name="quantity" value="-1" />
+                          <input type="image" src="{{ gfx }}/de_DE/t_uga/arrow_up_max.png" value="Ausbilden" alt="Baut die maximale Anzahl Einheiten" title="Baut die maximale Anzahl Einheiten" />
+                        </form></div>
                       {% else %}
                         {{ item.no_build_msg }}
                       {% endif %}                    

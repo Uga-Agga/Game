@@ -38,7 +38,7 @@
             <li class="clr"></li>
 
             <li class="player_detail_left">Awards:</li>
-            <li class="player_detail_right">{% if player_details.award %}<a href="main.php?modus={award_modus}&amp;award={tag}"><img src="images/awards/{tag}.png" width="15" height="15" border="0" hspace="1"></a>{% else %}&nbsp;{% endif %}</li>
+            <li class="player_detail_right">{% if player_details.award %}{% for award in player_details.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ award }}"><img src="images/awards/{{ award }}.png" width="15" height="15" border="0" hspace="1"></a>{% endfor %}{% else %}&nbsp;{% endif %}</li>
             <li class="clr"></li>
 
             <li class="player_detail_left">Geschlecht:</li>

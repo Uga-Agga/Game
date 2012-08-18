@@ -1,7 +1,8 @@
 {#
 /* hero.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -44,7 +45,7 @@
                 </tr>
                 <tr>
                   <td class="bold" style="vertical-align: top;">Erfahrung (Exp):</td>
-                  <td class="text-right" colspan="3">{{ hero.exp }}<div class="text-small">({{ hero.expLeft }} Exp bis Lvlup)</div></td>
+                  <td class="text-right" colspan="3">{{ hero.exp|number_format(0, ',', '.') }}<div class="text-small">({{ hero.expLeft|number_format(2, ',', '.') }} Exp bis Lvlup)</div></td>
                 </tr>
                 {% if showLevelUp and hero.isAlive>0 %}
                   <tr>
@@ -131,7 +132,7 @@
                     <td>{{ resource.name }}</td>
                     <td>
                       <div class="ym-fbox-text">
-                        <input style="width: 100px" type="text" name="value[{{ resource.resourceID }}]" id="value[{{ resource.resourceID }}]" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
+                        <input style="width: 100px" type="text" pattern="\d*" name="value[{{ resource.resourceID }}]" id="value[{{ resource.resourceID }}]" value="" maxlength="10" /> <span style="padding-left: 10px">x{{ resource.takeoverValue }}</span>
                       </div>
                     </td>
                   </tr>
@@ -146,7 +147,7 @@
             </div>
           </form>
         {% else %}
-          <div class="space text-center">Zur Zeit kannst du leider keine Rohstoffe Opfern.</div>
+          <div class="space text-center">Du kannst deinem Helden nur Rohstoffe opfern, wenn er sich auch bei dir in der Höhle befindet.</div>
         {% endif %}
       </div>
 
@@ -167,7 +168,7 @@
               {% for skill in skills %} 
               {% set bgID = (bgID+1)%2 %}
               <tr class="bg{{ bgID }}">
-               <td style="text-align: left;"><a href="" class="bold">{{ skill.name }}</a>
+               <td style="text-align: left;"><a href="{{ rules_path }}?modus=skill&amp;skillID={{ skill.dbFieldName }}" class="bold new-window">{{ skill.name }}</a>
                <div class="text-small">{{ skill.description|raw }}</div>
                </td>
                <td>{{ skill.requiredLevel }}</td>

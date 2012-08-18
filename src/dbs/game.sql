@@ -31,10 +31,14 @@ CREATE TABLE IF NOT EXISTS `Artefact_class` (
   `artefactClassID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `resref` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'artefact_test',
+  `initiationImg` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'dummy.gif',
+  `uninitiationImg` varchar(128) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'dummy.gif',
   `description` text COLLATE utf8_unicode_ci NOT NULL,
   `description_initiated` text COLLATE utf8_unicode_ci NOT NULL,
   `initiationID` int(11) NOT NULL DEFAULT '1',
-  `getArtefactBySpy` int(4) UNSIGNED NOT NULL DEFAULT '0',
+  `getArtefactBySpy` int(1) UNSIGNED NOT NULL DEFAULT '0',
+  `noZeroFood` int(1) UNSIGNED NOT NULL DEFAULT '0',
+  `destroyOnMove` int(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`artefactClassID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -731,6 +735,7 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `notInactive` tinyint(1) NOT NULL DEFAULT '0',
   `heroID` tinyint(1) NOT NULL DEFAULT '0',
   `auth` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `donateLocked` varchar(4096) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `tutorialID` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
   UNIQUE KEY `name` (`name`),

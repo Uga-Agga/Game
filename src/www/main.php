@@ -348,7 +348,7 @@ switch ($modus) {
     break;
 
   case QUESTIONNAIRE_PRESENTS:
-    questionnaire_presents($caveID, $ownCaves);
+    questionnaire_getQuestionnairePresents($caveID, $ownCaves);
     break;
 
   case SUGGESTIONS:
@@ -526,6 +526,7 @@ $template->addVars(array(
   'show_hero_link'    => ($ownCaves[$caveID][HERO_DB_FIELD] > 0) ? true : false,
   'countdown_time'    => $now->format("M j, Y H:i:s O"),
   'query_string'      => $requestString,
+  'war_points'        => getWarpointsByCaveData($ownCaves[$caveID]),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],

@@ -42,16 +42,21 @@ class Module_Questionnaire extends Module_Base {
           $choices = array();
           for ($i = 1; $i <= sizeof($params->choiceID); ++$i){
             if ($params->choiceID[$i] == "") break;
-            $choices[$i] = strval($params->choiceID[$i]);
+            $choices[$i] = array('answer' => strval($params->choiceID[$i]), 'credits' => max(0, intval($params->choiceID_credits[$i])));
           }
 
           if (!sizeof($choices)){
             tmpl_set($template, "MESSAGE/message", "Keine Antworten!");
           } else {
-            $query = "INSERT INTO Questionnaire_questions ".
+/*            $query = "INSERT INTO Questionnaire_questions ".
                      "(questionText, expiresOn, credits) ".
                      "VALUES ('{$params->questionText}', ".
                      "(NOW() + INTERVAL $laufzeit DAY) + 0, $credits)";
+*/
+            $query = "INSERT INTO Questionnaire_questions ".
+                     "(questionText, expiresOn) ".
+                     "VALUES ('{$params->questionText}', ".
+                     "(NOW() + INTERVAL $laufzeit DAY) + 0)";
 
             if (!$db_game->query($query)) die("Datenbankfehler beim Eintragen der Frage!");
 
@@ -59,8 +64,9 @@ class Module_Questionnaire extends Module_Base {
 
             foreach ($choices AS $key => $value){
               $query = "INSERT INTO Questionnaire_choices ".
-                       "(questionID, choiceID, choiceText) ".
-                       "VALUES ($questionID, $key, '$value')";
+                       "(questionID, choiceID, choiceText, credits) ".
+                       "VALUES ($questionID, $key, '".$value['answer']."', ".$value['credits'].")";
+                       echo $query;
               if (!$db_game->query($query)) die("Datenbankfehler beim Eintragen der Antwort [$key]!");
             }
             tmpl_set($template, "MESSAGE/message", "Frage eingetragen!");

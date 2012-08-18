@@ -269,7 +269,7 @@ function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
   }
 
   if (!empty($message['messageXML']) && in_array($message['nachrichtenart'], array(2, 6, 7, 9, 11, 20, 28, 29))) {
-    $messageXml = simplexml_load_string($message['messageXML']);
+    $messageXml = @simplexml_load_string($message['messageXML']);
     $template->addVars(array(
       'message_report' => $message['nachrichtenart'],
       'message_xml'    => $messageXml,

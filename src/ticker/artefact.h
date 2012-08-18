@@ -28,6 +28,8 @@ typedef struct Artefact_class
     const char *description_initiated;
     int         initiationID;
     int         getArtefactBySpy;
+    int         noZeroFood;
+    int         destroyOnMove;
     float       effect[MAX_EFFECT];
 } Artefact_class;
 
@@ -42,6 +44,8 @@ typedef struct Artefact
 extern void get_artefact_by_id (db_t *database, int artefactID,
         struct Artefact *artefact);
 extern void get_artefact_class_by_id (db_t *database, int artefactClassID,
+              struct Artefact_class *artefact_class);
+extern void get_artefact_class_by_artefact_id (db_t *database, int artefactID,
               struct Artefact_class *artefact_class);
 
 extern void put_artefact_into_cave (db_t *database, int artefactID,

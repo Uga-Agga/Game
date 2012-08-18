@@ -53,7 +53,6 @@ TICKER_SRC =  ticker/artefact.c ticker/artefact_handler.c \
               ticker/hero.c ticker/hero_handler.c
 TICKER_OBJ =  $(TICKER_SRC:.c=.o)
 
-CALC =	      www/simulator/simul
 CALC_SRC =    ticker/calc_battle.c ticker/expression.c ticker/function.c \
 	      ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
 	      ticker/memory.c ticker/object.c ticker/scanner.c \

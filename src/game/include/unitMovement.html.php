@@ -2,6 +2,7 @@
 /*
  * unitaction.html.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,6 +18,8 @@ require_once('lib/Movement.php');
 
 function unit_Movement($caveID, &$ownCave) {
   global $db, $template;
+
+  $safeForm = true;
 
   // get movements
   $ua_movements = Movement::getMovements();
@@ -73,6 +76,14 @@ function unit_Movement($caveID, &$ownCave) {
    */
   
   $moveHero = 0;
+
+  if ($details['hero'] != 0) {
+    $hero = getHeroByPlayer($_SESSION['player']->playerID);
+    if ($hero['isAlive'] != 1) {
+      $details['hero'] = 0;
+    }
+  }
+
   if ($details['hero'] != 0 && Request::getVar('moveHero', false) == true) {
     $moveHero = $details['hero'];
   }
@@ -175,7 +186,6 @@ function unit_Movement($caveID, &$ownCave) {
     // check if army is small enough for hero
     $denymovement_hero = false;
     if ($moveHero && (Request::getVar('movementID', 0) == 3 || Request::getVar('movementID', 0) == 6)) {
-      $hero = getHeroByPlayer($_SESSION['player']->playerID);
       //calculate size of army
       $armySize = 0;
       foreach ($unit as $unitID => $value) {
@@ -283,17 +293,25 @@ function unit_Movement($caveID, &$ownCave) {
           $minutesPerCave * $ua_movements[$movementID]->speedfactor);
 
         switch ($msgID) {
-          case 0: $msg = array('type' => 'success', 'message' => sprintf(_('Die Krieger wurden losgeschickt und haben %d Nahrung mitgenommen!'), $reqFood));
-                  break;
-          case 1: $msg = array('type' => 'error', 'message' => _('In diesen Koordinaten liegt keine Höhle!'));
-                  $moveHero = 0;
-                  break;
-          case 2: $msg = array('type' => 'error', 'message' => _('Für diese Bewegung sind nicht genügend Einheiten/Rohstoffe verfügbar!'));
-                  $moveHero = 0;
-                  break;
-          case 3: $msg = array('type' => 'error', 'message' => _('Schwerer Fehler: Bitte Admin kontaktieren!'));
-                  $moveHero = 0;
-                  break;
+          case 0:
+            $msg = array('type' => 'success', 'message' => sprintf(_('Die Krieger wurden losgeschickt und haben %d Nahrung mitgenommen!'), $reqFood));
+            $safeForm = false;
+          break;
+
+          case 1:
+            $msg = array('type' => 'error', 'message' => _('In diesen Koordinaten liegt keine Höhle!'));
+            $moveHero = 0;
+          break;
+
+          case 2:
+            $msg = array('type' => 'error', 'message' => _('Für diese Bewegung sind nicht genügend Einheiten/Rohstoffe verfügbar!'));
+            $moveHero = 0;
+          break;
+
+          case 3:
+            $msg = array('type' => 'error', 'message' => _('Schwerer Fehler: Bitte Admin kontaktieren!'));
+            $moveHero = 0;
+          break;
         }
       }
     }
@@ -316,8 +334,9 @@ function unit_Movement($caveID, &$ownCave) {
   }
 
   // make sure that moved hero is not shown again
-  if ($moveHero != 0)
+  if ($moveHero != 0) {
     $details['hero'] = 0;
+  }
 
 // //////////////////////////////////////////////////////////////
 // Create the page
@@ -350,13 +369,14 @@ function unit_Movement($caveID, &$ownCave) {
 
   // resources
   $resources = array();
-  for($res = 0; $res < sizeof($GLOBALS['resourceTypeList']); $res++) {
-    if (!$GLOBALS['resourceTypeList'][$res]->nodocumentation) {
+  foreach ($GLOBALS['resourceTypeList'] as $resourceID => $dummy) {
+    if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation) {
       $resources[] = array(
-        'resource_id'    => $GLOBALS['resourceTypeList'][$res]->resourceID,
-        'name'           => $GLOBALS['resourceTypeList'][$res]->name,
-        'current_amount' => "0" + $details[$GLOBALS['resourceTypeList'][$res]->dbFieldName],
-        'dbFieldName'    => $GLOBALS['resourceTypeList'][$res]->dbFieldName
+        'resource_id'    => $GLOBALS['resourceTypeList'][$resourceID]->resourceID,
+        'name'           => $GLOBALS['resourceTypeList'][$resourceID]->name,
+        'current_amount' => "0" + $details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName],
+        'dbFieldName'    => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
+        'value'          => ($safeForm && isset($resource[$resourceID]) && $resource[$resourceID] > 0) ? $resource[$resourceID] : '',
       );
     }
   }
@@ -365,41 +385,39 @@ function unit_Movement($caveID, &$ownCave) {
   // units table
   $unitprops = array();
   $units     = array();
-  for($i = 0; $i < sizeof($GLOBALS['unitTypeList']); $i++) {
-
+  foreach ($GLOBALS['unitTypeList'] as $unitID => $dummy) {
     // if no units of this type, next type
-    if (!$details[$GLOBALS['unitTypeList'][$i]->dbFieldName]) continue;
+    if (!$details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName]) continue;
 
     $temp = array();
     $encumbrance = array();
-    for( $j = 0; $j < count($GLOBALS['resourceTypeList']); $j++) {
-      if (!$GLOBALS['resourceTypeList'][$j]->nodocumentation) {
-        $encumbrance[$j] = array(
-          'resourceID' => $j,
-          'load'       => "0" + (isset($GLOBALS['unitTypeList'][$i]->encumbranceList[$j]) ? $GLOBALS['unitTypeList'][$i]->encumbranceList[$j] : 0)
+    foreach ($GLOBALS['resourceTypeList'] as $resourceID => $dummy) {
+      if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation) {
+        $encumbrance[$resourceID] = array(
+          'resourceID' => $resourceID,
+          'load'       => "0" + (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0)
         );
-        $temp[] = "0" + (isset($GLOBALS['unitTypeList'][$i]->encumbranceList[$j]) ? $GLOBALS['unitTypeList'][$i]->encumbranceList[$j] : 0);
+        $temp[] = "0" + (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0);
       }
     }
 
     $units[] = array(
-      'name'              => $GLOBALS['unitTypeList'][$i]->name,
-      'unit_id'           => $GLOBALS['unitTypeList'][$i]->unitID,
-      'food_cost'         => $GLOBALS['unitTypeList'][$i]->foodCost,
+      'name'              => $GLOBALS['unitTypeList'][$unitID]->name,
+      'unit_id'           => $unitID,
+      'food_cost'         => $GLOBALS['unitTypeList'][$unitID]->foodCost,
       'resource_load'     => implode(",", $temp),
-      'speed_factor'      => $GLOBALS['unitTypeList'][$i]->wayCost,
-      'max_warrior_count' => $details[$GLOBALS['unitTypeList'][$i]->dbFieldName],
-      // ?? warum -> ?? $i gegen namen ersetzen!!! TODO
-      'warrior_id'        => $i,
+      'speed_factor'      => $GLOBALS['unitTypeList'][$unitID]->wayCost,
+      'max_unit_count'    => $details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName],
       'encumbrance'       => $encumbrance,
-      'hitPoints'         => $GLOBALS['unitTypeList'][$i]->hitPoints
+      'hitPoints'         => $GLOBALS['unitTypeList'][$unitID]->hitPoints,
+      'value'             => ($safeForm && isset($unit[$unitID])) ? $unit[$unitID] : '',
     );
   }
   $template->addVar('unit_list', $units);
 
   // weitergereichte Koordinaten
-  if (!Request::getVar('movementID', 0)) {
-    if (Request::getVar('targetCaveID', 0)) {
+  if (!Request::getVar('movementID', 0) || $safeForm) {
+    if (Request::getVar('targetCaveID', 0) > 0) {
       $caveData = getCaveByID(Request::getVar('targetCaveID', 0));
 
       $template->addVars(array(
@@ -448,7 +466,7 @@ function unit_Movement($caveID, &$ownCave) {
 
   // hero
   if ($details['hero'] != 0) {
-    $template->addVar('hero', getHeroByPlayer($_SESSION['player']->playerID));
+    $template->addVar('hero', $hero);
   }
 
   // Module "CaveBookmarks" Integration

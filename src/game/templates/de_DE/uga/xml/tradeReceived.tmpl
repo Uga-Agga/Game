@@ -27,7 +27,6 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
 </p>
 {% endif %}
 
-
 {% if message_xml.wonderMessage %}{{ message_xml.wonderMessage|raw }}{% endif %}
 
 {% if message_xml.effects.effect %}
@@ -82,6 +81,13 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
   <p>Du hast das Artefakt "{{ message_xml.artefact.name }}" bekommen!</p>
 {% endif %}
 
+{% if message_xml.artefact_destroy %}
+  <p>
+    Nachdem du dir die Augen gewischt hast, siehst du, das dir keine Artefakt sondern nur etwas Asche geliefert worden ist.<br />
+    Ob das alles so richtig war?<br />Dein Artefakt "{{ message_xml.artefact_destroy.name }}" ist verloren.
+  <p>
+{% endif %}
+
 {% if message_xml.hero.send == 'true' %}
   {% if message_xml.hero.send == 'true' %}
     <p>Dein Held ist in der Höhle eingetroffen.</p>
@@ -91,6 +97,10 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
     <p>Die Schmach die dein Held ertragen musste, da du ihn aus deinen Höhlen weggeschickt hast, war unerträglich.</p>
     <p>Dein Held hat sich daher zu den Göttern begeben.</p>
   {% endif %}
+{% endif %}
+
+{% if message_xml.warpoints_trade %}
+  Da du dich zur Zeit mit {{ message_xml.source.playerName }} im Krieg befindest, war er nicht nur so nett dir seine Einheiten zu schenken, sondern er verliert auch {{ message_xml.warpoints_trade }} Kriegspunkte.
 {% endif %}
 
 {% endspaceless %}

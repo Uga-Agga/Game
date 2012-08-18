@@ -65,6 +65,8 @@ function artefact_getDetail($caveID, &$myCaves) {
     $showStatus = 0;
     $template->addVars(array('show_artefact' => $show_artefact));
     if ($show_artefact) {
+      $artefact['img'] = $artefact['uninitiationImg']; // Bild vom uninitalisierten Artefakt per default anzeigen!
+
       // eigene Höhle ...
       if (isset($myCaves[$artefact['caveID']])) {
         $showStatus = 1;
@@ -75,10 +77,9 @@ function artefact_getDetail($caveID, &$myCaves) {
 
           // reload
           $myCaves = getCaves($_SESSION['player']->playerID);
-        }
 
         // wenn noch uneingeweiht und in der "richtigen" Höhle, ritual zeigen
-        else if ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_UNINITIATED) {
+        } else if ($artefact['caveID'] == $caveID && $artefact['initiated'] == ARTEFACT_UNINITIATED) {
           // Check, ob bereits eingeweiht wird.
           if (sizeof(artefact_getArtefactInitiationsForCave($caveID)) == 0) {
             $showRitual = 1;
@@ -118,9 +119,15 @@ function artefact_getDetail($caveID, &$myCaves) {
         // "geheime" Beschreibung nur zeigen, wenn eingeweiht
         if ($artefact['initiated'] == ARTEFACT_INITIATED) {
           $artefact['description_initiated'] = $description_initiated;
+
+          // Besitzer des Artefaktes und initalisiert? Richtiges Artefakt Bild anzeigen
+          if (isset($myCaves[$artefact['caveID']])) {
+            $artefact['img'] = $artefact['initiationImg'];
+          }
         }
       }
-      $template->addVars(array('artefact' => $artefact));
+
+      $template->addVars(array('artefact'   => $artefact));
       $template->addVars(array('showRitual' => $showRitual));
       $template->addVars(array('showStatus' => $showStatus));
     } else {

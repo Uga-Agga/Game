@@ -197,12 +197,8 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
       }
       if (sizeof($resources)) $tmp['resources'] = $resources;
 
-      if ($row['isOwnMovement'] && 
-          $ua_movements[$row['movementID']]->returnID != -1 && 
-          !$row['artefactID'] && 
-          !$row['blocked']) {
-        $tmp['CANCEL'] = array("modus" => UNIT_MOVEMENT,
-                               "eventID" => $row['event_movementID']);
+      if ($row['isOwnMovement'] &&  $ua_movements[$row['movementID']]->returnID != -1 &&  !$row['artefactID'] &&  !$row['blocked']) {
+        $tmp['cancel'] = array("modus" => UNIT_MOVEMENT, "eventID" => $row['event_movementID']);
        }
     }
 

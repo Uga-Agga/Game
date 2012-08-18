@@ -383,10 +383,7 @@ class Module_Cave extends Module_Base {
     global $cfg;
 
     // init game rules
-    require_once($cfg['cfgpath'] . "game_rules.php");
-
-    global $resourceTypeList, $buildingTypeList, $unitTypeList, $defenseSystemTypeList, $scienceTypeList;
-    $resourceTypeList = $buildingTypeList = $unitTypeList = $defenseSystemTypeList = $scienceTypeList = '';
+    require_once($cfg['cfgpath'] . "rules/game.rules.php");
 
     init_Resources();
     init_Buildings();
@@ -394,20 +391,15 @@ class Module_Cave extends Module_Base {
     init_DefenseSystems();
     init_Sciences();
 
-    $this->resource = $resourceTypeList;
-    unset($resourceTypeList);
+    $this->resource = $GLOBALS['resourceTypeList'];
 
-    $this->building = $buildingTypeList;
-    unset($buildingTypeList);
+    $this->building = $GLOBALS['buildingTypeList'];
 
-    $this->unit = $unitTypeList;
-    unset($unitTypeList);
+    $this->unit = $GLOBALS['unitTypeList'];
 
-    $this->defense = $defenseSystemTypeList;
-    unset($defenseSystemTypeList);
+    $this->defense = $GLOBALS['defenseSystemTypeList'];
 
-    $this->science = $scienceTypeList;
-    unset($scienceTypeList);
+    $this->science = $GLOBALS['scienceTypeList'];
   }
 
   function _get_other_values(){

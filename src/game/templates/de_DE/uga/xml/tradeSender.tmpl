@@ -14,7 +14,7 @@
 Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
 
 <p>
-  Deine Lieferung ist in
+  Deine Lieferung ist aus deiner Höhle {{ message_xml.source.caveName }} ({{ message_xml.source.xCoord }}/{{ message_xml.source.yCoord }}) in
 
   {% if message_xml.target.caveID in list_cave_id %}
     deiner Höhle  {{ message_xml.target.caveName }} ({{ message_xml.target.xCoord }}/{{ message_xml.target.yCoord }})
@@ -61,6 +61,13 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
   <p>Das Artefakt "{{ message_xml.artefact.name }}" ist sicher angekommen.</p>
 {% endif %}
 
+{% if message_xml.artefact_destroy %}
+  <p>
+    Nachdem du dir die Augen gewischt hast, siehst du, daß dort, wo eben noch das Artefakt im Beutel lag, jetzt nur noch ein Häufchen Asche vorhanden ist.<br />
+    Ob das alles so richtig war?<br />Dein Artefakt "{{ message_xml.artefact_destroy.name }}" ist verloren.
+  <p>
+{% endif %}
+
 {% if message_xml.hero.send == 'true' %}
   {% if message_xml.hero.send == 'true' %}
     <p>Dein Held ist in der Höhle eingetroffen.</p>
@@ -70,5 +77,9 @@ Handelsbericht in Höhle {{ message_xml.target.caveName }} ({{ message_xml.targe
     <p>Die Schmach die dein Held ertragen musste, da du ihn aus deinen Höhlen weggeschickt hast, war unerträglich.</p>
     <p>Dein Held hat sich daher zu den Göttern begeben.</p>
   {% endif %}
+{% endif %}
+
+{% if message_xml.warpoints_trade %}
+  Da du dich zur Zeit mit {{ message_xml.target.playerName }} im Krieg befindest, warst du nicht nur so nett ihm seine Einheiten zu schenken, sondern dein Stamm verliert auch noch {{ message_xml.warpoints_trade }} Kriegspunkte.
 {% endif %}
 {% endspaceless %}

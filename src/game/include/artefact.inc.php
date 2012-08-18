@@ -253,7 +253,7 @@ function artefact_beginInitiation($artefact) {
 
   // get initiation costs
   $costs = array();
-  $temp = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['$defenseSystemTypeList']);
+  $temp = array_merge($GLOBALS['resourceTypeList'], $GLOBALS['buildingTypeList'], $GLOBALS['unitTypeList'], $GLOBALS['scienceTypeList'], $GLOBALS['defenseSystemTypeList']);
   foreach($temp as $val) {
     if (isset($ritual[$val->dbFieldName])) {
       if ($ritual[$val->dbFieldName]) {
@@ -408,7 +408,7 @@ function artefact_uninitiateArtefact($artefactID) {
 
   $sql = $db->prepare("DELETE FROM ". EVENT_ARTEFACT_TABLE ." WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
-  if (!$sql->execute() || $sql->rowCount() == 0) {
+  if (!$sql->execute()) {
     return false;
   }
 

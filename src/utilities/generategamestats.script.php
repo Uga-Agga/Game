@@ -42,20 +42,13 @@ foreach ($GLOBALS['unitTypeList'] AS $value)
 }
 
 /*
- * init hidden player
+ * get secret player and cace
  */
-$SecretCave = array();
-$sqlHiddenUser = "";
-if (sizeof(Config::$hiddenUser)) {
-  $sqlHiddenUser = "WHERE Player.name IN ('" . implode("', '", Config::$hiddenUser) . "')";
-}
-
 $sql = $db->prepare("SELECT caveID 
                      FROM ". CAVE_TABLE ."
                        LEFT JOIN ". PLAYER_TABLE . " 
-                         ON Cave.playerID = Player.playerID 
-         {$sqlHiddenUser}");
-         
+                         ON Cave.playerID = Player.playerID
+                     WHERE Player.noStatistic = 1 OR Cave.noStatistic = 1");
 if ($sql->execute()) {
     while ($row = $sql->fetch()) {
       $SecretCave[$row['caveID']] = TRUE;
@@ -198,7 +191,7 @@ foreach ($statsData as $type => $data) {
 }
 
 echo "GAME STATS: Wonder Stats.\n";
-$sql->exec("REPLACE INTO ". STATISTIC_TABLE ." (type, name, value)
+$db->exec("REPLACE INTO ". STATISTIC_TABLE ." (type, name, value)
             SELECT " . WONDER_STATS . ", sc.name, sc.value FROM ". STATISTIC_TABLE ." AS sc WHERE sc.type = " . WONDER_STATS_CACHE);
 
 echo "GAME STATS: Finish.\n";
