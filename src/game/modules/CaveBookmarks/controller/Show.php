@@ -17,6 +17,13 @@ require_once('modules/CaveBookmarks/model/CaveBookmarks.php');
 require_once('modules/CaveBookmarks/view/Show.php');
 
 class CaveBookmarks_Controller_Show extends Controller {
+
+  var $error;
+
+  function CaveBookmarks_Controller_Show($error = CAVEBOOKMARKS_NOERROR) {
+    $this->error = $error;
+  }
+
   function execute($caveID, $caves) {
     // get model
     $model = new CaveBookmarks_Model();

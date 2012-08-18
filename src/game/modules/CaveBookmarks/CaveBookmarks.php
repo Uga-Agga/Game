@@ -14,53 +14,38 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 ################################################################################
 
-require_once('lib/Controller.php');
-require_once('modules/CaveBookmarks/model/CaveBookmarks.php');
+/**
+ * This function dispatches the task at issue to the respective function.
+ */
 
-define('ACTION_NO',     0x00);
-define('ACTION_INSERT', 0x01);
-define('ACTION_UPDATE', 0x02);
-define('ACTION_DELETE', 0x03);
+function cavebookmarks_main($caveID, $caves) {
 
-class CaveBookmarks extends Controller {
-  public $templateFile = 'caveBookmarks.tmpl';
-  private $error = CAVEBOOKMARKS_NOERROR;
+  // initialize controller
+  $controller = NULL;
 
-  public function getContent() {
-    $model = new CaveBookmarks_Model();
-    $this->template->addVar('cave_bookmarks', $model->getCaveBookmarks());
+  // get current task
+  $task = Request::getVar('task', '');
+
+  switch ($task) {
+
+    default:
+    case 'Show':
+      require_once('modules/CaveBookmarks/controller/Show.php');
+      $controller = new CaveBookmarks_Controller_Show();
+      break;
+
+    case 'Delete':
+      require_once('modules/CaveBookmarks/controller/Delete.php');
+      $controller = new CaveBookmarks_Controller_Delete();
+      break;
+
+    case 'Add':
+      require_once('modules/CaveBookmarks/controller/Add.php');
+      $controller = new CaveBookmarks_Controller_Add();
+      break;
   }
 
-  public function submit() {
-    $action = Request::getVar('action', ACTION_NO);
-
-    $this->error = CAVEBOOKMARKS_NOERROR;
-
-    switch ($action) {
-      case ACTION_NO:
-        return;
-      break;
-
-      case ACTION_INSERT:
-        if (Request::getVar('name', '')) {
-          $this->error = $model->addCaveBookmarkByName(Request::getVar('name', ''));
-        } elseif (Request::getVar('xCoord', 0) && Request::getVar('yCoord', 0)) {
-          $this->error = $model->addCaveBookmarkByCoord(Request::getVar('xCoord', 0), Request::getVar('yCoord', 0));
-        } else {
-          $this->error = CAVEBOOKMARKS_ERROR_INSERTFAILED;
-        }
-      break;
-
-      case ACTION_UPDATE:
-        // do something
-      break;
-
-      case ACTION_DELETE:
-        $bookmarkID = Request::getVar('bookmarkID', 0);
-        $this->error = $model->deleteCaveBookmark($bookmarkID);
-      break;
-    }
-  }
+  return $controller === NULL ? '' : $controller->execute($caveID, $caves);
 }
 
 ?>
