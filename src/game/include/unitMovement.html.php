@@ -250,6 +250,11 @@ function unit_Movement($caveID, &$ownCave) {
       $moveHero = 0;
     }
 
+    else if (Request::getVar('movementID', 0) == 6 && $moveHero) {
+      $msg = array('type' => 'error', 'message' => _('Dein Held kann leider bei einer Übernahme nicht helfen.'));
+      $moveHero = 0;
+    }
+
     //  Einheiten bewegen!
     else {
       // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor
@@ -354,7 +359,6 @@ function unit_Movement($caveID, &$ownCave) {
     'fuel_id'                => GameConstants::FUEL_RESOURCE_ID,
     'fuel_name'              => $GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->name,
     'movement_cost_constant' => $foodPerCave,
-    'resource_types'         => GameConstants::MAX_RESOURCE,
     'status_msg'             => (isset($msg)) ? $msg : '',
   ));
 
@@ -370,7 +374,9 @@ function unit_Movement($caveID, &$ownCave) {
   // resources
   $resources = array();
   foreach ($GLOBALS['resourceTypeList'] as $resourceID => $dummy) {
-    if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation) {
+    $amount = (isset($details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName])) ? floor($details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName]) : 0;
+
+    if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation || $amount > 0) {
       $resources[] = array(
         'resource_id'    => $GLOBALS['resourceTypeList'][$resourceID]->resourceID,
         'name'           => $GLOBALS['resourceTypeList'][$resourceID]->name,
@@ -381,6 +387,7 @@ function unit_Movement($caveID, &$ownCave) {
     }
   }
   $template->addVar('resource', $resources);
+  $template->addVar('resource_types', count($resources));
 
   // units table
   $unitprops = array();
@@ -392,7 +399,9 @@ function unit_Movement($caveID, &$ownCave) {
     $temp = array();
     $encumbrance = array();
     foreach ($GLOBALS['resourceTypeList'] as $resourceID => $dummy) {
-      if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation) {
+      $amount = (isset($details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName])) ? floor($details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName]) : 0;
+
+      if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation || $amount > 0) {
         $encumbrance[$resourceID] = array(
           'resourceID' => $resourceID,
           'load'       => "0" + (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0)
