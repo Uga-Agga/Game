@@ -54,61 +54,58 @@
 #define drand()    (rand() / (RAND_MAX+1.0))
 
 static int isTakeoverableCave(db_t *database, int caveID) {
-    db_result_t *result;
+  db_result_t *result;
 
-    result = db_query(database,
-      "SELECT * FROM Cave WHERE playerID=0 AND caveID = %d AND takeoverable=1;",
-      caveID);
-    if(db_result_next_row(result))
-  return 1;
-    return 0;
+  result = db_query(database, "SELECT * FROM Cave WHERE playerID=0 AND caveID = %d AND takeoverable=1;", caveID);
+  if (db_result_next_row(result))
+    return 1;
+
+  return 0;
 }
 
 //return 0 falls nicht
-static int isMovingAllowed(db_t *database,
-                        struct Player *sender,
-                        struct Player *reciever,
-                        struct Relation *attToDef){
-    //einfache Fälle zuerst
-    //beide spieler im selben stamm
-    if(strcasecmp(sender->tribe, reciever->tribe) == 0)
-        return 1;
-    //wenn beide im vorkrieg sind dann müsste das in der relation ja schon stehen
-    if(attToDef->relationType == RELATION_TYPE_PRE_WAR)
-        return 1;
-    //wenn beide im krieg sind dann müsste das in der relation ja schon stehen
-    if(attToDef->relationType == RELATION_TYPE_WAR)
-        return 1;
-    //Im Kriegsbuendniss ist es auch möglich
-    if(attToDef->relationType == RELATION_TYPE_WAR_TREATMENT)
-        return 1;
+static int isMovingAllowed(db_t *database, 
+        struct Player *sender,
+        struct Player *reciever,
+        struct Relation *attToDef) {
+  //einfache Fälle zuerst
+  //beide spieler im selben stamm
+  if (strcasecmp(sender->tribe, reciever->tribe) == 0)
+    return 1;
 
-    if(reciever->player_id==0)
-       return 1;
+  //wenn beide im vorkrieg sind dann müsste das in der relation ja schon stehen
+  if (attToDef->relationType == RELATION_TYPE_PRE_WAR)
+    return 1;
 
-    //nun noch das schwierigere
-    //ist einer von beiden im krieg
-    db_result_t *result;
-    result = db_query(database,
-            "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'",
-            RELATION_TYPE_PRE_WAR, sender->tribe);
-    if(db_result_next_row(result))
-        return 0;
-    result = db_query(database,
-            "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'",
-            RELATION_TYPE_PRE_WAR, reciever->tribe);
-    if(db_result_next_row(result))
-        return 0;
-    result = db_query(database,
-            "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'",
-            RELATION_TYPE_WAR, sender->tribe);
-    if(db_result_next_row(result))
-        return 0;
-    result = db_query(database,
-            "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'",
-            RELATION_TYPE_WAR, reciever->tribe);
-    if(db_result_next_row(result))
-        return 0;
+  //wenn beide im krieg sind dann müsste das in der relation ja schon stehen
+  if (attToDef->relationType == RELATION_TYPE_WAR)
+    return 1;
+
+  //Im Kriegsbuendniss ist es auch möglich
+  if (attToDef->relationType == RELATION_TYPE_WAR_TREATMENT)
+    return 1;
+
+  if (reciever->player_id==0)
+   return 1;
+
+  //nun noch das schwierigere
+  //ist einer von beiden im krieg
+  db_result_t *result;
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'", RELATION_TYPE_PRE_WAR, sender->tribe);
+  if(db_result_next_row(result))
+    return 0;
+
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'", RELATION_TYPE_PRE_WAR, reciever->tribe);
+  if(db_result_next_row(result))
+    return 0;
+
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'", RELATION_TYPE_WAR, sender->tribe);
+  if(db_result_next_row(result))
+    return 0;
+
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribe like '%s'", RELATION_TYPE_WAR, reciever->tribe);
+  if(db_result_next_row(result))
+    return 0;
 
   return 1;
 }
@@ -117,10 +114,10 @@ static int check_farming (db_t *database,
         int artefacts,
         struct Player *attacker,
         struct Player *defender,
-        struct Relation *attToDef)
-{
+        struct Relation *attToDef) {
   if(!STEALOUTSIDEWAR)
-      return 0;
+    return 0;
+
   db_result_t *result;
 
   /*
@@ -129,32 +126,25 @@ static int check_farming (db_t *database,
    * zu holen || verteidiger hat keinen stamm
    */
   if ( (attToDef->relationType == RELATION_TYPE_WAR)
-       || (attToDef->relationType == RELATION_TYPE_PRE_WAR)
-          || (defender->tribe == NULL)
-    || (strcmp(defender->tribe,"multi")==0)
-    || (strcmp(defender->tribe, attacker->tribe)==0)
+        || (attToDef->relationType == RELATION_TYPE_PRE_WAR)
+        || (defender->tribe == NULL)
+        || (strcmp(defender->tribe,"multi")==0)
+        || (strcmp(defender->tribe, attacker->tribe)==0)
         || (strlen(defender->tribe) == 0)
-          || (artefacts > 0)
-          || (defender->player_id) == PLAYER_SYSTEM) {
-
-      return NO_FARMING;
+        || (artefacts > 0)
+        || (defender->player_id) == PLAYER_SYSTEM) {
+    return NO_FARMING;
   }
 
   /* Sind es Missionierungsgegner? */
-  result = db_query(database,
-  "SELECT c.caveID FROM Cave_takeover c ,Cave_takeover k  "
-  "WHERE c.caveID = k.caveID AND c.playerID = %d AND k.playerID = %d "
-  "AND k.status > 0 AND c.status > 0",
-  defender->player_id, attacker->player_id);
-
+  result = db_query(database, "SELECT c.caveID FROM Cave_takeover c ,Cave_takeover k WHERE c.caveID = k.caveID AND c.playerID = %d AND k.playerID = %d AND k.status > 0 AND c.status > 0", defender->player_id, attacker->player_id);
   return db_result_next_row(result) ? NO_FARMING : FARMING;
 }
 
 /*
  * Calculate an effect factor from the value of a database field
  */
-static float effect_factor (float factor)
-{
+static float effect_factor (float factor) {
   return factor < 0 ? 1 / (1 - factor) : 1 + factor;
 }
 
@@ -164,27 +154,26 @@ static float effect_factor (float factor)
  * into the Army structure (note: only defense_system may be NULL).
  */
 static void army_setup (db_t *database,
-      Army *army,
-      const struct Cave *cave,
-      const float religion_bonus[],
-      const int takeover_multiplier,
-      const int unit[],
-      const int resource[],
-      const int defense_system[],
-      int heroID)
-{
+        Army *army,
+        const struct Cave *cave,
+        const float religion_bonus[],
+        const int takeover_multiplier,
+        const int unit[],
+        const int resource[],
+        const int defense_system[],
+        int heroID) {
   int type;
   struct Hero hero;
   int armySize, isDef = 0;
 
-  if (defense_system)
-  {
+  if (defense_system) {
     isDef = 1;
   }
 
   if (heroID > 0) {
     get_hero_by_id(database, heroID, &hero);
   }
+
   /* cave and religion bonus */
   army->owner_caveID = cave->cave_id;
   army->religion = get_religion(cave);
@@ -198,11 +187,12 @@ static void army_setup (db_t *database,
     army->units[type].amount_before = unit[type];
     armySize += unit[type]*((struct BattleUnit *)unit_type[type])->hitPoints;
   }
+
   for (type = 0; type < MAX_RESOURCE; ++type)
     army->resourcesBefore[type] = resource[type];
 
   if (defense_system)
-    for (type = 0; type < MAX_DEFENSESYSTEM; ++type)
+    for (type = 0; type < MAX_DEFENSESYSTEM; ++type) 
       army->defenseSystems[type].amount_before = defense_system[type];
 
 
@@ -210,90 +200,80 @@ static void army_setup (db_t *database,
   * - hero is alive
   * - armySize >= hero experience
   */
-  army->heroFights = heroID > 0 &&
-      hero.exp >= armySize &&
-      hero.isAlive == 1;
+  army->heroFights = heroID > 0 && hero.exp >= armySize && hero.isAlive == 1;
 
   /* fill effects */
   /* XXX should this be effect_factor(... + takeover_multiplier)? */
   if (army->heroFights) {
-    army->effect_rangeattack_factor = effect_factor(cave->effect[14]+hero.effect[14])
-      + takeover_multiplier;
-    army->effect_arealattack_factor = effect_factor(cave->effect[15]+hero.effect[15])
-      + takeover_multiplier;
-    army->effect_attackrate_factor  = effect_factor(cave->effect[16]+hero.effect[16])
-      + takeover_multiplier;
-    army->effect_defenserate_factor = effect_factor(cave->effect[17]+hero.effect[17])
-      + takeover_multiplier;
-    army->effect_size_factor        = effect_factor(cave->effect[18]+hero.effect[18])
-      + takeover_multiplier;
-    army->effect_ranged_damage_resistance_factor = effect_factor(cave->effect[19]+hero.effect[19])
-      + takeover_multiplier;
+    army->effect_rangeattack_factor = effect_factor(cave->effect[14]+hero.effect[14]) + takeover_multiplier;
+    army->effect_arealattack_factor = effect_factor(cave->effect[15]+hero.effect[15]) + takeover_multiplier;
+    army->effect_attackrate_factor  = effect_factor(cave->effect[16]+hero.effect[16]) + takeover_multiplier;
+    army->effect_defenserate_factor = effect_factor(cave->effect[17]+hero.effect[17]) + takeover_multiplier;
+    army->effect_size_factor        = effect_factor(cave->effect[18]+hero.effect[18]) + takeover_multiplier;
+    army->effect_ranged_damage_resistance_factor = effect_factor(cave->effect[19]+hero.effect[19]) + takeover_multiplier;
   } else {
-    army->effect_rangeattack_factor = effect_factor(cave->effect[14])
-      + takeover_multiplier;
-    army->effect_arealattack_factor = effect_factor(cave->effect[15])
-      + takeover_multiplier;
-    army->effect_attackrate_factor  = effect_factor(cave->effect[16])
-      + takeover_multiplier;
-    army->effect_defenserate_factor = effect_factor(cave->effect[17])
-      + takeover_multiplier;
-    army->effect_size_factor        = effect_factor(cave->effect[18])
-      + takeover_multiplier;
-    army->effect_ranged_damage_resistance_factor = effect_factor(cave->effect[19])
-      + takeover_multiplier;
+    army->effect_rangeattack_factor = effect_factor(cave->effect[14]) + takeover_multiplier;
+    army->effect_arealattack_factor = effect_factor(cave->effect[15]) + takeover_multiplier;
+    army->effect_attackrate_factor  = effect_factor(cave->effect[16]) + takeover_multiplier;
+    army->effect_defenserate_factor = effect_factor(cave->effect[17]) + takeover_multiplier;
+    army->effect_size_factor        = effect_factor(cave->effect[18]) + takeover_multiplier;
+    army->effect_ranged_damage_resistance_factor = effect_factor(cave->effect[19]) + takeover_multiplier;
   }
 }
 
 static void increaseFarming(db_t *database,
-          int player_id){
-   if (player_id != 0){
+        int player_id) {
+  if (player_id != 0) {
     debug(DEBUG_BATTLE, "increaseFarming for %d", player_id);
     db_query(database, "UPDATE " DB_TABLE_PLAYER " SET fame = fame + 1 WHERE playerID = %d", player_id);
   }
- 
 }
+
 static void bodycount_update(db_t *database,
-                    int player_id,
-                    int count){
-  if (player_id != 0){
+        int player_id,
+        int count) {
+  if (player_id != 0) {
     debug(DEBUG_BATTLE, "bodycount: %d for %d", count, player_id);
     db_query(database, "UPDATE " DB_TABLE_PLAYER " SET body_count = body_count + %d WHERE playerID = %d", count, player_id);
   }
 }
 
-static int bodycount_calculate(const Battle *battle, int schalter){
+static int bodycount_calculate(const Battle *battle, int schalter) {
   int count = 0;
   int i = 0;
-  if(schalter != FLAG_ATTACKER){
+
+  if (schalter != FLAG_ATTACKER) {
     for (i = 0; i < MAX_UNIT; ++i) {
       const struct Army_unit *unit = &battle->attackers[0].units[i];
       count += unit->amount_before - unit->amount_after;
     }
-  }else{
+  } else {
     for (i = 0; i < MAX_UNIT; ++i) {
       const struct Army_unit *unit = &battle->defenders[0].units[i];
       count += unit->amount_before - unit->amount_after;
     }
   }
+
   return count;
 }
 
-static int bodycount_va_calculate(const Battle *battle){
+static int bodycount_va_calculate(const Battle *battle) {
   int count = 0;
   int i = 0;
+
   for (i = 0; i < MAX_DEFENSESYSTEM; ++i) {
     const struct Army_unit *defense = &battle->defenders[0].defenseSystems[i];
     count += defense->amount_before - defense->amount_after;
   }
+
   return count;
 }
 
 static void war_points_update(db_t *database,
-                    const struct Player* attacker,
-                    const struct Player* defender,
-                    int att_count,
-                    int def_count){
+        const struct Player* attacker,
+        const struct Player* defender,
+        int att_count,
+        int def_count) {
     debug(DEBUG_BATTLE, "warpoints: %d for [%s]%s and %d for [%s]%s", att_count, attacker->tribe, attacker->name, def_count, defender->tribe, attacker->name);
     db_query(database, "UPDATE Relation SET fame = fame + %d WHERE tribe like '%s' AND tribe_target like '%s'", att_count, attacker->tribe, defender->tribe);
     db_query(database, "UPDATE Relation SET fame = fame + %d WHERE tribe like '%s' AND tribe_target like '%s'", def_count, defender->tribe, attacker->tribe);
@@ -303,12 +283,10 @@ static void war_points_update(db_t *database,
     db_query(database, "UPDATE Player SET warpoints_pos = warpoints_pos + %d, warpoints_neg =  warpoints_neg + %d WHERE playerID = %d", def_count, att_count, defender->player_id);    
 }
 
-
-
 static void war_points_update_verschieben(db_t *database,
-                    const struct Player* attacker,
-                    const struct Player* defender,
-                    int count){
+        const struct Player* attacker,
+        const struct Player* defender,
+        int count){
     debug(DEBUG_BATTLE, "warpoints: %d for [%s]%s against [%s]%s", count, attacker->tribe, attacker->name, defender->tribe, attacker->name);
     db_query(database, "UPDATE Relation SET fame = fame + %d WHERE tribe like '%s' AND tribe_target like '%s'", count, attacker->tribe, defender->tribe);
 //wegen Bugusing von cc und hoelle nehmen wir das hier erstmal raus
@@ -322,15 +300,15 @@ static void war_points_update_verschieben(db_t *database,
 static int war_points_calculate(const Battle *battle, int schalter){
   int count = 0;
   int i = 0;
-  if(schalter == FLAG_ATTACKER){
+
+  if(schalter == FLAG_ATTACKER) {
     for (i = 0; i < MAX_UNIT; ++i) {
       const struct Army_unit *unit = &battle->defenders[0].units[i];
       count += (unit->amount_before - unit->amount_after) * ((struct Unit *)unit_type[i])->warpoints;
     }
     for (i = 0; i < MAX_DEFENSESYSTEM; ++i) {
       const struct Army_unit *defense = &battle->defenders[0].defenseSystems[i];
-      count += (defense->amount_before - defense->amount_after)
-               *((struct DefenseSystem *)defense_system_type[i])->warpoints;
+      count += (defense->amount_before - defense->amount_after) *((struct DefenseSystem *)defense_system_type[i])->warpoints;
     }
   }else{
     for (i = 0; i < MAX_UNIT; ++i) {
@@ -338,51 +316,44 @@ static int war_points_calculate(const Battle *battle, int schalter){
       count += (unit->amount_before - unit->amount_after) * ((struct Unit *)unit_type[i])->warpoints;
     }
   }
+
   return count;
 }
-static int get_takeover_multiplier (const struct Cave *cave)
-{
-#ifdef TAKEOVER_MULTIPLIER_BUILDING
-  return 1 + cave->building[TAKEOVER_MULTIPLIER_BUILDING];
-#else
-  return 1;
-#endif
+
+static int get_takeover_multiplier (const struct Cave *cave) {
+  #ifdef TAKEOVER_MULTIPLIER_BUILDING
+    return 1 + cave->building[TAKEOVER_MULTIPLIER_BUILDING];
+  #else
+    return 1;
+  #endif
 }
 
 static void prepare_battle(db_t *database,
-         Battle          *battle,
-         struct Player   *attacker,
-         struct Player   *defender,
-         struct Cave     *cave_attacker,
-         struct Cave     *cave_defender,
-         const float     *battle_bonus,
-         int             takeover_multiplier,
-         int             *units,
-         int             *resources,
-         int             *attacker_artefact_id,
-         int             *defender_artefact_id,
-         int             heroID,
-         struct Relation *relation_from_attacker,
-         struct Relation *relation_from_defender)
-{
+        Battle          *battle,
+        struct Player   *attacker,
+        struct Player   *defender,
+        struct Cave     *cave_attacker,
+        struct Cave     *cave_defender,
+        const float     *battle_bonus,
+        int             takeover_multiplier,
+        int             *units,
+        int             *resources,
+        int             *attacker_artefact_id,
+        int             *defender_artefact_id,
+        int             heroID,
+        struct Relation *relation_from_attacker,
+        struct Relation *relation_from_defender) {
   /* initialize defender army */
-  army_setup(database, &battle->defenders[0], cave_defender, battle_bonus,
-       takeover_multiplier,
-       cave_defender->unit, cave_defender->resource,
-       cave_defender->defense_system, cave_defender->heroID);
+  army_setup(database, &battle->defenders[0], cave_defender, battle_bonus, takeover_multiplier, cave_defender->unit, cave_defender->resource, cave_defender->defense_system, cave_defender->heroID);
 
   /* initialize attacker army */
-  army_setup(database, &battle->attackers[0], cave_attacker, battle_bonus, 0,
-       units, resources, NULL, heroID);
+  army_setup(database, &battle->attackers[0], cave_attacker, battle_bonus, 0, units, resources, NULL, heroID);
 
   /* artefacts */
   debug(DEBUG_BATTLE, "artefacts in target cave: %d", cave_defender->artefacts);
 
   if (cave_defender->artefacts > 0) {
-    db_result_t *result =
-      db_query(database, "SELECT artefactID FROM " DB_TABLE_ARTEFACT
-       " WHERE caveID = %d LIMIT 0,1",
-         cave_defender->cave_id);
+    db_result_t *result = db_query(database, "SELECT artefactID FROM " DB_TABLE_ARTEFACT " WHERE caveID = %d LIMIT 0,1", cave_defender->cave_id);
 
     if (!db_result_next_row(result))
       throw(SQL_EXCEPTION, "prepare_battle: no artefact in cave");
@@ -395,23 +366,19 @@ static void prepare_battle(db_t *database,
   debug(DEBUG_BATTLE, "attacker artefact: %d", *attacker_artefact_id);
 
   /* get the relation boni */
-  battle->attackers[0].relationMultiplicator =
-    relation_from_attacker->attackerMultiplicator;
-  battle->defenders[0].relationMultiplicator =
-    relation_from_defender->defenderMultiplicator;
+  battle->attackers[0].relationMultiplicator = relation_from_attacker->attackerMultiplicator;
+  battle->defenders[0].relationMultiplicator = relation_from_defender->defenderMultiplicator;
 
   /*hero */
   battle->attackers_hero_died = 0;
   battle->defenders_hero_died = 0;
 }
 
-
 static void after_battle_defender_update(db_t *database,
-           int             player_id,
-           const Battle    *battle,
-           int             cave_id,
-           struct Relation *relation)
-{
+        int             player_id,
+        const Battle    *battle,
+        int             cave_id,
+        struct Relation *relation) {
   dstring_t *ds;
   int       update = 0;
   int       i;
@@ -425,8 +392,7 @@ static void after_battle_defender_update(db_t *database,
     const struct Army_unit *unit = &battle->defenders[0].units[i];
 
     if (unit->amount_before != unit->amount_after) {
-      dstring_append(ds, "%s%s = %d", update ? "," : "",
-         unit_type[i]->dbFieldName, unit->amount_after);
+      dstring_append(ds, "%s%s = %d", update ? "," : "", unit_type[i]->dbFieldName, unit->amount_after);
       update = 1;
     }
   }
@@ -434,47 +400,39 @@ static void after_battle_defender_update(db_t *database,
   /* which defense systems need an update */
   debug(DEBUG_BATTLE, "preparing defensesystems update");
   for (i = 0; i < MAX_DEFENSESYSTEM; ++i) {
-    const struct Army_unit *defense_system =
-      &battle->defenders[0].defenseSystems[i];
+    const struct Army_unit *defense_system = &battle->defenders[0].defenseSystems[i];
 
-//    if ((relation->relationType == RELATION_TYPE_WAR) || (((struct DefenseSystem *)defense_system_type[i])->warpoints == 0 )) {
+//  if ((relation->relationType == RELATION_TYPE_WAR) || (((struct DefenseSystem *)defense_system_type[i])->warpoints == 0 )) {
       if (defense_system->amount_before != defense_system->amount_after) {
-        dstring_append(ds, "%s%s = %d", update ? "," : "",
-           defense_system_type[i]->dbFieldName,
-           defense_system->amount_after);
-      update = 1;
+        dstring_append(ds, "%s%s = %d", update ? "," : "", defense_system_type[i]->dbFieldName, defense_system->amount_after);
+        update = 1;
       }
-//   }  
+//  }
   }
 
   /* which resources need an update */
   debug(DEBUG_BATTLE, "preparing resources update");
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    if (battle->defenders[0].resourcesBefore[i] !=
-      battle->defenders[0].resourcesAfter[i]) {
-      dstring_append(ds, "%s%s = LEAST(%d, %s)", update ? "," : "",
-         resource_type[i]->dbFieldName,
-         battle->defenders[0].resourcesAfter[i],
-         function_to_sql(resource_type[i]->maxLevel));
+  for (i = 0; i < MAX_RESOURCE; ++i) {
+    if (battle->defenders[0].resourcesBefore[i] != battle->defenders[0].resourcesAfter[i]) {
+      dstring_append(ds, "%s%s = LEAST(%d, %s)", update ? "," : "", resource_type[i]->dbFieldName, battle->defenders[0].resourcesAfter[i], function_to_sql(resource_type[i]->maxLevel));
       update = 1;
     }
+  }
+
   dstring_append(ds, " WHERE caveID = %d", cave_id);
 
   if (update) {
     debug(DEBUG_SQL, "%s", dstring_str(ds));
     db_query_dstring(database, ds);
   }
-
 }
 
 static void takeover_cave(db_t *database,
-       int    cave_id,
-       int    attacker_id,
-       const char   *return_start)
-{
+        int    cave_id,
+        int    attacker_id,
+        const char   *return_start) {
   /* change owner of cave */
-  db_query(database, "UPDATE " DB_TABLE_CAVE " SET playerID = %d"
-         " WHERE caveID = %d", attacker_id, cave_id);
+  db_query(database, "UPDATE " DB_TABLE_CAVE " SET playerID = %d WHERE caveID = %d", attacker_id, cave_id);
 
   dstring_t *ds;
   ds = dstring_new("UPDATE Event_movement SET target_caveID = source_caveID, ");
@@ -484,7 +442,6 @@ static void takeover_cave(db_t *database,
   debug(DEBUG_SQL, "Torben %s", dstring_str(ds));
   db_query_dstring(database, ds);
 
-
   /* delete research from event table*/
   db_query(database, "DELETE FROM Event_science WHERE caveID = %d", cave_id);
 
@@ -493,19 +450,17 @@ static void takeover_cave(db_t *database,
 }
 
 static void after_battle_attacker_update (
-  db_t *database,
-  int          player_id,
-  const Battle *battle,
-  int          source_caveID,
-  int          target_caveID,
-  const char   *speed_factor,
-  const char   *return_start,
-  const char   *return_end,
-  int          artefact,
-  int          heroID,
-  struct Relation *relation
-  )
-{
+        db_t *database,
+        int          player_id,
+        const Battle *battle,
+        int          source_caveID,
+        int          target_caveID,
+        const char   *speed_factor,
+        const char   *return_start,
+        const char   *return_end,
+        int          artefact,
+        int          heroID,
+        struct Relation *relation) {
   int update = 0;
   int i;
 
@@ -521,18 +476,15 @@ static void after_battle_attacker_update (
     dstring_t *ds;
 
     /* send remaining units back */
-    ds = dstring_new("INSERT INTO Event_movement"
-         " (caveID, target_caveID, source_caveID, movementID,"
-         " speedFactor, start, end, artefactID, heroID");
+    ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
 
     for (i = 0; i < MAX_RESOURCE; ++i)
       dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
+
     for (i = 0; i < MAX_UNIT; ++i)
       dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-    dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-       source_caveID, source_caveID, target_caveID, RUECKKEHR,
-       speed_factor, return_start, return_end, artefact, heroID);
+    dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d", source_caveID, source_caveID, target_caveID, RUECKKEHR, speed_factor, return_start, return_end, artefact, heroID);
 
     for (i = 0; i < MAX_RESOURCE; ++i)
       dstring_append(ds, ",%d", battle->attackers[0].resourcesAfter[i]);
@@ -543,9 +495,7 @@ static void after_battle_attacker_update (
 
     debug(DEBUG_SQL, "%s", dstring_str(ds));
     db_query_dstring(database, ds);
-  }
-  else
-  {
+  } else {
     /* kill hero if no units left */
     if (heroID > 0) {
       kill_hero(database, heroID);
@@ -554,22 +504,22 @@ static void after_battle_attacker_update (
 }
 
 static void after_takeover_attacker_update(db_t *database,
-             int             player_id,
-             const Battle    *battle,
-             int             target_caveID,
-             int             artefact,
-             int             heroID,
-             struct Relation *relation)
-{
+        int             player_id,
+        const Battle    *battle,
+        int             target_caveID,
+        int             artefact,
+        int             heroID,
+        struct Relation *relation) {
   int update = 0;
   int i;
 
   /* construct attacker update */
-  for (i = 0; i < MAX_UNIT; ++i)
+  for (i = 0; i < MAX_UNIT; ++i) {
     if (battle->attackers[0].units[i].amount_after > 0) {
       update = 1;
       break;
     }
+  }
 
   if (update) {
     dstring_t *ds;
@@ -579,35 +529,26 @@ static void after_takeover_attacker_update(db_t *database,
       put_artefact_into_cave(database, artefact, target_caveID);
 
     /* put hero into cave */
-    if (heroID > 0)
-    {
+    if (heroID > 0) {
       remove_hero_effects_from_cave (database, heroID);
       put_hero_into_cave(database, heroID, target_caveID);
       apply_hero_effects_to_cave(database, heroID);
     }
+
     /* put remaining units into target_cave */
     ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
 
     for (i = 0; i < MAX_RESOURCE; ++i)
-      dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "",
-         resource_type[i]->dbFieldName,
-         resource_type[i]->dbFieldName,
-         battle->attackers[0].resourcesAfter[i],
-         function_to_sql(resource_type[i]->maxLevel));
+      dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "", resource_type[i]->dbFieldName, resource_type[i]->dbFieldName, battle->attackers[0].resourcesAfter[i], function_to_sql(resource_type[i]->maxLevel));
 
     for (i = 0; i < MAX_UNIT; ++i)
-      dstring_append(ds, ",%s = %s + %d",
-         unit_type[i]->dbFieldName,
-         unit_type[i]->dbFieldName,
-         battle->attackers[0].units[i].amount_after);
+      dstring_append(ds, ",%s = %s + %d", unit_type[i]->dbFieldName, unit_type[i]->dbFieldName, battle->attackers[0].units[i].amount_after);
 
     dstring_append(ds, " WHERE caveID = %d", target_caveID);
 
     debug(DEBUG_SQL, "%s", dstring_str(ds));
     db_query_dstring(database, ds);
-  }
-  else
-  {
+  } else {
     /* kill hero if no units left */
     if (heroID > 0) {
       kill_hero(database, heroID);
@@ -616,13 +557,11 @@ static void after_takeover_attacker_update(db_t *database,
 }
 
 struct Battle *hero_update_after_battle(db_t *database,
-    Battle *battle,
-    int heroID,
-    struct Cave *defender_cave,
-    int war_points_attacker,
-    int war_points_defender)
-{
-
+        Battle *battle,
+        int heroID,
+        struct Cave *defender_cave,
+        int war_points_attacker,
+        int war_points_defender) {
   struct Hero hero;
   dstring_t *ds;
 
@@ -630,8 +569,7 @@ struct Battle *hero_update_after_battle(db_t *database,
   if (battle->attackers->heroFights) {
     if (heroID > 0) {
       get_hero_by_id(database, heroID, &hero);
-      ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(GREATEST(healPoints - %d, 0), %d), exp = exp + %d",
-          abs(battle->attackers_acc_hitpoints_units_before - battle->attackers_acc_hitpoints_units), hero.maxHealPoints, war_points_attacker);
+      ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(GREATEST(healPoints - %d, 0), %d), exp = exp + %d", abs(battle->attackers_acc_hitpoints_units_before - battle->attackers_acc_hitpoints_units), hero.maxHealPoints, war_points_attacker);
       dstring_append(ds, " WHERE heroID = %d", heroID);
 
       debug(DEBUG_HERO, "hero_update_after_battle attacker: %s", dstring_str(ds));
@@ -648,11 +586,9 @@ struct Battle *hero_update_after_battle(db_t *database,
 
         debug(DEBUG_SQL, "%s", dstring_str(ds));
         db_query_dstring(database, ds);
-
       }
     }
   }
-
 
   /* defender hero update*/
   if (battle->defenders->heroFights) {
@@ -660,8 +596,7 @@ struct Battle *hero_update_after_battle(db_t *database,
 
     if (heroID > 0) {
       get_hero_by_id(database, heroID, &hero);
-      ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(GREATEST(healPoints - %d, 0), %d), exp = exp + %d",
-          abs(battle->defenders_acc_hitpoints_units_before - battle->defenders_acc_hitpoints_units), hero.maxHealPoints, war_points_defender);
+      ds = dstring_new("UPDATE " DB_TABLE_HERO " SET healPoints = LEAST(GREATEST(healPoints - %d, 0), %d), exp = exp + %d", abs(battle->defenders_acc_hitpoints_units_before - battle->defenders_acc_hitpoints_units), hero.maxHealPoints, war_points_defender);
       dstring_append(ds, " WHERE heroID = %d", heroID);
 
       debug(DEBUG_HERO, "hero_update_after_battle defender: %s", dstring_str(ds));
@@ -686,8 +621,7 @@ struct Battle *hero_update_after_battle(db_t *database,
  * @params database  the function needs this link to the DB
  * @params result    current movement event (from DB)
  */
-void movement_handler (db_t *database, db_result_t *result)
-{
+void movement_handler (db_t *database, db_result_t *result) {
   int movementID;
   int target_caveID;
   int source_caveID;
@@ -766,65 +700,58 @@ void movement_handler (db_t *database, db_result_t *result)
   get_cave_info(database, source_caveID, &cave1);
   get_cave_info(database, target_caveID, &cave2);
 
-  if (cave1.player_id)
+  if (cave1.player_id) {
     get_player_info(database, cave1.player_id, &player1);
-  else{  /* System */
+  } else {  /* System */
     memset(&player1, 0, sizeof player1);
     player1.tribe = "";
   }
-  if (cave2.player_id == cave1.player_id)
+
+  if (cave2.player_id == cave1.player_id) {
     player2 = player1;
-  else if (cave2.player_id)
+  } else if { (cave2.player_id)
     get_player_info(database, cave2.player_id, &player2);
-  else{  /* System */
+  } else {  /* System */
     memset(&player2, 0, sizeof player2);
     player2.tribe = "";
   }
+
   debug(DEBUG_TICKER, "sourceCaveID = %d, targetCaveID = %d, movementID = %d", source_caveID, target_caveID, movementID);
 
   /**********************************************************************/
   /*** THE INFAMOUS GIANT SWITCH ****************************************/
   /**********************************************************************/
-
   switch (movementID) {
-
     /**********************************************************************/
     /*** ROHSTOFFE BRINGEN ************************************************/
     /**********************************************************************/
     case ROHSTOFFE_BRINGEN:
-
       /* record in takeover table */
       ds = dstring_new("UPDATE " DB_TABLE_CAVE_TAKEOVER " SET ");
 
       for (i = 0; i < MAX_RESOURCE; ++i)
-  dstring_append(ds, "%s%s = %s + %d", i > 0 ? "," : "",
-    resource_type[i]->dbFieldName,
-    resource_type[i]->dbFieldName, resources[i]);
+        dstring_append(ds, "%s%s = %s + %d", i > 0 ? "," : "", resource_type[i]->dbFieldName, resource_type[i]->dbFieldName, resources[i]);
 
-      dstring_append(ds, " WHERE caveID = %d AND playerID = %d",
-         target_caveID, cave1.player_id);
+      dstring_append(ds, " WHERE caveID = %d AND playerID = %d", target_caveID, cave1.player_id);
 
       db_query_dstring(database, ds);
-      if(db_affected_rows(database)!=0){
-              takeover=1;
+      if (db_affected_rows(database)!=0) {
+        takeover=1;
       }
-  /* put resources into cave */
-  dstring_set(ds, "UPDATE " DB_TABLE_CAVE " SET ");
 
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "",
-      resource_type[i]->dbFieldName,
-      resource_type[i]->dbFieldName,
-      (takeover==1)?resources[i] * TAKEOVER_RESOURCE_SAVE_PERCENTAGE / 100:resources[i],
-      function_to_sql(resource_type[i]->maxLevel));
+      /* put resources into cave */
+      dstring_set(ds, "UPDATE " DB_TABLE_CAVE " SET ");
 
-    dstring_append(ds, " WHERE caveID = %d", target_caveID);
+      for (i = 0; i < MAX_RESOURCE; ++i)
+        dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "", resource_type[i]->dbFieldName, resource_type[i]->dbFieldName, (takeover==1)?resources[i] * TAKEOVER_RESOURCE_SAVE_PERCENTAGE / 100:resources[i], function_to_sql(resource_type[i]->maxLevel));
+
+      dstring_append(ds, " WHERE caveID = %d", target_caveID);
 
       db_query_dstring(database, ds);
 
       if (artefact > 0) {
         struct Artefact_class artefact_class;
- 
+
         // auslesen des Artefaktes. Sollte das Verschieben nicht erlaubt sein wird das Artefact nicht in die neue Höhle verschoben
         get_artefact_class_by_artefact_id(database, artefact, &artefact_class);
         if (artefact_class.destroyOnMove) {
@@ -835,16 +762,12 @@ void movement_handler (db_t *database, db_result_t *result)
       }
 
       /* send all units back */
-      dstring_set(ds, "INSERT INTO Event_movement"
-          " (caveID, target_caveID, source_caveID, movementID,"
-          " speedFactor, start, end, heroID");
+      dstring_set(ds, "INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, heroID");
 
       for (i = 0; i < MAX_UNIT; ++i)
         dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d",
-        source_caveID, source_caveID, target_caveID, RUECKKEHR,
-        speed_factor, return_start, return_end, heroID);
+      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d", source_caveID, source_caveID, target_caveID, RUECKKEHR, speed_factor, return_start, return_end, heroID);
 
       for (i = 0; i < MAX_UNIT; ++i)
         dstring_append(ds, ",%d", units[i]);
@@ -855,8 +778,8 @@ void movement_handler (db_t *database, db_result_t *result)
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, NULL, artefact, artefact_kill, 0, 0);
-      break;
+      resources, NULL, artefact, artefact_kill, 0, 0);
+    break;
 
     /**********************************************************************/
     /*** EINHEITEN/ROHSTOFFE VERSCHIEBEN **********************************/
@@ -864,33 +787,32 @@ void movement_handler (db_t *database, db_result_t *result)
     case VERSCHIEBEN:
       get_relation_info(database, player1.tribe, player2.tribe, &relation1);
       /*überprüfen ob sender und versender eine kriegsbeziehung haben */
-      if(!(isMovingAllowed(database, &player1, &player2, &relation1) ||
-        isTakeoverableCave(database, target_caveID))){
+      if (!(isMovingAllowed(database, &player1, &player2, &relation1) || isTakeoverableCave(database, target_caveID))) {
         //bewegung umdrehen//
-      /* send remaining units back */
-      ds = dstring_new("INSERT INTO Event_movement"
-      " (caveID, target_caveID, source_caveID, movementID,"
-      " speedFactor, start, end, artefactID, heroID");
+        /* send remaining units back */
+        ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
 
-      for (i = 0; i < MAX_RESOURCE; ++i)
-        dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
-      for (i = 0; i < MAX_UNIT; ++i)
-        dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
 
-      dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-      source_caveID, source_caveID, target_caveID, RUECKKEHR,
-      speed_factor, return_start, return_end, artefact, heroID);
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
+        source_caveID, source_caveID, target_caveID, RUECKKEHR,
+        speed_factor, return_start, return_end, artefact, heroID);
 
-      for (i = 0; i < MAX_RESOURCE; ++i)
-        dstring_append(ds, ",%d", resources[i]);
-      for (i = 0; i < MAX_UNIT; ++i)
-        dstring_append(ds, ",%d", units[i]);
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%d", resources[i]);
 
-      dstring_append(ds, ")");
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%d", units[i]);
 
-      db_query_dstring(database, ds);
-      break;
+        dstring_append(ds, ")");
+
+        db_query_dstring(database, ds);
+        break;
       }
+
       /* record in takeover table */
       ds = dstring_new("UPDATE " DB_TABLE_CAVE_TAKEOVER " SET ");
 
@@ -903,31 +825,27 @@ void movement_handler (db_t *database, db_result_t *result)
         target_caveID, cave1.player_id);
 
       db_query_dstring(database, ds);
-      if(db_affected_rows(database)!=0){
-              takeover=1;
+      if (db_affected_rows(database)!=0){
+        takeover=1;
       }
 
       /* put resources and units into cave */
       dstring_set(ds, "UPDATE " DB_TABLE_CAVE " SET ");
 
       for (i = 0; i < MAX_RESOURCE; ++i)
-        dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "",
-                       resource_type[i]->dbFieldName,
-                       resource_type[i]->dbFieldName, 
-                      (takeover==1)?resources[i] * TAKEOVER_RESOURCE_SAVE_PERCENTAGE / 100:resources[i],
-                      function_to_sql(resource_type[i]->maxLevel));
-      for (i = 0; i < MAX_UNIT; ++i){
+        dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "", resource_type[i]->dbFieldName, resource_type[i]->dbFieldName,  (takeover==1)?resources[i] * TAKEOVER_RESOURCE_SAVE_PERCENTAGE / 100:resources[i], function_to_sql(resource_type[i]->maxLevel));
+
+      for (i = 0; i < MAX_UNIT; ++i) {
         war_points_sender += ((struct Unit *)unit_type[i])->warpoints * units[i];
-        dstring_append(ds, ",%s = %s + %d",
-                 unit_type[i]->dbFieldName,
-                 unit_type[i]->dbFieldName, units[i]);
-        }
-        if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
-          war_points_update_verschieben(database, &player1, &player2, -1* war_points_sender);
-        } else {
-          war_points_sender = 0;
-        }
-        dstring_append(ds, " WHERE caveID = %d", target_caveID);
+        dstring_append(ds, ",%s = %s + %d", unit_type[i]->dbFieldName, unit_type[i]->dbFieldName, units[i]);
+      }
+
+      if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
+        war_points_update_verschieben(database, &player1, &player2, -1* war_points_sender);
+      } else {
+        war_points_sender = 0;
+      }
+      dstring_append(ds, " WHERE caveID = %d", target_caveID);
 
       db_query_dstring(database, ds);
       if (artefact > 0) {
@@ -942,29 +860,26 @@ void movement_handler (db_t *database, db_result_t *result)
         }
       }
       
-      if (heroID > 0)
-      {
+      if (heroID > 0) {
         if (cave1.player_id != cave2.player_id) {
           kill_hero(database, heroID);
           heroID = -1;
         } else {
-            remove_hero_effects_from_cave (database, heroID);
-            put_hero_into_cave(database, heroID, target_caveID);
-            apply_hero_effects_to_cave(database, heroID);
-          
+          remove_hero_effects_from_cave (database, heroID);
+          put_hero_into_cave(database, heroID, target_caveID);
+          apply_hero_effects_to_cave(database, heroID);
         }
       }
 
       /* generate trade report and receipt for sender */
       trade_report(database, &cave1, &player1, &cave2, &player2,
-       resources, units, artefact, artefact_kill, heroID, war_points_sender);
-      break;
+      resources, units, artefact, artefact_kill, heroID, war_points_sender);
+    break;
 
     /**********************************************************************/
     /*** RUECKKEHR ********************************************************/
     /**********************************************************************/
     case RUECKKEHR:
-
       /* put resources into cave */
       ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
 
@@ -998,14 +913,221 @@ void movement_handler (db_t *database, db_result_t *result)
     /*** ANGREIFEN ********************************************************/
     /**********************************************************************/
     case ANGREIFEN:
-
       /* beginner protection active in target cave? */
-      if (cave_is_protected(&cave2))
-      {
+      if (cave_is_protected(&cave2)) {
         /* send remaining units back */
-        ds = dstring_new("INSERT INTO Event_movement"
-             " (caveID, target_caveID, source_caveID, movementID,"
-             " speedFactor, start, end, artefactID, heroID");
+        ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
+
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d", source_caveID, source_caveID, target_caveID, RUECKKEHR, speed_factor, return_start, return_end, artefact, heroID);
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%d", resources[i]);
+
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%d", units[i]);
+
+        dstring_append(ds, ")");
+
+        db_query_dstring(database, ds);
+
+        /* create and send reports */
+        protected_report(database, &cave1, &player1, &cave2, &player2);
+        break;
+      }
+
+      /* get relations between the two players' tribes */
+      get_relation_info(database, player1.tribe, player2.tribe, &relation1);
+      get_relation_info(database, player2.tribe, player1.tribe, &relation2);
+      debug(DEBUG_BATTLE, "Relationtypes: %d and %d", relation1.relationType, relation2.relationType);
+
+      battle = battle_create(1, 1);
+      battle_bonus = get_battle_bonus();
+
+      debug(DEBUG_BATTLE, "entering prepare_battle");
+      /* prepare structs for battle, exceptions are uncaught! */
+      prepare_battle(database, battle, &player1, &player2, &cave1, &cave2, battle_bonus, 0, units, resources, &artefact, &artefact_def, heroID, &relation1, &relation2);
+
+      /* calculate the fame */
+      /* Calculatin is diferent if the battle was just pure farming*/
+      isFarming = check_farming(database, cave2.artefacts, &player1, &player2, &relation1);
+      if (relation1.relationType == RELATION_TYPE_WAR) {
+        battle->isWar = 1;
+      }
+
+      /* calculate battle result */
+      calcBattleResult(battle, &cave2, 0);
+
+      /* change artefact ownership */
+      debug(DEBUG_BATTLE, "entering change artefact");
+      after_battle_change_artefact_ownership(database, battle->winner, &artefact, &artefact_id, &artefact_def, target_caveID, &cave2, &lostTo);
+
+      /* attackers artefact (if any) is stored in variable artefact,
+         artefact_id is id of the artefact that changed owner (or 0) */
+
+      /* no relation -> attacker get negative fame*/
+      debug(DEBUG_BATTLE, "Relation Type %d",relation1.relationType);
+
+      /* construct attacker update */
+      debug(DEBUG_BATTLE, "entering attacker update");
+      after_battle_attacker_update(database, player1.player_id, battle, source_caveID, target_caveID, speed_factor, return_start, return_end, artefact, heroID, &relation1);
+
+      /* defender update: exception still uncaught (better leave) */
+      debug(DEBUG_BATTLE, "entering defender update");
+      after_battle_defender_update(database, player2.player_id, battle, target_caveID, &relation2);
+
+      /* Farming update */
+      if (isFarming) {
+        increaseFarming(database, player1.player_id);
+      }
+
+      /* reset DB_TABLE_CAVE_TAKEOVER */
+      ds = dstring_new("UPDATE " DB_TABLE_CAVE_TAKEOVER " SET status = 0");
+
+      for (i = 0; i < MAX_RESOURCE; ++i)
+        dstring_append(ds, ",%s = 0", resource_type[i]->dbFieldName);
+
+      dstring_append(ds, " WHERE caveID = %d AND playerID = %d",
+      target_caveID, cave1.player_id);
+
+      db_query_dstring(database, ds);
+
+      /* cave takeover by battle */
+      if (battle->winner == FLAG_ATTACKER && ((struct Terrain *)terrain_type[cave2.terrain])->takeoverByCombat) {
+        db_query(database, "UPDATE " DB_TABLE_CAVE " SET playerID = %d WHERE caveID = %d", cave1.player_id, target_caveID);
+        db_query(database, "DELETE FROM Event_science WHERE caveID = %d",
+        target_caveID);
+
+        science_update_caves(database, cave1.player_id);
+
+        //kill hero in defenders cave
+        if (cave2.heroID > 0) {
+          kill_hero(database, cave2.heroID);
+          cave2.heroID = 0;
+        }
+      }
+
+      //bodycount calculate
+      attacker_lose = bodycount_calculate(battle, FLAG_DEFENDER);
+      defender_lose = bodycount_calculate(battle, FLAG_ATTACKER);
+      defender_va_lose = bodycount_va_calculate(battle);
+
+      if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
+        bodycount_update( database, player1.player_id, defender_lose);
+        bodycount_update( database, player2.player_id, attacker_lose);
+        war_points_show = 1;
+        war_points_attacker = (defender_lose>0||defender_va_lose>11?war_points_calculate(battle,FLAG_ATTACKER):0);
+        war_points_defender = (attacker_lose>0?war_points_calculate(battle,FLAG_DEFENDER):0);
+
+        war_points_update(database, &player1, &player2, war_points_attacker, war_points_defender);
+      }
+
+      hero_points_attacker = war_points_calculate(battle,FLAG_ATTACKER);
+      hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
+
+      /* update hero */
+      battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender);
+
+      /* create and send reports */
+      battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo, 0, 0, &relation1, &relation2, war_points_show, war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender);
+    break;
+
+    /**********************************************************************/
+    /*** Spionieren *******************************************************/
+    /**********************************************************************/
+    case SPIONAGE:
+      /* generate spy report */
+      srrs = spy_report(database, &cave1, &player1, &cave2, &player2, resources, units, &artefact);
+      spy_result = srrs.value;
+
+      if (spy_result == 1) {
+        // artefact sollte immer < 1 sein wenn srrs.artefactID > 0!!!
+        if (srrs.artefactID > 0 && artefact == 0) {
+          artefact = srrs.artefactID;
+        }
+
+        /* send all units back */
+        ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
+
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d", source_caveID, source_caveID, target_caveID, RUECKKEHR, speed_factor, return_start, return_end, artefact, heroID);
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, ",%d", resources[i]);
+
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%d", units[i]);
+
+        dstring_append(ds, ")");
+
+        db_query_dstring(database, ds);
+      } else {
+        /* send remaining units back */
+        int count = 0;
+
+        ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
+
+        for (i = 0; i < MAX_UNIT; ++i)
+          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
+
+        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d", source_caveID, source_caveID, target_caveID, RUECKKEHR, speed_factor, return_start, return_end, artefact, heroID);
+
+        for (i = 0; i < MAX_UNIT; ++i) {
+          int num = units[i] * spy_result;
+
+          dstring_append(ds, ",%d", num);
+          count += num;
+          body_count += units[i] - num;
+        }
+
+        dstring_append(ds, ")");
+
+        if (count)
+          db_query_dstring(database, ds);
+
+        /* put resources into cave */
+        ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
+
+        for (i = 0; i < MAX_RESOURCE; ++i)
+          dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "", resource_type[i]->dbFieldName, resource_type[i]->dbFieldName, resources[i], function_to_sql(resource_type[i]->maxLevel));
+
+        dstring_append(ds, " WHERE caveID = %d", target_caveID);
+
+        db_query_dstring(database, ds);
+
+        if (artefact > 0)
+          put_artefact_into_cave(database, artefact, target_caveID);
+      }
+
+      // update hero
+      if (heroID > 0) {
+        put_hero_into_cave(database, heroID, target_caveID);
+      }
+
+      get_relation_info(database, player1.tribe, player2.tribe, &relation1);
+      if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
+        bodycount_update(database, player2.player_id, body_count);
+      }
+    break;
+
+    /**********************************************************************/
+    /*** UEBERNEHMEN ******************************************************/
+    /**********************************************************************/
+    case TAKEOVER:
+      /* secure or protected target gave? */
+      if (cave2.secure || cave_is_protected(&cave2)) {
+        /* send remaining units back */
+        ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
 
         for (i = 0; i < MAX_RESOURCE; ++i)
           dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
@@ -1026,257 +1148,9 @@ void movement_handler (db_t *database, db_result_t *result)
         db_query_dstring(database, ds);
 
         /* create and send reports */
+        /* FIXME use different message in report (protected -> secure) */
         protected_report(database, &cave1, &player1, &cave2, &player2);
         break;
-      }
-
-      /* get relations between the two players' tribes */
-      get_relation_info(database, player1.tribe, player2.tribe, &relation1);
-      get_relation_info(database, player2.tribe, player1.tribe, &relation2);
-      debug(DEBUG_BATTLE, "Relationtypes: %d and %d", relation1.relationType,
-            relation2.relationType);
-
-      battle = battle_create(1, 1);
-      battle_bonus = get_battle_bonus();
-
-      debug(DEBUG_BATTLE, "entering prepare_battle");
-      /* prepare structs for battle, exceptions are uncaught! */
-      prepare_battle(database,
-         battle,
-         &player1,
-         &player2,
-         &cave1, &cave2, battle_bonus, 0,
-         units, resources,
-         &artefact, &artefact_def, heroID,
-         &relation1, &relation2);
-
-      /* calculate the fame */
-      /* Calculatin is diferent if the battle was just pure farming*/
-      isFarming = check_farming(database, cave2.artefacts, &player1,
-            &player2, &relation1);
-      if( relation1.relationType == RELATION_TYPE_WAR){
-        battle->isWar = 1;
-      }
-
-      /* calculate battle result */
-      calcBattleResult(battle, &cave2, 0);
-
-      /* change artefact ownership */
-      debug(DEBUG_BATTLE, "entering change artefact");
-      after_battle_change_artefact_ownership(
-        database, battle->winner, &artefact, &artefact_id, &artefact_def,
-        target_caveID, &cave2, &lostTo);
-
-      /* attackers artefact (if any) is stored in variable artefact,
-   artefact_id is id of the artefact that changed owner (or 0) */
-
-      /* no relation -> attacker get negative fame*/
-      debug(DEBUG_BATTLE, "Relation Type %d",relation1.relationType);
-
-      /* construct attacker update */
-      debug(DEBUG_BATTLE, "entering attacker update");
-      after_battle_attacker_update(database, player1.player_id, battle,
-           source_caveID, target_caveID, speed_factor,
-           return_start, return_end, artefact, heroID,
-           &relation1);
-
-      /* defender update: exception still uncaught (better leave) */
-      debug(DEBUG_BATTLE, "entering defender update");
-      after_battle_defender_update(database, player2.player_id,
-           battle, target_caveID, &relation2);
-
- 
-      /* Farming update */
-      if(isFarming){
-        increaseFarming(database, player1.player_id);
-      }
-
-      /* reset DB_TABLE_CAVE_TAKEOVER */
-      ds = dstring_new("UPDATE " DB_TABLE_CAVE_TAKEOVER " SET status = 0");
-
-      for (i = 0; i < MAX_RESOURCE; ++i)
-        dstring_append(ds, ",%s = 0", resource_type[i]->dbFieldName);
-
-      dstring_append(ds, " WHERE caveID = %d AND playerID = %d",
-      target_caveID, cave1.player_id);
-
-      db_query_dstring(database, ds);
-
-      /* cave takeover by battle */
-      if (battle->winner == FLAG_ATTACKER &&
-    ((struct Terrain *)terrain_type[cave2.terrain])->takeoverByCombat) {
-        db_query(database, "UPDATE " DB_TABLE_CAVE " SET playerID = %d"
-         " WHERE caveID = %d",
-         cave1.player_id, target_caveID);
-
-       db_query(database, "DELETE FROM Event_science WHERE caveID = %d",
-       target_caveID);
-
-       science_update_caves(database, cave1.player_id);
-
-       //kill hero in defenders cave
-       if (cave2.heroID > 0) {
-         kill_hero(database, cave2.heroID);
-       }
-      }
-
-      //bodycount calculate
-      attacker_lose = bodycount_calculate(battle, FLAG_DEFENDER);
-      defender_lose = bodycount_calculate(battle, FLAG_ATTACKER);
-      defender_va_lose = bodycount_va_calculate(battle);
-
-      if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
-        bodycount_update( database, player1.player_id, defender_lose);
-        bodycount_update( database, player2.player_id, attacker_lose);
-        war_points_show = 1;
-        war_points_attacker = (defender_lose>0||defender_va_lose>11?war_points_calculate(battle,FLAG_ATTACKER):0);
-        war_points_defender = (attacker_lose>0?war_points_calculate(battle,FLAG_DEFENDER):0);
-
-        war_points_update(database, &player1, &player2, war_points_attacker, war_points_defender);
-      }
-
-      hero_points_attacker = war_points_calculate(battle,FLAG_ATTACKER);
-      hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
-
-      /* update hero */
-      battle = hero_update_after_battle(database, battle, heroID, &cave2,
-          hero_points_attacker, hero_points_defender);
-
-      /* create and send reports */
-      battle_report(database, &cave1, &player1, &cave2, &player2, battle,
-        artefact_id, lostTo, 0, 0, &relation1, &relation2,
-        war_points_show, war_points_attacker, war_points_defender,
-        heroID, hero_points_attacker, hero_points_defender);
-      break;
-
-    /**********************************************************************/
-    /*** Spionieren *******************************************************/
-    /**********************************************************************/
-    case SPIONAGE:
-      /* generate spy report */
-      srrs = spy_report(database, &cave1, &player1, &cave2, &player2, resources, units, &artefact);
-      spy_result = srrs.value;
-
-      if (spy_result == 1) {
-        // artefact sollte immer < 1 sein wenn srrs.artefactID > 0!!!
-        if (srrs.artefactID > 0 && artefact == 0) {
-          artefact = srrs.artefactID;
-        }
-
-        /* send all units back */
-        ds = dstring_new("INSERT INTO Event_movement"
-             " (caveID, target_caveID, source_caveID, movementID,"
-             " speedFactor, start, end, artefactID, heroID");
-
-        for (i = 0; i < MAX_RESOURCE; ++i)
-          dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
-        for (i = 0; i < MAX_UNIT; ++i)
-          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
-
-        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-          source_caveID, source_caveID, target_caveID, RUECKKEHR,
-          speed_factor, return_start, return_end, artefact, heroID);
-
-        for (i = 0; i < MAX_RESOURCE; ++i)
-          dstring_append(ds, ",%d", resources[i]);
-        for (i = 0; i < MAX_UNIT; ++i)
-          dstring_append(ds, ",%d", units[i]);
-
-        dstring_append(ds, ")");
-
-        db_query_dstring(database, ds);
-      } else {
-        /* send remaining units back */
-        int count = 0;
-
-        ds = dstring_new("INSERT INTO Event_movement"
-             " (caveID, target_caveID, source_caveID, movementID,"
-             " speedFactor, start, end, artefactID, heroID");
-
-        for (i = 0; i < MAX_UNIT; ++i)
-          dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
-
-        dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-          source_caveID, source_caveID, target_caveID, RUECKKEHR,
-          speed_factor, return_start, return_end, artefact, heroID);
-
-        for (i = 0; i < MAX_UNIT; ++i)
-        {
-          int num = units[i] * spy_result;
-
-          dstring_append(ds, ",%d", num);
-          count += num;
-            body_count += units[i] - num;
-        }
-
-        dstring_append(ds, ")");
-
-        if (count)
-          db_query_dstring(database, ds);
-
-        /* put resources into cave */
-        ds = dstring_new("UPDATE " DB_TABLE_CAVE " SET ");
-
-        for (i = 0; i < MAX_RESOURCE; ++i)
-          dstring_append(ds, "%s%s = LEAST(%s + %d, %s)", i > 0 ? "," : "",
-            resource_type[i]->dbFieldName,
-            resource_type[i]->dbFieldName, resources[i],
-            function_to_sql(resource_type[i]->maxLevel));
-
-        dstring_append(ds, " WHERE caveID = %d", target_caveID);
-
-        db_query_dstring(database, ds);
-
-        if (artefact > 0)
-          put_artefact_into_cave(database, artefact, target_caveID);
-      }
-
-      // update hero
-      if (heroID > 0) {
-        put_hero_into_cave(database, heroID, target_caveID);
-      }
-
-      get_relation_info(database, player1.tribe, player2.tribe, &relation1);
-      if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){   
-        bodycount_update(database, player2.player_id, body_count);
-      }
-      break;
-
-    /**********************************************************************/
-    /*** UEBERNEHMEN ******************************************************/
-    /**********************************************************************/
-    case TAKEOVER:
-
-      /* secure or protected target gave? */
-      if (cave2.secure || cave_is_protected(&cave2))
-      {
-  /* send remaining units back */
-  ds = dstring_new("INSERT INTO Event_movement"
-       " (caveID, target_caveID, source_caveID, movementID,"
-       " speedFactor, start, end, artefactID, heroID");
-
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, ",%s", resource_type[i]->dbFieldName);
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%s", unit_type[i]->dbFieldName);
-
-  dstring_append(ds, ") VALUES (%d, %d, %d, %d, %s, '%s', '%s', %d, %d",
-           source_caveID, source_caveID, target_caveID, RUECKKEHR,
-           speed_factor, return_start, return_end, artefact, heroID);
-
-  for (i = 0; i < MAX_RESOURCE; ++i)
-    dstring_append(ds, ",%d", resources[i]);
-  for (i = 0; i < MAX_UNIT; ++i)
-    dstring_append(ds, ",%d", units[i]);
-
-  dstring_append(ds, ")");
-
-  db_query_dstring(database, ds);
-
-  /* create and send reports */
-  /* FIXME use different message in report (protected -> secure) */
-  protected_report(database, &cave1, &player1, &cave2, &player2);
-  break;
       }
 
       get_relation_info(database, player1.tribe, player2.tribe, &relation1);
@@ -1288,51 +1162,35 @@ void movement_handler (db_t *database, db_result_t *result)
       takeover_multiplier = get_takeover_multiplier(&cave2);
 
       /* prepare structs for battle, exceptions are uncaught! */
-      prepare_battle(database,
-         battle,
-         &player1,
-         &player2,
-         &cave1, &cave2, battle_bonus, takeover_multiplier,
-         units, resources,
-         &artefact, &artefact_def, heroID,
-         &relation1, &relation2);
+      prepare_battle(database, battle, &player1, &player2, &cave1, &cave2, battle_bonus, takeover_multiplier, units, resources, &artefact, &artefact_def, heroID, &relation1, &relation2);
 
       /* calculate battle result */
       /*bei ner Übernahme kein resi klau möglich*/
       calcBattleResult(battle, &cave2, 1);
 
       /* change artefact ownership */
-      after_battle_change_artefact_ownership(
-        database, battle->winner, &artefact, &artefact_id, &artefact_def,
-      target_caveID, &cave2, &lostTo);
+      after_battle_change_artefact_ownership(database, battle->winner, &artefact, &artefact_id, &artefact_def,target_caveID, &cave2, &lostTo);
 
       /* attackers artefact (if any) is stored in variable artefact,
-       artefact_id is id of the artefact that changed owner (or 0) */
+         artefact_id is id of the artefact that changed owner (or 0) */
 
       /* defender update: exception still uncaught (better leave) */
-      after_battle_defender_update(database, player2.player_id,
-           battle, target_caveID, &relation2);
+      after_battle_defender_update(database, player2.player_id, battle, target_caveID, &relation2);
 
-
-     int war1 = get_tribe_at_war(database,player1.tribe);
-     int war2 = get_tribe_at_war(database,player2.tribe);
+      int war1 = get_tribe_at_war(database,player1.tribe);
+      int war2 = get_tribe_at_war(database,player2.tribe);
 
       /* attacker won:  put survivors into cave, change owner
        * attacker lost: send back survivors */
-      change_owner =
-          battle->winner == FLAG_ATTACKER && cave2.player_id != PLAYER_SYSTEM &&
-          player1.max_caves > get_number_of_caves(database, player1.player_id) &&
-          ((relation1.relationType == RELATION_TYPE_WAR &&
-          relation2.relationType == RELATION_TYPE_WAR) ||
-          (!war1 && !war2) ||
-          (strcasecmp(player1.tribe, player2.tribe) == 0)); // Spieler im selben stamm
-     //bodycount calculate
+      change_owner = battle->winner == FLAG_ATTACKER && cave2.player_id != PLAYER_SYSTEM && player1.max_caves > get_number_of_caves(database, player1.player_id) && ((relation1.relationType == RELATION_TYPE_WAR && relation2.relationType == RELATION_TYPE_WAR) || (!war1 && !war2) || (strcasecmp(player1.tribe, player2.tribe) == 0)); // Spieler im selben stamm
+
+      //bodycount calculate
       attacker_lose = bodycount_calculate(battle, FLAG_DEFENDER);
       defender_lose = bodycount_calculate(battle, FLAG_ATTACKER);
       defender_va_lose = bodycount_va_calculate(battle);
 
 
-      if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
+      if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
         war_points_show = 1;
         war_points_attacker = (defender_lose>0||defender_va_lose>11?war_points_calculate(battle,FLAG_ATTACKER):0);
         war_points_defender = (attacker_lose>0?war_points_calculate(battle,FLAG_DEFENDER):0);
@@ -1344,46 +1202,37 @@ void movement_handler (db_t *database, db_result_t *result)
       hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
 
       /* update hero */
-      battle = hero_update_after_battle(database, battle, heroID, &cave2,
-          hero_points_attacker, hero_points_defender);
+      battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender);
 
-      if (change_owner){
-        debug(DEBUG_TAKEOVER, "change owner of cave %d to new owner %d",
-            target_caveID, cave1.player_id);
+      if (change_owner) {
+        debug(DEBUG_TAKEOVER, "change owner of cave %d to new owner %d", target_caveID, cave1.player_id);
         takeover_cave(database, target_caveID, cave1.player_id,return_start);
-        after_takeover_attacker_update(database, player1.player_id,
-                                   battle, target_caveID,
-                                       artefact, heroID, &relation1);
-        if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
+        after_takeover_attacker_update(database, player1.player_id, battle, target_caveID, artefact, heroID, &relation1);
+
+        if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
           war_points_attacker += WAR_POINTS_FOR_TAKEOVER;
         }
       } else { /* send survivors back */
         debug(DEBUG_TAKEOVER, "send back attacker's survivors");
-        after_battle_attacker_update(database, player1.player_id, battle,
-             source_caveID, target_caveID, speed_factor,
-             return_start, return_end, artefact, heroID,
-             &relation1);
-        if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
+        after_battle_attacker_update(database, player1.player_id, battle, source_caveID, target_caveID, speed_factor, return_start, return_end, artefact, heroID, &relation1);
+        if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
           war_points_defender += WAR_POINTS_FOR_TAKEOVER_DEFEND;
         }
       }
-      if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
+
+      if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
         war_points_update(database, &player1, &player2, war_points_attacker, war_points_defender);
       }
 
       /* create and send reports */
-      battle_report(database, &cave1, &player1, &cave2, &player2, battle,
-        artefact_id, lostTo, change_owner, 1 + takeover_multiplier,
-        &relation1, &relation2,war_points_show, war_points_attacker, war_points_defender,
-        heroID, hero_points_attacker, hero_points_defender);
-     //bodycount calculate
+      battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo, change_owner, 1 + takeover_multiplier, &relation1, &relation2,war_points_show, war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender);
+      //bodycount calculate
 
-
-      if(relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR){
+      if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
         bodycount_update( database, player1.player_id, defender_lose);
         bodycount_update( database, player2.player_id, attacker_lose);
       }
-      break;
+    break;
 
     default:
       throw(BAD_ARGUMENT_EXCEPTION, "movement_handler: unknown movementID");
@@ -1392,6 +1241,5 @@ void movement_handler (db_t *database, db_result_t *result)
   /**********************************************************************/
   /*** END OF THE INFAMOUS GIANT SWITCH *********************************/
   /**********************************************************************/
-
   debug(DEBUG_TICKER, "leaving function movement_handler()");
 }

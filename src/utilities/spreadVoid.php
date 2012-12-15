@@ -90,7 +90,6 @@
 
       if (!$sql->execute()) {
         echo "Query failed:\n";
-        echo $query;
         exit;
       }
     }

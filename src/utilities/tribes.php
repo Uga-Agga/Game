@@ -190,7 +190,7 @@ echo "-- Checking Tribe Leaders --\n";
   }
 
   foreach($tribes AS $tag => $data) {
-    if (($r = tribe_recalcLeader($tag, $data['leaderID']) < 0)
+    if (($r = tribe_recalcLeader($tag, $data['leaderID'])) < 0)
     {
       echo "Error recalcing leader for Tribe $tag\n";
       return -1;
