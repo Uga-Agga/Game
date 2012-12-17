@@ -17,10 +17,14 @@
 {% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
 
 <div class="info">
+  Verdutzt stellst du fest das Skon-Thos Höhle leer ist.
+</div>
+<!--
+<div class="info">
   Das Uga Agga Tal wird von zahlreichen Handelsrouten durchzogen. Die Handelskarawanen werden von Skalis jüngeren Halbbruder geführt. Sein Name ist Skon-Tho.
   Skon-Tho kommt in regelmäßigen Abständen auch an deinen Höhlen vorbei und bietet dir einen Rohstofftausch an. Auch einige Einheiten kann Skon-Tho dir gegen einen vernünftigen Preis zum Handel anbieten.
   Skon-Tho ist bekannt für seine harte Verhandlungsführung, aber auch für sein freundliches Gemüt. Nicht selten gibt er am Lagerfeuer Geschichten von weit entfernten Höhlen, wilden Monstern und großen Häuptlingen zum Besten.
-  {% if rndMessage %}<br /><br />Gestern zum Beispiel, erzählte der Händler folgendes: {{ rndMessage }}{% endif %}
+  {% if rndMessage %}<br /><br />Gestern zum Beispiel, erzählte der Händler folgendes: {{ rndMessage|raw }}{% endif %}
   <br /><br />
   Eine weitere Möglichkeit Handel zu treiben sind die festen Marktstände in den Handelszentren.
   Handel im <a href="http://forum.uga-agga.de/handel-f174/">Uga Agga Forum</a>. <br />
@@ -47,6 +51,7 @@
                     <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
                    {% if item.description %}<dd style="padding-left: 10px">{{ item.description|raw }}</dd>{% endif %}
                   </dl>
+                  <span class="text-small">{{ item.locktill }}</span>
                 </td>
                 <td class="ua-td-build">
                   {% if item.build_link %}
@@ -66,5 +71,6 @@
     </div>
   </div>
 </div>
+-->
 
 {% endblock %}

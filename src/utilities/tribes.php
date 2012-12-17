@@ -73,10 +73,10 @@ echo "-- Checking Tribes --\n";
   
   foreach($tribes AS $tag => $data) {
     if (in_array($tag, $untouchableTribes)) {
-	continue;
+      continue;
     }
     
-    if (($member_count = tribe_getNumberOfMembers($tag, $db)) < 0) 
+    if (($member_count = tribe_getNumberOfMembers($tag)) < 0) 
     {
       echo "Error counting members of tribe {$data['tag']}.\n";
       return -1;
@@ -85,7 +85,7 @@ echo "-- Checking Tribes --\n";
     //Gültige Stämme prüfen auf Membermangel
     if ($data['valid'] && $member_count < TRIBE_MINIMUM_SIZE) 
     {
-      if (tribe_SetTribeInvalid($tag, $db)) {
+      if (tribe_SetTribeInvalid($tag)) {
         array_push($invalidated_tribes,$tag);
       } 
       else {
@@ -96,7 +96,7 @@ echo "-- Checking Tribes --\n";
     if ((! $data['valid']) && $member_count >= TRIBE_MINIMUM_SIZE) 
     {
       $data['valid'] = TRUE; // damit der Stamm nicht gel�scht wird
-      if (tribe_SetTribeValid($tag, $db)) {
+      if (tribe_SetTribeValid($tag)) {
         array_push($validated_tribes,$tag);
       } 
       else {
@@ -108,11 +108,11 @@ echo "-- Checking Tribes --\n";
     //Ungültige Stämme prüfen auf Löschbarkeit
     if (((! $data['valid']) && $data['ValidationTimeOver']) || ($member_count==0))  
     {
-      if (!relation_DeleteRelations($tag,$db)) {
+      if (!relation_DeleteRelations($tag)) {
         echo "Error: Couldn't delete relations for tribe $tag!\n";
       }
       
-      if ( tribe_deleteTribe($tag, $db)) { // remove '1' to activate del
+      if (tribe_deleteTribe($tag, 1)) { // remove '1' to activate del
         array_push($deleted_tribes, $tag.": ".$data['name']);
       }
       else {
@@ -162,12 +162,11 @@ echo "-- Checking Tribes --\n";
   $tribes_created = array();
 
   while ($row = $sql->fetch()) {
+    $newPasswort = substr(md5(rand().rand()), 0, 10);
 
-    if (!tribe_createTribe($row['tribe'], $row['tribe'], 0))
+    if (!tribe_createTribe($row['tribe'], $row['tribe'], $newPasswort, 0))
     {
-      echo 
-	"There are players with the tag {$row['tribe']}, ".
-	"but I couldn't create this new tribe!\n";
+      echo  "There are players with the tag {$row['tribe']}, but I couldn't create this new tribe!\n";
       continue;
     }
     array_push($tribes_created, $row['tribe']);
@@ -191,7 +190,7 @@ echo "-- Checking Tribe Leaders --\n";
   }
 
   foreach($tribes AS $tag => $data) {
-    if (($r = tribe_recalcLeader($tag, $data['leaderID'], $data['juniorLeaderID'])) < 0)
+    if (($r = tribe_recalcLeader($tag, $data['leaderID'])) < 0)
     {
       echo "Error recalcing leader for Tribe $tag\n";
       return -1;

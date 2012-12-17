@@ -124,10 +124,11 @@
                 <dd>{{ item.dependencies }}</dd>
               </dl>
             </td>
+            <td class="ua-td-level">Stufe: ({{ item.currentlevel }})
+            <td class="ua-td-build"><a href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" class="noborder" width="20" height="20" alt="Abreißen" title="Abreißen" /></a></td>
           </tr>
           <tr class="bg{{ bgID }} detail-row" id="improvement_{{ item.building_id }}" style="display: none;">
-            <td colspan="3" class="object-details">
-            </td>
+            <td colspan="5" class="object-details"></td>
           </tr>
         {% endfor %}
       </tbody>

@@ -18,6 +18,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 
   // open template
   $template->setFile('merchant.tmpl');
+  return;
   @require_once('rules/rndMessages.php');
 
   // messages
@@ -60,6 +61,21 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
       'name' => $GLOBALS['tradeCategoriesTypeList'][$j]->name
     );
 
+    $lockedCat = array();
+    $sql = $db->prepare("SELECT LockTill < :LockTill as allowed, LockTill, cat
+                         FROM ". TRADELOCK_TABLE . "
+                         WHERE PlayerID = :playerID");
+    $sql->bindValue('LockTill', date("Y-m-d H:i:s", time()), PDO::PARAM_STR);
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) $locktill = array();
+  
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      if ($row['allowed'] == 0) {
+        $lockedCat[$row['cat']] = time_fromDatetime($row['LockTill']);
+      }
+    }
+    $sql->closeCursor();
+
     $count = 0;
     foreach ($GLOBALS['tradeTypeList'] as $id => $trade) {
       if ($trade->nodocumentation) {
@@ -73,38 +89,26 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
       $less = false;
       $canbuy = true;
       $locktill = '';
-      $sql = $db->prepare("SELECT LockTill < :LockTill as allowed, LockTill
-                           FROM ". TRADELOCK_TABLE . "
-                           WHERE PlayerID = :playerID
-                             AND cat = :cat");
-      $sql->bindValue('LockTill', date("Y-m-d H:i:s", time()), PDO::PARAM_STR);
-      $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-      $sql->bindValue('cat', $cat->id, PDO::PARAM_STR);
 
-      if ($sql->execute()) {
-        $row = $sql->fetch(PDO::FETCH_ASSOC);
-        $sql->closeCursor();
-
-        if ($row['allowed'] == 0 && $row) {
-          $canbuy = false;
-          $locktill= time_fromDatetime($row['LockTill']);
-        }
+      if (isset($lockedCat[$cat->id])) {
+        $canbuy = false;
+        $locktill = $lockedCat[$cat->id];
       }
-      $sql->closeCursor();
 
       $trades[$j]['data'][$id] = array(
         'bgID'        => ($count++ % 2) + 1,
         'name'        => $trade->name,
         'trade_id'    => $id,
         'description' => $trade->description,
-        'dbFieldName' => $trade->tradeID
+        'dbFieldName' => $trade->tradeID,
+        'locktill'    => (!$canbuy) ? sprintf(_('Wieder im Angebot ab %s'), gmdate("d.m.Y H:i:s", $locktill)) : '',
       );
 
        $trades[$j]['data'][$id] = array_merge($trades[$j]['data'][$id], parseCost($trade, $details));
 
       // show the building link ?!
       if (!$canbuy)
-        $trades[$j]['data'][$id]['no_build_msg'] = sprintf(_('Wieder im Angebot ab %s'), gmdate("d.m.Y H:i:s",$locktill));
+        $trades[$j]['data'][$id]['no_build_msg'] = sprintf(_('Wieder im Angebot ab %s'), gmdate("d.m.Y H:i:s", $locktill));
       else if ($trades[$j]['data'][$id]['notenough']) {
         $trades[$j]['data'][$id]['no_build_msg'] = _('Zu wenig Rohstoffe');
       } else {
