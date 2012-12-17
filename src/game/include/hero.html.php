@@ -83,7 +83,6 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
   $hero = getHeroByPlayer($playerID);
   
-  
   $showTypesList = false;
   $changeType = false;
   if ($hero['heroTypeID'] == 1000) {

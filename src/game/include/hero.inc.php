@@ -599,6 +599,8 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
   $points = 0;
   foreach ($value_array as $resourceID => $value) {
     if ($value) {
+      $value = abs($value);
+
       if (array_key_exists($resourceID, $GLOBALS['resourceTypeList'])) {
         $resource = $GLOBALS['resourceTypeList'][$resourceID];
         $playerID = $_SESSION['player']->playerID;
