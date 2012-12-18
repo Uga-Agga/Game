@@ -709,7 +709,7 @@ void movement_handler (db_t *database, db_result_t *result) {
 
   if (cave2.player_id == cave1.player_id) {
     player2 = player1;
-  } else if { (cave2.player_id)
+  } else if (cave2.player_id) {
     get_player_info(database, cave2.player_id, &player2);
   } else {  /* System */
     memset(&player2, 0, sizeof player2);

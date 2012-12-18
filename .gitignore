@@ -6,6 +6,7 @@ src/config/*.xml
 src/config/*.tmp
 src/dbs/db-util
 src/dbs/game_rules.sql
+src/tmp/*
 src/game/include/config.inc.php
 src/game/include/effect_list.php
 src/game/include/game_rules.php
