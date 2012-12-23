@@ -17,6 +17,8 @@ require_once("include/config.inc.php");
 require_once("include/params.inc.php");
 require_once("include/template.inc.php");
 
+print_r($_GET);
+die();
 //messages
 $messageText = array (
   'default' => _('Es ist ein Fehler aufgetreten. Bitte erneut einloggen um weiterspielen zu können.'),
@@ -25,10 +27,6 @@ $messageText = array (
   'logout'  => _('Du bist jetzt ausgeloggt und kannst den Browser schließen oder weitersurfen.<br /><br />Vielen Dank für das Spielen von Uga-Agga!'),
   'wrongSessionID' => _('Falsche oder ungültige SessionID.'),
 );
-
-// load and open template
-$template = new Template(UA_GAME_DIR . '/templates/de_DE/uga/');
-$template->setFile('finish.tmpl');
 
 $id = Request::getVar('id', '');
 if (!empty($id) && isset($messageText[$id])) {
@@ -41,11 +39,13 @@ if (!empty($id) && isset($messageText[$id])) {
       @session_destroy();
     break;
   }
-
 } else {
   $message = $messageText['default'];
 }
 
+// load and open template
+$template = new Template(UA_GAME_DIR . '/templates/de_DE/uga/');
+$template->setFile('finish.tmpl');
 
 $template->addVars(array(
   'gfx'  => DEFAULT_GFX_PATH,

@@ -44,6 +44,7 @@ class Player {
   var $auth;
   var $donateLocked;
   var $tutorialID;
+  var $jabber;
 
   function Player($record) {
 
@@ -72,6 +73,7 @@ class Player {
     $this->auth               = unserialize($record['auth']);
     $this->donateLocked       = unserialize($record['donateLocked']);
     $this->tutorialID         = $record['tutorialID'];
+    $this->jabber             = $record['jabber'];
   }
 
   static function getPlayer($playerID, $complete=false) {

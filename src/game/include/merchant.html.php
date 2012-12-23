@@ -18,7 +18,7 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 
   // open template
   $template->setFile('merchant.tmpl');
-  @require_once('rules/rndMessages.php');
+  @include_once('rules/rndMessages.php');
 
   // messages
   $messageText = array (

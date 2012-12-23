@@ -1,144 +1,67 @@
-/** this method is used in the improvement and defense screens
- to load more details from the server and show and hide the
- corresponding element. Assumes a specific layout of the rows;
- namely, there is a row containing the "header" and the links,
- this row is followed by another row, that should be toggled,
- and this row contains one element td.object-details that
- should be populated with the html from the server.*/
-function toggleObjectDetails(a, url, event) {
-  var element = a.parents('tr.object-row').next();
-  var content = element.contents('td.object-details');
-  if (content.children().length == 0) {
-    content.html('Loading...')
-    .load(url+"&method=ajax");
-  }
-  element.toggle();
+DEBUG = 'on';
+
+$(document).on('click', 'a', function(event){
   event.preventDefault();
-}
 
-function displayExportDialog(a, url, event) {
-  
-    // prepare dialog window
-    $('#export-dialog').dialog({
-        autoOpen:false,
-        height: 600,
-        width: 800,
-        modal: true,
-        resizable: true,
-        buttons: {
-          Schließen: function() {
-            $(this).dialog('close');
-          }
+  var url = $(this).attr('href');
+  if ($(this).is('.absolute')) {
+    ua_log('fix url redirect: '+url);
+    window.location.replace(url);
+  } else if ($(this).is('.new-window')) {
+    ua_log('Open new Window: '+url);
+    window.open(url);
+  } else if ($(this).is('.object-detail-link')) {
+    var parent = $(this).parents('tr.object-row').next();
+    parent.toggle();
+    if (parent.children().html().length === 0) {
+      parent.children().html('<div class="text-center">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>');
+      ua_log('load ajax object detail: '+url);
+      $.get(url+'&method=ajax', function(data){parent.children().html(data);});
+    }
+  } else if ($(this).is('.export-link')) {
+    ua_log('Open export Window: '+url);
+    $('#export-dialog').dialog({autoOpen:false,height: 600,width: 800,modal: true,resizable: true,buttons: {'Schließen': function(){$( this ).dialog('close');}}});
+    $('#export-dialog').dialog('open').html('Exportiere Daten...').load(url+'&method=ajax');
+  } else {
+    ua_log('Load Ajax Content: '+url);
+    $('#loader').show(); $('#content').hide();
+    $.get(url+'&method=ajax', function(data) {
+      try {
+        var json = jQuery.parseJSON(data);
+        if (json.mode === 'finish') {
+          $("#overlay").show();
+          $('#loader').html('<div class="text-center">'+json.msg+'</div>');
+          $('#loader').attr('title', json.title);
+          $('#loader').dialog({width: 600, height: 200});
         }
+      } catch(e) {
+        $('#loader').dialog(); $('#loader').dialog('destroy');
+        $('#content').html($(data).find('#content').html());
+        $('#farmpoints').html($(data).find('#farmpoints').html());
+        $('#warpoints_info').html($(data).find('#warpoints_info').html());
+        document.title = $(data).filter('title').text();
+        $('#loader').hide(); $('#content').show(); 
+      }
     });
-    
-    $('#export-dialog').dialog('open').html("Exportiere Daten...").load(url+"&method=ajax");
-
-}
-
-wmtt = null;
-document.onmousemove = updateWMTT;
-function updateWMTT(e) {
-  if (wmtt != null && wmtt.style.display == 'block') {
-    x = (e.pageX ? e.pageX : window.event.x) + wmtt.offsetParent.scrollLeft - wmtt.offsetParent.offsetLeft;
-    y = (e.pageY ? e.pageY : window.event.y) + wmtt.offsetParent.scrollTop - wmtt.offsetParent.offsetTop;
-    wmtt.style.left = (x + 10) + "px";
-    wmtt.style.top   = (y + 10) + "px";
+    if(url!=window.location){window.history.pushState({path:url}, '', $(this).attr('href'));}
   }
-}
-function showWMTT(id) {
-  wmtt = document.getElementById(id);
-  wmtt.style.display = "block";
-}
-function hideWMTT() {
-  wmtt.style.display = "none";
-}
+});
+
+$(document).on("click", ".box_toggle", function(event){$(this).css('display', 'none');$('#'+$(this).attr('id')+'_content').slideDown("slow");});
+$(document).on("hover", ".change_mouseover", function(){$(this).css('cursor', 'pointer');}).on("mouseout", ".change_mouseover", function() {$(this).css('cursor', 'default');});
+
+$(document).on({mouseover: function() {$('div#warpoints').show();},mouseleave: function() {$('div#warpoints').hide();}}, "div#warpoints_info");
+$(document).on("mousemove", "div#warpoints_info", function(e) {$("div#warpoints").css('top', e.pageY + 10).css('left', e.pageX + 20);});
+
+$(document).on("click", ".load_max", function(){if ($('#'+$(this).attr('id')+'_input').val() === ''){$('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);} else {$('#'+$(this).attr('id')+'_input').val('');}});
 
 $(document).ready(function() {
-  $('a.new-window').click(function (event) {
-    window.open($(this).attr('href'));
-    return false;
-  });
+  $(".nav1").accessibleTabs({tabhead: 'h4', fx:'fadeIn', saveState:true, cssClassAvailable:true, autoAnchor:false});
+  $(".nav2").accessibleTabs({wrapperClass: 'content2', currentClass: 'current2', tabhead: 'h5', tabbody: '.tabbody2', fx:'fadeIn', cssClassAvailable:true, autoAnchor:false});
 
-  // The following code attaches the ajax-detail toggle to the click
-  // event of all detail links on the page.  
-  $('a.object-detail-link').click(function (event) {
-    var url = $(this).attr('href');
-    toggleObjectDetails($(this), url, event);
-  });
-
-  $('.box_toggle').click(function(){
-    $(this).css('display', 'none');
-    $('#'+$(this).attr('id')+'_content').slideDown("slow");
-  });
-
-  $('.box_show_hide').click(function(){
-    $('#'+$(this).attr('id')+'_content').toggle("fast");
-  });
-
-  $('.change_mouseover').hover(
-    function() { $(this).css('cursor', 'pointer'); },
-    function() { $(this).css('cursor', 'default'); }
-  );
-
-  $('.load_max').click(function(){
-    if ($('#'+$(this).attr('id')+'_input').val() == '') {
-      $('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);
-    } else {
-      $('#'+$(this).attr('id')+'_input').val('');
-    }
-  });
-
-  //function for tutorial form dropdown
-  function tutorial() {
-    if ($(".ua-tutorial-box").is(":hidden")){
-      $(".ua-tutorial-box").slideDown("slow");
-    }
-    else{
-      $(".ua-tutorial-box").slideUp("slow");
-    }
-  }
-
-  //run contact form when any contact link is clicked
-  $(".ua-tutorial-button").click(function(){tutorial()});
-
-  //display export popup
-  $('a.export-link').click(function (event) {
-    var url = $(this).attr('href');
-    displayExportDialog(this, url, event);
-    event.preventDefault();
-  });
-
-  // set up the options to be used for jqDock...
-  var dockOptions =
-    { align: 'middle' // horizontal menu, with expansion DOWN from a fixed TOP edge
-    , size: 30
-    , labels: 'bc'  // add labels (defaults to 'br')
-    };
-  // ...and apply...
+  // jqDock
+  var dockOptions = {align: 'middle', size: 30, labels: 'bc'};
   $('#ua-head-menu-item').jqDock(dockOptions);
-
-  // navigate options
-  $(".nav1").accessibleTabs({
-    tabhead: 'h4',
-    fx:'fadeIn',
-    saveState:true,
-    cssClassAvailable:true,
-    autoAnchor:true
-  });
-
-  $(".nav2").accessibleTabs({
-    wrapperClass: 'content2', 
-    currentClass: 'current2',
-    tabhead: 'h5',
-    tabbody: '.tabbody2',
-    fx:'fadeIn',
-    cssClassAvailable:true,
-    autoAnchor:true
-  });
-
-  // hide status msg
-  $('a.hide_status_msg').click(function(){
-    $(".status_msg").css('display', 'none');
-  });
 });
+
+function ua_log(out){if(DEBUG==='on'){console.log(out);}}

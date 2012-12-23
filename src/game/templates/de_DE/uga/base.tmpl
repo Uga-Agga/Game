@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="yaml/screen/typography.css" type="text/css"/>
     <link rel="stylesheet" href="yaml/forms/gray-theme.css" type="text/css"/>
     <link rel="stylesheet" href="yaml/add-ons/accessible-tabs/tabs.css" type="text/css"/>
-    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.8.18.custom.css" type="text/css" />
+    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.9.2.custom.css" type="text/css" />
     <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/styles.css" type="text/css"/>
     <!--[if lte IE 8]><link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/ie.css" type="text/css"/><![endif]-->
 
@@ -39,11 +39,13 @@
     <script type="text/javascript" src="js/jquery.cookie.js"></script>
     <script type="text/javascript" src="yaml/add-ons/accessible-tabs/jquery.tabs.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
+    <script type="text/javascript" src="js/jappixmini.js"></script>
     <script type="text/javascript" src="js/ua.js"></script>
 
     <style type="text/css">
-      .ua-box {background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
-      .error, .alert, .notice, .success, .info, .tooltip { }
+      .ua-box { background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
+      .ui-widget { background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
+
       .msg_read0 a {background-image: url('http://game.uga-agga.de/gfx/de_DE/t_uga/messages/mail.gif');}
 
       .ym-col-head1 { background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); }
@@ -62,28 +64,12 @@
         return time; 
       }
 
-      $(function() {
-      var open = {% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}true{% else %}false{% endif %};
-        $('#footerSlideButton').click(function() {
-          if(open === false) {
-            $('#footerSlideContent').animate({ height: '200px' });
-            $(this).css('backgroundPosition', 'bottom left');
-            $('#tutorialButton').show();
-            open = true;
-          } else {
-            $('#footerSlideContent').animate({ height: '0px' });
-            $(this).css('backgroundPosition', 'top left');
-            $('#tutorialButton').hide();
-            open = false;
-          }
-        });
-      });
-
     </script>
 
   {% endblock %}
 </head>
 <body>
+  <div id="overlay"></div>
   <div class="ym-wrapper">
     <div class="ym-column">
       <div class="ym-col-head-middle">
@@ -106,7 +92,7 @@
         <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
       </div>
       <div class="ym-col1 ym-col-head1">
-        <div class="bold" style="margin-left: 10px ;margin-top: 154px" onmouseover="showWMTT('warpoints')" onmouseout="hideWMTT()">Kriegspunkte der Höhle: {{ war_points.warpoints }}</div>
+        <div id="warpoints_info" class="bold change_mouseover" style="margin-left: 10px ;margin-top: 154px">Kriegspunkte der Höhle: {{ war_points.warpoints }}</div>
         <div id="warpoints" class="tooltip2">Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest.<br />Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden.<br />Unten sind alle Kriegspunkte aufgeführt!<br/ ><br/ >Einheiten: {{ war_points.warpointsUnits }}<br />Verteidigungsanlagen: {{ war_points.warpointsDefense }}</div>
       </div>
       <div class="ym-col2 ym-col-head2">
@@ -114,7 +100,7 @@
         <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
         <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
         <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
-        <div class="bold" style="margin-right: 10px ;margin-top: 5px">Farmpunkte: {{ player_fame }}</div>
+        <div id="farmpoints" class="bold" style="margin-right: 10px ;margin-top: 5px">Farmpunkte: {{ player_fame }}</div>
       </div>
     </div>
 
@@ -139,9 +125,9 @@
           <ul class="list-menu">
             <li><a href="main.php?modus={{ improvement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></a></li>
             <li><a href="main.php?modus={{ science_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></a></li>
-            <li><a href="main.php?modus={{ defense_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
-            <li><a href="main.php?modus={{ unit_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
-            <li><a href="main.php?modus={{ merchant_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
+            <li><a class="navigation" href="main.php?modus={{ defense_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
+            <li><a class="navigation" href="main.php?modus={{ unit_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
+            <li><a class="navigation" href="main.php?modus={{ merchant_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
             <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
@@ -152,25 +138,28 @@
         </div>
         <div class="ym-col3 ym-col-con3">
           <div class="ym-cbox">
-            <ul class="list-space">
-              <li>
-              {% for item in resources %}
-                <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
-                {{ item.amount }} ({{ item.delta }})&nbsp;</span>
-              {% endfor %}
-              </li>
-              <li>
-                <div class="block" id="cave-details-list">
-                  |&nbsp;{% for item in navigateCave %}
-                    <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
-                  {% endfor %}
-                </div>
-              </li>
-              <li>
-                <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
-              </li>
-            </ul>
-            {% block content %}{% endblock %}
+            <div id="loader" class="notice" style="display: none;">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>
+            <div id="content">
+              <ul class="list-space">
+                <li>
+                {% for item in resources %}
+                  <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
+                  {{ item.amount }} ({{ item.delta }})&nbsp;</span>
+                {% endfor %}
+                </li>
+                <li>
+                  <div class="block" id="cave-details-list">
+                    |&nbsp;{% for item in navigateCave %}
+                      <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
+                    {% endfor %}
+                  </div>
+                </li>
+                <li>
+                  <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
+                </li>
+              </ul>
+             {% block content %}{% endblock %}
+           </div>
           </div>
         </div>
         <div class="ym-ie-clearing">&nbsp;</div>
@@ -194,37 +183,6 @@
       </div>
     {% endblock %}
   </div>
-
-  {% if tutorial.show %}
-    <div id="footerSlideContainer">
-      <div id="footerSlideButton"></div>
-      <div id="footerSlideContent">
-        <div id="footerSlideText">
-          <h2 class="text-center" style="color: #FFFFFF;">{{ tutorial.content.header }}</h2>
-
-          <div class="ym-grid">
-            {% for item in tutorial.content.tabs %}
-              <div class="ym-{{ item.width }} ym-gl">
-                <div class="ym-gbox">
-                  <h3 style="color: #FFFFFF;">{{ item.header }}</h3><br />{{ item.txt|raw }}
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-
-          {% if tutorial.finish %}
-          <div id="tutorialButton" class="text-center" style="bottom: 0px; position: absolute; width: 100%;">
-            <form method="post" action="main.php?{{ query_string|raw }}&amp;caveID={{ cave_id }}">
-              <input type="hidden" name="nextTutorial" value="next" />
-              <input type="submit" value="zum nächstes Tutorial" class="submit" id="submit" name="submit" />
-            </form>
-          </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  {% endif %}
-
   {% include "extendsFooter.tmpl" %}
 </body>
 </html>

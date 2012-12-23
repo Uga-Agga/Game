@@ -30,16 +30,14 @@ page_start();
 
 // session expired?
 if (page_sessionExpired()) {
-  header("Location: " . Config::GAME_END_URL . "?id=inaktiv");
-  exit;
+  page_finish('inaktiv');
 } else {
   $_SESSION['lastAction'] = time();
 }
 
 // session valid?
 if (!page_sessionValidate()) {
-  header("Location: " . Config::GAME_END_URL . "?id=wrongSessionID");
-  exit;
+  page_finish('wrongSessionID');
 }
 
 // refresh user data
@@ -425,7 +423,7 @@ switch ($modus) {
   break;
 
   case LOGOUT:
-    header("Location: finish.php?id=logout");
+    page_finish('logout');
     exit;
     break;
 
@@ -527,6 +525,7 @@ $template->addVars(array(
   'countdown_time'    => $now->format("M j, Y H:i:s O"),
   'query_string'      => $requestString,
   'war_points'        => getWarpointsByCaveData($ownCaves[$caveID]),
+  'jabber'            => array('user' => $_SESSION['player']->name, 'passwd' => $_SESSION['session']['loginchecksum']),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],

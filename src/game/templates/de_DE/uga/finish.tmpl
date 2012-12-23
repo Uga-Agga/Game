@@ -45,8 +45,7 @@
   <div id="lightBox">
     <div style="float: left; width: 25%;"><img src="{{ gfx }}/de_DE/t_uga/icon_error_page.png" alt ="" title="" width="150px" height="150px" /></div>
     <div style="float: left; width: 75%;">
-      {{ status_msg|raw }}<br /><br />
-      <a href="{{ login_path }}">Hier gehts weiter zum Portal</a>
+      {{ status_msg.msg|raw }}
     </div>
     <div style="clear: both;"></div>
   </div>

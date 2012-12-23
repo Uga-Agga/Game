@@ -17,17 +17,6 @@ require_once("include/config.inc.php");
 require_once("include/db.inc.php");
 require_once("include/Player.php");
 
-function page_error403($message) {
-  @session_destroy();
-  header("Location: " . Config::GAME_END_URL . "?id=".urlencode($message));
-  exit;
-}
-
-function page_dberror() {
-  header("Location: " . Config::GAME_END_URL . "?id=db");
-  exit;
-}
-
 function stopwatch($start=false) {
   static $starttime;
 
@@ -48,7 +37,7 @@ function page_start() {
 
   // check for cookie
   if (!sizeof($_COOKIE)) {
-    page_error403('Sie müssen 3rd party cookies erlauben.');
+    page_finish('cookie');
   }
 
   // start session
@@ -56,14 +45,12 @@ function page_start() {
 
   // check for valid session
   if (!isset($_SESSION['player']) || !$_SESSION['player']->playerID) {
-    header("Location: " . Config::GAME_END_URL . "?id=inaktiv");
-    exit;
+    page_finish('inaktiv');
   }
 
   // connect to database
   if (!($db = DbConnect())) {
-    header("Location: " . Config::GAME_END_URL . "?id=db");
-    exit;
+    page_finish('db');
   }
 
   // init I18n
@@ -208,6 +195,47 @@ function page_ore() {
 
   // set new timestamp
   $_SESSION['ore_time'] = $now;
+}
+
+function page_finish($id='') {
+  $messageText = array (
+    'cookie'         => array('title' => _('Cookie fehler'),    'msg'  => _('Sie müssen 3rd party cookies erlauben.<br /><br /<a href="' . LOGIN_PATH . '">Hier gehts weiter zum Portal</a>')),
+    'default'        => array('title' => _('Warnmeldung'),      'msg' => _('Es ist ein Fehler aufgetreten. Bitte erneut einloggen um weiterspielen zu können.')),
+    'db'             => array('title' => _('Datenbank Fehler'), 'msg' => _('Es konnte keine Verbindung zur Datenbank hergestellt werden!<br />Bitte wende dich an einen Administrator oder versuche es später erneut.')),
+    'inaktiv'        => array('title' => _('Inaktivität'),      'msg' => sprintf(_('Du warst für %s Minuten oder mehr inaktiv. Bitte log dich erneut ins Spiel ein um weiterspielen zu können.'), ((int)(SESSION_MAX_LIFETIME/60)))),
+    'logout'         => array('title' => _('Logout'),           'msg' => _('Du bist jetzt ausgeloggt und kannst den Browser schließen oder weitersurfen.<br /><br />Vielen Dank für das Spielen von Uga-Agga!')),
+    'wrongSessionID' => array('title' => _('Session Fehler'),   'msg' => _('Falsche oder ungültige SessionID.')),
+  );
+
+  $useAjax = (Request::getVar('method', '') == 'ajax') ? true : false;
+
+  if (!empty($id) && isset($messageText[$id])) {
+    $message = $messageText[$id];
+  } else {
+    $message = $messageText['default'];
+  }
+  $message['msg'] = $message['msg'] . '<br /><br /><a class="absolute" href="' . LOGIN_PATH . '">Hier gehts weiter zum Portal</a>';
+
+  @session_start();
+  @session_destroy();
+
+  if ($useAjax) {
+    die(json_encode(array('mode' => 'finish', 'title' => $message['title'], 'msg' => $message['msg'])));
+  } else {
+    // load and open template
+    $template = new Template(UA_GAME_DIR . '/templates/de_DE/uga/');
+    $template->setFile('finish.tmpl');
+
+    $template->addVars(array(
+      'gfx'        => DEFAULT_GFX_PATH,
+      'login_path' => LOGIN_PATH,
+      'status_msg' => $message,
+      'time'       => date("d.m.Y H:i:s"),
+    ));
+    $template->render();
+  }
+
+  die();
 }
 
 ?>

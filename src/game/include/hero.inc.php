@@ -615,7 +615,7 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
         if (!$sql->execute() || $sql->rowCount() == 0) {
           continue;
         }
-    
+
         // add experience points
         $sql = $db->prepare("UPDATE " . HERO_TABLE . "
                              SET exp = exp + :expValue
@@ -630,10 +630,10 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
           $sql_setback->bindValue('value', $value, PDO::PARAM_INT);
           $sql_setback->bindValue('caveID', $caveID, PDO::PARAM_INT);
           $sql_setback->execute();
-    
+
           continue;
         }
-    
+
         $ownCaves = getCaves($playerID);
         $points += $value * $resource->takeoverValue;
       }
