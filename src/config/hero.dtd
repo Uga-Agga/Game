@@ -2,7 +2,7 @@
 <!-- Hero -->
 <!ELEMENT Heroes (HeroTypes)>
 <!ELEMENT HeroTypes (HeroType+)>
-<!ELEMENT HeroType (Name+, Description+, lvl, lvlUp, maxHP, force, regHP, ritual)>
+<!ELEMENT HeroType (Name+, Description+, lvl, lvlUp, maxHP, regHP, ritual)>
 <!ATTLIST HeroType
   id CDATA #REQUIRED
 >
@@ -22,7 +22,6 @@
 <!ELEMENT lvl (#PCDATA)>
 <!ELEMENT lvlUp (#PCDATA)>
 <!ELEMENT maxHP (#PCDATA)>
-<!ELEMENT force (#PCDATA)>
 <!ELEMENT regHP (#PCDATA)>
 <!ELEMENT p (#PCDATA)>
 <!ELEMENT Cost (#PCDATA)>

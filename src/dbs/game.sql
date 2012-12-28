@@ -488,8 +488,6 @@ CREATE TABLE IF NOT EXISTS `Hero` (
   `isMoving` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `tpFree` int(11) unsigned NOT NULL DEFAULT '0',
   `maxHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
-  `forceLvl` int(11) unsigned NOT NULL DEFAULT '0',
-  `force` varchar(11) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `regHpLvl` int(11) unsigned NOT NULL DEFAULT '0',
   `regHP` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`heroID`)

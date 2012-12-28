@@ -147,17 +147,17 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         if ($hero['tpFree'] >= 1) {
           $skill = Request::getVar('skill', '');
           switch ($skill) {
-            case 'force':
-              //typ='force';
-              if ($hero['forceLvl']<10) {
-                if (skillForce($playerID, $hero)) {
-                  $messageID = 1;
-                }
-                break;
-              }
-
-              $messageID = -5;
-            break;
+//            case 'force':
+//              //typ='force';
+//              if ($hero['forceLvl']<10) {
+//                if (skillForce($playerID, $hero)) {
+//                  $messageID = 1;
+//                }
+//                break;
+//              }
+//
+//              $messageID = -5;
+//            break;
 
             case 'maxHP':
               //typ='maxHP';
@@ -358,10 +358,14 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           }
         }
 
-        $skill['effect_values'][] = $name . ": " . ($skill['skillFactor']*$hero['forceLvl']);
+        $skill['effect_values'][] = $name . ": " . ($skill['skillFactor']*$hero[$skill['dbFieldName']]);
       }
+      
+      
+      // get level of skill
+      $skill['level'] = $hero[$skill['dbFieldName']];
 
-    // filter skills by hero type
+      // filter skills by hero type
       foreach ($skill['requiredType'] as $rt) {
         if ($rt == $hero['id']) {
           $skills[] = $skill;
@@ -371,14 +375,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
     // check if send button is disabled
     foreach ($skills as $skillID => $skill) {
-      if ($hero[$skill['dbFieldName']] || 
-          $skill['costTP'] > $hero['tpFree'] || 
-          $skill['requiredLevel'] > $hero['lvl']) {
+      if ($skill['costTP'] > $hero['tpFree'] || 
+          $skill['requiredLevel'] > $hero['lvl'] ||
+          $skill['maxLevel'] <= $skill['level']) {
         $skills[$skillID]['disableButton'] = true;
-      }
-
-      if ($hero[$skill['dbFieldName']]) {
-        $skills[$skillID]['showEffects'] = true;
       }
     }
 

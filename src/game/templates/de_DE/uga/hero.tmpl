@@ -3,6 +3,7 @@
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
  * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -65,18 +66,6 @@
                 <tr>
                   <td class="bold">freie Talentpunkte (TP):</td>
                   <td class="text-right" colspan="3">{{ hero.tpFree }}</td>
-                </tr>
-                <tr>
-                  <td class="bold">Stärke der Fertigkeit:</td>
-                  <td class="text-right">{{ hero.force }}</td>
-                  <td class="text-right" style="width: 55px;">Level <span class="bold">{{ hero.forceLvl }}</span></td>
-                  <td class="text-right" style="width: 18px;">
-                    {% if hero.tpFree>0 and hero.isAlive>0 %}
-                      <a href="main.php?modus={{ hero_link }}&amp;action=skill&amp;skill=force"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png" width="16px" height="16px" style="vertical-align: middle;" alt="Erhöhen" /></a>
-                    {% else %}
-                      &nbsp;
-                    {% endif %}
-                  </td>
                 </tr>
                 <tr>
                   <td class="bold">Maximale Lebenspunkte:</td>
@@ -159,9 +148,11 @@
               <tr>
                <th class="ua-td-name left">Name</th>
                <th>Benötigtes Level</th>
+               <th>Max. Level</th>
                <th>Kosten</th>
                <th>Basisfaktor</th>
-               <th>&nbsp;</th>
+               <th>Effekt</th>
+               <th>Skill</th>
               </tr>
             </thead>
             <tbody>
@@ -171,21 +162,22 @@
                <td style="text-align: left;"><a href="{{ rules_path }}?modus=skill&amp;skillID={{ skill.dbFieldName }}" class="bold new-window">{{ skill.name }}</a>
                <div class="text-small">{{ skill.description|raw }}</div>
                </td>
-               <td>{{ skill.requiredLevel }}</td>
-               <td>{{ skill.costTP }} TP</td>
+               <td>{% if skill.requiredLevel > hero.lvl %} <font color="red">{% endif %}{{ skill.requiredLevel }}{% if skill.requiredLevel > hero.lvl %} </font>{% endif %}</td>
+               <td>{% if skill.maxLevel < skill.level %} <font color="red">{% endif %}{{ skill.maxLevel }}{% if skill.maxLevel < skill.level %} </font>{% endif %}</td>
+               <td>{% if skill.costTp > hero.tpFree %} <font color="red">{% endif %}{{ skill.costTP }} TP {% if skill.costTp > hero.tpFree %}</font>{% endif %}</td>
                <td>{{ skill.skillFactor }}</td>
                <td>
-                <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
-                  <input type="hidden" name="action" value="skill_ability"/>
-                  <input type="hidden" name="skillID" value="{{ skill.id }}"/>
-                  {% if skill.showEffects %}
-                    {% for item in skill.effect_values %}
-                      {{ item }} <br />
-                    {% endfor %} 
-                  {% else %}
-                    <input name="value" value="Ausbilden" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
-                  {% endif %}
-                </form>
+               {% for item in skill.effect_values %}
+                 {{ item }} <br />
+               {% endfor %} 
+               </td>
+               <td>
+                 {{ skill.level }} <br />
+                 <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
+                   <input type="hidden" name="action" value="skill_ability"/>
+                   <input type="hidden" name="skillID" value="{{ skill.id }}"/>
+                   <input name="value" value="Erhöhen" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
+                 </form>
                </td>
               </tr>
               {% endfor %}
