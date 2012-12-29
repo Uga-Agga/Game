@@ -561,11 +561,12 @@ struct Battle *hero_update_after_battle(db_t *database,
         int heroID,
         struct Cave *defender_cave,
         int war_points_attacker,
-        int war_points_defender) {
+        int war_points_defender,
+        int change_owner) {
   struct Hero hero;
   dstring_t *ds;
 
-  /* attacker hero update*/
+  // attacker hero update
   if (battle->attackers->heroFights) {
     if (heroID > 0) {
       get_hero_by_id(database, heroID, &hero);
@@ -575,7 +576,7 @@ struct Battle *hero_update_after_battle(db_t *database,
       debug(DEBUG_HERO, "hero_update_after_battle attacker: %s", dstring_str(ds));
       db_query_dstring(database, ds);
 
-      /*check if hero is alive*/
+      // check if hero is alive
       get_hero_by_id(database, heroID, &hero);
       if (hero.healPoints <= 0) {
         kill_hero(database, heroID);
@@ -590,7 +591,7 @@ struct Battle *hero_update_after_battle(db_t *database,
     }
   }
 
-  /* defender hero update*/
+  // defender hero update
   if (battle->defenders->heroFights) {
     heroID = defender_cave->heroID;
 
@@ -602,9 +603,19 @@ struct Battle *hero_update_after_battle(db_t *database,
       debug(DEBUG_HERO, "hero_update_after_battle defender: %s", dstring_str(ds));
       db_query_dstring(database, ds);
 
-      /*check if hero is alive*/
+      // check if hero is alive
       get_hero_by_id(database, heroID, &hero);
       if (hero.healPoints <= 0) {
+        kill_hero(database, heroID);
+        battle->defenders_hero_died = 1;
+      }
+    }
+
+    // on takeover owner change kill hero in defenders cave
+    if (change_owner) {
+      heroID = defender_cave->heroID;
+
+      if (heroID > 0) {
         kill_hero(database, heroID);
         battle->defenders_hero_died = 1;
       }
@@ -1031,7 +1042,7 @@ void movement_handler (db_t *database, db_result_t *result) {
       hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
 
       /* update hero */
-      battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender);
+      battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender, 0);
 
       /* create and send reports */
       battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo, 0, 0, &relation1, &relation2, war_points_show, war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender);
@@ -1182,7 +1193,14 @@ void movement_handler (db_t *database, db_result_t *result) {
 
       /* attacker won:  put survivors into cave, change owner
        * attacker lost: send back survivors */
-      change_owner = battle->winner == FLAG_ATTACKER && cave2.player_id != PLAYER_SYSTEM && player1.max_caves > get_number_of_caves(database, player1.player_id) && ((relation1.relationType == RELATION_TYPE_WAR && relation2.relationType == RELATION_TYPE_WAR) || (!war1 && !war2) || (strcasecmp(player1.tribe, player2.tribe) == 0)); // Spieler im selben stamm
+      change_owner =
+          battle->winner == FLAG_ATTACKER
+            && cave2.player_id != PLAYER_SYSTEM
+            && player1.max_caves > get_number_of_caves(database, player1.player_id)
+            && ((relation1.relationType == RELATION_TYPE_WAR
+                 && relation2.relationType == RELATION_TYPE_WAR)
+                 || (!war1 && !war2)
+                 || (strcasecmp(player1.tribe, player2.tribe) == 0)); // Spieler im selben stamm
 
       //bodycount calculate
       attacker_lose = bodycount_calculate(battle, FLAG_DEFENDER);
@@ -1202,7 +1220,7 @@ void movement_handler (db_t *database, db_result_t *result) {
       hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
 
       /* update hero */
-      battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender);
+      battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender, change_owner);
 
       if (change_owner) {
         debug(DEBUG_TAKEOVER, "change owner of cave %d to new owner %d", target_caveID, cave1.player_id);
@@ -1224,8 +1242,9 @@ void movement_handler (db_t *database, db_result_t *result) {
         war_points_update(database, &player1, &player2, war_points_attacker, war_points_defender);
       }
 
-      /* create and send reports */
+      // create and send reports
       battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo, change_owner, 1 + takeover_multiplier, &relation1, &relation2,war_points_show, war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender);
+
       //bodycount calculate
 
       if (relation1.relationType == RELATION_TYPE_PRE_WAR || relation1.relationType == RELATION_TYPE_WAR) {
