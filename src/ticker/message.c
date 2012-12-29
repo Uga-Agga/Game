@@ -964,7 +964,7 @@ static char* battle_report_xml (db_t *database,
       religion = mxmlNewElement(battleValues, "religion");
         mxmlNewText(religion, 0, (char*) god_bonus);
 
-    //hero
+    // hero
     if (result->attackers->heroFights && IsAttacker) {
       hero = mxmlNewElement(attacker, "hero");
         points = mxmlNewElement(hero, "points");
@@ -1061,6 +1061,7 @@ static char* battle_report_xml (db_t *database,
         mxmlNewText(religion, 0, (char*) god_bonus);
     }
 
+    // hero
     if (result->defenders->heroFights && !IsAttacker) {
       hero = mxmlNewElement(defender, "hero");
         points = mxmlNewElement(hero, "points");

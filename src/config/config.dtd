@@ -310,11 +310,12 @@
 >
 <!--heroSkills-->
 <!ELEMENT HeroSkills (HeroSkill*)>
-<!ELEMENT HeroSkill (Name+, Description+, CostTP, RequiredLevel*, RequiredType+, skillFactor, effects)>
+<!ELEMENT HeroSkill (Name+, Description+, CostTP, RequiredLevel*, MaxLevel, RequiredType+, skillFactor, effects)>
 <!ATTLIST HeroSkill
   id ID #REQUIRED
 >
 <!ELEMENT RequiredLevel (#PCDATA)>
+<!ELEMENT MaxLevel (#PCDATA)>
 <!ELEMENT skillFactor (#PCDATA)>
 <!ELEMENT RequiredType EMPTY>
 <!ATTLIST RequiredType

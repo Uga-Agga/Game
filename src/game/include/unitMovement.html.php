@@ -250,11 +250,6 @@ function unit_Movement($caveID, &$ownCave) {
       $moveHero = 0;
     }
 
-    else if (Request::getVar('movementID', 0) == 6 && $moveHero) {
-      $msg = array('type' => 'error', 'message' => _('Dein Held kann leider bei einer Übernahme nicht helfen.'));
-      $moveHero = 0;
-    }
-
     //  Einheiten bewegen!
     else {
       // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor

@@ -712,6 +712,7 @@ function init_potions() {
                      'dbFieldName' =&gt; '<xsl:value-of select="@id"/>',
                      'costTP' =&gt; '<xsl:apply-templates select="CostTP"/>',
                      'requiredLevel' =&gt; '<xsl:apply-templates select="RequiredLevel"/>', 
+                     'maxLevel' =&gt; '<xsl:apply-templates select="MaxLevel"/>', 
                      'requiredType' =&gt; array(<xsl:apply-templates select="RequiredType"/>),
                      'skillFactor' =&gt; '<xsl:value-of select="skillFactor"/>',
                      'effects' =&gt; array(<xsl:apply-templates select="effects/effect"/>)

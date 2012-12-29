@@ -33,7 +33,6 @@ function init_heroTypes () {
                      'heroTypeID' =&gt; <xsl:value-of select="count(preceding-sibling::*)"/>,
                      'lvl_formula' =&gt; '<xsl:value-of select="lvl"/>', 
                      'lvlUp_formula' =&gt; '<xsl:value-of select="lvlUp"/>',
-                     'force_formula' =&gt; '<xsl:value-of select="force"/>', 
                      'regHP_formula' =&gt; '<xsl:value-of select="regHP"/>', 
                      'maxHP_formula' =&gt; '<xsl:value-of select="maxHP"/>',
                      'ritual' =&gt; array('ritualCost' => array(<xsl:apply-templates select="ritual/Cost"/>),
