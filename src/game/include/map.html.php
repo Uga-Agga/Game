@@ -2,7 +2,8 @@
 /*
  * map.html.php - 
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  Sascha Lange <salange@uos.de>, David Unger
+ * Copyright (c) 2011  Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

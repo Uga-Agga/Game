@@ -239,9 +239,10 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      if (Request::isPost('ingame') && ($userAuth['msg_public'] || $userAuth['isLeader'])) {
+      $messageType = Request::getVar('messageType', '');
+      if ($messageType == 'ingame' && ($userAuth['msg_public'] || $userAuth['isLeader'])) {
         $messageID = tribe_processSendTribeIngameMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
-      } else if ($userAuth['msg_tribe'] || $userAuth['isLeader']) {
+      } else if ($messageType == 'tribemsg' && $userAuth['msg_tribe'] || $userAuth['isLeader']) {
         $messageID = tribe_processSendTribeMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
       } else {
         $messageID = -1;
@@ -278,12 +279,12 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      $password = Request::getVar('tribe_password', '');
+      $password = Request::getVar('inputPassword', '');
       $postData = array(
-        'name'        => Request::getVar('tribe_name', '', true),
+        'name'        => Request::getVar('inputName', '', true),
         'password'    => (!empty($password)) ? $password : $tribeData['password'],
-        'avatar'      => Request::getVar('tribe_avatar', ''),
-        'description' => Request::getVar('tribe_description', '', true)
+        'avatar'      => Request::getVar('inputAvatar', ''),
+        'description' => Request::getVar('inputDescription', '', true)
       );
 
       $messageID = tribe_processAdminUpdate($tribeTag, $postData);

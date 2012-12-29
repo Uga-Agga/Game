@@ -1,7 +1,8 @@
 {#
 /* boxCost.tmpl -
  * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger, Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -9,14 +10,14 @@
  * the License, or (at your option) any later version. 
  */
 #}
+
 {% if item.resource_cost %}
   {% for resource in item.resource_cost %}
     <img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" />
     {% if resource.enough %}
-      <span class="enough small">{{ resource.value }}</span>
+      <span>{{ resource.value }}</span>
     {% else %}
-      <span class="less-small" onmouseover="showWMTT('missing_{{ item.dbFieldName }}_{{ resource.dbFieldName }}')" onmouseout="hideWMTT()">{{ resource.value }}</span>
-      <div id="missing_{{ item.dbFieldName }}_{{ resource.dbFieldName }}" class="tooltip" >Es fehlen noch: {{ resource.missing }} {{ resource.name }}</div>
+      <span class="less change_mouseover tooltip-show" rel="tooltip" data-placement="top" data-original-title="Es fehlen noch: {{ resource.missing }} {{ resource.name }}">{{ resource.value }}</span>
     {% endif %}
     &nbsp;
   {% endfor %}

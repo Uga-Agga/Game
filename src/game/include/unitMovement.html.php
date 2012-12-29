@@ -1,6 +1,6 @@
 <?php
 /*
- * unitaction.html.php -
+ * unitMovement.html.php -
  * Copyright (c) 2003  OGP Team
  * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *

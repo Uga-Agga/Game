@@ -17,15 +17,6 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
   global $config, $template;
 
-  // get wonder target text
-  $uaWonderTargetText = WonderTarget::getWonderTargets();
-
-  // first check whether that wonder should be displayed...
-  $wonder = $GLOBALS['wonderTypeList'][$wonderID];
-  if (!$wonder || ($wonder->nodocumentation &&
-       rules_checkDependencies($wonder, $caveData) !== TRUE))
-    $wonder = current($GLOBALS['wonderTypeList']);
-
   // open template
   if ($method == 'ajax') {
     $shortVersion = true;
@@ -36,6 +27,21 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
     $template->setFile('wonderDetail.tmpl');
     $template->setShowRresource(false);
   }
+
+  // first check whether that wonder should be displayed...
+  if (!isset($GLOBALS['wonderTypeList'][$wonderID])) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Das Wunder wurde nicht gefunden oder ist derzeit nicht verfügbar.')));
+    return;
+  }
+  $wonder = $GLOBALS['wonderTypeList'][$wonderID];
+
+  if ($wonder->nodocumentation && rules_checkDependencies($wonder, $caveData) !== TRUE) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Das Wunder wurde nicht gefunden oder ist derzeit nicht verfügbar.')));
+    return;
+  }
+
+  // get wonder target text
+  $uaWonderTargetText = WonderTarget::getWonderTargets();
 
   // iterate ressourcecosts
   $resourceCost = array();

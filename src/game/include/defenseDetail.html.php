@@ -1,8 +1,8 @@
 <?php
 /*
- * defense.html.php -
+ * defenseDetail.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,34 +13,31 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-
-################################################################################
-
-/**
- *
- */
-
 function defense_showProperties($defenseID, $cave, $method) {
   global $template;
-
-  // first check whether that defense should be displayed...
-  $defense = $GLOBALS['defenseSystemTypeList'][$defenseID];
-  $maxLevel = round(eval('return '.formula_parseToPHP("{$defense->maxLevel};", '$cave')));
-  $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
-  $maxReadable = formula_parseToReadable($defense->maxLevel);
-
-  if (!$defense || ($defense->nodocumentation && !$cave[$defense->dbFieldName] && rules_checkDependencies($defense, $cave) !== TRUE)) {
-    $defense = current($GLOBALS['defenseSystemTypeList']);
-  }
 
   // open template
   if ($method == 'ajax') {
     $shortVersion = true;
     $template->setFile('defenseDetailAjax.tmpl');
-  }
-  else {
+  } else {
     $shortVersion = false;
     $template->setFile('defenseDetail.tmpl');    
+  }
+
+  // first check whether that unit should be displayed...
+  if (!isset($GLOBALS['defenseSystemTypeList'][$defenseID])) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Verteidigung wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
+  }
+  $defense = $GLOBALS['defenseSystemTypeList'][$defenseID];
+  $maxLevel = round(eval('return '.formula_parseToPHP("{$defense->maxLevel};", '$cave')));
+  $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
+  $maxReadable = formula_parseToReadable($defense->maxLevel);
+
+  if ($defense->nodocumentation && !$cave[$defense->dbFieldName] && rules_checkDependencies($defense, $cave) !== TRUE) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Erweiterung wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
   }
 
   $currentlevel = $cave[$defense->dbFieldName];

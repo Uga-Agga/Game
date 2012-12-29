@@ -14,6 +14,7 @@
 {% block title %}Wunder Details{% endblock %}
 {% block content %}
 
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% else %}
 <div class="ua-box">
   <div class="ua-box-header">{{ name }}</div>
   <div class="ua-box-content">
@@ -92,5 +93,6 @@
 </div>
 
 <div class="success"><a href="{{ rules_path }}?modus=misc&miscID=4" class="new-window">weitere Informationen zu allen Wundern</a></div>
+{% endif %}
 
 {% endblock %}

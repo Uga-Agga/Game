@@ -2,6 +2,7 @@
 /*
  * page.inc.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -216,8 +217,8 @@ function page_finish($id='') {
   }
   $message['msg'] = $message['msg'] . '<br /><br /><a class="absolute" href="' . LOGIN_PATH . '">Hier gehts weiter zum Portal</a>';
 
-  @session_start();
-  @session_destroy();
+  //@session_start();
+  //@session_destroy();
 
   if ($useAjax) {
     die(json_encode(array('mode' => 'finish', 'title' => $message['title'], 'msg' => $message['msg'])));

@@ -2,7 +2,7 @@
 /* unitDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,6 +14,7 @@
 {% block title %}Einheiten Details{% endblock %}
 {% block content %}
 
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% else %}
 <div class="ua-box">
   <div class="ua-box-header">{{ name }}</div>
   <div class="ua-box-content">
@@ -136,5 +137,5 @@
 </div>
 
 <div class="success"><a href="{{ rules_path }}?modus=misc&amp;miscID=1" class="new-window">weitere Informationen zu allen Einheiten</a></div>
-
+{% endif %}
 {% endblock %}

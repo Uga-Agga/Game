@@ -1,7 +1,8 @@
 <?php
 /*
- * unitaction.inc.php -
+ * unitMovement.inc.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

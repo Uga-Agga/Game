@@ -2,6 +2,7 @@
 /*
  * unitbuild.html.php -
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -76,7 +77,7 @@ function unit_getUnitDetail($caveID, &$details) {
         break;
       }
 
-      if (Request::isPost('cancelOrderConfirm')) {
+      if (Request::isPost('postConfirm')) {
         $messageID = unit_cancelOrder($eventID, $caveID);
 
         if ($messageID == 0) {
@@ -191,6 +192,7 @@ function unit_getUnitDetail($caveID, &$details) {
   foreach ($GLOBALS['unitCategoryTypeList'] as $unitsCategory) {
     if (isset($units[$unitsCategory->id])) {
       $tmpUnits[$unitsCategory->sortID] = array(
+        'id'    => $unitsCategory->id,
         'name'  => $unitsCategory->name,
         'items' => $units[$unitsCategory->id]['items']
       );
@@ -199,6 +201,7 @@ function unit_getUnitDetail($caveID, &$details) {
 
     if (isset($unitsUnqualified[$unitsCategory->id])) {
       $tmpUnitsUnqualified[$unitsCategory->sortID] = array(
+        'id'    => $unitsCategory->id,
         'name'  => $unitsCategory->name,
         'items' => $unitsUnqualified[$unitsCategory->id]['items']
       );

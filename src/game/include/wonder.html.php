@@ -2,7 +2,7 @@
 /*
  * wonder.html.php - 
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  * Copyright (c) 2012 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
@@ -99,7 +99,6 @@ function wonder_getWonderContent($caveID, &$details) {
       } else {
         $wonders[$wonder->wonderCategory]['items'][$wonder->wonderID]['build_link'] = true;
       }
-
 /****************************************************************************************************
 *
 * Wunder die nicht gewundert werden können.
@@ -125,6 +124,7 @@ function wonder_getWonderContent($caveID, &$details) {
   foreach ($GLOBALS['wonderCategoryTypeList'] as $wonderCategory) {
     if (isset($wonders[$wonderCategory->id])) {
       $tmpWonders[$wonderCategory->sortID] = array(
+        'id'    => $wonderCategory->id,
         'name'  => $wonderCategory->name,
         'items' => $wonders[$wonderCategory->id]['items']
       );
@@ -133,6 +133,7 @@ function wonder_getWonderContent($caveID, &$details) {
 
     if (isset($wondersUnqualified[$wonderCategory->id])) {
       $tmpWondersUnqualified[$wonderCategory->sortID] = array(
+        'id'    => $wonderCategory->id,
         'name'  => $wonderCategory->name,
         'items' => $wondersUnqualified[$wonderCategory->id]['items']
       );

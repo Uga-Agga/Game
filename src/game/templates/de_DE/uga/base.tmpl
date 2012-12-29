@@ -20,42 +20,21 @@
     <!-- mobile viewport optimisation -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- stylesheets -->
-    <link rel="stylesheet" href="yaml/core/base.min.css" type="text/css"/>
-    <!--[if lte IE 7]><link rel="stylesheet" href="yaml/core/iehacks.min.css" type="text/css"/><![endif]-->
-    <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-
-    <link rel="stylesheet" href="yaml/screen/typography.css" type="text/css"/>
-    <link rel="stylesheet" href="yaml/forms/gray-theme.css" type="text/css"/>
-    <link rel="stylesheet" href="yaml/add-ons/accessible-tabs/tabs.css" type="text/css"/>
-    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.9.2.custom.css" type="text/css" />
-    <link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/styles.css" type="text/css"/>
-    <!--[if lte IE 8]><link rel="stylesheet" href="{{ gfx }}/de_DE/t_uga/css/ie.css" type="text/css"/><![endif]-->
+    <!-- Bootstrap -->
+    <link href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/styles.css" rel="stylesheet" media="screen">
 
     <!-- javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.form.js"></script>
     <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
     <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
-    <script type="text/javascript" src="js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="yaml/add-ons/accessible-tabs/jquery.tabs.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.8.18.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.url.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/jappixmini.js"></script>
     <script type="text/javascript" src="js/ua.js"></script>
-
-    <style type="text/css">
-      .ua-box { background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
-      .ui-widget { background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
-
-      .msg_read0 a {background-image: url('http://game.uga-agga.de/gfx/de_DE/t_uga/messages/mail.gif');}
-
-      .ym-col-head1 { background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); }
-      .ym-col-head2 { background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); }
-      
-      .ua-head-menu { background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); }
-
-      #footerSlideButton { background: url(http://return-true.com/examples/sliderButton.png) {% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}bottom{% else %}top{% endif %} left no-repeat transparent;}
-      {% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}#footerSlideContent { height: 200px; }{% endif %}
-    </style>
 
     <script type="text/javascript">
       function serverTime() { 
@@ -64,11 +43,231 @@
         return time; 
       }
 
-    </script>
+      {% if jabber.server and jabber.passwd %}
+        jQuery(document).ready(function() {
+          DEVELOPER = 'on';
 
+          HOST_MAIN      = '{{ jabber.server }}';
+          HOST_MUC       = "conference.{{ jabber.server }}";
+          HOST_PUBSUB    = "pubsub.{{ jabber.server }}";
+          HOST_VJUD      = "vjud.{{ jabber.server }}";
+          HOST_ANONYMOUS = "anonymous.{{ jabber.server }}";
+          HOST_BOSH      = "http://{{ jabber.server }}:5280/http-bind/";
+  
+          JAPPIX_STATIC = ''
+
+          // Define groupchats here
+          MINI_GROUPCHATS = [{{ jabber.groupchats|raw }}];
+          MINI_PASSWORDS = [];
+          MINI_5D_NON_CLOSEABLE_GROUPCHATS = [{{ jabber.noClose|raw }}];
+  
+          // Define chats here
+          MINI_CHATS = [];
+  
+          // Add an animation
+          MINI_ANIMATE = false;
+  
+          // Define the user nickname
+          MINI_NICKNAME = "{{ jabber.user }}";
+  
+          // Random user nickname (if no nickname)
+          MINI_RANDNICK = false;
+  
+          // Override the default session resource
+          MINI_RESOURCE = "UA-Game"+ Math.floor(Math.random()*100000);
+  
+          // Connect the user (autoconnect, show_pane, domain, username, password)
+          // Notice: put true/false to autoconnect and show_pane
+          // Notice: exclude "user" and "password" if using anonymous login
+          launchMini(true, true, "{{ jabber.server }}", "{{ jabber.user|lower }}", "{{ jabber.passwd }}");
+        });
+      {% endif %}
+    </script>
   {% endblock %}
+
+  <style type="text/css">
+    /* override bootstrap css */
+    body { padding-bottom: 40px; font-size: 12px; } /*width: 980px; margin: 0 auto;*/
+    a { color: #000000; }
+    dl { margin: 0; }
+    form { margin: 0 }
+    hr { margin: 10px 0; }
+    select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input { font-size: 12px; height: 15px; margin-bottom: 0; }
+    label, input, button, select, textarea { font-size: 12px; }
+    .table { margin-bottom: 0; }
+    .table-condensed th, .table-condensed td { padding: 4px 2px; }
+    .nav { margin-bottom: 0; }
+    .nav-tabs > .active > a, .nav-tabs > .active > a:hover { background-color: #c2cf90; }
+
+    .alert-success { background-color: #e6efc2; }
+    .alert-error { background-color: #fbe3e4; }
+    .alert-info { background-color: #d5edf8; }
+
+    .ui-widget-header { background: #c2cf90; }
+    .ui-widget-content { background: #e6efc2; }
+    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: #298a08; }
+
+    /* custom css */
+    ul.nav-ua { list-style-type: none !important; margin: 0; padding: 0; }
+    ul.nav-ua li { display: inline; margin: 0; padding: 0; width: 1px; }
+    ul.clean { list-style-type: none !important; margin: 0; padding: 0; }
+    thead th { background: #c2cf90 !important; }
+
+    .header-middle { position: relative; margin: 0 auto; width: 500px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
+    .header-middle-menu { position: relative;  width: 500px; height: 192px; }
+    #header-middle-menu-item { padding: 10px; }
+    #header-middle-menu-item div.jqDockWrap { margin: 0 auto; }
+    #header-middle-menu-item div.jqDock { cursor:pointer; }
+    div.jqDockLabel { bottom: -15px !important; padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
+
+    .span-header-left { z-index: -1; position: relative; width: 454px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat; }
+    .span-header-right { z-index: -1; position: relative; width: 446px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat; }
+    .span-content-left { width: 133px; }
+    .span-content-middle { width: 634px; }
+    .span-content-right { width: 133px; }
+
+    .text-center { text-align: center !important; }
+    .text-left { text-align: left !important; }
+    .text-right { text-align: right !important; }
+
+    .ua-box { background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important; background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
+    .ua-box-header { color: #FFFFFF; line-height: 20px; text-align: center; font-weight: bold; }
+    .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
+    .ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
+
+    td.date { width: 125px; text-align: right; }
+    td.build { width: 47px; text-align: right; }
+    td.build-unit { width: 85px; text-align: right; }
+    td.build-single { width: 25px; text-align: right; }
+    td.countdown { width: 75px; text-align: right; }
+    td.mini-img { width: 32px; }
+    td.time { width: 75px; text-align: right; }
+    td.time-lvl { width: 105px; text-align: center; }
+    td.switch { width: 16px; }
+    td.build-no-build { width: 100px; }
+
+    tr.digest-artefact { background-color: #9cf; }
+    tr.digest-building { background-color: #CCFFCC; }
+    tr.digest-defense { background-color: #FFFFFF; }
+    tr.digest-science { background-color: #FFCC99; }
+    tr.digest-unit { background-color: #CCFF99; }
+
+    tr.digest-mov-1 {background-color: #CCFF99; }
+    tr.digest-mov-2 {background-color: #CCFF99; }
+    tr.digest-mov-3 {background-color: #FFCC99; }
+    tr.digest-mov-4 {background-color: #FFCC99; }
+    tr.digest-mov-5 {background-color: #FFFFFF; }
+    tr.digest-mov-6 {background-color: #FFCC99; }
+
+    li.clr {clear: left; width: 1px; height: 1px;  margin: 0;}
+    li.player_detail_left {float: left; width: 160px; font-weight: bold; margin: 0 5px 5px 0;}
+    li.player_detail_right {float: left; width: 115px; padding: 0; margin: 0 0 5px 0;}
+    
+    li.clr {clear: left; width: 1px; height: 1px;  margin: 0;}
+    li.tribe_detail_left {float: left; width: 100px; font-weight: bold; margin: 0 5px 5px 0;}
+    li.tribe_detail_right {float: left; width: 180px; padding: 0; margin: 0 0 5px 0;}
+
+    .form-horizontal .tribe { margin-left: 105px; }
+    .form-horizontal .tribe-label { width: 100px; }
+
+    .input-wonder-xy { width: 45px; }
+    .input-unit { width: 25px; }
+
+    .bg0 { background-color: #eee }
+    .less { color:#ff0000; }
+    .space { padding: 5px 0 }
+    .nospace { padding: 0; margin: 0; }
+  </style>
+
 </head>
 <body>
+
+<div class="container">
+  <div class="row">
+    <div class="span-header-left">&nbsp;</div>
+    <div class="span-header-right pull-right text-right">&nbsp;</div>
+    <div class="header-middle text-center">
+      <div class="header-middle-menu">
+        <div id="header-middle-menu-item">
+          <a class="ajax" href="main.php?modus=hero_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>
+          <a href="main.php?modus=cave_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
+          <a href="main.php?modus=CaveBookmarks"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
+          <a href="main.php?modus=questionnaire"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
+          <a href="main.php?modus=Donations"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
+          <a href="main.php?modus=tribe"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
+          <a href="main.php?modus=Contacts"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
+          <a href="main.php?modus=effectwonder_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
+          <a href="main.php?modus=user_profile"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
+          <a href="main.php?modus=artefact_list"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
+          <a href="main.php?modus=news"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
+          <a href="http://faq.uga-agga.de" class="new-window"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
+        </div>
+        <div style="height: 51px; width: 315px; margin: 0 auto; top: 86px; position: relative; background-image: url(./images/round_name.png); background-repeat: no-repeat;">&nbsp;</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="span-content-left">
+      <ul class="nav-ua">
+        <li><a href="main.php?modus={{ easy_digest_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></a></li>
+        <li><a href="main.php?modus={{ unit_movement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></a></li>
+        <li><a href="main.php?modus={{ messages_list_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
+        <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></a></li>
+        <li><a href="main.php?modus={{ ranking_player_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></a></li>
+        <li><a href="main.php?modus={{ map_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></a></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
+        <li><a href="main.php?modus={{ wonder_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></a></li>
+        <li><a href="main.php?modus={{ takeover_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></a></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
+      </ul>
+    </div>
+    <div class="span-content-middle text-center">
+      <div id="loader" class="notice hide">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>
+
+      <div id="content">
+        {% for item in resources %}
+          <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
+          {{ item.amount }} ({{ item.delta }})&nbsp;</span>
+        {% endfor %}
+        <hr>
+        <div id="caves">
+          |&nbsp;{% for item in navigateCave %}
+            <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
+          {% endfor %}
+          <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
+        </div>
+        <hr>
+        {% block content %}{% endblock %}
+      </div>
+    </div>
+    <div class="span-content-right">
+      <ul class="nav-ua">
+        <li><a href="main.php?modus={{ improvement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></a></li>
+        <li><a href="main.php?modus={{ science_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></a></li>
+        <li><a class="navigation" href="main.php?modus={{ defense_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
+        <li><a class="navigation" href="main.php?modus={{ unit_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
+        <li><a class="navigation" href="main.php?modus={{ merchant_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
+        <li><a href="http://forum.uga-agga.de" class="new-window"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></a></li>
+        <li><a href="main.php?modus={{ suggestions_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></a></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
+      </ul>
+    </div>
+  </div>
+  <footer>
+    <p>&copy; Company 2012 | <a href="main.php?modus={{ logout_link }}">Logout</a></p>
+    <div id="slider"></div>
+  </footer>
+</div>
+
+
+{% if dummy %}
   <div id="overlay"></div>
   <div class="ym-wrapper">
     <div class="ym-column">
@@ -138,27 +337,7 @@
         </div>
         <div class="ym-col3 ym-col-con3">
           <div class="ym-cbox">
-            <div id="loader" class="notice" style="display: none;">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>
-            <div id="content">
-              <ul class="list-space">
-                <li>
-                {% for item in resources %}
-                  <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
-                  {{ item.amount }} ({{ item.delta }})&nbsp;</span>
-                {% endfor %}
-                </li>
-                <li>
-                  <div class="block" id="cave-details-list">
-                    |&nbsp;{% for item in navigateCave %}
-                      <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;
-                    {% endfor %}
-                  </div>
-                </li>
-                <li>
-                  <div class="block" id="cave-details-cave">Höhle {{ cave_name }} in ({{ cave_x_coord }}|{{ cave_y_coord }}).</div>
-                </li>
-              </ul>
-             {% block content %}{% endblock %}
+
            </div>
           </div>
         </div>
@@ -184,5 +363,6 @@
     {% endblock %}
   </div>
   {% include "extendsFooter.tmpl" %}
+  {% endif %}
 </body>
 </html>

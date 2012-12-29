@@ -2,6 +2,7 @@
 /*
  * science_detail.html.php -
  * Copyright (c) 2004  OGP-Team
+ * Copyright (c) 2011-2012  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,25 +16,29 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function science_getScienceDetails($scienceID, $caveData, $method) {
   global $template;
 
-  // first check whether that science should be displayed...
+  // open template
+  if ($method == 'ajax') {
+    $shortVersion = true;
+    $template->setFile('scienceDetailAjax.tmpl');
+  } else {
+    $shortVersion = false;
+    $template->setFile('scienceDetail.tmpl');
+    $template->setShowRresource(false);
+  }
+
+  // first check whether that unit should be displayed...
+  if (!isset($GLOBALS['scienceTypeList'][$scienceID])) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Forschung wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
+  }
   $science = $GLOBALS['scienceTypeList'][$scienceID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$science->maxLevel};", '$caveData')));
   $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
   $maxReadable = formula_parseToReadable($science->maxLevel);
 
-  if (!$science || ($science->nodocumentation && !$caveData[$science->dbFieldName] && rules_checkDependencies($science, $caveData) !== TRUE)) {
-    $science = current($GLOBALS['scienceTypeList']);
-  }
-
-  // open template
-  if ($method == 'ajax') {
-    $template->setFile('scienceDetailAjax.tmpl');
-    $shortVersion = 1;
-  }
-  else {
-    $template->setFile('scienceDetail.tmpl');
-    $template->setShowRresource(false);
-    $shortVersion = 0;
+  if ($science->nodocumentation && !$caveData[$science->dbFieldName] && rules_checkDependencies($science, $caveData) !== TRUE) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Forschung wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
   }
 
   $currentlevel = $caveData[$science->dbFieldName];

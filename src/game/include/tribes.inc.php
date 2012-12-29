@@ -1666,8 +1666,9 @@ function tribe_processKickMember($playerID, $tag) {
   }
 
   // do not kick in wartime
-  if (!relation_leaveTribeAllowed($tag))
+  if (!relation_leaveTribeAllowed($tag)) {
     return -40;
+  }
 
   // blocked
   if (!tribe_changeTribeAllowedForPlayerID($playerID)) {
@@ -1886,8 +1887,7 @@ function tribe_generateMapStylesheet() {
   $outfilename = "./images/temp/tribe_".$_SESSION['player']->tribe.".css";
   $outfile     = @fopen($outfilename, "wb");
 
-  if (!$outfile)
-    die("Could not create file!");
+  if (!$outfile) return;
 
   $sql = $db->prepare("SELECT *
                        FROM ". RELATION_TABLE . "

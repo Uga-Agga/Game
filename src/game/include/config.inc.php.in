@@ -2,6 +2,7 @@
 /*
  * config.inc.php.in -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -164,6 +165,10 @@ class Config {
   const GAME_START_URL      = "main.php";
 
   const WWW_REQUEST_TIMEOUT = .000;
+  
+  const JABBER_SERVER       = '';
+  const JABBER_NO_CLOSE     = '';
+  const JABBER_STATIC_GROUPCHATS = '';
 
   public static $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,
     UNIT_BUILDER, DEFENSE_BUILDER, IMPROVEMENT_DETAIL, SCIENCE_BUILDER, WONDER);

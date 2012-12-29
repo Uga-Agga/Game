@@ -3,7 +3,7 @@
  * improvement_building_detail.html.php - 
  * Copyright (c) 2004  OGP Team
  * Copyright (c) 2011  Sascha Lange <salange@uos.de>
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,25 +17,29 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   global $template;
 
-  // first check whether that building should be displayed...
+  // open template
+  if ($method == 'ajax') {
+    $shortVersion = true;
+    $template->setFile('improvementDetailAjax.tmpl');
+  } else {
+    $shortVersion = false;
+    $template->setFile('improvementDetail.tmpl');
+    $template->setShowRresource(false);
+  }
+
+  // first check whether that unit should be displayed...
+  if (!isset($GLOBALS['buildingTypeList'][$buildingID])) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Erweiterung wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
+  }
   $building = $GLOBALS['buildingTypeList'][$buildingID];
   $maxLevel = round(eval('return '.formula_parseToPHP("{$building->maxLevel};", '$caveData')));
   $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
   $maxReadable = formula_parseToReadable($building->maxLevel);
 
-  if (!$building || ($building->nodocumentation && !$caveData[$building->dbFieldName] && rules_checkDependencies($building, $caveData) !== TRUE)) {
-    $building = current($GLOBALS['buildingTypeList']);
-  }
-
-  // open template
-  if ($method == 'ajax') {
-    $shortVersion = true;
-    $template->setFile('improvementDetailAjax.tmpl');
-  }
-  else {
-    $shortVersion = false;
-    $template->setFile('improvementDetail.tmpl');
-    $template->setShowRresource(false);
+  if ($building->nodocumentation && !$caveData[$building->dbFieldName] && rules_checkDependencies($building, $caveData) !== TRUE) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Erweiterung wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
   }
 
   $currentlevel = $caveData[$building->dbFieldName];

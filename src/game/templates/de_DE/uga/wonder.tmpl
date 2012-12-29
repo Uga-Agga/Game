@@ -14,119 +14,131 @@
 {% block title %}Wunder{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <div class="ua-box">
   <div class="ua-box-header">Wunder</div>
   <div class="ua-box-content">
-    <div id="wonder" class="jquery_tabs nav1">
-      {% for category in wonders %}
-        <h4>{{ category.name }}</h4>
-        <div class="tabbody">
-          {% if category.items %}
-            <table>
-              <tbody>
-                {% for item in category.items %}
-                {% set bgID = (bgID+1)%2 %}
-                  <tr class="bg{{ bgID }} object-row">
-                    <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-                    <td>
-                      <dl>
-                        <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                        <dd>{% include "boxCost.tmpl" %}</dd>
-                      </dl>
-                    </td>
-                    <td class="text-right">
-                      {% if item.build_link %}
-                      <form action="main.php?modus={{ wonder_link }}" method="post">
-                        <div id="wonder">
-                          <input type="hidden" name="action" value="wonder" />
-                          <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
-                          <input type="hidden" name="caveID" value="{{ cave_id }}" />
-                          <ul>
-                            <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
-                            <li style="float: right; text-align: left;">
-                              <ul class="clean_list" style="width: 125px;">
+    <div id="wonderUnqualified">
+      {% if wonders %}
+        <ul class="nav nav-tabs" id="mainTab">
+          {% for category in wonders %}
+            <li{% if loop.first %} class="active"{% endif %}><a class="tab-switch" href="#wonder_{{ category.id }}" data-toggle="tab">{{ category.name }}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="tab-content">
+          {% for category in wonders %}
+            <div class="tab-pane{% if loop.first %} active{% endif %}" id="wonder_{{ category.id }}">
+              {% if category.items %}
+                <table class="table table-striped-info table-condensed">
+                  <tbody>
+                    {% for item in category.items %}
+                    {% set bgID = (bgID+1)%2 %}
+                      <tr class="bg{{ bgID }} object-row">
+                        <td class="switch"><a class="object-detail-link" data-id="wonder_{{ item.wonder_id }}" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                        <td>
+                          <dl>
+                            <dt><a class="object-detail-link" data-id="wonder_{{ item.wonder_id }}" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                            <dd>{% include "boxCost.tmpl" %}</dd>
+                          </dl>
+                        </td>
+                        <td class="text-right">
+                          {% if item.build_link %}
+                          <form action="main.php?modus={{ wonder_link }}" method="post">
+                          <div class="pull-right">
+                            <div class="pull-left" style="width: 125px;">
+                              <ul class="clean">
                                 <li>Name der Zielhöhle:</li>
-                                <li><input type="text" name="CaveName" size="10" maxlength="32" /></li>
+                                <li><input class="autocomplete input-small" type="text" name="CaveName" id="CaveName_{{ item.wonder_id }}" size="10" maxlength="32" data-source="caves" /></li>
                               </ul>
-                            </li>
-                            <li style="float: right; text-align: left;">
-                              <ul class="clean_list" style="width: 155px;">
+                            </div>
+                            <div class="pull-left" style="width: 155px;">
+                              <ul class="clean">
                                 <li>Koordinaten der Zielhöhle:</li>
                                 <li>
-                                  X:<input type="text" pattern="\d*" name="xCoord" size="3" maxlength="6" />
-                                  Y:<input type="text" pattern="\d*" name="yCoord" size="3" maxlength="6" /> 
+                                  X:<input class="input-wonder-xy" type="text" pattern="\d*" name="xCoord" size="3" maxlength="2" />
+                                  Y:<input class="input-wonder-xy" type="text" pattern="\d*" name="yCoord" size="3" maxlength="2" /> 
                                 </li>
                               </ul>
-                            </li>
-                          </ul>
-                        </div>
-                      </form>
-                      {% else %}
-                        <span style="text-align: right;"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
-                      {% endif %}
-                    </td>
-                  </tr>
-                  <tr class="detail-row" style="display: none">
-                    <td class="object-details" colspan="3">
-                    </td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
-            <div class="space text-center">Zur Zeit kannst du leider von dieser Kategorie noch keine Wunder erbitten.</div>
-          {% endif %}
-          {% set bgID = 0 %}
+                            </div>
+                            <div class="pull-left" style="width: 25px;">
+                              <input type="hidden" name="action" value="wonder" />
+                              <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
+                              <input type="hidden" name="caveID" value="{{ cave_id }}" />
+                              <input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" width="25" value="Beten" alt="Beten" title="Beten" />
+                            </div>
+                          </div>
+                          </form>
+                          {% else %}
+                            <span style="text-align: right;"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                      <tr class="bg{{ bgID }} hide"><td colspan="3" id="wonder_{{ item.wonder_id }}_details"></td></tr>
+                    {% endfor %}
+                    {% set bgID = 0 %}
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="space text-center">Zur Zeit kannst du leider von dieser Kategorie noch keine Wunder erbitten.</div>
+              {% endif %}
+            </div>
+          {% endfor %}
         </div>
       {% else %}
         <div class="space text-center">Dein Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</div>
-      {% endfor %}
+      {% endif %}
     </div>
   </div>
 </div>
 
-<div class="success"><a href="{{ rules_path }}?modus=misc&amp;miscID=4" class="new-window">Übersicht zu allen Wundern</a></div>
+<hr><a href="{{ rules_path }}?modus=misc&amp;miscID=4" class="new-window">Übersicht zu allen Wundern</a><hr>
 
 {% if wonders_unqualified %}
-<div class="ua-box">
-  <div class="ua-box-header">Wunder, die noch nicht erbeten werden können.</div>
-  <div id="wonder_unqualified" class="ua-box-content box_toggle change_mouseover space text-center">Wunder einblenden</div>
-  <div id="wonder_unqualified_content" class="ua-box-content" style="display: none;">
-    <div id="wonderUnqualified" class="jquery_tabs nav1">
-      {% for category in wonders_unqualified %}
-        <h4>{{ category.name }}</h4>
-        <div class="tabbody">
-          {% if category.items %}
-            <table>
-              <tbody>
-                {% for item in category.items %}
-                {% set bgID = (bgID+1)%2 %}
-                  <tr class="bg{{ bgID }} object-row">
-                    <td class="ua-td-open"><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-                    <td>
-                      <dl>
-                        <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ caveID }}"><span class="bold">{{ item.name }}</span></a></dt>
-                        <dd class="td_won_dd_3">{{ item.dependencies }}</dd>
-                      </dl>
-                    </td>
-                  </tr>
-                  <tr class="bg{{ bgID }} detail-row" id="wonder_{{ item.wonder_id }}" style="display: none;">
-                    <td colspan="3" class="object-details"></td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+  <div class="ua-box">
+    <div class="ua-box-header">Wunder, die noch nicht erbeten werden können</div>
+    <div class="ua-box-content">
+      <div id="wonderUnqualified">
+        <ul class="nav nav-tabs" id="wonderUnqualifiedTab">
+          <li class="active"><a class="tab-switch" href="#unqualified" data-toggle="tab"><i class="icon-remove"></i></a></li>
+          {% for category in wonders_unqualified %}
+            <li><a class="tab-switch" href="#unqualified_{{ category.id }}" data-toggle="tab">{{ category.name }}</a></li>
+          {% endfor %}
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="unqualified"></div>
+          {% for category in wonders_unqualified %}
+            <div class="tab-pane" id="unqualified_{{ category.id }}">
+              {% if category.items %}
+                <table class="table table-striped-info table-condensed">
+                  <tbody>
+                    {% for item in category.items %}
+                    {% set bgID = (bgID+1)%2 %}
+                      <tr class="bg{{ bgID }} object-row">
+                        <td class="switch"><a class="object-detail-link" data-id="unqualified_{{ item.wonder_id }}" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                        <td>
+                          <dl>
+                            <dt><a class="object-detail-link" data-id="unqualified_{{ item.wonder_id }}" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                            <dd>{{ item.dependencies }}</dd>
+                          </dl>
+                        </td>
+                      </tr>
+                      <tr class="bg{{ bgID }} hide"><td colspan="2" id="unqualified_{{ item.wonder_id }}_details"></td></tr>
+                    {% endfor %}
+                    {% set bgID = 0 %}
+                  </tbody>
+                </table>
+              {% else %}
+                <div class="space text-center">Aus dieser Kategorie kannst du bereits alle Wunder erbitten.</div>
+              {% endif %}
+            </div>
           {% else %}
-            <div class="space text-center">Aus dieser Kategorie kannst du bereits alle Wunder erbitten.</div>
-          {% endif %}
-          {% set bgID = 0 %}
+            <div class="space text-center">Du kannst bereits alle Wunder.</div>
+          {% endfor %}
         </div>
-      {% endfor %}
+      </div>
     </div>
   </div>
-</div>
 {% endif %}
 
 {% endblock %}

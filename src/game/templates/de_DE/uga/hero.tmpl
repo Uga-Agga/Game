@@ -14,7 +14,7 @@
 {% block title %}Helden{% endblock %} 
 {% block content %} 
 
-{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %} 
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
 {% if hero %}
 <div class="ua-box small">

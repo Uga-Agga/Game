@@ -20,69 +20,51 @@
 
 {% if opponent_movement %}
   <div class="ua-box">
-    <div class="ua-box-header">Fremde Bewegungen  </div>
-    <div class="ua-box-content" id="opponent">
-      <table>
+    <div class="ua-box-header">Fremde Bewegungen</div>
+    <div class="ua-box-content">
+      <table class="table table-striped-info table-condensed">
         <tbody>
           {% for item in opponent_movement %}
-          <tr id="digest_mov_{{ item.event_id }}" class="ua-digest-mov-{{ item.movement_id }} box_show_hide change_mouseover">
-            <td>
-              {{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br />
-              <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.source_xCoord }}&amp;targetYCoord={{ item.source_yCoord }}&amp;targetCaveName={{ item.source_cave_name|url_encode }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span>
-            </td>
+          <tr id="digest_mov_{{ item.event_id }}" class="digest-mov-{{ item.movement_id }} show_hide change_mouseover">
+            <td>{{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br /><span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.cave_id }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span></td>
             <td><span class="text-center">&gt; {{ item.movement_id_description }} &gt;</span></td>
-            <td>
-              {{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br />
-              <span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.target_cave_id }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
-            </td>
-            <td class="date-td text-right">{{ item.event_end_date }}</td>
-            <td class="ua-td-timer text-right">
-              <script type="text/javascript">
-                // <![CDATA[
-                $(function () {
-                    var timer_movement_date_{{ item.event_id }} = new Date();
-                    timer_movement_date_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                    $('#timer_movement_date_{{ item.event_id }}').countdown({until: timer_movement_date_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
-                });
-                // ]]>
-              </script>
-              <div id="timer_movement_date_{{ item.event_id }}"></div>
-            </td>
+            <td>{{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br /><span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span></td>
+            <td class="date">{{ item.event_end_date }}</td>
+            <td class="countdown"><div id="timer_movement_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
           </tr>
-          <tr id="digest_mov_{{ item.event_id }}_content" style="display: none;">
-            <td colspan="5" >
-              {% if item.units %}
-              <div style="padding-bottom: 10px;">
-                <ul>
-                  {% for key, item_unit in item.units %}
-                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
-                  {% endfor %}
-                </ul>
-                <br style="clear: both;" />
-              </div>
-              {% endif %}
+          <tr id="digest_mov_{{ item.event_id }}_content" class="hide">
+            <td colspan="5">
+              <div class="pull-left">
+                {% if item.units %}
+                <div class="padding-bottom: 10px;">
+                  <ul class="clean">{% for item_unit in item.units %}<li class="text-center small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>{% endfor %}</ul>
+                  <br style="clear: both;" />
+                </div>
+                {% endif %}
 
-              {% if item.resources %}
-              <div style="padding-bottom: 10px;">
-                <ul>
-                  {% for item_resource in item.resources %}
-                    <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
-                  {% endfor %}
-                </ul>
-                <br style="clear: both;" />
-              </div>
-              {% endif %}
+                {% if item.resources %}
+                <div style="padding-bottom: 10px;">
+                  <ul class="clean">{% for item_resource in item.resources %}<li class="text-center small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>{% endfor %}</ul>
+                  <br style="clear: both;" />
+                </div>
+                {% endif %}
 
-              {% if item.artefact %}
-              <div style="padding-bottom: 10px;">
-                <ul>
-                  {% for item_artefact in item.artefact %}
-                    <li class="text-center text-small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
-                  {% endfor %}
-                </ul>
-                <br style="clear: both;" />
+                {% if item.artefact %}
+                <div style="padding-bottom: 10px;">
+                  <ul>{% for item_artefact in item.artefact %}<li class="text-center small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>{% endfor %}</ul>
+                  <br style="clear: both;" />
+                </div>
+                {% endif %}
               </div>
-              {% endif %}
+              <div class="pull-right">
+                {% if item.cancel %}
+                <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}&amp;caveID={{ item.cave_id }}" method="post">
+                  <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
+                  <input type="hidden" name="action" value="cancel" />
+                  <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
+                </form>
+                {% else %}&nbsp;{% endif %}
+              </div>
             </td>
           </tr>
           {% endfor %}
@@ -95,71 +77,42 @@
 {% if own_movements %}
   <div class="ua-box">
     <div class="ua-box-header">Eigene Bewegungen</div>
-    <div class="ua-box-content" id="own">
-      <table>
+    <div class="ua-box-content">
+      <table class="table table-striped-info table-condensed">
         <tbody>
           {% for item in own_movements %}
-          <tr id="digest_mov_{{ item.event_id }}" class="ua-digest-mov-{{ item.movement_id }} box_show_hide change_mouseover">
-            <td>
-              {{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br />
-              <span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.cave_id }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span>
-            </td>
+          <tr id="digest_mov_{{ item.event_id }}" class="digest-mov-{{ item.movement_id }} show_hide change_mouseover">
+            <td>{{ item.source_player_name }} <small>{{ item.source_player_tribe }}</small><br /><span class="nobr"><a href="main.php?modus=unit_movement&amp;caveID={{ item.cave_id }}">{{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</a></span></td>
             <td><span class="text-center">&gt; {{ item.movement_id_description }} &gt;</span></td>
-            <td>
-              {{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br />
-              <span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span>
-            </td>
-            <td class="date-td text-right">{{ item.event_end_date }}</td>
-            <td class="ua-td-timer text-right">
-              <script type="text/javascript">
-                // <![CDATA[
-                $(function () {
-                    var timer_movement_date_{{ item.event_id }} = new Date();
-                    timer_movement_date_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                    $('#timer_movement_date_{{ item.event_id }}').countdown({until: timer_movement_date_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
-                });
-                // ]]>
-              </script>
-              <div id="timer_movement_date_{{ item.event_id }}"></div>
-            </td>
+            <td>{{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br /><span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span></td>
+            <td class="date">{{ item.event_end_date }}</td>
+            <td class="countdown"><div id="timer_movement_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
           </tr>
-          <tr id="digest_mov_{{ item.event_id }}_content" style="display: none;">
+          <tr id="digest_mov_{{ item.event_id }}_content" class="hide">
             <td colspan="5">
-              <div class="ym-gl">
+              <div class="pull-left">
                 {% if item.units %}
                 <div class="padding-bottom: 10px;">
-                  <ul>
-                    {% for item_unit in item.units %}
-                      <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>
-                    {% endfor %}
-                  </ul>
+                  <ul class="clean">{% for item_unit in item.units %}<li class="text-center small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/units/{{ item_unit.dbFieldName }}_small.gif" alt="{{ item_unit.name }}" title="{{ item_unit.name }}" /><br />{{ item_unit.value }}</li>{% endfor %}</ul>
                   <br style="clear: both;" />
                 </div>
                 {% endif %}
 
                 {% if item.resources %}
                 <div style="padding-bottom: 10px;">
-                  <ul>
-                    {% for item_resource in item.resources %}
-                      <li class="text-center text-small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>
-                    {% endfor %}
-                  </ul>
+                  <ul class="clean">{% for item_resource in item.resources %}<li class="text-center small" style="float: left; padding: 0 5px;"><img src="{{ gfx }}/resources/{{ item_resource.dbFieldName }}_icon.gif" alt="{{ item_resource.name }}" title="{{ item_resource.name }}" /><br />{{ item_resource.value }}</li>{% endfor %}</ul>
                   <br style="clear: both;" />
                 </div>
                 {% endif %}
 
                 {% if item.artefact %}
                 <div style="padding-bottom: 10px;">
-                  <ul>
-                    {% for item_artefact in item.artefact %}
-                      <li class="text-center text-small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>
-                    {% endfor %}
-                  </ul>
+                  <ul>{% for item_artefact in item.artefact %}<li class="text-center small" style="float: left; padding: 0 5px;">{{ item_artefact.name }}<br />{{ item_artefact.value }}</li>{% endfor %}</ul>
                   <br style="clear: both;" />
                 </div>
                 {% endif %}
               </div>
-              <div class="ym-gr">
+              <div class="pull-right">
                 {% if item.cancel %}
                 <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}&amp;caveID={{ item.cave_id }}" method="post">
                   <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
@@ -179,58 +132,37 @@
 
 
 {% if initiations %}
-  <div class="ua-box">
-    <div class="ua-box-header">Artefakte - Einweihungen</div>
-    <div class="ua-box-content" id="initiations">
-      <table class="table" cellpadding="3" cellspacing="0" rules="rows">
+<div class="ua-box">
+  <div class="ua-box-header">Artefakte - Einweihungen</div>
+  <div class="ua-box-content">
+    <table class="table table-striped-info table-condensed">
+      <tbody>
       {% for item in initiations %}
         <tr class="digest-artefact">
           <td>{{ item.artefactName }}</td>
           <td>{{ item.name }}</td>
-          <td class="date-td">{{ item.event_end_date }}</td>
-          <td class="time-bar-td text-right">
-            <script type="text/javascript">
-              // <![CDATA[
-              $(function () {
-                  var timer_artefact_{{ item.event_id }} = new Date();
-                  timer_artefact_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                  $('#timer_artefact_{{ item.event_id }}').countdown({until: timer_artefact_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
-              });
-              // ]]>
-            </script>
-            <div id="timer_artefact_{{ item.event_id }}"></div>
-          </td>
+          <td class="date">{{ item.event_end_date }}</td>
+          <td class="countdown"><div id="timer_artefact_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
         </tr>
       {% endfor %}
-      </table>
-    </div>
+      </tbody>
+    </table>
   </div>
-<br />
+</div>
 {% endif %}
 
 <div class="ua-box">
   <div class="ua-box-header">Ausstehende Termine</div>
   <div class="ua-box-content">
     {% if appointments %}
-      <table>
+      <table class="table table-striped-info table-condensed">
         <tbody>
         {% for item in appointments %}
-          <tr class="ua-digest-{{ item.category }}">
+          <tr class="digest-{{ item.category }}">
             <td>{{ item.event_name }}</td>
             <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
-            <td class="text-right">{{ item.event_end_date }}</td>
-            <td class="ua-td-timer">
-              <script type="text/javascript">
-                // <![CDATA[
-                $(function () {
-                    var timer_{{ item.category }}_appointment_{{ item.event_id }} = new Date();
-                    timer_{{ item.category }}_appointment_{{ item.event_id }}.setTime ({{ item.event_end }} * 1000);
-                    $('#timer_{{ item.category }}_appointment_{{ item.event_id }}').countdown({until: timer_{{ item.category }}_appointment_{{ item.event_id }}, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
-                });
-                // ]]>
-              </script>
-              <div id="timer_{{ item.category }}_appointment_{{ item.event_id }}"></div>
-            </td>
+            <td class="date">{{ item.event_end_date }}</td>
+            <td class="countdown"><div id="timer_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
           </tr>
         {% endfor %}
         </tbody>
@@ -245,7 +177,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Höhlen ohne laufende Termine</div>
   <div class="ua-box-content">
-    <table class="bordertable">
+    <table class="table table-bordered table-striped table-condensed">
       <thead>
         <tr>
           <th class="text-center">Erweiterungen</th>
@@ -256,12 +188,11 @@
       </thead>
       <tbody>
         {% for item in cave_no_action %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr>
             <td class="text-center"><a href="main.php?modus={{ item.buildings.modus }}&amp;caveID={{ item.buildings.caveID }}">{{ item.buildings.cave_name }}</a></td>
             <td class="text-center"><a href="main.php?modus={{ item.sciences.modus }}&amp;caveID={{ item.sciences.caveID }}">{{ item.sciences.cave_name }}</a></td>
             <td class="text-center"><a href="main.php?modus={{ item.units.modus }}&amp;caveID={{ item.units.caveID }}">{{ item.units.cave_name }}</a></td>
-            <td class="text-center last"><a href="main.php?modus={{ item.defenses.modus }}&amp;caveID={{ item.defenses.caveID }}">{{ item.defenses.cave_name }}</a></td>
+            <td class="text-center"><a href="main.php?modus={{ item.defenses.modus }}&amp;caveID={{ item.defenses.caveID }}">{{ item.defenses.cave_name }}</a></td>
           </tr>
         {% endfor %}
       </tbody>

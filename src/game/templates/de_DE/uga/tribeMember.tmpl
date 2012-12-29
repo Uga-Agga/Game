@@ -14,615 +14,628 @@
 {% block title %}Nachrichten{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space status_msg">{{ status_msg.message|raw }}</div>{% endif %}
-
-{% if confirm_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <div class="ua-box small">
   <div class="ua-box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
   <div class="ua-box-content">
-    <div id="tribeAll" class="jquery_tabs nav1">
-      <h4 class="hide_status_msg tipps" title="mal testen">Mein Stamm</h4>
-      <div class="tabbody">
-        <div id="tribeAllSub" class="jquery_tabs nav2">
-          <h5 class="hide_status_msg">Allgemeines</h5>
-          <div class="tabbody2">
-            {% if tribe_avatar %}
-              <div style="text-align: center; padding: 10px;">
-                <img src="{{ tribe_avatar.path }}" width="{{ tribe_avatar.width }}" height="{{ tribe_avatar.height }}" alt="Stammesbanner" />
-              </div>
-            {% endif %}
-
-            <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
-              <ul>
-                <li class="bold text-center" style="padding-bottom: 10px;">Informationen:</li>
-
-                <li class="tribe_detail_left">Anführer:</li>
-                <li class="tribe_detail_right">{% if tribe_leader_name %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_leader_id }}">{{ tribe_leader_name }}</a>{% else %}Zur Zeit keinen Anführer.{% endif %}</li>
-                <li class="clr"></li>
-
-                <li class="tribe_detail_left">Regierung:</li>
-                <li class="tribe_detail_right"><a href="http://game.uga-agga.de/rules/?modus=governments" class="new-window">{{ government_name }}</a></li>
-                <li class="clr"></li>
-              </ul>
-            </div>
-
-            <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
-              <ul>
-                <li class="text-center bold" style="padding-bottom: 10px;">Verbündete Stämme:</li>
-                {% if relations_ally %}
-                  {% for item in relations_ally %}
-                    <li>[<a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a>], seit {{ item.time }}</li>
-                  {% endfor %}
-                {% else %}
-                  <li>Zur Zeit seid ihr mit keinem Stamm verbündet.</li>
-                {% endif %}
-                <li>&nbsp;</li>
-                <li class="text-center" style="font-size: 11px;"><a href="main.php?modus={{ tribe_link }}&tribe={{ tribe_tag }}#tabTribeRelation">Alle Beziehungen anzeigen.</a></li>
-              </ul>
-            </div>
-            <div style="clear: both;"></div>
-
-            <table>
-              <thead>
-              <tr>
-                <th class="text-left">Stamm</th>
-                <th class="text-left">Beziehungen</th>
-                <th>Sonstiges</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% if relations_war %}
-                  {% for item in relations_info %}
-                    {% if item.war %}
-                    {% set bgID = (bgID+1)%2 %}
-                      <tr class="bg{{ bgID }}">
-                      <td class="text-left">{{ item.tag }}</td>
-                      <td class="text-left">
-                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                        {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-                      </td>
-                      <td class="text-right">
-                        {% if item.war %}
-                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
-                        {% endif %}
-                      </td>
-                    </tr>
-                    {% endif %}
-                  {% endfor %}
-                  {% for item in relations %}
-                    {% if item.war %}
-                    {% set bgID = (bgID+1)%2 %}
-                    <tr class="bg{{ bgID }}">
-                      <td class="text-left">{{ item.tag }}</td>
-                      <td class="text-left">
-                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                        {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-                      </td>
-                      <td class="text-right">
-                        {% if item.war %}
-                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
-                        {% endif %}
-                      </td>
-                    </tr>
-                    {% endif %}
-                  {% endfor %}
-                  {% set bgID = 0 %}
-                {% else %}
-                  <tr class="bg0"><td class="last text-center" colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
-                {% endif %}
-              </tbody>
-            </table>
-          </div>
-
-          <h5 class="hide_status_msg">Mitgliederliste</h5>
-          <div class="tabbody2">
-            <table>
-              <thead>
-              <tr>
-                <th class="text-left">Name</th>
-                <th>Gott</th>
-                <th>Halbgott</th>
-                <th class="text-center" style="width: 215px;">Höhlenliste</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for item in tribe_members_all %}
-                {% set bgID = (bgID+1)%2 %}
-                  <tr class="bg{{ bgID }}">
-                    <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
-                    <td>{{ item.god }}</td>
-                    <td>{{ item.halfgod }}</td>
-                    <td class="text-right" style="width: 215px; white-space: nowrap;">
-                      <form method="post" action="main.php?modus={{ unit_movement_link }}">
-                        <div style="white-space: nowrap;">
-                        [{{ item.caves|length }}]&nbsp;
-                        <select name="targetCaveID" style="width: 165px;">
-                          {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
-                        </select>
-
-                        <input type="submit" value="Go" name="tribeUnitMovement" />
-                        </div>
-                      </form>
-                    </td>
-                  </tr>
-                {% else %}
-                  <tr class="bg0"><td class="last text-center" colspan="4">Im Stamm befinden sich irgendwie keine Spieler Oo. (sollte nicht vorkommen xD)</td></tr>
-                {% endfor %}
-                {% set bgID = 0 %}
-              </tbody>
-            </table>
-          </div>
-
-          <h5 class="hide_status_msg">Bye...</h5>
-          <div class="tabbody2">
-            <form class="ym-form" id="tribeLeaveForm" method="post" action="main.php?modus={{ tribe_link }}">
-              <div class="ym-fbox-button text-center">
-                <input type="hidden" name="action" value="{{ tribe_action_leave }}" />
-                <input type="submit" class="ym-button" value="Diesen Stamm verlassen!" id="tribeLeave" name="tribeLeave"/>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
+    <ul class="nav nav-tabs"  id="mainTab">
+      <li class="dropdown active">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mein Stamm <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li class="active"><a class="tab-switch" href="#tribe_generally" data-toggle="tab">Allgemeines</a></li>
+          <li><a class="tab-switch" href="#tribe_memberlist" data-toggle="tab">Mitgliederliste</a></li>
+          <li><a class="tab-switch" href="#tribe_leave" data-toggle="tab">Bye...</a></li>
+        </ul>
+      </li>
 
       {% if is_auth.change_settings or is_auth.kick_member or is_auth.see_online or is_auth.isLeader %}
-      <h4 class="hide_status_msg">Verwaltung</h4>
-      <div class="tabbody">
-        <div id="tribeProfile" class="jquery_tabs nav2">
-          {% if is_auth.change_settings or is_auth.isLeader %}
-          <h5 class="hide_status_msg">Stammesprofil</h5>
-          <div class="tabbody2">
-            <form class="ym-form ym-columnar" id="tribeSettingsUpdate" method="post" action="main.php?modus={{ tribe_link }}">
-              <div class="ym-fbox-text">
-                <label for="tribe_name">Name</label>
-                <input type="text" name="tribe_name" id="tribe_name" value="{{tribe_name }}" maxlength="20" />
-              </div>
-              <div class="ym-fbox-text">
-                <label for="tribe_password">Password</label>
-                <input type="password" name="tribe_password" id="tribe_password" value="" maxlength="15" />
-              </div>
-              <div class="ym-fbox-text">
-                <label for="tribe_avatar">Avatar URL</label>
-                <input type="text" name="tribe_avatar" id="tribe_avatar" value="{{ tribe_avatar.path }}" maxlength="90" />
-              </div>
-              <div class="ym-fbox-text">
-                <label for="tribe_description">Beschreibung</label>
-                <textarea name="tribe_description" id="tribe_description" cols="25" rows="8">{{ tribe_description| raw }}</textarea>
-              </div>
-
-              <div class="ym-fbox-button text-center">
-                <input type="hidden" name="action" value="{{ tribe_action_update }}" />
-                <input type="submit" class="ym-button" value="Speichern" id="submit1" name="submit"/>
-                <input type="reset" class="ym-button" value="Reset" id="reset1" name="reset" />
-              </div>
-            </form>
-          </div>
-          {% endif %}
-
-          {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}
-          <h5 id="changeAuth" class="hide_status_msg">Spielerverwaltung</h5>
-          <div class="tabbody2">
-            <table>
-              <thead>
-              <tr>
-                <th class="text-left">Name</th>
-                <th>zuletzt gesehen am:</th>
-                <th>&nbsp;</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for item in tribe_members %}
-                {% set bgID = (bgID+1)%2 %}
-                  <tr class="bg{{ bgID }}">
-                    <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
-                    <td>{% if is_auth.see_online or is_auth.isLeader %}{{ item.lastAction }}{% endif %}</td>
-                    <td class="text-right" style="padding-right: 4px;">{% if is_auth.isLeader %}<span id="player_{{ item.playerID }}" class="box_show_hide change_mouseover" style="padding-right: 5px">Berechtigungen anzeigen</span>{% endif %}{% if is_auth.kick_member or is_auth.isLeader %}<a href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_kick }}&amp;playerID={{ item.playerID }}">Rauswerfen</a>{% endif %}</td>
-                  </tr>
-                  {% if is_auth.isLeader %}
-                  <tr id="player_{{ item.playerID }}_content" class="nohover" style="display: none;">
-                    <td colspan="3" class="text-left">
-                      <form class="ym-form ym-columnar" id="authupdate" method="post" action="main.php?modus={{ tribe_link }}#changeAuth">
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="msg_tribe" id="msg_tribe" style="margin-left: 0;" value="1" {% if item.tribeAuth.msg_tribe %}checked="checked"{% endif %} />
-                          <label for="msg_tribe">Stammesnachrichten schreiben</label>
-                        </div>
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="msg_public" id="msg_public" style="margin-left: 0;"  value="2" {% if item.tribeAuth.msg_public %}checked="checked"{% endif %} />
-                          <label for="msg_public">Stammesnachrichten per Privater Nachricht schreiben</label>
-                        </div>
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="change_relation" id="change_relation" style="margin-left: 0;"  value="4" {% if item.tribeAuth.change_relation %}checked="checked"{% endif %} />
-                          <label for="change_relation">Beziehungen ändern</label>
-                        </div>
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="kick_member" id="kick_member" style="margin-left: 0;"  value="8" {% if item.tribeAuth.kick_member %}checked="checked"{% endif %} />
-                          <label for="kick_member">Spieler kicken</label>
-                        </div>
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="change_settings" id="change_settings" style="margin-left: 0;"  value="16" {% if item.tribeAuth.change_settings %}checked="checked"{% endif %} />
-                          <label for="change_settings">Stammes-Informationen bearbeiten</label>
-                        </div>
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="wonder" id="wonder" style="margin-left: 0;"  value="32" {% if item.tribeAuth.wonder %}checked="checked"{% endif %} />
-                          <label for="wonder">Kann Stammeswunder erwirken</label>
-                        </div>
-                        <div class="ym-fbox-check">
-                          <input type="checkbox" name="see_online" id="see_online" style="margin-left: 0;"  value="64" {% if item.tribeAuth.see_online %}checked="checked"{% endif %} />
-                          <label for="see_online">Kann die letzte Online Zeit sehen</label>
-                        </div>
-
-                        <div class="ym-fbox-button text-center">
-                          <input type="hidden" name="action" value="{{ tribe_action_auth }}" />
-                          <input type="hidden" name="player_id" value="{{ item.playerID }}" />
-                          <input type="submit" class="ym-button" value="Speichern" id="submit4" name="submit"/>
-                          <input type="reset" class="ym-button" value="Reset" id="reset4" name="reset" />
-                        </div>
-                      </form>
-                    </td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-                {% set bgID = 0 %}
-              </tbody>
-            </table>
-          </div>
-          {% endif %}
-        </div>
-      </div>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stammesverwaltung <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          {% if is_auth.change_settings or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_profile" data-toggle="tab">Stammesprofil</a></li>{% endif %}
+          {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_member" data-toggle="tab">Spielerverwaltung</a></li>{% endif %}
+          {% if is_auth.manage_chat or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_chat" data-toggle="tab">Chat</a></li>{% endif %}
+        </ul>
+      </li>
       {% endif %}
 
-      <h4 class="hide_status_msg" id="tabTribeRelation">Regierung</h4>
-      <div class="tabbody">
-        <div id="tribeRelation" class="jquery_tabs nav2">
-          <h5 class="hide_status_msg">Beziehungen</h5>
-          <div class="tabbody2">
-            {% if relations_info or relations %}
-              <table>
-                <thead>
-                <tr>
-                  <th class="text-left">Stamm</th>
-                  <th class="text-left">Beziehungen</th>
-                  <th>Sonstiges</th>
-                </tr>
-                </thead>
-                <tbody>
-                  {% for item in relations_info %}
-                    {% set bgID = (bgID+1)%2 %}
-                    <tr class="bg{{ bgID }}">
-                      <td>{{ item.tag }}</td>
-                      <td>
-                        Eigene: <span class="bold">{{ item.relation }}</span><br />
-                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                        Bis: <span class="bold">{{ item.duration }}</span>
-                      </td>
-                      <td class="text-right" style="padding-right: 4px;">
-                        {% if item.war %}
-                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
-                        {% endif %}
-                      </td>
-                    </tr>
-                  {% endfor %}
-                  {% for item in relations %}
-                    {% set bgID = (bgID+1)%2 %}
-                    <tr class="bg{{ bgID }}">
-                      <td class="text-left">{{ item.tag }}</td>
-                      <td class="text-left">
-                        Ihre: <span class="bold">{{ item.their_relation }}</span><br />
-                        {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
-                      </td>
-                      <td class="text-right">
-                        {% if item.war %}
-                          Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
-                          Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
-                        {% endif %}
-                        {% if is_auth.change_relation or is_auth.isLeader %}
-                        <form method="post" action="main.php?modus={{ tribe_link }}">
-                          <p><select name="relationData[relationID]">
-                            {% for item2 in relations_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
-                          </select>
-                          <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" /><input type="submit" value="Go" /></p>
-                          {% if item.isForcePossible %}
-                            <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
-                          {% endif %}
-                        </form>
-                        {% endif %}
-                      </td>
-                    </tr>
-                  {% endfor %}
-                  {% set bgID = 0 %}
-                </tbody>
-              </table>
-            {% else %}
-              <div class="space text-center">Dein Stamm führt zur Zeit keine Beziehungen.</div>
-            {% endif %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Regierung <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a class="tab-switch" href="#tribe_relationship" data-toggle="tab">Beziehung</a></li>
+          {% if is_auth.change_relation or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_newrelationship" data-toggle="tab">Neue Beziehung</a></li>{% endif %}
+          <li><a class="tab-switch" href="#tribe_goverment" data-toggle="tab">Stammesregierung</a></li>
+          <li><a class="tab-switch" href="#tribe_leader" data-toggle="tab">Anführer wählen</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Nachrichten <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a class="tab-switch" href="#tribe_message" data-toggle="tab">Aktuelle Nachrichten</a></li>
+          {% if is_auth.msg_tribe or is_auth.msg_public or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_newmessage" data-toggle="tab">Neue Nachricht</a></li>{% endif %}
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Stammeswunder <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a class="tab-switch" href="#tribe_store" data-toggle="tab">Stammeslager</a></li>
+          <li><a class="tab-switch" href="#tribe_donation" data-toggle="tab">Einzahlungen</a></li>
+          {% if is_auth.isLeader or is_auth.wonder %}<li><a class="tab-switch" href="#tribe_wonder" data-toggle="tab">Stammeswunder</a></li>{% endif %}
+        </ul>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+{#/* Mein Stamm / Allgemeines */ #}
+      <div class="tab-pane active" id="tribe_generally">
+        {% if tribe_avatar %}
+          <div style="text-align: center; padding: 10px;">
+            <img src="{{ tribe_avatar.path }}" width="{{ tribe_avatar.width }}" height="{{ tribe_avatar.height }}" alt="Stammesbanner" />
           </div>
+        {% endif %}
 
-          {% if is_auth.change_relation or is_auth.isLeader %}
-          <h5 id="newRelation" class="hide_status_msg">Neue Beziehungen</h5>
-          <div class="tabbody2">
-            <form class="ym-form ym-columnar" id="tribeNewRelationForm" method="post" action="main.php?modus={{ tribe_link }}#newRelation">
-              <div class="ym-grid" style="padding-top: 0.8em;" >
-                <div class="ym-g50 ym-gl">
-                  <div class="ym-fbox-text">
-                    <label for="relationData_tag">Stammestag:</label>
-                    <input type="text" name="relationData[tag]" id="relationData_tag" value="" maxlength="8" />
-                  </div>
-                </div>
+        <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
+          <ul class="clean">
+            <li class="text-center" style="padding-bottom: 10px;"><h4>Informationen:</h4></li>
 
-                <div class="ym-g50 ym-gl">
-                  <div class="ym-fbox-select">
-                    <label for="relationData_id">Beziehung:</label>
-                    <select name="relationData[relationID]" id="relationData_id" size="1">
-                      {% for item in relations_list %}<option value="{{ item.relationID }}">{{ item.name }}</option>{% endfor %}
-                    </select>
-                  </div>
-                </div>
-              </div>
+            <li class="tribe_detail_left">Anführer:</li>
+            <li class="tribe_detail_right">{% if tribe_leader_name %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_leader_id }}">{{ tribe_leader_name }}</a>{% else %}Zur Zeit keinen Anführer.{% endif %}</li>
+            <li class="clr"></li>
 
-              <div class="ym-fbox-button text-center">
-                <input type="hidden" name="action" value="{{ tribe_action_relation }}" />
-                <input type="submit" class="ym-button" value="Beziehung eingehen" id="submit5" name="submit"/>
-              </div>
-            </form>
-          </div>
-          {% endif %}
-
-          <h5 class="hide_status_msg">Stammesregierung</h5>
-          <div class="tabbody2">
-            {% if government_select %}
-              <form class="ym-form ym-columnar" style="padding-top: 10px;" id="tribeGovernmentUpdateForm" method="post" action="main.php?modus={{ tribe_link }}">
-                <div class="ym-fbox-select">
-                  <label for="governmentData">Regierungsform:</label>
-                  <select name="governmentData[governmentID]" id="governmentData" size="1">
-                    {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-                  </select>
-                </div>
-
-                <div class="ym-fbox-button text-center">
-                  <input type="hidden" name="action" value="{{ tribe_action_goverment }}" />
-                  <input type="submit" class="ym-button" value="Aktualisieren" id="submit2" name="submit"/>
-                  <input type="reset" class="ym-button" value="Reset" id="reset2" name="reset" />
-                </div>
-              </form>
-            {% else %}
-              <div class="space text-center">
-                <h3 style="margin: 0;">Regierungsform</h3>
-                <div style="padding-top: 10px">{{ government_data.name }} {% if government_data.duration %}bis mindestens {{ government_data.duration }}{% endif %}</div>
-              </div>
-            {% endif %}
-          </div>
-
-          <h5 class="hide_status_msg" id="voteLeader">Anführer wählen</h5>
-          <div class="tabbody2">
-            {% if goverment_choice_list %}
-              <div class="space text-center">
-                <h3 style="margin: 0;">{{ goverment_choice_name }}</h3>
-                {{ goverment_choice_description|raw }}
-              </div>
-
-              <form class="ym-form ym-columnar" id="tribeChooseLeaderForm" method="post" action="main.php?modus={{ tribe_link }}#voteLeader">
-                <div class="ym-fbox-select">
-                  <label for="relationData_id">Anführer:</label>
-                  <select name="chooseLeaderID" id="chooseLeader_id" size="1">
-                    {% for item in goverment_choice_list %}<option value="{{ item.playerID }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-                  </select>
-                </div>
-
-                <table>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Spieler</th>
-                      <th>Stimmen</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for item in goverment_votes_list %}
-                      {% set bgID = (bgID+1)%2 %}
-                      <tr class="bg{{ bgID }}">
-                        <td class="text-left">{{ item.name }}</td>
-                        <td>{{ item.votes }}</td>
-                      </tr>
-                    {% else %}
-                      <tr class="bg0"><td class="last text-center" colspan="2">Bisher hat noch keine einen Anführer gewählt.</td></tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-
-                <div class="ym-fbox-button text-center">
-                  <input type="hidden" name="action" value="{{ tribe_action_choose_leader }}" />
-                  <input type="submit" class="ym-button" value="Anführer wählen" id="submit5" name="submit"/>
-                </div>
-              </form>
-            {% else %}
-              <div class="space text-center">
-                <h3 style="margin: 0;">{{ goverment_choice_name }}</h3>
-                {{ goverment_choice_description|raw }}
-                <div class="info" style="margin: 10px 10px 0;">{{ goverment_choice_message }}</div>
-              </div>
-            {% endif %}
-          </div>
+            <li class="tribe_detail_left">Regierung:</li>
+            <li class="tribe_detail_right"><a href="http://game.uga-agga.de/rules/?modus=governments" class="new-window">{{ government_name }}</a></li>
+            <li class="clr"></li>
+          </ul>
         </div>
-      </div>
 
-      <h4 class="hide_status_msg">Nachrichten</h4>
-      <div class="tabbody">
-        <div id="tibeMessage" class="jquery_tabs nav2">
-          <h5 class="hide_status_msg">Aktuelle Nachrichten</h5>
-          <div class="tabbody2">
-            <ul class="space">
-              {% for item in tribe_messages %}
-                <li>
-                  <div class="info text-left">
-                    <h3 class="loud">{{ item.time }}&nbsp;&nbsp;{{ item.subject }}</h3>
-                    {{ item.message|raw }}
-                  </div>
-                </li>
-              {% else %}
-                <li>
-                  <div class="info text-left">Zur Zeit gibt es keine Stammesnachrichten.</div>
-                </li>
+        <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
+          <ul class="clean">
+            <li class="text-center bold" style="padding-bottom: 10px;"><h4>Verbündete Stämme:</h4></li>
+            {% if relations_ally %}
+              {% for item in relations_ally %}
+                <li>[<a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a>], seit {{ item.time }}</li>
               {% endfor %}
-            </ul>
-          </div>
-
-          {% if is_auth.msg_tribe or is_auth.msg_public or is_auth.isLeader %}
-          <h5 id="sendMessage" class="hide_status_msg">Neue Nachricht</h5>
-          <div class="tabbody2">
-            <form class="ym-form" id="tribeSendMsg" method="post" action="main.php?modus={{ tribe_link }}#sendMessage">
-              <div class="ym-fbox-text">
-                <label for="messageText">Nachricht an alle Mitglieder</label>
-                <textarea name="messageText" id="messageText" cols="60" rows="8"></textarea>
-              </div>
-              
-              <div class="ym-fbox-button text-center">
-                <input type="hidden" name="action" value="{{ tribe_action_message }}" />
-                {% if is_auth.msg_tribe or is_auth.isLeader %}<input type="submit" class="ym-button" value="Stammesnachricht" id="tribemsg" name="tribemsg"/>{% endif %}
-                {% if is_auth.msg_public or is_auth.isLeader %}<input type="submit" class="ym-button" value="Private Nachricht" id="ingame" name="ingame"/>{% endif %}
-              </div>
-            </form>
-          </div>
-          {% endif %}
+            {% else %}
+              <li>Zur Zeit seid ihr mit keinem Stamm verbündet.</li>
+            {% endif %}
+            <li>&nbsp;</li>
+            <li class="text-center" style="font-size: 11px;"><a href="main.php?modus={{ tribe_link }}#tabTribeRelation">Alle Beziehungen anzeigen.</a></li>
+          </ul>
         </div>
+        <div style="clear: both;"></div>
+
+        <table class="table table-striped-info table-condensed">
+          <thead>
+          <tr>
+            <th class="text-left">Stamm</th>
+            <th class="text-left">Beziehungen</th>
+            <th>Sonstiges</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% if relations_war %}
+              {% for item in relations_info %}
+                {% if item.war %}
+                  <tr>
+                  <td class="text-left">{{ item.tag }}</td>
+                  <td class="text-left">
+                    Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                    {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                  </td>
+                  <td class="text-right">
+                    {% if item.war %}
+                      Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                      {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              {% for item in relations %}
+                {% if item.war %}
+                {% set bgID = (bgID+1)%2 %}
+                <tr class="bg{{ bgID }}">
+                  <td class="text-left">{{ item.tag }}</td>
+                  <td class="text-left">
+                    Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                    {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                  </td>
+                  <td class="text-right">
+                    {% if item.war %}
+                      Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                      Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+            {% else %}
+              <tr class="bg0"><td class="last text-center" colspan="3">Ihr befindet euch zur Zeit in keinem Krieg</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+{#/* Mein Stamm / Mitgliederliste */ #}
+      <div class="tab-pane" id="tribe_memberlist">
+        <table class="table table-striped-info table-condensed">
+          <thead>
+          <tr>
+            <th class="text-left">Name</th>
+            <th>Gott</th>
+            <th>Halbgott</th>
+            <th class="text-center" style="width: 215px;">Höhlenliste</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for item in tribe_members_all %}
+              <tr>
+                <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
+                <td>{{ item.god }}</td>
+                <td>{{ item.halfgod }}</td>
+                <td class="text-right" style="width: 215px; white-space: nowrap;">
+                  <form action="main.php?modus={{ tribe_link }}" method="post">
+                    <div style="white-space: nowrap;">
+                    [{{ item.caves|length }}]&nbsp;
+                    <select name="targetCaveID" style="width: 165px; height: 20px; padding: 0;">
+                      {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
+                    </select>
+  
+                    <input type="submit" value="Go" name="tribeUnitMovement" />
+                    </div>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr class="bg0"><td class="last text-center" colspan="4">Die Mitgliederliste konnte nicht geladen werden. Warte bist zum nächsten Ranking.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+{#/* Mein Stamm / Bye... */ #}
+      <div class="tab-pane space" id="tribe_leave">
+        </form>
+        <form action="main.php?modus={{ tribe_link }}" method="post">
+          <input type="hidden" name="action" value="{{ tribe_action_leave }}" />
+          <div class="control-group">
+            <div class="controls tribe text-center">
+              <button type="submit" class="btn">Diesen Stamm verlassen!</button>
+            </div>
+          </div>
+        </form>
       </div>
 
-      <h4 class="hide_status_msg">Wunder</h4>
-      <div class="tabbody">
-        <div id="tribeStorageWonder" class="jquery_tabs nav2">
-          <h5 class="hide_status_msg">Lager</h5>
-          <div class="tabbody2">
-            <div class="notice text-center space_margin">
-              Hier können Einzahlungen ins Stammeslager getätigt werden. <br />
-              Die Rohstoffe werden für Stammeswunder benötigt.<br />
-              Es kann alle {{ donationInterval }} Stunden EINE Einzahlung von JEDER Rohstoffart vorgenommen werden.<br />
+{#/* Verwaltung / Stammesprofil */ #}
+      {% if is_auth.change_settings or is_auth.isLeader %}
+      <div class="tab-pane space" id="tribe_profile">
+        <form id="formTribeProfile" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+          <div class="control-group">
+            <label class="control-label tribe-label" for="inputName">Name</label>
+            <div class="controls tribe">
+              <input type="text" id="inputName" name="inputName" placeholder="Name" value="{{tribe_name }}" required>
             </div>
-            <form class="ym-form ym-columnar" id="tribeStoreForm" method="post" action="main.php?modus={{ tribe_link }}">
-              <table>
-                <thead>
+          </div>
+          <div class="control-group">
+            <label class="control-label tribe-label" for="inputPassword">Password</label>
+            <div class="controls tribe">
+              <input type="password" id="inputPassword" name="inputPassword" placeholder="Password">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label tribe-label" for="inputAvatar">Avatar URL</label>
+            <div class="controls tribe">
+              <input type="url" id="inputAvatar" name="inputAvatar" placeholder="Avatar URL" value="{{ tribe_avatar.path }}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label tribe-label" for="inputDescription">Beschreibung</label>
+            <div class="controls tribe">
+              <textarea id="inputDescription" name="inputDescription" style="width: 495px; height: 125px;" rows="3">{{ tribe_description| raw }}</textarea>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls tribe">
+              <input type="hidden" name="action" value="{{ tribe_action_update }}" />
+              <input type="submit" class="btn" name="commit" value="Absenden">
+              <input type="reset" class="btn" name="reset" value="Reset">
+            </div>
+          </div>
+        </form>
+        <div id="output2"></div>
+      </div>
+      {% endif %}
+{#/* Verwaltung / Spielerverwaltung */ #}
+      {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}
+      <div class="tab-pane" id="tribe_member">
+        <table class="table table-striped-info table-condensed">
+          <thead>
+          <tr>
+            <th class="text-left">Name</th>
+            <th>zuletzt gesehen am:</th>
+            <th>&nbsp;</th>
+          </tr>
+          </thead>
+          <tbody>
+            {% for item in tribe_members %}
+            {% set bgID = (bgID+1)%2 %}
+              <tr class="bg{{ bgID }}">
+                <td><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
+                <td>{% if is_auth.see_online or is_auth.isLeader %}{{ item.lastAction }}{% endif %}</td>
+                <td class="text-right" style="padding-right: 4px;">{% if is_auth.isLeader %}<span id="player_{{ item.playerID }}" class="show_hide change_mouseover" style="padding-right: 10px">Berechtigungen anzeigen</span>{% endif %}{% if is_auth.kick_member or is_auth.isLeader %}<a href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_kick }}&amp;playerID={{ item.playerID }}" data-post="true" data-reask="true" data-reask-header="Spieler kicken" data-reask-msg="Möchtest du {{ item.name }} wirklich aus dem Stamm kicken?">Rauswerfen</a>{% endif %}</td>
+              </tr>
+              {% if is_auth.isLeader %}
+              <tr id="player_{{ item.playerID }}_content" class="nohover" style="display: none;">
+                <td colspan="3" class="text-left">
+                  <form id="formTribeMeberAuth" action="main.php?modus={{ tribe_link }}" method="post">
+                    <label class="checkbox">
+                      <input type="checkbox" id="msg_tribe" name="msg_tribe" value="1" {% if item.tribeAuth.msg_tribe %}checked="checked"{% endif %}>Stammesnachrichten schreiben
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="msg_public" name="msg_public" value="2" {% if item.tribeAuth.msg_public %}checked="checked"{% endif %}>Stammesnachrichten per Privater Nachricht schreiben
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="change_relation" name="change_relation" value="4" {% if item.tribeAuth.change_relation %}checked="checked"{% endif %}>Beziehungen ändern
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="kick_member" name="kick_member" value="8" {% if item.tribeAuth.kick_member %}checked="checked"{% endif %}>Spieler kicken
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="change_settings" name="change_settings" value="16" {% if item.tribeAuth.change_settings %}checked="checked"{% endif %}>Stammes-Informationen bearbeiten
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="tribeAuth.wonder" name="tribeAuth" value="32" {% if item.tribeAuth.tribeAuth.wonder %}checked="checked"{% endif %}>Kann Stammeswunder erwirken
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="see_online" name="see_online" value="64" {% if item.tribeAuth.see_online %}checked="checked"{% endif %}>Kann die letzte Online Zeit sehen
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" id="manage_chat" name="manage_chat" value="128" {% if item.tribeAuth.manage_chat %}checked="checked"{% endif %}>Darf die Chat Rechte verwalten
+                    </label>
+                    <div class="controls">
+                      <input type="hidden" name="action" value="{{ tribe_action_auth }}" />
+                      <input type="hidden" name="player_id" value="{{ item.playerID }}" />
+                      <input type="submit" class="btn" name="commit" value="Absenden">
+                      <input type="reset" class="btn" name="reset" value="Reset">
+                    </div>
+                    </form>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+            {% set bgID = 0 %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+{#/* Verwaltung / Chat */ #}
+      {% if is_auth.manage_chat or is_auth.isLeader %}
+      <div class="tab-pane" id="tribe_chat">
+        <div class="text-center space" style="width: 100%;"><i class="icon-heart"></i>&nbsp;Für Sven!&nbsp;<i class="icon-heart"></i></div>
+      </div>
+      {% endif %}
+{#/* Regierung / Beziehungen */ #}
+      <div class="tab-pane" id="tribe_relationship">
+        {% if relations_info or relations %}
+          <table class="table table-striped-info table-condensed">
+            <thead class="table table-striped-info table-condensed">
+            <tr>
+              <th>Stamm</th>
+              <th>Beziehungen</th>
+              <th>Sonstiges</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for item in relations_info %}
                 <tr>
-                  <th>&nbsp;</th>
-                  <th>Rohstoff</th>
-                  <th>Vorhanden</th>
-                  {% if showTribeStorageDonations %}
-                    <th>Einzahlungsmenge</th>
-                    <th>Maximale Menge pro Einzahlung</th>
+                  <td>{{ item.tag }}</td>
+                  <td>
+                    Eigene: <span class="bold">{{ item.relation }}</span><br />
+                    Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                    Bis: <span class="bold">{{ item.duration }}</span>
+                  </td>
+                  <td class="text-right" style="padding-right: 4px;">
+                    {% if item.war %}
+                      Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                      {% if percent_estimated %}Kriegsanteil: {{ item.percent_actual }}&nbsp;%<br />{% endif %}
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              {% for item in relations %}
+                <tr>
+                  <td>{{ item.tag }}</td>
+                  <td>
+                    Ihre: <span class="bold">{{ item.their_relation }}</span><br />
+                    {% if item.duration %}Bis: <span class="bold">{{ item.duration }}</span>{% endif %}
+                  </td>
+                  <td class="text-right">
+                    {% if item.war %}
+                      Knüppelpunkte: Unsere: {{ item.fame_own }}. Ihre: {{ item.fame_target }}<br />
+                      Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
+                    {% endif %}
+                    {% if is_auth.change_relation or is_auth.isLeader %}
+                    <form method="post" action="main.php?modus={{ tribe_link }}" action="main.php?modus={{ tribe_link }}" method="post">
+                      <p><select name="relationData[relationID]">
+                        {% for item2 in relations_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
+                      </select>
+                      <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" /><input type="submit" value="Go" /></p>
+                      {% if item.isForcePossible %}
+                        <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
+                      {% endif %}
+                    </form>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="space text-center">Dein Stamm führt zur Zeit keine Beziehungen.</div>
+        {% endif %}
+      </div>
+{#/* Verwaltung / Neue Beziehung */ #}
+      {% if is_auth.change_relation or is_auth.isLeader %}
+      <div class="tab-pane space" id="tribe_newrelationship">
+        <form id="formTribeRelation" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+          <div class="control-group">
+            <label class="control-label tribe-label" for="inputTag">Stammestag</label>
+            <div class="controls tribe">
+              <input class="autocomplete" type="text" name="relationData[tag]" id="inputTag" placeholder="Stammestag" data-source="tribe" required>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label tribe-label" for="relationDataID">Beziehung</label>
+            <div class="controls tribe">
+              <select name="relationData[relationID]" id="relationDataID" style="height: 25px; padding: 0;">
+                {% for item in relations_list %}<option value="{{ item.relationID }}">{{ item.name }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <input type="hidden" name="action" value="{{ tribe_action_relation }}" />
+              <input type="submit" class="btn" name="commit" value="Absenden">
+            </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+{#/* Verwaltung / Stammesregierung */ #}
+      <div class="tab-pane space" id="tribe_goverment">
+        {% if government_select %}
+        <form id="formTribeGoverment" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+          <div class="control-group">
+            <label class="control-label tribe-label" for="governmentData">Regierungsform</label>
+            <div class="controls tribe">
+              <select name="governmentData[governmentID]" id="governmentData" style="height: 25px; padding: 0;">
+                 {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="controls">
+              <input type="hidden" name="action" value="{{ tribe_action_goverment }}" />
+              <input type="submit" class="btn" name="commit" value="Absenden">
+            </div>
+          </div>
+        </form>
+        {% else %}
+          <div class="space text-center">
+            <h3 style="margin: 0;">Regierungsform</h3>
+            <div style="padding-top: 10px">{{ government_data.name }} {% if government_data.duration %}bis mindestens {{ government_data.duration }}{% endif %}</div>
+          </div>
+        {% endif %}
+      </div>
+{#/* Verwaltung / Anführer wählen */ #}
+      <div class="tab-pane" id="tribe_leader" style="padding: 5px;">
+        {% if goverment_choice_list %}
+          <div class="space text-center">
+            <h4>{{ goverment_choice_name }}</h4>
+            <p>{{ goverment_choice_description|raw }}</p>
+          </div>
+          <hr>
+          <form id="formTribeLeader" class="form-inline" action="main.php?modus={{ tribe_link }}" method="post">
+            Anführer:
+            <select style="height: 25px;" name="chooseLeaderID" id="chooseLeader_id" size="1">
+              {% for item in goverment_choice_list %}<option value="{{ item.playerID }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
+            </select>
+            <input type="hidden" name="action" value="{{ tribe_action_choose_leader }}" />
+            <input type="submit" class="btn" name="commit" value="Wählen">
+          </form>
+          <hr>
+          <table class="table table-striped-info table-condensed">
+            <thead>
+              <tr>
+                <th class="text-left">Spieler</th>
+                <th>Stimmen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in goverment_votes_list %}
+                <tr>
+                  <td class="text-left">{{ item.name }}</td>
+                  <td>{{ item.votes }}</td>
+                </tr>
+              {% else %}
+                <tr class="bg0"><td class="last text-center" colspan="2">Bisher hat noch keine einen Anführer gewählt.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="space text-center">
+            <h3 style="margin: 0;">{{ goverment_choice_name }}</h3>
+            {{ goverment_choice_description|raw }}
+            <div class="info" style="margin: 10px 10px 0;">{{ goverment_choice_message }}</div>
+          </div>
+        {% endif %}
+      </div>
+{#/* Nachrichten / Aktuelle Nachrichten */ #}
+      <div class="tab-pane" id="tribe_message">
+        <ul class="clean" style="padding: 5px;">
+          {% for item in tribe_messages %}
+            <li>
+              <h4 class="loud">{{ item.time }}&nbsp;&nbsp;{{ item.subject }}</h4>
+              <p>{{ item.message|raw }}</p>{% if not loop.last %}<hr>{% endif %}
+            </li>
+          {% else %}
+            <li>
+              <div class="info text-left">Zur Zeit gibt es keine Stammesnachrichten.</div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+{#/* Nachrichten / Neue Nachricht */ #}
+      {% if is_auth.msg_tribe or is_auth.msg_public or is_auth.isLeader %}
+      <div class="tab-pane" style="padding: 5px;" id="tribe_newmessage">
+        <form id="formTribeMessage" action="main.php?modus={{ tribe_link }}" method="post">
+          <div class="control-group">
+            <label class="control-label tribe-label" for="inputMessage">Nachricht</label>
+            <div class="controls tribe">
+              <textarea id="inputMessage" name="messageText" style="width: 600px; height: 125px;" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="control-group">
+            {% if is_auth.msg_tribe or is_auth.isLeader %}
+            <label class="radio">
+              <input type="radio" name="messageType" id="tribemsg" value="tribemsg" checked>Stammesnachricht
+            </label>
+            {% endif %}
+            {% if is_auth.msg_public or is_auth.isLeader %}
+            <label class="radio">
+              <input type="radio" name="messageType" id="ingame" value="ingame">Private Nachricht
+            </label>
+            {% endif %}
+          </div>
+          <div class="control-group">
+            <div class="controls tribe">
+              <input type="hidden" name="action" value="{{ tribe_action_message }}" />
+              <input type="submit" class="btn" name="commit" value="Absenden">
+            </div>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+{#/* Wunder / Lager */ #}
+      <div class="tab-pane" id="tribe_store">
+        <div class="notice text-center space_margin">
+          Hier können Einzahlungen ins Stammeslager getätigt werden. <br />
+          Die Rohstoffe werden für Stammeswunder benötigt.<br />
+          Es kann alle {{ donationInterval }} Stunden EINE Einzahlung von JEDER Rohstoffart vorgenommen werden.<br />
+        </div>
+        <form id="formTribeStore" action="main.php?modus={{ tribe_link }}" method="post">
+          <table class="table table-striped-info table-condensed">
+            <thead>
+              <tr>
+                <th>&nbsp;</th>
+                <th>Rohstoff</th>
+                <th>Vorhanden</th>
+                {% if showTribeStorageDonations %}
+                  <th>Einzahlungsmenge</th>
+                  <th>Maximale Menge pro Einzahlung</th>
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for resource in tribeStorageValues %}
+                <tr>
+                  <td><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
+                  <td>{{ resource.name }}</td>
+                  <td>{{ resource.value }}</td>
+                  {% if resource.donatePossible %}
+                    <td><input id="resource_{{ resource.resourceID }}_input" name="value[{{ resource.resourceID }}]" type="text" pattern="\d*" size="10" /></td>
+                    <td><div id="resource_{{ resource.resourceID }}" class="load_max change_mouseover">{{ resource.maxTribeDonation }}</div></td>
+                  {% else %}
+                    <td colspan="2">Nächste Einlagerung: {{ resource.lastDonate }}</td>
                   {% endif %}
                 </tr>
-                </thead>
-                <tbody>
-                  {% for resource in tribeStorageValues %}
-                    {% set bgID = (bgID+1)%2 %}
-                    <tr class="bg{{ bgID }}">
-                      <td><img src="{{ gfx }}/resources/{{ resource.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ resource.name }}" title="{{ resource.name }}" /></td>
-                      <td>{{ resource.name }}</td>
-                      <td>{{ resource.value }}</td>
-                      {% if resource.donatePossible %}
-                        <td><input id="resource_{{ resource.resourceID }}_input" name="value[{{ resource.resourceID }}]" type="text" pattern="\d*" size="10" /></td>
-                        <td><div id="resource_{{ resource.resourceID }}" class="load_max change_mouseover">{{ resource.maxTribeDonation }}</div></td>
-                      {% else %}
-                        <td colspan="2">Nächste Einlagerung: {{ resource.lastDonate }}</td>
-                      {% endif %}
-                    </tr>
-                  {% endfor %}
-                  {% set bgID = 0 %}
-                </tbody>
-              </table>
-              {% if showTribeStorageDonations %}
-                <div class="ym-fbox-button text-left">
-                  <input type="hidden" name="action" value="{{ tribe_action_donate }}" />
-                  <input type="submit" class="ym-button" value="Ugh!" id="submitDonation" name="submitDonation"/>
-                </div>
-              {% endif %}
-            </form>
-          </div>
-
-          <h5 class="hide_status_msg">Einzahlungen</h5>
-          <div class="tabbody2">
-            {% if donations %}
-              <table>
-                <thead>
-                  <tr>
-                    <th>Spieler</th>
-                    {% for item in tribeStorageValues %}
-                    <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
-                    {% endfor %}
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for donation in donations %}
-                  {% set bgID = (bgID+1)%2 %}
-                  <tr class="bg{{ bgID }}">
-                    {% for item in donation %}
-                    <td>{{ item }}</td>
-                    {% endfor %}
-                  </tr>
-                  {% endfor %}
-                  {% set bgID = 0 %}
-                </tbody>
-              </table>
-            {% else %}
-              <div class="space text-center">Bisher hat noch kein Spieler etwas ins Lager eingezahlt.</div>
-            {% endif %}
-          </div>
-
-          {% if is_auth.isLeader or is_auth.wonder %}
-          <h5 id="tribeWonder" class="hide_status_msg">Wunder</h5>
-          <div class="tabbody2">
-            {% if wonders %}
-              <table>
-                <tbody>
-                  {% for item in wonders %}
-                  {% set bgID = (bgID+1)%2 %}
-                    <tr class="bg{{ bgID }} object-row">
-                      <td><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
-                      <td>
-                        <dl>
-                          <dt><a class="object-detail-link" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
-                          <dd>{% include "boxCost.tmpl" %} bei {{ tribe_members_count }} Mitgliedern</dd>
-                        </dl>
-                      </td>
-                      <td class="text-right" style="vertical-align: center;">
-                        {% if item.build_link %}
-                        <form id="tribeWonderForm" method="post" action="main.php?modus={{ tribe_link }}#tribeWonder">
-                          <div>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if showTribeStorageDonations %}
+            <div class="control-group">
+              <div class="controls tribe">
+                <input type="hidden" name="action" value="{{ tribe_action_donate }}" />
+                <input type="submit" class="btn" name="commit" value="Absenden">
+              </div>
+            </div>
+          {% endif %}
+        </form>
+      </div>
+{#/* Wunder / Einzahlungen */ #}
+      <div class="tab-pane" id="tribe_donation">
+        {% if donations %}
+          <table class="table table-striped-info table-condensed">
+            <thead>
+              <tr>
+                <th>Spieler</th>
+                {% for item in tribeStorageValues %}
+                <th><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15" height="15" alt="{{ item.name }}" title="{{ item.name }}" /></th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for donation in donations %}
+              <tr>
+                {% for item in donation %}
+                <td>{{ item }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="space text-center">Bisher hat noch kein Spieler etwas ins Lager eingezahlt.</div>
+        {% endif %}
+      </div>
+{#/* Wunder / Wunder */ #}
+      {% if is_auth.isLeader or is_auth.wonder %}
+      <div class="tab-pane" id="tribe_wonder">
+        {% if wonders %}
+          <table class="table table-striped-info table-condensed">
+            <tbody>
+              {% for item in wonders %}
+              {% set bgID = (bgID+1)%2 %}
+                <tr class="bg{{ bgID }} object-row">
+                  <td><a class="object-detail-link" data-id="wonder_{{ item.wonder_id }}" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+                  <td>
+                    <dl>
+                      <dt><a class="object-detail-link" data-id="wonder_{{ item.wonder_id }}" href="main.php?modus={{ wonder_detail_link }}&amp;wonderID={{ item.wonder_id }}&amp;caveID={{ item.cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                      <dd>{% include "boxCost.tmpl" %} bei {{ tribe_members_count }} Mitgliedern</dd>
+                    </dl>
+                  </td>
+                  <td class="text-right" style="width: 150px;">
+                    {% if item.build_link %}
+                      <form id="tribeWonderForm" action="main.php?modus={{ tribe_link }}" method="post">
+                        <div class="pull-right">
+                          <div class="pull-left" style="width: 105px;">
+                            <ul class="clean">
+                              <li class="text-center">Zielstamm:</li>
+                              <li><input class="autocomplete input-small" type="text" name="CaveName" id="CaveName_{{ item.wonder_id }}" size="10" maxlength="32"  data-source="tribe" /></li>
+                            </ul>
+                          </div>
+                          <div class="pull-left" style="width: 25px;">
                             <input type="hidden" name="action" value="{{ tribe_action_wonder }}" />
                             <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
                             <input type="hidden" name="caveID" value="{{ cave_id }}" />
-                            <ul>
-                              <li style="float: right; width: 22px;"><input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" value="Beten" alt="Beten" title="Beten" /></li>
-                              <li style="float: right; text-align: left;">
-                                <ul class="clean_list" style="width: 100px;">
-                                  <li>Stammesname:</li>
-                                  <li><input type="text" name="tribeName" size="10" maxlength="32" /></li>
-                                </ul>
-                              </li>
-                            </ul>
+                            <input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" width="25" value="Beten" alt="Beten" title="Beten" />
                           </div>
-                        </form>
-                        {% else %}
-                          <span class="text-right"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
-                        {% endif %}
-                      </td>
-                    </tr>
-                    <tr class="detail-row" style="display: none">
-                      <td class="object-details" colspan="3">
-                      </td>
-                    </tr>  
-                  {% endfor %}
-                  {% set bgID = 0 %}
-                </tbody>
-              </table>
-            {% else %}
-              <div class="space text-center">Euer Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</div>
-            {% endif %}
-            {% set bgID = 0 %}
-          </div>
-          {% endif %}
-        </div>
+                        </div>
+                      </form>
+                    {% else %}
+                      <span class="text-right"><img src="{{ gfx }}/de_DE/t_uga/flash_false.png" class="noborder" width="20" height="20" alt="{message}" title="{{ item.no_build_msg }}" /></span>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr class="bg{{ bgID }} hide"><td colspan="4" id="wonder_{{ item.wonder_id }}_details"></td></tr>
+              {% endfor %}
+              {% set bgID = 0 %}
+            </tbody>
+          </table>
+        {% else %}
+          <div class="space text-center">Euer Glaube reicht bisher leider nicht aus um ein Wunder erbitten zu können.</div>
+        {% endif %}
       </div>
+      {% endif %}
     </div>
   </div>
 </div>

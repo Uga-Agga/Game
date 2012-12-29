@@ -1,7 +1,7 @@
 <?php
 /*
  * auth.inc.php -
- * Copyright (c) 2011-2012  David Unger
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -27,7 +27,7 @@ class auth {
       'value' => 2,  'desc'  => 'Stammesnachrichten per Privater Nachricht schreiben'
     );
     $this->perm['tribe']['change_relation'] = array(
-      'value' => 4,  'desc'  => 'Beziehungen ändern'
+      'value' => 4,  'desc'  => 'Beziehungen Ã¤ndern'
     );
     $this->perm['tribe']['kick_member'] = array(
       'value' => 8,  'desc'  => 'Spieler kicken'
@@ -40,6 +40,9 @@ class auth {
     );
     $this->perm['tribe']['see_online'] = array(
       'value' => 64, 'desc'  => 'Kann die letzte Online Zeit sehen'
+    );
+    $this->perm['tribe']['manage_chat'] = array(
+      'value' => 128, 'desc'  => 'Darf die Chat Rechte verwalten'
     );
   }
 

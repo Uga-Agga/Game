@@ -45,6 +45,11 @@ class Twig_TokenStream
         return implode("\n", $this->tokens);
     }
 
+    public function injectTokens(array $tokens)
+    {
+        $this->tokens = array_merge(array_slice($this->tokens, 0, $this->current), $tokens, array_slice($this->tokens, $this->current));
+    }
+
     /**
      * Sets the pointer to the next token and returns the old one.
      *
@@ -53,7 +58,7 @@ class Twig_TokenStream
     public function next()
     {
         if (!isset($this->tokens[++$this->current])) {
-            throw new Twig_Error_Syntax('Unexpected end of template', -1, $this->filename);
+            throw new Twig_Error_Syntax('Unexpected end of template', $this->token[$this->current - 1]->getLine(), $this->filename);
         }
 
         return $this->tokens[$this->current - 1];
@@ -92,7 +97,7 @@ class Twig_TokenStream
     public function look($number = 1)
     {
         if (!isset($this->tokens[$this->current + $number])) {
-            throw new Twig_Error_Syntax('Unexpected end of template', -1, $this->filename);
+            throw new Twig_Error_Syntax('Unexpected end of template', $this->token[$this->current + $number - 1]->getLine(), $this->filename);
         }
 
         return $this->tokens[$this->current + $number];
