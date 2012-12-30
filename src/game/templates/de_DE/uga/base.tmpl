@@ -92,8 +92,15 @@
     dl { margin: 0; }
     form { margin: 0 }
     hr { margin: 10px 0; }
-    select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input { font-size: 12px; height: 15px; margin-bottom: 0; }
+
+    select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input { font-size: 12px; padding: 2px 6px; }
+    .input-append input, .input-prepend input, .input-append select, .input-prepend select, .input-append .uneditable-input, .input-prepend .uneditable-input, .input-append .dropdown-menu,.input-prepend .dropdown-menu { font-size: 12px; }
+    .input-append, .input-prepend { margin-bottom: 0px; }
     label, input, button, select, textarea { font-size: 12px; }
+    select, input[type="file"] { height: 25px; *margin-top: 4px; line-height: 25px; }
+
+    .btn { line-height: 15px; }
+
     .table { margin-bottom: 0; }
     .table-condensed th, .table-condensed td { padding: 4px 2px; }
     .nav { margin-bottom: 0; }
@@ -170,8 +177,17 @@
     .form-horizontal .tribe { margin-left: 105px; }
     .form-horizontal .tribe-label { width: 100px; }
 
-    .input-wonder-xy { width: 45px; }
+    .form-horizontal .profile { margin-left: 105px; }
+    .form-horizontal .profile-label { width: 100px; }
+
+    .input-wonder-xy { width: 20px; }
     .input-unit { width: 25px; }
+
+    .abort, .arrow_max, .arrow_up, .flash { background-repeat: no-repeat;  width: 25px; height: 25px; cursor: pointer; background-color: transparent; border: none; }
+    .abort { background-image: url("{{ gfx }}/de_DE/t_uga/abort.png"); }
+    .arrow_max { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up_max.png"); }
+    .arrow_up { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up.png"); }
+    .flash { background-image: url("{{ gfx }}/de_DE/t_uga/flash.png"); }
 
     .bg0 { background-color: #eee }
     .less { color:#ff0000; }

@@ -75,7 +75,7 @@ function science_getScienceDetail($caveID, &$details) {
         break;
       }
 
-      if (Request::isPost('cancelOrderConfirm')) {
+      if (Request::isPost('postConfirm')) {
         $messageID = science_cancelOrder($eventID, $caveID);
 
         if ($messageID == 0) {

@@ -22,7 +22,7 @@
   <div class="ua-box">
     <div class="ua-box-header">Fremde Bewegungen</div>
     <div class="ua-box-content">
-      <table class="table table-striped-info table-condensed">
+      <table class="table table-condensed">
         <tbody>
           {% for item in opponent_movement %}
           <tr id="digest_mov_{{ item.event_id }}" class="digest-mov-{{ item.movement_id }} show_hide change_mouseover">
@@ -78,7 +78,7 @@
   <div class="ua-box">
     <div class="ua-box-header">Eigene Bewegungen</div>
     <div class="ua-box-content">
-      <table class="table table-striped-info table-condensed">
+      <table class="table table-condensed">
         <tbody>
           {% for item in own_movements %}
           <tr id="digest_mov_{{ item.event_id }}" class="digest-mov-{{ item.movement_id }} show_hide change_mouseover">
@@ -114,10 +114,10 @@
               </div>
               <div class="pull-right">
                 {% if item.cancel %}
-                <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}&amp;caveID={{ item.cave_id }}" method="post">
+                <form id="unitMovingCancel{{ item.event_id }}" action="main.php?modus={{ unit_movement_link }}&amp;caveID={{ item.cave_id }}" method="post">
                   <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
                   <input type="hidden" name="action" value="cancel" />
-                  <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
+                  <button class="abort" type="button" id="unitMovingCancelSubmit" name="unitMovingCancelSubmit" title="Einheiten umkehren"></button>
                 </form>
                 {% else %}&nbsp;{% endif %}
               </div>
@@ -135,7 +135,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Artefakte - Einweihungen</div>
   <div class="ua-box-content">
-    <table class="table table-striped-info table-condensed">
+    <table class="table table-striped table-condensed">
       <tbody>
       {% for item in initiations %}
         <tr class="digest-artefact">
@@ -155,7 +155,7 @@
   <div class="ua-box-header">Ausstehende Termine</div>
   <div class="ua-box-content">
     {% if appointments %}
-      <table class="table table-striped-info table-condensed">
+      <table class="table table-condensed">
         <tbody>
         {% for item in appointments %}
           <tr class="digest-{{ item.category }}">

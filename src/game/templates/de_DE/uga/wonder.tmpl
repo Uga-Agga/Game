@@ -14,7 +14,7 @@
 {% block title %}Wunder{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <div class="ua-box">
   <div class="ua-box-header">Wunder</div>
@@ -30,7 +30,7 @@
           {% for category in wonders %}
             <div class="tab-pane{% if loop.first %} active{% endif %}" id="wonder_{{ category.id }}">
               {% if category.items %}
-                <table class="table table-striped-info table-condensed">
+                <table class="table table-condensed">
                   <tbody>
                     {% for item in category.items %}
                     {% set bgID = (bgID+1)%2 %}
@@ -46,27 +46,13 @@
                           {% if item.build_link %}
                           <form action="main.php?modus={{ wonder_link }}" method="post">
                           <div class="pull-right">
-                            <div class="pull-left" style="width: 125px;">
-                              <ul class="clean">
-                                <li>Name der Zielhöhle:</li>
-                                <li><input class="autocomplete input-small" type="text" name="CaveName" id="CaveName_{{ item.wonder_id }}" size="10" maxlength="32" data-source="caves" /></li>
-                              </ul>
+                            <div class="input-append">
+                              <input class="autocomplete input-small" style="margin-right: 10px;" type="text" name="CaveName" id="CaveName_{{ item.wonder_id }}" placeholder="Höhlenname" maxlength="32" data-source="caves">
+                              <input class="input-wonder-xy" type="text" pattern="\d*" name="xCoord" placeholder="X" maxlength="2">
+                              <input class="input-wonder-xy" type="text" pattern="\d*" name="yCoord" placeholder="Y" maxlength="2"> 
+                              <button class="flash" style="margin-left: 10px;" type="button" id="formSearchTribeSubmit" name="formSearchTribeSubmit" title="Beten"></button>
                             </div>
-                            <div class="pull-left" style="width: 155px;">
-                              <ul class="clean">
-                                <li>Koordinaten der Zielhöhle:</li>
-                                <li>
-                                  X:<input class="input-wonder-xy" type="text" pattern="\d*" name="xCoord" size="3" maxlength="2" />
-                                  Y:<input class="input-wonder-xy" type="text" pattern="\d*" name="yCoord" size="3" maxlength="2" /> 
-                                </li>
-                              </ul>
-                            </div>
-                            <div class="pull-left" style="width: 25px;">
-                              <input type="hidden" name="action" value="wonder" />
-                              <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
-                              <input type="hidden" name="caveID" value="{{ cave_id }}" />
-                              <input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" width="25" value="Beten" alt="Beten" title="Beten" />
-                            </div>
+                            <input type="hidden" name="action" value="wonder"><input type="hidden" name="wonderID" value="{{ item.wonder_id }}"><input type="hidden" name="caveID" value="{{ cave_id }}">
                           </div>
                           </form>
                           {% else %}
@@ -110,7 +96,7 @@
           {% for category in wonders_unqualified %}
             <div class="tab-pane" id="unqualified_{{ category.id }}">
               {% if category.items %}
-                <table class="table table-striped-info table-condensed">
+                <table class="table table-condensed">
                   <tbody>
                     {% for item in category.items %}
                     {% set bgID = (bgID+1)%2 %}

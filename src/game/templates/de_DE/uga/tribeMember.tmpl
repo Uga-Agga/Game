@@ -14,7 +14,7 @@
 {% block title %}Nachrichten{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <div class="ua-box small">
   <div class="ua-box-header">Mein Stamm: {{ tribe_name }} [{{ tribe_tag }}]</div>
@@ -105,7 +105,7 @@
         </div>
         <div style="clear: both;"></div>
 
-        <table class="table table-striped-info table-condensed">
+        <table class="table table-striped table-condensed">
           <thead>
           <tr>
             <th class="text-left">Stamm</th>
@@ -158,7 +158,7 @@
       </div>
 {#/* Mein Stamm / Mitgliederliste */ #}
       <div class="tab-pane" id="tribe_memberlist">
-        <table class="table table-striped-info table-condensed">
+        <table class="table table-striped table-condensed">
           <thead>
           <tr>
             <th class="text-left">Name</th>
@@ -174,14 +174,13 @@
                 <td>{{ item.god }}</td>
                 <td>{{ item.halfgod }}</td>
                 <td class="text-right" style="width: 215px; white-space: nowrap;">
-                  <form action="main.php?modus={{ tribe_link }}" method="post">
-                    <div style="white-space: nowrap;">
-                    [{{ item.caves|length }}]&nbsp;
-                    <select name="targetCaveID" style="width: 165px; height: 20px; padding: 0;">
-                      {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
-                    </select>
-  
-                    <input type="submit" value="Go" name="tribeUnitMovement" />
+                  <form id="formTribeMemberCaves" action="main.php?modus={{ unit_movement_link }}" method="post">
+                    <div class="input-append">
+                      [{{ item.caves|length }}]&nbsp;
+                      <select name="targetCaveID" style="width: 165px;">
+                        {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
+                      </select>
+                      <button class="btn" type="button" id="tribeUnitMovement" name="tribeUnitMovement">Go</button>
                     </div>
                   </form>
                 </td>
@@ -194,15 +193,7 @@
       </div>
 {#/* Mein Stamm / Bye... */ #}
       <div class="tab-pane space" id="tribe_leave">
-        </form>
-        <form action="main.php?modus={{ tribe_link }}" method="post">
-          <input type="hidden" name="action" value="{{ tribe_action_leave }}" />
-          <div class="control-group">
-            <div class="controls tribe text-center">
-              <button type="submit" class="btn">Diesen Stamm verlassen!</button>
-            </div>
-          </div>
-        </form>
+        <div class="text-center"><a class="action btn" href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_leave }}" data-reask="true" data-reask-header="Stamm verlassen!" data-reask-msg="Möchtest du deinen Stann <strong> {{ tribe_name }} [{{ tribe_tag }}]</strong> wirklich Verlassen?">Stamm verlassen</a></div>
       </div>
 
 {#/* Verwaltung / Stammesprofil */ #}
@@ -212,7 +203,7 @@
           <div class="control-group">
             <label class="control-label tribe-label" for="inputName">Name</label>
             <div class="controls tribe">
-              <input type="text" id="inputName" name="inputName" placeholder="Name" value="{{tribe_name }}" required>
+              <input type="text" id="inputName" name="inputName" placeholder="Name" value="{{ tribe_name }}" required>
             </div>
           </div>
           <div class="control-group">
@@ -236,8 +227,7 @@
           <div class="control-group">
             <div class="controls tribe">
               <input type="hidden" name="action" value="{{ tribe_action_update }}" />
-              <input type="submit" class="btn" name="commit" value="Absenden">
-              <input type="reset" class="btn" name="reset" value="Reset">
+              <button class="btn" type="button" id="tribeProfileSubmit" name="tribeProfileSubmit">Absenden</button>
             </div>
           </div>
         </form>
@@ -247,7 +237,7 @@
 {#/* Verwaltung / Spielerverwaltung */ #}
       {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}
       <div class="tab-pane" id="tribe_member">
-        <table class="table table-striped-info table-condensed">
+        <table class="table table-condensed">
           <thead>
           <tr>
             <th class="text-left">Name</th>
@@ -264,7 +254,7 @@
                 <td class="text-right" style="padding-right: 4px;">{% if is_auth.isLeader %}<span id="player_{{ item.playerID }}" class="show_hide change_mouseover" style="padding-right: 10px">Berechtigungen anzeigen</span>{% endif %}{% if is_auth.kick_member or is_auth.isLeader %}<a href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_kick }}&amp;playerID={{ item.playerID }}" data-post="true" data-reask="true" data-reask-header="Spieler kicken" data-reask-msg="Möchtest du {{ item.name }} wirklich aus dem Stamm kicken?">Rauswerfen</a>{% endif %}</td>
               </tr>
               {% if is_auth.isLeader %}
-              <tr id="player_{{ item.playerID }}_content" class="nohover" style="display: none;">
+              <tr id="player_{{ item.playerID }}_content" class="bg{{ bgID }} hide">
                 <td colspan="3" class="text-left">
                   <form id="formTribeMeberAuth" action="main.php?modus={{ tribe_link }}" method="post">
                     <label class="checkbox">
@@ -294,8 +284,7 @@
                     <div class="controls">
                       <input type="hidden" name="action" value="{{ tribe_action_auth }}" />
                       <input type="hidden" name="player_id" value="{{ item.playerID }}" />
-                      <input type="submit" class="btn" name="commit" value="Absenden">
-                      <input type="reset" class="btn" name="reset" value="Reset">
+                      <button class="btn" type="button" id="tribeMemberAuthSubmit" name="tribeMemberAuthSubmit">Absenden</button>
                     </div>
                     </form>
                 </td>
@@ -316,8 +305,8 @@
 {#/* Regierung / Beziehungen */ #}
       <div class="tab-pane" id="tribe_relationship">
         {% if relations_info or relations %}
-          <table class="table table-striped-info table-condensed">
-            <thead class="table table-striped-info table-condensed">
+          <table class="table table-striped table-condensed">
+            <thead>
             <tr>
               <th>Stamm</th>
               <th>Beziehungen</th>
@@ -354,14 +343,17 @@
                       Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
                     {% endif %}
                     {% if is_auth.change_relation or is_auth.isLeader %}
-                    <form method="post" action="main.php?modus={{ tribe_link }}" action="main.php?modus={{ tribe_link }}" method="post">
-                      <p><select name="relationData[relationID]">
-                        {% for item2 in relations_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
-                      </select>
-                      <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" /><input type="submit" value="Go" /></p>
+                    <form id="formTribeChangeRelation" action="main.php?modus={{ tribe_link }}" method="post">
+                      <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" />
+                      <div class="input-append">
+                        <select name="relationData[relationID]">
+                          {% for item2 in relations_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
+                        </select>
+                        <button class="btn" type="button" id="changeRelation" name="changeRelation">Go</button>
                       {% if item.isForcePossible %}
-                        <p><input type="submit" name="forceSurrender" value="Kapitulation erzwingen" /></p>
+                        <button class="btn" type="button" id="forceSurrender" name="forceSurrender">Kapitulation erzwingen</button>
                       {% endif %}
+                      </div>
                     </form>
                     {% endif %}
                   </td>
@@ -373,7 +365,7 @@
           <div class="space text-center">Dein Stamm führt zur Zeit keine Beziehungen.</div>
         {% endif %}
       </div>
-{#/* Verwaltung / Neue Beziehung */ #}
+{#/* Regierung / Neue Beziehung */ #}
       {% if is_auth.change_relation or is_auth.isLeader %}
       <div class="tab-pane space" id="tribe_newrelationship">
         <form id="formTribeRelation" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
@@ -394,20 +386,20 @@
           <div class="control-group">
             <div class="controls">
               <input type="hidden" name="action" value="{{ tribe_action_relation }}" />
-              <input type="submit" class="btn" name="commit" value="Absenden">
+              <button class="btn" type="button" id="tribeNewRelationSubmit" name="tribeNewRelationSubmit">Absenden</button>
             </div>
           </div>
         </form>
       </div>
       {% endif %}
-{#/* Verwaltung / Stammesregierung */ #}
+{#/* Regierung / Stammesregierung */ #}
       <div class="tab-pane space" id="tribe_goverment">
         {% if government_select %}
         <form id="formTribeGoverment" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
           <div class="control-group">
             <label class="control-label tribe-label" for="governmentData">Regierungsform</label>
             <div class="controls tribe">
-              <select name="governmentData[governmentID]" id="governmentData" style="height: 25px; padding: 0;">
+              <select name="governmentData[governmentID]" id="governmentData">
                  {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
               </select>
             </div>
@@ -415,7 +407,7 @@
           <div class="control-group">
             <div class="controls">
               <input type="hidden" name="action" value="{{ tribe_action_goverment }}" />
-              <input type="submit" class="btn" name="commit" value="Absenden">
+              <button class="btn" type="button" id="formTribeGovermentSubmit" name="formTribeGovermentSubmit">Absenden</button>
             </div>
           </div>
         </form>
@@ -426,7 +418,7 @@
           </div>
         {% endif %}
       </div>
-{#/* Verwaltung / Anführer wählen */ #}
+{#/* Regierung / Anführer wählen */ #}
       <div class="tab-pane" id="tribe_leader" style="padding: 5px;">
         {% if goverment_choice_list %}
           <div class="space text-center">
@@ -436,14 +428,16 @@
           <hr>
           <form id="formTribeLeader" class="form-inline" action="main.php?modus={{ tribe_link }}" method="post">
             Anführer:
-            <select style="height: 25px;" name="chooseLeaderID" id="chooseLeader_id" size="1">
-              {% for item in goverment_choice_list %}<option value="{{ item.playerID }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
-            </select>
+            <div class="input-append">
+              <select name="chooseLeaderID" id="chooseLeader_id">
+                {% for item in goverment_choice_list %}<option value="{{ item.playerID }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
+              </select>
+              <button class="btn" type="button" id="formChoiceLeaderSubmit" name="formChoiceLeaderSubmit">Wählen</button>
+            </div>
             <input type="hidden" name="action" value="{{ tribe_action_choose_leader }}" />
-            <input type="submit" class="btn" name="commit" value="Wählen">
           </form>
           <hr>
-          <table class="table table-striped-info table-condensed">
+          <table class="table table-striped table-condensed">
             <thead>
               <tr>
                 <th class="text-left">Spieler</th>
@@ -491,25 +485,14 @@
           <div class="control-group">
             <label class="control-label tribe-label" for="inputMessage">Nachricht</label>
             <div class="controls tribe">
-              <textarea id="inputMessage" name="messageText" style="width: 600px; height: 125px;" rows="3"></textarea>
+              <textarea class="input-block-level" id="inputMessage" name="messageText" style="height: 125px;" rows="3"></textarea>
             </div>
-          </div>
-          <div class="control-group">
-            {% if is_auth.msg_tribe or is_auth.isLeader %}
-            <label class="radio">
-              <input type="radio" name="messageType" id="tribemsg" value="tribemsg" checked>Stammesnachricht
-            </label>
-            {% endif %}
-            {% if is_auth.msg_public or is_auth.isLeader %}
-            <label class="radio">
-              <input type="radio" name="messageType" id="ingame" value="ingame">Private Nachricht
-            </label>
-            {% endif %}
           </div>
           <div class="control-group">
             <div class="controls tribe">
               <input type="hidden" name="action" value="{{ tribe_action_message }}" />
-              <input type="submit" class="btn" name="commit" value="Absenden">
+              <button class="btn" type="button" id="tribemsg" name="tribemsg">Stammesnachricht</button>
+              <button class="btn" type="button" id="ingame" name="ingame">Private Nachricht</button>
             </div>
           </div>
         </form>
@@ -523,7 +506,7 @@
           Es kann alle {{ donationInterval }} Stunden EINE Einzahlung von JEDER Rohstoffart vorgenommen werden.<br />
         </div>
         <form id="formTribeStore" action="main.php?modus={{ tribe_link }}" method="post">
-          <table class="table table-striped-info table-condensed">
+          <table class="table table-striped table-condensed">
             <thead>
               <tr>
                 <th>&nbsp;</th>
@@ -555,7 +538,7 @@
             <div class="control-group">
               <div class="controls tribe">
                 <input type="hidden" name="action" value="{{ tribe_action_donate }}" />
-                <input type="submit" class="btn" name="commit" value="Absenden">
+                <button class="btn" type="button" id="formTribeStoreSubmit" name="formTribeStoreSubmit">Einzahlen</button>
               </div>
             </div>
           {% endif %}
@@ -564,7 +547,7 @@
 {#/* Wunder / Einzahlungen */ #}
       <div class="tab-pane" id="tribe_donation">
         {% if donations %}
-          <table class="table table-striped-info table-condensed">
+          <table class="table table-striped table-condensed">
             <thead>
               <tr>
                 <th>Spieler</th>
@@ -591,7 +574,7 @@
       {% if is_auth.isLeader or is_auth.wonder %}
       <div class="tab-pane" id="tribe_wonder">
         {% if wonders %}
-          <table class="table table-striped-info table-condensed">
+          <table class="table table-condensed">
             <tbody>
               {% for item in wonders %}
               {% set bgID = (bgID+1)%2 %}

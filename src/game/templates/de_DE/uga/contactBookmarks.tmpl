@@ -14,45 +14,38 @@
 {% block title %}Spieler Adressbuch{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr>{% endif %}
 
-<div class="ua-box small">
+<div class="ua-box">
   <div class="ua-box-header">Adressbuch</div>
   <div class="ua-box-content">
-    <table>
+    <table class="table table-striped table-condensed">
       <thead>
         <tr>
           <th>Name</th>
           <th>Stamm</th>
-          {% if contacts %}<th style="width: 150px;">&nbsp;</th>{% endif %}
+          {% if contacts %}<th style="width: 225px;">&nbsp;</th>{% endif %}
         </tr>
       </thead>
       <tbody>
         {% if contacts %}
           {% for item in contacts %}
-          {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr>
             <td><a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.contactplayerID }}">{{ item.contactname }}</a></td>
             <td>{{ item.contacttribe }}</td>
-            <td style="width: 245px;">
-              <div style="float: left;">
-                <form class="ym-form" method="post" action="main.php?modus={{ messages_new_link }}">
-                <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
-                  <input type="hidden" name="recipient" value="{{ item.contactname }}" />
-                  <input type="submit" class="ym-button" style="margin: 0;" value="Nachricht senden" />
-                </div>
+            <td style="width: 225px;">
+              <div class="pull-left">
+                <form id="contactsBookmarksMessage" class="form-inline" action="main.php?modus={{ messages_new_link }}" method="post">
+                  <input type="hidden" name="recipient" value="{{ item.contactname }}">
+                  <button class="btn" type="button" id="contactsBookmarksMessageSubmit" name="contactsBookmarksMessageSubmit">Nachricht senden</button>
                 </form>
               </div>
-              <div style="float: right;">
-                <form class="ym-form" method="post" action="main.php?modus={{ contact_bookmarks_link }}">
-                <div class="ym-fbox-button" style="padding: 0; margin: 0; background: transparent;">
-                  <input type="hidden" name="task" value="Delete" />
-                  <input type="hidden" name="contactID" value="{{ item.contactID }}" />
-                  <input type="submit" class="ym-button" style="margin: 0;" value="löschen" />
-                </div>
+              <div class="pull-right">
+                <form id="contactsBookmarksDelete" class="form-inline" action="main.php?modus={{ contact_bookmarks_link }}" method="post">
+                  <input type="hidden" name="task" value="Delete"><input type="hidden" name="contactID" value="{{ item.contactID }}">
+                  <button class="btn" type="button" id="contactsBookmarksDeleteSubmit" name="contactsBookmarksDeleteSubmit">Löschen</button>
                 </form>
               </div>
-              <div style="clear: both;"></div>
             </td>
           </tr>
           {% endfor %}
@@ -67,17 +60,14 @@
 <div class="ua-box small">
   <div class="ua-box-header">Kontakt hinzufügen</div>
   <div class="ua-box-content">
-    <form class="ym-form ym-columnar" id="newcontactbookmarkbyname" method="post" action="main.php?modus={{ contact_bookmarks_link }}">
-      <div class="ym-gbox ym-fbox-text">
-        <label for="contact" style="width: 50px;">Name:</label>
-        <input type="text" name="contact" id="contact" size="40" maxlength="255" tabindex="1" />
-      </div>
-
-      <div class="ym-fbox-button">
-        <input type="hidden" name="task" value="Add" /></p>
-        <input type="submit" class="ym-button" value="Hinzufügen" id="add" name="add" tabindex="4" />
-      </div>
-   </form>
+    <div class="text-center space">
+      <form id="contactsBookmarksAdd" class="form-inline" action="main.php?modus={{ contact_bookmarks_link }}" method="post">
+        <div class="input-append">
+          <input class="autocomplete input-small" type="text" name="inputName" id="inputName" placeholder="Spielername" maxlength="32" data-source="player">
+          <input type="hidden" name="task" value="Add"><button class="btn" type="button" id="contactsBookmarksAddSubmit" name="contactsBookmarksAddSubmit">Hinzufügen</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}

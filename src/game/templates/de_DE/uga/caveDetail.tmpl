@@ -28,7 +28,7 @@
         {% if resource %}
         <tr>
           <td>
-            <ul>
+            <ul class="clean">
               {% for item in resource %}
               <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /><br />{{ item.value }}</li>
               {% endfor %}
@@ -40,7 +40,7 @@
         {% if units %}
         <tr>
           <td>
-            <ul>
+            <ul class="clean">
               {% for item in units %}
               <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /><br/>{{ item.value }}</li>
               {% endfor %}
@@ -52,7 +52,7 @@
         {% if buildings %}
         <tr>
           <td>
-            <ul>
+            <ul class="clean">
               {% for item in buildings %}
               <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /><br />{{ item.value }}</li>
               {% endfor %}
@@ -64,7 +64,7 @@
         {% if defenses %}
         <tr>
           <td>
-            <ul>
+            <ul class="clean">
               {% for item in defenses %}
               <li style="float: left; padding: 0 5px; text-align: center; font-size: x-small;"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40px" height="50px" alt="{{ item.name }}" title="{{ item.name }}" /><br />{{ item.value }}</li>
               {% endfor %}

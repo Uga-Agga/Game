@@ -14,56 +14,59 @@
 {% block title %}Händler{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
-<div class="info">
-  Das Uga Agga Tal wird von zahlreichen Handelsrouten durchzogen. Die Handelskarawanen werden von Skalis jüngeren Halbbruder geführt. Sein Name ist Skon-Tho.
+<div class="alert alert-block alert-info">
+  <p>Das Uga Agga Tal wird von zahlreichen Handelsrouten durchzogen. Die Handelskarawanen werden von Skalis jüngeren Halbbruder geführt. Sein Name ist Skon-Tho.
   Skon-Tho kommt in regelmäßigen Abständen auch an deinen Höhlen vorbei und bietet dir einen Rohstofftausch an. Auch einige Einheiten kann Skon-Tho dir gegen einen vernünftigen Preis zum Handel anbieten.
   Skon-Tho ist bekannt für seine harte Verhandlungsführung, aber auch für sein freundliches Gemüt. Nicht selten gibt er am Lagerfeuer Geschichten von weit entfernten Höhlen, wilden Monstern und großen Häuptlingen zum Besten.
-  {% if rndMessage %}<br /><br />Gestern zum Beispiel, erzählte der Händler folgendes: {{ rndMessage|raw }}{% endif %}
-  <br /><br />
-  Eine weitere Möglichkeit Handel zu treiben sind die festen Marktstände in den Handelszentren.
-  Handel im <a href="http://forum.uga-agga.de/handel-f174/">Uga Agga Forum</a>. <br />
-  Hier werden sowohl diverse Handel zu Festpreisen, aber auch Versteigerungen und zum Teil unglaubliche Angebote bereitet.
-  <br /><br />
-  Vorbeischauen lohnt auf jeden Fall!
+  {% if rndMessage %}<br /><br />Gestern zum Beispiel, erzählte der Händler folgendes: {{ rndMessage|raw }}{% endif %}</p>
+  <p>Eine weitere Möglichkeit Handel zu treiben sind die festen Marktstände in den Handelszentren. Handel im <a href="http://forum.uga-agga.de/handel-f174/">Uga Agga Forum</a>.</p>
+  <p>Hier werden sowohl diverse Handel zu Festpreisen, aber auch Versteigerungen und zum Teil unglaubliche Angebote bereitet.</p>
+  <p>Vorbeischauen lohnt auf jeden Fall!</p>
 </div>
 
 <div class="ua-box">
   <div class="ua-box-header">Angebote</div>
   <div class="ua-box-content">
-    <div id="merchant" class="jquery_tabs nav1">
+    <div id="merchant">
+      <ul class="nav nav-tabs" id="mainTab">
       {% for cat in trades %}
-        <h4>{{ cat.name }}</h4>
-        <div class="tabbody">
-          <table>
-            <tbody>
-            {% for item in cat.data %}
-              {% set bgID = (bgID+1)%2 %}
-              <tr class="bg{{ bgID }}">
-                <td>
-                  <dl>
-                    <dt><span class="bold">{{ item.name }}</span></dt>
-                    <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
-                   {% if item.description %}<dd style="padding-left: 10px">{{ item.description|raw }}</dd>{% endif %}
-                  </dl>
-                  <span class="text-small">{{ item.locktill }}</span>
-                </td>
-                <td class="ua-td-build">
-                  {% if item.build_link %}
-                    <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="20" height="20" alt="Kaufen" title="Kaufen" /></a>
-                  {% else %}
-                    <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="20" height="20" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% else %}
-        <div class="space text-center">Zur Zeit hat der Händler leider nichts anzubieten.</div>
+        <li{% if loop.first %} class="active"{% endif %}><a class="tab-switch" href="#buildable_{{ cat.id }}" data-toggle="tab">{{ cat.name }}</a></li>
       {% endfor %}
+      </ul>
+      <div class="tab-content">
+        {% for cat in trades %}
+          <div class="tab-pane{% if loop.first %} active{% endif %}" id="buildable_{{ cat.id }}">
+            <table class="table table-striped-info table-condensed">
+              <tbody>
+              {% for item in cat.data %}
+                {% set bgID = (bgID+1)%2 %}
+                <tr class="bg{{ bgID }}">
+                  <td>
+                    <dl>
+                      <dt><span class="bold">{{ item.name }}</span></dt>
+                      <dd style="padding-left: 10px">{% include "boxCost.tmpl" %}</dd>
+                      {% if item.description %}<dd style="padding-left: 10px">{{ item.description|raw }}</dd>{% endif %}
+                    </dl>
+                    <span class="text-small">{{ item.locktill }}</span>
+                  </td>
+                  <td class="ua-td-build">
+                    {% if item.build_link %}
+                      <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}" data-post="true"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="25" alt="Kaufen" title="Kaufen" /></a>
+                    {% else %}
+                      <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="25" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="space text-center">Zur Zeit hat der Händler leider nichts anzubieten.</div>
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>

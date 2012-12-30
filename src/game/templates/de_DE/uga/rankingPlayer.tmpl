@@ -99,8 +99,10 @@ function swapImage(){
 </div>
 
 <form id="formSearchPlayer" class="form-horizontal" action="main.php?modus={{ ranking_player_link }}" method="post">
-  <input class="autocomplete" name="offset" id="offset" type="text" class="input-medium search-query" data-source="player">
-  <input type="submit" class="btn" name="search" value="Suchen">
+  <div class="input-append">
+    <input class="autocomplete" name="offset" id="offset" type="text" class="input-medium search-query" data-source="player">
+    <button class="btn" type="button" id="formSearchPlayerSubmit" name="formSearchPlayerSubmit">Suchen</button>
+  </div>
 </form>
 
 <p><img src="images/religious_distribution/religious_distribution.php" alt="Uga: {{ religious.ugapercent }}% Agga: {{ religious.aggapercent }}%" title="Uga: {{ religious.ugapercent }}% Agga: {{ religious.aggapercent }}%" /></p>

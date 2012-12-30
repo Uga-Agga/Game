@@ -100,9 +100,11 @@ function swapImage(){
   <a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ offset_down }}" onmouseover="swapImage('down','','{{ gfx }}/de_DE/t_uga/ranking/down.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/down.png" alt="down" width="20" height="20" class="noborder" id="down" title="down" /></a>&nbsp;
 </div>
 
-<form id="formSearchPlayer" class="form-horizontal" action="main.php?modus={{ ranking_tribe_link }}" method="post">
-  <input class="autocomplete input-medium search-query" name="offset" id="offset" type="text" data-source="tribe">
-  <input type="submit" class="btn" name="search" value="Suchen">
+<form id="formSearchTribe" class="form-horizontal" action="main.php?modus={{ ranking_tribe_link }}" method="post">
+  <div class="input-append">
+    <input class="autocomplete" name="offset" id="offset" type="text" class="input-medium search-query" data-source="tribe">
+    <button class="btn" type="button" id="formSearchTribeSubmit" name="formSearchTribeSubmit">Suchen</button>
+  </div>
 </form>
 
 {% endblock %}

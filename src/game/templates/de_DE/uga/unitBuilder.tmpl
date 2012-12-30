@@ -27,7 +27,7 @@
   }
 </script>
 
-{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
 {% if quene_show %}
   <div class="alert alert-block alert-success fade in text-left">
@@ -52,7 +52,7 @@
         {% for category in units %}
           <div class="tab-pane{% if loop.first %} active{% endif %}" id="buildable_{{ category.id }}">
             {% if category.items %}
-              <table class="table table-striped-info table-condensed">
+              <table class="table table-condensed">
                 <tbody>
                   {% for item in category.items %}
                   {% set bgID = (bgID+1)%2 %}
@@ -77,17 +77,18 @@
                             <input type="hidden" name="action" value="build" />
                             <input type="hidden" name="unitID" value="{{ item.unit_id }}" />
                             <input type="hidden" name="quantity" value="-1" />
-                            <input type="image" style="width: 25px;" src="{{ gfx }}/de_DE/t_uga/arrow_up_max.png" value="Ausbilden" alt="Baut die maximale Anzahl Einheiten" title="Baut die maximale Anzahl Einheiten" />
+                            <button class="arrow_max" type="button" id="formUnitBuilderMaxSubmit" name="formUnitBuilderMaxSubmit" title="Baut die maximale Anzahl Einheiten"></button>
                           </form>
                         </td>
                       {% endif %}
                       {% if item.build_link %}
                         <td class="build-unit">
-                          <form id="formUnitBuilder" method="post" style="margin: 0;" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
-                            <input type="hidden" name="action" value="build" />
-                            <input type="hidden" name="unitID" value="{{ item.unit_id }}" />
-                            <input class="input-unit" id="unit_{{ item.unit_id }}" ondblclick="build_max_units({{ item.unit_id }})" type="text" pattern="\d*" name="quantity" size="2" maxlength="2" />
-                            <input type="image" style="width: 25px; margin-bottom: 10px;" src="{{ gfx }}/de_DE/t_uga/arrow_up.png" value="Ausbilden" alt="Ausbilden" title="Ausbilden" />
+                          <form id="formUnitBuilder_{{ item.unit_id }}" method="post" style="margin: 0;" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
+                            <div class="input-append">
+                              <input class="input-unit" type="text" pattern="\d*" name="quantity" id="unit_{{ item.unit_id }}" maxlength="2">
+                              <button class="arrow_up" style="margin-left: 10px;" type="button" id="formUnitBuilderSubmit" name="formUnitBuilderSubmit" title="Ausbilden"></button>
+                            </div>
+                            <input type="hidden" name="action" value="build"><input type="hidden" name="unitID" value="{{ item.unit_id }}">
                           </form>
                         </td>
                       {% else %}
@@ -95,7 +96,6 @@
                           {{ item.no_build_msg }}
                         </td>
                       {% endif %}    
-                      
                     </tr>
                     <tr class="bg{{ bgID }} hide"><td colspan="{% if item.build_link %}6{% else %}5{% endif %}" id="buildable_{{ item.unit_id }}_details"></td></tr>
                   {% endfor %}
@@ -133,7 +133,7 @@
         {% for category in units_unqualified %}
           <div class="tab-pane" id="unqualified_{{ category.id }}">
             {% if category.items %}
-              <table class="table table-striped-info table-condensed">
+              <table class="table table-condensed">
                 <tbody>
                   {% for item in category.items %}
                   {% set bgID = (bgID+1)%2 %}

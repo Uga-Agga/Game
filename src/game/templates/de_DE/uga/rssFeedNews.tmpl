@@ -13,15 +13,12 @@
 {% block title %}News{% endblock %}
 {% block content %}
 
-{% if rssFeeds %}
-  {% for item in rssFeeds %}
-    <div class="info text-left">
-      <h3 class="loud"><a href="{{ item.link }}">{{ item.title }}</a></h3>
-      {{ item.description|raw }}
-    </div>
-  {% endfor %}
+{% for item in rssFeeds %}
+  <div class="alert-info text-left" style="padding: 5px;">
+    <h4><a href="{{ item.link }}">{{ item.title }}</a></h4>
+    {{ item.description|raw }}
+  </div>
 {% else %}
-  <div class="error">Zur Zeit gibt es leider keine News.</div>
-{% endif %}
-
+  <div class="alert-error">Zur Zeit gibt es leider keine News.</div>
+{% endfor %}
 {% endblock %}

@@ -1,7 +1,6 @@
 DEBUG = 'on';
 
 !function ($) {
-
   $(function(){
     $(document).on('click', 'a', function(event){
       event.preventDefault();
@@ -40,7 +39,7 @@ DEBUG = 'on';
         }
 /* Einfach Ignorieren ;) */
       } else if ($(this).is('.nolink')) {
-        
+        return;    
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
         if ($(this).attr('data-reask') == 'true') {
@@ -67,24 +66,30 @@ DEBUG = 'on';
               var useJson = true;
               try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
               if (useJson === true) {parseJson(json);} else {updateContent(data);}
-            },
+            }
           });
           if(url!=window.location){window.history.pushState({path:url}, '', $(this).attr('href'));}
         }
       }
     });
 
+    $(document).on('click', "button", function(e){
+      ua_log('Clicked Button '+$(this).attr("id"));
+      e.preventDefault();
+      var form = $(this).parents("form");
+      var data = {button: $(this).attr("id")};
+      form.ajaxSubmit({data: data, success: updateContent});
+    });
     $(document).on('submit', 'form', function(e) {
       ua_log('submit ajax form: '+$(this).attr('id'));
       e.preventDefault();
-      var options = {success: updateContent};
-      $(this).ajaxSubmit(options); 
+      alert('Achtung. Das Absenden der Buttons ist so unerwünscht!');
     });
 
     $(document).on("click", ".box_toggle", function(e){$(this).css('display', 'none');$('#'+$(this).attr('id')+'_content').slideDown("slow");});
     $(document).on("click", ".show_hide", function(e){$('#'+$(this).attr('id')+'_content').toggle("fast");});
     $(document).on("hover", ".change_mouseover", function(){$(this).css('cursor', 'pointer');}).on("mouseout", ".change_mouseover", function() {$(this).css('cursor', 'default');});
-    
+
     $(document).on({mouseover: function() {$('div#warpoints').show();},mouseleave: function() {$('div#warpoints').hide();}}, "div#warpoints_info");
     $(document).on("mousemove", "div#warpoints_info", function(e) {$("div#warpoints").css('top', e.pageY + 10).css('left', e.pageX + 20);});
     
@@ -152,5 +157,4 @@ DEBUG = 'on';
     $(function(){$("#slider").slider({range: "max",min: 940,max: 1440,value: 940,slide: function( event, ui ) {$('.container').css('width', ui.value + 'px');$('.span-content-middle').css('width', ui.value-306 + 'px');}});$( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );});
     function ua_log(out){if(DEBUG==='on'){console.log(out);}}
 })
-
 }(window.jQuery)

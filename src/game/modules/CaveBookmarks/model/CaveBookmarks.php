@@ -2,6 +2,7 @@
 /*
  * CaveBookmarks.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,12 +16,14 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 require_once('lib/Model.php');
 
 DEFINE('CAVEBOOKMARKS_NOERROR',             0x00);
+DEFINE('CAVEBOOKMARKS_DELETED',             0x01);
 
-DEFINE('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x01);
-DEFINE('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x02);
-DEFINE('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x03);
+DEFINE('CAVEBOOKMARKS_ERROR_NOSUCHCAVE',    0x02);
+DEFINE('CAVEBOOKMARKS_ERROR_MAXREACHED',    0x03);
+DEFINE('CAVEBOOKMARKS_ERROR_INSERTFAILED',  0x04);
 
-DEFINE('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x04);
+DEFINE('CAVEBOOKMARKS_ERROR_DELETEFAILED',  0x05);
+
 
 class CaveBookmarks_Model extends Model {
 
@@ -122,7 +125,7 @@ class CaveBookmarks_Model extends Model {
     $cave = getCaveByName($name);
 
     // no such cave
-    if (!sizeof($cave))
+    if (empty($cave))
       return CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
 
     return $this->addCaveBookmark($cave['caveID']);
@@ -152,9 +155,7 @@ class CaveBookmarks_Model extends Model {
     // send query
     $sql->execute();
 
-    return ($sql->rowCount() == 1)
-           ? CAVEBOOKMARKS_NOERROR
-           : CAVEBOOKMARKS_ERROR_DELETEFAILED;
+    return ($sql->rowCount() == 1) ? CAVEBOOKMARKS_DELETED : CAVEBOOKMARKS_ERROR_DELETEFAILED;
   }
 }
 

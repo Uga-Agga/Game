@@ -14,94 +14,130 @@
 {% block title %}Profil{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
-{% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
-
-<div class="ua-box small">
+<div class="ua-box">
   <div class="ua-box-header">Profil</div>
   <div class="ua-box-content">
-    <form class="ym-form ym-columnar" id="profileupdate" method="post" action="main.php?modus={{ user_profile_link }}">
-      <div class="jquery_tabs nav1">
-        {% for item in profile_data %}
-          <h4>{{ item.heading }}</h4>
-          <div class="tabbody">
-            {% if item.entry_info %}
-              {% for item_info in item.entry_info %}
-                <div class="ym-fbox-text">
-                  <label for="">{{ item_info.name|raw }}</label>
-                  <div>{{ item_info.value }}</div>
-                </div>
-              {% endfor %}
-            {% endif %}
-            {% if item.entry_input %}
-              {% for item_input in item.entry_input %}
-                <div class="ym-fbox-text">
-                  <label for="{{ item_input.dataarray }}[{{ item_input.dataentry }}]">{{ item_input.name|raw }}</label>
-                  <input type="text" name="{{ item_input.dataarray }}[{{ item_input.dataentry }}]" id="{{ item_input.dataarray }}[{{ item_input.dataentry }}]" value="{{ item_input.value }}" size="{{ item_input.size }}" maxlength="{{ item_input.maxlength }}" />
-                </div>
-              {% endfor %}
-            {% endif %}
-            {% if item.entry_memo %}
-              {% for item_memo in item.entry_memo %}
-                <div class="ym-fbox-text">
-                  <label for="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]">{{ item_memo.name|raw }}</label>
-                  <textarea name="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" id="{{ item_memo.dataarray }}[{{ item_memo.dataentry }}]" cols="{{ item_memo.cols }}" rows="{{ item_memo.rows }}">{{ item_memo.value|raw }}</textarea>
-                </div>
-              {% endfor %}
-            {% endif %}
-            {% if item.entry_input_pwd %}
-              {% for item_input_pwd in item.entry_input_pwd %}
-                <div class="ym-fbox-text">
-                  <label for="{{ item_input_pwd.dataarray }}[{{ item_input.dataentry }}]">{{ item_input_pwd.name|raw }}</label>
-                  <input type="password" name="{{ item_input_pwd.dataarray }}[{{ item_input_pwd.dataentry }}]" id="{{ item_input_pwd.dataarray }}[{{ item_input_pwd.dataentry }}]" size="{{ item_input_pwd.size }}" maxlength="{{ item_input_pwd.maxlength }}" />
-                </div>
-              {% endfor %}
-            {% endif %}
-            {% if item.entry_selection %}
-              {% for item_selection in item.entry_selection %}
-                <div class="ym-fbox-select">
-                  <label for="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]">{{ item_selection.name|raw }}</label>
-                  <select name="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]" id="{{ item_selection.dataarray }}[{{ item_selection.dataentry }}]" size="1">
-                    <option value="0" disabled="disabled">Please choose</option>
-                    {% for selector in item_selection.selector %}
-                      <option value="{{ selector.key }}" {% if selector.selector %}selected="selected"{% endif %}>{{ selector.text }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              {% endfor %}
-            {% endif %}
-            {% if item.entry_checkbox %}
-              {% for item_checkbox in item.entry_checkbox %}
-                <div class="ym-fbox-check">
-                  <input type="checkbox" name="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]" id="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]" value="{{ item_checkbox.value }}" {% if item_checkbox.checked %}checked="checked"{% endif %} />
-                  <label for="{{ item_checkbox.dataarray }}[{{ item_checkbox.dataentry }}]">{{ item_checkbox.name|raw }}</label>
-                </div>
-              {% endfor %}
-            {% endif %}
+    <div id="profile">
+      <ul class="nav nav-tabs" id="mainTab">
+        <li><a class="tab-switch active" href="#profile_info" data-toggle="tab">Benutzerdaten</a></li>
+        <li><a class="tab-switch" href="#profile_locale" data-toggle="tab">Lokalisierung</a></li>
+        <li><a class="tab-switch" href="#profile_template" data-toggle="tab">Template auswählen</a></li>
+        <li><a class="tab-switch" href="#profile_gfx" data-toggle="tab">Grafikpack</a></li>
+        <li><a class="tab-switch" href="#profile_passwd" data-toggle="tab">Passwort-Änderung</a></li>
+      </ul>
+      <form id="formTribeProfile" class="form-horizontal" action="main.php?modus={{ user_profile_link }}" method="post">
+      <div class="tab-content space">
+        <div class="tab-pane active" id="profile_info">
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerName">Name</label>
+            <div class="controls profile">
+              <input type="text" id="inputPlayerName" name="inputPlayerName" placeholder="Name" value="{{ player.name }}" disabled>
+            </div>
           </div>
-        {% endfor %}
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputName">Geschlecht</label>
+            <div class="controls profile">
+              <input type="text" id="inputName" name="inputName" placeholder="Geschlecht" value="{{ player.sex }}" disabled>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerEmail">Email</label>
+            <div class="controls profile">
+              <input type="text" id="inputPlayerEmail" name="inputPlayerEmail" placeholder="Email" value="{{ player.email }}" disabled>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerEmail2">Email2</label>
+            <div class="controls profile">
+              <input type="email" id="inputPlayerEmail2" name="inputPlayerEmail2" placeholder="Nachrichten E-Mail" value="{{ player.email2 }}" required>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerOrigin">Herkunft</label>
+            <div class="controls profile">
+              <input type="text" id="inputPlayerOrigin" name="inputPlayerOrigin" placeholder="Herkunft" value="{{ player.origin }}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerICQ">ICQ</label>
+            <div class="controls profile">
+              <input type="number" id="inputPlayerICQ" name="inputPlayerICQ" placeholder="ICQ" value="{{ player.icq }}" pattern="\d*">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerAvatar">Avatar Url</label>
+            <div class="controls profile">
+              <input type="url" id="inputPlayerAvatar" name="inputPlayerAvatar" placeholder="Avatar Url" value="{{ player.avatar }}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerDescription">Beschreibung</label>
+            <div class="controls profile">
+              <textarea id="inputPlayerDescription" name="inputPlayerDescription" style="width: 495px; height: 125px;" rows="3">{{ player.description| raw }}</textarea>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="profile_locale">
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerLang">Sprache</label>
+            <div class="controls profile">
+              <select name="inputPlayerLang" style="width: 165px; height: 20px; padding: 0;">
+                {% for key, lang in language %}<option value="{{ key }}"{% if player.language == key %} selected="selected"{% endif %}>{{ lang }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="profile_template">
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerTemplate">Template</label>
+            <div class="controls profile">
+              <select name="inputPlayerTemplate" style="width: 165px; height: 20px; padding: 0;">
+                {% for key, temp in template %}<option value="{{ key }}"{% if player.template == key %} selected="selected"{% endif %}>{{ temp }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="profile_gfx">
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerGFX">Grafikpack URL</label>
+            <div class="controls profile">
+              <input type="url" id="inputPlayerGFX" name="inputPlayerGFX" placeholder="GFX Adresse" value="{{ player.gfxpath }}" required>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="profile_passwd">
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerPasswordNew">Neues Passwort</label>
+            <div class="controls profile">
+              <input type="text" id="inputPlayerPasswordNew" name="inputPlayerPasswordNew" placeholder="Neues Passwort" value="">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerPasswordRe">Wiederholung</label>
+            <div class="controls profile">
+              <input type="text" id="inputPlayerPasswordRe" name="inputPlayerPasswordRe" placeholder="Neues Passwort - Wiederholung" value="">
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div class="ym-fbox-button text-center">
-        <input type="hidden" name="action" value="change" />
-        <input type="submit" class="ym-button" value="Speichern" id="safe" name="safe"/>
-        <input type="reset" class="ym-button" value="Reset" id="reset" name="reset" />
+      <div class="text-center space">
+        <input type="hidden" name="action" value="change">
+        <button class="btn" type="button" id="formTribeProfileSubmit" name="formTribeProfileSubmit">Absenden</button>
       </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 
-<div class="ua-box small">
+<div class="ua-box">
   <div class="ua-box-header">Account Löschen</div>
   <div class="ua-box-content">
-    <form class="ym-form ym-columnar" id="accountdelete" method="post" action="main.php?modus={{ user_profile_link }}">
-      <div class="space text-center bold">Ich habe keine Lust mehr!</div>
-      <div class="ym-fbox-button text-center">
-        <input type="hidden" name="action" value="delete" />
-        <input type="submit" class="ym-button" value="Den Account löschen!" id="delete" name="delete"/>
-      </div>
-    </form>
+    <div class="text-center space">
+    <h4>Ich habe keine Lust mehr!</h4>
+    <a class="action btn" href="main.php?modus={{ user_profile_link }}&amp;action=delete" data-reask="true" data-reask-header="Account löschen!" data-reask-msg="Möchtest du deinen Account wirklich löschen?">Den Account löschen!</a>
+    </div>
   </div>
 </div>
 

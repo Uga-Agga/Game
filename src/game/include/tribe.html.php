@@ -203,7 +203,7 @@ function tribe_getContent($caveID, &$details) {
 *
 ****************************************************************************************************/
     case TRIBE_ACTION_LEAVE:
-      if (Request::isPost('cancelOrderConfirm')) {
+      if (Request::isPost('postConfirm')) {
         $messageID = tribe_processLeave($_SESSION['player']->playerID, $tribeTag);
 
         if ($messageID > 0) {
@@ -239,10 +239,11 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
+      $button = Request::getVar('button', '');
       $messageType = Request::getVar('messageType', '');
-      if ($messageType == 'ingame' && ($userAuth['msg_public'] || $userAuth['isLeader'])) {
+      if ($button == 'ingame' && ($userAuth['msg_public'] || $userAuth['isLeader'])) {
         $messageID = tribe_processSendTribeIngameMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
-      } else if ($messageType == 'tribemsg' && $userAuth['msg_tribe'] || $userAuth['isLeader']) {
+      } else if ($button == 'tribemsg' && $userAuth['msg_tribe'] || $userAuth['isLeader']) {
         $messageID = tribe_processSendTribeMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
       } else {
         $messageID = -1;
@@ -260,8 +261,9 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
+      $button = Request::getVar('button', '');
       $relationData = Request::getVar('relationData', array('' => ''));
-      if (Request::isPost('forceSurrender')) {
+      if ($button == 'forceSurrender') {
         $messageID = relation_forceSurrender($tribeTag, $relationData);
       } else {
         $messageID = relation_processRelationUpdate($tribeTag, $relationData);

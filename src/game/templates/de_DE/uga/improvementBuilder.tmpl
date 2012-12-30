@@ -36,7 +36,7 @@
   <div class="ua-box-header">Erweiterungen</div>
   <div class="ua-box-content">
     {% if improvement %}
-      <table class="table table-striped-info table-condensed">
+      <table class="table table-condensed">
         <tbody>
           {% for item in improvement %}
           {% set bgID = (bgID+1)%2 %}
@@ -86,7 +86,7 @@
   <div class="ua-box-header">Erweiterungen, die noch nicht gebaut werden können</div>
   <div id="improvement_unqualified" class="ua-box-content box_toggle change_mouseover space text-center">Erweiterungen einblenden</div>
   <div id="improvement_unqualified_content" class="ua-box-content" style="display: none;">
-    <table class="table table-striped-info table-condensed">
+    <table class="table table-condensed">
       <tbody>
         {% for item in improvement_unqualified %}
         {% set bgID = (bgID+1)%2 %}
@@ -113,7 +113,7 @@
 <div class="ua-box">
   <div class="ua-box-header">Relikte</div>
   <div id="defense_system_relict_content" class="ua-box-content">
-    <table class="table table-striped-info table-condensed">
+    <table class="table table-condensed">
       <tbody>
         {% for item in improvement_relict %}
         {% set bgID = (bgID+1)%2 %}

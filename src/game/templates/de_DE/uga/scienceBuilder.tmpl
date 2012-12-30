@@ -35,7 +35,7 @@
   <div class="ua-box-header">Forschungen</div>
   <div class="ua-box-content">
     {% if science %}
-      <table class="table table-striped-info table-condensed">
+      <table class="table table-condensed">
         <tbody>
           {% for item in science %}
           {% set bgID = (bgID+1)%2 %}
@@ -80,7 +80,7 @@
   <div class="ua-box-header">Foschungen, die noch unbekannt sind</div>
   <div id="science_unqualified" class="ua-box-content box_toggle change_mouseover space text-center">Forschungen einblenden</div>
   <div id="science_unqualified_content" class="ua-box-content" style="display: none;">
-    <table class="table table-striped-info table-condensed">
+    <table class="table table-condensed">
       <tbody>
         {% for item in science_unqualified %}
         {% set bgID = (bgID+1)%2 %}
