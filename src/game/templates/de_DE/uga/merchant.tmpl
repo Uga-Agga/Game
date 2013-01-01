@@ -53,7 +53,7 @@
                   </td>
                   <td class="ua-td-build">
                     {% if item.build_link %}
-                      <a href="main.php?modus={{ merchant_link }}&amp;action=build&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}" data-post="true"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="25" alt="Kaufen" title="Kaufen" /></a>
+                      <a href="main.php?modus={{ merchant_link }}&amp;action=order&amp;tradeID={{ item.trade_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" class="noborder" width="25" alt="Kaufen" title="Kaufen" /></a>
                     {% else %}
                       <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" class="noborder" width="25" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
                     {% endif %}

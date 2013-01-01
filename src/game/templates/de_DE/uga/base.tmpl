@@ -2,7 +2,7 @@
 /* base.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -105,6 +105,10 @@
     .table-condensed th, .table-condensed td { padding: 4px 2px; }
     .nav { margin-bottom: 0; }
     .nav-tabs > .active > a, .nav-tabs > .active > a:hover { background-color: #c2cf90; }
+    .navbar .nav > .active > a,
+    .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {background-color: #c2cf90; }
+    .navbar { margin-bottom: 0; }
+    .navbar .nav > li > a { text-shadow: none; }
 
     .alert-success { background-color: #e6efc2; }
     .alert-error { background-color: #fbe3e4; }
@@ -152,6 +156,8 @@
     td.time-lvl { width: 105px; text-align: center; }
     td.switch { width: 16px; }
     td.build-no-build { width: 100px; }
+    td.message-icons { width: 50px; }
+    td.message-icon { width: 20px; }
 
     tr.digest-artefact { background-color: #9cf; }
     tr.digest-building { background-color: #CCFFCC; }
@@ -180,6 +186,9 @@
     .form-horizontal .profile { margin-left: 105px; }
     .form-horizontal .profile-label { width: 100px; }
 
+    .form-horizontal .message { margin-left: 55px; }
+    .form-horizontal .message-label { width: 50px; }
+
     .input-wonder-xy { width: 20px; }
     .input-unit { width: 25px; }
 
@@ -189,10 +198,28 @@
     .arrow_up { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up.png"); }
     .flash { background-image: url("{{ gfx }}/de_DE/t_uga/flash.png"); }
 
+    .btn-transparent { background-color: transparent; background-image: none; border: none; }
+    .btn-icon { width: 20px; padding: 0; margin: 0; }
+
     .bg0 { background-color: #eee }
     .less { color:#ff0000; }
     .space { padding: 5px 0 }
     .nospace { padding: 0; margin: 0; }
+
+    .msg_0 { background-color: #fff; } /* Information */
+    .msg_2 { background-color: #fc9; } /* Sieg */
+    .msg_6 { background-color: #cf9; } /* Handelsbericht */
+    .msg_7 { background-color: #ff9; } /* RÃƒÂ¼ckkehr */
+    .msg_8 { background-color: #cfc; } /* Stammesnachricht */
+    .msg_9 { background-color: #9cf; } /* Wunder */
+    .msg_10 { background-color: #FFFFFF; } /* Benutzernachricht */
+    .msg_11 { background-color: #fc9; } /* Spionage */
+    .msg_12 { background-color: #9cf; } /* Artefakt */
+    .msg_20 { background-color: #fc9; } /* Niederlage */
+    .msg_29 { background-color: #fff; } /* Missionierung */
+    .msg_99 { background-color: #ccc; } /* Uga-Agga Team */
+    .msg_1001 { background-color: #fff; } /* ANKÃœNDIGUNG */
+    .msg_read0 a { background-repeat: no-repeat; font-weight: bold; }
   </style>
 
 </head>
@@ -230,7 +257,7 @@
       <ul class="nav-ua">
         <li><a href="main.php?modus={{ easy_digest_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></a></li>
         <li><a href="main.php?modus={{ unit_movement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></a></li>
-        <li><a href="main.php?modus={{ messages_list_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
+        <li><a href="main.php?modus={{ messages_list_link }}"><img id="message_icon" style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
         <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></a></li>
         <li><a href="main.php?modus={{ ranking_player_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></a></li>
         <li><a href="main.php?modus={{ map_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></a></li>

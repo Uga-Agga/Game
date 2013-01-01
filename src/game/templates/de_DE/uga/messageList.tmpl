@@ -2,7 +2,7 @@
 /* messageList.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,81 +28,35 @@ function checkall(){
 // ]]>
 </script>
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
-{% if trash %}<div class="info">Du befindest dich gerade im Papierkorb. Hier kannst du gelösche Nachrichten wiederherstellen.<br />Achtung: Die Nachrichten hier werden automatisch gelöscht!</div>{% endif %}
-
-<form id="deletemessages" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}&amp;box={{ message_box }}">
+{% if trash %}<div class="alert-info">Du befindest dich gerade im Papierkorb. Hier kannst du gelösche Nachrichten wiederherstellen.<br />Achtung: Die Nachrichten hier werden automatisch gelöscht!</div><hr>{% endif %}
 
 <div class="ua-box">
-  <div class="ua-box-header">&nbsp;</div>
+  <div class="ua-box-header">Nachrichten{% if message_class_name %} ({{ message_class_name }}){% endif %}{{ messageClass }}</div>
   <div class="ua-box-content">
-    <div class="ym-grid" style="padding-top: 5px; padding-bottom: 5px;">
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=3"><img src="{{ gfx }}/de_DE/t_uga/messages/trash.png" class="noborder" alt="Papierkorb" title="Papierkorb" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a>
-        </div>
+    <div class="navbar navbar-static">
+      <div class="container" style="width: auto;">
+        <ul class="nav nav-tabs" id="mainTab">
+          <li{% if message_box == 1 %} class="active"{% endif %}><a href="main.php?modus={{ messages_list_link }}&amp;box=1#incomming">Posteingang</a></li>
+          <li{% if message_box == 2 %} class="active"{% endif %}><a href="main.php?modus={{ messages_list_link }}&amp;box=2#outgoing">Postausgang</a></li>
+          <li{% if message_box == 3 %} class="active"{% endif %}><a href="main.php?modus={{ messages_list_link }}&amp;box=3#trash">Papierkorb</a></li>
+          <li><a href="main.php?modus={{ messages_new_link }}#new">Neue Nachricht</a></li>
+        </ul>
+        <ul class="nav pull-right">
+          <li id="fat-menu" class="dropdown">
+            <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+              <li{% if message_class_id == 0 %} class="active"{% endif %}><a tabindex="-1" href="main.php?modus={{ messages_list_link }}&amp;box={{ message_box }}">Alle</a></li>
+              {% for item in message_classes %}<li{% if item.selected %} class="active"{% endif %}><a tabindex="-1" href="main.php?modus={{ messages_list_link }}&amp;box={{ message_box }}&amp;messageClass={{ item.id }}">{{ item.text }}</a></li>{% endfor %}
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
 
-    <div class="ym-grid" style="padding-top: 5px; padding-bottom: 5px;">
-      {% if not trash %}
-        <div class="ym-g50 ym-gl">
-          <div class="ym-gbox">
-            Markierte:
-            <select name="mark_action_value">
-              <option value="0">Bitte auswählen</option>
-              <option value="mail_and_delete">E-mail &amp; löschen</option>
-              <option value="delete">löschen</option>
-              <option value="mark_as_read">Als gelesen markieren</option>
-            </select>
-            <input type="submit" name="mark_action" value="Go" />
-          </div>
-        </div>
-        <div class="ym-g50 ym-gr text-right">
-          <div class="ym-gbox">
-            <select name="messageClass">
-              <option value="-1">Alle</option>
-              {% for item in message_classes %}
-                <option value="{{ item.id }}" {{ item.selected }}>{{ item.text }}</option>
-              {% endfor %}
-            </select>
-            <input type="submit" name="filter" value="Filtern" />
-            <input type="submit" name="delete_all" value=" Alle Löschen" onclick="return confirm('Wollen Sie die Nachrichten wirklich löschen?');" />
-          </div>
-        </div>
-      {% else %}
-        <div class="ym-g50 ym-gl">
-          <div class="ym-gbox">
-            Markierte:
-            <input type="hidden" name="mark_action_value" value="recover" />
-            <input type="submit" name="mark_action" value="Wiederherstellen" />
-          </div>
-        </div>
-    {% endif %}
-    </div>
-  </div>
-</div>
-
-<div class="ua-box">
-  <div class="ua-box-header">Nachrichten</div>
-  <div class="ua-box-content">
-    <table class="table table-striped table-condensed">
+    <form id="formMessage" class="form-inline" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}&amp;box={{ message_box }}">
+    <table class="table table-condensed">
       <thead>
         <tr>
           <th style="border-bottom: none;">&nbsp;</th>
@@ -110,22 +64,31 @@ function checkall(){
           <th style="border-bottom: none;">Nachrichtenart</th>
           <th style="border-bottom: none;">Betreff</th>
           <th style="border-bottom: none;">Datum</th>
+          <th style="border-bottom: none;">&nbsp;</th>
         </tr>
         <tr>
-          <th><input name="all" type="checkbox" value="check all" onclick="checkall();" /></th>
-          <th colspan="2"><span class="bold">alle auswählen</span></th>
-          <th colspan="2" class="text-right">
+          <th colspan="3">
+            <input class="check-all" type="checkbox" style="margin-right: 5px;">
+            {% if not trash %}
+              <button type="button" id="mark_delete" name="mark_delete" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten löschen"><i class="icon-trash"></i></button>
+              <button type="button" id="mark_read" name="mark_read" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten als gelesen makieren"><i class="icon-eye-open"></i></button>
+              <button type="button" id="mark_mail" name="mark_mail" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten per E-Mail schicken"><i class="icon-print"></i></button>
+            {% else %}
+              <button type="button" id="mark_recover" name="mark_recover" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="Nachricht wiederherstellen"><i class="icon-repeat"></i></button>
+            {% endif %}
+          </th>
+          <th colspan="3" class="text-right">
             Nachrichten {{ message_min }} - {{ message_max }} von {{ message_count }} &nbsp; 
             {% if message_prev %}
-              <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}&amp;messageClass={{ message_prev.message_class }}">&lt;&lt;&lt; zurück</a>
+              <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}&amp;messageClass={{ message_prev.message_class }}"><i class="icon-step-backward"></i></a>
             {% else %}
-              &lt;&lt;&lt; zurück
+              <i class="icon-step-backward"></i>
             {% endif %}
             &nbsp;|&nbsp;
             {% if message_next %}
-             <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}&amp;messageClass={{ message_next.message_class }}">weiter &gt;&gt;&gt;</a>
+              <a href="main.php?offset={{ message_next.offset }}&amp;modus={{ message_next.modus }}&amp;box={{ message_next.box }}&amp;messageClass={{ message_next.message_class }}"><i class="icon-step-forward"></i></a>
             {% else %}
-              weiter &gt;&gt;&gt;
+              <i class="icon-step-forward"></i>
             {% endif %}
           </th>
         </tr>
@@ -133,7 +96,7 @@ function checkall(){
       <tbody>
         {% if messages %}
           {% for item in messages %}
-            <tr class="msg_{{ item.messageClass }} msg_read{{ item.read }} nohover">
+            <tr class="msg_{{ item.messageClass }} msg_read{{ item.read }}">
               <td class="ua-td-name"><input type="checkbox" name="deletebox[{{ item.messageID }}]" value="{{ item.messageID }}" /></td>
               <td>{{ item.absender_empfaenger }}</td>
               <td>{{ item.nachrichtenart }}</td>
@@ -142,15 +105,26 @@ function checkall(){
                 <a href="main.php{{ item.linkparams|raw }}">{{ item.subject|raw }}</a>
               </td>
               <td class="text-right">{{ item.datum }}</td>
+              {% if not trash %}
+                <td class="message-icons">
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachrichten löschen" data-post="true"><i class="icon-trash"></i></a>
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_read&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachrichten als gelesen makieren" data-post="true"><i class="icon-eye-open"></i></a>
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_mail&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht per E-Mail schicken" data-post="true"><i class="icon-print"></i></a>
+                </td>
+              {% else %}
+                <td class="message-icon">
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_recover&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht wiederherstellen" data-post="true"><i class="icon-repeat"></i></a>
+                </td>
+              {% endif %}
             </tr>
           {% endfor %}
         {% else %}
-          <tr><td class="text-center" colspan="5">In diesem Postfach befinden sich zur Zeit keine Nachrichten.</td></tr>
+          <tr><td class="text-center" colspan="6">In diesem Postfach befinden sich zur Zeit keine Nachrichten.</td></tr>
         {% endif %}
       </tbody>
     </table>
+    </form>
   </div>
 </div>
-</form>
 
 {% endblock %}

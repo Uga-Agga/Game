@@ -2,7 +2,7 @@
 /*
  * merchant.html.php - 
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -34,10 +34,10 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
   switch ($action) {
 /****************************************************************************************************
 *
-* bauen? naja. eher ordern ;)
+* Holen wir mal das zeugs
 *
 ****************************************************************************************************/
-    case 'build':
+    case 'order':
       $tradeID = Request::getVar('tradeID', -1);
 
       if (!isset($GLOBALS['tradeTypeList'][$tradeID])) {

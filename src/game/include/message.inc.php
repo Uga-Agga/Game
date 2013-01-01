@@ -327,7 +327,7 @@ class Messages extends Parser {
 
     // get user messages
     if ($messageClass>= 0) {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -341,7 +341,7 @@ class Messages extends Parser {
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -369,7 +369,6 @@ class Messages extends Parser {
                       $t{12}.$t{13};
       $row['nachrichtenart'] = isset($this->MessageClass[$row['messageClass']]) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
       $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_INCOMING . '&amp;filter='. $messageClass;
-      $row[($row['flag'] ? 'FLAGGED' : 'UNFLAGGED') . '/id'] = $row['messageID'];
       $nachrichten[] = $row;
     }
     $sql->closeCursor();
@@ -467,7 +466,7 @@ class Messages extends Parser {
 
     // get user messages
     if ($messageClass >= 0) {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -481,7 +480,7 @@ class Messages extends Parser {
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT m.messageID, m.flag, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
+      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
                            FROM ". MESSAGE_TABLE . " m 
                              LEFT JOIN ". PLAYER_TABLE ." p 
                                ON p.playerID = m.senderID 
@@ -509,7 +508,6 @@ class Messages extends Parser {
                       $t{12}.$t{13};
       $row['nachrichtenart'] = isset($this->MessageClass[$row['messageClass']]) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
       $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_TRASH . '&amp;filter='. $messageClass;
-      $row[($row['flag'] ? 'FLAGGED' : 'UNFLAGGED') . '/id'] = $row['messageID'];
       $row['read'] = 1;
       $nachrichten[] = $row;
     }
@@ -810,68 +808,6 @@ class Messages extends Parser {
       return sprintf('Re(%d): %s', 1 + (int)$sub[2], trim($sub[3]));
     } else { // 'Re:'
       return sprintf('Re(2): %s', trim($sub[3]));
-    }
-  }
-
-  /**
-   * TODO
-   */
-  public function flag($mID) {
-    global $db;
-
-    // just a single message?
-    if (!is_array($mID)) {
-      $sql = $db->prepare("UPDATE ". MESSAGE_TABLE ."
-                           SET flag = 1
-                           WHERE flag = 0
-                             AND recipientID = :recipientID
-                             AND messageID = :messageID");
-      $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-      $sql->bindValue('messageID', $mID, PDO::PARAM_INT);
-      
-      $sql->execute();
-    } else {
-      $sql = $db->prepare("UPDATE ". MESSAGE_TABLE ."
-                           SET flag = 1
-                           WHERE flag = 0
-                             AND recipientID = recipientID
-                             AND messageID = :messageID");
-      foreach ($mID as $ID) {
-        $sql->bindValue('messageID', $ID, PDO::PARAM_INT);
-        $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-        $sql->execute();
-      }
-    }
-  }
-
-  /**
-   * TODO
-   */
-  public function unflag($mID) {
-    global $db;
-
-    // just a single message?
-      if (!is_array($mID)) {
-      $sql = $db->prepare("UPDATE ". MESSAGE_TABLE ."
-                           SET flag = 0
-                           WHERE flag = 1
-                             AND recipientID = :recipientID
-                             AND messageID = :messageID");
-      $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-      $sql->bindValue('messageID', $mID, PDO::PARAM_INT);
-      
-      $sql->execute();
-    } else {
-      $sql = $db->prepare("UPDATE ". MESSAGE_TABLE ."
-                           SET flag = 0
-                           WHERE flag = 1
-                             AND recipientID = recipientID
-                             AND messageID = :messageID");
-      foreach ($mID as $ID) {
-        $sql->bindValue('messageID', $ID, PDO::PARAM_INT);
-        $sql->bindValue('recipientID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-        $sql->execute();
-      }
     }
   }
 }

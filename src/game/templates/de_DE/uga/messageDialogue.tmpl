@@ -2,7 +2,7 @@
 /* messageDialogue.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -28,73 +28,51 @@
   });
 </script>
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <div class="ua-box">
-  <div class="ua-box-header">&nbsp;</div>
+  <div class="ua-box-header">Nachricht verfassen</div>
   <div class="ua-box-content">
-    <div class="ym-grid" style="padding-top: 5px; padding-bottom: 5px;">
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=3"><img src="{{ gfx }}/de_DE/t_uga/messages/trash.png" class="noborder" alt="Papierkorb" title="Papierkorb" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox center">
-          <a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a>
-        </div>
+    <div class="navbar navbar-static">
+      <div class="container" style="width: auto;">
+        <ul class="nav nav-tabs" id="mainTab">
+          <li><a href="main.php?modus={{ messages_list_link }}&amp;box=1#incomming">Posteingang</a></li>
+          <li><a href="main.php?modus={{ messages_list_link }}&amp;box=2#outgoing">Postausgang</a></li>
+          <li><a href="main.php?modus={{ messages_list_link }}&amp;box=3#trash">Papierkorb</a></li>
+          <li class="active"><a href="main.php?modus={{ messages_new_link }}#new">Neue Nachricht</a></li>
+        </ul>
       </div>
     </div>
-  </div>
-</div>
 
-<!--<span class="bold"><a href="?modus=Contacts">Adressbuch:</a></span>-->
-<div class="ua-box">
-  <div class="ua-box-header">Nachricht schreiben</div>
-  <div class="ua-box-content">
-    <form class="ym-form ym-columnar" id="newMessage" method="post" action="main.php">
-      <div class="ym-grid">
-        <div class="ym-g684-7 ym-gl">
-          <div class="ym-gbox ym-fbox-select">
-            <label for="contactID" style="width: 90px;">Adressbuch:</label>
-            <select name="contactID" id="contactID" size="1">
-              <option value="-1" selected="selected">Bitte wählen</option>
-              {% if contacts %}{% for item in contacts %}<option value="{{ item.contactID }}">{{ item.contactname }}</option>{% endfor %}{% endif %}
-            </select>
-          </div>
-          <div class="ym-gbox ym-fbox-text">
-            <label for="recipient" style="width: 90px;">An:</label>
-            <input type="text" name="recipient" id="recipient" value="{{ recipient }}" size="40" maxlength="255" tabindex="1" />
-          </div>
-          <div class="ym-gbox ym-fbox-text">
-            <label for="subject" style="width: 90px;">Betreff:</label>
-            <input type="text" name="subject" id="subject" value="{{ subject }}" size="40" maxlength="255" tabindex="2" />
+    <form id="formMessageNew" class="form-horizontal" method="post" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}">
+      <div style="padding: 5px;">
+        <div class="control-group">
+          <label class="control-label message-label" for="inputRecipient">An:</label>
+          <div class="controls message">
+            <input class="autocomplete" type="text" id="inputRecipient" name="recipient" placeholder="Spielername" value="{{ recipient }}" data-source="player">
           </div>
         </div>
-      </div>
-
-      <div class="ym-gbox ym-fbox-text">
-        <textarea name="nachricht" id="nachricht" style="width: 100%;" cols="61" rows="20" tabindex="3">{{ nachricht|raw }}</textarea>
-      </div>
-
-      <div class="ym-fbox-button">
+        <div class="control-group">
+          <label class="control-label message-label" for="inputSubject">Betreff:</label>
+          <div class="controls message">
+            <input type="text" id="inputSubject" name="subject" value="{{ subject }}">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls message">
+            <textarea class="input-block-level" id="nachricht" name="nachricht" style="height: 125px;" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls message">
+            <input type="hidden" name="action" value="{{ tribe_action_update }}" />
+            <button class="btn" type="button" id="formMessageNewSubmit" name="formMessageNewSubmit">Absenden</button>
+          </div>
+        </div>
         {% for item in hidden %}<input type="hidden" name="{{ item.arg }}" value="{{ item.value }}" />{% endfor %}
-        <input type="submit" class="ym-button" value="Senden" id="submit" name="Senden" tabindex="4" />
       </div>
     </form>
   </div>
 </div>
-
-<div class="text-right"><a href="main.php?modus={{ messages_list_link }}&amp;box={{ box }}">zurück zu den Nachrichten</a></div>
 
 {% endblock %}

@@ -251,7 +251,7 @@
               <tr class="bg{{ bgID }}">
                 <td><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
                 <td>{% if is_auth.see_online or is_auth.isLeader %}{{ item.lastAction }}{% endif %}</td>
-                <td class="text-right" style="padding-right: 4px;">{% if is_auth.isLeader %}<span id="player_{{ item.playerID }}" class="show_hide change_mouseover" style="padding-right: 10px">Berechtigungen anzeigen</span>{% endif %}{% if is_auth.kick_member or is_auth.isLeader %}<a href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_kick }}&amp;playerID={{ item.playerID }}" data-post="true" data-reask="true" data-reask-header="Spieler kicken" data-reask-msg="Möchtest du {{ item.name }} wirklich aus dem Stamm kicken?">Rauswerfen</a>{% endif %}</td>
+                <td class="text-right" style="padding-right: 4px;">{% if is_auth.isLeader %}<span id="player_{{ item.playerID }}" class="show_hide change_mouseover" style="padding-right: 10px">Berechtigungen anzeigen</span>{% endif %}{% if is_auth.kick_member or is_auth.isLeader %}<a href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_kick }}&amp;playerID={{ item.playerID }}" data-reask="true" data-reask-header="Spieler kicken" data-reask-msg="Möchtest du {{ item.name }} wirklich aus dem Stamm kicken?">Rauswerfen</a>{% endif %}</td>
               </tr>
               {% if is_auth.isLeader %}
               <tr id="player_{{ item.playerID }}_content" class="bg{{ bgID }} hide">

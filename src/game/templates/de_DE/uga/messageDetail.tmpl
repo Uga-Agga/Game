@@ -2,7 +2,7 @@
 /* messageDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,105 +15,47 @@
 {% block content %}
 
 <div class="ua-box">
-  <div class="ua-box-header">&nbsp;</div>
-  <div class="ua-box-content">
-    <div class="ym-grid" style="padding-top: 5px; padding-bottom: 5px;">
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=1"><img src="{{ gfx }}/de_DE/t_uga/messages/inbox.png" style="padding-left: 5px;" class="noborder" alt="Posteingang" title="Posteingang" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=2"><img src="{{ gfx }}/de_DE/t_uga/messages/outbox.png" class="noborder" alt="Postausgang" title="Postausgang" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_list_link }}&amp;box=3"><img src="{{ gfx }}/de_DE/t_uga/messages/trash.png" class="noborder" alt="Papierkorb" title="Papierkorb" /></a>
-        </div>
-      </div>
-      <div class="ym-g25 ym-gl">
-        <div class="ym-gbox text-center">
-          <a href="main.php?modus={{ messages_new_link }}"><img src="{{ gfx }}/de_DE/t_uga/messages/new.png" style="padding-right: 5px;" class="noborder" alt="Neue Nachricht" title="Neue Nachricht" /></a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="ua-box">
   <div class="ua-box-header">
-    <div class="ym-grid">
-      <div class="ym-g50 ym-gl text-left">
-        <div class="ym-gbox">
-          &nbsp;{% if previous_msg_id %}<a href="main.php?modus={{ messages_read_link }}&amp;messageID={{ previous_msg_id }}&amp;box={{ box }}&amp;filter={{ message_class }}" class="text-msg-next">&lt;&lt;&lt; vorherige</a>{% endif %}
-        </div>
-      </div>
-      <div class="ym-g50 ym-gl">
-        <div class="ym-gbox text-right">
-          {% if next_msg_id %}<a href="main.php?modus={{ messages_read_link }}&amp;messageID={{ next_msg_id }}&amp;box={{ box }}&amp;filter={{ message_class }}" class="text-msg-previous">nächste &gt;&gt;&gt;</a>{% endif %}&nbsp;
-        </div>
-      </div>
+    <div class="row-fluid">
+      <div class="span4 text-left" style="padding-left: 5px; min-height: 20px;">{% if previous_msg_id %}<a style="color: #ffffff;" href="main.php?modus={{ messages_read_link }}&amp;messageID={{ previous_msg_id }}&amp;box={{ box }}&amp;filter={{ message_class }}" class="text-msg-next">&lt;&lt;&lt; vorherige</a>{% endif %}</div>
+      <div class="span4" style="padding-right: 5px; min-height: 20px;">Nachricht lesen</div>
+      <div class="span4 text-right" style="padding-right: 5px; min-height: 20px;">{% if next_msg_id %}<a style="color: #ffffff;" href="main.php?modus={{ messages_read_link }}&amp;messageID={{ next_msg_id }}&amp;box={{ box }}&amp;filter={{ message_class }}" class="text-msg-previous">nächste &gt;&gt;&gt;</a>{% endif %}</div>
     </div>
   </div>
   <div class="ua-box-content">
-    <div class="ym-grid" style="padding-top: 10px;">
-      <div class="ym-g50 ym-gl">
-        <div class="ym-gbox">
-          <dl style="margin: 0;">
-            <dt class="dt-msg">Betreff:</dt><dd class="dd-msg">{{ message.subject|raw }}</dd>
-            <dt class="dt-msg">Von:</dt><dd class="dd-msg">{{ message.sender }}</dd>
-            <dt class="dt-msg">An:</dt><dd class="dd-msg">{{ message.empfaenger }}</dd>
-            <dt class="dt-msg">Datum:</dt><dd class="dd-msg">{{ message.datum }}</dd>
-          </dl>
-          <div style="margin-left:5px;">{% if xml_button %}<a class="export-link" href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div>
-          <div id="export-dialog"></div>
-        </div>
-      </div>
-      <div class="ym-g50 ym-gl">
-        <div class="ym-gbox text-right">
-          <iframe src="http://rcm-de.amazon.de/e/cm?t=ugag-21&amp;o=3&amp;p=20&amp;l=ez&amp;f=ifr&amp;f=ifr" width="120" height="90" scrolling="no" marginwidth="0" marginheight="0" border="0" frameborder="0" style="border:none; margin: 5px;"></iframe>
-        </div>
+    <div class="navbar navbar-static">
+      <div class="container" style="width: auto;">
+        <ul class="nav nav-tabs" id="mainTab">
+          <li><a href="main.php?modus={{ messages_list_link }}&amp;box=1#incomming">Posteingang</a></li>
+          <li><a href="main.php?modus={{ messages_list_link }}&amp;box=2#outgoing">Postausgang</a></li>
+          <li><a href="main.php?modus={{ messages_list_link }}&amp;box=3#trash">Papierkorb</a></li>
+          <li><a href="main.php?modus={{ messages_new_link }}#new">Neue Nachricht</a></li>
+          <li class="active"><a href="#">Nachricht lesen</a></li>
+        </ul>
       </div>
     </div>
 
-    <div class="msg-body">
-      {% if message_img %}<img class="float-right" src="{{ gfx }}/de_DE/t_uga/{{ message_img }}" alt="" title="" />{% endif %}
-      {% if message_xml %}<div>{% include "xml/baseReport.tmpl" %}</div>{% else %}{{ message.nachricht|raw }}{% endif %}
-    </div>
-
-    {% if reply or delete %}
-      {% if reply %}
-        <div style="float: left; width: 125px;">
-          <form class="ym-form" method="post" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}">
-            <div class="ym-fbox-button">
-                {% for item in reply %}
-                  <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
-                {% endfor %}
-                <input type="submit" class="ym-button" value="Antworten" id="Antworten" name="Antworten" />
-            </div>
-          </form>
-        </div>
-        <div style="padding-left: 125px;">
-      {% endif %}
-      {% if delete %}
-        <form class="ym-form" method="post" action="main.php?modus={{ messages_list_link }}&amp;caveID={{ cave_id }}">
-          <div class="ym-fbox-button">
-            {% for item in delete.item %}
-              <input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />
-            {% endfor %}
-            <input type="submit" class="ym-button" value="{{ delete.name }}" id="mark_action" name="mark_action" />
-          </div>
+    <div style="padding: 5px">
+      <div class="row"><div class="span1">Betreff:</div><div class="span4">{{ message.subject|raw }}</div></div>
+      <div class="row"><div class="span1">Von:</div><div class="span4">{{ message.sender }}</div></div>
+      <div class="row"><div class="span1">An:</div><div class="span4">{{ message.empfaenger }}</div></div>
+      <div class="row"><div class="span1">Datum:</div><div class="span4">{{ message.datum }}</div></div>
+      <div class="row"><div class="span5">{% if xml_button %}<a class="export-link" href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div></div>
+      {% if reply or delete %}
+        <form id="formMessageNewAnswer" class="form-inline" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}" method="post">
+        {% if reply %}
+          {% for item in reply %}<input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />{% endfor %}
+          <button class="btn" type="button" id="formMessageNewAnswerSubmit" name="formMessageNewAnswerSubmit">Antworten</button>
+        {% endif %}
+        {% if delete %}
+          <a class="btn change_mouseover" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box={{ box }}&amp;messageID={{ message_id }}" data-post="true">Löschen</a> 
+        {% endif %}
         </form>
       {% endif %}
-      {% if reply %}
-        </div>
-      {% endif %}
-    {% endif %}
+      <hr>
+      {% if message_xml %}<div>{% include "xml/baseReport.tmpl" %}</div>{% else %}{{ message.nachricht|raw }}{% endif %}
+    </div>
   </div>
 </div>
-
-<div class="text-center"><a href="main.php?modus={{ messages_list_link }}&amp;box={{ box }}">zurück zu den Nachrichten</a></div>
 
 {% endblock %}

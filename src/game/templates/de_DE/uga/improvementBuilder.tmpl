@@ -26,7 +26,7 @@
   <div class="alert alert-block alert-success fade in text-left">
     <h4>Momentan im Gange:</h4>
     <p>Ausbau {{ quene_name }} auf Stufe {{ quene_nextlevel }} (fertig: {{ quene_finish }})</p>
-    <p><a class="btn" href="main.php?modus={{ improvement_link }}&amp;action=cancelOrder&amp;id={{ quene_event_id }}&amp;caveID={{ cave_id }}" data-post="true" data-reask="true" data-reask-header="Ausbau abbrechen!" data-reask-msg="Möchtest du den Ausbau von {{ quene_name }} auf Stufe {{ quene_nextlevel }} wirklich stoppen?">Abbrechen</a></p>
+    <p><a class="btn" href="main.php?modus={{ improvement_link }}&amp;action=cancelOrder&amp;id={{ quene_event_id }}&amp;caveID={{ cave_id }}" data-reask="true" data-reask-header="Ausbau abbrechen!" data-reask-msg="Möchtest du den Ausbau von {{ quene_name }} auf Stufe {{ quene_nextlevel }} wirklich stoppen?">Abbrechen</a></p>
   </div>
 {% endif %}
 
@@ -51,7 +51,7 @@
               </td>
               <td class="build-single">
                 {% if item.build_link %}
-                  <a href="main.php?modus={{ improvement_link }}&amp;action=build&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}" data-post="true"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" width="25" alt="Ausbauen" title="Ausbauen" /></a>
+                  <a href="main.php?modus={{ improvement_link }}&amp;action=build&amp;buildingID={{ item.building_id }}&amp;caveID={{ item.cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" width="25" alt="Ausbauen" title="Ausbauen" /></a>
                 {% else %}
                   <img src="{{ gfx }}/de_DE/t_uga/arrow_up_false.png" width="25" alt="{{ item.no_build_msg }}" title="{{ item.no_build_msg }}" />
                 {% endif %}

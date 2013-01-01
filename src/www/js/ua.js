@@ -1,3 +1,11 @@
+/* ua.js -
+ * Copyright (c) 2012-2013 David Unger <unger-dave@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
 DEBUG = 'on';
 
 !function ($) {
@@ -34,7 +42,7 @@ DEBUG = 'on';
           ua_log('switch tab: '+url);
           $('#status-msg').hide();
           if(url!=window.location) {
-            window.history.pushState({path:url}, '', $(this).attr('href'));
+            window.history.pushState($(this).attr('href'), '', $(this).attr('href'));
           }
         }
 /* Einfach Ignorieren ;) */
@@ -47,7 +55,7 @@ DEBUG = 'on';
           $('#modal-reask').modal({keyboard: true, backdrop: false});
           return;
         }
-    
+
         $('#loader').show(); $('#content').hide();
         if ($(this).attr('data-post') == 'true') {
           ua_log('Load Ajax post Content: '+url);
@@ -68,22 +76,49 @@ DEBUG = 'on';
               if (useJson === true) {parseJson(json);} else {updateContent(data);}
             }
           });
-          if(url!=window.location){window.history.pushState({path:url}, '', $(this).attr('href'));}
+          if(url!=window.location){window.history.pushState($(this).attr('href'), '', $(this).attr('href'));}
         }
+      }
+    });
+
+    $(window).on('popstate', function(e) {
+      return;
+      var url = window.location.search;
+      if(url != '') {
+        ua_log('Please go back Browser: '+url);
+  
+        $('#loader').show(); $('#content').hide();
+        $.ajax({
+          url: url+'&method=ajax',
+          cache: false,
+          dataType: 'html',
+          success: function(data) {
+            var useJson = true;
+            try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+            if (useJson === true) {parseJson(json);} else {updateContent(data);}
+          }
+        });
       }
     });
 
     $(document).on('click', "button", function(e){
       ua_log('Clicked Button '+$(this).attr("id"));
+      if ($(this).attr("id") === undefined) {return;}
+
       e.preventDefault();
       var form = $(this).parents("form");
       var data = {button: $(this).attr("id")};
       form.ajaxSubmit({data: data, success: updateContent});
     });
+
     $(document).on('submit', 'form', function(e) {
-      ua_log('submit ajax form: '+$(this).attr('id'));
+      ua_log('submit form: '+$(this).attr('id'));
       e.preventDefault();
       alert('Achtung. Das Absenden der Buttons ist so unerwünscht!');
+    });
+
+    $(document).on("hashchange", function(e){
+      console.log('Wir gehen zurück Oo');
     });
 
     $(document).on("click", ".box_toggle", function(e){$(this).css('display', 'none');$('#'+$(this).attr('id')+'_content').slideDown("slow");});
@@ -94,7 +129,9 @@ DEBUG = 'on';
     $(document).on("mousemove", "div#warpoints_info", function(e) {$("div#warpoints").css('top', e.pageY + 10).css('left', e.pageX + 20);});
     
     $(document).on("click", ".load_max", function(){if ($('#'+$(this).attr('id')+'_input').val() === ''){$('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);} else {$('#'+$(this).attr('id')+'_input').val('');}});
-    
+
+    $(document).on("click", "input.check-all", function(e){ $(this).parents('form:eq(0)').find(':checkbox').attr('checked', this.checked);});
+
     $(document).ready(function() {
       // jqDock
       var dockOptions = {align: 'middle', size: 30, labels: 'bc'};
@@ -117,9 +154,11 @@ DEBUG = 'on';
     }
     
     function updateContent(data) {
+      ua_log('update content....');
       $('#content').html($(data).find('#content').html());
       $('#farmpoints').html($(data).find('#farmpoints').html());
       $('#warpoints_info').html($(data).find('#warpoints_info').html());
+      $('#message_icon').attr('src', $(data).find('img#message_icon').attr('src'));
       document.title = $(data).filter('title').text();
       $('.tooltip-show').tooltip();
       parseTabs();
