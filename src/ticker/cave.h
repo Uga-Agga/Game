@@ -40,6 +40,7 @@ struct Cave
     int monster_id;
     int heroID;
     int secure;
+    int starting_position;
     time_t protect_end;
     int resource[MAX_RESOURCE];
     int building[MAX_BUILDING];

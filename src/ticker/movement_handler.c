@@ -1041,11 +1041,33 @@ void movement_handler (db_t *database, db_result_t *result) {
       hero_points_attacker = war_points_calculate(battle,FLAG_ATTACKER);
       hero_points_defender = war_points_calculate(battle,FLAG_DEFENDER);
 
-      /* update hero */
+      // update hero
       battle = hero_update_after_battle(database, battle, heroID, &cave2, hero_points_attacker, hero_points_defender, 0);
 
+      // set last attacking tribe
+      if (battle->winner == FLAG_ATTACKER) {
+        db_query(database, "UPDATE " DB_TABLE_CAVE " SET lastAttackingTribe = '%s' WHERE caveID = %d", player1.tribe, target_caveID);
+      }
+
+      // check and set take takeoverable
+      int caveSetTakeoverable = 0;
+      if (battle->winner == FLAG_ATTACKER
+          && !cave2.takeoverable
+          && !cave2.starting_position
+          && (cave2.player_id == 0))
+      {
+        // if there are no units and defense systems in the cave, set it takeoverable
+        if (battle->defenders_acc_hitpoints_units == 0 && battle->defenders_acc_hitpoints_defenseSystems == 0) {
+          db_query(database, "UPDATE " DB_TABLE_CAVE " SET takeoverable = 1 WHERE caveID = %d", cave2.cave_id);
+          caveSetTakeoverable = 1;
+          debug(DEBUG_TICKER, "movement_handler: Set cave with ID %d as takeoverable", cave2.cave_id);
+        }
+      }
+
       /* create and send reports */
-      battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo, 0, 0, &relation1, &relation2, war_points_show, war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender);
+      battle_report(database, &cave1, &player1, &cave2, &player2, battle,
+          artefact_id, lostTo, 0, 0, &relation1, &relation2, war_points_show, war_points_attacker,
+          war_points_defender, heroID, hero_points_attacker, hero_points_defender, caveSetTakeoverable);
     break;
 
     /**********************************************************************/
@@ -1243,7 +1265,9 @@ void movement_handler (db_t *database, db_result_t *result) {
       }
 
       // create and send reports
-      battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo, change_owner, 1 + takeover_multiplier, &relation1, &relation2,war_points_show, war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender);
+      battle_report(database, &cave1, &player1, &cave2, &player2, battle, artefact_id, lostTo,
+          change_owner, 1 + takeover_multiplier, &relation1, &relation2,war_points_show,
+          war_points_attacker, war_points_defender, heroID, hero_points_attacker, hero_points_defender, caveSetTakeoverable);
 
       //bodycount calculate
 

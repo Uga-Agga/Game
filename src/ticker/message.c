@@ -862,7 +862,7 @@ static char* battle_report_xml (db_t *database,
         const struct Relation *relation2,
         int show_warpoints, int attacker_warpoints, int defender_warpoints, int show_defender,
         int defender_size_guessed, int IsAttacker,
-        int hero_points_attacker, int hero_points_defender)
+        int hero_points_attacker, int hero_points_defender, int caveSetTakeoverable)
 {
   mxml_node_t *xml;
   mxml_node_t *battlereport;
@@ -879,6 +879,7 @@ static char* battle_report_xml (db_t *database,
   mxml_node_t *Artefact, *Lost;
   mxml_node_t *selfAttack, *isAttacker;
   mxml_node_t *hero, *points, *heal, *death;
+  mxml_node_t *caveTakeoverable;
 
   int type = 0;
   char *xmlstring = "";
@@ -1124,6 +1125,12 @@ static char* battle_report_xml (db_t *database,
           mxmlNewText(Lost, 0, (const char*) (lost ? "true" : "false"));
     }
 
+    // cave set takeoverable
+    if (caveSetTakeoverable) {
+      caveTakeoverable = mxmlNewElement(battlereport, "setCaveTakeoverable");
+        mxmlNewText(caveTakeoverable, 0, (const char*) (caveSetTakeoverable ? "true" : "false"));
+    }
+
   xmlstring = mxmlSaveAllocString(xml, MXML_NO_CALLBACK);
 
   return xmlstring;
@@ -1138,7 +1145,7 @@ void battle_report (db_t *database,
         const struct Relation *relation1,
         const struct Relation *relation2,
         int show_warpoints, int attacker_warpoints, int defender_warpoints,
-        int heroID, int hero_points_attacker, int hero_points_defender)
+        int heroID, int hero_points_attacker, int hero_points_defender, int caveSetTakeoverable)
 {
   template_t *template1, *template2;
   const char *subject1, *subject2;
@@ -1213,7 +1220,7 @@ void battle_report (db_t *database,
                 relation1,
                 relation2,
                 show_warpoints, attacker_warpoints, defender_warpoints, 0, defender_size_guessed, 1,
-                hero_points_attacker, hero_points_defender);
+                hero_points_attacker, hero_points_defender, caveSetTakeoverable);
   } else {
     report_army_table(template1, player1->locale_id, result);
     xml1 = battle_report_xml(database,
@@ -1224,7 +1231,7 @@ void battle_report (db_t *database,
                 relation1,
                 relation2,
                 show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 1,
-                hero_points_attacker, hero_points_defender);
+                hero_points_attacker, hero_points_defender, caveSetTakeoverable);
   }
 
   report_army_table(template2, player2->locale_id, result);
@@ -1236,7 +1243,7 @@ void battle_report (db_t *database,
               relation1,
               relation2,
               show_warpoints, attacker_warpoints, defender_warpoints, 1, defender_size_guessed, 0,
-              hero_points_attacker, hero_points_defender);
+              hero_points_attacker, hero_points_defender, caveSetTakeoverable);
 
   if (result->winner == FLAG_ATTACKER) {
     report_resources(template1, player1->locale_id,

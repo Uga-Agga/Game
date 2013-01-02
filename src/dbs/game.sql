@@ -120,6 +120,7 @@ CREATE TABLE IF NOT EXISTS `Cave` (
   `monsterID` int(11) unsigned NOT NULL DEFAULT '0',
   `regionID` int(11) NOT NULL DEFAULT '0',
   `hero` int(11) NOT NULL DEFAULT '0',
+  `lastAttackingTribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`caveID`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `Coords` (`xCoord`,`yCoord`),
