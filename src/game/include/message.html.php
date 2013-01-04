@@ -2,7 +2,7 @@
 /*
  * message.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012  David Unger
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -35,32 +35,47 @@ function messages_getMessages($caveID, $deletebox, $box) {
     $statusMsg = $template->getVar('status_msg');
   }
 
+  $action = Request::getVar('action', '');
+  $messageID = Request::getVar('messageID', 0);
+
   // checkboxes checked
-  if (is_array($deletebox) && Request::isPost('mark_action')) {
-    $mark_action = Request::getVar('mark_action_value', '');
-    switch ($mark_action) {
+  if ((is_array($deletebox) && Request::isPost('button')) || (Request::getVar('action', '') && Request::getVar('messageID', 0) != 0)) {
+    if (Request::getVar('action', '') && Request::getVar('messageID', 0) != 0) {
+      $deletebox = array($messageID);
+      $switch = Request::getVar('action', '');
+    } else {
+      $switch = Request::getVar('button', '');
+    }
+
+
+    if (!sizeof($deletebox)) {
+      $statusMsg = array('type' => 'error', 'message' => _('Du mußt mindestens eine Nachricht auswählen.'));
+      $switch = '';
+    }
+
+    switch ($switch) {
       // mail and delete
-      case 'mail_and_delete':
-        $deleted = $messagesClass->mailAndDeleteMessages($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleted));
+      case 'mark_mail':
+        $mailCount = $messagesClass->mailAndDeleteMessages($deletebox);
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) per E-Mail verschickt erfolgreich gelöscht.'), $mailCount));
       break;
 
       // just delete
-      case 'delete':
-        $deleted = $messagesClass->deleteMessages($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleted));
+      case 'mark_delete':
+        $deleteCount = $messagesClass->deleteMessages($deletebox);
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleteCount));
       break;
 
       // mark as read
-      case 'mark_as_read':
-        $marked_as_read = $messagesClass->markAsRead($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) als gelesen markiert.'), $marked_as_read));
+      case 'mark_read':
+        $readCount = $messagesClass->markAsRead($deletebox);
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) als gelesen markiert.'), $readCount));
       break;
 
       // recover messages
-      case 'recover':
-        $recover = $messagesClass->recoverMessages($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) wurden wiederhergestellt.'), $recover));
+      case 'mark_recover':
+        $recoverCount = $messagesClass->recoverMessages($deletebox);
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) wurden wiederhergestellt.'), $recoverCount));
       break;
     }
   }
@@ -70,16 +85,6 @@ function messages_getMessages($caveID, $deletebox, $box) {
     $deleted = $messagesClass->deleteAllMessages($box, Request::getVar('messageClass', -2));
     $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleted));
     unset($_REQUEST['messageClass'], $_POST['messageClass'], $_GET['messageClass']);
-  }
-
-  // flag messages
-  if (Request::isPost('flag')) {
-    $messagesClass->flag(Request::getVar('id', array('' => '')));
-  }
-
-  // unflag messages
-  if (Request::isPost('unflag')) {
-    $messagesClass->unflag(Request::getVar('id', array('' => '')));
   }
 
   // verschiedene Boxes werden hier behandelt... //
@@ -162,24 +167,25 @@ function messages_getMessages($caveID, $deletebox, $box) {
       'message_class' => $messageClass
     );
   }
-
 /****************************************************************************************************
 *
 * Übergeben ans Template
 *
 ****************************************************************************************************/
   $template->addVars(array(
-    'from_to'         => $boxes[$box]['from_to'],
-    'messages'        => $messages,
-    'message_box'     => $box,
-    'message_classes' => $classes,
-    'message_min'     => ($message_count == 0) ? 0 : $offset + 1,
-    'message_max'     => min($offset + MSG_PAGE_COUNT, $message_count),
-    'message_count'   => $message_count,
-    'message_prev'    => $message_prev,
-    'message_next'    => $message_next,
-    'status_msg'      => (isset($statusMsg)) ? $statusMsg : '',
-    'trash'           => ($box == BOX_TRASH) ? true : false,
+    'from_to'            => $boxes[$box]['from_to'],
+    'messages'           => $messages,
+    'message_box'        => $box,
+    'message_classes'    => $classes,
+    'message_class_id'   => isset($messageClass) ? $messageClass : 0,
+    'message_class_name' => isset($messagesClass->MessageClass[$messageClass]) ? $messagesClass->MessageClass[$messageClass] : '',
+    'message_min'        => ($message_count == 0) ? 0 : $offset + 1,
+    'message_max'        => min($offset + MSG_PAGE_COUNT, $message_count),
+    'message_count'      => $message_count,
+    'message_prev'       => $message_prev,
+    'message_next'       => $message_next,
+    'status_msg'         => (isset($statusMsg)) ? $statusMsg : '',
+    'trash'              => ($box == BOX_TRASH) ? true : false,
   ));
 }
 
@@ -194,6 +200,7 @@ function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
     $template->throwError('Fehler beim Anzeigen der nachricht. ID wurde nicht übergeben!');
     return;
   }
+
   // init messages class
   $messagesClass = new Messages;
 

@@ -2,7 +2,7 @@
 /*
  * main.php -
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -350,7 +350,7 @@ switch ($modus) {
     break;
 
   case SUGGESTIONS:
-    list($pagetitle, $content) = suggestions_main($caveID, $ownCaves);
+    suggestions_getContent();
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -460,8 +460,8 @@ $resources = array();
 if ($template->getShowRresource() && isset($resourceTypeList)) {
   foreach ($resourceTypeList as $resource) {
     $amount = floor($ownCaves[$caveID][$resource->dbFieldName]);
-    if (!$resource->nodocumentation || $amount > 0) {
-      $delta = $ownCaves[$caveID][$resource->dbFieldName . "_delta"];
+    $delta = $ownCaves[$caveID][$resource->dbFieldName . "_delta"];
+    if (/*!$resource->nodocumentation ||*/ $amount > 0 || $delta > 0) {
       if ($delta > 0) $delta = "+" . $delta;
       $resources['resources'][] = array(
         'dbFieldName'  => $resource->dbFieldName,
@@ -525,7 +525,7 @@ $template->addVars(array(
   'countdown_time'    => $now->format("M j, Y H:i:s O"),
   'query_string'      => $requestString,
   'war_points'        => getWarpointsByCaveData($ownCaves[$caveID]),
-  'jabber'            => array('user' => $_SESSION['player']->name, 'passwd' => $_SESSION['session']['loginchecksum']),
+  'jabber'            => array('server' => Config::JABBER_SERVER, 'noClose' => Config::JABBER_NO_CLOSE, 'groupchats' => Config::JABBER_STATIC_GROUPCHATS, 'user' => $_SESSION['player']->name, 'passwd' => $_SESSION['session']['loginchecksum']),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],
@@ -548,6 +548,7 @@ $template->addVars(array(
   'hero_link'               => HERO_DETAIL,
   'improvement_link'        => IMPROVEMENT_BUILDER,
   'improvement_detail_link' => IMPROVEMENT_DETAIL,
+  'logout_link'             => LOGOUT,
   'map_link'                => MAP,
   'map_detail_link'         => MAP_DETAIL,
 //  'map_region_link'         => MAP_REGION_LINK,

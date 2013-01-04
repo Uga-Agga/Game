@@ -1,7 +1,7 @@
 {#
 /* map.tmpl -
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011 Sascha Lange <salange@uos.de>, David Unger
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
  * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -21,43 +21,25 @@
 <div class="ua-box">
   <div class="ua-box-header">Karte</div>
   <div class="ua-box-content">
-    <div class="ym-grid" style="padding: 10px 0;">
-      <div class="ym-g33 ym-gl">
-        <div class="ym-gbox center">
-          <form id="searchCoords" method="post" action="main.php?modus={{ modus }}">
-            <p>(X/Y):
-              <input type="text" pattern="\d*" name="xCoord" size="4" maxlength="4" />
-              <input type="text" pattern="\d*" name="yCoord" size="4" maxlength="4" />
-              <input type="hidden" name="caveID" value="{{ caveID }}" />
-              <input type="submit" value="go" />
-            </p>
-          </form>
+    <div style="padding: 5px;">
+    <form id="formMapCaveSearch" class="form-horizontal" action="main.php?modus={{ map_link }}" method="post">
+      <div class="row-fluid">
+        <div class="span4 text-left"><input class="autocomplete input-medium" style="margin-right: 10px;" type="text" name="caveName" id="caveName" placeholder="Höhlenname" maxlength="32" data-source="caves"></div>
+        <div class="span4 text-center">
+          <input class="input-wonder-xy" type="text" pattern="\d*" name="xCoord" placeholder="X" maxlength="2">
+          <input class="input-wonder-xy" type="text" pattern="\d*" name="yCoord" placeholder="Y" maxlength="2">
+        </div>
+        <div class="span4 text-right">
+          <select class="input-medium" name="targetCaveID" id="targetCaveID">
+          <option value="-1">Bitte wählen</option>
+          {% for bookmark in caveBookmarks %}<option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>{% endfor %}
+          </select>
         </div>
       </div>
-      <div class="ym-g33 ym-gl">
-        <div class="ym-gbox center">
-          <form id="searchID" method="post" action="main.php?modus=map">
-            <p><a href="?modus=CaveBookmarks&amp;task=Show">Höhlenliste:</a>
-            <select name="targetCaveID" id="targetCaveID">
-              <option value="-1">Bitte wählen</option>
-              {% for bookmark in caveBookmarks %}
-              <option value="{{ bookmark.caveID }}">{{ bookmark.name }} ({{ bookmark.xCoord }}|{{ bookmark.yCoord }})</option>
-              {% endfor  %}
-            </select></p>
-          </form>
-        </div>
+      <div class="row-fluid">
+        <div class="span12 text-center"><button class="btn btn-map" type="button" id="formMapCaveSearchSubmit" name="formMapCaveSearchSubmit">Höhle anzeigen</button></div>
       </div>
-      <div class="ym-g33 ym-gl">
-        <div class="ym-gbox center">
-          <form id="searchName" method="post" action="main.php?modus={{ modus }}">
-            <p>Name:
-              <input type="text" name="caveName" size="16" maxlength="50" />
-              <input type="hidden" name="caveID" value="{{ caveID }}" />
-              <input type="submit" value="go" />
-            </p>
-          </form>
-        </div>
-      </div>
+    </form>
     </div>
   </div>
 </div>
@@ -67,38 +49,20 @@
     <div class="ua-box">
       <div class="ua-box-header">Navigation</div>
       <div class="ua-box-content">
-        <div class="ym-grid">
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="NW" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a>
-          </div>
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="N" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ N.x }}&amp;yCoord={{ N.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png" style="border:none;width:40px;hight:40px;" alt="nord" /></a>
-          </div>
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="NE" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NE.x }}&amp;yCoord={{ NE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a>
-          </div>
+        <div class="row-fluid">
+          <div class="span4"><a class="arrow" id="NW" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a></div>
+          <div class="span4"><a class="arrow" id="N" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ N.x }}&amp;yCoord={{ N.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png" style="border:none;width:40px;hight:40px;" alt="nord" /></a></div>
+          <div class="span4"><a class="arrow" id="NE" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NE.x }}&amp;yCoord={{ NE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a></div>
         </div>
-        <div class="ym-grid">
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="W" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ W.x }}&amp;yCoord={{ W.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png" style="border:none;width:40px;hight:40px;" alt="west" /></a>
-          </div>
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="M" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ cave_x_coord }}&amp;yCoord={{ cave_y_coord }}"><img src="{{ gfx }}/de_DE/t_uga/map/M.png" style="border:none;width:40px;hight:40px;" alt="" /></a>
-          </div>
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="E" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ E.x }}&amp;yCoord={{ E.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png" style="border:none;width:40px;hight:40px;" alt="ost" /></a>
-          </div>
+        <div class="row-fluid">
+          <div class="span4"><a class="arrow" id="W" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ W.x }}&amp;yCoord={{ W.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png" style="border:none;width:40px;hight:40px;" alt="west" /></a></div>
+          <div class="span4"><a class="arrow" id="M" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ cave_x_coord }}&amp;yCoord={{ cave_y_coord }}"><img src="{{ gfx }}/de_DE/t_uga/map/M.png" style="border:none;width:40px;hight:40px;" alt="" /></a></div>
+          <div class="span4"><a class="arrow" id="E" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ E.x }}&amp;yCoord={{ E.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png" style="border:none;width:40px;hight:40px;" alt="ost" /></a></div>
         </div>
-        <div class="ym-grid">
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="SW" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SW.x }}&amp;yCoord={{ SW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="südwest" /></a>
-          </div>
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="S" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ S.x }}&amp;yCoord={{ S.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png" style="border:none;width:40px;hight:40px;" alt="süd" /></a>
-          </div>
-          <div class="ym-g33 ym-gl">
-            <a class="arrow" id="SE" href="./main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SE.x }}&amp;yCoord={{ SE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a>
-          </div>
+        <div class="row-fluid">
+          <div class="span4"><a class="arrow" id="SW" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SW.x }}&amp;yCoord={{ SW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="südwest" /></a></div>
+          <div class="span4"><a class="arrow" id="S" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ S.x }}&amp;yCoord={{ S.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png" style="border:none;width:40px;hight:40px;" alt="süd" /></a></div>
+          <div class="span4"><a class="arrow" id="SE" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SE.x }}&amp;yCoord={{ SE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a></div>
         </div>
 
         {% if minimap %} 
@@ -127,150 +91,5 @@
 
   <div style="clear: both"></div>
 </div>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    
-    function displayMessage()
-    {
-      var message = $('#message');
-      
-      if (message.length == 0) return ;
-      
-      $('#message-view')
-      .html(message.html())
-      .slideDown();
-      
-      message.remove();
-    }
-    
-    function hideMessage()
-    {
-      $('#message-view')
-      .slideUp();
-    }
-    
-    // open dialog
-    function openDetailDialog(url)
-    {                
-      $('#detail-dialog').dialog('open').html("Lade Details...").load(url+"&method=ajax");
-    }
-    
-    // prepare dialog window
-    $('#detail-dialog').dialog({
-        autoOpen:false,
-        height: 500,
-        width: 700,
-        modal: true,
-        resizable: false,
-        buttons: {
-          Schließen: function() {
-            $(this).dialog('close');
-          }
-        }
-    });
-    
-    /** attaches event handlers to map-detail-links. must be called on first startup and
-      * whenever a new map region is loaded from the server. */
-    function connectDetailClickedEvents()
-    {
-      $('a.map-detail-link').click(function (event) {
-        var url = $(this).attr('href');
-        openDetailDialog(url);
-        return false;
-      });
-    }
-    
-    function loadMap(query)
-    {
-      $("#map-view").load(query, function() {
-        if ($('#map-view #message').length > 0) {
-          displayMessage();
-        }
-        else {
-          hideMessage();
-        }
-        connectDetailClickedEvents();
-        
-        // get a new minimap with corrected position marker
-        var xCoord = parseInt($('#map-queryX').html());
-        var yCoord = parseInt($('#map-queryY').html());
-        var minimapbase = $('#minimap-base-url').html();
-        
-        $('#minimap-image').attr('src', (minimapbase+"?x="+xCoord+"&y="+yCoord));
-        
-      });
-    }
-    
-    $('#searchCoords').submit(function () {
-      var xCoord = $(this).find(':text[name=xCoord]').val();
-      var yCoord = $(this).find(':text[name=yCoord]').val();
-      
-      if (xCoord === '' || yCoord ==='') return false;
-      
-      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
-      return false;
-    });
-    
-    $('#searchName').submit(function () {
-      var caveName = $(this).find(':text[name=caveName]').val();
-      
-      if (caveName === '') return false;
-
-      caveNameEncode = encodeURIComponent(caveName);
-      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&caveName="+caveNameEncode);
-      return false;
-    });
-    
-    $('#searchID #targetCaveID').change(function () {
-      var targetCaveID = $(this).val();
-      if (targetCaveID < 0) return false;
-      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&targetCaveID="+targetCaveID);
-      return false;
-    });
-    
-    $('#minimap-image').click(function (event) {
-      event.preventDefault();
-      var x = event.pageX - $(this).offset().left;
-      var y = event.pageY - $(this).offset().top;
-      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&minimap_x="+x+"&minimap_y="+y+"&scaling={{ minimap.scaling }}");
-
-      return false;
-    });
-  
-    // store the direction to move the map with each arrow
-    $('#NW').data('dx', -1).data('dy', -1); 
-    $('#N').data('dx', 0).data('dy', -1); 
-    $('#NE').data('dx', 1).data('dy', -1); 
-    $('#E').data('dx', 1).data('dy', 0); 
-    $('#SE').data('dx', 1).data('dy', 1); 
-    $('#S').data('dx', 0).data('dy', 1); 
-    $('#SW').data('dx', -1).data('dy', 1); 
-    $('#W').data('dx', -1).data('dy', 0); 
-    
-    $('a.arrow').click(function (event) {
-      event.preventDefault();
-
-      var xCoord = $('#map-centerX').html();
-      var yCoord = $('#map-centerY').html();
-      
-      var dx = $(this).data('dx');
-      var dy = $(this).data('dy');
-      
-      if (xCoord === '' || yCoord === '' || (dx == 0 && dy == 0)) {
-        return false;
-      }
-
-      xCoord = parseInt(xCoord) + dx;
-      yCoord = parseInt(yCoord) + dy;
-            
-      loadMap("./main.php?caveID={{ caveID }}&modus={{ mapRegionLink }}&xCoord="+xCoord+"&yCoord="+yCoord);
-
-    });
-    
-    connectDetailClickedEvents();  // connect the map-detail-links to the ajax event handler
-    
-  })
-</script>
 
 {% endblock %}

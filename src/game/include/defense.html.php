@@ -2,7 +2,7 @@
 /*
  * defense.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -85,7 +85,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if (Request::isPost('cancelOrderConfirm')) {
+      if (Request::isPost('postConfirm')) {
         $messageID = defense_cancelOrder($eventID, $caveID);
 
         if ($messageID == 1) {
@@ -119,7 +119,7 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
-      if (Request::isPost('cancelOrderConfirm')) {
+      if (Request::isPost('postConfirm')) {
         $messageID = defense_Demolishing($defenseID, $caveID, $details);
         $details = getCaveSecure($caveID, $_SESSION['player']->playerID);
       } else {
@@ -216,6 +216,7 @@ function defense_builder($caveID, &$details) {
   foreach ($GLOBALS['defenseCategoryTypeList'] as $defenseCategory) {
     if (isset($defenseSystem[$defenseCategory->id])) {
       $tmpDefenseSystem[$defenseCategory->sortID] = array(
+        'id'    => $defenseCategory->id,
         'name'  => $defenseCategory->name,
         'items' => $defenseSystem[$defenseCategory->id]['items']
       );
@@ -224,6 +225,7 @@ function defense_builder($caveID, &$details) {
 
     if (isset($defenseSystemRelict[$defenseCategory->id])) {
       $tmpDefenseSystemRelict[$defenseCategory->sortID] = array(
+        'id'    => $defenseCategory->id,
         'name'  => $defenseCategory->name,
         'items' => $defenseSystemRelict[$defenseCategory->id]['items']
       );
@@ -232,12 +234,14 @@ function defense_builder($caveID, &$details) {
 
     if (isset($defenseSystemUnqualified[$defenseCategory->id])) {
       $tmpDefenseSystemUnqualified[$defenseCategory->sortID] = array(
+        'id'    => $defenseCategory->id,
         'name'  => $defenseCategory->name,
         'items' => $defenseSystemUnqualified[$defenseCategory->id]['items']
       );
       unset($defenseSystemUnqualified[$defenseCategory->id]);
     }
   }
+
   $defenseSystem            = $tmpDefenseSystem;
   $defenseSystemRelict      = $tmpDefenseSystemRelict;
   $defenseSystemUnqualified = $tmpDefenseSystemUnqualified;

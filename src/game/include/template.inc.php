@@ -1,7 +1,7 @@
 <?php
 /*
  * template.inc.php -
- * Copyright (c) 2011-2012  David Unger
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -46,7 +46,9 @@ class Template {
         die ('ERROR: Template konnte nicht geladen werden!');
       }
     }
-    
+
+    $this->twig->addFilter('ceil', new Twig_Filter_Function('ceil'));
+
     $this->vars = array();
     $this->showRresource = true;
   }

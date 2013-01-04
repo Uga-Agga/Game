@@ -2,6 +2,7 @@
 /*
  * Show.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -57,6 +58,10 @@ class CaveBookmarks_View_Show extends View {
 
       case CAVEBOOKMARKS_ERROR_DELETEFAILED:
         $message = array('type' => 'error', 'message' => 'Der Eintrag konnte nicht entfernt werden');
+        break;
+
+      case CAVEBOOKMARKS_DELETED:
+        $message = array('type' => 'success', 'message' => 'Der Eintrag wurde erfolgreich entfernt');
         break;
 
       default:

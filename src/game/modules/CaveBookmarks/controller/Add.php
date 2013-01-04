@@ -2,6 +2,7 @@
 /*
  * Add.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -30,10 +31,12 @@ class CaveBookmarks_Controller_Add extends Controller {
     $error = CAVEBOOKMARKS_NOERROR;
 
     // add CaveBookmark
-    if (Request::getVar('name', '')) {
-      $error = $model->addCaveBookmarkByName(Request::getVar('name', ''));
+    if (Request::getVar('inputName', '')) {
+      $error = $model->addCaveBookmarkByName(Request::getVar('inputName', ''));
+    } else if (Request::getVar('inputX', 0) && Request::getVar('inputX', 0)) {
+      $error = $model->addCaveBookmarkByCoord(Request::getVar('inputX', 0), Request::getVar('inputY', 0));
     } else {
-      $error = $model->addCaveBookmarkByCoord(Request::getVar('xCoord', 0), Request::getVar('yCoord', 0));
+      $error = CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
     }
 
     // return Show Controller

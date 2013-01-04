@@ -1,7 +1,8 @@
 <?php
 /*
- * unit_properties.html.php -
+ * unitDetail.html.php -
  * Copyright (c) 2004  OGP-Team
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,15 +15,6 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
 function unit_getUnitDetails($unitID, $caveData, $method) {
   global $template;
-  global $buildingTypeList, $defenseSystemTypeList, $resourceTypeList, $scienceTypeList, $unitTypeList;
-
-  $details = $caveData;
-  // first check whether that unit should be displayed...
-  $unit = $unitTypeList[$unitID];
-  if (!$unit || ($unit->nodocumentation &&
-                 !$caveData[$unit->dbFieldName] &&
-                 rules_checkDependencies($unit, $caveData) !== TRUE))
-    $unit = current($unitTypeList);
 
   // open template
   if ($method == 'ajax') {
@@ -33,6 +25,19 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
     $shortVersion = false;
     $template->setFile('unitDetail.tmpl');
     $template->setShowRresource(false);    
+  }
+
+  $details = $caveData;
+  // first check whether that unit should be displayed...
+  if (!isset($GLOBALS['unitTypeList'][$unitID])) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Einheit wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
+  }
+  $unit = $GLOBALS['unitTypeList'][$unitID];
+
+  if ($unit->nodocumentation && !$caveData[$unit->dbFieldName] && rules_checkDependencies($unit, $caveData) !== TRUE) {
+    $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Einheit wurde nicht gefunden oder ist derzeit nicht baubar.')));
+    return;
   }
 
   // iterate ressourcecosts
@@ -233,7 +238,7 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
     'spyChance'     => $unit->spyChance,
     'spyQuality'    => $unit->spyQuality,
     'antiSpyChance' => $unit->antiSpyChance,
-    'fuelName'      => $resourceTypeList[1]->dbFieldName,
+    'fuelName'      => $GLOBALS['resourceTypeList'][1]->dbFieldName,
     'fuelFactor'    => $unit->foodCost,
     'wayCost'       => $unit->wayCost,
     'dependencies'  => $dependencies,

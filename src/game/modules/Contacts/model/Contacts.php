@@ -70,6 +70,8 @@ class Contacts_Model extends Model {
   function addContact($name) {
     global $db;
 
+    if (empty($name)) return CONTACTS_ERROR_NOSUCHPLAYER;
+
     // check username
     $player = getPlayerByName($name);
 

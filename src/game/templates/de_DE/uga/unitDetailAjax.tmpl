@@ -2,7 +2,7 @@
 /* unitDetailAjax.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -12,6 +12,7 @@
 #}
 {% spaceless %}
 
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }} text-center nospace"><p>{{ status_msg.message|raw }}</p></div>{% else %}
 <div style="padding: 10px;">
   <img class="float-left" src="{{ gfx }}/units/{{ dbFieldName }}_large.gif" alt="{{ name }}" title="{{ name }}" width="250" />
   {{ description|raw }}
@@ -126,5 +127,5 @@
     </div>
   </div>
 </div>
-
+{% endif %}
 {% endspaceless %}

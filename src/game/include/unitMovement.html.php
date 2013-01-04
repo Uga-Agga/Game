@@ -1,8 +1,8 @@
 <?php
 /*
- * unitaction.html.php -
+ * unitMovement.html.php -
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -144,7 +144,7 @@ function unit_Movement($caveID, &$ownCave) {
     // Array von Nullwerten befreien
     $unit     = array_filter(Request::getVar('unit', array('' => '')), "filterZeros");
     $unit     = array_map("checkFormValues", $unit);
-    $resource = array_map("checkFormValues", Request::getVar('rohstoff', array('' => '')));
+    $resource = array_map("checkFormValues", Request::getVar('resource', array('' => '')));
 
     // Test, ob Einheitentragekapazität ausgelastet
     $overloaded = 0;
@@ -272,25 +272,12 @@ function unit_Movement($caveID, &$ownCave) {
       }
 
       // Dauer x Rationen x Größe einer Ration x Bewegungsfaktor
-      $reqFood = ceil($tmpdist *
-                      $minutesPerCave *
-                      getMaxSpeedFactor($unit) *
-                      $ua_movements[$movementID]->speedfactor *
-                      calcRequiredFood($unit) *
-                      $foodPerCave *
-                      $ua_movements[$movementID]->foodfactor);
+      $reqFood = ceil($tmpdist * $minutesPerCave * getMaxSpeedFactor($unit) * $ua_movements[$movementID]->speedfactor * calcRequiredFood($unit) * $foodPerCave * $ua_movements[$movementID]->foodfactor);
 
       if ($details[$GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->dbFieldName]< $reqFood) {
         $msg = array('type' => 'error', 'message' => _('Nicht genug Nahrung zum Ernähren der Krieger auf ihrem langen Marsch vorhanden!'));
-
       } else {
-        $msgID = setMovementEvent(
-          $caveID, $details,
-          $targetXCoord, $targetYCoord,
-          $unit, $resource,
-          $movementID, $reqFood, $duration,
-          $moveArtefact, $moveHero,
-          $minutesPerCave * $ua_movements[$movementID]->speedfactor);
+        $msgID = setMovementEvent($caveID, $details, $targetXCoord, $targetYCoord, $unit, $resource, $movementID, $reqFood, $duration, $moveArtefact, $moveHero, $minutesPerCave * $ua_movements[$movementID]->speedfactor);
 
         switch ($msgID) {
           case 0:
@@ -315,8 +302,8 @@ function unit_Movement($caveID, &$ownCave) {
         }
       }
     }
-  } else if (Request::isPost('action') && Request::getVar('action', '') == 'cancel' && $eventID = Request::getVar('eventID', 0)) {
-    $msgID = reverseMovementEvent($caveID, $eventID);
+  } else if (Request::isPost('action') && Request::getVar('action', '') == 'cancel' && Request::getVar('eventID', 0)) {
+    $msgID = reverseMovementEvent($caveID, Request::getVar('eventID', 0));
     switch ($msgID) {
       case 0: $msg = array('type' => 'success', 'message' => _('Die Einheiten kehren zurück!')); break;
       case 1: $msg = array('type' => 'error', 'message' => _('Fehler bei der Rückkehr!')); break;
@@ -345,26 +332,31 @@ function unit_Movement($caveID, &$ownCave) {
   // open template
   $template->setFile('unitMovement.tmpl');
 
-  $template->addVars(array(
-    'currentX'               => $details['xCoord'],
-    'currentY'               => $details['yCoord'],
-    'dim_x'                  => $dim_x,
-    'dim_y'                  => $dim_y,
-    'speed'                  => $minutesPerCave,
-    'fuel_id'                => GameConstants::FUEL_RESOURCE_ID,
-    'fuel_name'              => $GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->name,
-    'movement_cost_constant' => $foodPerCave,
-    'status_msg'             => (isset($msg)) ? $msg : '',
-  ));
-
   // movements
-  $selectable_movements = array();
+  $selectableMovements = array();
   foreach ($ua_movements AS $value) {
     if ($value->playerMayChoose) {
-      $selectable_movements[] = get_object_vars($value);
+      $selectableMovements[$value->id] = get_object_vars($value);
     }
   }
-  $template->addVar('selectable_movements', $selectable_movements);
+  $template->addVar('selectable_movements', $selectableMovements);
+
+  $movementData = array(
+    'currentX'       => $details['xCoord'],
+    'currentY'       => $details['yCoord'],
+    'dim_x'          => $dim_x,
+    'dim_y'          => $dim_y,
+    'minutesPerCave' => $minutesPerCave,
+    'foodID'         => GameConstants::FUEL_RESOURCE_ID,
+    'foodfactor'     => $foodPerCave,
+    'movements'      => $selectableMovements
+  );
+
+  $template->addVars(array(
+    'fuel_name'     => $GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->name,
+    'status_msg'    => (isset($msg)) ? $msg : '',
+    'movement_data' => json_encode($movementData)
+  ));
 
   // resources
   $resources = array();
@@ -375,14 +367,20 @@ function unit_Movement($caveID, &$ownCave) {
       $resources[] = array(
         'resource_id'    => $GLOBALS['resourceTypeList'][$resourceID]->resourceID,
         'name'           => $GLOBALS['resourceTypeList'][$resourceID]->name,
-        'current_amount' => "0" + $details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName],
+        'current_amount' => $details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName],
         'dbFieldName'    => $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName,
         'value'          => ($safeForm && isset($resource[$resourceID]) && $resource[$resourceID] > 0) ? $resource[$resourceID] : '',
+      );
+      $resourcesJson[$resourceID] = array(
+        'resource_id'    => $GLOBALS['resourceTypeList'][$resourceID]->resourceID,
+        'name'           => $GLOBALS['resourceTypeList'][$resourceID]->name,
+        'current_amount' => $details[$GLOBALS['resourceTypeList'][$resourceID]->dbFieldName],
+        'amount'         => 0,
       );
     }
   }
   $template->addVar('resource', $resources);
-  $template->addVar('resource_types', count($resources));
+  $template->addVar('resource_json', json_encode($resourcesJson));
 
   // units table
   $unitprops = array();
@@ -398,10 +396,13 @@ function unit_Movement($caveID, &$ownCave) {
 
       if (!$GLOBALS['resourceTypeList'][$resourceID]->nodocumentation || $amount > 0) {
         $encumbrance[$resourceID] = array(
-          'resourceID' => $resourceID,
-          'load'       => "0" + (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0)
+          'resourceID'  => $resourceID,
+          'dbFieldName' => (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID])) ? $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName : '',
+          'name'        => (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID])) ? $GLOBALS['resourceTypeList'][$resourceID]->name : '',
+          'load'        => (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0)
+          
         );
-        $temp[] = "0" + (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0);
+        $temp[] = (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0);
       }
     }
 
@@ -409,15 +410,32 @@ function unit_Movement($caveID, &$ownCave) {
       'name'              => $GLOBALS['unitTypeList'][$unitID]->name,
       'unit_id'           => $unitID,
       'food_cost'         => $GLOBALS['unitTypeList'][$unitID]->foodCost,
-      'resource_load'     => implode(",", $temp),
       'speed_factor'      => $GLOBALS['unitTypeList'][$unitID]->wayCost,
       'max_unit_count'    => $details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName],
       'encumbrance'       => $encumbrance,
       'hitPoints'         => $GLOBALS['unitTypeList'][$unitID]->hitPoints,
       'value'             => ($safeForm && isset($unit[$unitID])) ? $unit[$unitID] : '',
+      'size'              => $GLOBALS['unitTypeList'][$unitID]->hitPoints,
+      'arealAttack'       => $GLOBALS['unitTypeList'][$unitID]->attackAreal,
+      'rangeAttack'       => $GLOBALS['unitTypeList'][$unitID]->attackRange,
+      'attackRate'        => $GLOBALS['unitTypeList'][$unitID]->attackRate
+    );
+
+    $unitsJson[] = array(
+      'unit_id'      => $unitID,
+      'foodCost'     => $GLOBALS['unitTypeList'][$unitID]->foodCost,
+      'speedFactor'  => $GLOBALS['unitTypeList'][$unitID]->wayCost,
+      'maxUnitCount' => $details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName],
+      'encumbrance'  => $encumbrance,
+      'hitPoints'    => $GLOBALS['unitTypeList'][$unitID]->hitPoints,
+      'size'         => $GLOBALS['unitTypeList'][$unitID]->hitPoints,
+      'arealAttack'  => $GLOBALS['unitTypeList'][$unitID]->attackAreal,
+      'rangeAttack'  => $GLOBALS['unitTypeList'][$unitID]->attackRange,
+      'attackRate'   => $GLOBALS['unitTypeList'][$unitID]->attackRate
     );
   }
   $template->addVar('unit_list', $units);
+  $template->addVar('unit_list_json', json_encode($unitsJson));
 
   // weitergereichte Koordinaten
   if (!Request::getVar('movementID', 0) || $safeForm) {
@@ -440,7 +458,6 @@ function unit_Movement($caveID, &$ownCave) {
 
   // weitere Paramter
    $template->addVar('params', array(
-    array('name'=>'modus',  'value'=> UNIT_MOVEMENT),
     array('name'=>'moveit', 'value'=> 'true'),
     array('name'=>'trigger','value'=> 'self'),
     array('name'=>'tstamp', 'value'=> "".time())

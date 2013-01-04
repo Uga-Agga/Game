@@ -2,6 +2,7 @@
 /*
  * modus.inc.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -166,7 +167,7 @@ $require_files[RANKING_PLAYER]              = array('ranking.html.php', 'ranking
 $require_files[RANKING_TRIBE]               = array('ranking.html.php', 'ranking.inc.php');
 $require_files[SCIENCE_BUILDER]             = array('science.inc.php', 'science.html.php');
 $require_files[SCIENCE_DETAIL]              = array('science.inc.php', 'scienceDetail.html.php');
-$require_files[SUGGESTIONS]                 = array('../modules/Suggestions/Suggestions.php');
+$require_files[SUGGESTIONS]                 = array('suggestions.html.php');
 $require_files[TAKEOVER]                    = array('formula_parser.inc.php', 'takeover.html.php');
 $require_files[TRIBE]                       = array('tribe.html.php', 'tribes.inc.php', 'auth.inc.php', 'message.inc.php', 'rules/government.rules.php', 'rules/relation.list.php', 'rules/wonder.rules.php', 'wonder.inc.php');
 $require_files[TRIBE_DELETE]                = array('tribeDelete.html.php', 'tribes.inc.php', 'auth.inc.php', 'rules/relation.list.php', 'message.inc.php');
