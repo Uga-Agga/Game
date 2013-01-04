@@ -2,7 +2,7 @@
 /* sugestions.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,30 +14,22 @@
 {% block title %}Verbesserungsvorschläge{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message }}</div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr>{% endif %}
 
-<div class="info small bottom_space">
-  Hier kannst du Verbesserungsvorschläge einbringen. Um Mißbrauch zu
-  vermeiden, wird die Anzahl der möglichen Vorschläge auf {{ max_count }} pro Spieler
-  beschränkt. Ebenso wird ein Vorschlag sicher nicht bevorzugt behandelt, wenn man
-  ihn dreimal anbringt.
-</div>
+<div class="alert alert-info"><p>Hier kannst du Verbesserungsvorschläge einbringen. Um Mißbrauch zu vermeiden, wird die Anzahl der möglichen Vorschläge auf {{ max_count }} pro Spieler beschränkt. Ebenso wird ein Vorschlag sicher nicht bevorzugt behandelt, wenn man ihn dreimal anbringt.</p></div>
 
-{% if no_suggestions %}
-  <div class="error small bottom_space">Du hast schon die Maximalzahl an möglichen Vorschlägen erreicht.</div>
+<hr>
+
+{% if max_suggestions %}
+  <div class="alert alert-block alert-error"><p>Du hast schon die Maximalzahl an möglichen Vorschlägen erreicht.</p></div>
 {% else %}
   <div class="ua-box small">
     <div class="ua-box-header">Verbesserungsvorschläge</div>
-    <div class="ua-box-content">
-      <form class="ym-form" method="post" action="main.php?modus={{ suggestions_link }}">
-        <div class="ym-fbox-text">
-          <textarea style="width: 100%;" name="suggestion{{ count }}" id="suggestion{{ count }}" rows="20" cols="61"></textarea>
-        </div>
-        <div class="ym-fbox-button">
-          <input type="hidden" name="task" value="Send" />
-          <input type="submit" class="ym-button" value="Abschicken" id="submit" name="Abschicken" />
-          <input type="reset" class="ym-button" value="reset" id="reset" name="reset" />
-        </div>
+    <div class="ua-box-content" style="padding: 5px;">
+      <form id="formSuggestions" class="form-horizontal" method="post" action="main.php?modus={{ suggestions_link }}&amp;caveID={{ cave_id }}">
+        <textarea class="input-block-level" id="inputMessage" name="inputMessage" style="height: 200px;" rows="3"></textarea>
+        <input type="hidden" name="action" value="add">
+        <button class="btn" type="button" id="formSuggestionsSubmit" name="formSuggestionsSubmit">Absenden</button>
       </form>
     </div>
   </div>

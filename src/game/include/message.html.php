@@ -2,7 +2,7 @@
 /*
  * message.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-20132 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -47,17 +47,23 @@ function messages_getMessages($caveID, $deletebox, $box) {
       $switch = Request::getVar('button', '');
     }
 
+
+    if (!sizeof($deletebox)) {
+      $statusMsg = array('type' => 'error', 'message' => _('Du mußt mindestens eine Nachricht auswählen.'));
+      $switch = '';
+    }
+
     switch ($switch) {
       // mail and delete
       case 'mark_mail':
         $mailCount = $messagesClass->mailAndDeleteMessages($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $mailCount));
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) per E-Mail verschickt erfolgreich gelöscht.'), $mailCount));
       break;
 
       // just delete
       case 'mark_delete':
         $deleteCount = $messagesClass->deleteMessages($deletebox);
-        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) per E-Mail verschickt erfolgreich gelöscht.'), $deleteCount));
+        $statusMsg = array('type' => 'success', 'message' => sprintf(_('%d Nachricht(en) erfolgreich gelöscht.'), $deleteCount));
       break;
 
       // mark as read

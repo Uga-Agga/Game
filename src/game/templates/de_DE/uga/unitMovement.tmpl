@@ -2,7 +2,7 @@
 /* unitMovement.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,272 +14,142 @@
 {% block title %}Bewegungen{% endblock %}
 {% block content %}
 
-<script type="text/javascript">
-  var uamoves = new Array();
-  var units = new Array();
-  {% for item in unit_list %}units[{{ item.unit_id }}] = {maxWarriorAnzahl:{{ item.max_unit_count }}, foodCost:{{ item.food_cost }}, speedFactor:{{ item.speed_factor }}, resourceLoad:[{{ item.resource_load }}], hitPoints:{{ item.hitPoints }}};{% endfor %}
-  var domcomp = document.childNodes ? true : false;
-  function getMovementID(){
-    var r = document.getElementById("unitMoving").movementID;
-    for (var i=0; i<r.length; i++) if (!r[i].checked) continue; else return r[i].value;
-    return null;
-  }
-
-  function TimeString(duration)
-  {
-    var time = duration * 60;
-    var hours = Math.floor(time/3600);
-    var minutes = Math.floor((time%3600)/60);
-    if(!hours) return minutes+" Min";
-    var text = duration + " Min ("+hours+" Std";
-    if (minutes) text = text + " "+((minutes<10)?"0":"")+minutes+" Min";
-    text = text + ")";
-    return text;
-  }
-
-  function dur() {
-
-    var MINUTESPERCAVE = {{ speed }};
-    var FOODPERCAVE    = {{ movement_cost_constant }};
-    
-    /* Using torus edge condition */
-    var xCoord = {{ dim_x }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetXCoord.value ) - {{ currentX }}) - {{ dim_x }});
-    var yCoord = {{ dim_y }} - Math.abs(Math.abs(parseInt(document.getElementById("unitMoving").targetYCoord.value ) - {{ currentY }}) - {{ dim_y }});
-
-    var movementID = parseInt(getMovementID());
-    if (isNaN(movementID) || typeof(uamoves[movementID]) == 'undefined') return;
-
-    var i, amount;
-
-    var maxSpeedFactor = 0;
-    for (i = 0; i < units.length; ++i){
-      amount = document.getElementById("unit_" + i + "");
-      if (!amount) continue;
-      else amount = amount.value;
-      if (amount != "" && Number(amount) > 0)
-        maxSpeedFactor = Math.max(maxSpeedFactor, units[i]['speedFactor']);
-    }
-    var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));  
-    // Entfernung x Dauer pro Höhle x größter Geschwindigkeitsfaktor x Bewegungsfaktor
-    var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) * MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']);
-
-    var movementspeed =  maxSpeedFactor * uamoves[movementID]['speedfactor'];
-    if (isNaN(maxSpeedFactor)){
-      if (domcomp) document.getElementById("movementspeed").innerHTML = "-";
-      else document.getElementById("movementspeed").value = "-";
-    } else {
-      if (domcomp) document.getElementById("movementspeed").innerHTML = movementspeed;
-      else document.getElementById("movementspeed").value = movementspeed ;
-    }
-    if (isNaN(duration)){
-      if (domcomp) document.getElementById("duration").innerHTML = "- Min";
-      else document.getElementById("duration").value = "- Min";
-    } else {
-      if (domcomp) document.getElementById("duration").innerHTML = TimeString(duration);
-      else document.getElementById("duration").value =  TimeString(duration); 
-    }
-
-    var unitRations = 0;
-    for (i = 0; i < units.length; ++i) {
-      amount = document.getElementById("unit_" + i + "");
-      if (!amount) continue;
-      else amount = amount.value;
-      if (amount != "" && Number(amount) > 0)
-        unitRations += amount * units[i]['foodCost'];
-    }
-    var tmpdist = 0;
-    var i = 0;
-    if(distance > 15){
-      distance = distance - 15;
-      tmpdist = 15;
-      if(Math.floor(distance/5)<11)
-        tmpdist += (distance % 5) * (1-0.1*Math.floor(distance/5));
-
-      for(i = 1; i <= Math.floor( distance / 5) && i < 11; i++) {
-        tmpdist += 5*(1-0.1*(i-1));
-      }
-    }else{
-        tmpdist = distance;
-    }
-
-    // Dauer x Rationen x Größe einer Ration x Bewegungsfaktor
-  //  var food = Math.ceil(duration * unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
-    var food = Math.ceil(MINUTESPERCAVE * maxSpeedFactor * uamoves[movementID]['speedfactor']* tmpdist *
-                         unitRations * FOODPERCAVE * uamoves[movementID]['foodfactor']);
-
-
-    if (isNaN(food)){
-      if (domcomp) document.getElementById("food").innerHTML = "- Nahrung";
-      else document.getElementById("food").value = "- Nahrung";
-    } else {
-      if (domcomp) document.getElementById("food").innerHTML = food + " Nahrung";
-      else document.getElementById("food").value = food + " Nahrung";
-    }
-  }
-
-  function getMaxLoad(){
-    var i, j, amount;
-    var maxLoad;
-    for (i = 0; i < {{ resource_types }}; ++i){
-      maxLoad = 0;
-      for (j = 0; j < units.length; ++j){
-        if (typeof(units[j]) == "undefined") continue;
-        amount = document.getElementById("unit_" + j + "");
-        if (!amount) continue;
-        else amount = amount.value;
-        if (amount != "" && Number(amount) > 0)
-          maxLoad += amount * units[j]['resourceLoad'][i];
-      }
-      if (domcomp) document.getElementById("resource" + i).innerHTML = maxLoad;
-      else document.getElementById("resource" + i).value = maxLoad;
-    } 
-  }
-
-  {% if hero %}
-  function getArmySize(){
-    var i, amount;
-    var armySize = 0;
-    for (i = 0; i < units.length; ++i){
-      if (typeof(units[i]) == "undefined") continue;
-      amount = document.getElementById("unit_"+ i + "");
-      if (!amount) continue;
-      else amount = amount.value;
-      if (amount != "" && Number(amount) > 0)
-        armySize += amount*units[i]['hitPoints'];
-    }
-    if (domcomp) document.getElementById("armySize").innerHTML = "Größe Armee: "+armySize;
-    else document.getElementById("armySize").value = "Größe Armee: "+armySize;
-  }
-  {% endif %}
-
-  function checkall(){
-    var i, amount;
-    var allchecked = document.getElementById("all")
-    for (i = 0; i < units.length; ++i){
-      amount = document.getElementById("unit_" + i + "");
-      if (!amount) continue;
-      if (allchecked.checked) amount.value = units[i]['maxWarriorAnzahl'];
-      else amount.value = "";
-    }
-    dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}
-  }
-
-  function markAll(unitID){
-    var amount;
-    amount = document.getElementById("unit_" + unitID + "");
-    if (amount.value == "")
-      amount.value = units[unitID]['maxWarriorAnzahl'];
-    else
-      amount.value = "";
-    dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}
-  }
-
-  function loadMaxRes(resNr, resMax){
-    var value = domcomp
-                ? document.getElementById("resource" + resNr).innerHTML
-                : document.getElementById("resource" + resNr).value;
-    if (isNaN(value))
-      return;
-    var amount = document.getElementById("rohstoff_" + resNr + "");
-    amount.value = (amount.value == "") ? Math.min(value, resMax) : "";
-  }
-
-  var caveBookmarks = new Array();
-
-  function disable_to(){
-    var r = document.getElementById("unitMoving").targetCaveID;
-    var flag = false;
-    for (var i = 0; i < r.length; i++)
-      if (r[i].selected && r[i].value != -1){
-        flag = true; break;
-      }
-    document.getElementById("unitMoving").targetXCoord.disabled =
-      document.getElementById("unitMoving").targetYCoord.disabled =
-      document.getElementById("unitMoving").targetCaveName.disabled = flag;
-    if (flag){
-      document.getElementById("unitMoving").targetXCoord.value = caveBookmarks[r[i].value][0];
-      document.getElementById("unitMoving").targetYCoord.value = caveBookmarks[r[i].value][1];
-      document.getElementById("unitMoving").targetCaveName.value = caveBookmarks[r[i].value][2];
-    } else {
-      document.getElementById("unitMoving").targetXCoord.value =
-        document.getElementById("unitMoving").targetYCoord.value =
-        document.getElementById("unitMoving").targetCaveName.value = '';
-    }
-    dur();
-  }
-</script>
-
-<script type="text/javascript">
-  wmtt = null;
-  document.onmousemove = updateWMTT;
-  function updateWMTT(e) {
-    if (wmtt != null && wmtt.style.display == 'block') {
-      x = (e.pageX ? e.pageX : window.event.x) + wmtt.offsetParent.scrollLeft - wmtt.offsetParent.offsetLeft;
-      y = (e.pageY ? e.pageY : window.event.y) + wmtt.offsetParent.scrollTop - wmtt.offsetParent.offsetTop;
-      wmtt.style.left = (x + 20) + "px";
-      wmtt.style.top   = (y + 20) + "px";
-    }
-  }
-  function showWMTT(id) {
-    wmtt = document.getElementById(id);
-    wmtt.style.display = "block";
-  }
-  function hideWMTT() {
-    wmtt.style.display = "none";
-  }
-</script>
-
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
 <div class="ua-box">
   <div class="ua-box-header">Einheiten Bewegen</div>
   <div class="ua-box-content">
-    <form class="ym-form" id="unitMoving" style="padding-left: 4px; padding-right: 4px;" method="post" action="main.php?modus={{ unit_movement_link }}">
-      <table>
+    <form id="formUnitMovement" class="form-horizontal" action="main.php?modus={{ unit_movement_link }}" method="post">
+      <div id="movementData" class="hide">{{ movement_data }}</div>
+      <div id="unitData" class="hide">{{ unit_list_json }}</div>
+      <div id="resouceData" class="hide">{{ resource_json }}</div>
+
+      <table class="table table-striped table-condensed" id="unitTable">
         <thead>
-        <tr>
-          <td colspan="3">&nbsp;</td>
-          <td colspan="10" class="text-center bold">Transportkapazität</td>
-        </tr>
-        <tr>
-          <td class="bold" style="width: 155px">Einheit</td>
-          <td class="bold" style="width: 55px">Menge</td>
-          <td class="bold" style="width: 55px">Max</td>
-          {% for item in resource %}<td><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></td>{% endfor %}
-        </tr>
+          <tr>
+            <th colspan="5">&nbsp;</th>
+            <th class="text-center" colspan="3">Schadensarten</th>
+          </tr>
+          <tr>
+            <th class="move-name">Einheit</th>
+            <th class="move-unit">Anzahl</th>
+            <th class="move-max">Max</th>
+            <th class="text-center">Größe</th>
+            <th class="text-center">Tempo</th>
+            <th class="text-center">Gebäude</th>
+            <th class="text-center">Getümmel</th>
+            <th class="text-center">Fernkampf</th>
+          </tr>
         </thead>
         <tbody>
-        {% for item in unit_list %}
-        {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td><a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a></td>
-          <td><input style="width: 90%" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" type="text" pattern="\d*" size="6" maxlength="6" ondblclick="markAll({{ item.unit_id }})" onfocus="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onclick="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onchange="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" onkeyup="dur();getMaxLoad();{% if hero %}getArmySize();{% endif %}" /></td>
-          <td><div class="change_mouseover" onclick="markAll({{ item.unit_id }})">{{ item.max_unit_count }}</div></td>
-          {% for item2 in item.encumbrance %}<td style="width:30px;" class="text-center">{{ item2.load }}</td>{% endfor %}
-        </tr>
-        {% endfor %}
-        <tr>
-        <td><label for="all">Alle Auswählen</label></td>
-          <td><input name="all" id="all" type="checkbox" value="check all" onclick="checkall();" /></td>
-          <td>&nbsp;</td>
-          {% for item in resource %}<td style="width:30px;" class="text-center"><div id="resource{{ item.resource_id }}">0</div></td>{% endfor %}
-        </tr>
+          {% for item in unit_list %}
+            <tr>
+              <td class="move-name">
+                <a href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a><br/>
+                {% for resources in item.encumbrance %}{% if resources.load > 0 %}<img class="tooltip-show" rel="tooltip" data-placement="top" data-original-title="Maximale Traglast: {{ resources.load }}" width="18" height="18" src="{{ gfx }}/resources/{{ resources.dbFieldName }}_icon.gif" alt="{{ resources.name }}"/>{% endif %}{% endfor %}
+              </td>
+              <td class="move-unit"><input class="input-unit dblclickmax change-movement" type="number" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" pattern="\d*" min="0" max="{{ item.max_unit_count }}" step="100" maxlength="6" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}"></td>
+              <td class="move-max"><span class="change_mouseover clickmax update-movement" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}">{{ item.max_unit_count }}</span></td>
+              <td class="text-center">{{ item.size }}</td>
+              <td class="text-center">{{ item.speed_factor }}</td>
+              <td class="text-center">{{ item.arealAttack }}</td>
+              <td class="text-center">{{ item.attackRate }}</td>
+              <td class="text-center">{{ item.rangeAttack }}</td>
+            </tr>
+          {% else %}
+            <tr><td class="text-center" colspan="8">Derzeit besitzt du keine Einheiten.</td></tr>
+          {% endfor %}
+          <tr>
+            <td><b>Alle mitnehmen</b></td>
+            <td class="text-center"><input type="checkbox" id="selctAllUnits"></td>
+            <td id="countAll">0</td>
+            <td class="text-center" id="sizeAll">0</td>
+            <td class="text-center" id="speedFactorAll">0</td>
+            <td class="text-center" id="arealAttackAll">0</td>
+            <td class="text-center" id="attackRateAll">0</td>
+            <td class="text-center" id="rangeAttackAll">0</td>
+          </tr>
         </tbody>
       </table>
+      <hr>
+      {% set countHead = 0 %}{% set countBody = 0 %}{% set countBody2 = 0 %}
+      {% set rows = resource|length/5 %}
+      {% for i in range(1, rows|ceil) %}
+        {% if resource[countHead].dbFieldName %}
+          <table class="table table-condensed">
+            <thead>
+              <tr>
+              {% for j in range(1, 5) %}
+                <th class="text-center"><img width="20" height="20" src="{{ gfx }}/resources/{{ resource[countHead].dbFieldName }}_icon.gif" alt="{{ resource[countHead].name }}" title="{{ resource[countHead].name }}" /></th>
+                {% set countHead = countHead + 1 %}
+              {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="bg0">
+              {% for j in range(1, 5) %}
+                <td class="text-center"><input class="input-resource nospace dblclickmax change-movement" type="number" id="resource_{{ resource[countBody].resource_id }}" value="" name="resource[{{ resource[countBody].resource_id }}]" pattern="\d*" maxlength="6" data-max="0" data-max-id="resource_{{ resource[countBody].resource_id }}"></td>
+                {% set countBody = countBody + 1 %}
+              {% endfor %}
+              </tr>
+              <tr class="bg0">
+              {% for j in range(1, 5) %}
+                <td class="text-center"><div class="change_mouseover clickmax update-movement" id="resource_{{ resource[countBody2].resource_id }}_max" data-max="0" data-max-id="resource_{{ resource[countBody2].resource_id }}">0</div></td>
+                {% set countBody2 = countBody2 + 1 %}
+              {% endfor %}
+              </tr>
+            </tbody>
+          </table>
+        {% endif %}
+      {% endfor %}
+      <hr>
+      <div class="row" style="width: 621px; margin: 0 auto;">
+        <div class="span2" style="margin-left: 0; padding-left: 5px;">
+          <h5>Bewegungsart:</h5>
+          {% for item in selectable_movements %}<label class="radio change-movement" for="movementID{{ item.id }}"><input type="radio" name="movementID" value="{{ item.id }}" id="movementID{{ item.id }}">{{ item.description }}</label>{% endfor %}
+          {% if hero %}<p class="nospace"><label class="checkbox"><input type="checkbox">Held mitnehmen?</label></p>{% endif %}
+        </div>
+        <div class="span3" style="width: 266px; margin-left: 0;">
+          <h5 class="text-center">Daten:</h5>
+          <p class="nospace">Bewegungsdauer:<span style="padding-left: 5px;" id="duration">- Min</span></p>
+          <p class="nospace">Nahrungsverbrauch:<span style="padding-left: 5px;" id="food">- Nahrung</span></p>
+          <p>Bewegungsgeschwindigkeit:<span style="padding-left: 5px;" id="speed">0</span></p>
 
+          {% if hero %}
+            <p class="nospace">Erfahrung Held:<span style="padding-left: 5px;" id="heroExp">{{ hero.exp }}</span></p>
+            <p class="nospace">Lebenspunkte Held:<span style="padding-left: 5px;" id="heroHeal">{{ hero.exp }}</span></p>
+          {% endif %}
+        </div>
+        <div class="span2 pull-right text-right" style="width: 205px; margin-left: 0; padding-right: 5px;">
+          <h5 class="text-center">Ziel:</h5>
+          <div class="control-group">
+            <div class="input-append">
+              <input class="input-move-xy change-movement" type="number" pattern="\d*" name="targetXCoord" id="targetXCoord" placeholder="X" maxlength="2">
+              <input class="input-move-xy change-movement" type="number" style="margin-left: 20px; "pattern="\d*" name="targetYCoord" id="targetYCoord" placeholder="Y" maxlength="2">
+            </div>
+          </div>
+          <div class="control-group">
+            <input class="autocomplete input-move-cave change-movement" type="text" name="targetCaveName" id="targetCaveName"placeholder="Höhlenname" size="10" maxlength="32" data-source="tribe" />
+          </div>
+          {% if bookmarks_cave %}
+            <div class="control-group">
+              <select class="input-move-select" name="targetCaveID" id="targetCaveID" size="1">
+                <option value="-1" selected="selected">Bitte wählen</option>
+                {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
+              </select>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <hr>
+      <div class="text-right" style="width: 100%">
+        <button class="text-right" style="margin: 0 5px 5px 0" type="button" id="moveit" name="moveit" class="btn">und los geht's. UGH?</button>
+      </div>
+
+<!--
       <div class="ym-grid" style="padding-top: 5px;">
         <div class="ym-g33 ym-gl">
           <ul class="movement left">
-            <li class="bold"><a class="new-window" href="{{ rules_path }}?modus=misc&amp;miscID=3">Ressourcen:</a></li>
-            {% for item in resource %}
-            <li>
-              <div class="ym-grid">
-              <div class="ym-gl" style="width: 22px;"><label for="rohstoff_{{ item.resource_id }}"><img width="20" height="20" src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }}" /></label></div>
-              <div class="ym-gl" style="width: 50px;"><input style="width: 50px;" id="rohstoff_{{ item.resource_id }}" value="{{ item.value }}" name="rohstoff[{{ item.resource_id }}]" type="text" pattern="\d*" size="6" maxlength="6" ondblclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});" /></div>
-              <div class="ym-gl left" style="width: 75px; padding-left: 3px;"><div class="change_mouseover" onclick="loadMaxRes({{ item.resource_id }}, {{ item.current_amount }});">({{ item.current_amount }})</div></div>
-              </div>
-            </li>
-            {% endfor %}
             {% if artefact %}
               <li style="height: 10px;">&nbsp;</li>
               <li class="bold">Artefakt:</li>
@@ -298,94 +168,8 @@
             {% endif %}
           </ul>
         </div>
-        <div class="ym-g33 ym-gl">
-          <ul class="clean_list">
-            <li>
-              <ul class="movement">
-                <li>Bewegungsart:</li>
-                <li>
-                  <div class="ym-fbox-check">
-                    <input type="radio" name="movementID" value="0" id="movementID0" checked="checked" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
-                    <label for="movementID0"><em>Wähle eine Bewegung</em></label>
-                  </div>
-                </li>
-                {% for item in selectable_movements %}
-                  <li>
-                    <div class="ym-fbox-check">
-                      <input type="radio" name="movementID" value="{{ item.id }}" id="movementID{{ item.id }}" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
-                      <label for="movementID{{ item.id }}">{{ item.description }}<script type="text/javascript">uamoves[{{ item.id }}] = {speedfactor:{{ item.speedfactor }}, foodfactor:{{ item.foodfactor }}};</script></label>
-                    </div>
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-            <li class="border_top" style="height: 10px;">&nbsp;</li>
-            <li>Bewegungsdauer:<br /><div style="padding-left: 5px;" id="duration">- Min</div></li>
-            <li>Nahrungsverbrauch:<br /><div style="padding-left: 5px;" id="food">- Nahrung</div></li>
-            <li>Bewegungsgeschwindigkeit:<br /><div style="padding-left: 5px;" id="movementspeed">0</div>
-            </li>
-          </ul>
-        </div>
-        <div class="ym-g33 ym-gl">
-          <ul>
-            {% if hero %}
-              <li class="bold">Held</li>
-              <li>
-                <div class="ym-fbox-check">
-                  <input type="checkbox" name="moveHero" id="moveHero" value="true" />
-                  <label for="moveHero">mitnehmen?</label>
-                </div>
-              </li>
-              <li><div id="armySize">Größe Armee: 0</div></li>
-              <li>Erfahrung Held: {{ hero.exp }}</li>
-              <li>Lebenspunkte Held: {{ hero.healPoints }}</li>
-            {% endif %}
-            <li style="height: 10px;">&nbsp;</li>
-            <li class="bold">Ziel</li>
-            <li>
-              <div class="ym-fbox-text">
-                <label for="targetXCoord">x:</label>
-                <input type="text" pattern="\d*" name="targetXCoord" id="targetXCoord" value="{{ target_x_coord }}" size="4" maxlength="4" autocomplete="off" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
-              </div>
-            </li>
-            <li>
-              <div class="ym-fbox-text">
-                <label for="targetYCoord">y:</label>
-                <input type="text" pattern="\d*" name="targetYCoord" id="targetYCoord" value="{{ target_y_coord }}" size="4" maxlength="4" autocomplete="off" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
-              </div>
-            </li>
-            <li>
-              <div class="ym-fbox-text">
-                <label for="targetCaveName">Höhlenname:</label>
-                <input type="text" name="targetCaveName" id="targetCaveName" value="{{ target_cave_name }}" size="4" maxlength="50" onfocus="dur();" onclick="dur();" onchange="dur();" onkeydown="dur();" onkeyup="dur();" />
-              </div>
-            </li>
-            {% if bookmarks_cave %}
-            <li>
-              <div class="ym-fbox-select">
-                <a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Show">Höhlenliste:</a>
-                <select name="targetCaveID" id="targetCaveID" size="1" onchange="disable_to(); return true;">
-                  <option value="-1" selected="selected">Bitte wählen</option>
-                  {% for item in bookmarks_cave %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
-                </select>
-              </div>
-            </li>
-            <li>
-              <script type="text/javascript">
-              // <![CDATA[
-                {% for item in bookmarks_cave %}caveBookmarks[{{ item.caveID }}] = [{{ item.xCoord }},{{ item.yCoord }},"{{ item.raw_name }}"];{% endfor %}
-              // ]]>
-              </script>
-            </li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-
-      <div class="ym-fbox-button text-right">
-        {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
-        <input type="submit" class="ym-button" value="und los geht's. UGH?" id="submit" name="submit"/>
-      </div>
+-->
+      {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
     </form>
   </div>
 </div>
@@ -395,75 +179,64 @@
 <div class="ua-box">
   <div class="ua-box-header">laufende Bewegungen eigener Verbände</div>
   <div class="ua-box-content">
-    <table>
+    <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
-          <th style="min-width:120px">Bewegungsart</th>
-          <th style="min-width:200px">Zeitraum</th>
-          <th style="min-width:200px">Zielhöhle</th>
-          <th style="width:200px">Einh./Ress.</th>
-          <th>&nbsp;</th> 
+          <th style="width: 105px;">Bewegungsart</th>
+          <th style="width: 160px;">Zeitraum</th>
+          <th>Zielhöhle</th>
+          <th>Einh./Ress.</th>
+          <th style="width: 30px;">&nbsp;</th> 
         </tr>
       </thead>
       <tbody>
         {% for item in ownMovement %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{bgID}">
-            <td>
-              <ul>
-                <li>{{ item.movement_id_description }}</li>
-                <li>
-                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
-                </li>
-              </ul>
+          <tr>
+            <td style="width: 105px;">
+              <p class="nospace">{{ item.movement_id_description }}</p>
+              <p class="nospace">
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>              
+              </p>
+            </td>
+            <td style="width: 160px;">
+              <p class="nospace">Start: {{ item.event_start_date }}</p>
+              <p class="nospace">Ende: {{ item.event_end_date }}</p>
             </td>
             <td>
-              <ul>
-                <li>Startzeitpunkt: {{ item.event_start_date }}</li>
-                <li>Endzeitpunkt: {{ item.event_end_date }}</li>
-              </ul>
+              <p class="nospace">{{ item.target_player_name }} - {{ item.target_player_tribe }}</p>
+              <p class="nospace">aus {{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</p>
             </td>
             <td>
-              <ul class="clean_list">
-                <li>{{ item.target_player_name }} - {{ item.target_player_tribe }}</li>
-                <li>aus {{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</li>
-              </ul>
+              {% for item_unit in item.units %}
+                <p class="nospace"><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></p>
+              {% endfor %}
+
+              {% if item.resources %}
+                <p class="nospace" style="height: 5px;">&nbsp;</p>
+                {% for item_resource in item.resources %}
+                  <p class="nospace"><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></p>
+                {% endfor %}
+              {% endif %}
+              {% if item.artefact %}
+                <p class="nospace" style="height: 5px;">&nbsp;</p>
+                <p class="nospace"><span class="text-small" style="white-space: nowrap;">&nbsp;{{ item.artefact.name }}</span></p>
+              {% endif %}
             </td>
-            <td>
-              <ul class="clean_list">
-                {% if item.units %}
-                  {% for item_unit in item.units %}
-                    <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
-                  {% endfor %}
-                {% endif %}
-                <li>&nbsp;</li>
-                {% if item.resources %}
-                  {% for item_resource in item.resources %}
-                    <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
-                  {% endfor %}
-                {% endif %}
-                {% if item.artefact %}
-                  <li><span class="text-small" style="white-space: nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
-                {% endif %}
-                {% if item.hero %}
-                    <li><span class="text-small" style="white-space: nowrap;">{{ item.hero }}</span></li>
-                {% endif %}
-              </ul>
-            </td>
-            <td class="text-right" style="vertical-align: middle;">
+            <td class="text-right" style="width: 30px; vertical-align: middle;">
             {% if item.cancel %}
-            <form id="unitMovingCancel" action="main.php?modus={{ unit_movement_link }}" method="post">
-              <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
-              <input type="hidden" name="action" value="cancel" />
-              <input type="image" src="{{ gfx }}/de_DE/t_uga/abort.png" name="submit" alt="Einheiten umkehren" />
-            </form>
+              <form id="formUnitMovingCancel{{ item.cancel.eventID }}" action="main.php?modus={{ unit_movement_link }}" method="post">
+                <input type="hidden" name="eventID" value="{{ item.cancel.eventID }}" />
+                <input type="hidden" name="action" value="cancel" />
+                <button class="abort" type="button" id="unitMovingCancelSubmit{{ item.cancel.eventID }}" name="unitMovingCancelSubmit{{ item.cancel.eventID }}" title="Einheiten umkehren"></button>
+              </form>
+            {% else %}
+              &nbsp;
             {% endif %}
-            &nbsp;</td>
+            </td>
           </tr>
         {% endfor %}
-        {% set bgID = 0 %}
       </tbody>
     </table>
   </div>
@@ -474,62 +247,52 @@
 <div class="ua-box">
   <div class="ua-box-header">ankommende Verbände</div>
   <div class="ua-box-content">
-    <table>
+    <table class="table table-striped table-condensed">
       <thead>
         <tr>
-          <th style="min-width:120px">Bewegungsart</th>
-          <th style="min-width:200px">Zeitraum</th>
-          <th style="min-width:200px">Herkunft</th>
-          <th style="width:200px">Einh./Ress.</th>
+          <th style="width: 105px;">Bewegungsart</th>
+          <th style="width: 160px;">Zeitraum</th>
+          <th>Herkunft</th>
+          <th>Einh./Ress.</th>
         </tr>
       </thead>
       <tbody>
         {% for item in oppMovement %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{bgID}">
-            <td>
-              <ul>
-                <li>{{ item.movement_id_description }}</li>
-                <li>
-                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
-                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-                  <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
-                </li>
-              </ul>
+          <tr>
+            <td style="width: 105px;">
+              <p class="nospace">{{ item.movement_id_description }}</p>
+              <p class="nospace">
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>              
+              </p>
+            </td>
+            <td style="width: 160px;">
+              <p class="nospace">Start: {{ item.event_start_date }}</p>
+              <p class="nospace">Ende: {{ item.event_end_date }}</p>
             </td>
             <td>
-              <ul>
-                <li>Startzeitpunkt: {{ item.event_start_date }}</li>
-                <li>Endzeitpunkt: {{ item.event_end_date }}</li>
-              </ul>
+              <p class="nospace">{{ item.target_player_name }} - {{ item.target_player_tribe }}</p>
+              <p class="nospace">aus {{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</p>
             </td>
             <td>
-              <ul>
-                <li>{{ item.source_player_name }} - {{ item.source_player_tribe }}</li>
-                <li>aus {{ item.source_cave_name }} ({{ item.source_xCoord }}|{{ item.source_yCoord }})</li>
-              </ul>
-            </td>
-            <td>
-              <ul>
-              {% if item.units %}
-                {% for item_unit in item.units %}
-                  <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></li>
-                {% endfor %}
-              {% endif %}
-              <li>&nbsp;</li>
+              {% for item_unit in item.units %}
+                <p class="nospace"><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_unit.name }}:</span> {{ item_unit.value }}</span></p>
+              {% endfor %}
+
               {% if item.resources %}
+                <p class="nospace" style="height: 5px;">&nbsp;</p>
                 {% for item_resource in item.resources %}
-                  <li><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></li>
+                  <p class="nospace"><span class="text-small" style="white-space: nowrap;"><span class="bold">{{ item_resource.name }}:</span>{{ item_resource.value }}</span></p>
                 {% endfor %}
               {% endif %}
               {% if item.artefact %}
-                <li><span class="text-small" style="white-space: nowrap;">&nbsp;{{ item.artefact.name }}</span></li>
+                <p class="nospace" style="height: 5px;">&nbsp;</p>
+                <p class="nospace"><span class="text-small" style="white-space: nowrap;">&nbsp;{{ item.artefact.name }}</span></p>
               {% endif %}
-              </ul>
             </td>
           </tr>
         {% endfor %}
-        {% set bgID = 0 %}
       </tbody>
     </table>
   </div>

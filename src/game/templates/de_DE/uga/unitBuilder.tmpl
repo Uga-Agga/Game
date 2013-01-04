@@ -2,7 +2,7 @@
 /* unitBuilder.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -85,7 +85,7 @@
                         <td class="build-unit">
                           <form id="formUnitBuilder_{{ item.unit_id }}" method="post" style="margin: 0;" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
                             <div class="input-append">
-                              <input class="input-unit" type="text" pattern="\d*" name="quantity" id="unit_{{ item.unit_id }}" maxlength="2">
+                              <input class="input-unit" type="number" pattern="\d*" name="quantity" id="unit_{{ item.unit_id }}" maxlength="2" min="1" max="{{ max_build_units }}" step="1">
                               <button class="arrow_up" style="margin-left: 10px;" type="button" id="formUnitBuilderSubmit" name="formUnitBuilderSubmit" title="Ausbilden"></button>
                             </div>
                             <input type="hidden" name="action" value="build"><input type="hidden" name="unitID" value="{{ item.unit_id }}">

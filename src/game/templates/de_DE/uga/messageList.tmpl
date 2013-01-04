@@ -30,7 +30,7 @@ function checkall(){
 
 {% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
-{% if trash %}<div class="alert-info">Du befindest dich gerade im Papierkorb. Hier kannst du gelösche Nachrichten wiederherstellen.<br />Achtung: Die Nachrichten hier werden automatisch gelöscht!</div><hr>{% endif %}
+{% if trash %}<div class="alert alert-info">Du befindest dich gerade im Papierkorb. Hier kannst du gelösche Nachrichten wiederherstellen.<br />Achtung: Die Nachrichten hier werden automatisch gelöscht!</div><hr>{% endif %}
 
 <div class="ua-box">
   <div class="ua-box-header">Nachrichten{% if message_class_name %} ({{ message_class_name }}){% endif %}{{ messageClass }}</div>
@@ -46,7 +46,7 @@ function checkall(){
         <ul class="nav pull-right">
           <li id="fat-menu" class="dropdown">
             <a href="#" id="drop3" role="button" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
-            <ul class="dropdown-menu" role="menu" aria-labelledby="drop3">
+            <ul class="dropdown-menu" aria-labelledby="drop3">
               <li{% if message_class_id == 0 %} class="active"{% endif %}><a tabindex="-1" href="main.php?modus={{ messages_list_link }}&amp;box={{ message_box }}">Alle</a></li>
               {% for item in message_classes %}<li{% if item.selected %} class="active"{% endif %}><a tabindex="-1" href="main.php?modus={{ messages_list_link }}&amp;box={{ message_box }}&amp;messageClass={{ item.id }}">{{ item.text }}</a></li>{% endfor %}
             </ul>
@@ -74,7 +74,7 @@ function checkall(){
               <button type="button" id="mark_read" name="mark_read" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten als gelesen makieren"><i class="icon-eye-open"></i></button>
               <button type="button" id="mark_mail" name="mark_mail" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten per E-Mail schicken"><i class="icon-print"></i></button>
             {% else %}
-              <button type="button" id="mark_recover" name="mark_recover" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="Nachricht wiederherstellen"><i class="icon-repeat"></i></button>
+              <button type="button" id="mark_recover" name="mark_recover" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="Nachricht in den Posteingang verschieben"><i class="icon-repeat"></i></button>
             {% endif %}
           </th>
           <th colspan="3" class="text-right">
@@ -101,19 +101,19 @@ function checkall(){
               <td>{{ item.absender_empfaenger }}</td>
               <td>{{ item.nachrichtenart }}</td>
               <td>
-                {% if item.read == 0 %}<img src="{{ gfx }}/de_DE/t_uga/messages/mail.gif" width="12px" height="12px" alt="" />{% endif %}
+                {% if item.read == 0 %}<img src="{{ gfx }}/de_DE/t_uga/messages/mail.gif" width="12" height="12" alt="" />{% endif %}
                 <a href="main.php{{ item.linkparams|raw }}">{{ item.subject|raw }}</a>
               </td>
               <td class="text-right">{{ item.datum }}</td>
               {% if not trash %}
                 <td class="message-icons">
-                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachrichten löschen" data-post="true"><i class="icon-trash"></i></a>
-                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_read&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachrichten als gelesen makieren" data-post="true"><i class="icon-eye-open"></i></a>
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht in den Papierkorb verschieben" data-post="true"><i class="icon-trash"></i></a>
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_read&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht als gelesen makieren" data-post="true"><i class="icon-eye-open"></i></a>
                   <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_mail&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht per E-Mail schicken" data-post="true"><i class="icon-print"></i></a>
                 </td>
               {% else %}
                 <td class="message-icon">
-                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_recover&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht wiederherstellen" data-post="true"><i class="icon-repeat"></i></a>
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_recover&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht in den Posteingang verschiebenn" data-post="true"><i class="icon-repeat"></i></a>
                 </td>
               {% endif %}
             </tr>

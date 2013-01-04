@@ -121,13 +121,6 @@ function getCaveMapContent($caveID, $caves) {
   // template öffnen
   $template->setFile('map.tmpl');
 
-  // Grundparameter setzen
-  $template->addVars(array(
-    'modus'         => MAP,
-    'mapRegionLink' => MAP_REGION,
-    'caveID'        => $caveID
-    ));
-
   $resolvedCoords = determineCoordsFromParameters($caveData, $mapSize);
   $template->addVars($resolvedCoords);
 

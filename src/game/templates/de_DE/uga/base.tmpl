@@ -27,6 +27,7 @@
 
     <!-- javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.cookie.js"></script>
     <script type="text/javascript" src="js/jquery.form.js"></script>
     <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
@@ -123,6 +124,7 @@
     ul.nav-ua li { display: inline; margin: 0; padding: 0; width: 1px; }
     ul.clean { list-style-type: none !important; margin: 0; padding: 0; }
     thead th { background: #c2cf90 !important; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {-webkit-appearance: none; margin: 0; }
 
     .header-middle { position: relative; margin: 0 auto; width: 500px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
     .header-middle-menu { position: relative;  width: 500px; height: 192px; }
@@ -131,8 +133,8 @@
     #header-middle-menu-item div.jqDock { cursor:pointer; }
     div.jqDockLabel { bottom: -15px !important; padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
 
-    .span-header-left { z-index: -1; position: relative; width: 454px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat; }
-    .span-header-right { z-index: -1; position: relative; width: 446px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat; }
+    .span-header-left { position: relative; width: 454px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat; }
+    .span-header-right { position: relative; width: 446px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat; }
     .span-content-left { width: 133px; }
     .span-content-middle { width: 634px; }
     .span-content-right { width: 133px; }
@@ -148,16 +150,19 @@
 
     td.date { width: 125px; text-align: right; }
     td.build { width: 47px; text-align: right; }
-    td.build-unit { width: 85px; text-align: right; }
-    td.build-single { width: 25px; text-align: right; }
-    td.countdown { width: 75px; text-align: right; }
-    td.mini-img { width: 32px; }
-    td.time { width: 75px; text-align: right; }
-    td.time-lvl { width: 105px; text-align: center; }
-    td.switch { width: 16px; }
     td.build-no-build { width: 100px; }
+    td.build-single { width: 25px; text-align: right; }
+    td.build-unit { width: 85px; text-align: right; }
+    td.countdown { width: 75px; text-align: right; }
     td.message-icons { width: 50px; }
     td.message-icon { width: 20px; }
+    td.mini-img { width: 32px; }
+    td.move-max { width: 70px; }
+    td.move-name { width: 160px; }
+    td.move-unit { width: 75px; }
+    td.switch { width: 16px; }
+    td.time { width: 75px; text-align: right; }
+    td.time-lvl { width: 105px; text-align: center; }
 
     tr.digest-artefact { background-color: #9cf; }
     tr.digest-building { background-color: #CCFFCC; }
@@ -190,7 +195,11 @@
     .form-horizontal .message-label { width: 50px; }
 
     .input-wonder-xy { width: 20px; }
-    .input-unit { width: 25px; }
+    .input-unit { width: 70px; }
+    .input-resource { width: 70px; }
+    .input-move-cave { width: 185px; }
+    .input-move-select { width: 200px; }
+    .input-move-xy { width: 75px; }
 
     .abort, .arrow_max, .arrow_up, .flash { background-repeat: no-repeat;  width: 25px; height: 25px; cursor: pointer; background-color: transparent; border: none; }
     .abort { background-image: url("{{ gfx }}/de_DE/t_uga/abort.png"); }
@@ -204,7 +213,7 @@
     .bg0 { background-color: #eee }
     .less { color:#ff0000; }
     .space { padding: 5px 0 }
-    .nospace { padding: 0; margin: 0; }
+    .nospace { padding: 0 !important; margin: 0 !important; }
 
     .msg_0 { background-color: #fff; } /* Information */
     .msg_2 { background-color: #fc9; } /* Sieg */
@@ -227,8 +236,16 @@
 
 <div class="container">
   <div class="row">
-    <div class="span-header-left">&nbsp;</div>
-    <div class="span-header-right pull-right text-right">&nbsp;</div>
+    <div class="span-header-left">
+      <div class="tooltip-show" style="width: 200px; margin-left: 10px ;margin-top: 154px" rel="tooltip" data-placement="bottom" data-original-title="Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest. Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden. Unten sind alle Kriegspunkte aufgeführt! Einheiten: {{ war_points.warpointsUnits }} Verteidigungsanlagen: {{ war_points.warpointsDefense }}"><b>Kriegspunkte der Höhle: {{ war_points.warpoints }}</b></div>
+    </div>
+    <div class="span-header-right pull-right text-right">
+      <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
+      <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
+      <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
+      <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
+      <div style="margin-right: 10px; margin-top: 12px"><b>Farmpunkte: {{ player_fame }}</b></div>
+    </div>
     <div class="header-middle text-center">
       <div class="header-middle-menu">
         <div id="header-middle-menu-item">
@@ -303,109 +320,13 @@
       </ul>
     </div>
   </div>
+  {% block footer %}
   <footer>
-    <p>&copy; Company 2012 | <a href="main.php?modus={{ logout_link }}">Logout</a></p>
+    <p>&copy; Company 2013</p>
     <div id="slider"></div>
   </footer>
+  {% endblock %}
 </div>
-
-
-{% if dummy %}
-  <div id="overlay"></div>
-  <div class="ym-wrapper">
-    <div class="ym-column">
-      <div class="ym-col-head-middle">
-        <div class="ua-head-menu">
-          <div id="ua-head-menu-item">
-            <a href="main.php?modus=hero_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>
-            <a href="main.php?modus=cave_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
-            <a href="main.php?modus=CaveBookmarks"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
-            <a href="main.php?modus=questionnaire"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
-            <a href="main.php?modus=Donations"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
-            <a href="main.php?modus=tribe"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
-            <a href="main.php?modus=Contacts"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
-            <a href="main.php?modus=effectwonder_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
-            <a href="main.php?modus=user_profile"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
-            <a href="main.php?modus=artefact_list"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
-            <a href="main.php?modus=news"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
-            <a href="http://faq.uga-agga.de" class="new-window"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
-          </div>
-        </div>
-        <img style="padding-top: 83px; position: relative; margin: 0 auto;" src="./images/round_name.png" alt="" />
-      </div>
-      <div class="ym-col1 ym-col-head1">
-        <div id="warpoints_info" class="bold change_mouseover" style="margin-left: 10px ;margin-top: 154px">Kriegspunkte der Höhle: {{ war_points.warpoints }}</div>
-        <div id="warpoints" class="tooltip2">Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest.<br />Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden.<br />Unten sind alle Kriegspunkte aufgeführt!<br/ ><br/ >Einheiten: {{ war_points.warpointsUnits }}<br />Verteidigungsanlagen: {{ war_points.warpointsDefense }}</div>
-      </div>
-      <div class="ym-col2 ym-col-head2">
-         <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
-        <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
-        <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
-        <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
-        <div id="farmpoints" class="bold" style="margin-right: 10px ;margin-top: 5px">Farmpunkte: {{ player_fame }}</div>
-      </div>
-    </div>
-
-    <div id="main">
-      <div class="ym-column">
-        <div class="ym-col1 ym-col-con1">
-          <ul class="list-menu">
-            <li><a href="main.php?modus={{ easy_digest_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></a></li>
-            <li><a href="main.php?modus={{ unit_movement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></a></li>
-            <li><a href="main.php?modus={{ messages_list_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages{{ new_mail_link }}.jpg" alt="Nachrichten" /></a></li>
-            <li><a href="main.php?modus=all_cave_detail"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></a></li>
-            <li><a href="main.php?modus={{ ranking_player_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></a></li>
-            <li><a href="main.php?modus={{ map_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></a></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_2.jpg" alt="" /></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_3.jpg" alt="" /></li>
-            <li><a href="main.php?modus={{ wonder_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_wonder.jpg" alt="Wunder" /></a></li>
-            <li><a href="main.php?modus={{ takeover_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_takeover.jpg" alt="Missionieren" /></a></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_left_4.jpg" alt="" /></li>
-          </ul>
-        </div>
-        <div class="ym-col2 ym-col-con2">
-          <ul class="list-menu">
-            <li><a href="main.php?modus={{ improvement_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_improvement_detail.jpg" alt="Erweiterungen" /></a></li>
-            <li><a href="main.php?modus={{ science_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_science.jpg" alt="Forschungen" /></a></li>
-            <li><a class="navigation" href="main.php?modus={{ defense_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_external_builder.jpg" alt="Verteidigung" /></a></li>
-            <li><a class="navigation" href="main.php?modus={{ unit_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_builder.jpg" alt="Einheiten" /></a></li>
-            <li><a class="navigation" href="main.php?modus={{ merchant_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_merchant.jpg" alt="Händler" /></a></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_2.jpg" alt="" /></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_3.jpg" alt="" /></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_4.jpg" alt="" /></li>
-            <li><a href="http://forum.uga-agga.de" class="new-window"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_forum.jpg" alt="UA Forum" /></a></li>
-            <li><a href="main.php?modus={{ suggestions_link }}"><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_mail.jpg" alt="Mail an UA" /></a></li>
-            <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_right_5.jpg" alt="" /></li>
-          </ul>
-        </div>
-        <div class="ym-col3 ym-col-con3">
-          <div class="ym-cbox">
-
-           </div>
-          </div>
-        </div>
-        <div class="ym-ie-clearing">&nbsp;</div>
-      </div>
-    </div>
-
-    {% block footer %}
-      <div class="ym-grid" style="padding-top: 10px;">
-        <div class="ym-g33 ym-gl ym-col-footer1">
-          Serverzeit: {{ time }}
-        </div>
-        <div class="ym-g33 ym-gl ym-col-footer2">
-          {% include 'vote.tmpl' %}
-        </div>
-        <div class="ym-g33 ym-gr ym-col-footer3">
-          <a href="main.php?modus=statistic">Statistik</a> &amp;
-          <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
-          <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
-          <a href="#top"><img src="{{ gfx }}/de_DE/t_uga/arrow_up.png" alt="nach oben" style="width:15px; height:15px;" /></a>
-        </div>
-      </div>
-    {% endblock %}
-  </div>
-  {% include "extendsFooter.tmpl" %}
-  {% endif %}
+{% include "extendsFooter.tmpl" %}
 </body>
 </html>

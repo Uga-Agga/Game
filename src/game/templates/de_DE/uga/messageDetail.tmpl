@@ -48,7 +48,7 @@
           <button class="btn" type="button" id="formMessageNewAnswerSubmit" name="formMessageNewAnswerSubmit">Antworten</button>
         {% endif %}
         {% if delete %}
-          <a class="btn change_mouseover" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box={{ box }}&amp;messageID={{ message_id }}" data-post="true">Löschen</a> 
+          <a class="btn change_mouseover" href="main.php?modus={{ messages_list_link }}&amp;action=mark_recover&amp;caveID={{ cave_id }}&amp;box=1&amp;messageID={{ message_id }}" data-post="true">Wiederherstellen</a> 
         {% endif %}
         </form>
       {% endif %}

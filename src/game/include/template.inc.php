@@ -46,7 +46,9 @@ class Template {
         die ('ERROR: Template konnte nicht geladen werden!');
       }
     }
-    
+
+    $this->twig->addFilter('ceil', new Twig_Filter_Function('ceil'));
+
     $this->vars = array();
     $this->showRresource = true;
   }
