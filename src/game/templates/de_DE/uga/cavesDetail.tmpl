@@ -1,8 +1,8 @@
 {#
-/* caves.tmpl -
+/* cavesDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -21,7 +21,7 @@
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Rohstoffe</div>
   <div class="ua-box-content">
-    <table cellpadding="3" cellspacing="0" rules="all">
+    <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr style="padding-left: 4px; padding-right: 4px;">
           <th>&nbsp;</th>
@@ -31,8 +31,7 @@
       </thead>
       <tbody>
         {% for item in resource %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}" style="padding-left: 4px; padding-right: 4px;">
+          <tr style="padding-left: 4px; padding-right: 4px;">
             <td class="ua-td-padding"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" width="20" height="20" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.sum_max }})" /></td>
             {% for cave_data in item.cave %}
               <td class="ua-td-padding">
@@ -59,7 +58,7 @@
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Einheiten</div>
   <div class="ua-box-content">
-    <table cellpadding="3" cellspacing="0" rules="all">
+    <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
           <th>&nbsp;</th>
@@ -69,8 +68,7 @@
       </thead>
       <tbody>
         {% for item in unit %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr>
             <td class="ua-td-padding"><img src="{{ gfx }}/units/{{ item.dbFieldName }}_small.gif" width="40" height="50" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
             <td class="ua-td-padding">{{ item.sum }}</td>
@@ -87,7 +85,7 @@
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Erweiterungen</div>
   <div class="ua-box-content">
-    <table cellpadding="3" cellspacing="0" rules="all">
+    <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
           <th>&nbsp;</th>
@@ -97,8 +95,7 @@
       </thead>
       <tbody>
         {% for item in building %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr>
             <td class="ua-td-padding"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" width="40" height="50" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
             <td class="ua-td-padding">{{ item.sum }}</td>
@@ -115,7 +112,7 @@
 <div class="ua-box ua-box-center">
   <div class="ua-box-header">Verteidigung</div>
   <div class="ua-box-content">
-    <table cellpadding="3" cellspacing="0" rules="all">
+    <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
           <th>&nbsp;</th>
@@ -125,8 +122,7 @@
       </thead>
       <tbody>
         {% for item in defenses %}
-        {% set bgID = (bgID+1)%2 %}
-          <tr class="bg{{ bgID }}">
+          <tr>
             <td class="ua-td-padding"><img src="{{ gfx }}/externals/{{ item.dbFieldName }}_small.gif" width="40" height="50" alt="{{ item.name }}" title="{{ item.name }}" /></td>
             {% for cave_data in item.cave %}<td class="ua-td-padding">{{ cave_data.amount }}</td>{% endfor %}
             <td class="ua-td-padding">{{ item.sum }}</td>

@@ -2,7 +2,7 @@
 /* tribe.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,48 +16,57 @@
 
 {% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
 
-<div class="ua-box small">
+<div class="ua-box">
   <div class="ua-box-header">Stamm gründen</div>
-  <div class="ua-box-content">
-    <form class="ym-form ym-columnar" style="padding-top: 0.5em;" id="tribecreateForm" method="post" action="main.php?modus={{ tribe_link }}">
-      <div class="ym-fbox-text">
-        <label for="create_tag">Stammeskürzel</label>
-        <input type="text" name="tag" id="create_tag" value="{{ create_tag_value }}" maxlength="8" />
+  <div class="ua-box-content ua-box-space">
+    <form id="formTribeNew" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+      <div class="control-group">
+        <label class="control-label tribe-label" for="inputTag">Stammeskürzel</label>
+        <div class="controls tribe">
+          <input type="text" id="inputTag" placeholder="Stammeskürzel">
+        </div>
       </div>
-      <div class="ym-fbox-text">
-        <label for="create_password">Passwort</label>
-        <input type="password" name="password" id="create_password" value="{{ create_password_value }}" maxlength="20" />
+      <div class="control-group">
+        <label class="control-label tribe-label" for="inputPassword">Passwort</label>
+        <div class="controls tribe">
+          <input type="text" id="inputPassword" placeholder="Passwort">
+        </div>
       </div>
-      <div class="ym-fbox-check">
-        <input type="checkbox" name="restore_rank" id="restore_rank" value="" />
-        <label for="restore_rank">Ranking aus der alten Runde übernehmen</label>
+      <div class="control-group" style="margin-bottom: 0;">
+        <div class="controls tribe">
+          <label class="checkbox">
+            <input type="checkbox" name="restore_rank" id="restore_rank" value="">Ranking aus der alten Runde übernehmen
+          </label>
+          <button class="btn" type="button" id="formTribeNewSubmit" name="formTribeNewSubmit">Stamm gründen!</button>
+        </div>
       </div>
-
-      <div class="ym-fbox-button center">
-        <input type="hidden" name="action" value="{{ tribe_action_create }}" />
-        <input type="submit" class="ym-button" value="Stamm gründen!" id="submit" name="submit"/>
-      </div>
+      <input type="hidden" name="action" value="{{ tribe_action_create }}" />
     </form>
   </div>
 </div>
 
-<div class="ua-box small">
+<div class="ua-box">
   <div class="ua-box-header">Stamm beitreten</div>
-  <div class="ua-box-content">
-    <form class="ym-form ym-columnar" style="padding-top: 0.5em;" id="tribejoinForm" method="post" action="main.php?modus={{ tribe_link }}">
-      <div class="ym-fbox-text">
-        <label for="join_tag">Stammeskürzel</label>
-        <input type="text" name="tag" id="join_tag" value="{{ join_tag_value }}" maxlength="8" />
+  <div class="ua-box-content ua-box-space">
+    <form id="formTribeJoin" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+      <div class="control-group">
+        <label class="control-label tribe-label" for="inputTag">Stammeskürzel</label>
+        <div class="controls tribe">
+          <input type="text" id="inputTag" placeholder="Stammeskürzel">
+        </div>
       </div>
-      <div class="ym-fbox-text">
-        <label for="join_password">Passwort</label>
-        <input type="password" name="password" id="join_password" value="{{ join_password_value }}" maxlength="20" />
+      <div class="control-group">
+        <label class="control-label tribe-label" for="inputPassword">Passwort</label>
+        <div class="controls tribe">
+          <input type="text" id="inputPassword" placeholder="Passwort">
+        </div>
       </div>
-
-      <div class="ym-fbox-button center">
-        <input type="hidden" name="action" value="{{ tribe_action_join }}" />
-        <input type="submit" class="ym-button" value="Stamm beitreten!" id="submit" name="submit"/>
+      <div class="control-group" style="margin-bottom: 0;">
+        <div class="controls tribe">
+          <button class="btn" type="button" id="formTribeJoinSubmit" name="formTribeJoinSubmit">Stamm beitreten!</button>
+        </div>
       </div>
+      <input type="hidden" name="action" value="{{ tribe_action_join }}" />
     </form>
   </div>
 </div>

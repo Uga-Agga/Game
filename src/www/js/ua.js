@@ -117,8 +117,13 @@ DEBUG = 'on';
 
     $(document).on('submit', 'form', function(e) {
       ua_log('submit form: '+$(this).attr('id'));
-      e.preventDefault();
-      alert('Achtung. Das Absenden der Buttons ist so unerwünscht!');
+
+      if ($(this).is('.paypal')) {
+        $("form").attr("target", "_blank");
+      } else {
+        e.preventDefault();
+        alert('Achtung. Das Absenden der Buttons ist so unerwünscht!');
+      }
     });
 
     $(document).on('click', '.box_toggle', function(e){$(this).css('display', 'none');$('#'+$(this).attr('id')+'_content').slideDown("slow");});
@@ -176,13 +181,9 @@ DEBUG = 'on';
 
         var speed = (movementData.movements[movementID].speedfactor * speedFactor);
 
-        $('#duration').html(duration+' Min');
-        $('#food').html(food+' '+resouceData[movementData.foodID].name);
-        $('#speed').html(speed);
+        $('#duration').html(duration+' Min');$('#food').html(food+' '+resouceData[movementData.foodID].name);$('#speed').html(speed);
       } else {
-        $('#duration').html('- Min');
-        $('#food').html('- '+resouceData[movementData.foodID].name);
-        $('#speed').html('0');
+        $('#duration').html('- Min');$('#food').html('- '+resouceData[movementData.foodID].name);$('#speed').html('0');
       }
     }
 

@@ -2,7 +2,7 @@
 /*
  * tribe.html.php -
  * Copyright (c) 2004  OGP-Team
- * Copyright (c) 2011-2012  David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013  David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -655,7 +655,7 @@ function tribe_getContentNoTribe($caveID, &$details) {
   $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
-      if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))) {
+      if (tribe_validatePassword(Request::getVar('inputPassword', '')) && tribe_validateTag(Request::getVar('inputTag', ''))) {
         $messageID = tribe_processJoin($_SESSION['player']->playerID, Request::getVar('tag', ''), Request::getVar('password', ''));
         if ($messageID == 1) {
           $auth = new auth;
@@ -672,7 +672,7 @@ function tribe_getContentNoTribe($caveID, &$details) {
     break;
 
     case TRIBE_ACTION_CREATE:
-      if (tribe_validatePassword(Request::getVar('password', '')) && tribe_validateTag(Request::getVar('tag', ''))){
+      if (tribe_validatePassword(Request::getVar('inputPassword', '')) && tribe_validateTag(Request::getVar('inputTag', ''))){
         $messageID = tribe_processCreate($_SESSION['player']->playerID, Request::getVar('tag', ''), Request::getVar('password', ''), Request::getVar('restore_rank', 'no') == 'yes');
       } else {
         $messageID = -8;

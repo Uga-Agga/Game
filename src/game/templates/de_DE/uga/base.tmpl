@@ -154,6 +154,7 @@
     .ua-box-header { color: #FFFFFF; line-height: 20px; text-align: center; font-weight: bold; }
     .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
     .ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
+    .ua-box-space { padding: 5px; }
 
     td.date { width: 125px; text-align: right; }
     td.build { width: 47px; text-align: right; }
@@ -249,17 +250,17 @@
       <div class="header-middle-menu">
         <div id="header-middle-menu-item">
           <a class="ajax" href="main.php?modus=hero_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_hero.png' width="30" height="30" title='Held' alt='' /></a>
-          <a href="main.php?modus=cave_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
-          <a href="main.php?modus=CaveBookmarks"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
-          <a href="main.php?modus=questionnaire"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
-          <a href="main.php?modus=Donations"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
-          <a href="main.php?modus=tribe"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
-          <a href="main.php?modus=Contacts"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
-          <a href="main.php?modus=effectwonder_detail"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
-          <a href="main.php?modus=user_profile"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
-          <a href="main.php?modus=artefact_list"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
-          <a href="main.php?modus=news"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
-          <a href="http://faq.uga-agga.de" class="new-window"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
+          <a href="main.php?modus={{ cave_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
+          <a href="main.php?modus={{ cave_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
+          <a href="main.php?modus={{ questionaire_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
+          <a href="main.php?modus={{ donations_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
+          <a href="main.php?modus={{ tribe_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
+          <a href="main.php?modus={{ contact_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
+          <a href="main.php?modus={{ effectwonder_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
+          <a href="main.php?modus={{ user_profile_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_profile.png' width="30" height="30" title='Profil' alt='' /></a>
+          <a href="main.php?modus={{ artefact_list_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_artefact.png' width="30" height="30" title='Artefaktliste' alt='' /></a>
+          <a href="main.php?modus={{ news_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_news.png' title='News' width="30" height="30" alt='' /></a>
+          <a href="{{ help_path }}" class="new-window"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_faq.png' width="30" height="30" title='FAQ' alt='' /></a>
         </div>
         <div style="height: 51px; width: 315px; margin: 0 auto; top: 86px; position: relative; background-image: url(./images/round_name.png); background-repeat: no-repeat;">&nbsp;</div>
       </div>

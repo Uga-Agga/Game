@@ -183,7 +183,7 @@ switch ($modus) {
     break;
 
   case DONATIONS:
-    list($pagetitle, $content) = donations_main($caveID, $ownCaves);
+    donations_getContent();
     break;
 
   /////////////////////////////////////////////////////////////////////////////
@@ -331,12 +331,6 @@ switch ($modus) {
     }
     break;
 
-  case TRIBE_DELETE:
-    $confirm = Request::isPost('confirm');
-
-    tribeDelete_getContent($_SESSION['player']->playerID, $_SESSION['player']->tribe, $confirm);
-    break;
-
   /////////////////////////////////////////////////////////////////////////////
   // FRAGEBÖGEN                                                              //
   /////////////////////////////////////////////////////////////////////////////
@@ -414,13 +408,9 @@ switch ($modus) {
     $requestKeys = array('tribe');
     break;
 
-  case DYK:
-    doYouKnow_getContent();
-  break;
-
   case MERCHANT:
     merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
-  break;
+    break;
 
   case LOGOUT:
     page_finish('logout');
@@ -568,7 +558,6 @@ $template->addVars(array(
   'suggestions_link'        => SUGGESTIONS,
   'takeover_link'           => TAKEOVER,
   'tribe_link'              => TRIBE,
-  'tribe_admin_link'        => TRIBE_ADMIN,
   'tribe_detail_link'       => TRIBE_DETAIL,
   'unit_link'               => UNIT_BUILDER,
   'unit_detail_link'        => UNIT_DETAIL,

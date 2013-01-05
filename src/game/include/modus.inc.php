@@ -2,7 +2,7 @@
 /*
  * modus.inc.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -86,11 +86,11 @@ DEFINE('ARTEFACT_LIST',               'artefact_list');
 DEFINE('AWARD_DETAIL',                'award_detail');
 DEFINE('CAVE_BOOKMARKS',              'CaveBookmarks');
 DEFINE('CAVE_DETAIL',                 'cave_detail');
-DEFINE('CONTACTS_BOOKMARKS',           'Contacts');
+DEFINE('CONTACTS_BOOKMARKS',          'Contacts');
 DEFINE('DEFENSE_BUILDER',             'defense_builder');
 DEFINE('DEFENSE_DETAIL',              'defense_detail');
 DEFINE('DELETE_ACCOUNT',              'delete_account');
-DEFINE('DONATIONS',                   'Donations');
+DEFINE('DONATIONS',                   'donations');
 DEFINE('EVENT_REPORTS',               'EventReports');
 DEFINE('EASY_DIGEST',                 'easy_digest');
 DEFINE('EFFECTWONDER_DETAIL',         'effectwonder_detail');
@@ -117,8 +117,6 @@ DEFINE('SCIENCE_DETAIL',              'science_detail');
 DEFINE('SUGGESTIONS',                 'suggestions');
 DEFINE('TAKEOVER',                    'takeover');
 DEFINE('TRIBE',                       'tribe');
-DEFINE('TRIBE_ADMIN',                 'tribe_admin');
-DEFINE('TRIBE_DELETE',                'tribe_delete');
 DEFINE('TRIBE_DETAIL',                'tribe_detail');
 DEFINE('UNIT_BUILDER',                'unit_builder');
 DEFINE('UNIT_DETAIL',                 'unit_detail');
@@ -128,7 +126,6 @@ DEFINE('VOTE'        ,                'vote');
 DEFINE('WEATHER_REPORT',              'weather_report');
 DEFINE('WONDER',                      'wonder');
 DEFINE('WONDER_DETAIL',               'wonder_detail');
-DEFINE('DYK',                         'doYouKnow');
 DEFINE('MERCHANT',                    'merchant');
 DEFINE('NEWS',                        'news');
 DEFINE('STATISTIC',                   'statistic');
@@ -144,7 +141,7 @@ $require_files[CAVE_DETAIL]                 = array('cave.html.php', 'tribes.inc
 $require_files[CONTACTS_BOOKMARKS]          = array('../modules/Contacts/Contacts.php');
 $require_files[DEFENSE_BUILDER]             = array('defense.html.php', 'defense.inc.php');
 $require_files[DEFENSE_DETAIL]              = array('defenseDetail.html.php', 'defense.inc.php');
-$require_files[DONATIONS]                   = array('../modules/Donations/Donations.php');
+$require_files[DONATIONS]                   = array('donations.html.php');
 $require_files[DELETE_ACCOUNT]              = array('delete.html.php');
 $require_files[EASY_DIGEST]                 = array('artefact.inc.php', 'digest.html.php', 'digest.inc.php', 'movement.lib.php');
 $require_files[EFFECTWONDER_DETAIL]         = array('rules/wonder.rules.php', 'effectWonderDetail.html.php', 'wonder.inc.php', 'rules/hero.rules.php', 'hero.inc.php');
@@ -170,7 +167,6 @@ $require_files[SCIENCE_DETAIL]              = array('science.inc.php', 'scienceD
 $require_files[SUGGESTIONS]                 = array('suggestions.html.php');
 $require_files[TAKEOVER]                    = array('formula_parser.inc.php', 'takeover.html.php');
 $require_files[TRIBE]                       = array('tribe.html.php', 'tribes.inc.php', 'auth.inc.php', 'message.inc.php', 'rules/government.rules.php', 'rules/relation.list.php', 'rules/wonder.rules.php', 'wonder.inc.php');
-$require_files[TRIBE_DELETE]                = array('tribeDelete.html.php', 'tribes.inc.php', 'auth.inc.php', 'rules/relation.list.php', 'message.inc.php');
 $require_files[TRIBE_DETAIL]                = array('tribeDetail.html.php', 'tribes.inc.php', 'ranking.inc.php', 'messageParser.inc.php', 'rules/relation.list.php');
 $require_files[UNIT_BUILDER]                = array('unit.html.php', 'unit.inc.php');
 $require_files[UNIT_DETAIL]                 = array('unitDetail.html.php', 'unit.inc.php');
@@ -180,7 +176,6 @@ $require_files[VOTE]                        = array('vote.html.php');
 $require_files[WEATHER_REPORT]              = array('weather.html.php', 'rules/wonder.rules.php', 'basic.lib.php');
 $require_files[WONDER]                      = array('rules/wonder.rules.php', 'wonder.html.php', 'wonder.inc.php', 'message.inc.php', 'basic.lib.php');
 $require_files[WONDER_DETAIL]               = array('rules/wonder.rules.php', 'wonderDetail.html.php', 'wonder.inc.php', 'rules/relation.list.php');
-$require_files[DYK]                         = array('doYouKnow.html.php');
 $require_files[MERCHANT]                    = array('formula_parser.inc.php', 'merchant.html.php', 'rules/trade.rules.php');
 $require_files[NEWS]                        = array('rssFeedNews.html.php');
 $require_files[STATISTIC]                   = array('statistic.html.php', 'rules/wonder.rules.php');

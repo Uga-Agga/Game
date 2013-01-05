@@ -97,3 +97,5 @@ function suggestions_addSuggestion($playerID, $message) {
   
   return 1;
 }
+
+?>
