@@ -14,7 +14,7 @@
 {% block title %}Stamm gründe/beitreten{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small bottom_space">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
 <div class="ua-box">
   <div class="ua-box-header">Stamm gründen</div>
@@ -23,19 +23,19 @@
       <div class="control-group">
         <label class="control-label tribe-label" for="inputTag">Stammeskürzel</label>
         <div class="controls tribe">
-          <input type="text" id="inputTag" placeholder="Stammeskürzel">
+          <input type="text" id="inputTag" name="inputTag" placeholder="Stammeskürzel">
         </div>
       </div>
       <div class="control-group">
         <label class="control-label tribe-label" for="inputPassword">Passwort</label>
         <div class="controls tribe">
-          <input type="text" id="inputPassword" placeholder="Passwort">
+          <input type="password" id="inputPassword" name="inputPassword" placeholder="Passwort">
         </div>
       </div>
       <div class="control-group" style="margin-bottom: 0;">
         <div class="controls tribe">
           <label class="checkbox">
-            <input type="checkbox" name="restore_rank" id="restore_rank" value="">Ranking aus der alten Runde übernehmen
+            <input type="checkbox" name="restore_rank" id="inputRestoreRank" value="">Ranking aus der alten Runde übernehmen
           </label>
           <button class="btn" type="button" id="formTribeNewSubmit" name="formTribeNewSubmit">Stamm gründen!</button>
         </div>
@@ -52,13 +52,13 @@
       <div class="control-group">
         <label class="control-label tribe-label" for="inputTag">Stammeskürzel</label>
         <div class="controls tribe">
-          <input type="text" id="inputTag" placeholder="Stammeskürzel">
+          <input type="text" id="inputTag" name="inputTag" placeholder="Stammeskürzel">
         </div>
       </div>
       <div class="control-group">
         <label class="control-label tribe-label" for="inputPassword">Passwort</label>
         <div class="controls tribe">
-          <input type="text" id="inputPassword" placeholder="Passwort">
+          <input type="password" id="inputPassword" name="inputPassword" placeholder="Passwort">
         </div>
       </div>
       <div class="control-group" style="margin-bottom: 0;">

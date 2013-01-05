@@ -50,7 +50,6 @@ DEBUG = 'on';
         return;    
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
-        console.log('click link '+$(this).attr('href'));
         if ($(this).attr('data-reask') == 'true') {
           appendModal('modal-reask', $(this).attr('data-reask-header'), $(this).attr('data-reask-msg'), url);
           $('#modal-reask').modal({keyboard: true, backdrop: false});
