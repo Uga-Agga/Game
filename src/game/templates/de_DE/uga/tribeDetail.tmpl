@@ -2,7 +2,7 @@
 /* tribeDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,62 +15,43 @@
 {% block content %}
 
 <div class="ua-box small">
-  <div class="ua-box-header">Stamm: {{ tribe_details.name }}</div>
+  <div class="ua-box-header">Stamm: {{ tribe_details.name }} [{{ tribe_details.tag }}]</div>
   <div class="ua-box-content">
-    <div id="tribeDetail" class="jquery_tabs nav2">
-      <h5>Stammesübersicht</h5>
-      <div class="tabbody2">
-        {% if tribe_details.avatar %}
-          <div style="text-align: center; padding: 10px;">
-            <img src="{{ tribe_details.avatar_path }}" width="{{ tribe_details.avatar_width }}" height="{{ tribe_details.avatar_height }}" alt="Stammesbanner" />
+    <ul class="nav nav-tabs" id="mainTab">
+      <li class="active"><a class="tab-switch" href="#tribe_info" data-toggle="tab">Stammesübersicht</a></li>
+      <li><a class="tab-switch" href="#tribe_member" data-toggle="tab">Mitgliederliste</a></li>
+      <li><a class="tab-switch" href="#tribe_history" data-toggle="tab">Stammes-Geschichte</a></li>
+      <li><a class="tab-switch" href="#tribe_relations" data-toggle="tab">Beziehungen</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="tribe_info">
+        <div class="row-fluid">
+          <div class="span12">
+            {% if tribe_details.avatar %}
+              <p class="text-center"><img src="{{ tribe_details.avatar_path }}" width="{{ tribe_details.avatar_width }}" height="{{ tribe_details.avatar_height }}" alt="Stammesbanner" /></p>
+            {% endif %}
+            <div class="row-fluid">
+              <div class="span6">
+                <h5 class="text-center">Spielderdaten</h5>
+                <div class="row"><div class="span2 span-tribesmall-row1">Stammestag:</div><div class="span4 span-tribesmall-row2">{{ tribe_details.tag }}</div></div>
+                <div class="row"><div class="span2 span-tribesmall-row1">Stammestag:</div><div class="span4 span-tribesmall-row2">{{ tribe_details.name }}</div></div>
+                <div class="row"><div class="span2 span-tribesmall-row1">Anführer:</div><div class="span4 span-tribesmall-row2">{% if tribe_details.leader_name != 'k.A.' %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a>{% else %}{{ tribe_details.leader_name }}{% endif %}</div></div>
+                <div class="row"><div class="span2 span-tribesmall-row1"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">Ranking:</a></div><div class="span4 span-tribesmall-row2">{% if tribe_details.rank %}{{ tribe_details.rank }}{% else %}&nbsp;{% endif %}</div></div>
+              </div>
+              <div class="span6">
+                <h5 class="text-center">Beschreibung</h5>
+                <div class="row"><div class="span2 span-tribe-row1">Knüppelpunkte gewonnen:</div><div class="span4 span-tribe-row2">{{ tribe_details.warpoints_pos }}</div></div>
+                <div class="row"><div class="span2 span-tribe-row1">Knüppelpunkte verloren:</div><div class="span4 span-tribe-row2">{{ tribe_details.warpoints_neg }}</div></div>
+                {% if tribe_details.award_tag %}<p><a href="main.php?modus={{ award_details_link }}&amp;award={{ tribe_details.award_tag }}"><img src="images/awards/{{ tribe_details.award_tag }}_large.png" width="128" height="128" border="0" hspace="8" /></a></p>{% endif %}
+              </div>
+            </div>
+            <h5 class="text-center">Stammesbeschreibung</h5>
+            <p>{{ tribe_details.description|raw }}</p>
           </div>
-        {% endif %}
-
-        <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px; margin-top: 10px;">
-          <ul>
-            <li class="bold text-center" style="padding-bottom: 10px;">Stammesdaten</li>
-
-            <li class="tribe_detail_left">Stammestag:</li>
-            <li class="tribe_detail_right">{{ tribe_details.tag }}</li>
-            <li class="clr"></li>
-
-            <li class="tribe_detail_left">Stammesname:</li>
-            <li class="tribe_detail_right">{{ tribe_details.name }}</li>
-            <li class="clr"></li>
-
-            <li class="tribe_detail_left">Anführer:</li>
-            <li class="tribe_detail_right">{% if tribe_details.leader_name != 'k.A.' %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a>{% else %}{{ tribe_details.leader_name }}{% endif %}</li>
-            <li class="clr"></li>
-
-            <li class="tribe_detail_left"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">Ranking:</a></li>
-            <li class="tribe_detail_right"><a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ tribe_details.rank_offset }}">{{ tribe_details.rank }}</a></li>
-            <li class="clr"></li>
-          </ul>
-        </div>
-
-        <div class="notice text-left" style="width: 290px; float: right; margin-right: 10px; margin-top: 10px;">
-          <ul>
-            <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesinformationen</li>
-
-            <li style="padding-bottom: 10px;">Knüppelpunkte gewonnen: {{ tribe_details.warpoints_pos }}</li>
-            <li style="padding-bottom: 10px;">Knüppelpunkte verloren: {{ tribe_details.warpoints_neg }}</li>
-
-            {% if tribe_details.award_tag %}<li><a href="main.php?modus={{ award_details_link }}&amp;award={{ tribe_details.award_tag }}"><img src="images/awards/{{ tribe_details.award_tag }}_large.png" width="128" height="128" border="0" hspace="8" /></a></li>{% endif %}
-          </ul>
-        </div>
-        <div style="clear: both;"></div>
-
-        <div style="padding: 0 10px 10px;">
-          <ul class="notice" style="margin: 0;">
-            <li class="bold" style="padding-bottom: 10px; text-align: center;">Stammesbeschreibung:</li>
-            <li>{{ tribe_details.description|raw }}</li>
-          </ul>
         </div>
       </div>
-
-      <h5>Mitglieder</h5>
-      <div class="tabbody2">
-        <table>
+      <div class="tab-pane" id="tribe_member">
+        <table class="table table-striped table-condensed">
           <thead>
             <tr>
               <th>Rank</th>
@@ -90,25 +71,21 @@
                 <td>{% if item.religion %}<img src="{{ gfx }}/de_DE/t_uga/ranking/{{ item.religion }}.gif" alt="{{ item.religion }}" width="15" height="15" border="0" title="{{ item.religion }}" />{% else %}&nbsp;{% endif %}</td>
                 <td style="width: 90px;">{{ item.points }}</td>
                 <td>{{ item.kp }}</td>
-
-                <td>
-                  {% for item2 in item.award %}
-                    <a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>
-                  {% else %}&nbsp;{% endfor %}
-                </td>
+                <td>{% for item2 in item.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>{% else %}&nbsp;{% endfor %}</td>
 
                 <td class="text-right" style="width: 215px; white-space: nowrap;">
                   {% if item.caves %}
-                    <form method="post" action="main.php?modus={{ unit_movement_link }}">
-                      <div style="white-space: nowrap;">
-                      [{{ item.caves|length }}]&nbsp;
-                      <select name="targetCaveID" style="width: 165px;">
-                        {% for cave in item.caves %}<option value="{{ cave.caveID }}">{{ cave.name }} ({{ cave.xCoord }}/{{ cave.yCoord }})</option>{% endfor %}
-                      </select>
-
-                      <input type="submit" value="Go" name="tribeUnitMovement" />
-                      </div>
-                    </form>
+                    <div class="pull-left">[{{ item.caves|length }}]&nbsp;</div>
+                    <div class="pull-right">
+                      <form id="formTribeMemberCaves" action="main.php?modus={{ unit_movement_link }}" method="post">
+                        <div class="input-append">
+                          <select name="targetCaveID" style="width: 165px;">
+                            {% for item in item.caves %}<option value="{{ item.caveID }}">{{ item.name }} ({{ item.xCoord }}/{{ item.yCoord }})</option>{% endfor %}
+                          </select>
+                          <button class="btn" type="button" id="tribeUnitMovement" name="tribeUnitMovement">Go</button>
+                        </div>
+                      </form>
+                    </div>
                   {% else %}
                     Keine Höhle
                   {% endif %}
@@ -120,24 +97,19 @@
           </tbody>
         </table>
       </div>
-
-      <h5>Stammes-Geschichte</h5>
-      <div class="tabbody2">
-        {% if tribe_history %}
-          {% for item in tribe_history %}
-            <div class="info text-left" style="margin-left: 10px; margin-right: 10px;">
-              <h3 class="loud">{{ item.ingameTime }}</h3>
-              {{ item.message }}
-            </div>
-          {% endfor %}
+      <div class="tab-pane" id="tribe_history">
+        {% for item in tribe_history %}
+          <div class="alert-info text-left" style="padding: 5px;">
+            <h5>{{ item.ingameTime }}</h5>
+            <p>{{ item.message }}</p>
+          </div>
+          {% if not loop.last %}<hr>{% endif %}
         {% else %}
-          <div class="space text-center">Dieser Stamm hat noch keine Geschichte.</div>
-        {% endif %}
+          <p class="text-center">Dieser Stamm hat noch keine Geschichte.</p>
+        {% endfor %}
       </div>
-
-      <h5>Beziehungen</h5>
-      <div class="tabbody2">
-        <table>
+      <div class="tab-pane" id="tribe_relations">
+        <table class="table table-striped table-condensed">
           <thead>
             <tr>
               <th class="text-left">Stamm</th>
@@ -147,8 +119,7 @@
           </thead>
           <tbody>
             {% for item in relations_data %}
-              {% set bgID = (bgID+1)%2 %}
-              <tr class="bg{{ bgID }}">
+              <tr>
                 <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
                 <td>{{ item.relation_to }}</td>
                 <td>{{ item.relation_from }}</td>

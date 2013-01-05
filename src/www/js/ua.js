@@ -121,10 +121,6 @@ DEBUG = 'on';
       alert('Achtung. Das Absenden der Buttons ist so unerwünscht!');
     });
 
-    $(document).on("hashchange", function(e){
-      console.log('Wir gehen zurück Oo');
-    });
-
     $(document).on('click', '.box_toggle', function(e){$(this).css('display', 'none');$('#'+$(this).attr('id')+'_content').slideDown("slow");});
     $(document).on('click', '.show_hide', function(e){$('#'+$(this).attr('id')+'_content').toggle("fast");});
     $(document).on('hover', '.change_mouseover', function(){$(this).css('cursor', 'pointer');}).on("mouseout", ".change_mouseover", function() {$(this).css('cursor', 'default');});
@@ -140,6 +136,7 @@ DEBUG = 'on';
     $(document).on('change input', '.change-movement', function(e) {updateMovement();});
     $(document).on('click', '.update-movement', function(e) {updateMovement();});
     $(document).on('click', '#selctAllUnits', function(e) {var unitData;try {unitData = jQuery.parseJSON($('#unitData').html());}catch(e) {ua_log('Fehler beim einlesen der Einheiten');return false;}for (var unit in unitData) {if($(this).attr('checked')) {$('#unit_'+unitData[unit].unit_id).val(unitData[unit].maxUnitCount);} else {$('#unit_'+unitData[unit].unit_id).val('');}}updateMovement();});
+    $(document).on('change', '.move-select-bookmark', function(e) {if ($(this).val() !== '-1') {$('#targetXCoord').enable(false);$('#targetYCoord').enable(false);$('#targetCaveName').enable(false);$('#targetXCoord').val($(this).find(":selected").attr('data-xCoord'));$('#targetYCoord').val($(this).find(":selected").attr('data-yCoord'));$('#targetCaveName').val($(this).find(":selected").attr('data-caveName'));} else {$('#targetXCoord').enable(true);$('#targetYCoord').enable(true);$('#targetCaveName').enable(true);$('#targetXCoord').val('');$('#targetYCoord').val('');$('#targetCaveName').val('');}});
 
     function updateMovement() {
       var movementData;var unitData;var resouceData;

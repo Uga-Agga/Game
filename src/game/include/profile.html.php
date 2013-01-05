@@ -2,7 +2,7 @@
 /*
  * profile.html.php -
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -144,6 +144,8 @@ function profile_getPlayerData($db_login){
     return NULL;
   }
 
+  $game['avatar'] = @unserialize($game['avatar']);
+
   return array("game" => $game, "login" => $login);
 }
 
@@ -156,7 +158,7 @@ function profile_update($db_login) {
   $playerID = $_SESSION['player']->playerID;
   $data = array(
     'avatar'      => Request::getVar('inputPlayerAvatar', ''),
-    'description' => Request::getVar('inputPlayerDescription', ''),
+    'description' => Request::getVar('inputPlayerDescription', '', true),
     'email2'      => Request::getVar('inputPlayerEmail2', ''),
     'gfxpath'     => Request::getVar('inputPlayerGFX', ''),
     'icq'         => Request::getVar('inputPlayerICQ', ''),

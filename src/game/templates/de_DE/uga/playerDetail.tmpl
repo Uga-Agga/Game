@@ -2,7 +2,7 @@
 /* playerDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,90 +17,54 @@
 <div class="ua-box small">
   <div class="ua-box-header">Spieler: {{ player_details.name }}</div>
   <div class="ua-box-content">
-    <div id="tribeDetail" class="jquery_tabs nav2">
-      <h5>Spielerübersicht</h5>
-      <div class="tabbody2">
-        {% if player_avatar %}
-          <div style="text-align: center; padding: 10px;">
-            <img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" alt="Spielerbanner" />
+    <ul class="nav nav-tabs" id="mainTab">
+      <li class="active"><a class="tab-switch" href="#profile_info" data-toggle="tab">Spielerübersicht</a></li>
+      <li><a class="tab-switch" href="#profile_history" data-toggle="tab">Spielergeschichte</a></li>
+      <li><a class="tab-switch" href="#profile_cave" data-toggle="tab">Höhlenliste</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="profile_info">
+        <div class="row-fluid">
+          <div class="span12">
+            {% if player_avatar %}
+              <p class="text-center"><img src="{{ player_avatar }}" width="{{ player_avatar_width }}" height="{{ player_avatar_height }}" alt="Spielerbanner"></p>
+            {% endif %}
+            <div class="row-fluid">
+              <div class="span6">
+                <h5 class="text-center">Spielderdaten</h5>
+                <div class="row"><div class="span2 span-profile-row1">Name:</div><div class="span4 span-profile-row2">{{ player_details.name }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">Stamm:</div><div class="span4 span-profile-row2"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe }}">{{ player_details.tribe }}</a></div></div>
+                <div class="row"><div class="span2 span-profile-row1">Awards:</div><div class="span4 span-profile-row2">{% if player_details.award %}{% for award in player_details.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ award }}"><img src="images/awards/{{ award }}.png" width="15" height="15" border="0" hspace="1"></a>{% endfor %}{% else %}&nbsp;{% endif %}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">Geschlecht:</div><div class="span4 span-profile-row2">{{ player_details.sex }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">Herkunft:</div><div class="span4 span-profile-row2">{{ player_details.origin }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">Uga-Agga-Alter:</div><div class="span4 span-profile-row2">{{ player_details.age }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">ICQ:</div><div class="span4 span-profile-row2">{{ player_details.icq }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">Knüppelpunkte gewonnen:</div><div class="span4 span-profile-row2">{{ player_details.warpoints_pos }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">Knüppelpunkte verloren:</div><div class="span4 span-profile-row2">{{ player_details.warpoints_neg }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1">geknüppelte Gegner:</div><div class="span4 span-profile-row2">{{ player_details.body_count }}</div></div>
+                <div class="row"><div class="span2 span-profile-row1"><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ player_details.rank }}">Aktuelles Ranking:</a></div><div class="span4 span-profile-row2">{% if player_details.rank %}{{ player_details.rank }}{% else %}&nbsp;{% endif %}</div></div>
+                <p class="text-center"><a href="main.php?modus={{ contact_bookmarks_link }}&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></p>
+                <p class="text-center"><a href="main.php?modus={{ messages_new_link }}&amp;recipient={{ player_details.mail_receiver }}">Nachricht senden</a></p>
+              </div>
+              <div class="span6">
+                <h5 class="text-center">Beschreibung</h5>
+                <p>{{ player_details.description|raw }}</p>
+              </div>
+            </div>
           </div>
-        {% endif %}
-
-        <div class="notice text-left" style="width: 290px; float: left; margin-left: 10px;">
-          <ul>
-            <li class="bold text-center" style="padding-bottom: 10px;">Stammesdaten</li>
-
-            <li class="player_detail_left">Name:</li>
-            <li class="player_detail_right">{{ player_details.name }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Stamm:</li>
-            <li class="player_detail_right"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe }}">{{ player_details.tribe }}</a></li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Awards:</li>
-            <li class="player_detail_right">{% if player_details.award %}{% for award in player_details.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ award }}"><img src="images/awards/{{ award }}.png" width="15" height="15" border="0" hspace="1"></a>{% endfor %}{% else %}&nbsp;{% endif %}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Geschlecht:</li>
-            <li class="player_detail_right">{{ player_details.sex }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Herkunft:</li>
-            <li class="player_detail_right">{{ player_details.origin }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Uga-Agga-Alter:</li>
-            <li class="player_detail_right">{{ player_details.age }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">ICQ:</li>
-            <li class="player_detail_right">{{ player_details.icq }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Knüppelpunkte gewonnen:</li>
-            <li class="player_detail_right">{{ player_details.warpoints_pos }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">Knüppelpunkte verloren:</li>
-            <li class="player_detail_right">{{ player_details.warpoints_neg }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left">geknüppelte Gegner:</li>
-            <li class="player_detail_right">{{ player_details.body_count }}</li>
-            <li class="clr"></li>
-
-            <li class="player_detail_left"><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ player_details.rank }}">Aktuelles Ranking:</a></li>
-            <li class="player_detail_right">{% if player_details.rank %}{{ player_details.rank }}{% else %}&nbsp;{% endif %}</li>
-            <li class="clr"></li>
-
-            <li class="text-center"><a href="main.php?modus={{ contact_bookmarks_link }}&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></li>
-            <li class="text-center"><a href="main.php?modus={{ messages_new_link }}&amp;recipient={{ player_details.mail_receiver }}">Nachricht senden</a></li>
-          </ul>
         </div>
-
-        <div class="notice" style="width: 290px; float: right; margin-right: 10px;">
-          <ul>
-            <li class="bold" style="padding-bottom: 10px; text-align: center;">Beschreibung:</li>
-            <li style="padding-bottom: 10px;">{{ player_details.description|raw }}</li>
-          </ul>
-        </div>
-        <div style="clear: both;"></div>
       </div>
-
-      <h5>Spieler-Geschichte</h5>
-      <div class="tabbody2">
-        <table>
+      <div class="tab-pane" id="profile_history">
+        <table class="table table-striped table-condensed">
           <tbody>
             <thead>
-              <tr><th class="text-center" colspan="4">Spieler-Geschichte</th></tr>
+              <tr><th class="text-center date" colspan="2">Spieler-Geschichte</th></tr>
             </thead>
             <tbody>
             {% for item in player_history %}
-            {% set bgID = (bgID+1)%2 %}
-            <tr class="bg{{ bgID }}">
-              <td class="left" style="width: 160px;">{{ item.timestamp }}</td>
-              <td class="left">{{ item.entry|raw }}</td>
+            <tr>
+              <td class="date">{{ item.timestamp }}</td>
+              <td>{{ item.entry|raw }}</td>
             </tr>
             {% else %}
               <tr><td>Dieser Spieler hat noch keine Geschichte</td></tr>
@@ -108,21 +72,18 @@
           </tbody>
         </table>
       </div>
-
-      <h5>Höhlenliste</h5>
-      <div class="tabbody2">
-        <table>
+      <div class="tab-pane" id="profile_cave">
+        <table class="table table-striped table-condensed">
           <tbody>
             <thead>
               <tr><th class="text-center" colspan="4">Höhlenliste</th></tr>
             </thead>
             <tbody>
             {% for item in player_caves %}
-            {% set bgID = (bgID+1)%2 %}
-            <tr class="bg{{ bgID }}">
-              <td class="left"><a href="main.php?modus={{ map_link }}&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
-              <td class="left">{% if item.secureCave == false %} (Übernehmbar){% else %}&nbsp;{% endif %}</td>
-              <td class="right">
+            <tr>
+              <td class="text-left"><a href="main.php?modus={{ map_link }}&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }})</a></td>
+              <td class="text-left">{% if item.secureCave == false %} (Übernehmbar){% else %}&nbsp;{% endif %}</td>
+              <td class="text-right">
                 <a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}&amp;targetCaveName={{ item.name }}">Marsch!</a>
                 <a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">Höhlenliste+</a>
               </td>
