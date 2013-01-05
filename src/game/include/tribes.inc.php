@@ -2,7 +2,7 @@
 /*
  * tribes.inc.php -
  * Copyright (c) 2004  OGP-Team
- * Copyright (c) 2012 Georg Pitterle
+ * Copyright (c) 2012-2013 Georg Pitterle
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -558,6 +558,9 @@ function relation_calcFame($winner, $winnerOld, $looser, $looserOld) {
 function relation_setRelation($from, $target, $relation, $duration, $end_time, $from_points_old, $target_points_old, $fame=0) {
   global $db;
 
+  $fromID = tribe_getTribeIDByTag($from); 
+  $targetID = tribe_getTribeIDByTag($target);
+  
   if (($from_points = tribe_getMight($from)) < 0) {
     $from_points = 0;
   }
@@ -584,8 +587,10 @@ function relation_setRelation($from, $target, $relation, $duration, $end_time, $
     $query =
       "REPLACE " . RELATION_TABLE .
       " SET tribe = '$from', ".
+      " tribeID_source = '$fromID', ".
       ((isset($target_members) && $target_members != 0) ? "target_members = '$target_members', " : "").
       "tribe_target = '$target', ".
+      "tribeID_target = '$targetID', ".
       "timestamp = NOW() +0, ".
       "relationType = '$relation', ".
       "tribe_rankingPoints = '$from_points', ".
@@ -1060,6 +1065,48 @@ function tribe_getTribeByTag($tag) {
   return $result;
 }
 
+// get tag by tribeID
+function tribe_getTagByID($tribeID) {
+  global $db;
+  
+  $sql = $db->prepare("SELECT tag FROM " . TRIBE_TABLE . "
+                        WHERE tribeID = :tribeID");
+  $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return null; 
+  }
+  
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+  
+  if (empty($result)) {
+    return null;
+  } else {
+    return $result['tag'];
+  }
+}
+
+function tribe_getTribeIDByTag($tag) {
+  global $db; 
+  
+  $sql = $db->prepare("SELECT tribeID FROM " . TRIBE_TABLE . "
+                        WHERE tag = :tag"); 
+  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  
+  if (!$sql->execute()) {
+    return null; 
+  }
+  
+  $result = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+  
+  if (empty($result)) {
+    return null;
+  } else {
+    return $result['tribeID'];
+  }
+}
+
 function tribe_makeLeader($playerID, $tag) {
   global $db;
   
@@ -1089,15 +1136,18 @@ function tribe_unmakeLeader($playerID, $tag) {
   return 1;
 }
 
-function tribe_joinTribe($playerID, $tag) {
+function tribe_joinTribe($playerID, $tribeID) {
   global $db;
   
+  $tag = tribe_getTagByID($tribeID); 
+  
   $sql = $db->prepare("UPDATE ". PLAYER_TABLE . "
-                      SET tribe = :tag
+                      SET tribe = :tag, tribeID = :tribeID
                       WHERE playerID = :playerID
                         AND tribe = ''");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  $sql->bindValue('tribeID', $tribeID, PDO::PARAM_STR);
   if (!$sql->execute() || $sql->rowCount() == 0) {
     return false;
   }
@@ -1234,12 +1284,14 @@ function tribe_createTribe($tag, $name, $password, $leaderID) {
   if (!$sql->execute()) {
     return false;
   }
-
+  
+  $tribeID = $db->lastInsertId();
+  echo "hallo12";
   if(!tribe_createRanking($tag)) {
     return false;
   }
-
-  if (!tribe_joinTribe($leaderID, $tag)) {
+;
+  if (!tribe_joinTribe($leaderID, $tribeID)) {
     return false;
   }
 
@@ -1248,7 +1300,7 @@ function tribe_createTribe($tag, $name, $password, $leaderID) {
     return false;
   }
 
-  return 1;
+  return true;
 }
 
 
@@ -1544,6 +1596,7 @@ function tribe_processJoin($playerID, $tag, $password) {
                          AND password = BINARY :password");
   $sql->bindValue('tag', $tag, PDO::PARAM_STR);
   $sql->bindValue('password', $password, PDO::PARAM_STR);
+
   if (!$sql->rowCountSelect()) {
     return -1;
   }
@@ -1570,7 +1623,7 @@ function tribe_processJoin($playerID, $tag, $password) {
     }
   }
 
-  if (!tribe_joinTribe($playerID, $tribeData['tag'])) {
+  if (!tribe_joinTribe($playerID, $tribeData['tribeID'])) {
     return -3;
   }
 

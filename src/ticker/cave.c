@@ -1,6 +1,7 @@
 /*
  * cave.c - cave and player information
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -162,7 +163,9 @@ void get_player_info (db_t *database, int player_id, struct Player *player)
 
   player->player_id = player_id;
   player->name = db_result_get_string(result, "name");
-  player->tribe = db_result_get_string(result, "tribe");
+  //player->tribe = db_result_get_string(result, "tribe");
+  player->tribe = get_tribeTagByID(database, db_result_get_int(result, "tribeID"));
+  player->tribe_id = db_result_get_int(result, "tribeID");
   player->max_caves = db_result_get_int(result, "takeover_max_caves");
   player->locale = db_result_get_string(result, "language");
   player->locale_id = get_locale_id(player->locale);
@@ -172,25 +175,32 @@ void get_player_info (db_t *database, int player_id, struct Player *player)
 /*
  * Retrieve relation table information for the given tribe and tribe_target.
  */
-int get_relation_info (db_t *database, const char *tribe,
-		       const char *tribe_target, struct Relation *relation)
+int get_relation_info (db_t *database, int tribe_id_source,
+		       int tribe_id_target, struct Relation *relation)
 {
   db_result_t *result = NULL;
+  const char *tribeTag_source;
+  const char *tribeTag_target;
 
-  if (tribe && tribe_target)
+  tribeTag_source = get_tribeTagByID(database, tribe_id_source);
+  tribeTag_target = get_tribeTagByID(database, tribe_id_target);
+
+  if (tribe_id_source && tribe_id_target)
   {
-    debug(DEBUG_BATTLE, "get relation for tribes %s %s", tribe, tribe_target);
+    debug(DEBUG_BATTLE, "get relation for tribe %s and %s", tribeTag_source, tribeTag_target);
     result = db_query(database,
 	"SELECT * FROM " DB_TABLE_RELATION
-	" WHERE tribe = '%s' AND tribe_target = '%s'", tribe, tribe_target);
+	" WHERE tribeID_source = '%d' AND tribeID_target = '%d'", tribe_id_source, tribe_id_target);
   }
 
   if (!result || !db_result_next_row(result))
   {
     debug(DEBUG_BATTLE, "filling dummy relation");
     relation->relation_id = 0;
-    relation->tribe = tribe;
-    relation->tribe_target = tribe_target;
+    relation->tribe = tribeTag_source;
+    relation->tribe_id_source = tribe_id_source;
+    relation->tribe_target = tribeTag_target;
+    relation->tribe_id_target = tribe_id_target;
     relation->relationType = RELATION_TYPE_NONE;
 
     /* FIXME these values should be read from relation types */
@@ -203,8 +213,10 @@ int get_relation_info (db_t *database, const char *tribe,
   }
 
   relation->relation_id = db_result_get_int(result, "relationID");
-  relation->tribe = tribe;
-  relation->tribe_target = tribe_target;
+  relation->tribe = tribeTag_source;
+  relation->tribe_id_source = tribe_id_source;
+  relation->tribe_target = tribeTag_target;
+  relation->tribe_id_target = tribe_id_target;
   relation->relationType = db_result_get_int(result, "relationType");
   relation->defenderMultiplicator =
     db_result_get_double(result, "defenderMultiplicator");
@@ -220,16 +232,16 @@ int get_relation_info (db_t *database, const char *tribe,
 
 
 
-int get_tribe_at_war(db_t *database, const char *tribe)
+int get_tribe_at_war(db_t *database, int tribe_id)
 {
   db_result_t *result = NULL;
 
-  if (tribe)
+  if (tribe_id)
   {
-    debug(DEBUG_BATTLE, "get tribe at war for %s", tribe);
+    debug(DEBUG_BATTLE, "get tribe at war for %s", get_tribeTagByID(database, tribe_id));
     result = db_query(database,
         "SELECT * FROM " DB_TABLE_RELATION
-        " WHERE tribe = '%s' AND relationType = '%i'", tribe, RELATION_TYPE_WAR);
+        " WHERE tribeID_source = %d AND relationType = '%i'", tribe_id, RELATION_TYPE_WAR);
   }
 
   return (result && db_result_next_row(result));
@@ -293,4 +305,18 @@ void get_monster_info (db_t *database, int monster_id, struct Monster *monster)
   monster->strength = db_result_get_int(result, "koerperkraft");
   monster->exp_value = db_result_get_int(result, "erfahrung");
   monster->attributes = db_result_get_string(result, "eigenschaft");
+}
+
+/*
+ * return tag by tribeID
+ */
+const char* get_tribeTagByID(db_t *database, int tribeID) {
+
+  db_result_t *result = db_query(database, "SELECT tag FROM " DB_TABLE_TRIBE " WHERE tribeID = %d", tribeID);
+
+  if (!db_result_next_row(result)) {
+    return "";
+  }
+
+    return db_result_get_string(result, "tag");
 }
