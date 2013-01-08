@@ -51,7 +51,7 @@
       MAP_MAX_Y = -{{ map_size.max_y }};
 
       {% if jabber.server and jabber.passwd %}
-        
+        jQuery(document).ready(function() {
           DEVELOPER = 'on';
 
           HOST_MAIN      = '{{ jabber.server }}';
