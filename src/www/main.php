@@ -516,6 +516,7 @@ $template->addVars(array(
   'query_string'      => $requestString,
   'war_points'        => getWarpointsByCaveData($ownCaves[$caveID]),
   'jabber'            => array('server' => Config::JABBER_SERVER, 'noClose' => Config::JABBER_NO_CLOSE, 'groupchats' => Config::JABBER_STATIC_GROUPCHATS, 'user' => $_SESSION['player']->name, 'passwd' => $_SESSION['session']['loginchecksum']),
+  'map_size'          => array('min_x' => MAP_MIN_X, 'max_x' => MAP_MAX_X, 'min_y' => MAP_MIN_Y, 'max_y' => MAP_MAX_Y),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],
   'ua_time_day'             => $UgaAggaTime['day'],
@@ -541,7 +542,7 @@ $template->addVars(array(
   'logout_link'             => LOGOUT,
   'map_link'                => MAP,
   'map_detail_link'         => MAP_DETAIL,
-//  'map_region_link'         => MAP_REGION_LINK,
+  'map_region_link'         => MAP_REGION,
   'merchant_link'           => MERCHANT,
   'messages_list_link'      => MESSAGES_LIST,
   'messages_new_link'       => MESSAGE_NEW,

@@ -80,7 +80,7 @@ function determineCoordsFromParameters($caveData, $mapSize) {
   }
 
   // caveID eingegeben ?
-  else if (($targetCaveID = Request::getVar('targetCaveID', 0)) !== 0) {
+  else if (($targetCaveID = Request::getVar('targetCaveID', 0)) > 0) {
     $coords = getCaveByID($targetCaveID);
     if ($coords === null) {
       $message = sprintf(_('Die Höhle mit der ID: "%d" konnte nicht gefunden werden!'), $targetCaveID);       

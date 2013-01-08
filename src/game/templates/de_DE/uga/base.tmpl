@@ -31,6 +31,7 @@
     <script type="text/javascript" src="js/jquery.form.js"></script>
     <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
     <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
     <script type="text/javascript" src="js/jquery.url.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
@@ -44,8 +45,13 @@
         return time; 
       }
 
+      MAP_MIN_X = {{ map_size.min_x }};
+      MAP_MAX_X = {{ map_size.max_x }};
+      MAP_MIN_Y = -{{ map_size.min_y }};
+      MAP_MAX_Y = -{{ map_size.max_y }};
+
       {% if jabber.server and jabber.passwd %}
-        jQuery(document).ready(function() {
+        
           DEVELOPER = 'on';
 
           HOST_MAIN      = '{{ jabber.server }}';
@@ -114,6 +120,7 @@
     .alert-success { background-color: #e6efc2; }
     .alert-error { background-color: #fbe3e4; }
     .alert-info { background-color: #d5edf8; }
+    .alert-notice { background-color: #fff6bf; }
 
     .ui-widget-header { background: #c2cf90; }
     .ui-widget-content { background: #e6efc2; }
@@ -155,6 +162,7 @@
     .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
     .ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
     .ua-box-space { padding: 5px; }
+    .ua-box-fix { width: 634px; margin: 0 auto; }
 
     td.date { width: 125px; text-align: right; }
     td.build { width: 47px; text-align: right; }
@@ -237,7 +245,7 @@
 <div class="container">
   <div class="row">
     <div class="span-header-left">
-      <div class="tooltip-show" style="width: 200px; margin-left: 10px ;margin-top: 154px" rel="tooltip" data-placement="bottom" data-original-title="Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest. Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden. Unten sind alle Kriegspunkte aufgeführt! Einheiten: {{ war_points.warpointsUnits }} Verteidigungsanlagen: {{ war_points.warpointsDefense }}"><b>Kriegspunkte der Höhle: {{ war_points.warpoints }}</b></div>
+      <div class="tooltip-show" id="warpoints_info" style="width: 200px; margin-left: 10px ;margin-top: 154px" rel="tooltip" data-placement="bottom" data-original-title="Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest. Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden. Unten sind alle Kriegspunkte aufgeführt! Einheiten: {{ war_points.warpointsUnits }} Verteidigungsanlagen: {{ war_points.warpointsDefense }}"><b>Kriegspunkte der Höhle: {{ war_points.warpoints }}</b></div>
     </div>
     <div class="span-header-right pull-right text-right">
       <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
@@ -323,7 +331,7 @@
   {% block footer %}
   <footer>
     <p>&copy; Company 2013</p>
-    <div id="slider"></div>
+    <div id="pageSilder"></div>
   </footer>
   {% endblock %}
 </div>

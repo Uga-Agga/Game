@@ -15,19 +15,18 @@
 {% block title %}Karte{% endblock %}
 {% block content %}
 
-<div class="notice" id="message-view" {% if not message %}style="display: none;"{% endif %}>{{ message }}</div>
-<div id="detail-dialog" style="display: none;" title="Höhlendetails"></div>
+<div class="alert alert-block alert-{{ status_msg.type }} ua-box-fix{% if not message %} hide{% endif %}" id="messageDisplay"><p>{{ message|raw }}</p></div>
 
-<div class="ua-box">
+<div class="ua-box ua-box-fix">
   <div class="ua-box-header">Karte</div>
   <div class="ua-box-content">
     <div style="padding: 5px;">
-    <form id="formMapCaveSearch" class="form-horizontal" action="main.php?modus={{ map_link }}" method="post">
+    <form id="formMapCaveSearch" class="form-horizontal" action="main.php?modus={{ map_region_link }}" method="post">
       <div class="row-fluid">
         <div class="span4 text-left"><input class="autocomplete input-medium" style="margin-right: 10px;" type="text" name="caveName" id="caveName" placeholder="Höhlenname" maxlength="32" data-source="caves"></div>
         <div class="span4 text-center">
-          <input class="input-wonder-xy" type="text" pattern="\d*" name="xCoord" placeholder="X" maxlength="2">
-          <input class="input-wonder-xy" type="text" pattern="\d*" name="yCoord" placeholder="Y" maxlength="2">
+          <input class="input-wonder-xy" type="text" pattern="\d*" name="xCoord" id="xCoord" placeholder="X" maxlength="2">
+          <input class="input-wonder-xy" type="text" pattern="\d*" name="yCoord" id="yCoord" placeholder="Y" maxlength="2">
         </div>
         <div class="span4 text-right">
           <select class="input-medium" name="targetCaveID" id="targetCaveID">
@@ -44,52 +43,17 @@
   </div>
 </div>
 
-<div style="width: 100%;">
-  <div style="float: right; width: 140px;">
-    <div class="ua-box">
-      <div class="ua-box-header">Navigation</div>
-      <div class="ua-box-content">
-        <div class="row-fluid">
-          <div class="span4"><a class="arrow" id="NW" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NW.x }}&amp;yCoord={{ NW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NW.png" style="border:none;width:40px;hight:40px;" alt="nordwest" /></a></div>
-          <div class="span4"><a class="arrow" id="N" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ N.x }}&amp;yCoord={{ N.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/N.png" style="border:none;width:40px;hight:40px;" alt="nord" /></a></div>
-          <div class="span4"><a class="arrow" id="NE" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ NE.x }}&amp;yCoord={{ NE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/NO.png" style="border:none;width:40px;hight:40px;" alt="nordost" /></a></div>
-        </div>
-        <div class="row-fluid">
-          <div class="span4"><a class="arrow" id="W" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ W.x }}&amp;yCoord={{ W.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/W.png" style="border:none;width:40px;hight:40px;" alt="west" /></a></div>
-          <div class="span4"><a class="arrow" id="M" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ cave_x_coord }}&amp;yCoord={{ cave_y_coord }}"><img src="{{ gfx }}/de_DE/t_uga/map/M.png" style="border:none;width:40px;hight:40px;" alt="" /></a></div>
-          <div class="span4"><a class="arrow" id="E" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ E.x }}&amp;yCoord={{ E.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/O.png" style="border:none;width:40px;hight:40px;" alt="ost" /></a></div>
-        </div>
-        <div class="row-fluid">
-          <div class="span4"><a class="arrow" id="SW" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SW.x }}&amp;yCoord={{ SW.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SW.png" style="border:none;width:40px;hight:40px;" alt="südwest" /></a></div>
-          <div class="span4"><a class="arrow" id="S" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ S.x }}&amp;yCoord={{ S.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/S.png" style="border:none;width:40px;hight:40px;" alt="süd" /></a></div>
-          <div class="span4"><a class="arrow" id="SE" href="main.php?caveID={{ caveID }}&amp;modus={{ modus }}&amp;xCoord={{ SE.x }}&amp;yCoord={{ SE.y }}"><img src="{{ gfx }}/de_DE/t_uga/map/SO.png" style="border:none;width:40px;hight:40px;" alt="südost" /></a></div>
-        </div>
-
-        {% if minimap %} 
-          <div id="minimap-base-url" style="display: none;">{{ minimap.file_base|raw }}</div>
-          <div class="box-content success inner center" id="minimap-view">
-            <form action="main.php" method="post" id="minimapform">
-              <p>
-                <input id="minimap-image" name="minimap" type="image" style="width: {{ minimap.width }}px; height: {{ minimap.height }}px; border: thin groove #009900; cursor: crosshair;" src="{{ minimap.file|raw }}" />
-                <input type="hidden" name="scaling" value="{{ minimap.scaling }}" />
-                <input type="hidden" name="modus"  value="{{ minimap.modus }}" />
-                <input type="hidden" name="caveID" value="{{ caveID }}" />
-              </p>
-            </form>
-          </div>
-        {% endif %}
-      </div>
+<div class="ua-box ua-box-fix">
+  <div class="ua-box-header">Karte</div>
+  <div class="ua-box-content">
+    <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori"></div></div>
+    <div class="clearfix">
+      <div class="pull-left" style="width: 12px;"><div style="height: 545px; margin-top: 30px;"id="mapSliderVerti"></div></div>
+      <div class="pull-left" style="width: 584px;" id="map-view">{% include "mapRegion.tmpl" %}</div>
+      <div class="pull-right" style="width: 12px;"><div style="height: 545px; margin-top: 30px;" id="mapSliderVerti2"></div></div>
     </div>
-  </div>
-
-  <div style="margin-right: 150px;">
-    <div id="mapBox" class="ua-box">
-      <div class="ua-box-header">Karte</div>
-      <div class="ua-box-content" id="map-view">{% include "mapRegion.tmpl" %}</div>
-    </div>
-  </div>
-
-  <div style="clear: both"></div>
+    <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori2"></div></div>
+  </div> 
 </div>
 
 {% endblock %}

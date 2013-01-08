@@ -124,12 +124,12 @@
           <h5 class="text-center">Ziel:</h5>
           <div class="control-group">
             <div class="input-append">
-              <input class="input-move-xy change-movement" type="number" pattern="\d*" name="targetXCoord" id="targetXCoord" placeholder="X" maxlength="2">
-              <input class="input-move-xy change-movement" type="number" style="margin-left: 20px; "pattern="\d*" name="targetYCoord" id="targetYCoord" placeholder="Y" maxlength="2">
+              <input class="input-move-xy change-movement" type="number" pattern="\d*" name="targetXCoord" id="targetXCoord" placeholder="X" value="{{ target_x_coord }}" maxlength="2">
+              <input class="input-move-xy change-movement" type="number" style="margin-left: 20px; "pattern="\d*" name="targetYCoord" id="targetYCoord" placeholder="Y" value="{{ target_y_coord }}" maxlength="2">
             </div>
           </div>
           <div class="control-group">
-            <input class="autocomplete input-move-cave change-movement" type="text" name="targetCaveName" id="targetCaveName" placeholder="Höhlenname" size="10" maxlength="32" data-source="tribe" />
+            <input class="autocomplete input-move-cave change-movement" type="text" name="targetCaveName" id="targetCaveName" placeholder="Höhlenname" value="{{ target_cave_name }}" size="10" maxlength="32" data-source="caves" />
           </div>
           {% if bookmarks_cave %}
             <div class="control-group">
@@ -247,7 +247,7 @@
 <div class="ua-box">
   <div class="ua-box-header">ankommende Verbände</div>
   <div class="ua-box-content">
-    <table class="table table-striped table-condensed">
+    <table class="table table-striped table-condensed table-bordered">
       <thead>
         <tr>
           <th style="width: 105px;">Bewegungsart</th>

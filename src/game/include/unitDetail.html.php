@@ -19,7 +19,7 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
   // open template
   if ($method == 'ajax') {
     $shortVersion = true;
-    $template->setFile('unitDetailAjax.tmpl');
+    $template->setFile('unitDetail.tmpl');
   }
   else {
     $shortVersion = false;

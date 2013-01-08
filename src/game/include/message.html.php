@@ -167,6 +167,7 @@ function messages_getMessages($caveID, $deletebox, $box) {
       'message_class' => $messageClass
     );
   }
+
 /****************************************************************************************************
 *
 * Übergeben ans Template

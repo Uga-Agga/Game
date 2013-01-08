@@ -565,7 +565,7 @@ function hero_levelUp($hero) {
   if ($hero['exp'] < $hero['lvlUp']) {
     return -12;
   }
-  
+
   $maxHealPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE ."
@@ -592,7 +592,7 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
   
   // immolation allowed only in actual cave
   if (!$ownCaves[$caveID]['hero']) {
-    return array('messageID' => -24, 'value' =>0);
+    return array('messageID' => -24, 'value' => 0);
   }
   
   $points = 0;

@@ -11,7 +11,7 @@ DEBUG = 'on';
 !function ($) {
   $(function(){
     $(document).on('click', 'a', function(e){
-      event.preventDefault();
+      e.preventDefault();
 
       var url = $(this).attr('href');
 /* Direkte Urls. einfach folgen! */
@@ -47,7 +47,7 @@ DEBUG = 'on';
         }
 /* Einfach Ignorieren ;) */
       } else if ($(this).is('.nolink')) {
-        return;    
+        return;
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
         if ($(this).attr('data-reask') == 'true') {
@@ -81,24 +81,6 @@ DEBUG = 'on';
       }
     });
 
-    $(window).on('popstate', function(e) {
-      var currentURL = $.url().attr('query');
-
-      if(currentURL !== '') {
-        $('#loader').show(); $('#content').hide();
-        $.ajax({
-          url: 'main.php?'+currentURL+'&method=ajax',
-          cache: false,
-          dataType: 'html',
-          success: function(data) {
-            var useJson = true;
-            try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
-            if (useJson === true) {parseJson(json);} else {updateContent(data);}
-          }
-        });
-      }
-    });
-
     $(document).on('click', "button", function(e){
       ua_log('Clicked Button '+$(this).attr("id"));
       if ($(this).attr("id") === undefined) {return;}
@@ -107,9 +89,17 @@ DEBUG = 'on';
       var form = $(this).parents("form");
       var data = {button: $(this).attr("id")};
       if ($(this).is('.btn-map')) {
-        updateMapData(form);
-        console.log('Map map map map');
+        form.ajaxSubmit({data: data, success: function (data) {
+          $('#map-view').html(data);
+          if($('#messageAjax').html() !== null) {$('#messageDisplay').html($('#messageAjax').html());$('#messageDisplay').show();}
+          $('#caveName').val('');$('#xCoord').val('');$('#yCoord').val('');$("#targetCaveID option[value='-1']").attr('selected',true);
+          $('#mapSliderHori').slider('value', getMapSliderValue('xCoord'));
+          $('#mapSliderHori2').slider('value', getMapSliderValue('xCoord'));
+          $('#mapSliderVerti').slider('value', getMapSliderValue('yCoord'));
+          $('#mapSliderVerti2').slider('value', getMapSliderValue('yCoord'));
+        }});
       } else {
+        window.history.pushState(form.attr('action'), '', form.attr('action'));
         form.ajaxSubmit({data: data, success: updateContent});
       }
     });
@@ -128,10 +118,11 @@ DEBUG = 'on';
     $(document).on('click', '.box_toggle', function(e){$(this).css('display', 'none');$('#'+$(this).attr('id')+'_content').slideDown("slow");});
     $(document).on('click', '.show_hide', function(e){$('#'+$(this).attr('id')+'_content').toggle("fast");});
     $(document).on('hover', '.change_mouseover', function(){$(this).css('cursor', 'pointer');}).on("mouseout", ".change_mouseover", function() {$(this).css('cursor', 'default');});
+    $(document).on("click", "input.check-all", function(e){ $(this).parents('form:eq(0)').find(':checkbox').attr('checked', this.checked);});
 
     $(document).on({mouseover: function() {$('div#warpoints').show();},mouseleave: function() {$('div#warpoints').hide();}}, "div#warpoints_info");
     $(document).on('mousemove', 'div#warpoints_info', function(e) {$("div#warpoints").css('top', e.pageY + 10).css('left', e.pageX + 20);});
-    
+
     $(document).on('click', '.load_max', function(){if ($('#'+$(this).attr('id')+'_input').val() === ''){$('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);} else {$('#'+$(this).attr('id')+'_input').val('');}});
 
     $(document).on('click', '.clickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
@@ -193,20 +184,15 @@ DEBUG = 'on';
       // jqDock
       var dockOptions = {align: 'middle', size: 30, labels: 'bc'};$('#header-middle-menu-item').jqDock(dockOptions);
 
+      $(function(){$("#pageSilder").slider({range: "max",min: 940,max: 1440,value: getLastRange(true),slide: function( event, ui ) {$.cookie('page_width', ui.value);$('.container').css('width', ui.value+'px');$('.span-content-middle').css('width', ui.value-306+'px');}});});
+
       $('.tooltip-show').tooltip();
       $('.popover').popover();
       reParseContent();
     });
     
-    function appendModal(id, title, msg, href) {
-      var hide = (href === false) ? 'hide' : '';
-      removeModal(id);
-      $('body').append('<div id="'+id+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true"><div class="modal-header"><h3 id="messageModalLabel">'+title+'</h3></div><div class="modal-body"><p id="messageModalMsg">'+msg+'</p></div><div id="messageModalFooter" class="modal-footer '+hide+'"><button class="btn" data-dismiss="modal" aria-hidden="true">Schließen</button><a href="'+href+'" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-post="true">Bestätigen</a></div></div>');
-    }
-    
-    function removeModal(id) {
-      $('#'+id).remove();
-    }
+    function appendModal(id, title, msg, href) {var hide = (href === false) ? 'hide' : '';removeModal(id);$('body').append('<div id="'+id+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true"><div class="modal-header"><h3 id="messageModalLabel">'+title+'</h3></div><div class="modal-body"><p id="messageModalMsg">'+msg+'</p></div><div id="messageModalFooter" class="modal-footer '+hide+'"><button class="btn" data-dismiss="modal" aria-hidden="true">Schließen</button><a href="'+href+'" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-post="true">Bestätigen</a></div></div>');}
+    function removeModal(id) {$('#'+id).remove();}
     
     function updateContent(data) {
       ua_log('update content....');
@@ -218,13 +204,6 @@ DEBUG = 'on';
       $('.tooltip-show').tooltip();
       reParseContent();
       $('#loader').hide(); $('#content').show();
-    }
-    function updateMapData(form) {
-      var data = {button: $(this).attr("id")};
-      form.ajaxSubmit({data: data, success: function(e){
-          console.log(e);
-        }
-      });
     }
 
     function reParseContent() {
@@ -240,19 +219,41 @@ DEBUG = 'on';
       });
 
       var anchor = $.url().fsegment(1);
-      if (anchor.length > 1 && $('#'+anchor).length > 0) {
-        $('#mainTab a[href="#'+anchor+'"]').tab('show');}
+      if (anchor.length > 1 && $('#'+anchor).length > 0) {$('#mainTab a[href="#'+anchor+'"]').tab('show');}
+
+      $(function(){$('#mapSliderHori').slider({range: "min", value: getMapSliderValue('xCoord'), min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ){$('#mapSliderHori2').slider('value', ui.value);getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
+      $(function(){$('#mapSliderHori2').slider({range: "min", value: getMapSliderValue('xCoord'), min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ) {$('#mapSliderHori').slider('value', ui.value);getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
+      $(function(){$('#mapSliderVerti').slider({orientation: "vertical", range: "max", value: getMapSliderValue('yCoord'), min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti2').slider('value', ui.value);getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
+      $(function(){$('#mapSliderVerti2').slider({orientation: "vertical", range: "max", value: getMapSliderValue('yCoord'), min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti').slider('value', ui.value);getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
     }
-    
+    function getMapSliderValue(type) {if (type === 'xCoord') {return $('#map-queryX').html();} else if (type === 'yCoord') {return $('#map-queryY').html()*-1;}}
+
+    function getMap(xCoord, yCoord) {
+      ua_log('Load map Content: main.php?modus=map&method=ajax&xCoord='+xCoord+'&yCoord='+yCoord);
+
+      $.ajax({
+        url: 'main.php?modus=map_region&method=ajax&xCoord='+xCoord+'&yCoord='+yCoord,
+        cache: false,
+        dataType: 'html',
+        success: function(data) {
+          var useJson = true;
+          try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+          if (useJson === true) {parseJson(json);} else {
+            $('#map-view').html(data);
+            if($('#messageAjax').html() !== null) {$('#messageDisplay').html($('#messageAjax').html());$('#messageDisplay').show();}
+            $('#caveName').val('');$('#xCoord').val('');$('#yCoord').val('');$("#targetCaveID option[value='-1']").attr('selected',true);
+          }
+        }
+      });
+    }
+
     function parseJson(json) {
       if (json.mode === 'finish') {
         appendModal('modal-logout', json.title, json.msg, false);
         $('#modal-logout').modal({keyboard: false, backdrop: 'static'});
       }
     }
-    
-    $(function(){$("#slider").slider({range: "max",min: 940,max: 1440,value: getLastRange(true),slide: function( event, ui ) {$.cookie('page_width', ui.value);$('.container').css('width', ui.value+'px');$('.span-content-middle').css('width', ui.value-306+'px');}});});
-    
+
     function getLastRange(slider) {
       var pageWidth = $.cookie('page_width');
       if ($.isNumeric(pageWidth) && pageWidth > 940 && pageWidth < 1441) {

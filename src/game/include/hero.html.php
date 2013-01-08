@@ -240,7 +240,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           break;
         }
 
-        if ($value < 0) {
+        if ($value != 1 || $value != 5) {
           $messageID = -8; 
           break;
         }

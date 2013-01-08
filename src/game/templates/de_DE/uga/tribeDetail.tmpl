@@ -60,7 +60,7 @@
               <th>Punktzahl</th>
               <th style="width: 90px;">Knüppelpunkte</th>
               <th>&nbsp;</th>
-              <th class="text-center" style="width: 205px;">Höhlen</th>
+              <th class="text-center" style="width: 235px;">Höhlen</th>
             </tr>
           </thead>
           <tbody>
@@ -73,7 +73,7 @@
                 <td>{{ item.kp }}</td>
                 <td>{% for item2 in item.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ item2.tag }}"><img src="images/awards/{{ item2.tag }}.png" width="15" height="15" border="0" hspace="1" /></a>{% else %}&nbsp;{% endfor %}</td>
 
-                <td class="text-right" style="width: 215px; white-space: nowrap;">
+                <td class="text-right" style="width: 235px; white-space: nowrap;">
                   {% if item.caves %}
                     <div class="pull-left">[{{ item.caves|length }}]&nbsp;</div>
                     <div class="pull-right">
