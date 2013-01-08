@@ -1,6 +1,7 @@
 /*
  * cave.h - cave and player information
  * Copyright (c) 2003  OGP Team
+ * Copyright(c) 2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -55,6 +56,7 @@ struct Player
     int player_id;
     const char *name;
     const char *tribe;
+    int tribe_id;
     int max_caves;
     const char *locale;
     int locale_id;
@@ -65,7 +67,9 @@ struct Relation
 {
     int relation_id;
     const char *tribe;
+    int tribe_id_source;
     const char *tribe_target;
+    int tribe_id_target;
     int relationType;
     float defenderMultiplicator;
     float attackerMultiplicator;
@@ -134,8 +138,8 @@ extern void get_player_info (db_t *database, int player_id,
 /*
  * Retrieve relation table information for the given tribe and target tribe.
  */
-extern int get_relation_info (db_t *database, const char *tribe,
-			      const char *tribe_target,
+extern int get_relation_info (db_t *database, int tribe_id_source,
+			      int tribe_id_target,
 			      struct Relation *relation);
 
 /*
@@ -159,7 +163,11 @@ extern int cave_is_protected (const struct Cave *cave);
 extern void get_monster_info (db_t *database, int monster_id,
 			      struct Monster *monster);
 
-extern int get_tribe_at_war(db_t *database, const char *tribe);
+extern int get_tribe_at_war(db_t *database, int tribe_id);
 
+/*
+ * Get tribe tag by tribe ID
+ */
+extern const char* get_tribeTagByID(db_t *database, int tribeID);
 
 #endif /* _CAVE_H_ */

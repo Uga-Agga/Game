@@ -121,6 +121,7 @@ CREATE TABLE IF NOT EXISTS `Cave` (
   `regionID` int(11) NOT NULL DEFAULT '0',
   `hero` int(11) NOT NULL DEFAULT '0',
   `lastAttackingTribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `lastAttackingTribeID` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`caveID`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `Coords` (`xCoord`,`yCoord`),
@@ -211,6 +212,7 @@ CREATE TABLE IF NOT EXISTS `doYouKnow` (
 CREATE TABLE IF NOT EXISTS `Election` (
   `electionID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `voterID` int(11) unsigned NOT NULL DEFAULT '0',
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`electionID`),
@@ -688,6 +690,7 @@ CREATE TABLE IF NOT EXISTS `Monster` (
 --
 
 CREATE TABLE IF NOT EXISTS `OldTribes` (
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `tag` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `password` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `used` int(1) NOT NULL DEFAULT '0',
@@ -709,6 +712,7 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `name` varchar(90) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `fame` int(11) NOT NULL DEFAULT '0',
   `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `tribeBlockEnd` varchar(14) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `sex` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
   `origin` varchar(90) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -862,6 +866,7 @@ CREATE TABLE IF NOT EXISTS `RankingTribe` (
   `rankingID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `calculateTime` int(11) unsigned NOT NULL DEFAULT '0',
   `tribe` varchar(90) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `rank` int(11) unsigned NOT NULL DEFAULT '0',
   `members` int(11) unsigned NOT NULL DEFAULT '0',
   `fame` int(11) NOT NULL DEFAULT '0',
@@ -903,7 +908,9 @@ CREATE TABLE IF NOT EXISTS `Regions` (
 CREATE TABLE IF NOT EXISTS `Relation` (
   `relationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tribe` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID_source` int(11) unsigned NOT NULL DEFAULT '0',
   `tribe_target` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID_target` int(11) unsigned NOT NULL DEFAULT '0',
   `relationType` int(11) NOT NULL DEFAULT '0',
   `timestamp` char(14) COLLATE utf8_unicode_ci DEFAULT NULL,
   `duration` char(15) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -995,22 +1002,6 @@ CREATE TABLE IF NOT EXISTS `Suggestions` (
   PRIMARY KEY (`suggestionID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `Tournament`
---
-
-CREATE TABLE IF NOT EXISTS `Tournament` (
-  `turnierID` int(11) unsigned NOT NULL DEFAULT '0',
-  `turnierName` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
-  `art` int(11) unsigned NOT NULL DEFAULT '0',
-  `gebot` int(11) unsigned NOT NULL DEFAULT '0',
-  `starttime` varchar(14) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`turnierID`),
-  UNIQUE KEY `turnierName` (`turnierName`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1028,22 +1019,6 @@ CREATE TABLE IF NOT EXISTS `tradelock` (
   KEY `group` (`cat`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `Treasure`
---
-
-CREATE TABLE IF NOT EXISTS `Treasure` (
-  `schatz_id` mediumint(9) NOT NULL DEFAULT '0',
-  `name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `art` char(3) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `wert` int(11) unsigned DEFAULT NULL,
-  `truhenart` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `b` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `eigenschaften` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`schatz_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1052,6 +1027,7 @@ CREATE TABLE IF NOT EXISTS `Treasure` (
 --
 
 CREATE TABLE IF NOT EXISTS `Tribe` (
+  `tribeID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `name` varchar(90) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `description` mediumtext COLLATE utf8_unicode_ci NOT NULL,
@@ -1071,9 +1047,10 @@ CREATE TABLE IF NOT EXISTS `Tribe` (
   `warpoints_neg` int(11) NOT NULL DEFAULT '0',
   `war_won` int(11) unsigned NOT NULL DEFAULT '0',
   `war_lost` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`tag`),
+  PRIMARY KEY (`tribeID`),
   UNIQUE KEY `name` (`name`),
-  KEY `leaderID` (`leaderID`)
+  KEY `leaderID` (`leaderID`), 
+  KEY `tag` (`tag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
@@ -1086,6 +1063,7 @@ CREATE TABLE IF NOT EXISTS `Tribe` (
 CREATE TABLE IF NOT EXISTS `TribeHistory` (
   `tribeHistoryID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `ingameTime` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `message` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -1103,6 +1081,7 @@ CREATE TABLE IF NOT EXISTS `TribeHistory` (
 CREATE TABLE IF NOT EXISTS `TribeMessage` (
   `tribeMessageID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `messageClass` int(11) unsigned NOT NULL DEFAULT '0',
   `messageSubject` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `messageText` mediumtext COLLATE utf8_unicode_ci NOT NULL,
@@ -1125,6 +1104,7 @@ CREATE TABLE IF NOT EXISTS `TribeStorageDonations` (
   `donationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) NOT NULL,
   `tribe` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`donationID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

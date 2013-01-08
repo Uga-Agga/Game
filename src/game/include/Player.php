@@ -3,6 +3,7 @@
  * Player.php -
  * Copyright (c) 2004  Marcus Lunzenauer
  * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -40,6 +41,7 @@ class Player {
   var $template;
   var $timeCorrection;
   var $tribe;
+  var $tribeID; 
   var $tribeBlockEnd;
   var $auth;
   var $donateLocked;
@@ -69,6 +71,7 @@ class Player {
     $this->template           = $record['template'];
     $this->timeCorrection     = $record['timeCorrection'];
     $this->tribe              = $record['tribe'];
+    $this->tribeID            = $record['tribeID'];
     $this->tribeBlockEnd      = $record['tribeBlockEnd'];
     $this->auth               = unserialize($record['auth']);
     $this->donateLocked       = unserialize($record['donateLocked']);

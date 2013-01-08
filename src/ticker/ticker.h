@@ -1,6 +1,7 @@
 /*
  * ticker.h - general definitions for the ticker
  * Copyright (c) 2003  OGP Team
+ * Copyright (c) 2011-2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,6 +30,8 @@
 #define DB_TABLE_PLAYER  "Player"
 #define DB_TABLE_RELATION "Relation"
 #define DB_TABLE_HERO "Hero"
+#define DB_TABLE_TRIBE "Tribe"
+#define DB_TABLE_PLAYER "Player"
 
 #define ID_SCIENCE_UGA 22
 #define ID_SCIENCE_AGGA 23

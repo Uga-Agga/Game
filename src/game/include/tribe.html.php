@@ -3,6 +3,7 @@
  * tribe.html.php -
  * Copyright (c) 2004  OGP-Team
  * Copyright (c) 2011-2013  David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -656,7 +657,7 @@ function tribe_getContentNoTribe($caveID, &$details) {
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
       if (tribe_validatePassword(Request::getVar('inputPassword', '')) && tribe_validateTag(Request::getVar('inputTag', ''))) {
-        $messageID = tribe_processJoin($_SESSION['player']->playerID, Request::getVar('inputPassword', ''), Request::getVar('inputTag', ''));
+        $messageID = tribe_processJoin($_SESSION['player']->playerID, Request::getVar('inputTag', ''), Request::getVar('inputPassword', ''));
         if ($messageID == 1) {
           $auth = new auth;
           $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
