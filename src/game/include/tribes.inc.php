@@ -3,6 +3,7 @@
  * tribes.inc.php -
  * Copyright (c) 2004  OGP-Team
  * Copyright (c) 2012-2013 Georg Pitterle
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -380,8 +381,6 @@ function relation_processRelationUpdate($tag, $relationData, $FORCE = 0) {
     tribe_sendTribeMessage($tag, TRIBE_MESSAGE_RELATION, "Der Stamm {$targetTribeInfo['tag']} ändert seine Haltung",
       "Der Stamm {$targetTribeInfo['tag']} hat die Haltung ihnen gegenüber automatisch auf $relationName geändert.");
   }
-
-  tribe_generateMapStylesheet();
 
   return 7;
 }
@@ -1929,65 +1928,6 @@ function tribe_isLeader($playerID, $tribe) {
   }
 
   return 1;
-}
-
-function tribe_generateMapStylesheet() {
-  global $db;
-
-  if ($_SESSION['player']->tribe == '')
-    return;
-
-  $outfilename = "./images/temp/tribe_".$_SESSION['player']->tribe.".css";
-  $outfile     = @fopen($outfilename, "wb");
-
-  if (!$outfile) return;
-
-  $sql = $db->prepare("SELECT *
-                       FROM ". RELATION_TABLE . "
-                       WHERE tribe = :tribe
-                         OR tribe_target = :tribe");
-  $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_STR);
-
-  fwrite($outfile, "a.t_".$_SESSION['player']->tribe." {\n");
-  fwrite($outfile, "  width: 100%;\n");
-  fwrite($outfile, "  border-top: 2px solid darkgreen;\n");
-  fwrite($outfile, "}\n\n");
-
-  if ($sql->execute()) {
-    while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      fwrite($outfile, "a.t_".($row['tribe'] == $_SESSION['player']->tribe ? $row['tribe_target'] : $row['tribe'])." {\n");
-      fwrite($outfile, "  width: 100%;\n");
-      fwrite($outfile, "  border-top: ");
-      switch ($row['relationType']) {
-        case 0:  // keine
-          fwrite($outfile, "0px solid transparent");
-          break;
-        case 1:  // Ulti
-          fwrite($outfile, "2px dotted red");
-          break;
-        case 2:  // Krieg
-          fwrite($outfile, "2px solid red");
-          break;
-        case 3:  // Kapitulation
-          fwrite($outfile, "0px solid transparent");
-          break;
-        case 4:  // Besatzung
-          fwrite($outfile, "0px solid transparent");
-          break;
-        case 5:  // Waffenstillstand
-          fwrite($outfile, "2px dashed blue");
-          break;
-        case 6:  // NAP
-          fwrite($outfile, "2px solid blue");
-          break;
-        case 7:  // Bündnis
-          fwrite($outfile, "2px solid green");
-          break;
-      }
-      fwrite($outfile, "\n}\n\n");
-    }
-  }
-  fclose($outfile);
 }
 
 function relation_deleteRelations($tag) {

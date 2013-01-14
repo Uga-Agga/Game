@@ -3,7 +3,7 @@
  * map.html.php - 
  * Copyright (c) 2004  OGP Team
  * Copyright (c) 2011  Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -198,7 +198,6 @@ function getCaveMapContent($caveID, $caves) {
   )));
 }
 
-
 /** calculates the displayed data for a specific map region. */
 function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   $caveData = $caves[$caveID];
@@ -217,6 +216,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 
   // get the map details
   $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);
+  $relations = relation_getRelationsForTribe($_SESSION['player']->tribe);
 
   $map = array();
   foreach ($caveDetails AS $cave) {
@@ -225,7 +225,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
       'terrain'   => 'terrain'.$cave['terrain'],
       'imgMap'    => $GLOBALS['terrainList'][$cave['terrain']]['imgMap'],
       'barren'    => $GLOBALS['terrainList'][$cave['terrain']]['barren'],
-      'alt'       => "{$cave['cavename']} - ({$cave['xCoord']}|{$cave['yCoord']}) - {$cave['region']}",
+      'title'     => 'Dies ist der Landstrich "' . $cave['cavename'] . '" (' . $cave['xCoord'] . '|' . $cave['yCoord'] . ') - ' . $cave['region'],
       'link'      => "modus=" . MAP_DETAIL . "&amp;targetCaveID={$cave['caveID']}",
     );
 
@@ -276,8 +276,19 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
         $text = $cave['name'];
 
       // übernehmbare Höhlen können gekennzeichnet werden
-      if ($cave['secureCave'] != 1)
+      if ($cave['secureCave'] != 1) {
         $cell['unsecure'] = array('dummy' => '');
+      }
+
+      if ($_SESSION['player']->tribeID == $cave['tribeID']) {
+        $cell['css_self'] = 't_self';
+      }
+      if (isset($relations['own'][strtoupper($cave['tribe'])])) {
+        $cell['css_own'] = 't_own_relation_' . $relations['own'][strtoupper($cave['tribe'])]['relationType'];
+      }
+      if (isset($relations['other'][strtoupper($cave['tribe'])])) {
+        $cell['css_other'] = 't_other_relation_' . $relations['other'][strtoupper($cave['tribe'])]['relationType'];
+      }
     }
 
     $cell['file'] = $file;

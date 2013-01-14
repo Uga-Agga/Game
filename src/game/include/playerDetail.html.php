@@ -88,7 +88,6 @@ function player_getContent($caveID, $playerID) {
   }
 
   $template->addVars(array(
-    'player_details' => $playerDetails,
-    'tribe_rank'     => rankingTribe_checkOffset($playerTribe),
+    'player_details' => $playerDetails
   ));
 }

@@ -42,7 +42,7 @@
                 <div class="row"><div class="span2 span-profile-row1">Knüppelpunkte gewonnen:</div><div class="span4 span-profile-row2">{{ player_details.warpoints_pos }}</div></div>
                 <div class="row"><div class="span2 span-profile-row1">Knüppelpunkte verloren:</div><div class="span4 span-profile-row2">{{ player_details.warpoints_neg }}</div></div>
                 <div class="row"><div class="span2 span-profile-row1">geknüppelte Gegner:</div><div class="span4 span-profile-row2">{{ player_details.body_count }}</div></div>
-                <div class="row"><div class="span2 span-profile-row1"><a href="main.php?modus={{ ranking_player_link }}&amp;offset={{ player_details.rank }}">Aktuelles Ranking:</a></div><div class="span4 span-profile-row2">{% if player_details.rank %}{{ player_details.rank }}{% else %}&nbsp;{% endif %}</div></div>
+                <div class="row"><div class="span2 span-profile-row1"><a href="main.php?modus={{ ranking_player_link }}&amp;search={{ player_details.name|url_encode() }}">Aktuelles Ranking:</a></div><div class="span4 span-profile-row2">{% if player_details.rank %}{{ player_details.rank }}{% else %}&nbsp;{% endif %}</div></div>
                 <p class="text-center"><a href="main.php?modus={{ contact_bookmarks_link }}&amp;task=Add&amp;contact={{ player_details.name }}">Zum Adressbuch hinzufügen</a></p>
                 <p class="text-center"><a href="main.php?modus={{ messages_new_link }}&amp;recipient={{ player_details.mail_receiver }}">Nachricht senden</a></p>
               </div>

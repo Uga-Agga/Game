@@ -29,7 +29,8 @@ src/utilities/db_backup.cron
 src/utilities/terrain
 src/utilities/terrain.o
 src/utilities/util.inc.php
-src/www/simulator/simul
+src/www/images/terrain_map.png
+src/www/images/temp/*.png
 src/www/config.inc.php
 config.log
 config.status

@@ -13,6 +13,8 @@ DEBUG = 'on';
     $(document).on('click', 'a', function(e){
       e.preventDefault();
 
+      $('#modal').modal('hide')
+
       var url = $(this).attr('href');
 /* Direkte Urls. einfach folgen! */
       if ($(this).is('.absolute')) {
@@ -34,13 +36,25 @@ DEBUG = 'on';
 /* Öffnen des Exports Fenster */
       } else if ($(this).is('.export-link')) {
         ua_log('Open export Window: '+url);
-        $('#export-dialog').dialog({autoOpen:false,height: 600,width: 800,modal: true,resizable: true,buttons: {'Schließen': function(){$( this ).dialog('close');}}});
-        $('#export-dialog').dialog('open').html('Exportiere Daten...').load(url+'&method=ajax');
+        $('#modalLabel').html('Export');
+        $('#modalLabelClose').show();
+        $('#modalFooter').hide();
+        $('#modal').modal({keyboard: true, backdrop: true});
+        $('#modal').children('div.modal-body').html('Exportiere Daten...').load(url+'&method=ajax');
+/* Öffnen des Detail Fenster */
+      } else if ($(this).is('.popup-detail')) {
+        ua_log('Open export Window: '+url);
+        if ($(this).attr('data-title')) {$('#modalLabel').html($(this).attr('data-title'));} else {$('#modalLabel').html('Details');}
+        $('#modalLabelClose').show();
+        $('#modalFooter').hide();
+        $('#modal').modal({keyboard: true, backdrop: true});
+        $('#modal').children('div.modal-body').html('Exportiere Daten...').load(url+'&method=ajax');
 /* Tab Links */
       } else if ($(this).is('.tab-switch') || $(this).is('.dropdown-toggle')) {
         if (url.length > 1) {
           ua_log('switch tab: '+url);
           $('#status-msg').hide();
+          $('#mainTab a[href="'+url+'"]').tab('show');
           if(url!=window.location) {
             window.history.pushState($(this).attr('href'), '', $(this).attr('href'));
           }
@@ -51,8 +65,12 @@ DEBUG = 'on';
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
         if ($(this).attr('data-reask') == 'true') {
-          appendModal('modal-reask', $(this).attr('data-reask-header'), $(this).attr('data-reask-msg'), url);
-          $('#modal-reask').modal({keyboard: true, backdrop: false});
+          $('#modalLabel').html($(this).attr('data-reask-header'));
+          $('#modalLabelClose').show();
+          $('#modalFooterHref').attr('href', url);
+          $('#modalFooter').show();
+          $('#modal').modal({keyboard: true, backdrop: false});
+          $('#modal').children('div.modal-body').html($(this).attr('data-reask-msg'));
           return;
         }
 
@@ -190,20 +208,18 @@ DEBUG = 'on';
       $('.popover').popover();
       reParseContent();
     });
-    
-    function appendModal(id, title, msg, href) {var hide = (href === false) ? 'hide' : '';removeModal(id);$('body').append('<div id="'+id+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true"><div class="modal-header"><h3 id="messageModalLabel">'+title+'</h3></div><div class="modal-body"><p id="messageModalMsg">'+msg+'</p></div><div id="messageModalFooter" class="modal-footer '+hide+'"><button class="btn" data-dismiss="modal" aria-hidden="true">Schließen</button><a href="'+href+'" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-post="true">Bestätigen</a></div></div>');}
-    function removeModal(id) {$('#'+id).remove();}
-    
+
     function updateContent(data) {
       ua_log('update content....');
       $('#content').html($(data).find('#content').html());
       $('#farmpoints').html($(data).find('#farmpoints').html());
       $('#warpoints_info').html($(data).find('#warpoints_info').html());
+      $('#region-info').html($(data).find('#region-info').html());
       $('#message_icon').attr('src', $(data).find('img#message_icon').attr('src'));
       document.title = $(data).filter('title').text();
       $('.tooltip-show').tooltip();
       reParseContent();
-      $('#loader').hide(); $('#content').show();
+      $('#loader').hide();$('#content').show();
     }
 
     function reParseContent() {
@@ -248,10 +264,7 @@ DEBUG = 'on';
     }
 
     function parseJson(json) {
-      if (json.mode === 'finish') {
-        appendModal('modal-logout', json.title, json.msg, false);
-        $('#modal-logout').modal({keyboard: false, backdrop: 'static'});
-      }
+      if (json.mode === 'finish') {$('#loader').hide();$('#modalLabel').html(json.title);$('#modalLabelClose').hide();$('#modalFooter').hide();$('#modal').modal({keyboard: false, backdrop: 'static'});$('#modalBody').css('text-align', 'center');$('#modal').children('div.modal-body').html(json.msg);}
     }
 
     function getLastRange(slider) {

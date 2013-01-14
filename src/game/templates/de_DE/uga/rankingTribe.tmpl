@@ -2,7 +2,7 @@
 /* rankingTribe.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,47 +13,6 @@
 {% extends "base.tmpl" %}
 {% block title %}Stammesranking{% endblock %}
 {% block content %}
-
-<script language="JavaScript" type="text/JavaScript">
-<!--
-function swapImgRestore() {
-  var i, x, a = document.sr;
-  for(i = 0; a && i < a.length && (x = a[i]) && x.oSrc; i++)
-    x.src = x.oSrc;
-}
-
-function findObj(n, d) {
-  var p,i,x;
-  if(!d)
-    d = document;
-  if((p = n.indexOf("?")) > 0 && parent.frames.length){
-    d = parent.frames[n.substring(p + 1)].document;
-    n = n.substring(0, p);
-  }
-  if(!(x = d[n]) && d.all)
-    x = d.all[n];
-  for(i = 0; !x && i < d.forms.length; i++)
-    x = d.forms[i][n];
-  for(i = 0; !x && d.layers && i < d.layers.length; i++)
-    x = findObj(n, d.layers[i].document);
-  if(!x && d.getElementById)
-    x = d.getElementById(n);
-  return x;
-}
-
-function swapImage(){
-  var i, j = 0, x, a = swapImage.arguments;
-  document.sr = new Array;
-  for(i = 0; i < (a.length - 2); i += 3)
-    if((x = findObj(a[i]))!=null){
-      document.sr[j++] = x;
-      if(!x.oSrc)
-        x.oSrc = x.src;
-      x.src = a[i + 2];
-    }
-}
-//-->
-</script>
 
 <a href="main.php?modus={{ ranking_player_link }}&amp;caveID={{ cave_id }}">Zum Spielerranking</a><hr>
 
@@ -95,14 +54,48 @@ function swapImage(){
   </div>
 </div>
 
-<div class="text-center">
-  <a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ offset_up }}" onmouseover="swapImage('up','','{{ gfx }}/de_DE/t_uga/ranking/up.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/up.png" alt="up" width="20" height="20" class="noborder" id="up" title="up" /></a>&nbsp;
-  <a href="main.php?modus={{ ranking_tribe_link }}&amp;offset={{ offset_down }}" onmouseover="swapImage('down','','{{ gfx }}/de_DE/t_uga/ranking/down.png',1)" onmouseout="swapImgRestore()"><img src="{{ gfx }}/de_DE/t_uga/ranking/down.png" alt="down" width="20" height="20" class="noborder" id="down" title="down" /></a>&nbsp;
+{% if max_pages > 1 %}
+{% set extremePagesLimit = 2 %}
+{% set nearbyPagesLimit = 2 %}
+<div class="pagination pagination-small pagination-centered">
+  <ul>
+    <li{% if page <= 1 %} class="disabled"{% endif %}><a{% if page <= 1 %} class="nolink"{% endif %} href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ page-1 }}">«</a></li>
+
+    {% for i in range(1, extremePagesLimit) if ( i < page-nearbyPagesLimit ) %}
+      <li><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ i }}">{{ i }}</a></li>
+    {% endfor %}
+
+    {% if extremePagesLimit + 1 < page - nearbyPagesLimit %}
+      <li class="disabled"><a class="nolink" href="#">...</a></li>
+    {% endif %}
+
+    {% for i in range(page-nearbyPagesLimit, page-1) if ( i > 0 ) %}
+      <li><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ i }}">{{ i }}</a></li>
+    {% endfor %}
+    <li class="active"><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ page }}">{{ page }}</a></li>
+
+    {% if page < max_pages %}
+      {% for i in range(page+1, max_pages) if ( loop.index <= nearbyPagesLimit and i <= max_pages ) %}
+        <li><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ i }}">{{ i }}</a></li>
+      {% endfor %}
+      
+      {% if  (max_pages - extremePagesLimit) > (page + nearbyPagesLimit ) %}
+        <li class="disabled"><a class="nolink" href="#">...</a></li>
+      {% endif %}
+      
+      {% for i in range(max_pages-extremePagesLimit+1, max_pages) if ( i > page+nearbyPagesLimit ) %}
+        <li><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ i }}">{{ i }}</a></li>
+      {% endfor %}
+    {% endif %}
+
+    <li{% if page >= max_pages %} class="disabled"{% endif %}><a{% if page >= max_pages %} class="nolink"{% endif %} href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ page+1 }}">»</a></li>
+  </ul>
 </div>
+{% endif %}
 
 <form id="formSearchTribe" class="form-horizontal" action="main.php?modus={{ ranking_tribe_link }}" method="post">
   <div class="input-append">
-    <input class="autocomplete" name="offset" id="offset" type="text" class="input-medium search-query" data-source="tribe">
+    <input class="autocomplete" name="search" id="search" type="text" class="input-medium search-query" data-source="tribe">
     <button class="btn" type="button" id="formSearchTribeSubmit" name="formSearchTribeSubmit">Suchen</button>
   </div>
 </form>

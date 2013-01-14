@@ -70,8 +70,6 @@ function tribe_getContent($caveID, $tag) {
     }
   }
 
-  $row['rank_offset'] = rankingTribe_checkOffset($tag);
-
   // parse tribe message
   $parser = new parser;
   $row['description'] = $parser->p($row['description']);

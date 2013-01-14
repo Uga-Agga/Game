@@ -2,7 +2,7 @@
 /* mapDetailAjax.tmpl -
  * Copyright (c) 2003  OGP Team  (for original version mapDetail.tmpl)
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -11,36 +11,21 @@
  */
 #}
 
-<div class="ua-box">
-  <div class="ua-box-header">Dies ist der Landstrich "{{ cave_details.name }}" ({{ cave_details.xCoord }}|{{ cave_details.yCoord }}) - {{ cave_details.terrain_name }}</div>
-  <div class="ua-box-content text-center">
-    <ul class="space">
-      <li><img src="{{ gfx }}/de_DE/t_uga/map/{{ cave_details.terrain_img }}" alt="{{ cave_details.terrain_name }}" title="{{ cave_details.terrain_name }}" /></li>
-      <li><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}&amp;targetCaveName={{ cave_details.name }}">dorthin bewegen!</a></li>
-      <li><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ cave_details.xCoord }}&amp;yCoord={{ cave_details.yCoord }}">zur Höhlenliste hinzufügen!</a></li>
-      <li>&nbsp;</li>
-      {% if cave_details.playerID %}
-        <li>Diese Höhle gehört dem Häuptling <a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ player_details.playerID }}"><span class="bold">{{ player_details.name }}</span></a>{% if player_details.tribe %} vom Stamme <a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe|url_encode }}"><span class="bold">{{ player_details.tribe }}</span></a>{% endif %}.</li>
-        {% if cave_details.protected %}
-          <li>
-            <em>Anfängerschutz aktiv!</em>
-          </li>
-        {% endif %}
-        <li><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name|url_encode }}">Spieler zum Adressbuch hinzufügen</a></li>
-        {% if cave_details.artefact %}<li>&nbsp;</li><li><span class="bold">In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</span></li>{% endif %}
-      {% else %}
-        {% if takeoverable %}<li>Dieser Landstrich ist bewohnbar und kann <a class="bold" href="main.php?modus={{ takeover_link }}&amp;caveID={{ caveID }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}">missioniert</a> werden!</li><li>&nbsp;</li>{% endif %}
-      {% endif %}
-      <li></li>
-    </ul>
-  </div>
-</div>
+<div class="text-center" style="width: 100%">
+  <img src="{{ gfx }}/de_DE/t_uga/map/{{ cave_details.terrain_img }}" alt="{{ cave_details.terrain_name }}" title="{{ cave_details.terrain_name }}" />
+  <p style="margin: 0;"><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}&amp;targetCaveName={{ cave_details.name }}">dorthin bewegen!</a></p>
+  <p><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ cave_details.xCoord }}&amp;yCoord={{ cave_details.yCoord }}">zur Höhlenliste hinzufügen!</a></p>
+  {% if cave_details.playerID %}
+    <p style="margin: 0;">Diese Höhle gehört dem Häuptling <a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ player_details.playerID }}"><span class="bold">{{ player_details.name }}</span></a>{% if player_details.tribe %} vom Stamme <a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe|url_encode }}"><span class="bold">{{ player_details.tribe }}</span></a>{% endif %}.</p>
+    {% if cave_details.protected %}<p style="margin: 0;"><em>Anfängerschutz aktiv!</em></p>{% endif %}
+    <p style="margin: 0;"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name|url_encode }}">Spieler zum Adressbuch hinzufügen</a></p>
+    {% if cave_details.artefact %}<p style="margin: 0;"><strong>In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</strong></p>{% endif %}
+  {% else %}
+    {% if takeoverable %}<p style="margin: 0;">Dieser Landstrich ist bewohnbar und kann <a class="bold" href="main.php?modus={{ takeover_link }}&amp;caveID={{ caveID }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}">missioniert</a> werden!</p>{% endif %}
+  {% endif %}
 
-{% if cave_details.playerID %}
-<div class="ua-box">
-  <div class="ua-box-header">Alle Höhlen dieses Häuptlings</div>
-  <div class="ua-box-content center">
-    <table class="borderable space">
+  {% if cave_details.playerID %}
+    <table class="table table-striped table-condensed" style="margin-top: 10px;">
       <thead>
         <tr>
           <th>Höhle</th>
@@ -53,9 +38,8 @@
       </thead>
       <tbody>
       {% for item in player_caves %}
-      {% set bgID = (bgID+1)%2 %}
-        <tr class="bg{{ bgID }}">
-          <td class="ua-td-name left">{{ item.caveName }} ({{ item.xCoord }} | {{ item.yCoord }}){% if item.secureCave == false %}<br /><span class="text-small">(Übernehmbar)</span>{% endif %}</td>
+        <tr>
+          <td class="ua-td-name left"><p class="nospace">{{ item.caveName }} ({{ item.xCoord }} | {{ item.yCoord }}){% if item.secureCave == false %}</p><p class="nospace"><small>(Übernehmbar)</small></p>{% endif %}</td>
           <td>{{ item.terrain }}</td>
           <td>{{ item.caveSize }}</td>
           <td>
@@ -68,7 +52,5 @@
       {% endfor %}
       </tbody>
     </table>
-  </div>
+  {% endif %}
 </div>
-{% endif %}
-

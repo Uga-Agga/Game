@@ -2,7 +2,7 @@
 /*
  * ranking.inc.php -
  * Copyright (c) 2004  OGP-Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,111 +13,77 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function ranking_checkOffset($playerID, $offset) {
+
+function rankingPlayer_checkOffsetBySearch($search, $numRows) {
   global $db;
 
-  // get numRows of Ranking
-  $sql = $db->prepare("SELECT COUNT(*) AS num_rows FROM " . RANKING_TABLE);
+  // Es gibt weniger Spieler als maximal angezeigt werden können? Ab Spieler 1 auflisten
+  if ($numRows <= RANKING_ROWS) {
+    return 0;
+  }
+
+  $sql = $db->prepare("SELECT rank
+                       FROM ". RANKING_TABLE ." 
+                       WHERE name LIKE :search");
+  $sql->bindValue('search', $search, PDO::PARAM_STR);
   if (!$sql->execute()) return -1;
 
   $row = $sql->fetch(PDO::FETCH_ASSOC);
-  $num_rows = $row['num_rows'];
   $sql->closeCursor();
 
+  if (!$row) {
+    return -1;
+  } else {
+    return (abs(ceil($row['rank']/RANKING_ROWS))-1) * RANKING_ROWS;
+  }
+}
+
+function rankingPlayer_checkOffsetByPage($playerID, $page, $numRows) {
+  global $db;
+
   // Es gibt weniger Spieler als maximal angezeigt werden können? Ab Spieler 1 auflisten
-  if ($num_rows <= RANKING_ROWS) {
-    return 1;
+  if ($numRows <= RANKING_ROWS) {
+    return 0;
   }
 
-  // eingegbener offset ist eine zahl?
-  if (strval(intval($offset)) == $offset) {
-    return ($offset < $num_rows) ? $offset : $num_rows;
-  }
-
-  if (empty($offset)) {
-    // $offset is not set yet, show the actual player in the middle of the list
+  if ($page == 0) {
+    // $page is not set yet, show the actual player in the middle of the list
     $sql = $db->prepare("SELECT rank
                          FROM ". RANKING_TABLE." 
                          WHERE playerID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  } else {
-    // $offset is a player name
-    $sql = $db->prepare("SELECT rank
-                         FROM ". RANKING_TABLE ." 
-                         WHERE name LIKE :offset");
-    $sql->bindValue('offset', $offset, PDO::PARAM_STR);
-  }
+    if (!$sql->execute()) return 0;
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
 
-  if (!$sql->execute()) return -1;
-  $row = $sql->fetch(PDO::FETCH_ASSOC);
-  $sql->closeCursor();
-
-  if (!$row) {
-    return 1;
+    if (!$row) {
+      return 0;
+    } else {
+      return abs(floor($row['rank']/RANKING_ROWS)) * RANKING_ROWS;
+    }
   } else {
-    return (($row['rank'] - floor(RANKING_ROWS/2)) > 0) ? $row['rank'] - floor(RANKING_ROWS/2) : 1;
+    $maxPages = ceil($numRows/RANKING_ROWS);
+    if ($page > $maxPages) {
+      return (($maxPages-1) * RANKING_ROWS);
+    } else {
+      return (($page-1) * RANKING_ROWS);
+    }
   }
 }
 
-function rankingTribe_checkOffset($offset) {
+function rankingPlayer_getRowsByOffset($offset) {
   global $db;
 
-  // get numRows of Ranking
-  $sql = $db->prepare("SELECT COUNT(*) AS num_rows FROM " . RANKING_TRIBE_TABLE);
-  if (!$sql->execute()) return -1;
-
-  $row = $sql->fetch(PDO::FETCH_ASSOC);
-  $num_rows = $row['num_rows'];
-  $sql->closeCursor();
-
-  // Es gibt weniger Stämme als maximal angezeigt werden können? Ab Spieler 1 auflisten
-  if ($num_rows <= RANKING_ROWS) {
-    return 1;
+  if ($offset < 0) {
+    return array();
   }
 
-  // eingegbener offset ist eine zahl?
-  if (strval(intval($offset)) == $offset) {
-    return ($offset < $num_rows) ? $offset : $num_rows;
-  }
-
-  if (empty($offset) && $_SESSION['player']->tribe) {
-    // $offset is not set yet, show the actual tribe in the middle of the list
-    $sql = $db->prepare("SELECT rank
-                         FROM ". RANKING_TRIBE_TABLE." 
-                         WHERE tribe = :tribe");
-    $sql->bindValue('tribe', $_SESSION['player']->tribe, PDO::PARAM_INT);
-  } else if ($_SESSION['player']->tribe) {
-    // $offset is a player name
-    $sql = $db->prepare("SELECT rank
-                         FROM ". RANKING_TRIBE_TABLE ." 
-                         WHERE tribe LIKE :offset");
-    $sql->bindValue('offset', $offset, PDO::PARAM_STR);
-  } else {
-    return 1;
-  }
-
-  if (!$sql->execute()) return -1;
-  $row = $sql->fetch(PDO::FETCH_ASSOC);
-  $sql->closeCursor();
-
-  if (!$row) {
-    return 1;
-  } else {
-    return (($row['rank'] - floor(RANKING_ROWS/2)) > 0) ? $row['rank'] - floor(RANKING_ROWS/2) : 1;
-  }
-}
-
-
-function ranking_getRowsByOffset($caveID, $offset) {
-  global $db;
-
-  $offset = ($offset > 0) ? $offset -1 : 0;
   $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, p.tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
                        FROM ". RANKING_TABLE ." r
                          LEFT JOIN ". PLAYER_TABLE ." p ON r.playerID = p.playerID
                          LEFT JOIN ". TRIBE_TABLE ." t ON p.tribe = t.tag
                        ORDER BY rank ASC LIMIT :offset, :rankingRows");
-  $sql->bindValue('offset', ($offset), PDO::PARAM_INT);
+  $sql->bindValue('offset', $offset, PDO::PARAM_INT);
   $sql->bindValue('rankingRows', RANKING_ROWS, PDO::PARAM_INT);
 
   if (!$sql->execute()) {
@@ -138,8 +104,81 @@ function ranking_getRowsByOffset($caveID, $offset) {
   return $result;
 }
 
-function rankingTribe_getRowsByOffset($caveID, $offset) {
+function rankingPlayer_getMaxRows() {
+  global $db;
 
+  // get numRows of Ranking
+  $sql = $db->prepare("SELECT COUNT(*) AS num_rows FROM " . RANKING_TABLE);
+  if (!$sql->execute()) return 0;
+
+  $ret = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+  
+  return $ret['num_rows'];
+}
+
+function rankingTribe_checkOffsetBySearch($search, $numRows) {
+  global $db;
+
+  // Es gibt weniger ´Stämme als maximal angezeigt werden können? Ab Stamm 1 auflisten
+  if ($numRows <= RANKING_ROWS) {
+    return 0;
+  }
+
+  $sql = $db->prepare("SELECT rank
+                       FROM ". RANKING_TRIBE_TABLE ." 
+                       WHERE tribe LIKE :search");
+  $sql->bindValue('search', $search, PDO::PARAM_STR);
+  if (!$sql->execute()) return -1;
+
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+
+  if (!$row) {
+    return -1;
+  } else {
+    return (abs(ceil($row['rank']/RANKING_ROWS))-1) * RANKING_ROWS;
+  }
+}
+
+function rankingTribe_checkOffsetByPage($tribeID, $page, $numRows) {
+  global $db;
+
+  // Es gibt weniger Spieler als maximal angezeigt werden können? Ab Spieler 1 auflisten
+  if ($numRows <= RANKING_ROWS) {
+    return 0;
+  }
+
+  if ($page == 0) {
+    if ($tribeID == 0) {
+      return 0;
+    }
+
+    // $page is not set yet, show the actual player in the middle of the list
+    $sql = $db->prepare("SELECT rank
+                         FROM ". RANKING_TRIBE_TABLE." 
+                         WHERE tribeID = :tribeID");
+    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
+    if (!$sql->execute()) return 0;
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    if (!$row) {
+      return -1;
+    } else {
+      return abs(floor($row['rank']/RANKING_ROWS)) * RANKING_ROWS;
+    }
+  } else {
+    $maxPages = ceil($numRows/RANKING_ROWS);
+    if ($page > $maxPages) {
+      return (($maxPages-1) * RANKING_ROWS);
+    } else {
+      return (($page-1) * RANKING_ROWS);
+    }
+  }
+}
+
+function rankingTribe_getRowsByOffset($offset) {
   global $db;
 
   $sql = $db->prepare("SELECT r.*, r.playerAverage AS average, t.awards, t.war_won, t.war_lost
@@ -147,7 +186,7 @@ function rankingTribe_getRowsByOffset($caveID, $offset) {
                          LEFT JOIN ". TRIBE_TABLE ." t ON r.tribe = t.tag
                        ORDER BY r.rank ASC
                        LIMIT :offset, :rankingRows");
-  $sql->bindValue('offset', $offset - 1, PDO::PARAM_INT);
+  $sql->bindValue('offset', $offset, PDO::PARAM_INT);
   $sql->bindValue('rankingRows', RANKING_ROWS, PDO::PARAM_INT);
 
   if (!$sql->execute()) {
@@ -166,6 +205,19 @@ function rankingTribe_getRowsByOffset($caveID, $offset) {
   }
 
   return $result;
+}
+
+function rankingTribe_getMaxRows() {
+  global $db;
+
+  // get numRows of Ranking
+  $sql = $db->prepare("SELECT COUNT(*) AS num_rows FROM " . RANKING_TRIBE_TABLE);
+  if (!$sql->execute()) return 0;
+
+  $ret = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+  
+  return $ret['num_rows'];
 }
 
 function ranking_getReligiousDistribution() {

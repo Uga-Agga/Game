@@ -23,7 +23,7 @@
     <!-- Bootstrap -->
     <link href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="css/styles.css" rel="stylesheet" media="screen">
+    <link href="{{ gfx }}/de_DE/t_uga/css/styles.css" rel="stylesheet" media="screen">
 
     <!-- javascript -->
     <script type="text/javascript" src="js/jquery.min.js"></script>
@@ -60,7 +60,7 @@
           HOST_VJUD      = "vjud.{{ jabber.server }}";
           HOST_ANONYMOUS = "anonymous.{{ jabber.server }}";
           HOST_BOSH      = "http://{{ jabber.server }}:5280/http-bind/";
-  
+
           JAPPIX_STATIC = ''
 
           // Define groupchats here
@@ -93,150 +93,17 @@
   {% endblock %}
 
   <style type="text/css">
-    /* override bootstrap css */
-    body { padding-bottom: 40px; font-size: 12px; } /*width: 980px; margin: 0 auto;*/
-    a { color: #000000; }
-    dl { margin: 0; }
-    form { margin: 0 }
-    hr { margin: 10px 0; }
+    .header-middle { background-image: url("{{ gfx }}/de_DE/t_uga/menu/header/background.png"); }
 
-    select, textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input { font-size: 12px; padding: 2px 6px; }
-    .input-append input, .input-prepend input, .input-append select, .input-prepend select, .input-append .uneditable-input, .input-prepend .uneditable-input, .input-append .dropdown-menu,.input-prepend .dropdown-menu { font-size: 12px; }
-    .input-append, .input-prepend { margin-bottom: 0px; }
-    label, input, button, select, textarea { font-size: 12px; }
-    select, input[type="file"] { height: 25px; *margin-top: 4px; line-height: 25px; }
+    .span-header-left { background-image: url("{{ gfx }}/de_DE/t_uga/header_left.png"); }
+    .span-header-right {  background-image: url("{{ gfx }}/de_DE/t_uga/header_right.png"); }
+    
+    .ua-box { background-image: url("{{ gfx }}/de_DE/t_uga/grass.png"); }
 
-    .btn { line-height: 15px; }
-
-    .table { margin-bottom: 0; }
-    .table-condensed th, .table-condensed td { padding: 4px 2px; }
-    .nav { margin-bottom: 0; }
-    .nav-tabs > .active > a, .nav-tabs > .active > a:hover { background-color: #c2cf90; }
-    .navbar .nav > .active > a,
-    .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {background-color: #c2cf90; }
-    .navbar { margin-bottom: 0; }
-    .navbar .nav > li > a { text-shadow: none; }
-
-    .alert-success { background-color: #e6efc2; }
-    .alert-error { background-color: #fbe3e4; }
-    .alert-info { background-color: #d5edf8; }
-    .alert-notice { background-color: #fff6bf; }
-
-    .ui-widget-header { background: #c2cf90; }
-    .ui-widget-content { background: #e6efc2; }
-    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: #298a08; }
-
-    /* custom css */
-    ul.nav-ua { list-style-type: none !important; margin: 0; padding: 0; }
-    ul.nav-ua li { display: inline; margin: 0; padding: 0; width: 1px; }
-    ul.clean { list-style-type: none !important; margin: 0; padding: 0; }
-    thead th { background: #c2cf90 !important; }
-    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {-webkit-appearance: none; margin: 0; }
-
-    .header-middle { position: relative; margin: 0 auto; width: 500px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
-    .header-middle-menu { position: relative;  width: 500px; height: 192px; }
-    #header-middle-menu-item { padding: 10px; }
-    #header-middle-menu-item div.jqDockWrap { margin: 0 auto; }
-    #header-middle-menu-item div.jqDock { cursor:pointer; }
-    div.jqDockLabel { bottom: -15px !important; padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
-
-    .span-header-left { position: relative; width: 454px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat; }
-    .span-header-right { position: relative; width: 446px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat; }
-    .span-content-left { width: 133px; }
-    .span-content-middle { width: 634px; }
-    .span-content-right { width: 133px; }
-
-    .span-profile-row1 { width: 155px !important; margin-left: 25px !important; }
-    .span-profile-row2 { width: 135px !important; }
-    .span-tribe-row1 { width: 155px !important; margin-left: 25px !important; }
-    .span-tribe-row2 { width: 135px !important; }
-    .span-tribesmall-row1 { width: 85px !important; margin-left: 25px !important; }
-    .span-tribesmall-row2 { width: 135px !important; }
-
-    .text-center { text-align: center !important; }
-    .text-left { text-align: left !important; }
-    .text-right { text-align: right !important; }
-
-    .ua-box { background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important; background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
-    .ua-box-header { color: #FFFFFF; line-height: 20px; text-align: center; font-weight: bold; }
-    .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
-    .ua-box-center { display: inline-block; margin-left: auto; margin-right: auto; }
-    .ua-box-space { padding: 5px; }
-    .ua-box-fix { width: 634px; margin: 0 auto; }
-
-    td.date { width: 125px; text-align: right; }
-    td.build { width: 47px; text-align: right; }
-    td.build-no-build { width: 100px; }
-    td.build-single { width: 25px; text-align: right; }
-    td.build-unit { width: 85px; text-align: right; }
-    td.countdown { width: 75px; text-align: right; }
-    td.message-icons { width: 50px; }
-    td.message-icon { width: 20px; }
-    td.mini-img { width: 32px; }
-    td.move-max { width: 70px; }
-    td.move-name { width: 160px; }
-    td.move-unit { width: 75px; }
-    td.switch { width: 16px; }
-    td.time { width: 75px; text-align: right; }
-    td.time-lvl { width: 105px; text-align: center; }
-
-    tr.digest-artefact { background-color: #9cf; }
-    tr.digest-building { background-color: #CCFFCC; }
-    tr.digest-defense { background-color: #FFFFFF; }
-    tr.digest-science { background-color: #FFCC99; }
-    tr.digest-unit { background-color: #CCFF99; }
-
-    tr.digest-mov-1 {background-color: #CCFF99; }
-    tr.digest-mov-2 {background-color: #CCFF99; }
-    tr.digest-mov-3 {background-color: #FFCC99; }
-    tr.digest-mov-4 {background-color: #FFCC99; }
-    tr.digest-mov-5 {background-color: #FFFFFF; }
-    tr.digest-mov-6 {background-color: #FFCC99; }
-
-    .form-horizontal .tribe { margin-left: 105px; }
-    .form-horizontal .tribe-label { width: 100px; }
-
-    .form-horizontal .profile { margin-left: 105px; }
-    .form-horizontal .profile-label { width: 100px; }
-
-    .form-horizontal .message { margin-left: 55px; }
-    .form-horizontal .message-label { width: 50px; }
-
-    .input-wonder-xy { width: 20px; }
-    .input-unit { width: 70px; }
-    .input-resource { width: 70px; }
-    .input-move-cave { width: 185px; }
-    .input-move-select { width: 200px; }
-    .input-move-xy { width: 75px; }
-
-    .abort, .arrow_max, .arrow_up, .flash { background-repeat: no-repeat;  width: 25px; height: 25px; cursor: pointer; background-color: transparent; border: none; }
     .abort { background-image: url("{{ gfx }}/de_DE/t_uga/abort.png"); }
     .arrow_max { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up_max.png"); }
     .arrow_up { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up.png"); }
     .flash { background-image: url("{{ gfx }}/de_DE/t_uga/flash.png"); }
-
-    .btn-transparent { background-color: transparent; background-image: none; border: none; }
-    .btn-icon { width: 20px; padding: 0; margin: 0; }
-
-    .bg0 { background-color: #eee }
-    .less { color:#ff0000; }
-    .space { padding: 5px 0 }
-    .nospace { padding: 0 !important; margin: 0 !important; }
-
-    .msg_0 { background-color: #fff; } /* Information */
-    .msg_2 { background-color: #fc9; } /* Sieg */
-    .msg_6 { background-color: #cf9; } /* Handelsbericht */
-    .msg_7 { background-color: #ff9; } /* RÃƒÂ¼ckkehr */
-    .msg_8 { background-color: #cfc; } /* Stammesnachricht */
-    .msg_9 { background-color: #9cf; } /* Wunder */
-    .msg_10 { background-color: #FFFFFF; } /* Benutzernachricht */
-    .msg_11 { background-color: #fc9; } /* Spionage */
-    .msg_12 { background-color: #9cf; } /* Artefakt */
-    .msg_20 { background-color: #fc9; } /* Niederlage */
-    .msg_29 { background-color: #fff; } /* Missionierung */
-    .msg_99 { background-color: #ccc; } /* Uga-Agga Team */
-    .msg_1001 { background-color: #fff; } /* ANKÃœNDIGUNG */
-    .msg_read0 a { background-repeat: no-repeat; font-weight: bold; }
   </style>
 
 </head>
@@ -247,7 +114,7 @@
     <div class="span-header-left">
       <div class="tooltip-show" id="warpoints_info" style="width: 200px; margin-left: 10px ;margin-top: 154px" rel="tooltip" data-placement="bottom" data-original-title="Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest. Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden. Unten sind alle Kriegspunkte aufgeführt! Einheiten: {{ war_points.warpointsUnits }} Verteidigungsanlagen: {{ war_points.warpointsDefense }}"><b>Kriegspunkte der Höhle: {{ war_points.warpoints }}</b></div>
     </div>
-    <div class="span-header-right pull-right text-right">
+    <div class="span-header-right pull-right text-right" id="region-info">
       <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
       <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
       <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
@@ -295,6 +162,7 @@
     </div>
     <div class="span-content-middle text-center">
       <div id="loader" class="notice hide">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>
+      <div id="dialog" class="hide"> </div>
 
       <div id="content">
         {% for item in resources %}
@@ -335,6 +203,17 @@
   </footer>
   {% endblock %}
 </div>
+<div id="modal" class="modal ua-box hide fade in">
+  <div class="ua-box-header"><button type="button" id="modalLabelClose" class="close hide" style="opacity: 0.8; color: #FFFFFF;" data-dismiss="modal" aria-hidden="true">&times;</button><span id="modalLabel">&nbsp;</span></div>
+  <div class="modal-body ua-box-content ua-box-space" id="modalBody">
+    <p id="messageModalMsg">&nbsp;</p>
+  </div>
+  <div id="modalFooter" class="modal-footer hide">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Schließen</button>
+    <a href="false" class="btn btn-primary" id="modalFooterHref" data-dismiss="modal" aria-hidden="true" data-post="true">Bestätigen</a>
+  </div>
+</div>
+<div class="modal-backdrop hide fade in"></div>
 {% include "extendsFooter.tmpl" %}
 </body>
 </html>

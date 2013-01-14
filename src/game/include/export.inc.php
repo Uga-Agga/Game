@@ -1,9 +1,9 @@
 <?php
 /*
  * export.inc.php -
- * Copyright (c) 2012  Georg Pitterle
  * Copyright (c) 2011  Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2012  Georg Pitterle
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -135,19 +135,20 @@ function export_switch() {
  */
 function export_allCaves_xml() {
   global $db;
-  
-  $caves = array();
-  
+
   $sql = $db->prepare("SELECT * 
                        FROM ". CAVE_TABLE ."
                        WHERE playerID = :playerID 
                        ORDER BY name ASC");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-  if ($sql->execute()) {
-    while($row = $sql->fetch(PDO::FETCH_ASSOC))
-      $caves_data[$row['caveID']] = $row;
-  } else return 'Datenbankfehler!';
-  
+  if (!$sql->execute()) {
+    return "Datenbankfehler!";
+  }
+
+  $caves = array();
+  while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+    $caves_data[$row['caveID']] = $row;
+  }
 
   $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><allCaves></allCaves>");
   $allCaves = $xml;
@@ -225,10 +226,11 @@ function export_thisCave_xml($caveID) {
                      "AND caveID = :caveID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return "Datenbankfehler!";
+  }
 
-  if ($sql->execute()) {
-    $row = $sql->fetch(PDO::FETCH_ASSOC);
-  } else return 'Datenbankfehler!';
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
 
   $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><thisCave></thisCave>");
   $cave = $xml;
@@ -589,10 +591,11 @@ function export_sciences_xml() {
 
   $sql = $db->prepare("SELECT * FROM ". PLAYER_TABLE ." WHERE playerID = :playerID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return "Datenbankfehler!";
+  }
 
-  if ($sql->execute()) {
-      $player_data = $sql->fetch(PDO::FETCH_ASSOC);
-  } else return 'Datenbankfehler!';
+  $player_data = $sql->fetch(PDO::FETCH_ASSOC);
 
   $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><sciences></sciences>");
 
@@ -620,10 +623,11 @@ function export_sciences_bb() {
 
   $sql = $db->prepare("SELECT * FROM ". PLAYER_TABLE ." WHERE playerID = :playerID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return "Datenbankfehler!";
+  }
 
-  if ($sql->execute()) {
-      $player_data = $sql->fetch(PDO::FETCH_ASSOC);
-  } else return 'Datenbankfehler!';
+  $player_data = $sql->fetch(PDO::FETCH_ASSOC);
 
   $header = "Forschungen des Spielers " . $_SESSION['player']->name;
 
@@ -653,10 +657,11 @@ function export_buildings_xml($caveID) {
                        "AND caveID = :caveID ");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return "Datenbankfehler!";
+  }
 
-  if ($sql->execute())
-      $row = $sql->fetch(PDO::FETCH_ASSOC);
-  else return 'Datenbankfehler!';
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
 
   $xml = new mySimpleXML("<?xml version='1.0' encoding='utf-8'?><buildings></buildings>");
   $cave = $xml;
@@ -695,14 +700,13 @@ function export_buildings_bb($caveID) {
                        "AND caveID = :caveID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+  if (!$sql->execute()) {
+    return "Datenbankfehler!";
+  }
 
-  if ($sql->execute())
-      $row = $sql->fetch(PDO::FETCH_ASSOC);
-  else return 'Datenbankfehler!';
+  $row = $sql->fetch(PDO::FETCH_ASSOC);
 
-  $header = "Erweiterungen der H&ouml;hle " . $row['name'] . 
-    " (". $row['xCoord'] ."|". $row['yCoord'] .") des Spielers " . 
-    $_SESSION['player']->name;
+  $header = "Erweiterungen der Höhle " . $row['name'] . " (". $row['xCoord'] ."|". $row['yCoord'] .") des Spielers " . $_SESSION['player']->name;
 
   $building = "";
   foreach ($GLOBALS['buildingTypeList'] AS $buildingID => $buildingDetail) {
@@ -728,7 +732,6 @@ function export_messages_xml($messageID) {
                        FROM " . MESSAGE_TABLE . "
                        WHERE messageID = :messageID");
   $sql->bindValue('messageID', $messageID, PDO::PARAM_INT);
-
   if (!$sql->execute()) {
     return "Datenbankfehler!";
   }
@@ -768,7 +771,6 @@ function export_stats_xml() {
   }
 
   $sql = $db->prepare("SELECT * FROM " . STATISTIC_TABLE);
-  
   if (!$sql->execute()) {
     return;
   }
@@ -828,13 +830,11 @@ function export_stats_xml() {
    * get Unit stats
    */
   $sql = $db->prepare("SELECT * FROM ". STATISTIC_UNIT_TABLE ." ORDER BY type_sub DESC");
-
   if (!$sql->execute()) {
     return;
   }
 
   $StatsData = array();
-  
   while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $UnitStats[$row['type']][$row['type_sub']] = $row;
   }

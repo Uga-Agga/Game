@@ -14,7 +14,7 @@
 {% block content %}
 
 {% for item in rssFeeds %}
-  <div class="alert-info text-left" style="padding: 5px;">
+  <div class="alert alert-info text-left" style="padding: 5px;">
     <h4><a href="{{ item.link }}">{{ item.title }}</a></h4>
     {{ item.description|raw }}
   </div>

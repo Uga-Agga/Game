@@ -17,7 +17,7 @@ function getCaveDetailsByCoords($minX, $minY, $maxX, $maxY) {
   global $db;
 
   $caveDetails = array();
-  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribe, r.name as region
+  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribe, p.tribeID, r.name as region
                        FROM ". CAVE_TABLE ." c
                          LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
                          LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID

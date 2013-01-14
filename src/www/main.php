@@ -304,18 +304,12 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case RANKING_PLAYER:
-    $offset = Request::getVar('offset', '');
-    $offset = ranking_checkOffset($_SESSION['player']->playerID, $offset);
-
-    ranking_getContent($caveID, $offset);
+    ranking_getContent();
     $requestKeys = array('offset');
     break;
 
   case RANKING_TRIBE:
-    $offset = Request::getVar('offset', '');
-    $offset  = rankingTribe_checkOffset($offset);
-
-    rankingTribe_getContent($caveID, $offset);
+    rankingTribe_getContent();
     $requestKeys = array('offset');
     break;
 

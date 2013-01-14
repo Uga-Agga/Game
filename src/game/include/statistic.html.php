@@ -70,7 +70,7 @@ function statistic_getContent() {
   $template->addVars(array(
     'user_online'   => $userOnline['count'],
     'accounts_all'  => $accounts['count'],
-    'accounts_free' => 508-$accounts['count']
+    'accounts_free' => MAX_ACCOUNTS - $accounts['count']
   ));
 
   /*

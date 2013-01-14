@@ -1,18 +1,30 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="de" xml:lang="de">
-<head>
-<title>UGA AGGA ONLINE GAME - Exporte</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
-<body>
-  <form>
-  <p>Code zum Kopieren
-    <input type="button" value="Markieren &amp; Kopieren" onclick="this.form.cparea.select(); this.form.cparea.focus(); document.execCommand('Copy')" />
-    </p>
-    <div style="width:100%; height:100%">
-    <textarea rows="29" name ="cparea" style="width:100%; height:100%">{{content}}</textarea>
-  </div>
-  </form>
-</body>
-</html>
-
+{#
+/* export.tmpl -
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>
+ * Copyright (c) 2013 David Unger <unger.dave@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+<script type="text/javascript">
+  function selectElementContents(el) {
+    if (window.getSelection && document.createRange) {
+      // IE 9 and non-IE
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } else if (document.body.createTextRange) {
+      // IE < 9
+      var textRange = document.body.createTextRange();
+      textRange.moveToElementText(el);
+      textRange.select();
+    }
+  }
+</script>
+<input type="button" class="btn" onclick="selectElementContents(document.getElementById('export'))" unselectable="on" value="Markieren">
+<pre id="export">{{ content }}</pre>

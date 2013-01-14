@@ -2,7 +2,7 @@
 /*
  * ranking.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,7 +13,7 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function ranking_getContent($caveID, $offset) {
+function ranking_getContent() {
   global $template;
 
   // open template
@@ -33,32 +33,63 @@ function ranking_getContent($caveID, $offset) {
     $aggapercent = 0;
   }
 
-  $row = ranking_getRowsByOffset($caveID, $offset);
+  $numRows = rankingPlayer_getMaxRows();
+  $offset = 0; $row = array();
+  if ($numRows > 0) {
+    $search = Request::getVar('search', '');
+    $page = Request::getVar('page', 0);
+    if ($search !== '') {
+      $offset = rankingPlayer_checkOffsetBySearch($search, $numRows);
+      if ($offset < 0) {
+        $offset = 0;
+        $template->addVar('status_msg', array('type' => 'error', 'message' => 'Der gesuchte Spieler wurde nicht gefunden'));
+      }
+    } else {
+      $offset = rankingPlayer_checkOffsetByPage($_SESSION['player']->playerID, $page, $numRows);
+    }
+
+    $row = rankingPlayer_getRowsByOffset($offset);
+  }
 
   $template->addVars(array(
-    'offset_up'   => (($offset - RANKING_ROWS) > 0) ? ($offset - RANKING_ROWS) : 0,
-    'offset_down' => ($offset + RANKING_ROWS),
-    'religious' =>  array(
-      'ugapercent' => $ugapercent,
-      'aggapercent' => $aggapercent
-    ),
-    'row' => $row,
+    'page'          => ceil($offset/RANKING_ROWS)+1,
+    'max_pages'     => ceil($numRows/RANKING_ROWS),
+    'rows_per_page' => RANKING_ROWS,
+    'religious'     =>  array('ugapercent' => $ugapercent, 'aggapercent' => $aggapercent),
+    'row'           => $row,
   ));
 }
 
-function rankingTribe_getContent($caveID, $offset){
+function rankingTribe_getContent(){
   global $template;
 
   // open template
   $template->setFile('rankingTribe.tmpl');
   $template->setShowRresource(false);
 
-  $row = rankingTribe_getRowsByOffset($caveID, $offset);
+  $numRows = rankingTribe_getMaxRows();
+  $offset = 0; $row = array();
+  if ($numRows > 0) {
+    $search = Request::getVar('search', '');
+    $page = Request::getVar('page', 0);
+    if ($search !== '') {
+      $offset = rankingTribe_checkOffsetBySearch($search, $numRows);
+      if ($offset < 0) {
+        $offset = 0;
+        $template->addVar('status_msg', array('type' => 'error', 'message' => 'Der gesuchte Stamm wurde nicht gefunden'));
+      }
+    } else {
+      $offset = rankingTribe_checkOffsetByPage($_SESSION['player']->tribeID, $page, $numRows);
+    }
+
+    $row = rankingTribe_getRowsByOffset($offset);
+  }
 
   $template->addVars(array(
-    'offset_up'   => (($offset - RANKING_ROWS) > 0) ? ($offset - RANKING_ROWS) : 0,
-    'offset_down' => ($offset + RANKING_ROWS),
-    'row'       => $row,
+    'page'          => ceil($offset/RANKING_ROWS)+1,
+    'max_pages'     => ceil($numRows/RANKING_ROWS),
+    'rows_per_page' => RANKING_ROWS,
+    'row'           => $row,
   ));
 }
 

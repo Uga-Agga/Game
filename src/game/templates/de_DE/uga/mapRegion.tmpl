@@ -25,16 +25,16 @@
           {% if cell.empty %}<td>&nbsp;</td>{% endif %}
           {% if cell.corner %}<td>&nbsp;</td>{% endif %}
           {% if cell.mapcell %}
-            <td style="height: 80px; width: 80px; border: 1px solid #000000; padding: 0; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }} t_{{ cell.mapcell.text_tribe }}">
+            <td style="height: 80px; width: 80px; border: 1px solid #E6EFC2; padding: 0; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }} {{ cell.mapcell.css_self }} {{ cell.mapcell.css_own }} {{ cell.mapcell.css_other }}">
               <div style="height: 80px; width: 80px; position: relative;">
-                <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="{{ cell.mapcell.alt }}" />
+                <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
                 {% if (cell.mapcell.link or cell.mapcell.link) and not cell.mapcell.barren %}
                   <div class="text-center" style="position: absolute; bottom: 0px; width: 80px; line-height: 13px;">
                     {% if cell.mapcell.link_tribe and not cell.mapcell.barren %}
                      <p class="nospace"><a href="main.php?{{ cell.mapcell.link_tribe|raw }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }} text-center"><small>{{ cell.mapcell.text_tribe }}</small></a></p>
                     {% endif %}
                     {% if cell.mapcell.link and not cell.mapcell.barren %}
-                      <p class="nospace"><a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }}{% endif %} class="map-detail-link{% if cell.mapcell.unsecure %} unsecure{% endif %} text-center"><small>{{ cell.mapcell.text|raw }}</small></a></p>
+                      <p class="nospace"><a href="main.php?{{ cell.mapcell.link|raw }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }}{% endif %} class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %} text-center" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text|raw }}</small></a></p>
                     {% endif %}
                   </div>
                 {% endif %}
