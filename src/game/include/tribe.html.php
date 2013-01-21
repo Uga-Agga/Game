@@ -301,23 +301,23 @@ function tribe_getContent($caveID, &$details) {
       }
 
       $targetTribe = Request::getVar('targetTribe', '');
-      $relationID = Request::getVar('relationID', '');
-      if (empty($relationTag) || empty($relationID)) {
+      $relationID = Request::getVar('relationID', 0);
+      if (empty($targetTribe) || empty($relationID)) {
         $messageID = -30;
         break;
       }
 
-      $targetTribeID = Tribe::getID($targetTribe);
-      if (empty($targetTribeID)) {
+      $targeData = Tribe::getID($targetTribe, true);
+      if (empty($targeData)) {
         $messageID = -15;
         break;
       }
 
       $button = Request::getVar('button', '');
       if ($button == 'forceSurrender') {
-        $messageID = TribeRelation::forceSurrender($tribeID, $targetTribeID, $relationID);
+        $messageID = TribeRelation::forceSurrender($tribeData, $targeData, $relationID);
       } else {
-        $messageID = TribeRelation::processRelationUpdate($tribeTag, $relationData);
+        $messageID = TribeRelation::processRelationUpdate($tribeData, $targeData, $relationID);
       }
     break;
 
@@ -480,7 +480,7 @@ function tribe_getContent($caveID, &$details) {
 
     if (!$targetData['changeable']) {
       $relations_info[$target] = array(
-        'tag'            => $target,
+        'tag'            => $targetData['targetTag'],
         'relation'       => $GLOBALS['relationList'][$targetData['relationType']]['name'],
         'duration'       => $targetData['time'],
         'their_relation' => (isset($relationsAll['other'][$target])) ? $GLOBALS['relationList'][$relationsAll['other'][$target]['relationType']]['name'] : $GLOBALS['relationList'][0]['name']
@@ -495,7 +495,7 @@ function tribe_getContent($caveID, &$details) {
       }
     } else {
       $relations[$target] = array(
-        'tag'            => $target,
+        'tag'            => $targetData['targetTag'],
         'target_points'  => $targetData['target_rankingPoints'],
         'tribe_points'   => $targetData['tribe_rankingPoints'],
         'their_relation' =>  (isset($relationsAll['other'][$target])) ? $GLOBALS['relationList'][$relationsAll['other'][$target]['relationType']]['name'] : $GLOBALS['relationList'][0]['name'],

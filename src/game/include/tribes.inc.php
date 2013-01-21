@@ -170,7 +170,7 @@ class Tribe {
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     $sql->execute();
 
-    $sql = $db->prepare("DELETE FROM " . ELECTION_TABLE . " WHERE tribeID = :tribeID");
+    $sql = $db->prepare("DELETE FROM " . TRIBE_ELECTION_TABLE . " WHERE tribeID = :tribeID");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     $sql->execute();
 
@@ -222,7 +222,11 @@ class Tribe {
     }
 
     $result['description'] = str_replace('<br />', '\n', $result['description']);
-    $result['avatar'] = @unserialize($result['avatar']);
+    $result['avatar'] = (empty($result['avatar'])) ? array() : @unserialize($result['avatar']);
+    if (!is_array($result['avatar'])) {
+      $result['avatar'] = array();
+    }
+
     $result['wonderLocked'] = (empty($result['wonderLocked'])) ? array() : @unserialize($result['wonderLocked']);
     if (!is_array($result['wonderLocked'])) {
       $result['wonderLocked'] = array();
@@ -242,9 +246,6 @@ class Tribe {
       $result['award'] = $awards;
     }
 
-    if ($result['avatar']) {
-      $result['avatar'] = @unserialize($row['avatar']);
-    }
 
     return $result;
   }
@@ -439,6 +440,8 @@ class Tribe {
   public static function isTopTribe($tribeID) {
     global $db;
 
+    if (empty($tribeID)) return false;
+
     $sql = $db->prepare("SELECT rank 
                          FROM " . RANKING_TRIBE_TABLE . " 
                          WHERE tribeID = :tribeID
@@ -462,7 +465,7 @@ class Tribe {
       return false;
     }
 
-    $sql = $db->prepare("DELETE FROM " . ELECTION_TABLE . "
+    $sql = $db->prepare("DELETE FROM " . TRIBE_ELECTION_TABLE . "
                          WHERE voterID = :playerID
                            OR playerID LIKE :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
@@ -789,7 +792,7 @@ class Tribe {
       $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
                            SET war_lost = war_lost + 1
                            WHERE tribeID = :tribeID");
-      $sql->bindValue('tribeID', $tribeID, PDO::PARAM_STR);
+      $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
       if (!$sql->execute() || $sql->rowCount() == 0) {
         return false;
       }
@@ -797,7 +800,7 @@ class Tribe {
       $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
                            SET war_won = war_won + 1
                            WHERE tribeID = :tribeID");
-      $sql->bindValue('tribeID', $targetTribeID, PDO::PARAM_STR);
+      $sql->bindValue('tribeID', $targetTribeID, PDO::PARAM_INT);
       if (!$sql->execute() || $sql->rowCount() == 0) {
         return false;
       }
@@ -808,7 +811,7 @@ class Tribe {
       $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
                            SET war_won = war_won + 1
                            WHERE tribeID = :tribeID");
-      $sql->bindValue('tribeID', $tribeID, PDO::PARAM_STR);
+      $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
       if (!$sql->execute() || $sql->rowCount() == 0) {
         return false;
       }
@@ -816,7 +819,7 @@ class Tribe {
       $sql = $db->prepare("UPDATE " . TRIBE_TABLE . "
                            SET war_lost = war_lost + 1
                            WHERE tribeID = :tribeID");
-      $sql->bindValue('tribeID', $targetTribeID, PDO::PARAM_STR);
+      $sql->bindValue('tribeID', $targetTribeID, PDO::PARAM_INT);
       if (!$sql->execute() || $sql->rowCount() == 0) {
         return false;
       }
@@ -904,8 +907,6 @@ class TribeDonation {
   public static function setDonations($value_array, $caveID, &$caveData) {
     global $db;
 
-    $playerID = $_SESSION['player']->playerID;
-
     if (!sizeof($value_array)) {
       return -8;
     }
@@ -946,7 +947,7 @@ class TribeDonation {
                           "(playerID, tribeID, timestamp, ".implode (", ", $fields_resources) . ")
                           VALUES (:playerID, :tribeID, :timestamp, " . implode(", ", $fields_donations). ")");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
-    $sql->bindValue('tribe', $_SESSION['player']->tribeID, PDO::PARAM_STR);
+    $sql->bindValue('tribeID', $_SESSION['player']->tribeID, PDO::PARAM_STR);
     $sql->bindValue('timestamp', time(), PDO::PARAM_INT);
     if (!$sql->execute()) return -11;
 
@@ -1013,7 +1014,7 @@ class TribeGovernment {
       return -27;
     }
 
-    TribeMessage::sendIntern($tribeID, self::MESSAGE_LEADER, 'Die Regierung wurde geändert', 'Die Regierung des Stammes wurde auf ' . $GLOBALS['governmentList'][$governmentID]['name'] . ' geändert.');
+    TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, 'Die Regierung wurde geändert', 'Die Regierung des Stammes wurde auf ' . $GLOBALS['governmentList'][$governmentID]['name'] . ' geändert.');
 
     return 8;
   }
@@ -1035,7 +1036,7 @@ class TribeLeader {
     if (empty($tribeID)) return array();
 
     $sql = $db->prepare("SELECT p.name, COUNT(e.voterID) AS votes 
-                         FROM ". ELECTION_TABLE ." e 
+                         FROM " . TRIBE_ELECTION_TABLE . " e 
                            LEFT JOIN Player p ON p.playerID = e.playerID 
                          WHERE e.tribeID = :tribeID
                          GROUP BY e.playerID, p.name");
@@ -1056,7 +1057,7 @@ class TribeLeader {
 
     if (empty($playerID)) return 0;
 
-    $sql = $db->prepare("SELECT playerID FROM " . ELECTION_TABLE . " WHERE voterID = :playerID");
+    $sql = $db->prepare("SELECT playerID FROM " . TRIBE_ELECTION_TABLE . " WHERE voterID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     if (!$sql->execute()) return 0;
 
@@ -1071,7 +1072,7 @@ class TribeLeader {
 
     if (empty($voterID)) return -29;
 
-    $sql = $db->prepare("DELETE FROM ". ELECTION_TABLE ."
+    $sql = $db->prepare("DELETE FROM " . TRIBE_ELECTION_TABLE . "
                          WHERE voterID = :playerID ");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
@@ -1102,7 +1103,7 @@ class TribeLeader {
 
     if (empty($chooseLeaderID) || empty($votePlayerID) || empty($tribeID)) return -29;
 
-    $sql = $db->prepare("REPLACE ". ELECTION_TABLE." 
+    $sql = $db->prepare("REPLACE " . TRIBE_ELECTION_TABLE . " 
                          SET voterID = :voterID, 
                            playerID = :playerID,
                            tribeID = :tribeID");
@@ -1150,7 +1151,7 @@ class TribeMessage {
     $messagesClass = new Messages;
 
     foreach ($members AS $playerID => $playerData) {
-      if(!$messagesClass->insertMessageIntoDB($playerID, sprintf(_("Stammesnachricht von %s"), $sender), $message, true, true)) {
+      if(!$messagesClass->sendSystemMessage($playerID, 8, sprintf(_("Stammesnachricht von %s"), $sender), $message)) {
         return -7;
       }
     }
@@ -1290,9 +1291,10 @@ class TribeRelation {
     if (empty($tribeID)) return array();
 
     // get relations from $tag to other tribes
-    $sql = $db->prepare("SELECT r.*,  DATE_FORMAT(r.duration, '%d.%m.%Y %H:%i:%s') AS time, (NOW()+0) > r.duration AS changeable, t.tag as tribe
+    $sql = $db->prepare("SELECT r.*,  DATE_FORMAT(r.duration, '%d.%m.%Y %H:%i:%s') AS time, (NOW()+0) > r.duration AS changeable, t.tag, t2.tag as targetTag
                          FROM ". RELATION_TABLE . " r
                          LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = r.tribeID
+                         LEFT JOIN ". TRIBE_TABLE ." t2 ON t2.tribeID = r.tribeID_target
                          WHERE r.tribeID = :tribeID");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return array();
@@ -1305,9 +1307,10 @@ class TribeRelation {
     $sql->closeCursor();
 
     // get relations from other tribes to $tag
-    $sql = $db->prepare("SELECT r.*,  DATE_FORMAT(r.duration, '%d.%m.%Y %H:%i:%s') AS time, t.tag as tribe
+    $sql = $db->prepare("SELECT r.*,  DATE_FORMAT(r.duration, '%d.%m.%Y %H:%i:%s') AS time, t.tag, t2.tag as targetTag
                          FROM ". RELATION_TABLE . " r
                          LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = r.tribeID_target
+                         LEFT JOIN ". TRIBE_TABLE ." t2 ON t2.tribeID = r.tribeID
                          WHERE r.tribeID_target = :tribeID");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return NULL;
@@ -1347,7 +1350,7 @@ class TribeRelation {
     $sql = $db->prepare("SELECT *, DATE_FORMAT(duration, '%d.%m.%Y %H:%i:%s') AS time, (NOW()+0) > duration AS changeable
                          FROM ". RELATION_TABLE . "
                          WHERE tribeID = :tribeID_target
-                           AND tribe_target LIKE :tribeID");
+                           AND tribeID_target LIKE :tribeID");
     $sql->bindValue('tribeID_target', $targetTribeID, PDO::PARAM_INT);
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return false;
@@ -1506,13 +1509,13 @@ class TribeRelation {
       }
 
       // check if switching to same relation as target or relation is possible
-      if ($relation['other']['relationType'] != $relationType && !self::isPossible($relationType, $relation['own']['relationType'])) {
+      if ($relation['other']['relationType'] != $relationID && !self::isPossible($relationID, $relation['own']['relationType'])) {
         return -20;
       }
 
       if (!$force && ($GLOBALS['relationList'][$relationID]['isWarAlly'])) {
         //generally allowes?
-        if (!$GLOBALS['relationList'][$relationFrom]['isAlly']) {
+        if (!$GLOBALS['relationList'][$relation['own']['relationType']]['isAlly']) {
           return -21;
         }
         if (!$GLOBALS['relationList'][$relation['other']['relationType']]['isAlly']) {
@@ -1529,7 +1532,7 @@ class TribeRelation {
         $from_points   = max(0, $tribeMight);
         $target_points = max(0, $targetMight);
 
-        $targetTopTribe = Tribe::isTopTribe();
+        $targetTopTribe = Tribe::isTopTribe($targetData['tribeID']);
         if ($targetTopTribe == false) {
           if (($relationInfo['targetSizeDiffDown'] > 0) &&
               ($from_points - $relationInfo['targetSizeDiffDown'] > $target_points )) {
@@ -1550,11 +1553,11 @@ class TribeRelation {
       $duration = 0;
       $end_time = $relation['other']['duration'];
     } else {
-      $duration = $GLOBALS['relationList'][$relation['own']['relationType']]['transitions'][$relationType]['time'];
+      $duration = $GLOBALS['relationList'][$relation['own']['relationType']]['transitions'][$relationID]['time'];
       $end_time = 0;
     }
 
-    if ($GLOBALS['relationList'][$relationFrom]['isPrepareForWar'] && $GLOBALS['relationList'][$relationID]['isWar']) {
+    if ($GLOBALS['relationList'][$relation['own']['relationType']]['isPrepareForWar'] && $GLOBALS['relationList'][$relationID]['isWar']) {
       $OurFame = $relation['own']['fame'];
       $OtherFame = $relation['other']['fame'];
     } else {
@@ -1562,26 +1565,26 @@ class TribeRelation {
       $OtherFame = 0;
     }
 
-    if (!self::setRelation($tribeData['tribeID'], $targetData['tribeID'], $relationType, $duration, $end_time, $relation['own']['tribe_rankingPoints'], $relation['own']['target_rankingPoints'], $OurFame)) {
+    if (!self::setRelation($tribeData['tribeID'], $targetData['tribeID'], $relationID, $duration, $end_time, $relation['own']['tribe_rankingPoints'], $relation['own']['target_rankingPoints'], $OurFame)) {
       return -3;
     }
 
     // calculate elo if war ended  
-    if ($GLOBALS['relationList'][$relationType]['isWarWon']) {
+    if ($GLOBALS['relationList'][$relationID]['isWarWon']) {
       Tribe::calculateElo($tribeData['tribeID'], $tribeMight, $targetData['tribeID'], $targetMight);
       Tribe::updateWonLost($tribeData['tribeID'], $targetData['tribeID'], false);
-    } else if ($GLOBALS['relationList'][$relationType]['isWarLost']) {
+    } else if ($GLOBALS['relationList'][$relationID]['isWarLost']) {
       Tribe::calculateElo($targetData['tribeID'], $targetMight, $tribeData['tribeID'], $tribeMight);
       Tribe::updateWonLost($tribeData['tribeID'], $targetData['tribeID'], true);
     }
 
     // insert history message
-    if (isset($GLOBALS['relationList'][$relationType]['historyMessage'])) {
-      Tribe::setHistory($tribetData['tribeID'], Tribe::prepareHistoryMessage($tribeData['tag'], $targetData['tag'], $GLOBALS['relationList'][$relationType]['historyMessage']));
+    if (isset($GLOBALS['relationList'][$relationID]['historyMessage'])) {
+      Tribe::setHistory($tribeData['tribeID'], Tribe::prepareHistoryMessage($tribeData['tag'], $targetData['tag'], $GLOBALS['relationList'][$relationID]['historyMessage']));
     }
 
-    TribeMessage::sendIntern($tribetData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Haltung gegenüber %s geändert"), $targetData['tag']), sprintf(_("Ihr Stammesanführer hat die Haltung Ihres Stammes gegenüber dem Stamm %s auf %s geändert."), $targetData['tag'], $GLOBALS['relationList'][$relationType]['name']));
-    TribeMessage::sendIntern($targetData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Der Stamm %s ändert seine Haltung"), $tribeData['tag']), sprintf(_("Der Stammesanführer des Stammes %s hat die Haltung seines Stammes ihnen gegenüber auf %s geändert."), $tribeData['tag'], $GLOBALS['relationList'][$relationType]['name']));
+    TribeMessage::sendIntern($tribeData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Haltung gegenüber %s geändert"), $targetData['tag']), sprintf(_("Ihr Stammesanführer hat die Haltung Ihres Stammes gegenüber dem Stamm %s auf %s geändert."), $targetData['tag'], $GLOBALS['relationList'][$relationID]['name']));
+    TribeMessage::sendIntern($targetData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Der Stamm %s ändert seine Haltung"), $tribeData['tag']), sprintf(_("Der Stammesanführer des Stammes %s hat die Haltung seines Stammes ihnen gegenüber auf %s geändert."), $tribeData['tag'], $GLOBALS['relationList'][$relationID]['name']));
 
     // switch other side if necessary (and not at this type already)
     if (!$end_time && ($oST = $relationInfo['otherSideTo']) >= 0) {
@@ -1594,8 +1597,8 @@ class TribeRelation {
         Tribe::setHistory($targetData['tribeID'], Tribe::prepareHistoryMessage($tribeData['tag'], $targetData['tag'], $GLOBALS['relationList'][$oST]['historyMessage']));
       }
 
-      TribeMessage::sendIntern($tribetData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Der Stamm %s ändert seine Haltung"), $targetData['tag']), sprintf(_("Der Stamm %s hat die Haltung ihnen gegenüber automatisch auf %s geändert."), $targetData['tag'], $GLOBALS['relationList'][$oST]['name']));
-      TribeMessage::sendIntern($targetData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Haltung gegenüber %s geändert"), $tribeData['tag']), sprintf(_("Die Haltung Ihres Stammes gegenüber dem Stamm %s wurde automatisch auf %s geändert."), $tribeData['tag'], $GLOBALS['relationList'][$relationType]['name']));
+      TribeMessage::sendIntern($tribeData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Der Stamm %s ändert seine Haltung"), $targetData['tag']), sprintf(_("Der Stamm %s hat die Haltung ihnen gegenüber automatisch auf %s geändert."), $targetData['tag'], $GLOBALS['relationList'][$oST]['name']));
+      TribeMessage::sendIntern($targetData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Haltung gegenüber %s geändert"), $tribeData['tag']), sprintf(_("Die Haltung Ihres Stammes gegenüber dem Stamm %s wurde automatisch auf %s geändert."), $tribeData['tag'], $GLOBALS['relationList'][$oST]['name']));
     }
 
     return 7;
@@ -1633,7 +1636,7 @@ class TribeRelation {
                            SET tribeID = :tribeID,
                              tribeID_target = :tribeID_target,
                              target_members = :target_members,
-                             timestamp = = NOW() +0,
+                             timestamp = NOW() +0,
                              relationType = :relationType,
                              tribe_rankingPoints = :tribe_rankingPoints,
                              target_rankingPoints = :target_rankingPoints,
@@ -1641,7 +1644,7 @@ class TribeRelation {
                              defenderReceivesFame = :defenderReceivesFame,
                              attackerMultiplicator = :attackerMultiplicator,
                              defenderMultiplicator = :defenderMultiplicator,
-                             " . ($end_time) ? "duration = " . (int)$end_time : "duration = (NOW() + INTERVAL " . (int)$duration . " HOUR) + 0
+                             " . ($end_time ?  "duration = ". (int)$end_time : "duration = (NOW() + INTERVAL " . (int)$duration .  " HOUR) + 0 ") . ",
                              fame = :fame");
       $sql->bindValue('tribeID', $fromTribeID, PDO::PARAM_INT);
       $sql->bindValue('tribeID_target', $targetTribeID, PDO::PARAM_INT);
@@ -1945,7 +1948,7 @@ class TribeWonder {
                           SET wonderLocked = :wonderLocked
                           WHERE tribeID = :tribeID");
     $sql->bindValue('wonderLocked', serialize($locked), PDO::PARAM_STR);
-    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_STR);
+    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return 6;
     }

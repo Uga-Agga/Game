@@ -220,13 +220,12 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 
   $map = array();
   foreach ($caveDetails AS $cave) {
-
     $cell = array(
+      'caveID'    => $cave['caveID'],
       'terrain'   => 'terrain'.$cave['terrain'],
       'imgMap'    => $GLOBALS['terrainList'][$cave['terrain']]['imgMap'],
       'barren'    => $GLOBALS['terrainList'][$cave['terrain']]['barren'],
       'title'     => 'Dies ist der Landstrich "' . $cave['cavename'] . '" (' . $cave['xCoord'] . '|' . $cave['yCoord'] . ') - ' . $cave['region'],
-      'link'      => "modus=" . MAP_DETAIL . "&amp;targetCaveID={$cave['caveID']}",
     );
 
     // unbewohnte Höhle
@@ -237,19 +236,16 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
         $file = "icon_cave_empty";
       // als Einöde zeigen
       } else {
-        $text = _('Ein&ouml;de');
+        $text = _('Einöde');
         $file = "icon_waste";
       }
-
     // bewohnte Höhle
     } else {
-
       // eigene Höhle
       if ($cave['playerID'] == $_SESSION['player']->playerID) {
         $file = "icon_cave_own";
-      // fremde Höhle
       } else {
-        $file = "icon_cave_other";
+        $file = "icon_cave_other"; // fremde Höhle
       }
 
       // mit Artefakt
@@ -257,23 +253,22 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
         $file .= "_artefact";
       }
 
-      // link zum Tribe einfügen
-      $cell['link_tribe'] = "modus=" . TRIBE_DETAIL . "&amp;tribe=".urlencode(unhtmlentities($cave['tribe']));
-
       // Stamm abkürzen
       $decodedTribe = unhtmlentities($cave['tribe']);
       if (strlen($decodedTribe) > 10) {
-        $cell['text_tribe'] = htmlentities(substr($decodedTribe, 0, 8)) . "..";
+        $cell['tribe'] = htmlentities(substr($decodedTribe, 0, 8)) . "..";
       } else {
-        $cell['text_tribe'] = $cave['tribe'];
+        $cell['tribe'] = $cave['tribe'];
       }
+      $cell['tribeID'] = $cave['tribeID'];
 
       // Besitzer
       $decodedOwner = unhtmlentities($cave['name']);
-      if (strlen($decodedOwner) > 10)
+      if (strlen($decodedOwner) > 10) {
         $text = htmlentities(substr($decodedOwner, 0, 8)) . "..";
-      else
+      } else {
         $text = $cave['name'];
+      }
 
       // übernehmbare Höhlen können gekennzeichnet werden
       if ($cave['secureCave'] != 1) {

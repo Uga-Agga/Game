@@ -120,7 +120,6 @@ CREATE TABLE IF NOT EXISTS `Cave` (
   `monsterID` int(11) unsigned NOT NULL DEFAULT '0',
   `regionID` int(11) NOT NULL DEFAULT '0',
   `hero` int(11) NOT NULL DEFAULT '0',
-  `lastAttackingTribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `lastAttackingTribeID` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`caveID`),
   UNIQUE KEY `name` (`name`),
@@ -188,36 +187,6 @@ CREATE TABLE IF NOT EXISTS `Contacts` (
   `contactplayerID` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`contactID`),
   UNIQUE KEY `contact` (`playerID`,`contactplayerID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `doYouKnow`
---
-
-CREATE TABLE IF NOT EXISTS `doYouKnow` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `titel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-  `content` mediumtext COLLATE utf8_unicode_ci NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `Election`
---
-
-CREATE TABLE IF NOT EXISTS `Election` (
-  `electionID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
-  `voterID` int(11) unsigned NOT NULL DEFAULT '0',
-  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`electionID`),
-  UNIQUE KEY `voterID` (`voterID`),
-  KEY `playerID` (`playerID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -668,24 +637,6 @@ CREATE TABLE IF NOT EXISTS `Message` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `Monster`
---
-
-CREATE TABLE IF NOT EXISTS `Monster` (
-  `monsterID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `angriff` int(11) unsigned NOT NULL DEFAULT '0',
-  `verteidigung` int(11) unsigned NOT NULL DEFAULT '0',
-  `mental` int(11) unsigned NOT NULL DEFAULT '0',
-  `koerperkraft` int(11) unsigned NOT NULL DEFAULT '0',
-  `erfahrung` int(11) unsigned NOT NULL DEFAULT '0',
-  `eigenschaft` char(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`monsterID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
 -- Tabellenstruktur für Tabelle `OldTribes`
 --
 
@@ -706,12 +657,12 @@ CREATE TABLE IF NOT EXISTS `OldTribes` (
 
 CREATE TABLE IF NOT EXISTS `Player` (
   `playerID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ident` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `npcID` int(11) unsigned NOT NULL DEFAULT '0',
   `email2` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `name` varchar(90) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `fame` int(11) NOT NULL DEFAULT '0',
-  `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `tribeBlockEnd` varchar(14) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `sex` char(1) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -741,8 +692,10 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `donateLocked` varchar(4096) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `tutorialID` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`playerID`),
+  UNIQUE KEY `ident` (`ident`),
   UNIQUE KEY `name` (`name`),
-  KEY `tribe` (`tribe`),
+  UNIQUE KEY `jabberName` (`jabberName`),
+  KEY `tribeID` (`tribeID`),
   KEY `noStatistic` (`noStatistic`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -865,7 +818,6 @@ CREATE TABLE IF NOT EXISTS `Ranking` (
 CREATE TABLE IF NOT EXISTS `RankingTribe` (
   `rankingID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `calculateTime` int(11) unsigned NOT NULL DEFAULT '0',
-  `tribe` varchar(90) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `rank` int(11) unsigned NOT NULL DEFAULT '0',
   `members` int(11) unsigned NOT NULL DEFAULT '0',
@@ -879,7 +831,7 @@ CREATE TABLE IF NOT EXISTS `RankingTribe` (
   `war_won` int(11) unsigned NOT NULL DEFAULT '0',
   `war_lost` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`rankingID`),
-  UNIQUE KEY `tribe` (`tribe`),
+  UNIQUE KEY `tribeID` (`tribeID`),
   KEY `rank` (`rank`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -907,9 +859,7 @@ CREATE TABLE IF NOT EXISTS `Regions` (
 
 CREATE TABLE IF NOT EXISTS `Relation` (
   `relationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `tribe` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
-  `tribeID_source` int(11) unsigned NOT NULL DEFAULT '0',
-  `tribe_target` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `tribeID_target` int(11) unsigned NOT NULL DEFAULT '0',
   `relationType` int(11) NOT NULL DEFAULT '0',
   `timestamp` char(14) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -924,8 +874,9 @@ CREATE TABLE IF NOT EXISTS `Relation` (
   `moral` int(11) NOT NULL DEFAULT '0',
   `target_members` int(11) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`relationID`),
-  UNIQUE KEY `oneRelationUnique` (`tribe`,`tribe_target`),
-  KEY `tribe_target` (`tribe_target`)
+  UNIQUE KEY `oneRelationUnique` (`tribeID`,`tribeID_target`),
+  KEY `tribeID` (`tribeID`),
+  KEY `tribeID_target` (`tribeID_target`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -940,12 +891,14 @@ CREATE TABLE IF NOT EXISTS `Session` (
   `s_id_used` tinyint(4) NOT NULL DEFAULT '0',
   `lastAction` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',
+  `ident` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
   `microtime` decimal(20,4) NOT NULL DEFAULT '0.0000',
   `loginip` varchar(15) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `loginchecksum` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `loginnoscript` int(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`sessionID`),
   UNIQUE KEY `playerID` (`playerID`),
+  UNIQUE KEY `ident` (`ident`),
   UNIQUE KEY `s_id` (`s_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -1033,7 +986,6 @@ CREATE TABLE IF NOT EXISTS `Tribe` (
   `description` mediumtext COLLATE utf8_unicode_ci NOT NULL,
   `avatar` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `leaderID` int(11) unsigned NOT NULL DEFAULT '0',
-  `juniorLeaderID` int(11) unsigned DEFAULT '0',
   `created` varchar(14) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `password` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `governmentID` enum('1','2') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
@@ -1062,14 +1014,13 @@ CREATE TABLE IF NOT EXISTS `Tribe` (
 
 CREATE TABLE IF NOT EXISTS `TribeHistory` (
   `tribeHistoryID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `ingameTime` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `message` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`tribeHistoryID`),
   KEY `timestamp` (`timestamp`),
-  KEY `tribe` (`tribe`)
+  KEY `tribeID` (`tribeID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -1080,7 +1031,6 @@ CREATE TABLE IF NOT EXISTS `TribeHistory` (
 
 CREATE TABLE IF NOT EXISTS `TribeMessage` (
   `tribeMessageID` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `tag` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `messageClass` int(11) unsigned NOT NULL DEFAULT '0',
   `messageSubject` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
@@ -1090,7 +1040,7 @@ CREATE TABLE IF NOT EXISTS `TribeMessage` (
   PRIMARY KEY (`tribeMessageID`),
   KEY `messageClass` (`messageClass`),
   KEY `recipientDeleted` (`recipientDeleted`),
-  KEY `tag` (`tag`),
+  KEY `tribeID` (`tribeID`),
   KEY `messageTime` (`messageTime`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
@@ -1103,8 +1053,25 @@ CREATE TABLE IF NOT EXISTS `TribeMessage` (
 CREATE TABLE IF NOT EXISTS `TribeStorageDonations` (
   `donationID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) NOT NULL,
-  `tribe` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
   `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`donationID`)
+  PRIMARY KEY (`donationID`),
+  KEY `tribeID` (`tribeID`
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `TribeElection`
+--
+
+CREATE TABLE IF NOT EXISTS `TribeElection` (
+  `electionID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `tribe` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `tribeID` int(11) unsigned NOT NULL DEFAULT '0',
+  `voterID` int(11) unsigned NOT NULL DEFAULT '0',
+  `playerID` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`electionID`),
+  UNIQUE KEY `voterID` (`voterID`),
+  KEY `playerID` (`playerID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;

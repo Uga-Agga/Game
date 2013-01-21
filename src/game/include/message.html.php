@@ -219,8 +219,8 @@ function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
   if ($message['sender'] != "System" && $box == BOX_INCOMING) {
     $template->addVars(array(
       'reply' => array(
-        array('arg' => "box",        'value' => BOX_INCOMING),
-        array('arg' => "subject",    'value' => $messagesClass->createSubject($message['subject'])),
+        array('arg' => "box",       'value' => BOX_INCOMING),
+        array('arg' => "subject",   'value' => $messagesClass->createSubject($message['subject'])),
         array('arg' => "recipient", 'value' => $message['sender'])
       )
     ));
@@ -233,18 +233,18 @@ function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
         'name' => 'Löschen',
         'item' => array(
           array('arg' => "box", 'value' => $box),
-          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+          array('arg' => "deletebox[" . $messageID . "]", 'value' => $messageID),
           array('arg' => "mark_action_value", 'value' => 'delete'),
         )
       )
     ));
   } else if ($box == BOX_TRASH) {
     $template->addVars(array(
-      'delete' => array(
+      'recover' => array(
         'name' => 'Wiederherstellen',
         'item' => array(
           array('arg' => "box", 'value' => $box),
-          array('arg' => "deletebox[" .$messageID . "]", 'value' => $messageID),
+          array('arg' => "deletebox[" . $messageID . "]", 'value' => $messageID),
           array('arg' => "mark_action_value", 'value' => 'recover'),
         )
       )

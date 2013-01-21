@@ -98,11 +98,11 @@ function checkall(){
           {% for item in messages %}
             <tr class="msg_{{ item.messageClass }} msg_read{{ item.read }}">
               <td class="ua-td-name"><input type="checkbox" name="deletebox[{{ item.messageID }}]" value="{{ item.messageID }}" /></td>
-              <td>{{ item.absender_empfaenger }}</td>
+              <td>{% if item.playerID %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ item.playerID }}">{{ item.player }}</a>{% else %}{{ item.player }}{% endif %}</td>
               <td>{{ item.nachrichtenart }}</td>
               <td>
-                {% if item.read == 0 %}<img src="{{ gfx }}/de_DE/t_uga/messages/mail.gif" width="12" height="12" alt="" />{% endif %}
-                <a href="main.php{{ item.linkparams|raw }}">{{ item.subject|raw }}</a>
+                {% if item.read < 1 and item.read != '' %}<img src="{{ gfx }}/de_DE/t_uga/messages/mail.gif" width="12" height="12" alt="" />{% endif %}
+                <a href="main.php?modus={{ messages_read_link }}&amp;messageID={{ item.messageID }}&amp;box={{ message_box }}&amp;filter={{ message_class_id }}">{{ item.subject|raw }}</a>
               </td>
               <td class="text-right">{{ item.datum }}</td>
               {% if not trash %}

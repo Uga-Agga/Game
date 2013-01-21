@@ -60,7 +60,7 @@ if (!$sql->execute()) {
 $sessionRow = $sql->fetch(PDO::FETCH_ASSOC);
 $sql->closeCursor();
 
-// sessionstart sollte nur einmal augerufen werden können
+// sessionstart sollte nur einmal augerufen werden kÃ¶nnen
 $sql = $db->prepare("UPDATE " . SESSION_TABLE . "
                      SET s_id_used = 1
                      WHERE s_id = :s_id

@@ -36,22 +36,29 @@
     </div>
 
     <div style="padding: 5px">
-      <div class="row"><div class="span1">Betreff:</div><div class="span4">{{ message.subject|raw }}</div></div>
-      <div class="row"><div class="span1">Von:</div><div class="span4">{{ message.sender }}</div></div>
-      <div class="row"><div class="span1">An:</div><div class="span4">{{ message.empfaenger }}</div></div>
-      <div class="row"><div class="span1">Datum:</div><div class="span4">{{ message.datum }}</div></div>
-      <div class="row"><div class="span5">{% if xml_button %}<a class="export-link" href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div></div>
-      {% if reply or delete %}
-        <form id="formMessageNewAnswer" class="form-inline" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}" method="post">
-        {% if reply %}
-          {% for item in reply %}<input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />{% endfor %}
-          <button class="btn" type="button" id="formMessageNewAnswerSubmit" name="formMessageNewAnswerSubmit">Antworten</button>
-        {% endif %}
-        {% if delete %}
-          <a class="btn change_mouseover" href="main.php?modus={{ messages_list_link }}&amp;action=mark_recover&amp;caveID={{ cave_id }}&amp;box=1&amp;messageID={{ message_id }}" data-post="true">Wiederherstellen</a> 
-        {% endif %}
-        </form>
-      {% endif %}
+      <div class="row">
+        <div class="span6">
+          <div class="row"><div class="span1">Betreff:</div><div class="span4">{{ message.subject|raw }}</div></div>
+          <div class="row"><div class="span1">Von:</div><div class="span4">{{ message.sender }}</div></div>
+          <div class="row"><div class="span1">An:</div><div class="span4">{{ message.empfaenger }}</div></div>
+          <div class="row"><div class="span1">Datum:</div><div class="span4">{{ message.datum }}</div></div>
+          {% if reply or delete or recover %}
+            <form id="formMessageNewAnswer" class="form-inline" action="main.php?modus={{ messages_new_link }}&amp;caveID={{ cave_id }}" method="post">
+            {% if reply %}
+              {% for item in reply %}<input name="{{ item.arg }}" type="hidden" value="{{ item.value }}" />{% endfor %}
+              <button class="btn" type="button" id="formMessageNewAnswerSubmit" name="formMessageNewAnswerSubmit">Antworten</button>
+            {% endif %}
+            {% if delete %}
+              <a class="btn change_mouseover" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box=1&amp;messageID={{ message_id }}" data-post="true">löschen</a> 
+            {% endif %}
+            {% if recover %}
+              <a class="btn change_mouseover" href="main.php?modus={{ messages_list_link }}&amp;action=mark_recover&amp;caveID={{ cave_id }}&amp;box=1&amp;messageID={{ message_id }}" data-post="true">Wiederherstellen</a> 
+            {% endif %}
+            </form>
+          {% endif %}
+        </div>
+        <div class="span1 pull-right text-right">{% if xml_button %}<a class="export-link" href="export.php?modus=messages&amp;messageID={{ message_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" style="width:30px; height:30px;" alt="Export als XML" title="Export als XML" /></a>{% endif %}</div>
+      </div>
       <hr>
       {% if message_xml %}<div>{% include "xml/baseReport.tmpl" %}</div>{% else %}{{ message.nachricht|raw }}{% endif %}
     </div>

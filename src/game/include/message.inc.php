@@ -220,7 +220,7 @@ class Messages extends Parser {
 
     if ($messageClass >= 0) {
       $sql = $db->prepare("SELECT messageID
-                           FROM ". MESSAGE_TABLE . "
+                           FROM " . MESSAGE_TABLE . "
                            WHERE senderID = :playerID
                              AND senderDeleted != 1
                              AND messageClass = :messageClass
@@ -229,7 +229,7 @@ class Messages extends Parser {
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
     } else {
       $sql = $db->prepare("SELECT messageID
-                           FROM ". MESSAGE_TABLE . "
+                           FROM " . MESSAGE_TABLE . "
                            WHERE senderID = :playerID
                              AND senderDeleted != 1
                            ORDER BY messageID DESC");
@@ -259,7 +259,7 @@ class Messages extends Parser {
 
     if ($messageClass >= 0) {
       $sql = $db->prepare("SELECT messageID
-                           FROM ". MESSAGE_TABLE . "
+                           FROM " . MESSAGE_TABLE . "
                            WHERE recipientID = :playerID
                              AND recipientDeleted = 1
                              AND messageClass = :messageClass
@@ -269,7 +269,7 @@ class Messages extends Parser {
       
     } else {
       $sql = $db->prepare("SELECT messageID
-                           FROM ". MESSAGE_TABLE . "
+                           FROM " . MESSAGE_TABLE . "
                            WHERE recipientID = :playerID
                              AND recipientDeleted = 1
                            ORDER BY messageID DESC");
@@ -294,82 +294,61 @@ class Messages extends Parser {
   /**
    *
    */
-  public function getIncomingMessages($offset, $row_count, $messageClass = -2) {
+  public function getIncomingMessages($offset, $row_count, $messageClass=-2) {
     global $db;
 
     $nachrichten = array();
 
     // get announcements
-    $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime
+    $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum
                          FROM ". MESSAGE_TABLE ." m
                            LEFT JOIN ". PLAYER_TABLE ." p
-                             ON p.playerID = m.senderID 
-                         WHERE messageClass = 1001 
+                             ON p.playerID = m.senderID
+                         WHERE messageClass = 1001
                          ORDER BY m.messageTime DESC, m.messageID DESC");
-    if (!$sql->execute()) {
-      return array();
-    }
+    if (!$sql->execute()) return array();
 
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $row['absender_empfaenger'] = empty($row['name']) ? _('System') : $row['name'];
-      $t = $row['messageTime'];
-      $row['datum'] = $t{6}.$t{7}  .".".
-                      $t{4}.$t{5}  .".".
-                      $t{2}.$t{3}  ." ".
-                      $t{8}.$t{9}  .":".
-                      $t{10}.$t{11}.":".
-                      $t{12}.$t{13};
+      $row['sender'] = empty($row['name']) ? _('System') : $row['name'];
       $row['nachrichtenart'] = $this->MessageClass[$row['messageClass']];
-      $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_INCOMING . '&amp;filter=' .$messageClass;
-      $nachrichten[] = $row;
+      array_push($nachrichten, $row);
     }
     $sql->closeCursor();
 
     // get user messages
-    if ($messageClass>= 0) {
-      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
-                           FROM ". MESSAGE_TABLE . " m 
-                             LEFT JOIN ". PLAYER_TABLE ." p 
-                               ON p.playerID = m.senderID 
+    if ($messageClass >= 0) {
+      $sql = $db->prepare("SELECT m.messageID, m.senderID as playerID, p.name as player, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum, SIGN(m.read) as `read`
+                           FROM ". MESSAGE_TABLE . " m
+                             LEFT JOIN ". PLAYER_TABLE ." p
+                               ON p.playerID = m.senderID
                            WHERE recipientID = :playerID
-                             AND recipientDeleted != 1 
+                             AND recipientDeleted != 1
                              AND messageClass = :messageClass
-                           ORDER BY m.messageTime DESC, m.messageID DESC 
+                           ORDER BY m.messageTime DESC, m.messageID DESC
                            LIMIT :offset, :rowCount");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
-                           FROM ". MESSAGE_TABLE . " m 
-                             LEFT JOIN ". PLAYER_TABLE ." p 
+      $sql = $db->prepare("SELECT m.messageID, m.senderID as playerID, p.name as player, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum, SIGN(m.read) as `read`
+                           FROM ". MESSAGE_TABLE . " m
+                             LEFT JOIN ". PLAYER_TABLE ." p
                                ON p.playerID = m.senderID 
                            WHERE recipientID = :playerID
-                             AND recipientDeleted != 1 
-                           ORDER BY m.messageTime DESC, m.messageID DESC 
+                             AND recipientDeleted != 1
+                           ORDER BY m.messageTime DESC, m.messageID DESC
                            LIMIT :offset, :rowCount");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     }
-
-    if (!$sql->execute()) {
-      return array();
-    }
+    if (!$sql->execute()) return array();
 
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $row['absender_empfaenger'] = empty($row['name']) ? _('System') : $row['name'];
-      $t = $row['messageTime'];
-      $row['datum'] = $t{6}.$t{7}  .".".
-                      $t{4}.$t{5}  .".".
-                      $t{2}.$t{3}  ." ".
-                      $t{8}.$t{9}  .":".
-                      $t{10}.$t{11}.":".
-                      $t{12}.$t{13};
-      $row['nachrichtenart'] = isset($this->MessageClass[$row['messageClass']]) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
-      $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_INCOMING . '&amp;filter='. $messageClass;
-      $nachrichten[] = $row;
+      $row['player'] = empty($row['player']) ? _('System') : $row['player'];
+      $row['nachrichtenart'] = (isset($this->MessageClass[$row['messageClass']])) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
+      array_push($nachrichten, $row);
     }
     $sql->closeCursor();
 
@@ -387,68 +366,38 @@ class Messages extends Parser {
       $nachrichtenart .= 'WHEN ' . $key . ' THEN "' . $value . '" ';
 
     if ($messageClass >= 0) {
-      $sql = $db->prepare("SELECT 
-                          m.messageID, 
-                          IFNULL(p.name, \"" . _('System') . "\") AS absender_empfaenger, 
-
-                          CASE m.messageClass " . $nachrichtenart . "
-                          ELSE \""._('unbekannte Nachrichtenart')."\"
-                          END AS nachrichtenart, 
-
-                          m.messageSubject AS subject, 
-                          DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum, 
-                          SIGN(m.read) as `read` 
-
-                          FROM ". MESSAGE_TABLE . " m 
-                          LEFT JOIN ".PLAYER_TABLE ." p 
-                          ON p.playerID = m.recipientID 
-
-                          WHERE senderID = :playerID
-                          AND senderDeleted != 1 
-                          AND messageClass = :messageClass
-                          ORDER BY m.messageTime DESC 
-                          LIMIT :offset, :rowCount");
+      $sql = $db->prepare("SELECT m.messageID, m.recipientID, p.name, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum
+                           FROM ". MESSAGE_TABLE . " m
+                             LEFT JOIN ". PLAYER_TABLE ." p
+                               ON p.playerID = m.recipientID
+                           WHERE m.senderID = :playerID
+                             AND senderDeleted != 1
+                             AND messageClass = :messageClass
+                           ORDER BY m.messageTime DESC
+                           LIMIT :offset, :rowCount");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT 
-                          m.messageID, 
-                          IFNULL(p.name, \"" . _('System') . "\") AS absender_empfaenger, 
-
-                          CASE m.messageClass " . $nachrichtenart . "
-                          ELSE \""._('unbekannte Nachrichtenart')."\"
-                          END AS nachrichtenart, 
-
-                          m.messageSubject AS subject, 
-                          DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum, 
-                          SIGN(m.read) as `read` 
-
-                          FROM ". MESSAGE_TABLE . " m 
-                          LEFT JOIN ".PLAYER_TABLE ." p 
-                          ON p.playerID = m.recipientID 
-
-                          WHERE senderID = :playerID
-                          AND senderDeleted != 1 
-                          ORDER BY m.messageTime DESC 
-                          LIMIT :offset, :rowCount");
+      $sql = $db->prepare("SELECT m.messageID, m.recipientID as playerID, p.name as player, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum
+                           FROM ". MESSAGE_TABLE . " m
+                             LEFT JOIN ". PLAYER_TABLE ." p
+                               ON p.playerID = m.recipientID
+                           WHERE senderID = :playerID
+                             AND senderDeleted != 1
+                           ORDER BY m.messageTime DESC
+                           LIMIT :offset, :rowCount");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     }
-
-    if (!$sql->execute()) {
-      return array();
-    }
+    if (!$sql->execute()) return array();
 
     $nachrichten = array();
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_OUTGOING . '&amp;filter=' .$messageClass;
-
-      // FIXME
-      unset($row['read']);
-
+      $row['player'] = empty($row['player']) ? _('System') : $row['player'];
+      $row['nachrichtenart'] = (isset($this->MessageClass[$row['messageClass']])) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
       array_push($nachrichten, $row);
     }
     $sql->closeCursor();
@@ -466,48 +415,37 @@ class Messages extends Parser {
 
     // get user messages
     if ($messageClass >= 0) {
-      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject,  m.messageTime, SIGN(m.read) as `read`
-                           FROM ". MESSAGE_TABLE . " m 
-                             LEFT JOIN ". PLAYER_TABLE ." p 
-                               ON p.playerID = m.senderID 
+      $sql = $db->prepare("SELECT m.messageID, m.senderID as playerID, p.name as player, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum
+                           FROM ". MESSAGE_TABLE . " m
+                             LEFT JOIN ". PLAYER_TABLE ." p
+                               ON p.playerID = m.senderID
                            WHERE recipientID = :playerID
-                             AND recipientDeleted = 1 
+                             AND recipientDeleted = 1
                              AND messageClass = :messageClass
-                           ORDER BY m.messageTime DESC, m.messageID DESC 
+                           ORDER BY m.messageTime DESC, m.messageID DESC
                            LIMIT :offset, :rowCount");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('messageClass', $messageClass, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     } else {
-      $sql = $db->prepare("SELECT m.messageID, p.name, m.messageClass, m.messageSubject AS subject, m.messageTime, SIGN(m.read) as `read`
-                           FROM ". MESSAGE_TABLE . " m 
-                             LEFT JOIN ". PLAYER_TABLE ." p 
-                               ON p.playerID = m.senderID 
+      $sql = $db->prepare("SELECT m.messageID, m.senderID as playerID, p.name as player, m.messageClass, m.messageSubject AS subject, DATE_FORMAT(m.messageTime, '%d.%m.%y %H:%i:%s') AS datum
+                           FROM ". MESSAGE_TABLE . " m
+                             LEFT JOIN ". PLAYER_TABLE ." p
+                               ON p.playerID = m.senderID
                            WHERE recipientID = :playerID
-                             AND recipientDeleted = 1 
-                           ORDER BY m.messageTime DESC, m.messageID DESC 
+                             AND recipientDeleted = 1
+                           ORDER BY m.messageTime DESC, m.messageID DESC
                            LIMIT :offset, :rowCount");
       $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
       $sql->bindValue('offset', intval($offset), pDO::PARAM_INT);
       $sql->bindValue('rowCount', intval($row_count), PDO::PARAM_INT);
     }
-
-    if (!$sql->execute()) {
-      return array();
-    }
+    if (!$sql->execute()) return array();
 
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $row['absender_empfaenger'] = empty($row['name']) ? _('System') : $row['name'];
-      $t = $row['messageTime'];
-      $row['datum'] = $t{6}.$t{7}  .".".
-                      $t{4}.$t{5}  .".".
-                      $t{2}.$t{3}  ." ".
-                      $t{8}.$t{9}  .":".
-                      $t{10}.$t{11}.":".
-                      $t{12}.$t{13};
-      $row['nachrichtenart'] = isset($this->MessageClass[$row['messageClass']]) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
-      $row['linkparams'] = '?modus=' . MESSAGE_READ . '&amp;messageID=' . $row['messageID'] . '&amp;box=' . BOX_TRASH . '&amp;filter='. $messageClass;
+      $row['player'] = empty($row['player']) ? _('System') : $row['player'];
+      $row['nachrichtenart'] = (isset($this->MessageClass[$row['messageClass']])) ? $this->MessageClass[$row['messageClass']] : 'Nachricht';
       $row['read'] = 1;
       $nachrichten[] = $row;
     }
@@ -738,7 +676,7 @@ class Messages extends Parser {
     global $db;
 
     // wurde nur der Spielername angegeben playerID auslesen
-    if (strval(intval($recipient)) !== $recipient) {
+    if (!is_numeric($recipient)) {
       // get Empfaenger ID
       $sql = $db->prepare("SELECT playerID FROM ". PLAYER_TABLE ." WHERE name = :recipient");
       $sql->bindValue('recipient', $recipient, PDO::PARAM_STR);
@@ -756,21 +694,8 @@ class Messages extends Parser {
     }
 
     $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ."
-                           (recipientID,
-                           senderID,
-                           messageClass,
-                           messageSubject,
-                           messageText,
-                           messageTime,
-                           senderDeleted)
-                         VALUES (
-                           :recipientID,
-                           :senderID,
-                           :messageClass,
-                           :messageSubject,
-                           :messageText,
-                           NOW()+0,
-                           :senderDelete)");
+                         (recipientID, senderID, messageClass,  messageSubject, messageText, messageTime, senderDeleted)
+                         VALUES (:recipientID, :senderID, :messageClass, :messageSubject, :messageText, NOW()+0, :senderDelete)");
     $sql->bindValue('recipientID', $recipient, PDO::PARAM_INT);
     $sql->bindValue('senderID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('messageClass', ($isTribeMessage) ? 8 : 10, PDO::PARAM_INT);
@@ -787,11 +712,12 @@ class Messages extends Parser {
   public function sendSystemMessage($receiverID, $type, $subject, $nachricht, $xml = "") {
     global $db;
 
-    $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ." (recipientID, messageClass, senderID, messageSubject, messageText, messageXML, messageTime) " .
-             "VALUES (:receiverID, :type, :senderID, :subject, :message, :xml, NOW()+0)");
+    $sql = $db->prepare("INSERT INTO " . MESSAGE_TABLE . "
+                         (recipientID, messageClass, senderID, messageSubject, messageText, messageXML, messageTime)
+                         VALUES (:receiverID, :type, :senderID, :subject, :message, :xml, NOW()+0)");
     $sql->bindValue('receiverID', $receiverID, PDO::PARAM_INT);
     $sql->bindValue('type', $type, PDO::PARAM_INT);
-    $sql->bindValue('senderID', (int) 0, PDO::PARAM_INT);
+    $sql->bindValue('senderID', 0, PDO::PARAM_INT);
     $sql->bindValue('subject', $subject, PDO::PARAM_STR);
     $sql->bindValue('message', $nachricht, PDO::PARAM_STR);
     $sql->bindValue('xml', $xml, PDO::PARAM_STR);

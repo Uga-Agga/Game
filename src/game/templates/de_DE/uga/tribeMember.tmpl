@@ -88,7 +88,7 @@
               <div class="span6">
                 <h5 class="text-center">Verbündete Stämme</h5>
                 {% for item in relations_ally %}
-                  <p>[<a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe_target|url_encode }}">{{ item.tribe_target }}</a>], seit {{ item.time }}</p>
+                  <p>[<a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribeID_target }}">{{ item.targetTag }}</a>], seit {{ item.time }}</p>
                 {% else %}
                   <p>Zur Zeit seid ihr mit keinem Stamm verbündet.</p>
                 {% endfor %}
@@ -400,7 +400,7 @@
 {#/* Regierung / Neue Beziehung */ #}
       {% if is_auth.change_relation or is_auth.isLeader %}
       <div class="tab-pane space" id="tribe_newrelationship">
-        <form id="formTribeRelation" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+        <form id="formTribeRelation" class="form-horizontal" action="main.php?modus={{ tribe_link }}#tribe_newrelationship" method="post">
           <div class="control-group">
             <label class="control-label tribe-label" for="targetTribe">Stammestag</label>
             <div class="controls tribe">
