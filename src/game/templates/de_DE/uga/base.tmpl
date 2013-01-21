@@ -50,7 +50,7 @@
       MAP_MIN_Y = -{{ map_size.min_y }};
       MAP_MAX_Y = -{{ map_size.max_y }};
 
-      {% if jabber.server and jabber.passwd %}
+      {% if jabber.server and jabber.user and jabber.passwd %}
         jQuery(document).ready(function() {
           DEVELOPER = 'on';
 

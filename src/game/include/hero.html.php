@@ -29,10 +29,10 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
   // get current playerID by user
   $playerID = $_SESSION['player']->playerID;
-  $player = getPlayerByID($playerID);
+  $player = Player::getPlayer($playerID, true);
 
   $newhero = false;
-  
+
   $messageText = array(
     -24 => array('type' => 'error', 'message' => _('Es können nur Rohstoffe aus der aktuellen Höhle geopfert werden!')),
     -23 => array('type' => 'error', 'message' => _('Die Fähigkeit wurde schon erlernt!')),
@@ -161,7 +161,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
             case 'maxHP':
               //typ='maxHP';
-              if ($hero['maxHpLvl']<10) {
+              if ($hero['maxHpLvl'] < 10) {
                 if (skillMaxHp($playerID, $hero)) {
                   $messageID = 1;
                 } else {
@@ -254,9 +254,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
       break;
     }
 
-    $queue=getHeroQueue($playerID);
+    $queue = getHeroQueue($playerID);
 
-    $player = getPlayerByID($playerID);
     $potions = array();
     foreach ($GLOBALS['potionTypeList'] AS $potionID => $potion) {
       if ($player[$potion->dbFieldName] > 0) {
@@ -272,7 +271,6 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     }
 
   } else {
-    $player = getPlayerByID($playerID);
     if ($player['heroism'] >= 1){
       $messageID = 4;
       $newhero = true;

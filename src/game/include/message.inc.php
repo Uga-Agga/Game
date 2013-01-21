@@ -737,18 +737,23 @@ class Messages extends Parser {
   public function insertMessageIntoDB($recipient, $subject, $nachricht, $sender_delete=false, $isTribeMessage = false) {
     global $db;
 
-    // get Empfaenger ID
-    $sql = $db->prepare("SELECT playerID FROM ". PLAYER_TABLE ." WHERE name = :recipient");
-    $sql->bindValue('recipient', $recipient, PDO::PARAM_STR);
-    if (!$sql->execute()) {
-      return 0;
-    }
+    // wurde nur der Spielername angegeben playerID auslesen
+    if (strval(intval($recipient)) !== $recipient) {
+      // get Empfaenger ID
+      $sql = $db->prepare("SELECT playerID FROM ". PLAYER_TABLE ." WHERE name = :recipient");
+      $sql->bindValue('recipient', $recipient, PDO::PARAM_STR);
+      if (!$sql->execute()) {
+        return 0;
+      }
 
-    $row = $sql->fetch(PDO::FETCH_ASSOC);
-    if (empty($row)) {
-      return 0;
+      $row = $sql->fetch(PDO::FETCH_ASSOC);
+      if (empty($row)) {
+        return 0;
+      }
+      $sql->closeCursor();
+
+      $recipient = $row['playerID'];
     }
-    $sql->closeCursor();
 
     $sql = $db->prepare("INSERT INTO ". MESSAGE_TABLE ."
                            (recipientID,
@@ -766,7 +771,7 @@ class Messages extends Parser {
                            :messageText,
                            NOW()+0,
                            :senderDelete)");
-    $sql->bindValue('recipientID', $row['playerID'], PDO::PARAM_INT);
+    $sql->bindValue('recipientID', $recipient, PDO::PARAM_INT);
     $sql->bindValue('senderID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('messageClass', ($isTribeMessage) ? 8 : 10, PDO::PARAM_INT);
     $sql->bindValue('messageSubject', $subject, PDO::PARAM_STR);

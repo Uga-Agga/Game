@@ -34,9 +34,9 @@
               <div class="span6">
                 <h5 class="text-center">Spielderdaten</h5>
                 <div class="row"><div class="span2 span-tribesmall-row1">Stammestag:</div><div class="span4 span-tribesmall-row2">{{ tribe_details.tag }}</div></div>
-                <div class="row"><div class="span2 span-tribesmall-row1">Stammestag:</div><div class="span4 span-tribesmall-row2">{{ tribe_details.name }}</div></div>
+                <div class="row"><div class="span2 span-tribesmall-row1">Stammesname:</div><div class="span4 span-tribesmall-row2">{{ tribe_details.name }}</div></div>
                 <div class="row"><div class="span2 span-tribesmall-row1">Anführer:</div><div class="span4 span-tribesmall-row2">{% if tribe_details.leader_name != 'k.A.' %}<a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ tribe_details.leaderID }}">{{ tribe_details.leader_name }}</a>{% else %}{{ tribe_details.leader_name }}{% endif %}</div></div>
-                <div class="row"><div class="span2 span-tribesmall-row1"><a href="main.php?modus={{ ranking_tribe_link }}&amp;search={{ tribe_details.tag }}">Ranking:</a></div><div class="span4 span-tribesmall-row2">{% if tribe_details.rank %}{{ tribe_details.rank }}{% else %}&nbsp;{% endif %}</div></div>
+                <div class="row"><div class="span2 span-tribesmall-row1"><a href="main.php?modus={{ ranking_tribe_link }}&amp;search={{ tribe_details.tag|url_encode }}">Ranking:</a></div><div class="span4 span-tribesmall-row2">{% if tribe_details.rank %}{{ tribe_details.rank }}{% else %}&nbsp;{% endif %}</div></div>
               </div>
               <div class="span6">
                 <h5 class="text-center">Beschreibung</h5>

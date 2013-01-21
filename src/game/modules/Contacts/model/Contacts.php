@@ -2,6 +2,7 @@
 /*
  * Contacts.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -34,9 +35,10 @@ class Contacts_Model extends Model {
     $result = array();
 
     // prepare query
-    $sql = $db->prepare("SELECT c.*, p.name AS contactname, p.tribe AS contacttribe
+    $sql = $db->prepare("SELECT c.*, p.name AS contactname, t.tag AS contacttribe
                          FROM ". CONTACTS_TABLE ." c 
                            LEFT JOIN ". PLAYER_TABLE ." p ON c.contactplayerID = p.playerID 
+                           LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID 
                          WHERE c.playerID = :playerID
                          ORDER BY contactname");
     $sql->bindParam('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);

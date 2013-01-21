@@ -157,16 +157,18 @@ function profile_update($db_login) {
 
   $playerID = $_SESSION['player']->playerID;
   $data = array(
-    'avatar'      => Request::getVar('inputPlayerAvatar', ''),
-    'description' => Request::getVar('inputPlayerDescription', '', true),
-    'email2'      => Request::getVar('inputPlayerEmail2', ''),
-    'gfxpath'     => Request::getVar('inputPlayerGFX', ''),
-    'icq'         => Request::getVar('inputPlayerICQ', ''),
-    'language'    => Request::getVar('inputPlayerLang', ''),
-    'origin'      => Request::getVar('inputPlayerOrigin', ''),
-    'template'    => Request::getVar('inputPlayerTemplate', ''),
-    'passwordNew' => Request::getVar('inputPlayerPasswordNew', ''),
-    'passwordRe'  => Request::getVar('inputPlayerPasswordRe', ''),
+    'avatar'       => Request::getVar('inputPlayerAvatar', ''),
+    'description'  => Request::getVar('inputPlayerDescription', '', true),
+    'email2'       => Request::getVar('inputPlayerEmail2', ''),
+    'gfxpath'      => Request::getVar('inputPlayerGFX', ''),
+    'icq'          => Request::getVar('inputPlayerICQ', ''),
+    'language'     => Request::getVar('inputPlayerLang', ''),
+    'origin'       => Request::getVar('inputPlayerOrigin', ''),
+    'template'     => Request::getVar('inputPlayerTemplate', ''),
+    'passwordNew'  => Request::getVar('inputPlayerPasswordNew', ''),
+    'passwordRe'   => Request::getVar('inputPlayerPasswordRe', ''),
+    'jabberPwdNew' => Request::getVar('inputJabberPasswordNew', ''),
+    'jabberPwdRe'  => Request::getVar('inputJabberPasswordRe', ''),
   );
 
   // validate language code
@@ -191,6 +193,15 @@ function profile_update($db_login) {
     return array('type' => 'error', 'message' => ('Ungültiges E-Mail Adresse. Bitte nimm deine Eingaben erneut vor!'));
   }
 
+  if (strcmp($data['jabberPwdNew'], $data['jabberPwdRe']) != 0) {
+    return array('type' => 'error', 'message' => _('Das Jabber Passwort stimmt nicht mit der Wiederholung überein.'));
+  }
+
+  // password too short?
+  if(!preg_match('/^\w{6,}$/', unhtmlentities($data['jabberPwdNew']))) {
+    return array('type' => 'error', 'message' => _('Das Jabber Passwort muss mindestens 6 Zeichen lang sein!'));
+  }
+
   $sql = $db->prepare("UPDATE " . PLAYER_TABLE . " 
                        SET origin = :origin, 
                          icq = :icq,
@@ -200,7 +211,8 @@ function profile_update($db_login) {
                          language = :language,
                          gfxpath = :gfxpath,
                          email2 = :email2,
-                         avatar = :avatar
+                         avatar = :avatar,
+                         jabberPassword = :jabberPassword
                        WHERE playerID = :playerID");
   $sql->bindValue('origin', $data['origin'], PDO::PARAM_STR);
   $sql->bindValue('icq', $data['icq'], PDO::PARAM_INT);
@@ -210,26 +222,27 @@ function profile_update($db_login) {
   $sql->bindValue('gfxpath', $data['gfxpath'], PDO::PARAM_STR);
   $sql->bindValue('email2', $data['email2'], PDO::PARAM_STR);
   $sql->bindValue('avatar', $data['avatar'], PDO::PARAM_STR);
+  $sql->bindValue('jabberPassword', $data['jabberPwdNew'], PDO::PARAM_STR);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   if (!$sql->execute()) {
     return array('type' => 'error', 'message' => _('Die Daten konnten gar nicht oder zumindest nicht vollständig aktualisiert werden.'));
   }
 
   // ***** now update the password, if it is set **** **************************
-  if (strlen($password['passwordNew'])) {
+  if (strlen($data['passwordNew'])) {
     // typo?
-    if (strcmp($password['passwordNew'], $password['passwordRe']) != 0) {
-      return array('type' => 'error', 'message' => _('Das Passwort stimmt nicht mit der Wiederholung überein.'));
+    if (strcmp($data['passwordNew'], $data['passwordRe']) != 0) {
+      return array('type' => 'error', 'message' => _('Das Spiel Passwort stimmt nicht mit der Wiederholung überein.'));
     }
 
     // password too short?
-    if(!preg_match('/^\w{6,}$/', unhtmlentities($password['passwordNew']))) {
-      return array('type' => 'error', 'message' => _('Das Passwort muss mindestens 6 Zeichen lang sein!'));
+    if(!preg_match('/^\w{6,}$/', unhtmlentities($data['passwordNew']))) {
+      return array('type' => 'error', 'message' => _('Das Spiel Passwort muss mindestens 6 Zeichen lang sein!'));
     }
 
     // set password
     $sql = $db_login->prepare("UPDATE Login SET password = :password WHERE LoginID = :loginID");
-    $sql->bindValue('password', $password['passwordNew'], PDO::PARAM_STR); 
+    $sql->bindValue('password', $data['passwordNew'], PDO::PARAM_STR); 
     $sql->bindValue('loginID', $playerID, PDO::PARAM_INT);
 
     if (!$sql->execute() || $sql->rowCount() == 0) {

@@ -13,7 +13,7 @@ DEBUG = 'on';
     $(document).on('click', 'a', function(e){
       e.preventDefault();
 
-      $('#modal').modal('hide')
+      $('#modal').modal('hide');
 
       var url = $(this).attr('href');
 /* Direkte Urls. einfach folgen! */
@@ -210,6 +210,7 @@ DEBUG = 'on';
     });
 
     function updateContent(data) {
+      console.log(data);
       ua_log('update content....');
       $('#content').html($(data).find('#content').html());
       $('#farmpoints').html($(data).find('#farmpoints').html());

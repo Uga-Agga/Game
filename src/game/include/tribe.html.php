@@ -32,6 +32,7 @@ function tribe_getContent($caveID, &$details) {
 
   // messages
   $messageText = array (
+    -43 => array('type' => 'error', 'message' => _('Die Regierung wurde nicht geändert, weil sie sich nicht geändert hat.')),
     -42 => array('type' => 'error', 'message' => _('Ein Rohstoff wurde erst vor kurzen eingelagert. Bitte warte bis du es erneut versucht.')),
     -41 => array('type' => 'error', 'message' => _('Beim kicken das Spielers ist ein Fehler aufgetreten.')),
     -40 => array('type' => 'error', 'message' => _('Der Stamm befindet sich zur Zeit in einem Krieg und es kann kein Spieler gekickt werden.')),
@@ -89,18 +90,18 @@ function tribe_getContent($caveID, &$details) {
      13 => array('type' => 'success', 'message' => _('Der Spieler wurde erfolgreich gekickt.')),
   );
 
-  if (!$_SESSION['player']->tribe) {
+  if (!$_SESSION['player']->tribeID) {
     tribe_getContentNoTribe($caveID, $details);
     return;
   }
 
-  $tribeTag = $_SESSION['player']->tribe;
-  $tribeData = tribe_getTribeByTag($tribeTag);
+  $tribeID = $_SESSION['player']->tribeID;
+  $tribeData = Tribe::getByID($tribeID);
   if ($tribeData == null) {
     $template->throwError('Der Stamm konnte nicht geladen werden.');
     return;
   }
-  $tribeMembers = tribe_getAllMembers($tribeTag);
+  $tribeMembers = Tribe::getPlayerList($tribeID, true, true);
 
   // open template
   $template->setFile('tribeMember.tmpl');
@@ -112,7 +113,6 @@ function tribe_getContent($caveID, &$details) {
   $userAuth['isLeader'] = ($tribeData['leaderID'] == $_SESSION['player']->playerID) ? true : false;
 
   // process form data
-  $messageID = 0;
   $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
 /****************************************************************************************************
@@ -126,8 +126,10 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      if (!Request::isPost('player_id', true)) {
-        $messageID = -30;
+      $playerID = Request::getVar('player_id', 0);
+
+      if ($playerID == 0 || !isset($tribeMembers[$playerID])) {
+        $messageID = -38;
         break;
       }
 
@@ -136,13 +138,13 @@ function tribe_getContent($caveID, &$details) {
         $authID = $authID | Request::getVar($type, 0);
       }
 
-      if ($auth->setPermission('tribe', $authID, Request::getVar('player_id', 0))) {
+      $newUserAuth = $auth->setPermission('tribe', $authID, $playerID);
+      if ($newUserAuth !== false) {
         $messageID = 10;
+        $tribeMembers[$playerID]['tribeAuth'] = $auth->getAllTypePermission('tribe', $newUserAuth);
       } else {
         $messageID = -31;
       }
-
-      $tribeMembers = tribe_getAllMembers($tribeTag);
     break;
 
 /****************************************************************************************************
@@ -151,8 +153,16 @@ function tribe_getContent($caveID, &$details) {
 *
 ****************************************************************************************************/
     case TRIBE_ACTION_CHOOSE_LEADER:
-      $voteID = Request::getVar('chooseLeaderID', 0);
-      $messageID = leaderChoose_processChoiceUpdate($voteID, $_SESSION['player']->playerID, $tribeTag);
+      $chooseLeaderID = Request::getVar('chooseLeaderID', 0);
+
+      if ($chooseLeaderID != 0 && isset($tribeMembers[$chooseLeaderID])) {
+        $messageID = TribeLeader::setChoice($chooseLeaderID, $_SESSION['player']->playerID, $tribeID);
+        break;
+      } else if ($chooseLeaderID == 0) {
+        $messageID = TribeLeader::removeChoice($_SESSION['player']->playerID);
+      } else {
+        $messageID = -38;
+      }
     break;
 
 /****************************************************************************************************
@@ -162,9 +172,9 @@ function tribe_getContent($caveID, &$details) {
 ****************************************************************************************************/
     case TRIBE_ACTION_DONATE:
       $value = Request::getVar('value', array('' => ''));
-      $messageID = tribe_donateResources($value, $caveID, $details);
+      $messageID = TribeDonation::setDonations($value, $caveID, $details);
 
-      $tribeData = tribe_getTribeByTag($tribeTag);
+      $tribeData = Tribe::getByID($tribeID);
     break;
 
 /****************************************************************************************************
@@ -178,8 +188,23 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      $governmentData = Request::getVar('governmentData', array('' => ''));
-      $messageID = government_processGovernmentUpdate($tribeTag, $governmentData);
+      if(!TribeGovernment::isChangeable($tribeID)) {
+        $messageID = -28;
+        break;
+      }
+
+      $governmentID = Request::getVar('governmentID', 0);
+      if ($governmentID == 0) {
+        $messageID = -27;
+        break;
+      }
+
+      if ($governmentID == $tribeData['governmentID']) {
+        $messageID = -43;
+        break;
+      }
+
+      $messageID = TribeGovernment::setGovernment($tribeID, $governmentID);
     break;
 
 /****************************************************************************************************
@@ -194,8 +219,20 @@ function tribe_getContent($caveID, &$details) {
       }
 
       $playerID = Request::getVar('playerID', 0);
-      $messageID = tribe_processKickMember($playerID, $tribeTag);
-      $tribeMembers = tribe_getAllMembers($tribeTag);
+      if ($playerID == 0 || !isset($tribeMembers[$playerID])) {
+        $messageID = -38;
+        break;
+      }
+
+      if ($tribeData['leaderID'] == $playerID) {
+        $messageID = -39;
+        break;
+      }
+
+      $messageID = Tribe::processKickMember($playerID, $tribeData);
+      if ($messageID > 0) {
+        unset($tribeMembers[$playerID]);
+      }
     break;
 
 /****************************************************************************************************
@@ -205,7 +242,7 @@ function tribe_getContent($caveID, &$details) {
 ****************************************************************************************************/
     case TRIBE_ACTION_LEAVE:
       if (Request::isPost('postConfirm')) {
-        $messageID = tribe_processLeave($_SESSION['player']->playerID, $tribeTag);
+        $messageID = Tribe::processLeave($_SESSION['player']->playerID, $tribeData);
 
         if ($messageID > 0) {
           page_refreshUserData();
@@ -234,8 +271,9 @@ function tribe_getContent($caveID, &$details) {
         $messageID = -1;
         break;
       }
-      
-      if (!Request::isPost('messageText', true)) {
+
+      $message = Request::getVar('messageText', '', true);
+      if (empty($message)) {
         $messageID = -6;
         break;
       }
@@ -243,9 +281,9 @@ function tribe_getContent($caveID, &$details) {
       $button = Request::getVar('button', '');
       $messageType = Request::getVar('messageType', '');
       if ($button == 'ingame' && ($userAuth['msg_public'] || $userAuth['isLeader'])) {
-        $messageID = tribe_processSendTribeIngameMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
+        $messageID = TribeMessage::processSendPlayer($tribeID, $_SESSION['player']->name, $message);
       } else if ($button == 'tribemsg' && $userAuth['msg_tribe'] || $userAuth['isLeader']) {
-        $messageID = tribe_processSendTribeMessage($_SESSION['player']->playerID, $tribeTag, Request::getVar('messageText', '', true));
+        $messageID = TribeMessage::processSendIntern($tribeID, $_SESSION['player']->name, $message);
       } else {
         $messageID = -1;
       }
@@ -262,12 +300,24 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
+      $targetTribe = Request::getVar('targetTribe', '');
+      $relationID = Request::getVar('relationID', '');
+      if (empty($relationTag) || empty($relationID)) {
+        $messageID = -30;
+        break;
+      }
+
+      $targetTribeID = Tribe::getID($targetTribe);
+      if (empty($targetTribeID)) {
+        $messageID = -15;
+        break;
+      }
+
       $button = Request::getVar('button', '');
-      $relationData = Request::getVar('relationData', array('' => ''));
       if ($button == 'forceSurrender') {
-        $messageID = relation_forceSurrender($tribeTag, $relationData);
+        $messageID = TribeRelation::forceSurrender($tribeID, $targetTribeID, $relationID);
       } else {
-        $messageID = relation_processRelationUpdate($tribeTag, $relationData);
+        $messageID = TribeRelation::processRelationUpdate($tribeTag, $relationData);
       }
     break;
 
@@ -290,8 +340,8 @@ function tribe_getContent($caveID, &$details) {
         'description' => Request::getVar('inputDescription', '', true)
       );
 
-      $messageID = tribe_processAdminUpdate($tribeTag, $postData);
-      $tribeData = tribe_getTribeByTag($tribeTag);
+      $messageID = Tribe::updateTribeData($tribeID, $postData);
+      $tribeData = Tribe::getByID($tribeID);
     break;
 
 /****************************************************************************************************
@@ -323,17 +373,17 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      $messageID = wonder_processTribeWonder($caveID, $wonderID, $tribeTag, $tribeName);
+      $messageID = TribeWonder::processWonder($wonderID, $tribeData, $targetName);
       if ($messageID > 0) {
-        wonder_updateTribeLocked($tribeTag, $wonderID, $tribeData['wonderLocked']);
+        TribeWonder::setBlockedTime($tribeID, $wonderID, $tribeData['wonderLocked']);
       }
 
       if ($messageID == 11 || $messageID == 12) {
         $success = ($messageID == 12) ? 1 : 2;
-        wonder_addStatistic($wonderID, $success);
+        TribeWonder::addStatistic($wonderID, $success);
       }
 
-      $tribeData = tribe_getTribeByTag($tribeTag);
+      $tribeData = Tribe::getByID($tribeID);
     break;
   }
 
@@ -342,7 +392,7 @@ function tribe_getContent($caveID, &$details) {
   * Auswahl der Regierungsformen
   *
   ****************************************************************************************************/
-  $tribeGovernment = government_getGovernmentForTribe($tribeTag);
+  $tribeGovernment = TribeGovernment::getGovernment($tribeID);
   if (empty($tribeGovernment)) {
     $template->throwError('Fehler beim Auslesen der Regierungsform.');
     return;
@@ -364,8 +414,8 @@ function tribe_getContent($caveID, &$details) {
   }
 
   if ($tribeGovernment['governmentID'] == 2) {
-    $choice = leaderChoose_getVoteOf($_SESSION['player']->playerID);
-    $votes  = leaderChoose_getElectionResultsForTribe($tribeTag);
+    $choice = TribeLeader::getVotes($_SESSION['player']->playerID);
+    $votes  = TribeLeader::getElection($tribeID);
 
     $possibleChoices = $tribeMembers;
     $possibleChoices[0] = array ('name' => _('Keiner'), 'playerID' => 0);
@@ -393,20 +443,13 @@ function tribe_getContent($caveID, &$details) {
 
   /****************************************************************************************************
   *
-  * Parsen für die Mitgliederliste
-  *
-  ****************************************************************************************************/
-  $tribeMembersAll = tribe_getPlayerList($tribeTag, true, true);
-
-  /****************************************************************************************************
-  *
   * Auslesen der Stammesnachrichten
   *
   ****************************************************************************************************/
   $messagesClass = new Messages;
 
   $messageAry = array();
-  $messages = tribe_getTribeMessages($tribeTag);
+  $messages = TribeMessage::getMessages($tribeID);
   if (sizeof($messages)) {
     foreach($messages AS $msgID => $messageData) {
       $messageAry[] = array(
@@ -424,8 +467,8 @@ function tribe_getContent($caveID, &$details) {
   * Auslesen und Anzeigen der Beziehungen
   *
   ****************************************************************************************************/
-  $relationsAll = relation_getRelationsForTribe($tribeTag);
-  $relationsWar = relation_getWarTargetsAndFame($tribeTag);
+  $relationsAll = TribeRelation::getRelations($tribeID);
+  $relationsWar = TribeRelation::getWarRelations($tribeID);
 
   // Allgemein -> Allgemeines
   // Regierung -> Beziehungen
@@ -532,7 +575,7 @@ function tribe_getContent($caveID, &$details) {
   * Einzahlungen
   *
   ****************************************************************************************************/
-  $donations = tribe_getTribeStorageDonations($tribeData['tag']);
+  $donations = TribeDonation::getDonations($tribeID);
   $template->addVar('donations', $donations);
 
   /****************************************************************************************************
@@ -584,10 +627,6 @@ function tribe_getContent($caveID, &$details) {
   * Übergabe ans Template
   *
   ****************************************************************************************************/
-  if ($messageID && isset($messageText[$messageID])) {
-    $template->addVar('status_msg', $messageText[$messageID]);
-  }
-
   $template->addVars(array(
     'tribe_name'          => $tribeData['name'],
     'tribe_tag'           => $tribeData['tag'],
@@ -596,7 +635,6 @@ function tribe_getContent($caveID, &$details) {
     'tribe_leader_name'   => $tribeData['leaderName'],
     'tribe_leader_id'     => $tribeData['leaderID'],
     'tribe_members'       => $tribeMembers,
-    'tribe_members_all'   => $tribeMembersAll,
     'tribe_members_count' => strval($memberCount),
 
     'government_name'     => $GLOBALS['governmentList'][$tribeData['governmentID']]['name'],
@@ -609,18 +647,20 @@ function tribe_getContent($caveID, &$details) {
     'relations_info'      => $relations_info,
     'relations_war'       => (!empty($relationsWar)) ? true : false,
 
-    'tribe_action_auth'      => TRIBE_ACTION_AUTH,
-    'tribe_action_choose_leader' => TRIBE_ACTION_CHOOSE_LEADER,
-    'tribe_action_donate'    => TRIBE_ACTION_DONATE,
-    'tribe_action_goverment' => TRIBE_ACTION_GOVERMENT,
-    'tribe_action_leave'     => TRIBE_ACTION_LEAVE,
-    'tribe_action_message'   => TRIBE_ACTION_MESSAGE,
-    'tribe_action_relation'  => TRIBE_ACTION_RELATION,
-    'tribe_action_update'    => TRIBE_ACTION_UPDATE,
-    'tribe_action_wonder'    => TRIBE_ACTION_WONDER,
-    'tribe_action_kick'      => TRIBE_ACTION_KICK,
-
     'wonders'             => $wonders,
+
+    'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
+
+    'tribe_action_auth'          => TRIBE_ACTION_AUTH,
+    'tribe_action_choose_leader' => TRIBE_ACTION_CHOOSE_LEADER,
+    'tribe_action_donate'        => TRIBE_ACTION_DONATE,
+    'tribe_action_goverment'     => TRIBE_ACTION_GOVERMENT,
+    'tribe_action_leave'         => TRIBE_ACTION_LEAVE,
+    'tribe_action_message'       => TRIBE_ACTION_MESSAGE,
+    'tribe_action_relation'      => TRIBE_ACTION_RELATION,
+    'tribe_action_update'        => TRIBE_ACTION_UPDATE,
+    'tribe_action_wonder'        => TRIBE_ACTION_WONDER,
+    'tribe_action_kick'          => TRIBE_ACTION_KICK,
   ));
 }
 
@@ -640,9 +680,10 @@ function tribe_getContentNoTribe($caveID, &$details) {
     -1 => array('type' => 'error', 'message' => _('Stammeskürzel und Passwort stimmen nicht überein.')),
      1 => array('type' => 'success', 'message' => _('Du bist dem Stamm beigetreten.')),
      2 => array('type' => 'success', 'message' => _('Der Stamm wurde erfolgreich angelegt.')),
+     3 => array('type' => 'success', 'message' => _('Der Stamm wurde erfolgreich angelegt. Jedoch konnte das alte Ranking nicht übernommen werden.')),
   );
 
-  if (!empty($_SESSION['player']->tribe)) {
+  if (!empty($_SESSION['player']->tribeID)) {
     tribe_getContent($caveID, $details);
     return;
   }
@@ -652,12 +693,14 @@ function tribe_getContentNoTribe($caveID, &$details) {
   $template->setShowRresource(false);
 
   // process form data
-  $messageID = 0;
   $tribeAction =  Request::getVar('action', 0);
   switch ($tribeAction) {
     case TRIBE_ACTION_JOIN:
-      if (tribe_validatePassword(Request::getVar('inputPassword', '')) && tribe_validateTag(Request::getVar('inputTag', ''))) {
-        $messageID = tribe_processJoin($_SESSION['player']->playerID, Request::getVar('inputTag', ''), Request::getVar('inputPassword', ''));
+      $tag = Request::getVar('inputTag', '');
+      $password = Request::getVar('inputPassword', '');
+
+      if (Tribe::validatePassword($password) && Tribe::validateTag($tag)) {
+        $messageID = Tribe::processJoin($_SESSION['player']->playerID, $tag, $password);
         if ($messageID == 1) {
           $auth = new auth;
           $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
@@ -673,11 +716,12 @@ function tribe_getContentNoTribe($caveID, &$details) {
     break;
 
     case TRIBE_ACTION_CREATE:
-      if (!tribe_validatePassword(Request::getVar('inputPassword', ''))){
-        die();
-      }
-      if (tribe_validatePassword(Request::getVar('inputPassword', '')) && tribe_validateTag(Request::getVar('inputTag', ''))){
-        $messageID = tribe_processCreate($_SESSION['player']->playerID, Request::getVar('inputTag', ''), Request::getVar('inputPassword', ''), Request::getVar('inputRestoreRank', 'no') == 'yes');
+      $tag = Request::getVar('inputTag', '');
+      $password = Request::getVar('inputPassword', '');
+      $restoreRang = (Request::getVar('inputRestoreRank', 'no') == 'yes') ? true : false;
+
+      if (Tribe::validatePassword($password) && Tribe::validateTag($tag)) {
+        $messageID = Tribe::processCreate($_SESSION['player']->playerID, $tag, $password, $restoreRang);
       } else {
         $messageID = -8;
       }
@@ -699,11 +743,8 @@ function tribe_getContentNoTribe($caveID, &$details) {
   * Übergabe ans Template
   *
   ****************************************************************************************************/
-  if ($messageID && isset($messageText[$messageID])) {
-    $template->addVar('status_msg', $messageText[$messageID]);
-  }
-
   $template->addVars(array(
+    'status_msg'           => (isset($messageID)) ? $messageText[$messageID] : '',
     'tribe_action_create'  => TRIBE_ACTION_CREATE,
     'tribe_action_join'    => TRIBE_ACTION_JOIN,
   ));

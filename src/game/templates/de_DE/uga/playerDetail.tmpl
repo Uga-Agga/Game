@@ -33,7 +33,7 @@
               <div class="span6">
                 <h5 class="text-center">Spielderdaten</h5>
                 <div class="row"><div class="span2 span-profile-row1">Name:</div><div class="span4 span-profile-row2">{{ player_details.name }}</div></div>
-                <div class="row"><div class="span2 span-profile-row1">Stamm:</div><div class="span4 span-profile-row2"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe }}">{{ player_details.tribe }}</a></div></div>
+                <div class="row"><div class="span2 span-profile-row1">Stamm:</div><div class="span4 span-profile-row2"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribeID }}">{{ player_details.tribe }}</a></div></div>
                 <div class="row"><div class="span2 span-profile-row1">Awards:</div><div class="span4 span-profile-row2">{% if player_details.award %}{% for award in player_details.award %}<a href="main.php?modus={{ award_detail_link }}&amp;award={{ award }}"><img src="images/awards/{{ award }}.png" width="15" height="15" border="0" hspace="1"></a>{% endfor %}{% else %}&nbsp;{% endif %}</div></div>
                 <div class="row"><div class="span2 span-profile-row1">Geschlecht:</div><div class="span4 span-profile-row2">{{ player_details.sex }}</div></div>
                 <div class="row"><div class="span2 span-profile-row1">Herkunft:</div><div class="span4 span-profile-row2">{{ player_details.origin }}</div></div>

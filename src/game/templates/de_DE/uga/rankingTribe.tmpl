@@ -38,7 +38,7 @@
         {% for item in row %}
           <tr>
             <td style="padding-left: 4px">{{ item.rank }}</td>
-            <td><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
+            <td><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ item.tribeID }}">{{ item.tribe }}</a></td>
             <td>{{ item.glory }}</td>
             <td>{{ item.points_rank }}</td>
             <td>{{ item.average }}</td>

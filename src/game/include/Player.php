@@ -2,7 +2,7 @@
 /*
  * Player.php -
  * Copyright (c) 2004  Marcus Lunzenauer
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  * Copyright (c) 2011-2013 Georg Pitterle <georg.pitterle@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -46,10 +46,9 @@ class Player {
   var $auth;
   var $donateLocked;
   var $tutorialID;
-  var $jabber;
+  var $jabberName;
 
   function Player($record) {
-
     $this->playerID           = $record['playerID'];
     $this->name               = $record['name'];
     $this->email              = $record['email'];
@@ -76,18 +75,19 @@ class Player {
     $this->auth               = unserialize($record['auth']);
     $this->donateLocked       = unserialize($record['donateLocked']);
     $this->tutorialID         = $record['tutorialID'];
-    $this->jabber             = $record['jabber'];
+    $this->jabberName         = $record['jabberName'];
   }
 
   static function getPlayer($playerID, $complete=false) {
     global $db;
 
     // get player out of the database
-    $sql = $db->prepare("SELECT *
-                         FROM " . PLAYER_TABLE . "
-                         WHERE playerID = :playerID");
+    $sql = $db->prepare("SELECT p.*, t.tag as tribe
+                         FROM " . PLAYER_TABLE . " p
+                           LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = p.tribeID 
+                         WHERE p.playerID = :playerID");
     $sql->bindParam('playerID', $playerID, PDO::PARAM_INT);
-    if (!$sql->execute()) return NULL;
+    if (!$sql->execute()) return null;
 
     $playerData = $sql->fetch(PDO::FETCH_ASSOC);
     $sql->closeCursor();

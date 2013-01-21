@@ -216,7 +216,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 
   // get the map details
   $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);
-  $relations = relation_getRelationsForTribe($_SESSION['player']->tribe);
+  $relations = TribeRelation::getRelations($_SESSION['player']->tribe);
 
   $map = array();
   foreach ($caveDetails AS $cave) {
@@ -280,7 +280,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
         $cell['unsecure'] = array('dummy' => '');
       }
 
-      if ($_SESSION['player']->tribeID == $cave['tribeID']) {
+      if ($_SESSION['player']->playerID == $cave['playerID']) {
         $cell['css_self'] = 't_self';
       }
       if (isset($relations['own'][strtoupper($cave['tribe'])])) {
@@ -400,9 +400,9 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
 
   if ($cave['playerID'] != 0) {
     $caveDetails   = getCaves($cave['playerID']);
-    $playerDetails = getPlayerByID($cave['playerID']);
+    $playerDetails = Player::getPlayer($cave['playerID']);
 
-    $showArtePossible = ($playerDetails['tribe'] != GOD_ALLY) ? true : false;
+    $showArtePossible = ($playerDetails->tribe != GOD_ALLY) ? true : false;
   }
 
   $cave['terrain_name'] = $GLOBALS['terrainList'][$cave['terrain']]['name'];

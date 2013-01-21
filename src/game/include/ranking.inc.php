@@ -78,10 +78,10 @@ function rankingPlayer_getRowsByOffset($offset) {
     return array();
   }
 
-  $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, p.tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
+  $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, t.tag as tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
                        FROM ". RANKING_TABLE ." r
                          LEFT JOIN ". PLAYER_TABLE ." p ON r.playerID = p.playerID
-                         LEFT JOIN ". TRIBE_TABLE ." t ON p.tribe = t.tag
+                         LEFT JOIN ". TRIBE_TABLE ." t ON p.tribeID = t.tribeID
                        ORDER BY rank ASC LIMIT :offset, :rankingRows");
   $sql->bindValue('offset', $offset, PDO::PARAM_INT);
   $sql->bindValue('rankingRows', RANKING_ROWS, PDO::PARAM_INT);
@@ -181,9 +181,9 @@ function rankingTribe_checkOffsetByPage($tribeID, $page, $numRows) {
 function rankingTribe_getRowsByOffset($offset) {
   global $db;
 
-  $sql = $db->prepare("SELECT r.*, r.playerAverage AS average, t.awards, t.war_won, t.war_lost
+  $sql = $db->prepare("SELECT r.*, r.playerAverage AS average, t.awards, t.war_won, t.war_lost, t.tag as tribe
                        FROM ". RANKING_TRIBE_TABLE ." r
-                         LEFT JOIN ". TRIBE_TABLE ." t ON r.tribe = t.tag
+                         LEFT JOIN ". TRIBE_TABLE ." t ON r.tribeID = t.tribeID
                        ORDER BY r.rank ASC
                        LIMIT :offset, :rankingRows");
   $sql->bindValue('offset', $offset, PDO::PARAM_INT);

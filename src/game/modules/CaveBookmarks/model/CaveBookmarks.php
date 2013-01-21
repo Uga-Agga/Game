@@ -2,7 +2,7 @@
 /*
  * CaveBookmarks.php -
  * Copyright (c) 2004  Marcus Lunzenauer
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -38,7 +38,7 @@ class CaveBookmarks_Model extends Model {
     $names = array();
     // prepare query
     $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord, ".
-                   "p.playerID, p.name as playerName, p.tribe, ".
+                   "p.playerID, p.name as playerName, p.tribeID, ".
                    "r.name as region ".
                    "FROM ". CAVE_BOOKMARKS_TABLE ." cb ".
                    "LEFT JOIN ". CAVE_TABLE ." c ON cb.caveID = c.caveID ".
@@ -59,7 +59,7 @@ class CaveBookmarks_Model extends Model {
 
     if ($extended) {
       $sql = $db->prepare("SELECT c.caveID, c.name, c.xCoord, c.yCoord, ".
-               "p.playerID, p.name as playerName, p.tribe, ".
+               "p.playerID, p.name as playerName, p.tribeID, ".
                "r.name as region ".
                "FROM ". CAVE_TABLE ." c ".
                "LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID ".

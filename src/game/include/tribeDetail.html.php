@@ -12,11 +12,11 @@
 /** ensure this file is being included by a parent file */
 defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 
-function tribe_getContent($caveID, $tag) {
+function tribe_getContent($caveID, $tribeID) {
   global $db, $template;
 
-  if (!$tag) {
-    $template->throwError('Es wurde kein Stamm ausgewählt.');
+  if (!$tribeID) {
+    $template->throwError('Der Stamm wurde nicht gefunden.');
     return;
   }
 
@@ -24,108 +24,29 @@ function tribe_getContent($caveID, $tag) {
   $template->setFile('tribeDetail.tmpl');
   $template->setShowRresource(false);
 
-  $sql = $db->prepare("SELECT t.*, p.playerID, p.name AS leader_name
-                       FROM ". TRIBE_TABLE ." t
-                         LEFT JOIN ". PLAYER_TABLE ." p
-                           ON p.playerID = t.leaderID
-                       WHERE t.tag LIKE :tag");
-  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
-  if(!$sql->execute()) {
-    $template->throwError('Fehler in der Datenbank.');
+  $tribe = Tribe::getByID($tribeID);
+  if ($tribe == null) {
+    $template->throwError('Der Stamm wurde nicht gefunden.');
     return;
-  }
-
-  if (!$row = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $template->throwError('Es konnte kein Stamm mit dem Namen gefunden werden.');
-    return;
-  }
-  $sql->closeCursor();
-
-  $JuniorAdmin = $targetPlayer = new Player(getPlayerByID($row['juniorLeaderID']));
-
-  if (!empty($row['awards'])){
-    $tmp = explode('|', $row['awards']);
-    $awards = array();
-
-    foreach ($tmp AS $tag1) {
-      $awards[] = array(
-        'award_tag' => $tag1,
-        'award_modus' => AWARD_DETAIL
-      );
-    }
-
-    $row['award'] = $awards;
-  }
-
-  if ($row['avatar']) {
-    $row['avatar'] = @unserialize($row['avatar']);
-    $row['avatar_path'] = $row['avatar']['path'];
-    $row['avatar_width'] = $row['avatar']['width'];
-    $row['avatar_height'] = $row['avatar']['height'];
-  }
-
-  foreach($row as $k => $v) {
-    if (!$v && $k != 'avatar') {
-      $row[$k] = "k.A.";
-    }
   }
 
   // parse tribe message
   $parser = new parser;
-  $row['description'] = $parser->p($row['description']);
+  $tribe['description'] = $parser->p($tribe['description']);
 
-  // get Tribe Rank
-  $sql = $db->prepare("SELECT rank FROM ". RANKING_TRIBE_TABLE ." WHERE tribe = :tag");
-  $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+  $ranking = Tribe::getRanking($tribeID);
+  $tribe['rank'] = $ranking;
 
-  if (!$sql->execute()) {
-    $template->throwError('Fehler in der Datenbank.');
-    return;
-  }
-
-  if ($ranking = $sql->fetch(PDO::FETCH_ASSOC)) {
-    $row['rank'] = $ranking['rank'];
-  } else {
-    $row['rank'] = '';
-  }
-
-  $template->addVar('tribe_details', $row);
+  $template->addVar('tribe_details', $tribe);
 
   // history
-  $history = relation_getTribeHistory($tag);
-  $template->addVar('tribe_history', $history);
+  $template->addVar('tribe_history', Tribe::getHistory($tribeID));
 
   // player list
-  $playerList = tribe_getPlayerList($tag, true, true);
-  foreach($playerList AS $id => $playerData) {
-    if (!empty($playerData['awards'])) {
-      $playerData['awards'] = explode('|', $playerData['awards']);
-
-      $awards = array();
-      foreach ($playerData['awards'] AS $award) {
-        $awards[] = array('tag' => $award, 'award_modus' => AWARD_DETAIL);
-      }
-
-      $playerData['award'] = $awards;
-    }
-
-    foreach($playerData as $k => $v) {
-      if ($k == 'awards' || $k == 'religion') {
-        continue;
-      }
-
-      if (!$v) {
-        $playerData[$k] = _('k.A.');
-      }
-    }
-
-    $playerList[$id] = $playerData;
-  }
-
-  $template->addVar('tribe_player_list', $playerList);
+  $template->addVar('tribe_player_list', Tribe::getPlayerList($tribeID, true, true));
 
   // relations
-  $relations = relation_getRelationsForTribe($tag);
+  $relations = TribeRelation::getRelations($tribeID);
   $relationsData = array();
   if (isset($relations['own'])) {
     foreach($relations['own'] AS $target => $relationData) {

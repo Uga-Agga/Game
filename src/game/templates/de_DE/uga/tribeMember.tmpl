@@ -35,7 +35,12 @@
         <ul class="dropdown-menu">
           {% if is_auth.change_settings or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_profile" data-toggle="tab">Stammesprofil</a></li>{% endif %}
           {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_member" data-toggle="tab">Spielerverwaltung</a></li>{% endif %}
-          {% if is_auth.manage_chat or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_chat" data-toggle="tab">Chat</a></li>{% endif %}
+          {% if is_auth.manage_chat or is_auth.isLeader %}
+            <li class="divider"></li>
+            <li><a class="tab-switch" href="#tribe_chat1" data-toggle="tab">Chat Raum 1</a></li>
+            <li><a class="tab-switch" href="#tribe_chat2" data-toggle="tab">Chat Raum 2</a></li>
+            <li><a class="tab-switch" href="#tribe_chat3" data-toggle="tab">Chat Raum 3</a></li>
+          {% endif %}
         </ul>
       </li>
       {% endif %}
@@ -156,7 +161,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for item in tribe_members_all %}
+            {% for item in tribe_members %}
               <tr>
                 <td class="text-left"><a href="main.php?modus={{ player_detail_link}}&amp;detailID={{ item.playerID }}">{{ item.name }}</a></td>
                 <td>{{ item.god }}</td>
@@ -250,7 +255,7 @@
               {% if is_auth.isLeader %}
               <tr id="player_{{ item.playerID }}_content" class="bg{{ bgID }} hide">
                 <td colspan="3" class="text-left">
-                  <form id="formTribeMeberAuth" action="main.php?modus={{ tribe_link }}" method="post">
+                  <form id="formTribeMeberAuth" action="main.php?modus={{ tribe_link }}#tribe_member" method="post">
                     <label class="checkbox">
                       <input type="checkbox" id="msg_tribe" name="msg_tribe" value="1" {% if item.tribeAuth.msg_tribe %}checked="checked"{% endif %}>Stammesnachrichten schreiben
                     </label>
@@ -293,7 +298,40 @@
 {#/* Verwaltung / Chat */ #}
       {% if is_auth.manage_chat or is_auth.isLeader %}
       <div class="tab-pane" id="tribe_chat">
-        <div class="text-center space" style="width: 100%;"><i class="icon-heart"></i>&nbsp;Für Sven!&nbsp;<i class="icon-heart"></i></div>
+        <div class="container-fluid">
+          <div class="row-fluid">
+            <div class="span4 nospace">
+              <input type="text" placeholder="Raumname 1">
+              <select multiple="multiple">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+            <div class="span4 nospace">
+              <input type="text" placeholder="Raumname 2">
+              <select multiple="multiple">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+            <div class="span4 nospace">
+              <input type="text" placeholder="Raumname 3">
+              <select multiple="multiple">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
       {% endif %}
 {#/* Regierung / Beziehungen */ #}
@@ -338,9 +376,9 @@
                     {% endif %}
                     {% if is_auth.change_relation or is_auth.isLeader %}
                     <form id="formTribeChangeRelation" action="main.php?modus={{ tribe_link }}" method="post">
-                      <input type="hidden" name="relationData[tag]" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" />
+                      <input type="hidden" name="targetTribe" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" />
                       <div class="input-append">
-                        <select name="relationData[relationID]">
+                        <select name="relationID">
                           {% for item2 in relations_list %}<option value="{{ item2.relationID }}" {% if item2.relationID == item.relation_type %}selected="selected"{% endif %}>{{ item2.name }}</option>{% endfor %}
                         </select>
                         <button class="btn" type="button" id="changeRelation" name="changeRelation">Go</button>
@@ -364,15 +402,15 @@
       <div class="tab-pane space" id="tribe_newrelationship">
         <form id="formTribeRelation" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
           <div class="control-group">
-            <label class="control-label tribe-label" for="inputTag">Stammestag</label>
+            <label class="control-label tribe-label" for="targetTribe">Stammestag</label>
             <div class="controls tribe">
-              <input class="autocomplete" type="text" name="relationData[tag]" id="inputTag" placeholder="Stammestag" data-source="tribe" required>
+              <input class="autocomplete" type="text" name="targetTribe" id="targetTribe" placeholder="Stammestag" data-source="tribe" required>
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label tribe-label" for="relationDataID">Beziehung</label>
+            <label class="control-label tribe-label" for="relationID">Beziehung</label>
             <div class="controls tribe">
-              <select name="relationData[relationID]" id="relationDataID" style="height: 25px; padding: 0;">
+              <select name="relationID" id="relationID" style="height: 25px; padding: 0;">
                 {% for item in relations_list %}<option value="{{ item.relationID }}">{{ item.name }}</option>{% endfor %}
               </select>
             </div>
@@ -389,11 +427,11 @@
 {#/* Regierung / Stammesregierung */ #}
       <div class="tab-pane space" id="tribe_goverment">
         {% if government_select %}
-        <form id="formTribeGoverment" class="form-horizontal" action="main.php?modus={{ tribe_link }}" method="post">
+        <form id="formTribeGoverment" class="form-horizontal" action="main.php?modus={{ tribe_link }}#tribe_goverment" method="post">
           <div class="control-group">
-            <label class="control-label tribe-label" for="governmentData">Regierungsform</label>
+            <label class="control-label tribe-label" for="governmentID">Regierungsform</label>
             <div class="controls tribe">
-              <select name="governmentData[governmentID]" id="governmentData">
+              <select name="governmentID" id="governmentID">
                  {% for item in government_select %}<option value="{{ item.value }}" {{ item.selected|raw }}>{{ item.name }}</option>{% endfor %}
               </select>
             </div>
@@ -420,7 +458,7 @@
             <p>{{ goverment_choice_description|raw }}</p>
           </div>
           <hr>
-          <form id="formTribeLeader" class="form-inline" action="main.php?modus={{ tribe_link }}" method="post">
+          <form id="formTribeLeader" class="form-inline" action="main.php?modus={{ tribe_link }}#tribe_leader" method="post">
             Anführer:
             <div class="input-append">
               <select name="chooseLeaderID" id="chooseLeader_id">
@@ -496,7 +534,7 @@
           Die Rohstoffe werden für Stammeswunder benötigt.<br />
           Es kann alle {{ donationInterval }} Stunden EINE Einzahlung von JEDER Rohstoffart vorgenommen werden.<br />
         </div>
-        <form id="formTribeStore" action="main.php?modus={{ tribe_link }}" method="post">
+        <form id="formTribeStore" action="main.php?modus={{ tribe_link }}#tribe_store" method="post">
           <table class="table table-striped table-condensed">
             <thead>
               <tr>

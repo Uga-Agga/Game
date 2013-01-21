@@ -107,7 +107,7 @@ class auth {
       $_SESSION['player']->auth[$authType] = $newUserAuth;
     }
 
-    return true;
+    return $newUserAuth;
   }
 }
 

@@ -2,7 +2,7 @@
 /*
  * map.inc.php - 
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,9 +17,10 @@ function getCaveDetailsByCoords($minX, $minY, $maxX, $maxY) {
   global $db;
 
   $caveDetails = array();
-  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribe, p.tribeID, r.name as region
+  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribeID, r.name as region, t.tag as tribe
                        FROM ". CAVE_TABLE ." c
                          LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                         LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
                          LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID
                        WHERE :minX <= c.xCoord AND c.xCoord <= :maxX
                          AND   :minY <= c.yCoord AND c.yCoord <= :maxY

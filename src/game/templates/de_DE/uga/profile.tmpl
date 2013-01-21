@@ -108,16 +108,30 @@
           </div>
         </div>
         <div class="tab-pane" id="profile_passwd">
+          <h5>Spiel Login</h5>
           <div class="control-group">
             <label class="control-label profile-label" for="inputPlayerPasswordNew">Neues Passwort</label>
             <div class="controls profile">
-              <input type="text" id="inputPlayerPasswordNew" name="inputPlayerPasswordNew" placeholder="Neues Passwort" value="">
+              <input type="password" id="inputPlayerPasswordNew" name="inputPlayerPasswordNew" placeholder="Neues Passwort" value="" pattern=".{6,}">
             </div>
           </div>
           <div class="control-group">
             <label class="control-label profile-label" for="inputPlayerPasswordRe">Wiederholung</label>
             <div class="controls profile">
-              <input type="text" id="inputPlayerPasswordRe" name="inputPlayerPasswordRe" placeholder="Neues Passwort - Wiederholung" value="">
+              <input type="password" id="inputPlayerPasswordRe" name="inputPlayerPasswordRe" placeholder="Neues Passwort - Wiederholung" value="" pattern=".{6,}">
+            </div>
+          </div>
+          <h5>Jabber Login</h5>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputJabberPasswordNew">Neues Passwort</label>
+            <div class="controls profile">
+              <input type="password" id="inputJabberPasswordNew" name="inputJabberPasswordNew" placeholder="Neues Passwort" value="" pattern=".{6,}">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputJabberPasswordRe">Wiederholung</label>
+            <div class="controls profile">
+              <input type="password" id="inputJabberPasswordRe" name="inputJabberPasswordRe" placeholder="Neues Passwort - Wiederholung" value="" pattern=".{6,}">
             </div>
           </div>
         </div>

@@ -209,7 +209,7 @@ function getRegionByName($name) {
 
 /** This function returns a players data
  */
-function getPlayerByID($playerID) {
+/*function getPlayerByID($playerID) {
   global $db;
 
   $sql = $db->prepare("SELECT *
@@ -222,7 +222,7 @@ function getPlayerByID($playerID) {
   $sql->closeCursor();
   
   return $ret;
-}
+}*/
 
 /** This function returns a players data
  */
