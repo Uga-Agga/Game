@@ -26,12 +26,18 @@ define('TRIBE_ACTION_CHOOSE_LEADER', 9);
 define('TRIBE_ACTION_AUTH',         10);
 define('TRIBE_ACTION_WONDER',       11);
 define('TRIBE_ACTION_KICK',         12);
+define('TRIBE_ACTION_CHAT_ADD',     13);
+define('TRIBE_ACTION_CHAT_REMOVE',  14);
 
 function tribe_getContent($caveID, &$details) {
   global $template;
 
   // messages
   $messageText = array (
+    -47 => array('type' => 'error', 'message' => _('Fehler beim entfernen der Spielerrechte.')),
+    -46 => array('type' => 'error', 'message' => _('Der Stamm wurde nicht gefunden.')),
+    -45 => array('type' => 'error', 'message' => _('Der Spieler wurde nicht gefunden.')),
+    -44 => array('type' => 'error', 'message' => _('Beim hinzufügen der Spielerrechte ist ein Fehler aufgetreten.')),
     -43 => array('type' => 'error', 'message' => _('Die Regierung wurde nicht geändert, weil sie sich nicht geändert hat.')),
     -42 => array('type' => 'error', 'message' => _('Ein Rohstoff wurde erst vor kurzen eingelagert. Bitte warte bis du es erneut versucht.')),
     -41 => array('type' => 'error', 'message' => _('Beim kicken das Spielers ist ein Fehler aufgetreten.')),
@@ -88,6 +94,9 @@ function tribe_getContent($caveID, &$details) {
      11 => array('type' => 'info', 'message' => _('Die Götter haben Ihr Flehen nicht erhört! Die eingesetzten Opfergaben sind natürlich dennoch verloren. Mehr Glück beim nächsten Mal!')),
      12 => array('type' => 'success', 'message' => _('Das Erflehen des Wunders scheint Erfolg zu haben.')),
      13 => array('type' => 'success', 'message' => _('Der Spieler wurde erfolgreich gekickt.')),
+     14 => array('type' => 'success', 'message' => _('Spielerrechte erfolgreich hinzugefügt. In kürze kann der Spieler den Raum betreten.')),
+     15 => array('type' => 'success', 'message' => _('Spielerrechte erfolgreich hinzugefügt. In kürze können die Spieler den Raum betreten.')),
+     16 => array('type' => 'success', 'message' => _('Spielerrechte erfolgreich entfernt. In kürze können der/die Spieler den Raum nicht mehr betreten.')),
   );
 
   if (!$_SESSION['player']->tribeID) {
@@ -111,6 +120,9 @@ function tribe_getContent($caveID, &$details) {
   $auth = new auth;
   $userAuth = $auth->getAllTypePermission('tribe', $_SESSION['player']->auth['tribe']);
   $userAuth['isLeader'] = ($tribeData['leaderID'] == $_SESSION['player']->playerID) ? true : false;
+
+  // init Chat Channel
+  $chatRooms = Chat::getRoomsByTribeID($tribeID);
 
   // process form data
   $tribeAction =  Request::getVar('action', 0);
@@ -385,6 +397,93 @@ function tribe_getContent($caveID, &$details) {
 
       $tribeData = Tribe::getByID($tribeID);
     break;
+
+/****************************************************************************************************
+*
+* User/Stammes Rechte für den Chat vergeben
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_CHAT_ADD:
+      if (!$userAuth['manage_chat'] && !$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $roomID = Request::getVar('roomID', 0);
+      if (empty($roomID) || (!isset($chatRooms[$roomID]))) {
+        $messageID = -30;
+        break;
+      }
+
+      $user = Request::getVar('user', '');
+      $tribe = Request::getVar('tribe', '');
+
+      if (!empty($user)) {
+        if (Chat::checkUserExists($user)) {
+          if (Chat::authAdd($roomID, $user)) {
+            $messageID = 14;
+            break;
+          } else {
+            $messageID = -44;
+            break;
+          }
+        } else {
+          $messageID = -45;
+          break;
+        }
+      } else if (!empty($tribe)) {
+        $chatTribeID = Tribe::getID($tribe);
+
+        if ($tribe !== false) {
+          if (Chat::authAddTribe($roomID, $chatTribeID)) {
+            $messageID = 15;
+            break;
+          } else {
+            $messageID = -44;
+            break;
+          }
+        } else  {
+          $messageID = -45;
+          break;
+        }
+      } else {
+        $messageID = -30;
+        break;
+      }
+    break;
+
+/****************************************************************************************************
+*
+* Userrechte entfernen
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_CHAT_REMOVE:
+      if (!$userAuth['manage_chat'] && !$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $roomID = Request::getVar('roomID', 0);
+      if (empty($roomID) || (!isset($chatRooms[$roomID]))) {
+        $messageID = -30;
+        break;
+      }
+
+      $removeIDs = Request::getVar('removeIDs', array('' => ''));
+
+      if (!empty($removeIDs)) {
+        if (Chat::authDel($roomID, $removeIDs)) {
+          $messageID = 16;
+          break;
+        } else {
+          $messageID = -47;
+          break;
+        }
+      } else {
+        $messageID = -30;
+        break;
+      }
+    break;
   }
 
   /****************************************************************************************************
@@ -522,7 +621,7 @@ function tribe_getContent($caveID, &$details) {
     }
 
     $relations[$target] = array(
-      'tag'            => $target,
+      'tag'            => $targetData['targetTag'],
       'their_relation' => $GLOBALS['relationList'][$relationsAll['other'][$target]['relationType']]['name'],
       'duration'       => $targetData['time'],
       'relation_type'  => 0,
@@ -624,6 +723,18 @@ function tribe_getContent($caveID, &$details) {
 
   /****************************************************************************************************
   *
+  * Chat
+  *
+  ****************************************************************************************************/
+  $userRooms = Chat::getUsersByTribeID($tribeID);
+
+  foreach ($chatRooms as $id => $data) {
+    if (!isset($userRooms[$id]) || empty($userRooms[$id])) continue;
+    $chatRooms[$id]['auth'] = $userRooms[$id];
+  }
+
+  /****************************************************************************************************
+  *
   * Übergabe ans Template
   *
   ****************************************************************************************************/
@@ -649,9 +760,13 @@ function tribe_getContent($caveID, &$details) {
 
     'wonders'             => $wonders,
 
+    'chat_rooms'          => $chatRooms,
+
     'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
 
     'tribe_action_auth'          => TRIBE_ACTION_AUTH,
+    'tribe_action_chat_add'      => TRIBE_ACTION_CHAT_ADD,
+    'tribe_action_chat_remove'   => TRIBE_ACTION_CHAT_REMOVE,
     'tribe_action_choose_leader' => TRIBE_ACTION_CHOOSE_LEADER,
     'tribe_action_donate'        => TRIBE_ACTION_DONATE,
     'tribe_action_goverment'     => TRIBE_ACTION_GOVERMENT,

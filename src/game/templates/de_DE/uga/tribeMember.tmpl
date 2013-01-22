@@ -37,9 +37,9 @@
           {% if is_auth.kick_memberr or is_auth.see_online or is_auth.isLeader %}<li><a class="tab-switch" href="#tribe_member" data-toggle="tab">Spielerverwaltung</a></li>{% endif %}
           {% if is_auth.manage_chat or is_auth.isLeader %}
             <li class="divider"></li>
-            <li><a class="tab-switch" href="#tribe_chat1" data-toggle="tab">Chat Raum 1</a></li>
-            <li><a class="tab-switch" href="#tribe_chat2" data-toggle="tab">Chat Raum 2</a></li>
-            <li><a class="tab-switch" href="#tribe_chat3" data-toggle="tab">Chat Raum 3</a></li>
+            {% for item in chat_rooms %}
+              <li><a class="tab-switch" href="#tribe_chat_{{ item.tag }}" data-toggle="tab">{{ item.name }}</a></li>
+            {% endfor %}
           {% endif %}
         </ul>
       </li>
@@ -194,7 +194,6 @@
       <div class="tab-pane space" id="tribe_leave">
         <div class="text-center"><a class="action btn" href="main.php?modus={{ tribe_link }}&amp;action={{ tribe_action_leave }}" data-reask="true" data-reask-header="Stamm verlassen!" data-reask-msg="Möchtest du deinen Stann <strong> {{ tribe_name }} [{{ tribe_tag }}]</strong> wirklich Verlassen?">Stamm verlassen</a></div>
       </div>
-
 {#/* Verwaltung / Stammesprofil */ #}
       {% if is_auth.change_settings or is_auth.isLeader %}
       <div class="tab-pane space" id="tribe_profile">
@@ -272,7 +271,7 @@
                       <input type="checkbox" id="change_settings" name="change_settings" value="16" {% if item.tribeAuth.change_settings %}checked="checked"{% endif %}>Stammes-Informationen bearbeiten
                     </label>
                     <label class="checkbox">
-                      <input type="checkbox" id="tribeAuth.wonder" name="tribeAuth" value="32" {% if item.tribeAuth.tribeAuth.wonder %}checked="checked"{% endif %}>Kann Stammeswunder erwirken
+                      <input type="checkbox" id="wonder" name="wonder" value="32" {% if item.tribeAuth.wonder %}checked="checked"{% endif %}>Kann Stammeswunder erwirken
                     </label>
                     <label class="checkbox">
                       <input type="checkbox" id="see_online" name="see_online" value="64" {% if item.tribeAuth.see_online %}checked="checked"{% endif %}>Kann die letzte Online Zeit sehen
@@ -285,7 +284,7 @@
                       <input type="hidden" name="player_id" value="{{ item.playerID }}" />
                       <button class="btn" type="button" id="tribeMemberAuthSubmit" name="tribeMemberAuthSubmit">Absenden</button>
                     </div>
-                    </form>
+                  </form>
                 </td>
               </tr>
               {% endif %}
@@ -297,42 +296,47 @@
       {% endif %}
 {#/* Verwaltung / Chat */ #}
       {% if is_auth.manage_chat or is_auth.isLeader %}
-      <div class="tab-pane" id="tribe_chat">
-        <div class="container-fluid">
-          <div class="row-fluid">
-            <div class="span4 nospace">
-              <input type="text" placeholder="Raumname 1">
-              <select multiple="multiple">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </select>
+        {% for item in chat_rooms %}
+        <div class="tab-pane" style="padding: 0 5px;" id="tribe_chat_{{ item.tag }}">
+          <div class="row" style="width: 614px; margin: 0 auto;">
+            <div class="span3 nospace" style="width: 50%">
+              <h5>Aktuelle Berechtigungen</h5>
+              <form id="formTribChat{{ item.id }}" class="form-horizontal" action="main.php?modus={{ tribe_link }}#tribe_chat_{{ item.tag }}" method="post">
+                <div class="control-group">
+                  <select name="removeIDs[]" style="height: 150px" multiple="multiple">
+                    {% for user in item.auth %}<option value="{{ user.id }}">{{ user.name }}</option>{% endfor %}
+                  </select>
+                </div>
+                <div class="control-group">
+                  <input type="hidden" name="action" value="{{ tribe_action_chat_remove }}" />
+                  <input type="hidden" name="roomID" value="{{ item.id }}" />
+                  <button class="btn" type="button" id="tribeMemberAuthSubmit" name="tribeMemberAuthSubmit">Entfernen</button>
+                </div>
+              </form>
             </div>
-            <div class="span4 nospace">
-              <input type="text" placeholder="Raumname 2">
-              <select multiple="multiple">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </select>
-            </div>
-            <div class="span4 nospace">
-              <input type="text" placeholder="Raumname 3">
-              <select multiple="multiple">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </select>
+            <div class="span3 nospace" style="width: 50%">
+              <h5>Spielerrechte hinzufügen</h5>
+              <form id="formTribChatAddPlayer{{ item.id }}" class="form-horizontal" action="main.php?modus={{ tribe_link }}#tribe_chat_{{ item.tag }}" method="post">
+                <div class="input-append">
+                  <input class="autocomplete" name="user" id="user" type="text" class="input-medium search-query" data-source="player">
+                  <input type="hidden" name="roomID" value="{{ item.id }}" />
+                  <input type="hidden" name="action" value="{{ tribe_action_chat_add }}" />
+                  <button class="btn" type="button" id="formTribChatAddPlayer{{ item.id }}Submit" name="formTribChatAddPlayer{{ item.id }}Submit">Ugh!</button>
+                </div>
+              </form>
+              <h5>Stamm hinzufügen</h5>
+              <form id="formTribChatAddTribe{{ item.id }}" class="form-horizontal" action="main.php?modus={{ tribe_link }}#tribe_chat_{{ item.tag }}" method="post">
+                <div class="input-append">
+                  <input class="autocomplete" name="tribe" id="tribe" type="text" class="input-medium search-query" data-source="tribe">
+                  <input type="hidden" name="roomID" value="{{ item.id }}" />
+                  <input type="hidden" name="action" value="{{ tribe_action_chat_add }}" />
+                  <button class="btn" type="button" id="formTribChatAddTribe{{ item.id }}Submit" name="formTribChatAddTribe{{ item.id }}Submit">Ugh!</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
-      </div>
+        {% endfor %}
       {% endif %}
 {#/* Regierung / Beziehungen */ #}
       <div class="tab-pane" id="tribe_relationship">
@@ -375,7 +379,7 @@
                       Kriegsanteil: {{ item.percent_actual }}&nbsp;% ({{ item.percent_estimated }}&nbsp;% benötigt)<br />
                     {% endif %}
                     {% if is_auth.change_relation or is_auth.isLeader %}
-                    <form id="formTribeChangeRelation" action="main.php?modus={{ tribe_link }}" method="post">
+                    <form id="formTribeChangeRelation" action="main.php?modus={{ tribe_link }}#tribe_relationship" method="post">
                       <input type="hidden" name="targetTribe" value="{{ item.tag }}" /><input type="hidden" name="action" value="{{ tribe_action_relation }}" />
                       <div class="input-append">
                         <select name="relationID">

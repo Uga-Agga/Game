@@ -376,7 +376,7 @@ class Tribe {
       }
     }
 
-    if ($getCaves) {
+    if ($getCaves && !empty($return)) {
       $sql = $db->prepare("SELECT caveID, xCoord, yCoord, name, playerID
                            FROM "  . CAVE_TABLE . "
                            WHERE playerID IN ('" . implode("', '", array_keys($return)) . "')");
@@ -1191,7 +1191,7 @@ class TribeMessage {
 }
 
 class TribeRelation {
-  /**
+  /*
    * calculate the fame according to the following formula:
    * basis * (V/S) * (V/S) * (S'/V')
    * this is bigger: if, winner had more points,
@@ -1390,7 +1390,7 @@ class TribeRelation {
     $maxTimeForForceSurrenderHours = $GLOBALS['relationList'][$warId]['maxTimeForForceSurrenderHours'];
 
     // generate query for MySQL, get wars
-    $sql = $db->prepare("SELECT r_target.tribeID as target,
+    $sql = $db->prepare("SELECT r_target.tribeID as targetID,
                            r_own.fame as fame_own,
                            r_target.fame as fame_target,
                            ROUND((

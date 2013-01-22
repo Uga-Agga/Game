@@ -20,22 +20,19 @@ class Chat {
 
     if (is_array($playerNames)) {
       $db->beginTransaction();
-      $sql = $db->prepare("INSERT INTO " . CHAT_USER_TABLE . " 
-                           (roomID, name)
-                           VALUES (:roomID, :name)");
-      foreach ($users as $user) {
+      $sql = $db->prepare("REPLACE " . CHAT_USER_TABLE . " 
+                           (roomID, name, deleted)
+                           VALUES (:roomID, :name, 0)");
+      foreach ($playerNames as $name) {
         $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-        $sql->bindValue('name', $playerNames, PDO::PARAM_STR);
+        $sql->bindValue('name', $name, PDO::PARAM_STR);
         $sql->execute();
       }
-
-      if (!$db->commit()) {
-        return false;
-      }
+      if (!$db->commit()) return false;
     } else {
-      $sql = $db->prepare("INSERT INTO " . CHAT_USER_TABLE . "
-                           (roomID, name)
-                           VALUES (:roomID, :name)");
+      $sql = $db->prepare("REPLACE " . CHAT_USER_TABLE . "
+                           (roomID, name, deleted)
+                           VALUES (:roomID, :name, 0)");
       $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
       $sql->bindValue('name', $playerNames, PDO::PARAM_STR);
       if (!$sql->execute() || $sql->rowCount() == 0) {
@@ -46,53 +43,96 @@ class Chat {
     return true;
   }
 
-  public static function authDel($roomID, $playerNames) {
+  public static function authAddTribe($roomID, $tribeID) {
     global $db;
 
-    if (empty($playerNames)) return false;
+    if (empty($tribeID)) return false;
 
-    if (is_array($playerNames)) {
+    $playerNames = array();
+    $sql = $db->prepare("SELECT playerID, jabbername
+                         FROM " . PLAYER_TABLE . "
+                         WHERE tribeID = :tribeID");
+    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
+    if (!$sql->execute()) return array();
+
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $playerNames[$row['playerID']] = $row['jabbername'];
+    }
+    $sql->closeCursor();
+
+    if (!empty($playerNames)) {
+      return self::authAdd($roomID, $playerNames);
+    }
+
+    return false;
+  }
+
+  public static function authDel($roomID, $IDs) {
+    global $db;
+
+    if (empty($IDs)) return false;
+
+    if (is_array($IDs)) {
       $db->beginTransaction();
       $sql = $db->prepare("UPDATE " . CHAT_USER_TABLE . "
-                           SET deleted = 1
+                           SET deleted = 1, success = 0
                            WHERE roomID = :roomID
-                             AND name = :name");
-      foreach ($users as $user) {
-      $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-      $sql->bindValue('user', $playerNames, PDO::PARAM_STR);
+                             AND id = :id");
+      foreach ($IDs as $id) {
+        $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
+        $sql->bindValue('id', $id, PDO::PARAM_STR);
         $sql->execute();
       }
+      if (!$db->commit()) return false;
 
-      if (!$db->commit()) {
-        return false;
-      }
     } else {
       $sql = $db->prepare("UPDATE " . CHAT_USER_TABLE . "
-                           SET deleted = 1
+                           SET deleted = 1, success = 0
                            WHERE roomID = :roomID
-                             AND name = :name");
+                             AND id = :id");
       $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-      $sql->bindValue('user', $playerNames, PDO::PARAM_STR);
-      if (!$sql->execute()) {
-        return false;
-      }
+      $sql->bindValue('id', $IDs, PDO::PARAM_INT);
+      if (!$sql->execute()) return false;
     }
 
     return true;
   }
 
-  public static function userAdd($playerName) {
+  public static function checkUserExists($user){
     global $db;
 
-    if (empty($playerName)) return false;
+    if (empty($user)) return false;
+
+    $sql = $db->prepare("SELECT jabberName
+                         FROM " . PLAYER_TABLE . "
+                         WHERE jabberName = :jabberName");
+    $sql->bindValue('jabberName', $user, PDO::PARAM_STR);
+    if (!$sql->execute()) return false;
+
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    if (empty($row)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static function userAdd($user) {
+    global $db;
+
+    if (empty($user)) return false;
 
     $sql = $db->prepare("INSERT INTO " . CHAT_QUEUE_TABLE . " 
                          (type, user)
                          VALUES('userAdd', :name)");
-    $sql->bindValue('name', $playerName, PDO::PARAM_STR);
+    $sql->bindValue('name', $user, PDO::PARAM_STR);
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return false;
     }
+
+    return true;
   }
 
   public static function userDel($user) {
@@ -112,19 +152,20 @@ class Chat {
   public static function tribeAdd($tribeID, $tag, $name, $autojoin=false) {
     global $db;
 
-    if (empty($tribeID) || empty($tag)) return false;
+    if (empty($tribeID) || empty($tag) || empty($name)) return false;
 
     $sql = $db->prepare("INSERT INTO " . CHAT_ROOM_TABLE . " 
                          (tribeID, tag, name, autojoin)
-                         VALUES('tribeID', :tag, :name, :autojoin)");
+                         VALUES(:tribeID, :tag, :name, :autojoin)");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
-    $sql->bindValue('name', $tag, PDO::PARAM_STR);
-    $sql->bindValue('tribeID', $autojoin, PDO::PARAM_INT);
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    $sql->bindValue('name', $name, PDO::PARAM_STR);
+    $sql->bindValue('autojoin', $autojoin, PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return false;
     }
 
-    return $sql->lastInsertId();
+    return $db->lastInsertId();
   }
 
   public static function tribeDel($tribeID) {
@@ -143,12 +184,9 @@ class Chat {
       $sql->bindValue('name', $playerName, PDO::PARAM_STR);
       $sql->execute();
     }
+    if (!$sql->commit()) return false;
 
-    if (!$db->commit()) {
-      return false;
-    }
-
-    $sql = $db->prepare("UPDATE " . CHAT_ROOM_TABLE . " SET deleted = 1 WHERE AND tribeID = :tribeID");
+    $sql = $db->prepare("UPDATE " . CHAT_ROOM_TABLE . " SET deleted = 1 WHERE tribeID = :tribeID");
     $sql->bindValue('tribeID', tribeID, PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return false;
@@ -162,13 +200,13 @@ class Chat {
 
     if (empty($tribeID) || empty($tag)) return false;
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}_1", "[{$tag}] Haupthöhle", true);
+    $rommID = self::tribeAdd($tribeID, "{$tag}", "[{$tag}] Haupthöhle", true);
     self::authAdd($rommID, $playerName);
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}_2", "[{$tag}] Nebenhöhle 1");
+    $rommID = self::tribeAdd($tribeID, "{$tag}1", "[{$tag}] Nebenhöhle 1");
     self::authAdd($rommID, $playerName);
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}_3", "[{$tag}] Nebenhöhle 2");
+    $rommID = self::tribeAdd($tribeID, "{$tag}2", "[{$tag}] Nebenhöhle 2");
     self::authAdd($rommID, $playerName);
   }
 
@@ -224,15 +262,36 @@ class Chat {
                          WHERE tribeID = :tribeID");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return array();
-  
+
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
       $rooms[$row['id']] = $row;
     }
     $sql->closeCursor();
-    
+
     return $rooms;
   }
 
-  public static function getUsersByTribeID($tribeID) {}
+  public static function getUsersByTribeID($tribeID) {
+    global $db;
+
+    if (empty($tribeID)) return false;
+
+    $user = array();
+    $sql = $db->prepare("SELECT c.*
+                         FROM " . CHAT_USER_TABLE . " c
+                           LEFT JOIN " . CHAT_ROOM_TABLE . " r ON r.id = c.roomID
+                         WHERE r.tribeID = :tribeID
+                           AND c.deleted = 0");
+    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
+    if (!$sql->execute()) return array();
+
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      $user[$row['roomID']][$row['id']] = $row;
+    }
+    $sql->closeCursor();
+
+    return $user;
+  }
 }
+
 ?>
