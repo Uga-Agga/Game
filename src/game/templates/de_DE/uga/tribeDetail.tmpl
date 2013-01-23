@@ -120,7 +120,7 @@
           <tbody>
             {% for item in relations_data %}
               <tr>
-                <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribe|url_encode }}">{{ item.tribe }}</a></td>
+                <td class="text-left"><a href="main.php?modus={{ tribe_detail_link }}&tribe={{ item.tribeID_target }}">{{ item.tribe }}</a></td>
                 <td>{{ item.relation_to }}</td>
                 <td>{{ item.relation_from }}</td>
               </tr>

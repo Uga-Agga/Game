@@ -1246,7 +1246,7 @@ class TribeRelation {
 
   public static function forceSurrender($tribeData, $targetData, $relationID) {
     // check conditions
-    if(empty($tribeData) || empty($targetData) || empty($relationID)) return -30;
+    if(empty($tribeData) || empty($targetData)) return -30;
 
     if ($tribeData['tribeID'] == $targetData['tribeID']) {
       return -14;
@@ -1531,7 +1531,7 @@ class TribeRelation {
   }
 
   public static function processRelationUpdate($tribeData, $targetData, $relationID, $force=false) {
-    if(empty($tribeData) || empty($targetData) || empty($relationID)) return -30;
+    if(empty($tribeData) || empty($targetData)) return -30;
 
     $tribeMight = self::getMight($tribeData['tribeID']);
     $targetMight = self::getMight($targetData['tribeID']);

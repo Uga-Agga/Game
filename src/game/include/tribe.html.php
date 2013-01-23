@@ -314,8 +314,8 @@ function tribe_getContent($caveID, &$details) {
 
       $targetTribe = Request::getVar('targetTribe', '');
       $relationID = Request::getVar('relationID', 0);
-      if (empty($targetTribe) || empty($relationID)) {
-        $messageID = -30;
+      if (empty($targetTribe)) {
+        $messageID = -15;
         break;
       }
 

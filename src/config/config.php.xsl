@@ -748,12 +748,14 @@ function init_potions() {
   $GLOBALS['terrainList'][<xsl:value-of select="@id"/>] = array('name' =&gt; '<xsl:value-of select="Name"/>',
                           'img' =&gt; '<xsl:value-of select="img"/>',
                           'imgMap' =&gt; '<xsl:value-of select="imgMap"/>',
+                          'description' =&gt; '<xsl:apply-templates select="Description[@lang='de_DE']"/>',
                           'takeoverByCombat' =&gt; <xsl:value-of select="@takeoverByCombat"/>,
                           'barren' =&gt; <xsl:value-of select="@barren"/>,
                           'color' =&gt; array(<xsl:apply-templates select="Color"/>),
                           'effects' =&gt; array(<xsl:apply-templates select="Effect"/>),
                           'tribeRegion' =&gt; <xsl:value-of select="@tribeRegion"/>,
-                          'tribeWonder' =&gt; <xsl:apply-templates select="TribeWonder"/>);
+                          <xsl:if test="TribeWonder">'tribeWonder' =&gt; <xsl:apply-templates select="TribeWonder"/></xsl:if>
+);
 </xsl:template>
 
 <xsl:template match="Regions">

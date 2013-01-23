@@ -202,6 +202,7 @@ struct Terrain
     int takeoverByCombat;
     int barren;
     unsigned char color[3];
+    int tribeRegion;
 
     double effects[MAX_EFFECT];
 };

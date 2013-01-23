@@ -26,17 +26,21 @@
           {% if cell.corner %}<td>&nbsp;</td>{% endif %}
           {% if cell.mapcell %}
             <td style="height: 80px; width: 80px; border: 1px solid #E6EFC2; padding: 0; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }} {{ cell.mapcell.css_self }} {{ cell.mapcell.css_own }} {{ cell.mapcell.css_other }}">
-              <div style="height: 80px; width: 80px; position: relative;">
-                <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
-                {% if (cell.mapcell.tribe or cell.mapcell.text) and not cell.mapcell.barren %}
-                  <div class="text-center" style="position: absolute; bottom: 0px; width: 80px; line-height: 13px;">
-                    {% if cell.mapcell.tribe and not cell.mapcell.barren %}
-                     <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }} text-center"><small>{{ cell.mapcell.tribe }}</small></a></p>
-                    {% endif %}
-                    {% if cell.mapcell.text and not cell.mapcell.barren %}
-                      <p class="nospace"><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" {% if cell.mapcell.unsecure %}{{ cell.mapcell.unsecure.dummy }}{% endif %} class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %} text-center" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text }}</small></a></p>
-                    {% endif %}
-                  </div>
+              <div class="text-center" style="height: 80px; width: 80px; position: relative;">
+                {% if cell.mapcell.terrain_tribe %}
+                  <a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" class="info-modal popup-detail" data-title="{{ cell.mapcell.title }}"><small>Stammeshöhle</small></a>
+                {% else %}
+                  <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
+                  {% if (cell.mapcell.tribe or cell.mapcell.text) and not cell.mapcell.barren %}
+                    <div style="position: absolute; bottom: 0px; width: 80px; line-height: 13px;">
+                      {% if cell.mapcell.tribe and not cell.mapcell.barren %}
+                       <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.tribe }}</small></a></p>
+                      {% endif %}
+                      {% if cell.mapcell.text and not cell.mapcell.barren %}
+                        <p class="nospace"><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %}" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text }}</small></a></p>
+                      {% endif %}
+                    </div>
+                  {% endif %}
                 {% endif %}
               </div>
             </td>

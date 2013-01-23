@@ -828,6 +828,7 @@ static const struct Terrain terrain_type_list[] = {
     .color   = {
       <xsl:value-of select="concat(Color/@r,', ',Color/@g,', ',Color/@b)"/>
     },
+    .tribeRegion = <xsl:value-of select="@tribeRegion"/>,
 <xsl:if test="count(Effect)">
     .effects = {
 <xsl:for-each select="Effect">

@@ -221,11 +221,12 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
   $map = array();
   foreach ($caveDetails AS $cave) {
     $cell = array(
-      'caveID'    => $cave['caveID'],
-      'terrain'   => 'terrain'.$cave['terrain'],
-      'imgMap'    => $GLOBALS['terrainList'][$cave['terrain']]['imgMap'],
-      'barren'    => $GLOBALS['terrainList'][$cave['terrain']]['barren'],
-      'title'     => 'Dies ist der Landstrich "' . $cave['cavename'] . '" (' . $cave['xCoord'] . '|' . $cave['yCoord'] . ') - ' . $cave['region'],
+      'caveID'        => $cave['caveID'],
+      'terrain'       => 'terrain'.$cave['terrain'],
+      'terrain_tribe' => $GLOBALS['terrainList'][$cave['terrain']]['tribeRegion'],
+      'imgMap'        => $GLOBALS['terrainList'][$cave['terrain']]['imgMap'],
+      'barren'        => $GLOBALS['terrainList'][$cave['terrain']]['barren'],
+      'title'         => 'Dies ist der Landstrich "' . $cave['cavename'] . '" (' . $cave['xCoord'] . '|' . $cave['yCoord'] . ') - ' . $GLOBALS['terrainList'][$cave['terrain']]['name'],
     );
 
     // unbewohnte Höhle
@@ -402,6 +403,15 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
 
   $cave['terrain_name'] = $GLOBALS['terrainList'][$cave['terrain']]['name'];
   $cave['terrain_img'] = $GLOBALS['terrainList'][$cave['terrain']]['img'];
+
+  if ($GLOBALS['terrainList'][$cave['terrain']]['tribeRegion']) {
+    $cave['terrain_description'] = $GLOBALS['terrainList'][$cave['terrain']]['description'];
+    $cave['terrain_tribe_cave'] = $GLOBALS['terrainList'][$cave['terrain']]['tribeRegion'];
+    
+    $attackerTribe = Tribe::getByID($cave['lastAttackingTribeID']);
+    $cave['tribe_cave_tag'] = $attackerTribe['tag'];
+  }
+
   $region = getRegionByID($cave['regionID']);
 
   if ($cave['artefacts'] != 0 && ($showArtePossible || $_SESSION['player']->tribe == GOD_ALLY)) {
@@ -421,12 +431,12 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
     $caves = array();
     foreach ($caveDetails AS $key => $value) {
       $temp = array(
-        'caveName'     => $value['name'],
-        'xCoord'       => $value['xCoord'],
-        'yCoord'       => $value['yCoord'],
-        'terrain'      => $GLOBALS['terrainList'][$value['terrain']]['name'],
-        'caveSize'     => floor($value[CAVE_SIZE_DB_FIELD] / 50) + 1,
-        'secureCave'   => $value['secureCave'],
+        'caveName'   => $value['name'],
+        'xCoord'     => $value['xCoord'],
+        'yCoord'     => $value['yCoord'],
+        'terrain'    => $GLOBALS['terrainList'][$value['terrain']]['name'],
+        'caveSize'   => floor($value[CAVE_SIZE_DB_FIELD] / 50) + 1,
+        'secureCave' => $value['secureCave'],
       );
 
       if ($value['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
