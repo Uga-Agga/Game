@@ -751,7 +751,9 @@ function init_potions() {
                           'takeoverByCombat' =&gt; <xsl:value-of select="@takeoverByCombat"/>,
                           'barren' =&gt; <xsl:value-of select="@barren"/>,
                           'color' =&gt; array(<xsl:apply-templates select="Color"/>),
-                          'effects' =&gt; array(<xsl:apply-templates select="Effect"/>));
+                          'effects' =&gt; array(<xsl:apply-templates select="Effect"/>),
+                          'tribeRegion' =&gt; <xsl:value-of select="@tribeRegion"/>,
+                          'tribeWonder' =&gt; <xsl:apply-templates select="TribeWonder"/>);
 </xsl:template>
 
 <xsl:template match="Regions">
@@ -766,6 +768,8 @@ function init_potions() {
 
 <xsl:template match="Color">'r' =&gt; <xsl:value-of select="number(@r)"/>, 'g' =&gt; <xsl:value-of select="@g"/>, 'b' =&gt; <xsl:value-of select="@b"/>
 </xsl:template>
+
+<xsl:template match="TribeWonder"><xsl:value-of select="number(@id)"/></xsl:template>
 
 <xsl:template match="EffectTypes"></xsl:template>
 

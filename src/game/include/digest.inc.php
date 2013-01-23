@@ -2,7 +2,7 @@
 /*
  * digest.inc.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,7 +20,6 @@ require_once('lib/Movement.php');
 /*      MOVEMENTS                                                           **/
 /*                                                                          **/
 /*****************************************************************************/
-
 function digest_getMovements($ownCave, $doNotShow, $showDetails) {
   global $db;
 
@@ -30,18 +29,26 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
   // caveIDs einsammeln
   $caveIDs = implode(', ', array_map(array($db, 'quote'), array_keys($ownCave)));
 
-  // Bewegungen besorgen
-  $query = "SELECT *
-            FROM " . EVENT_MOVEMENT_TABLE . "
-            WHERE source_caveID IN (". $caveIDs .")
-              OR target_caveID IN (". $caveIDs .")
-            ORDER BY end ASC, event_movementID ASC";
-
-  if (!$sql = $db->query($query)) {
-    return array();
+  $targetExtraFilds = formula_parseToSelectSQL(GameConstants::EXPOSE_INVISIBLE);
+  $sqlExtra = array();
+  foreach ($targetExtraFilds as $field) {
+    $sqlTargetExtra[] = 'tc.' . $field . ' AS target_' . $field;
   }
 
-  $rows = $sql->fetchAll();
+  $sql = $db->prepare("SELECT em.*, sc.name AS source_cave_name, sp.name AS source_player_name, st.tag AS source_player_tribe, sc.xCoord AS source_xCoord, sc.yCoord AS source_yCoord, tc.name AS target_cave_name, tp.name AS target_player_name, tt.tag AS target_player_tribe, tc.xCoord AS target_xCoord, tc.yCoord AS target_yCoord " . ((!empty($sqlTargetExtra)) ? ', ' . implode(', ', $sqlTargetExtra) : '') . "
+                       FROM " . EVENT_MOVEMENT_TABLE . " em
+                         LEFT JOIN " . CAVE_TABLE . " sc ON sc.caveID = em.source_caveID
+                         LEFT JOIN " . PLAYER_TABLE . " sp ON sp.playerID = sc.playerID
+                         LEFT JOIN " . TRIBE_TABLE . " st ON st.tribeID = sp.tribeID
+                         LEFT JOIN " . CAVE_TABLE . " tc ON tc.caveID = em.target_caveID
+                         LEFT JOIN " . PLAYER_TABLE . " tp ON tp.playerID = tc.playerID
+                         LEFT JOIN " . TRIBE_TABLE . " tt ON tt.tribeID = tp.tribeID
+                       WHERE em.source_caveID IN (". $caveIDs .")
+                         OR em.target_caveID IN (". $caveIDs .")
+                       ORDER BY em.end ASC, em.event_movementID ASC");
+  if (!$sql->execute()) return array();
+
+  $rows = $sql->fetchAll(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
   // bewegungen durchgehen
@@ -117,20 +124,18 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
       'event_end_date'          => time_formatDatetime($row['end']),
       'isOwnMovement'           => intval($row['isOwnMovement']),
       'seconds_before_end'      => time_fromDatetime($row['end']) - time(),
-      'movement_id_description' => $ua_movements[$row['movementID']]->description
+      'movement_id_description' => $ua_movements[$row['movementID']]->description,
+      'source_cave_name'        => $row['source_cave_name'],
+      'source_player_name'      => $row['source_player_name'],
+      'source_player_tribe'     => $row['source_player_tribe'],
+      'source_xCoord'           => $row['source_xCoord'],
+      'source_yCoord'           => $row['source_yCoord'],
+      'target_cave_name'        => $row['target_cave_name'],
+      'target_player_name'      => $row['target_player_name'],
+      'target_player_tribe'     => $row['target_player_tribe'],
+      'target_xCoord'           => $row['target_xCoord'],
+      'target_yCoord'           => $row['target_yCoord']
     );
-
-    // Quelldaten
-    $source = getCaveNameAndOwnerByCaveID($row['source_caveID']);
-    foreach ($source AS $key => $value) {
-      $tmp['source_'.$key] = $value;
-    }
-
-    // Zieldaten
-    $target = getCaveNameAndOwnerByCaveID($row['target_caveID']);
-    foreach ($target AS $key => $value) {
-      $tmp['target_'.$key] = $value;
-    }
 
     // ***** Einheiten, Rohstoffe und Artefakte *****
     if ($showDetails) {
@@ -147,7 +152,9 @@ function digest_getMovements($ownCave, $doNotShow, $showDetails) {
       // eval(GameConstants::EXPOSE_INVISIBLE)
       // FIXME (mlunzena): oben holen wir schon bestimmte Höhlendaten,
       //                   das sollte man zusammenfassen..
-      $target = getCaveByID($row['target_caveID']);
+      foreach ($targetExtraFilds as $field) {
+        $target[$field] = $row['target_' . $field];
+      }
       $expose = eval('return '.formula_parseToPHP(GameConstants::EXPOSE_INVISIBLE.";", '$target'));
 
       // show units

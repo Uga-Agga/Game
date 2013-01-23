@@ -134,9 +134,10 @@ function getCavesByRegion($regionID){
 function getCaveNameAndOwnerByCaveID($caveID) {
   global $db;
 
-  $sql = $db->prepare("SELECT c.name AS cave_name, p.name AS player_name, p.tribe AS player_tribe, c.xCoord, c.yCoord
+  $sql = $db->prepare("SELECT c.name AS cave_name, p.name AS player_name, t.tag AS player_tribe, c.xCoord, c.yCoord
                        FROM " . CAVE_TABLE . " c
                          LEFT JOIN " . PLAYER_TABLE . " p ON c.playerID = p.playerID
+                         LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = p.tribeID
                        WHERE c.caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return array();

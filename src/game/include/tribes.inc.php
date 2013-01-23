@@ -1228,6 +1228,22 @@ class TribeRelation {
     return true;
   }
 
+  public static function checkForRelationAttrib($tribeID1, $tribeID2, $attribArray) {
+    if (empty($tribeID1) || empty($tribeID2) || empty($attribArray)) return false;
+
+    $relation = self::getRelations($tribeID1, $tribeID2);
+    $result = false;
+
+    foreach ($attribArray as $attrib) {
+      $result = ($GLOBALS['relationList'][$relation['own']['relationType']][$attrib] == 1) && ($GLOBALS['relationList'][$relation['other']['relationType']][$attrib] == 1);
+      if ($result) {
+        break;
+      }
+    }
+
+    return $result;
+  }
+
   public static function forceSurrender($tribeData, $targetData, $relationID) {
     // check conditions
     if(empty($tribeData) || empty($targetData) || empty($relationID)) return -30;
@@ -1377,7 +1393,7 @@ class TribeRelation {
 
     // first get the id of war
     $warId = 0;
-    while( !($GLOBALS['relationList'][$warId]['isWar']) ){
+    while(!($GLOBALS['relationList'][$warId]['isWar']) ){
       $warId++;
     }
 
@@ -1472,6 +1488,42 @@ class TribeRelation {
     }
 
     return false;
+  }
+
+  public static function hasWar($tribeID, $includePrepareForWar) {
+    if (empty($tribeID)) return false;
+
+    $relations = self::getRelations($tribeID);
+
+    $weAreAtWar = false;
+    foreach ($relations['own'] as $actRelation) {
+      if ($GLOBALS['relationList'][$actRelation['relationType']]['isWar']) {
+        return true;
+      };
+      if ($includePrepareForWar && ($GLOBALS['relationList'][$actRelation['relationType']]['isPrepareForWar'])) {
+        return true;
+      };
+    }
+
+    return false;
+  }
+
+  public static function isAlly($tribeID1, $tribeID2) {
+    if (empty($tribeID1) || empty($tribeID2)) return false;
+
+    $attribs = array();
+    $attribs[] = 'isWarAlly';
+  
+    return self::checkForRelationAttrib($tribeID1, $tribeID2, $attribs);
+  }
+
+  public static function isEnemy($tag_tribe1, $tag_tribe2) {
+    if (empty($tribeID1) || empty($tribeID2)) return false;
+
+    $attribs = array();
+    $attribs[] = 'isWar';
+
+    return self::checkForRelationAttrib($tribeID1, $tribeID2, $attribs);
   }
 
   public static function isPossible($to, $from) {

@@ -39,15 +39,18 @@
           name CDATA #REQUIRED>
 <!--Terrains-->
 <!ELEMENT Terrains (Terrain+)>
-<!ELEMENT Terrain (Name+, img+, imgMap+, Description+, Color, Effect*)>
+<!ELEMENT Terrain (Name+, img+, imgMap+, Description+, Color, Effect*, TribeWonder*)>
 <!ATTLIST Terrain
           id CDATA #REQUIRED
           takeoverByCombat (0 | 1) "0"
-          barren (0 | 1) "0">
+          barren (0 | 1) "0"
+          tribeRegion (0 | 1) "0">
 <!ELEMENT Color EMPTY>
 <!ATTLIST Color r CDATA #REQUIRED g CDATA #REQUIRED b CDATA #REQUIRED>
 <!ELEMENT img (#PCDATA)>
 <!ELEMENT imgMap (#PCDATA)>
+<!ELEMENT TribeWonder EMPTY>
+<!ATTLIST TribeWonder id CDATA #REQUIRED>
 <!--Regions-->
 <!ELEMENT Regions (Region+)>
 <!ELEMENT Region (Name+, Description+, Effect*)>

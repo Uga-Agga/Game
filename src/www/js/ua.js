@@ -129,7 +129,7 @@ DEBUG = 'on';
         $("form").attr("target", "_blank");
       } else {
         e.preventDefault();
-        alert('Achtung. Das Absenden der Buttons ist so unerwünscht!');
+        $('#'+$(this).attr('id')+'Submit').click();
       }
     });
 

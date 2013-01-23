@@ -138,7 +138,7 @@ function unit_Movement($caveID, &$ownCave) {
     // get target player
     $result = getCaveByCoords(intval($targetXCoord), intval($targetYCoord));
     if (sizeof($result) != 0) {
-      $targetPlayer = new Player(getPlayerByID($result['playerID']));
+      $targetPlayer = Player::getPlayer($result['playerID']);
     }
 
     // Array von Nullwerten befreien
@@ -166,23 +166,17 @@ function unit_Movement($caveID, &$ownCave) {
     $denymovement_targetwar = false;
     if ($movementID == 2) {  // move units/resources
       if (strtoupper($targetPlayer->tribe) != strtoupper($_SESSION['player']->tribe)) {  //may tade in own tribe
-
-        $ownTribe = $_SESSION['player']->tribe;
-        $targetTribe = $targetPlayer->tribe;
         $targetIsNonPlayer = $targetPlayer->playerID == 0;
 
-
-        $ownTribeAtWar = tribe_isAtWar($ownTribe, TRUE);
-        $targetTribeAtWar = tribe_isAtWar($targetTribe, TRUE);
-        $TribesMayTrade = relation_areAllies($ownTribe, $targetTribe) ||
-                          relation_areEnemys($ownTribe, $targetTribe) ||
-                          $targetIsNonPlayer;
+        $ownTribeAtWar = TribeRelation::hasWar($_SESSION['player']->tribeID, true);
+        $targetTribeAtWar = TribeRelation::hasWar($targetPlayer->tribeID, true);
+        $TribesMayTrade = TribeRelation::isAlly($_SESSION['player']->tribeID, $targetPlayer->tribeID) || TribeRelation::isEnemy($_SESSION['player']->tribeID, $targetPlayer->tribeID) || $targetIsNonPlayer;
 
         $denymovement_nonenemy = $ownTribeAtWar && !$TribesMayTrade;
         $denymovement_targetwar =  $targetTribeAtWar && !$TribesMayTrade;
       }
     }
-    
+
     // check if army is small enough for hero
     $denymovement_hero = false;
     if ($moveHero && (Request::getVar('movementID', 0) == 3 || Request::getVar('movementID', 0) == 6)) {
@@ -261,8 +255,9 @@ function unit_Movement($caveID, &$ownCave) {
       if($distance > 15) {
         $distance = $distance - 15;
         $tmpdist = 15;
-        if(floor($distance/5)<11)
+        if(floor($distance/5) < 11) {
           $tmpdist += ($distance % 5) * (1-0.1*floor($distance/5));
+        }
 
         for ($i = 1; $i <= floor( $distance / 5) && $i < 11; $i++) {
           $tmpdist += 5*(1-0.1*($i-1));
@@ -274,7 +269,7 @@ function unit_Movement($caveID, &$ownCave) {
       // Dauer x Rationen x Größe einer Ration x Bewegungsfaktor
       $reqFood = ceil($tmpdist * $minutesPerCave * getMaxSpeedFactor($unit) * $ua_movements[$movementID]->speedfactor * calcRequiredFood($unit) * $foodPerCave * $ua_movements[$movementID]->foodfactor);
 
-      if ($details[$GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->dbFieldName]< $reqFood) {
+      if ($details[$GLOBALS['resourceTypeList'][GameConstants::FUEL_RESOURCE_ID]->dbFieldName] < $reqFood) {
         $msg = array('type' => 'error', 'message' => _('Nicht genug Nahrung zum Ernähren der Krieger auf ihrem langen Marsch vorhanden!'));
       } else {
         $msgID = setMovementEvent($caveID, $details, $targetXCoord, $targetYCoord, $unit, $resource, $movementID, $reqFood, $duration, $moveArtefact, $moveHero, $minutesPerCave * $ua_movements[$movementID]->speedfactor);
@@ -481,7 +476,6 @@ function unit_Movement($caveID, &$ownCave) {
 
   // artefakte
   if (sizeof($myartefacts) != 0) {
-    //tmpl_set($template, '/ARTEFACTS/ARTEFACT', $myartefacts); 
     $template->addVar('artefact', $myartefacts);
   }
 

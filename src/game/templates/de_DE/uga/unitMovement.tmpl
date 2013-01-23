@@ -48,7 +48,7 @@
                 <a class="popup-detail" href="main.php?modus={{ unit_detail_link }}&amp;unitID={{ item.unit_id }}">{{ item.name }}</a><br/>
                 {% for resources in item.encumbrance %}{% if resources.load > 0 %}<img class="tooltip-show" rel="tooltip" data-placement="top" data-original-title="Maximale Traglast: {{ resources.load }}" width="18" height="18" src="{{ gfx }}/resources/{{ resources.dbFieldName }}_icon.gif" alt="{{ resources.name }}"/>{% endif %}{% endfor %}
               </td>
-              <td class="move-unit"><input class="input-unit dblclickmax change-movement" type="number" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" pattern="\d*" min="0" max="{{ item.max_unit_count }}" step="100" maxlength="6" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}"></td>
+              <td class="move-unit"><input class="input-unit dblclickmax change-movement" type="number" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" pattern="\d*" min="0" max="{{ item.max_unit_count }}" maxlength="6" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}"></td>
               <td class="move-max"><span class="change_mouseover clickmax update-movement" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}">{{ item.max_unit_count }}</span></td>
               <td class="text-center">{{ item.size }}</td>
               <td class="text-center">{{ item.speed_factor }}</td>

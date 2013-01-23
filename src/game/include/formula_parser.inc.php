@@ -2,7 +2,7 @@
 /*
  * formula_parser.inc.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -91,6 +91,41 @@ function formula_parseToSQL($formula) {
                      $sql);
 
   return $sql;
+}
+
+function formula_parseToSelectSQL($formula) {
+  global $FORMULA_SYMBOLS;
+
+  $sql = "";
+  $farmmalus = max($_SESSION['player']->fame - FREE_FARM_POINTS , 0);
+  $formula = str_replace("[E25.ACT]", $farmmalus, $formula);
+  // abstract functions are sql functions -> no translation needed
+
+  // parse symbols
+  for ($i = 0; $i < strlen($formula); $i++) {
+    // opening brace
+    if ($formula{$i} == '[') {
+
+      $symbol = $formula{++$i};
+      $index = 0;
+
+      while($formula{++$i} != '.')
+        $index = $index * 10 + ($formula{$i} + 0);
+
+      $field  = substr($formula, ++$i, 3);
+
+      // 'ACT]' or 'MAX]'
+      $i += 3;
+
+      if (strncasecmp($field, "ACT", 3) == 0) {
+        $sqlFields[$FORMULA_SYMBOLS[$symbol][$index]->dbFieldName] = true;
+      } else if (strncasecmp($field, "MAX", 3) == 0) {
+        formula_parseToSQL($FORMULA_SYMBOLS[$symbol][$index]->maxLevel);
+      }
+    }
+  }
+
+  return array_keys($sqlFields);
 }
 
 function formula_parseToPHP($formula, $detail) {
