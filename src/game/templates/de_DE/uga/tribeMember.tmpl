@@ -301,6 +301,8 @@
       {% if is_auth.manage_chat or is_auth.isLeader %}
         {% for item in chat_rooms %}
         <div class="tab-pane" style="padding: 0 5px;" id="tribe_chat_{{ item.tag }}">
+          <h5 class="text-center">{{ item.name }}</h5>
+          <hr>
           <div class="row" style="width: 614px; margin: 0 auto;">
             <div class="span3 nospace" style="width: 50%">
               <h5>Aktuelle Berechtigungen</h5>

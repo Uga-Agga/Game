@@ -1057,10 +1057,11 @@ void movement_handler (db_t *database, db_result_t *result) {
       if (battle->winner == FLAG_ATTACKER
           && !cave2.takeoverable
           && !cave2.starting_position
-          && (cave2.player_id == 0))
+          && (cave2.player_id == 0)
+          && ((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 0)
       {
         // if there are no units and defense systems in the cave, set it takeoverable
-        if (battle->defenders_acc_hitpoints_units == 0 && battle->defenders_acc_hitpoints_defenseSystems == 0 && ((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion) {
+        if (battle->defenders_acc_hitpoints_units == 0 && battle->defenders_acc_hitpoints_defenseSystems == 0) {
           db_query(database, "UPDATE " DB_TABLE_CAVE " SET takeoverable = 1 WHERE caveID = %d", cave2.cave_id);
           caveSetTakeoverable = 1;
           debug(DEBUG_TICKER, "movement_handler: Set cave with ID %d as takeoverable", cave2.cave_id);
