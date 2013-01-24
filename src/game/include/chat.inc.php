@@ -177,17 +177,16 @@ class Chat {
 
     $db->beginTransaction();
     $sql = $db->prepare("UPDATE " . CHAT_USER_TABLE . "
-                         SET deleted = 1
+                         SET deleted = 1, success = 0
                          WHERE roomID = :roomID");
     foreach ($rooms as $room) {
       $sql->bindValue('roomID', $room['id'], PDO::PARAM_INT);
-      $sql->bindValue('name', $playerName, PDO::PARAM_STR);
       $sql->execute();
     }
-    if (!$sql->commit()) return false;
+    if (!$db->commit()) return false;
 
-    $sql = $db->prepare("UPDATE " . CHAT_ROOM_TABLE . " SET deleted = 1 WHERE tribeID = :tribeID");
-    $sql->bindValue('tribeID', tribeID, PDO::PARAM_INT);
+    $sql = $db->prepare("UPDATE " . CHAT_ROOM_TABLE . " SET deleted = 1, success = 0 WHERE tribeID = :tribeID");
+    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
       return false;
     }
@@ -231,13 +230,13 @@ class Chat {
   public static function tribeLeave($tribeID, $playerName) {
     global $db;
 
-    if (epty($tribeID) || empty($playerName)) return false;
+    if (empty($tribeID) || empty($playerName)) return false;
 
     $rooms = self::getRoomsByTribeID($tribeID);
 
     $db->beginTransaction();
     $sql = $db->prepare("UPDATE " . CHAT_USER_TABLE . "
-                         SET deleted = 1
+                         SET deleted = 1, success = 0
                          WHERE roomID = :roomID
                            AND name = :name");
     foreach ($rooms as $room) {
@@ -245,10 +244,7 @@ class Chat {
       $sql->bindValue('name', $playerName, PDO::PARAM_STR);
       $sql->execute();
     }
-
-    if (!$db->commit()) {
-      return false;
-    }
+    if (!$db->commit()) return false;
   }
 
   public static function getRoomsByTribeID($tribeID) {

@@ -143,11 +143,11 @@ class Tribe {
       if (!self::tribe_leaveTribe($playerID)) {
         return false;
       }
-  
+
       if (!self::setBlockedTime($playerID)) {
         return 0;
       }
-  
+
       $messagesClass = new Messages;
       $messagesClass->sendSystemMessage($playerID, 8, "Auflösung des Stammes", sprintf(_("Ihr Stamm %s wurde soeben aufgelöst. Sollten Sie Probleme mit dem Stammesmenü haben, loggen Sie sich bitte neu ein."), $tribeData['tag']));
 
@@ -174,6 +174,10 @@ class Tribe {
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     $sql->execute();
 
+    $sql = $db->prepare("DELETE FROM " . TRIBE_STORAGE_DONATIONS_TABLE . " WHERE tribeID = :tribeID");
+    $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
+    $sql->execute();
+
     $sql = $db->prepare("SELECT rank 
                          FROM ". RANKING_TRIBE_TABLE . "
                          WHERE tribeID = :tribeID");
@@ -195,8 +199,10 @@ class Tribe {
       $sql->execute();
     }
 
+    Chat::tribeDel($tribeID);
+
     if ($tribeData['leaderID'] != 0) {
-      Player::addHistoryEntry($tribe['leaderID'], sprintf(_("löst den Stamm '%s' auf"), $tribeData['tag']));
+      Player::addHistoryEntry($tribeData['leaderID'], sprintf(_("löst den Stamm '%s' auf"), $tribeData['tag']));
     }
 
     return 1;
@@ -478,33 +484,35 @@ class Tribe {
     return str_replace("[TARGET]", $target, str_replace("[TRIBE]", $tribe, $message));
   }
 
-  public static function processCreate($leaderID, $tag, $password, $restore_rank=false) {
+  public static function processCreate($leaderData, $tag, $password, $restore_rank=false) {
     global $db;
 
-    if (empty($leaderID) || empty($tag) || empty($password)) return -1;
+    if (empty($leaderData) || empty($tag) || empty($password)) return -1;
 
     $tribeData = self::getID($tag);
     if (!empty($tribeData)) {
       return -4;
     }
 
-    if (!self::changeTribeAllowed($leaderID)) {
+    if (!self::changeTribeAllowed($leaderData->playerID)) {
       return -10;
     }
 
-    $tribeID = self::insertTribe($tag, $tag, $password, $leaderID);
+    $tribeID = self::insertTribe($tag, $tag, $password, $leaderData->playerID);
 
     if ($tribeID === false) {
       return -5;
     }
 
-    Player::addHistoryEntry($leaderID, sprintf(_("gründet den Stamm '%s'"), $tag));
+    Player::addHistoryEntry($leaderData->playerID, sprintf(_("gründet den Stamm '%s'"), $tag));
 
     if ($restore_rank) {
       if (!self::setOldRanking($tag, $password, $tribeID)) {
         return 3;
       }
     }
+
+    Chat::tribeInit($tribeID, $tag, $leaderData->jabberName);
 
     return 2;
   }
@@ -534,17 +542,17 @@ class Tribe {
       return -41;
     }
 
-    Chat::tribeLeave($tribeData['tribeID'], $player['jabberName']);
+    Chat::tribeLeave($tribeData['tribeID'], $playerData->jabberName);
 
     Player::addHistoryEntry($playerID, sprintf(_("wird aus dem Stamm '%s' geworfen"), $tribeData['tag']));
 
     // block player
     self::setBlockedTime($playerID);
 
-    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_MEMBER, 'Spieler rausgeschmissen', sprintf(_("Der Spieler %s wurde soeben aus dem Stamm ausgeschlossen."), $playerData['name']));
+    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_MEMBER, 'Spieler rausgeschmissen', sprintf(_("Der Spieler %s wurde soeben aus dem Stamm ausgeschlossen."), $playerData->name));
 
     $messagesClass = new Messages;
-    $messagesClass->sendSystemMessage($playerID, 8, 'Stammausschluss.', sprintf(_("Sie wurden aus dem Stamm %s ausgeschlossen."), $tribeData['tag']));
+    $messagesClass->sendSystemMessage($playerID, 8, 'Stammausschluss.', sprintf(_("Du wurdest soeben aus dem Stamm %s ausgeschlossen."), $tribeData['tag']));
 
     return 13;
   }
@@ -576,27 +584,27 @@ class Tribe {
       return -5;
     }
 
-    Chat::tribeLeave($tribeData['tribeID'], $player['jabberName']);
+    Chat::tribeLeave($tribeData['tribeID'], $playerData->jabberName);
 
     Player::addHistoryEntry($playerID, sprintf(_("verläßt den Stamm '%s'"), $tribeData['tag']));
 
     self::setBlockedTime($playerID);
 
-    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_MEMBER, 'Spieleraustritt', sprintf(_("Der Spieler %s ist soeben aus dem Stamm ausgetreten."), $playerData['name']));
+    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_MEMBER, 'Spieleraustritt', sprintf(_("Der Spieler %s ist soeben aus dem Stamm ausgetreten."), $playerData->name));
 
     $memberCount = self::getMemberCount($tribeData['tribeID']);
     if ($memberCount !== false && $memberCount == 0) { // Prüfung auf false mit === nötig da die Rückgabe von false nen fehler ist!
-      self::deleteTribe($tribeID, $force);
+      self::deleteTribe($tribeData, $force);
       return 2;
     }
 
     return 1;
   }
 
-  public static function processJoin($playerID, $tag, $password) {
+  public static function processJoin($playerData, $tag, $password) {
     global $db;
 
-    if (empty($tag) || empty($password)) return -1;
+    if (empty($playerData) || empty($tag) || empty($password)) return -1;
 
     $tribeData = self::getID($tag, true);
     if (empty($tribeData)) {
@@ -607,16 +615,11 @@ class Tribe {
       return -1;
     }
 
-    if (!self::changeTribeAllowed($playerID)) {
+    if (!self::changeTribeAllowed($playerData->playerID)) {
       return -10;
     }
-    if (!TribeRelation::changeTribeAllowed($tribeID) ) {
+    if (!TribeRelation::changeTribeAllowed($tribeData['tribeID']) ) {
       return -6;
-    }
-
-    $playerData = Player::getPlayer($playerID);
-    if (empty($playerData)) {
-      return -3;
     }
 
     if ((int) TRIBE_MAXIMUM_SIZE > 0) {
@@ -634,17 +637,17 @@ class Tribe {
       }
     }
 
-    if (!self::setTribe($playerID, $tribeData['tribeID'])) {
+    if (!self::setTribe($playerData->playerID, $tribeData['tribeID'])) {
       return -3;
     }
 
-    self::setBlockedTime($playerID);
+    self::setBlockedTime($playerData->playerID);
 
-    Chat::tribeJoin($tribeData['tribeID'], $_SESSION['player']->jabberName);
+    Chat::tribeJoin($tribeData['tribeID'], $playerData->jabberName);
 
-    Player::addHistoryEntry($playerID, sprintf(_("tritt dem Stamm '%s' bei"), $tribeData['tag']));
+    Player::addHistoryEntry($playerData->playerID, sprintf(_("tritt dem Stamm '%s' bei"), $tribeData['tag']));
 
-    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_MEMBER, 'Spielerbeitritt', sprintf(_("Der Spieler %s ist soeben dem Stamm beigetreten"), $playerData['name']));
+    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_MEMBER, 'Spielerbeitritt', sprintf(_("Der Spieler %s ist soeben dem Stamm beigetreten"), $playerData->name));
 
     return 1;
   }

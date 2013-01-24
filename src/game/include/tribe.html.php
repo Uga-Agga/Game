@@ -815,7 +815,7 @@ function tribe_getContentNoTribe($caveID, &$details) {
       $password = Request::getVar('inputPassword', '');
 
       if (Tribe::validatePassword($password) && Tribe::validateTag($tag)) {
-        $messageID = Tribe::processJoin($_SESSION['player']->playerID, $tag, $password);
+        $messageID = Tribe::processJoin($_SESSION['player'], $tag, $password);
         if ($messageID == 1) {
           $auth = new auth;
           $auth->setPermission('tribe', 0, $_SESSION['player']->playerID);
@@ -836,7 +836,7 @@ function tribe_getContentNoTribe($caveID, &$details) {
       $restoreRang = (Request::getVar('inputRestoreRank', 'no') == 'yes') ? true : false;
 
       if (Tribe::validatePassword($password) && Tribe::validateTag($tag)) {
-        $messageID = Tribe::processCreate($_SESSION['player']->playerID, $tag, $password, $restoreRang);
+        $messageID = Tribe::processCreate($_SESSION['player'], $tag, $password, $restoreRang);
       } else {
         $messageID = -8;
       }

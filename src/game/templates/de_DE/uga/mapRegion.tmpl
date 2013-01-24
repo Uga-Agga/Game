@@ -25,14 +25,14 @@
           {% if cell.empty %}<td>&nbsp;</td>{% endif %}
           {% if cell.corner %}<td>&nbsp;</td>{% endif %}
           {% if cell.mapcell %}
-            <td style="height: 80px; width: 80px; border: 1px solid #E6EFC2; padding: 0; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }} {{ cell.mapcell.css_self }} {{ cell.mapcell.css_own }} {{ cell.mapcell.css_other }}">
-              <div class="text-center" style="height: 80px; width: 80px; position: relative;">
+            <td style="height: 80px;  width: 80px; padding: 0; border: none; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }}">
+              <div class="text-center {{ cell.mapcell.css_self }} {{ cell.mapcell.css_own }} {{ cell.mapcell.css_other }}" style="height: 78px; width: 78px; position: relative;  border: 1px solid #E6EFC2;">
                 {% if cell.mapcell.terrain_tribe %}
                   <a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" class="info-modal popup-detail" data-title="{{ cell.mapcell.title }}"><small>Stammeshöhle</small></a>
                 {% else %}
-                  <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="80px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
+                  <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="78px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
                   {% if (cell.mapcell.tribe or cell.mapcell.text) and not cell.mapcell.barren %}
-                    <div style="position: absolute; bottom: 0px; width: 80px; line-height: 13px;">
+                    <div style="position: absolute; bottom: 0px; width: 78px; line-height: 13px;">
                       {% if cell.mapcell.tribe and not cell.mapcell.barren %}
                        <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.tribe }}</small></a></p>
                       {% endif %}
