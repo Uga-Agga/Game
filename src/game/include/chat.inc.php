@@ -288,6 +288,27 @@ class Chat {
 
     return $user;
   }
+
+  public static function isTagFree($tag){
+    global $db;
+
+    if (empty($tag)) return false;
+
+    $sql = $db->prepare("SELECT count(*) as count
+                         FROM " . CHAT_ROOM_TABLE . "
+                         WHERE tag = :tag");
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    if (!$sql->execute()) return false;
+
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    if ($row['count'] == 0) {
+      return true;
+    }
+
+    return false;
+  }
 }
 
 ?>

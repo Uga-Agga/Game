@@ -22,7 +22,7 @@ function questionnaire_getQuestionnaire($caveID, &$ownCaves) {
 
   // open template
   $template->setFile('questionnaire.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   //messages
   $messageText = array (

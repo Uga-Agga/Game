@@ -423,17 +423,19 @@ switch ($modus) {
 // init tutorial
 $tutorial = new Tutorial;
 $tutorialFinish = $tutorial->checkFinish($ownCaves[$caveID]);
+
 if (!$tutorial->noTutorial) {
-  if ($tutorialFinish && Request::isPost('nextTutorial')) {
+  $finish = Request::getVar('tutorial', '');
+  if ($tutorialFinish && $finish == 'finish' && Request::isPost('postConfirm')) {
     $tutorial->setFinish($ownCaves[$caveID]);
     $tutorialFinish = $tutorial->checkFinish($ownCaves[$caveID]);
   }
 
   $template->addVar('tutorial', array(
     'show'    => true,
-    'content' => ($tutorialFinish) ? $tutorial->finishMsg : $tutorial->startMsg,
+    'content' => $tutorial->msg,
     'finish'  => $tutorialFinish,
-    'open'    => ($tutorialFinish || Request::isPost('nextTutorial')) ? 'true' : 'false'
+    'open'    => ($tutorialFinish || $finish == 'finish') ? 'true' : 'false'
   ));
 } else {
   $template->addVar('tutorial', array('show' => false));
@@ -441,7 +443,7 @@ if (!$tutorial->noTutorial) {
 
 // prepare resource bar
 $resources = array();
-if ($template->getShowRresource() && isset($resourceTypeList)) {
+if ($template->getShowResource() && isset($resourceTypeList)) {
   foreach ($resourceTypeList as $resource) {
     $amount = floor($ownCaves[$caveID][$resource->dbFieldName]);
     $delta = $ownCaves[$caveID][$resource->dbFieldName . "_delta"];

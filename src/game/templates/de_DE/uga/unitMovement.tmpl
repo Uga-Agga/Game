@@ -106,6 +106,7 @@
       <div class="row" style="width: 621px; margin: 0 auto;">
         <div class="span2" style="margin-left: 0; padding-left: 5px;">
           <h5>Bewegungsart:</h5>
+          <label class="radio change-movement" for="movementID"><input type="radio" name="movementID" value="0" id="movementID" checked><em>Auswählen</em></label>
           {% for item in selectable_movements %}<label class="radio change-movement" for="movementID{{ item.id }}"><input type="radio" name="movementID" value="{{ item.id }}" id="movementID{{ item.id }}">{{ item.description }}</label>{% endfor %}
           {% if hero %}<p class="nospace"><label class="checkbox"><input type="checkbox">Held mitnehmen?</label></p>{% endif %}
         </div>

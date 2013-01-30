@@ -114,7 +114,7 @@ function tribe_getContent($caveID, &$details) {
 
   // open template
   $template->setFile('tribeMember.tmpl');
-  $template->setShowRresource(true);
+  $template->setShowResource(true);
 
   // init auth
   $auth = new auth;
@@ -805,7 +805,7 @@ function tribe_getContentNoTribe($caveID, &$details) {
 
   // open template
   $template->setFile('tribe.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   // process form data
   $tribeAction =  Request::getVar('action', 0);

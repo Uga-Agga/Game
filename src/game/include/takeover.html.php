@@ -2,7 +2,7 @@
 /*
  * takeover.html.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012  David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,18 +29,14 @@ function takeover_main($caveID, $ownCaves) {
   $action = Request::getVar('action', '');
   switch ($action) {
     case 'withdrawal':
-      if (Request::isPost('abort_withdrawal')) {
+      if (!Request::isPost('postConfirm')) {
         break;
       }
 
-      if (Request::isPost('confirm_withdrawal')) {
+      if (Request::isPost('postConfirm')) {
         $feedback = takeover_withdrawal();
         break;
       }
-
-      // generate check value
-      $_SESSION['withdrawal_check'] = uniqid('withdrawal');
-      $template->addVar('withdrawal_check',  $_SESSION['withdrawal_check']);
     break;
 
     case 'change':
@@ -64,7 +60,7 @@ function takeover_main($caveID, $ownCaves) {
         break;
       }
 
-      if (Request::isPost('confirm_change')) {
+      if (Request::isPost('postConfirm')) {
         $feedback = takeover_change($xCoord, $yCoord);
         break;
       }
@@ -114,12 +110,16 @@ function takeover_main($caveID, $ownCaves) {
 * Übergeben ans Template
 *
 ****************************************************************************************************/
+    // generate check value
+    $_SESSION['withdrawal_check'] = uniqid('withdrawal');
+
     $template->addVars(array(
       'popularity'       => GameConstants::TAKEOVER_MAX_POPULARITY_POINTS,
       'maxcaves'         => $maxcaves,
-      'target_x_coord'   => Request::getVar('targetXCoord', 0),
-      'target_y_coord'   => Request::getVar('targetYCoord', 0),
-      'resource_ratings' => $ratings
+      'target_x_coord'   => (Request::getVar('targetXCoord', 0)) ? Request::getVar('targetXCoord', 0) : '',
+      'target_y_coord'   => (Request::getVar('targetYCoord', 0)) ? Request::getVar('targetYCoord', 0) : '',
+      'resource_ratings' => $ratings,
+      'withdrawal_check' => $_SESSION['withdrawal_check']
     ));
 
     // get bidding

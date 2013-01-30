@@ -59,8 +59,7 @@ function wonder_recalc($caveID) {
 
   $fields = array();
   foreach($GLOBALS['effectTypeList'] AS $effectID => $data) {
-    array_push($fields,
-         "SUM(".$data->dbFieldName.") AS ".$data->dbFieldName);
+    array_push($fields, "SUM(".$data->dbFieldName.") AS ".$data->dbFieldName);
   }
 
   $fields = implode(", ", $fields);

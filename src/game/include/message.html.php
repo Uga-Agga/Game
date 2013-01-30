@@ -207,7 +207,7 @@ function messages_showMessage($caveID, &$myCaves, $messageID, $box) {
 
   // open template
   $template->setFile('messageDetail.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   $message = $messagesClass->getMessageDetail($messageID);
   if (empty($message)) {
@@ -313,7 +313,7 @@ function messages_newMessage($caveID) {
 
   // open template
   $template->setFile('messageDialogue.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   $template->addVars(array(
     'box'        => Request::getVar('box', BOX_INCOMING),
@@ -362,7 +362,7 @@ function messages_sendMessage($caveID) {
 
   // open template
   $template->setFile('messageDialogue.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   if ((strlen($nachricht) > $zeichen) || empty($nachricht)) {
     $message = array('type' => 'error', 'message' => sprintf(_('Fehler! Nachricht konnte nicht verschickt werden! Stellen Sie sicher, dass die Nachricht nicht länger als %d Zeichen oder leer ist.'), $zeichen));

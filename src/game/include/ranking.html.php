@@ -18,7 +18,7 @@ function ranking_getContent() {
 
   // open template
   $template->setFile('rankingPlayer.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   $religions = ranking_getReligiousDistribution();
 

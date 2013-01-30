@@ -494,6 +494,10 @@ class Tribe {
       return -4;
     }
 
+    if (!Chat::isTagFree($tag)) {
+      return -4;
+    }
+
     if (!self::changeTribeAllowed($leaderData->playerID)) {
       return -10;
     }

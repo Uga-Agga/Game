@@ -50,7 +50,7 @@
       MAP_MIN_Y = -{{ map_size.min_y }};
       MAP_MAX_Y = -{{ map_size.max_y }};
 
-      {% if jabber.server and jabber.user and jabber.passwd %}
+      {% if jabber.server2 and jabber.user and jabber.passwd %}
         jQuery(document).ready(function() {
           DEVELOPER = 'on';
 
@@ -67,22 +67,22 @@
           MINI_GROUPCHATS = [{{ jabber.groupchats|raw }}];
           MINI_PASSWORDS = [];
           MINI_5D_NON_CLOSEABLE_GROUPCHATS = [{{ jabber.noClose|raw }}];
-  
+
           // Define chats here
           MINI_CHATS = [];
-  
+
           // Add an animation
           MINI_ANIMATE = false;
-  
+
           // Define the user nickname
           MINI_NICKNAME = "{{ jabber.user }}";
-  
+
           // Random user nickname (if no nickname)
           MINI_RANDNICK = false;
-  
+
           // Override the default session resource
           MINI_RESOURCE = "UA-Game"+ Math.floor(Math.random()*100000);
-  
+
           // Connect the user (autoconnect, show_pane, domain, username, password)
           // Notice: put true/false to autoconnect and show_pane
           // Notice: exclude "user" and "password" if using anonymous login
@@ -104,6 +104,9 @@
     .arrow_max { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up_max.png"); }
     .arrow_up { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up.png"); }
     .flash { background-image: url("{{ gfx }}/de_DE/t_uga/flash.png"); }
+
+    .tutorial { list-style: none; margin: 0; }
+    .tutorial li { display: inline-block; padding-right: 10px; }
   </style>
 
 </head>
@@ -112,7 +115,7 @@
 <div class="container">
   <div class="row">
     <div class="span-header-left">
-      <div class="tooltip-show" id="warpoints_info" style="width: 200px; margin-left: 10px ;margin-top: 154px" rel="tooltip" data-placement="bottom" data-original-title="Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest. Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden. Unten sind alle Kriegspunkte aufgeführt! Einheiten: {{ war_points.warpointsUnits }} Verteidigungsanlagen: {{ war_points.warpointsDefense }}"><b>Kriegspunkte der Höhle: {{ war_points.warpoints }}</b></div>
+      <div class="tooltip-show change_mouseover" id="warpoints_info" style="width: 200px; margin-left: 10px ;margin-top: 154px" rel="tooltip" data-placement="bottom" data-original-title="Oben stehen die aktuellen Kriegspunkte die du in einem Krieg, bei einem Angriff auf diese Höhle, verlieren könntest. Das verlieren der Kriegspunkte ist möglich, sobald bei einem Angriff Einheiten gestorben sind oder mehr als 11 Verteidgungsanlagen zerstört wurden. Unten sind alle Kriegspunkte aufgeführt! Einheiten: {{ war_points.warpointsUnits }} Verteidigungsanlagen: {{ war_points.warpointsDefense }}"><b>Kriegspunkte der Höhle: {{ war_points.warpoints }}</b></div>
     </div>
     <div class="span-header-right pull-right text-right" id="region-info">
       <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
@@ -198,22 +201,32 @@
   </div>
   {% block footer %}
   <footer>
-    <p>&copy; Company 2013</p>
+    <p>&copy; Company 2013 &nbsp; <span class="show-tutorial change_mouseover">Tutorial</p>
     <div id="pageSilder"></div>
   </footer>
   {% endblock %}
 </div>
-<div id="modal" class="modal ua-box hide fade in">
+<div id="modal" class="modal ua-box hide fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="ua-box-header"><button type="button" id="modalLabelClose" class="close hide" style="opacity: 0.8; color: #FFFFFF;" data-dismiss="modal" aria-hidden="true">&times;</button><span id="modalLabel">&nbsp;</span></div>
   <div class="modal-body ua-box-content ua-box-space" id="modalBody">
     <p id="messageModalMsg">&nbsp;</p>
   </div>
   <div id="modalFooter" class="modal-footer hide">
     <button class="btn" data-dismiss="modal" aria-hidden="true">Schließen</button>
-    <a href="false" class="btn btn-primary" id="modalFooterHref" data-dismiss="modal" aria-hidden="true" data-post="true">Bestätigen</a>
+    <a href="false" class="btn btn-primary" id="modalFooterHref" aria-hidden="true" data-post="true">Bestätigen</a>
   </div>
 </div>
-<div class="modal-backdrop hide fade in"></div>
+
+{% if tutorial.show %}
+<div id="tutorialData" style="display: none;">
+  <div id="tutorialDataOpen">{% if tutorial.open == 'true' or tutorial.content.showAlways == 'true' %}true{% else %}false{% endif %}</div>
+  <div id="tutorialDataFinish">{% if tutorial.finish %}true{% else %}false{% endif %}</div>
+  <div id="tutorialDataUrl">main.php?{{ query_string|raw }}&caveID={{ cave_id }}&tutorial=finish</div>
+  <div id="tutorialDataHeader">{{ tutorial.content.header }}</div>
+  <div id="tutorialDataBody">{% for tab in tutorial.content.tabs %}<h5>{{ tab.header|raw }}:</h5>{{ tab.msg|raw }}{% if not loop.last  %}<hr>{% endif %}{% endfor %}</div>
+</div>
+{% endif %}
+
 {% include "extendsFooter.tmpl" %}
 </body>
 </html>

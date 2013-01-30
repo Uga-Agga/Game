@@ -1,7 +1,7 @@
 <?php
 /*
  * template.inc.php -
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -74,11 +74,11 @@ class Template {
     $this->file = $file;
   }
 
-  public function setShowRresource($flag) {
+  public function setShowResource($flag) {
     $this->showRresource = $flag;
   }
 
-  public function getShowRresource() {
+  public function getShowResource() {
     return $this->showRresource;
   }
 

@@ -74,9 +74,9 @@ foreach ($regions as $regionID => $region) {
   $sql->closeCursor();
   $supply = count($supply);
 
-  echo "Region :                    " . $region['name'] . "\n".
-       "Angebot:                    " . $supply . "\n".
-       "Nachfrage:                  " . $demand . "\n";
+  echo "Region : " . $region['name'] . "\n".
+       "Angebot: " . $supply . "\n".
+       "Nachfrage: " . $demand . "\n";
   $demand = (int) ($demand / $SUPPLYFACTOR);
   echo "zu befriedigende Nachfrage: $demand\n";
 

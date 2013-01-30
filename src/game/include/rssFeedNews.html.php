@@ -1,7 +1,7 @@
 <?php
 /*
  * rssFeedNews.html.php -
- * Copyright (c) 2011 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -16,7 +16,7 @@ function rssFeedNews_getContent() {
   global $template;
 
   $template->setFile('rssFeedNews.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   $rss = new Rss;
   $rss->cache_dir = realpath(dirname(__FILE__) . '/../cache'); //path to cache directory on your server from this script. Chmod 777!
