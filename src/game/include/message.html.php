@@ -47,7 +47,6 @@ function messages_getMessages($caveID, $deletebox, $box) {
       $switch = Request::getVar('button', '');
     }
 
-
     if (!sizeof($deletebox)) {
       $statusMsg = array('type' => 'error', 'message' => _('Du mußt mindestens eine Nachricht auswählen.'));
       $switch = '';

@@ -18,7 +18,9 @@ CREATE TABLE IF NOT EXISTS `Artefact` (
   `artefactClassID` int(11) unsigned NOT NULL DEFAULT '0',
   `caveID` int(11) unsigned NOT NULL DEFAULT '0',
   `initiated` int(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`artefactID`)
+  `global` int(1) NOT NULL DEFAULT '2',
+  PRIMARY KEY (`artefactID`),
+  KEY `global` (`global`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------

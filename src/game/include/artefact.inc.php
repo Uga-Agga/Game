@@ -37,15 +37,13 @@ function artefact_getArtefactsReadyForMovement($caveID) {
 function getArtefactList() {
   global $db;
 
-  $sql = $db->prepare("SELECT 
-                         a.artefactID, a.caveID, a.initiated, 
-                         ac.name as artefactname, ac.initiationID, 
-                         c.name AS cavename, c.xCoord, c.yCoord, 
-                         p.playerID, p.name, p.tribe 
-                       FROM ". ARTEFACT_TABLE ." a 
-                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID 
-                         LEFT JOIN ". CAVE_TABLE ." c ON a.caveID = c.caveID 
-                         LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID");
+  $sql = $db->prepare("SELECT a.artefactID, a.caveID, a.initiated, ac.name as artefactname, ac.initiationID, c.name AS cavename, c.xCoord, c.yCoord, p.playerID, p.name, t.tag as tribe
+                       FROM ". ARTEFACT_TABLE ." a
+                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
+                         LEFT JOIN ". CAVE_TABLE ." c ON a.caveID = c.caveID
+                         LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                         LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
+                       WHERE a.pet = 0");
   if (!$sql->execute()) return array();
 
   $result = $sql->fetchAll(PDO::FETCH_ASSOC);
