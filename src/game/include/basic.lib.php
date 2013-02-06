@@ -22,9 +22,11 @@ defined('_VALID_UA') or die('Direct Access to this location is not allowed.');
 function getCaveByID($caveID) {
   global $db;
 
-  $sql = $db->prepare("SELECT *, (protection_end > NOW()+0) AS protected
-                       FROM " . CAVE_TABLE . "
-                       WHERE caveID = :caveID");
+  $sql = $db->prepare("SELECT c.*, (c.protection_end > NOW()+0) AS protected, CASE WHEN a.artefact > 0 THEN 1 ELSE 0 END as hasArtefact, CASE WHEN ap.artefact > 0 THEN 1 ELSE 0 END as hasPet
+                       FROM " . CAVE_TABLE . " c
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
+                       WHERE c.caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return NULL;
 
@@ -39,10 +41,12 @@ function getCaveByID($caveID) {
 function getCaveSecure($caveID, $playerID){
   global $db;
 
-  $sql = $db->prepare("SELECT *, (protection_end > NOW()+0) AS protected
-                       FROM " . CAVE_TABLE . "
-                       WHERE caveID = :caveID
-                         AND playerID = :playerID");
+  $sql = $db->prepare("SELECT c.*, (c.protection_end > NOW()+0) AS protected, CASE WHEN a.artefact > 0 THEN 1 ELSE 0 END as hasArtefact, CASE WHEN ap.artefact > 0 THEN 1 ELSE 0 END as hasPet
+                       FROM " . CAVE_TABLE . " c
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
+                       WHERE c.caveID = :caveID
+                         AND c.playerID = :playerID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   if (!$sql->execute()) return NULL;
@@ -58,9 +62,11 @@ function getCaveSecure($caveID, $playerID){
 function getCaveByName($caveName){
   global $db;
 
-  $sql = $db->prepare("SELECT *
-                       FROM " . CAVE_TABLE . "
-                       WHERE name = :name");
+  $sql = $db->prepare("SELECT c.*, CASE WHEN a.artefact > 0 THEN 1 ELSE 0 END as hasArtefact, CASE WHEN ap.artefact > 0 THEN 1 ELSE 0 END as hasPet
+                       FROM " . CAVE_TABLE . " c
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
+                       WHERE c.name = :name");
   $sql->bindValue('name', $caveName, PDO::PARAM_STR);
   if (!$sql->execute()) return array();
 
@@ -75,17 +81,19 @@ function getCaveByName($caveName){
 function getCaveByCoords($xCoord, $yCoord){
   global $db;
 
-  $sql = $db->prepare("SELECT *
-                       FROM " . CAVE_TABLE . "
-                       WHERE xCoord = :xCoord
-                         AND yCoord = :yCoord");
+  $sql = $db->prepare("SELECT c.*, (c.protection_end > NOW()+0) AS protected, CASE WHEN a.artefact > 0 THEN 1 ELSE 0 END as hasArtefact, CASE WHEN ap.artefact > 0 THEN 1 ELSE 0 END as hasPet
+                       FROM " . CAVE_TABLE . " c
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
+                       WHERE c.xCoord = :xCoord
+                         AND c.yCoord = :yCoord");
   $sql->bindValue('xCoord', $xCoord, PDO::PARAM_INT);
   $sql->bindValue('yCoord', $yCoord, PDO::PARAM_INT);
   if (!$sql->execute()) return array();
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret;
 }
 
@@ -95,10 +103,12 @@ function getCaves($playerID){
   global $db;
 
   $caves = array();
-  $sql = $db->prepare("SELECT *, (protection_end > NOW()+0) AS protected
-                       FROM " . CAVE_TABLE . "
-                       WHERE playerID = :playerID
-                       ORDER BY name ASC");
+  $sql = $db->prepare("SELECT c.*, (c.protection_end > NOW()+0) AS protected, CASE WHEN a.artefact > 0 THEN 1 ELSE 0 END as hasArtefact, CASE WHEN ap.artefact > 0 THEN 1 ELSE 0 END as hasPet
+                       FROM " . CAVE_TABLE . " c
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
+                       WHERE c.playerID = :playerID
+                       ORDER BY c.name ASC");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   if (!$sql->execute()) return array();
 
@@ -117,9 +127,11 @@ function getCavesByRegion($regionID){
 
   $caves = array();
   $sql = $db->prepare("SELECT *, (protection_end > NOW()+0) AS protected
-                       FROM " . CAVE_TABLE . "
-                       WHERE regionID = :regionID
-                       ORDER BY name ASC");
+                       FROM " . CAVE_TABLE . " c
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
+                       WHERE c.regionID = :regionID
+                       ORDER BY c.name ASC");
   $sql->bindValue('regionID', $regionID, PDO::PARAM_INT);
   if (!$sql->execute()) return 0;
   while($row = $sql->fetch(PDO::FETCH_ASSOC)){
@@ -138,6 +150,8 @@ function getCaveNameAndOwnerByCaveID($caveID) {
                        FROM " . CAVE_TABLE . " c
                          LEFT JOIN " . PLAYER_TABLE . " p ON c.playerID = p.playerID
                          LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = p.tribeID
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
                        WHERE c.caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return array();

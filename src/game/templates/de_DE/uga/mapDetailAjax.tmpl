@@ -23,7 +23,8 @@
       <p style="margin: 0;">Diese Höhle gehört dem Häuptling <a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ player_details.playerID }}"><span class="bold">{{ player_details.name }}</span></a>{% if player_details.tribe %} vom Stamme <a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe|url_encode }}"><span class="bold">{{ player_details.tribe }}</span></a>{% endif %}.</p>
       {% if cave_details.protected %}<p style="margin: 0;"><em>Anfängerschutz aktiv!</em></p>{% endif %}
       <p style="margin: 0;"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name|url_encode }}">Spieler zum Adressbuch hinzufügen</a></p>
-      {% if cave_details.artefact %}<p style="margin: 0;"><strong>In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</strong></p>{% endif %}
+      {% if cave_details.hasArtefact %}<p style="margin: 0;"><strong>In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</strong></p>{% endif %}
+      {% if cave_details.hasPet %}<p style="margin: 0;"><strong>In dieser Höhle wohnt ein Haustier.</strong></p>{% endif %}
     {% else %}
       {% if takeoverable %}<p style="margin: 0;">Dieser Landstrich ist bewohnbar und kann <a class="bold" href="main.php?modus={{ takeover_link }}&amp;caveID={{ caveID }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}">missioniert</a> werden!</p>{% endif %}
     {% endif %}
@@ -37,19 +38,20 @@
             <th>Größe</th>
             <th>&nbsp;</th>
             <th>&nbsp;</th>
-            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
         {% for item in player_caves %}
           <tr>
-            <td class="ua-td-name left"><p class="nospace">{{ item.caveName }} ({{ item.xCoord }} | {{ item.yCoord }}){% if item.secureCave == false %}</p><p class="nospace"><small>(Übernehmbar)</small></p>{% endif %}</td>
+            <td class="text-left">
+              <p class="nospace">{{ item.caveName }} ({{ item.xCoord }} | {{ item.yCoord }})</p>
+              {% if item.secureCave == false %}<p class="nospace" style="line-height: 10px;"><small>(Übernehmbar)</small></p>{% endif %}
+              {% if item.protected %}<p class="nospace" style="line-height: 10px;"><small>Anfängerschutz aktiv</small></p>{% endif %}
+              {% if item.artefact %}<p class="nospace" style="line-height: 10px;"><small>Artefact!</p>{% endif %}
+              {% if item.pet %}<p class="nospace" style="line-height: 10px;"><small>Haustier!</p>{% endif %}
+            </td>
             <td>{{ item.terrain }}</td>
             <td>{{ item.caveSize }}</td>
-            <td>
-              {% if item.protected %}Anfängerschutz aktiv{% endif %}&nbsp;
-              {% if item.artefact %}<a href="main.php?modus={{ artefact_list_link }}">Artefakte!!</a>{% endif %}
-            </td>
             <td><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ item.xCoord }}&amp;targetYCoord={{ item.yCoord }}">dorthin bewegen!</a></td>
             <td><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ item.xCoord }}&amp;yCoord={{ item.yCoord }}">zur Höhlenliste hinzufügen!</a></td>
           </tr>

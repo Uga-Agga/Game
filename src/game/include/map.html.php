@@ -250,7 +250,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
       }
 
       // mit Artefakt
-      if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
+      if ($cave['hasArtefact'] && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
         $file .= "_artefact";
       }
 
@@ -290,11 +290,6 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
     $cell['file'] = $file;
     $cell['text'] = $text;
 
-    // Wenn die Höhle ein Artefakt enthält und man berechtigt ist -> anzeigen
-    if ($cave['artefacts'] != 0 && ($cave['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
-      $cell['artefacts'] = $cave['artefacts'];
-      $cell['artefacts_text'] = sprintf(_('Artefakte: %d'), $cave['artefacts']);
-    }
     $map[$cave['xCoord']][$cave['yCoord']] = $cell;
   }
 
@@ -391,7 +386,7 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
   $cave  = getCaveByID($targetCaveID);
 
   $caveDetails   = array();
-  $playerDetails = array();
+  $playerDetails = null;
   $showArtePossible = false;
 
   if ($cave['playerID'] != 0) {
@@ -414,8 +409,16 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
 
   $region = getRegionByID($cave['regionID']);
 
-  if ($cave['artefacts'] != 0 && ($showArtePossible || $_SESSION['player']->tribe == GOD_ALLY)) {
-    $cave['artefact'] = true;
+  // Wenn die Höhle ein Artefakt enthält und man berechtigt ist -> anzeigen
+  if ($cave['hasArtefact'] && ($showArtePossible || $_SESSION['player']->tribe == GOD_ALLY)) {
+    $cave['hasArtefact'] = true;
+  } else {
+    $cave['hasArtefact'] = false;
+  }
+  if ($cave['hasPet'] && ($showArtePossible || $_SESSION['player']->tribe == GOD_ALLY)) {
+    $cave['hasPet'] = true;
+  } else {
+    $cave['hasArtefact'] = false;
   }
 
   $template->addVar('cave_details', $cave);
@@ -439,8 +442,11 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
         'secureCave' => $value['secureCave'],
       );
 
-      if ($value['artefacts'] != 0 && ($playerDetails['tribe'] != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
+      if ($value['hasArtefact'] && ($playerDetails->tribe != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
         $temp['artefact'] = true;
+      }
+      if ($value['hasPet'] && ($playerDetails->tribe != GOD_ALLY || $_SESSION['player']->tribe == GOD_ALLY)) {
+        $temp['pet'] = true;
       }
 
       $caves[] = $temp;

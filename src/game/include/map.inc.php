@@ -17,11 +17,13 @@ function getCaveDetailsByCoords($minX, $minY, $maxX, $maxY) {
   global $db;
 
   $caveDetails = array();
-  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribeID, r.name as region, t.tag as tribe
+  $sql = $db->prepare("SELECT c.terrain, c.name AS cavename, c.caveID, c.xCoord, c.yCoord, c.secureCave, c.artefacts, c.takeoverable, p.name, p.playerID, p.tribeID, r.name as region, t.tag as tribe, CASE WHEN a.artefact > 0 THEN 1 ELSE 0 END as hasArtefact, CASE WHEN ap.artefact > 0 THEN 1 ELSE 0 END as hasPet
                        FROM ". CAVE_TABLE ." c
                          LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
                          LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
                          LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) a ON a.caveID = c.caveID AND a.pet = 0 AND c.artefacts > 0
+                         LEFT JOIN (SELECT caveID, pet, count(*) as artefact FROM Artefact GROUP BY caveID) ap ON ap.caveID = c.caveID AND ap.pet = 1 AND c.artefacts > 0
                        WHERE :minX <= c.xCoord AND c.xCoord <= :maxX
                          AND   :minY <= c.yCoord AND c.yCoord <= :maxY
                        ORDER BY c.yCoord, c.xCoord");

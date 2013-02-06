@@ -2,7 +2,7 @@
 /*
  * artefact.inc.php -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -34,16 +34,18 @@ function artefact_getArtefactsReadyForMovement($caveID) {
   return $result;
 }
 
-function getArtefactList() {
+function getArtefactList($playerID=-1) {
   global $db;
 
-  $sql = $db->prepare("SELECT a.artefactID, a.caveID, a.initiated, ac.name as artefactname, ac.initiationID, c.name AS cavename, c.xCoord, c.yCoord, p.playerID, p.name, t.tag as tribe
+  $sql = $db->prepare("SELECT a.artefactID, a.caveID, a.initiated, ac.name as artefactname, ac.initiationID, c.name AS cavename, c.xCoord, c.yCoord, c.terrain, p.playerID, p.name, t.tag as tribe
                        FROM ". ARTEFACT_TABLE ." a
                          LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
                          LEFT JOIN ". CAVE_TABLE ." c ON a.caveID = c.caveID
                          LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
                          LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
-                       WHERE a.pet = 0");
+                       WHERE a.pet = 0
+                         OR (a.pet = 1 AND p.playerID = :playerID)");
+  $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   if (!$sql->execute()) return array();
 
   $result = $sql->fetchAll(PDO::FETCH_ASSOC);

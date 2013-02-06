@@ -1,8 +1,8 @@
 {#
-/* hero.tmpl -
+/* artefactDetail.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>, Georg Pitterle
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,62 +14,48 @@
 {% block title %}Artefakt Details{% endblock %} 
 {% block content %} 
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <p><a href="main.php?modus={{ artefact_list_link }}">Zur Artefaktliste</a></p>
 {% if show_artefact %}
-<div class="ua-box small">
+<div class="ua-box">
   <div class="ua-box-header">{{ artefact.name }}</div>
-  <div class="ua-box-content">
-    <div class="ym-grid" style="padding: 10px; width: 640px;">
-      <div class="ym-gl text-left" style="width: 110px">
-        <img src="images/artefacts/{{ artefact.img }}" width="100px" height="100px" alt="{{ artefact.name }}" title="{{ artefact.name }}" />
-      </div>
-      <div class="ym-gr text-center" style="width: 520px;">
-        <div class="notice text-left">
-          <h3 class="text-center">Beschreibung:</h3>
-          {% if artefact.description_initiated %}
-            {{ artefact.description_initiated|raw }}<br />
-            {% if showStatus %}<div class="text-small" style="padding-top: 10px;">Status: eingeweiht!</div>{% endif %}
-          {% else %}
-            {{ artefact.description|raw }}<br />
-            {% if showStatus %}<div class="text-small" style="padding-top: 10px;">Status: <span class="bold">nicht</span> eingeweiht!</div>{% endif %}
-          {% endif %}
-        </div>
+  <div class="ua-box-content ua-box-space">
+    <div class="row-fluid">
+      <div class="span12">
+        <img class="pull-left" src="images/artefacts/{{ artefact.img }}" width="100px" height="100px" alt="{{ artefact.name }}" title="{{ artefact.name }}" />
+
+        <h5 class="text-center">Beschreibung</h5>
+        {% if artefact.description_initiated %}
+          {{ artefact.description_initiated|raw }}
+          {% if showStatus %}<p><small>Status: eingeweiht!</small></p>{% endif %}
+        {% else %}
+          {{ artefact.description|raw }}
+          {% if showStatus %}<p><small>Status: <span class="bold">nicht</span> eingeweiht!</small></p>{% endif %}
+        {% endif %}
       </div>
     </div>
 
     {% if showRitual>0 %}
-      <div class="space">
-        <div class="notice text-left">
-          <h3 class="text-center">Einweihung:</h3>
-          <div class="ym-grid" style="padding-top: 10px;">
-            <div class="ym-gl text-center" style="width: 495px">
-              {{ artefact.initiation.description |raw }}
-            </div>
-            <div class="ym-gr text-left" style="width: 120px">
-              {% for item in artefact.initiation.cost %}
-                {{ item.object }}:
-                <span class="{{ item.class }}small">{{ item.amount }}</span>
-                <br />
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <form class="ym-form" id="initiateArtefact" method="post" action="main.php?modus={{ artefact_detail_link }}">
-        <div class="ym-fbox-button text-left">
+      <hr>
+      <h5 class="text-center">Einweihung</h5>
+      {{ artefact.initiation.description|raw }}
+      <hr>
+      <h5 class="text-center">Kosten</h5>
+      {% for item in artefact.initiation.cost %}
+        {{ item.object }}:
+        <span class="{{ item.class }}small">{{ item.amount }}</span>
+      {% endfor %}
+      <div class="text-center">
+        <form id="formArtefactInitiate" class="form-horizontal" action="main.php?modus={{ artefact_detail_link }}&amp;artefactID={{ artefact.artefactID }}" method="post">
           <input type="hidden" name="artefactID" value="{{ artefact.artefactID }}"/>
           <input type="hidden" name="initiate" value="{{ artefact.initiation.initiate }}"/>
-          <input type="submit" class="ym-button" value="Ritual durchführen" id="initiate" name="initiate" />
-        </div>
-      </form>
+          <button class="btn" type="button" id="formArtefactInitiateSubmit" name="formArtefactInitiateSubmit">Ritual durchführen</button>
+        </form>
+      </div>
     {% elseif showRitual==0 %}
     {% else %}
-      <div class="space">
-        <div class="info">In dieser Höhle wird bereits ein Artefakt eingeweiht!</div>
-      </div>
+      <h5 class="text-center">In dieser Höhle wird bereits ein Artefakt eingeweiht!</h5>
     {% endif %}
   </div>
 </div>

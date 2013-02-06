@@ -52,9 +52,9 @@ function artefact_getDetail($caveID, &$myCaves) {
         if (!$cave['playerID']) {
           $show_artefact = FALSE;
         } else {
-          $owner = getPlayerByID($cave['playerID']);
+          $owner = Player::getPlayer($cave['playerID']);
           // Besitzer ist ein Gott
-          if ($owner['tribe'] == GOD_ALLY) {
+          if ($owner->tribe == GOD_ALLY) {
             $show_artefact = FALSE;
           }
         }
@@ -94,8 +94,7 @@ function artefact_getDetail($caveID, &$myCaves) {
             foreach($merged_game_rules as $val) {
               if (isset($ritual[$val->dbFieldName])) {
                 if ($ritual[$val->dbFieldName]) {
-                  $object_context = (ceil($ritual[$val->dbFieldName]) > floor($myCaves[$artefact['caveID']][$val->dbFieldName])) ?
-                                    'less-' : 'enough ';
+                  $object_context = (ceil($ritual[$val->dbFieldName]) > floor($myCaves[$artefact['caveID']][$val->dbFieldName])) ? 'less-' : 'enough ';
                   array_push($cost, array('object' => $val->name, 'amount' => $ritual[$val->dbFieldName], 'class' => $object_context));
                 }
               }
@@ -142,10 +141,10 @@ function artefact_getDetail($caveID, &$myCaves) {
 function artefact_getList($caveID, $ownCaves) {
   global $template;
 
-  $template->setFile('artefactlist.tmpl');
+  $template->setFile('artefactList.tmpl');
 
   //get artefacts
-  $artefacts = getArtefactList();
+  $artefacts = getArtefactList($_SESSION['player']->playerID);
 
   // get moving artefacts
   $movements = artefact_getArtefactMovements();
@@ -153,16 +152,17 @@ function artefact_getList($caveID, $ownCaves) {
   $ownArtefactsList = array();
   $otherArtefactsList = array();
   $movedArtefactsList = array();
-  
-  foreach ($artefacts AS $artefact) { 
+
+  foreach ($artefacts as $artefact) { 
+    $artefact['cave_detail_title'] = 'Dies ist der Landstrich "' . $artefact['cavename'] . '" (' . $artefact['xCoord'] . '|' . $artefact['yCoord'] . ') - ' . $GLOBALS['terrainList'][$artefact['terrain']]['name'];
+
     // eigenes Artefakt
     if (isset($ownCaves[$artefact['caveID']])) {
       switch ($artefact['initiated']) {
         case ARTEFACT_UNINITIATED: 
           if ($artefact['caveID'] == $caveID) {
             $artefact['initiation_possible'] = array('artefactID' => $artefact['artefactID']);
-          }
-          else {
+          } else {
             $artefact['initiation_not_possible'] = array('status' => _('uneingeweiht'));
           }
         break;

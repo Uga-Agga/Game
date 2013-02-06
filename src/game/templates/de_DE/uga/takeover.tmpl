@@ -32,7 +32,7 @@
   <div class="alert alert-block alert-info">
     Willst du die Höhle in ({{ xCoord }}/{{ yCoord }}) wirklich missionieren?
     <br /><br />
-    <form id="formTakeoverConfirm" method="post" action="main.php?modus={{ takeover_link }}">
+    <form id="formTakeoverConfirm" method="post" action="main.php?modus={{ takeover_link }}" method="post">
       <div><input type="hidden" name="action" value="change" />
       <input type="hidden" name="change_check" value="{{ change_check }}" />
       <input type="hidden" name="xCoord" value="{{ xCoord }}" />
@@ -124,7 +124,7 @@
           <form id="formTakeoverWithdrawal" class="form-horizontal" action="main.php?modus={{ takeover_link }}" method="post" data-reask="true"  data-reask-header="Missionierung abbrechen!" data-reask-msg="Entscheidest du dich wirklich dafür, dein Angebot zurückzuziehen? Sobald du dies getan hast, wird der Häuptling der bebotenen Höhle deine Zuwendungen  vergessen haben und deine Bemühungen zunichte machen ...">
             <input type="hidden" name="action" value="withdrawal" />
             <input type="hidden" name="withdrawal_check" value="{{ withdrawal_check }}" />
-            <button class="btn" type="button" id="formTakeoverChangeSubmit" name="formTakeoverChangeSubmit">Überzeugungsarbeit beenden</button>
+            <button class="btn" type="button" id="formTakeoverWithdrawalSubmit" name="formTakeoverWithdrawalSubmit">Überzeugungsarbeit beenden</button>
           </form>
         </div>
       </div>
