@@ -587,20 +587,6 @@ if (sizeof($ownCaves)) {
 
 $template->render();
 
-/*
-// prepare next and previous cave
-$keys = array_keys($ownCaves);
-$pos =  array_search($caveID, $keys);
-$prev = isset($keys[$pos - 1]) ? $keys[$pos - 1] : $keys[count($keys)-1];
-$next = isset($keys[$pos + 1]) ? $keys[$pos + 1] : $keys[0];
-
-if (!is_null($prev))
-  tmpl_set($template, '/PREVCAVE', array('id' => $prev, 'name' => $ownCaves[$prev]['name']));
-
-if (!is_null($next))
-  tmpl_set($template, '/NEXTCAVE', array('id' => $next, 'name' => $ownCaves[$next]['name']));
-*/
-
 // close page
 page_end();
 
