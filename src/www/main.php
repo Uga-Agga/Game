@@ -201,7 +201,7 @@ switch ($modus) {
   case MAP_DETAIL:
     $targetCaveID = Request::getVar('targetCaveID', 0);
     $method = Request::getVar('method', '');
-    
+
     getCaveReport($caveID, $ownCaves, $targetCaveID, $method);
     $requestKeys = array('targetCaveID');
     break;
