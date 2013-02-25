@@ -1,3 +1,4 @@
+lib/
 src/Makefile
 src/admintools/config.inc.php
 src/admintools/dbconfig.inc.php
@@ -39,3 +40,4 @@ ugaagga.conf
 .buildpath
 .project
 .settings
+.c9revisions/

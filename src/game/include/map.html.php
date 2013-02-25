@@ -216,7 +216,7 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
 
   // get the map details
   $caveDetails = getCaveDetailsByCoords($minX, $minY, $maxX, $maxY);
-  $relations = TribeRelation::getRelations($_SESSION['player']->tribe);
+  $relations = TribeRelation::getRelations($_SESSION['player']->tribeID);
 
   $map = array();
   foreach ($caveDetails AS $cave) {
@@ -279,11 +279,11 @@ function calcCaveMapRegionData($caveID, $caves, $xCoord, $yCoord) {
       if ($_SESSION['player']->playerID == $cave['playerID']) {
         $cell['css_self'] = 't_self';
       }
-      if (isset($relations['own'][strtoupper($cave['tribe'])])) {
-        $cell['css_own'] = 't_own_relation_' . $relations['own'][strtoupper($cave['tribe'])]['relationType'];
+      if (isset($relations['own'][$cave['tribeID']])) {
+        $cell['css_own'] = 't_own_relation_' . $relations['own'][$cave['tribeID']]['relationType'];
       }
-      if (isset($relations['other'][strtoupper($cave['tribe'])])) {
-        $cell['css_other'] = 't_other_relation_' . $relations['other'][strtoupper($cave['tribe'])]['relationType'];
+      if (isset($relations['other'][$cave['tribeID']])) {
+        $cell['css_other'] = 't_other_relation_' . $relations['other'][$cave['tribeID']]['relationType'];
       }
     }
 
@@ -453,8 +453,14 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
     }
 
     $template->addVar('player_caves', $caves);
-  } else if (sizeof($ownCaves) < $_SESSION['player']->takeover_max_caves && $cave['takeoverable'] == 1) {
-    $template->addVar('takeoverable', true);
+  } else {
+    if (sizeof($ownCaves) < $_SESSION['player']->takeover_max_caves) {
+      if ($cave['starting_position'] == 0 && $cave['takeoverable'] == 0 && $cave['takeover_level'] > 0) {
+        $template->addVar('maybe_takeoverable', true);
+      } else if ($cave['takeoverable'] == 1) {
+        $template->addVar('takeoverable', true);
+      }
+    }
   }
 }
 

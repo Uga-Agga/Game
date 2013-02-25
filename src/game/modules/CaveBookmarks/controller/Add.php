@@ -31,10 +31,10 @@ class CaveBookmarks_Controller_Add extends Controller {
     $error = CAVEBOOKMARKS_NOERROR;
 
     // add CaveBookmark
-    if (Request::getVar('inputName', '')) {
-      $error = $model->addCaveBookmarkByName(Request::getVar('inputName', ''));
-    } else if (Request::getVar('inputX', 0) && Request::getVar('inputX', 0)) {
-      $error = $model->addCaveBookmarkByCoord(Request::getVar('inputX', 0), Request::getVar('inputY', 0));
+    if (Request::getVar('contact', '')) {
+      $error = $model->addCaveBookmarkByName(Request::getVar('contact', ''));
+    } else if (Request::getVar('xCoord', 0) && Request::getVar('yCoord', 0)) {
+      $error = $model->addCaveBookmarkByCoord(Request::getVar('xCoord', 0), Request::getVar('yCoord', 0));
     } else {
       $error = CAVEBOOKMARKS_ERROR_NOSUCHCAVE;
     }

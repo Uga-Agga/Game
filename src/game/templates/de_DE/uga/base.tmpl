@@ -7,7 +7,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 <!DOCTYPE html>
@@ -21,7 +21,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Bootstrap -->
-    <link href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" media="screen">
+    <link href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.10.1.custom.min.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="{{ gfx }}/de_DE/t_uga/css/styles.css" rel="stylesheet" media="screen">
 
@@ -30,7 +30,7 @@
     <script type="text/javascript" src="js/jquery.cookie.js"></script>
     <script type="text/javascript" src="js/jquery.form.js"></script>
     <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.10.1.custom.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
     <script type="text/javascript" src="js/jquery.url.js"></script>
@@ -39,15 +39,15 @@
     <script type="text/javascript" src="js/ua.js"></script>
 
     <script type="text/javascript">
-      function serverTime() { 
-        var time = null; 
-        time = new Date("{{ countdown_time }}"); 
-        return time; 
+      function serverTime() {
+        var time = null;
+        time = new Date("{{ countdown_time }}");
+        return time;
       }
 
       MAP_MIN_X = {{ map_size.min_x }};
       MAP_MAX_X = {{ map_size.max_x }};
-      MAP_MIN_Y = -{{ map_size.min_y }};
+      MAP_MIN_Y = {{ map_size.min_y }};
       MAP_MAX_Y = -{{ map_size.max_y }};
 
       {% if jabber.server2 and jabber.user and jabber.passwd %}
@@ -97,7 +97,7 @@
 
     .span-header-left { background-image: url("{{ gfx }}/de_DE/t_uga/header_left.png"); }
     .span-header-right {  background-image: url("{{ gfx }}/de_DE/t_uga/header_right.png"); }
-    
+
     .ua-box { background-image: url("{{ gfx }}/de_DE/t_uga/grass.png"); }
 
     .abort { background-image: url("{{ gfx }}/de_DE/t_uga/abort.png"); }
@@ -120,7 +120,7 @@
     <div class="span-header-right pull-right text-right" id="region-info">
       <a href="main.php?modus=logout"><img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" /></a><br />
       <img class="right" style="margin-right: 100px; margin-top:-30px;" src="{{ gfx }}/de_DE/t_uga/menu/terrain/terrain_{{ cave_terrain }}.png" alt="terrain_{{ cave_terrain }}" title="{{ cave_terrain_desc }}" /><br />
-      <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br /> 
+      <img class="right" style="margin-right: 120px;" src="{{ gfx }}/de_DE/t_uga/menu/month/month_{{ ua_time_month }}.png" alt="month_{{ ua_time_month }}" title="{{ ua_time_day }}. Tag des {{ ua_time_time_month_name }}-Monats im Jahre {{ ua_time_year }} um {{ ua_time_hour }} Uhr." /><br />
       <img class="right" style="margin-right: 100px;" src="{{ gfx }}/de_DE/t_uga/menu/weather/weather_{{ weather_id }}.png" alt="{{ weather_name }}" title="{{ weather_name }}" /><br />
       <div style="margin-right: 10px; margin-top: 12px"><b>Farmpunkte: {{ player_fame }}</b></div>
     </div>
@@ -201,7 +201,7 @@
   </div>
   {% block footer %}
   <footer>
-    <p>&copy; Company 2013 &nbsp; <span class="show-tutorial change_mouseover">Tutorial</p>
+    <p>&copy; Uga-Agga 2013 &nbsp; <span class="show-tutorial change_mouseover">Tutorial</p>
     <div id="pageSilder"></div>
   </footer>
   {% endblock %}

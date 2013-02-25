@@ -20,9 +20,9 @@
   <div class="ua-box-header">Einheiten Bewegen</div>
   <div class="ua-box-content">
     <form id="formUnitMovement" class="form-horizontal" action="main.php?modus={{ unit_movement_link }}" method="post">
-      <div id="movementData" class="hide">{{ movement_data }}</div>
-      <div id="unitData" class="hide">{{ unit_list_json }}</div>
-      <div id="resouceData" class="hide">{{ resource_json }}</div>
+      <div id="movementData" class="hide">{{ movement_data|raw }}</div>
+      <div id="unitData" class="hide">{{ unit_list_json|raw }}</div>
+      <div id="resouceData" class="hide">{{ resource_json|raw }}</div>
 
       <table class="table table-striped table-condensed">
         <thead>
@@ -33,7 +33,7 @@
           <tr>
             <th class="move-name">Einheit</th>
             <th class="move-unit">Anzahl</th>
-            <th class="move-max">Max</th>
+            <th class="move-max text-center">Max</th>
             <th class="text-center">Größe</th>
             <th class="text-center">Tempo</th>
             <th class="text-center">Gebäude</th>
@@ -49,7 +49,7 @@
                 {% for resources in item.encumbrance %}{% if resources.load > 0 %}<img class="tooltip-show" rel="tooltip" data-placement="top" data-original-title="Maximale Traglast: {{ resources.load }}" width="18" height="18" src="{{ gfx }}/resources/{{ resources.dbFieldName }}_icon.gif" alt="{{ resources.name }}"/>{% endif %}{% endfor %}
               </td>
               <td class="move-unit"><input class="input-unit dblclickmax change-movement" type="number" id="unit_{{ item.unit_id }}" value="{{ item.value }}" name="unit[{{ item.unit_id }}]" pattern="\d*" min="0" max="{{ item.max_unit_count }}" maxlength="6" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}"></td>
-              <td class="move-max"><span class="change_mouseover clickmax update-movement" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}">{{ item.max_unit_count }}</span></td>
+              <td class="move-max text-center"><span class="change_mouseover clickmax update-movement" data-max="{{ item.max_unit_count }}" data-max-id="unit_{{ item.unit_id }}">{{ item.max_unit_count }}</span></td>
               <td class="text-center">{{ item.size }}</td>
               <td class="text-center">{{ item.speed_factor }}</td>
               <td class="text-center">{{ item.arealAttack }}</td>
@@ -62,7 +62,7 @@
           <tr>
             <td><b>Alle mitnehmen</b></td>
             <td class="text-center"><input type="checkbox" id="selctAllUnits"></td>
-            <td id="countAll">0</td>
+            <td class="text-center" id="countAll">0</td>
             <td class="text-center" id="sizeAll">0</td>
             <td class="text-center" id="speedFactorAll">0</td>
             <td class="text-center" id="arealAttackAll">0</td>

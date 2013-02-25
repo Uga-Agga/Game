@@ -18,7 +18,7 @@ function player_getContent($caveID, $playerID) {
 
   // open template
   $template->setFile('playerDetail.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   // workaround, if no playerID is submitted! TODO
   if ($playerID == 0) $playerID = $_SESSION['player']->playerID;

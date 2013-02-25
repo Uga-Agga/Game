@@ -26,6 +26,7 @@
       {% if cave_details.hasArtefact %}<p style="margin: 0;"><strong>In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</strong></p>{% endif %}
       {% if cave_details.hasPet %}<p style="margin: 0;"><strong>In dieser Höhle wohnt ein Haustier.</strong></p>{% endif %}
     {% else %}
+      {% if maybe_takeoverable %}<p style="margin: 0;">Dieser Landstirch ist bewohnbar und kann erobert werden! Höhlenstufe: {{ cave_details.takeover_level }}</p>{% endif %}
       {% if takeoverable %}<p style="margin: 0;">Dieser Landstrich ist bewohnbar und kann <a class="bold" href="main.php?modus={{ takeover_link }}&amp;caveID={{ caveID }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}">missioniert</a> werden!</p>{% endif %}
     {% endif %}
 

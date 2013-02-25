@@ -14,6 +14,8 @@ DEBUG = 'on';
       e.preventDefault();
 
       var url = $(this).attr('href');
+      if ($(this).attr('href') === undefined) {return;}
+
 /* Direkte Urls. einfach folgen! */
       if ($(this).is('.absolute')) {
         ua_log('fix url redirect: '+url);
@@ -38,7 +40,7 @@ DEBUG = 'on';
         $('#modalLabelClose').show();
         $('#modalFooter').hide();
         $('#modal').modal({keyboard: true, backdrop: true});
-        $('#modal').children('div.modal-body').html('Exportiere Daten...').load(url+'&method=ajax');
+        $('#modal').children('div.modal-body').html('Daten werden geladen...').load(url+'&method=ajax');
 /* Öffnen des Detail Fenster */
       } else if ($(this).is('.popup-detail')) {
         ua_log('Open export Window: '+url);
@@ -46,7 +48,7 @@ DEBUG = 'on';
         $('#modalLabelClose').show();
         $('#modalFooter').hide();
         $('#modal').modal({keyboard: true, backdrop: true});
-        $('#modal').children('div.modal-body').html('Exportiere Daten...').load(url+'&method=ajax');
+        $('#modal').children('div.modal-body').html('Daten werden geladen...').load(url+'&method=ajax');
 /* Tab Links */
       } else if ($(this).is('.tab-switch') || $(this).is('.dropdown-toggle')) {
         if (url.length > 1) {
@@ -192,9 +194,10 @@ DEBUG = 'on';
 
       var movementID = $('input[name=movementID]:checked').val();
       if (movementData.movements[movementID] !== undefined && speedFactor !== 0 && $('#targetYCoord').val() && $('#targetXCoord').val()) {
-        var xCoord = movementData.dim_x - Math.abs(Math.abs(parseInt($('#targetYCoord').val(), 10) - movementData.currentX) - movementData.dim_x);
-        var yCoord = movementData.dim_y - Math.abs(Math.abs(parseInt($('#targetXCoord').val(), 10) - movementData.currentY) - movementData.dim_y);
+        var xCoord = movementData.dim_x - Math.abs(Math.abs(parseInt($('#targetXCoord').val(), 10) - movementData.currentX) - movementData.dim_x);
+        var yCoord = movementData.dim_y - Math.abs(Math.abs(parseInt($('#targetYCoord').val(), 10) - movementData.currentY) - movementData.dim_y);
         var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));
+
         var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) * movementData.minutesPerCave * speedFactor * movementData.movements[movementID].speedfactor);
 
         var tmpdist = 0;var i = 0;
@@ -203,7 +206,7 @@ DEBUG = 'on';
 
         var speed = (movementData.movements[movementID].speedfactor * speedFactor);
 
-        $('#duration').html(duration+' Min');$('#food').html(food+' '+resouceData[movementData.foodID].name);$('#speed').html(speed);
+        $('#duration').html(TimeString(duration));$('#food').html(food+' '+resouceData[movementData.foodID].name);$('#speed').html(speed);
       } else {
         $('#duration').html('- Min');$('#food').html('- '+resouceData[movementData.foodID].name);$('#speed').html('0');
       }
@@ -322,6 +325,17 @@ DEBUG = 'on';
         if (slider) {return 940;}else{return 0;}
       }
     }
+
+  function TimeString(duration) {
+    var time = duration * 60;
+    var hours = Math.floor(time/3600);
+    var minutes = Math.floor((time%3600)/60);
+    if(!hours) return minutes+" Min";
+    var text = duration + " Min ("+hours+" Std";
+    if (minutes) text = text + " "+((minutes<10)?"0":"")+minutes+" Min";
+    text = text + ")";
+    return text;
+  }
 
     function ua_log(out){if(DEBUG==='on'&&typeof console.log !== "undefined"){console.log(out);}}
 })

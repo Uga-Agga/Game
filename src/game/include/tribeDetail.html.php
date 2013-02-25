@@ -22,7 +22,7 @@ function tribe_getContent($caveID, $tribeID) {
 
   // open template
   $template->setFile('tribeDetail.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   $tribe = Tribe::getByID($tribeID);
   if ($tribe == null) {

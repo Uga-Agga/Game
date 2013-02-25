@@ -65,7 +65,7 @@ function rankingTribe_getContent(){
 
   // open template
   $template->setFile('rankingTribe.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   $numRows = rankingTribe_getMaxRows();
   $offset = 0; $row = array();

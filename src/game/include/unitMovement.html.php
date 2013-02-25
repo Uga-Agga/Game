@@ -380,6 +380,7 @@ function unit_Movement($caveID, &$ownCave) {
   // units table
   $unitprops = array();
   $units     = array();
+  $unitsJson = array();
   foreach ($GLOBALS['unitTypeList'] as $unitID => $dummy) {
     // if no units of this type, next type
     if (!$details[$GLOBALS['unitTypeList'][$unitID]->dbFieldName]) continue;
@@ -395,7 +396,6 @@ function unit_Movement($caveID, &$ownCave) {
           'dbFieldName' => (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID])) ? $GLOBALS['resourceTypeList'][$resourceID]->dbFieldName : '',
           'name'        => (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID])) ? $GLOBALS['resourceTypeList'][$resourceID]->name : '',
           'load'        => (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0)
-          
         );
         $temp[] = (isset($GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID]) ? $GLOBALS['unitTypeList'][$unitID]->encumbranceList[$resourceID] : 0);
       }
