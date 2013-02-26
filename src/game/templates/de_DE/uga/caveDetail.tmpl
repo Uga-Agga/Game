@@ -14,9 +14,7 @@
 {% block title %}Höhlendetails{% endblock %}
 {% block content %}
 
-{% if status_msg %}<div class="{{ status_msg.type }}">{{ status_msg.message|raw }}</div>{% endif %}
-
-{% if cancelOrder_box %}{% include "boxConfirmation.tmpl" %}{% endif %}
+{% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
 <a class="export-link" href="export.php?modus=thisCave&amp;caveID={{ cave_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="30" height="30" alt="Export als XML" title="Export als XML" /></a><div id="export-dialog"></div>
 
@@ -79,15 +77,20 @@
 </div>
 
 {% if give_up %}
-  <form method="post" action="main.php?modus={{ cave_detail_link }}&amp;action=caveGiveUp">
-    <p><input type="hidden" name="giveUpCaveID" value="{{ cave_data.cave_id }}" /></p>
-    <p><input type="submit" value="Höhle {{ cave_data.name }} aufgeben" /></p>
+<p>
+  <form id="formCaveGiveUp" class="form-inline" action="main.php?modus={{ cave_detail_link }}&amp;action=caveGiveUp" method="post" data-reask="true"  data-reask-header="Höhle aufgeben" data-reask-msg="Möchtest du diese Höhle wirklich aufgeben? Dies kann nicht mehr rückgängig gemacht werden!">
+    <input type="hidden" name="giveUpCaveID" value="{{ cave_data.caveID }}" />
+    <button class="btn" type="button" id="formCaveGiveUpSubmit" name="formCaveGiveUpSubmit">Höhle {{ cave_data.name }} aufgeben</button>
   </form>
+</p>
 {% endif %}
 {% if unprotected %}
-  <form method="post" action="main.php?modus={{ cave_detail_link }}&amp;action=endProtection">
-    <p><input type="submit" value="Anfängerschutz vorzeitig beenden." /></p>
+<p>
+  <form id="formCaveProtection" class="form-inline" action="main.php?modus={{ cave_detail_link }}&amp;action=endProtection" method="post" data-reask="true"  data-reask-header="Anfängerschutz beenden" data-reask-msg="Möchtest du den Anfängerschutz wirklich beenden? Dies kann nicht mehr rückgängig gemacht werden!">
+    <input type="hidden" name="giveUpCaveID" value="{{ cave_data.caveID }}" />
+    <button class="btn" type="button" id="formCaveProtectionSubmit" name="formCaveProtectionSubmit">Anfängerschutz beenden</button>
   </form>
+</p>
 {% endif %}
 
 {% endblock %}

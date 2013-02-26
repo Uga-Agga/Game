@@ -13,11 +13,11 @@
 
 <div class="text-center" style="width: 100%">
   <img src="{{ gfx }}/de_DE/t_uga/map/{{ cave_details.terrain_img }}" alt="{{ cave_details.terrain_name }}" title="{{ cave_details.terrain_name }}" />
+  <p style="margin: 0;"><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}&amp;targetCaveName={{ cave_details.name }}">dorthin bewegen!</a></p>
   {% if cave_details.terrain_tribe_cave %}
     <h5>Aktueller Besitzer: {% if cave_details.tribe_cave_tag %}{{ cave_details.tribe_cave_tag }}{% else %}Unerobert{% endif %}</h5>
     {{ cave_details.terrain_description|raw }}
   {% else %}
-    <p style="margin: 0;"><a href="main.php?modus={{ unit_movement_link }}&amp;targetXCoord={{ cave_details.xCoord }}&amp;targetYCoord={{ cave_details.yCoord }}&amp;targetCaveName={{ cave_details.name }}">dorthin bewegen!</a></p>
     <p><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ cave_details.xCoord }}&amp;yCoord={{ cave_details.yCoord }}">zur Höhlenliste hinzufügen!</a></p>
     {% if cave_details.playerID %}
       <p style="margin: 0;">Diese Höhle gehört dem Häuptling <a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ player_details.playerID }}"><span class="bold">{{ player_details.name }}</span></a>{% if player_details.tribe %} vom Stamme <a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe|url_encode }}"><span class="bold">{{ player_details.tribe }}</span></a>{% endif %}.</p>
