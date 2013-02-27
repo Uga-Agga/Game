@@ -552,6 +552,7 @@ $template->addVars(array(
   'ranking_tribe_link'      => RANKING_TRIBE,
   'science_link'            => SCIENCE_BUILDER,
   'science_detail_link'     => SCIENCE_DETAIL,
+  'statistic_link'          => STATISTIC,
   'suggestions_link'        => SUGGESTIONS,
   'takeover_link'           => TAKEOVER,
   'tribe_link'              => TRIBE,

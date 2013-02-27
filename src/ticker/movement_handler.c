@@ -367,7 +367,7 @@ static void prepare_battle(db_t *database,
   debug(DEBUG_BATTLE, "attacker artefact: %d", *attacker_artefact_id);
 
   /* get the relation boni */
-  battle->attackers[0].relationMultiplicator = relation_from_attacker->attackerMultiplicator;
+  battle->attackers[0].relationMultiplicator = (defender->player_id == 0) ? 1.0 : relation_from_attacker->attackerMultiplicator;
   battle->defenders[0].relationMultiplicator = relation_from_defender->defenderMultiplicator;
 
   /*hero */

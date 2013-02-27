@@ -44,6 +44,7 @@ foreach ($GLOBALS['unitTypeList'] AS $value)
 /*
  * get secret player and cace
  */
+$SecretCave = array();
 $sql = $db->prepare("SELECT caveID 
                      FROM ". CAVE_TABLE ."
                        LEFT JOIN ". PLAYER_TABLE . " 
@@ -78,6 +79,7 @@ unset($Halfgod);
 /*
  * get unit stats
  */
+/*
 echo "GAME STATS: Unit Stats.\n";
 $fields = array();
 foreach (array_keys($UnitFieldsName) as $name) {
@@ -126,6 +128,7 @@ else {
 foreach (array_keys($UnitFieldsName) as $name) {
    $statsData[UNIT_STATS][$name] = $CaveUnits[$name] + $MovementUnits[$name];
 }
+*/
 
 /*
  * get storage stats
@@ -171,7 +174,7 @@ foreach ($statsData as $type => $data) {
 
   foreach ($data as $name => $count)
   {
-    if (sizeof($DataDB[$name])) {
+    if (isset($DataDB[$name]) && sizeof($DataDB[$name])) {
       if (sizeof($DataDB[$name]) > 23) {
           $DataDB[$name] = array_slice($DataDB[$name], 1);
       }

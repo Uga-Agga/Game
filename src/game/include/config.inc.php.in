@@ -132,6 +132,8 @@ define("STATS_DAY_COUNT", 21);
 define("STATS_WEEK", '3');
 define("STATS_WEEK_COUNT", 24);
 
+define("MAX_ACCOUNTS", 400);
+
 /* ***** PROFILE *****  ***************************************************** */
 define("MAX_AVATAR_WIDTH", 600);
 define("MAX_AVATAR_HEIGHT", 200);

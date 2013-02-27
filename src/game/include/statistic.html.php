@@ -77,7 +77,7 @@ function statistic_getContent() {
   * print god stats
   */
   $GodStatsList = array();
-  $GodStats = $StatsData[GOD_STATS];
+  $GodStats = isset($StatsData[GOD_STATS]) ? $StatsData[GOD_STATS] : array();
   ksort($GodStats);
   foreach ($GodStats as $God => $value) {
     $GodStatsList[] =  array("name" => $ScienceFieldsName[$God],
@@ -89,7 +89,7 @@ function statistic_getContent() {
   * print god halfgod stats
   */
   $HalfGodStatsList = array();
-  $HalfGodStats = $StatsData[HALFGOD_STATS];
+  $HalfGodStats = isset($StatsData[HALFGOD_STATS]) ? $StatsData[HALFGOD_STATS] : array();
   ksort($HalfGodStats);
   foreach ($HalfGodStats as $HalfGod => $value) {
     if (!isset($ScienceFieldsName[$HalfGod])) {
@@ -105,7 +105,7 @@ function statistic_getContent() {
   * print storage stats
   */
   $StorageStatsList = array();
-  $StorageStats = $StatsData[STORAGE_STATS];
+  $StorageStats = isset($StatsData[STORAGE_STATS]) ? $StatsData[STORAGE_STATS] : array();
   ksort($StorageStats);
   foreach ($StorageStats as $Storage => $value) {
     $StorageStatsList[] = array("name" => $Storage,
@@ -152,7 +152,7 @@ function statistic_getContent() {
    * print Unit stats
    */
   $Units = array(); $UnitAll= 0;
-  $LastUnitStats = array_pop($UnitStats[STATS_HOUR]);
+  $LastUnitStats = isset($UnitStats[STATS_HOUR]) ? array_pop($UnitStats[STATS_HOUR]) : array();
   foreach ($UnitFieldsName as $Unit => $Name) {
     if (!isset($LastUnitStats[$Unit])) {
       continue;
@@ -163,9 +163,12 @@ function statistic_getContent() {
                      'name'  => $Name,
                      'value' => $LastUnitStats[$Unit]);
   }
-  $Units[] = array('unit'  => 'all',
-                   'name'  => 'Insgesamt:',
-                   'value' => $UnitAll);
+
+  if(!empty($LastUnitStats)) {
+    $Units[] = array('unit'  => 'all',
+                     'name'  => 'Insgesamt:',
+                     'value' => $UnitAll);
+  }
 
   $template->addVars(array('Units' => $Units));
   unset($Name, $Unit, $Units, $UnitAll, $LastUnitStats);

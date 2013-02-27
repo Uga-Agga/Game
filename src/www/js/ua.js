@@ -235,6 +235,7 @@ DEBUG = 'on';
       $('#warpoints_info').html($(data).find('#warpoints_info').html());
       $('#region-info').html($(data).find('#region-info').html());
       $('#message_icon').attr('src', $(data).find('#message_icon').attr('src'));
+      $('#servertime').html($(data).find('#servertime').html());
 
       $('#tutorialDataOpen').html($(data).find('#tutorialDataOpen').html());
       $('#tutorialDataFinish').html($(data).find('#tutorialDataFinish').html());
@@ -282,8 +283,14 @@ DEBUG = 'on';
     function getMapSliderValue(type) {if (type === 'xCoord') {return $('#map-queryX').html();} else if (type === 'yCoord') {return $('#map-queryY').html()*-1;}}
 
     function showTutorialModal() {
+      if ($('#tutorialDataHeader').html() === '' || $('#tutorialDataBody').html() === '') {
+        $('#modal').modal('hide');
+        return;
+      }
+
       $('#modalLabel').html($('#tutorialDataHeader').html());
       $('#modalLabelClose').show();
+
       if ($('#tutorialDataFinish').html() === 'true') {
         $('#modalFooterHref').attr('href', $('#tutorialDataUrl').text());
         $('#modalFooter').show();

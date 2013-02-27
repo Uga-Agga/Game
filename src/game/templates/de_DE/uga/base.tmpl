@@ -169,7 +169,7 @@
 
       <div id="content">
         {% for item in resources %}
-          <span class="nobr"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
+          <span class="nobr tooltip-show change_mouseover" rel="tooltip" data-placement="top" data-original-title="{{ item.name }} (max. {{ item.max_level }}, gesichert {{ item.safe_storage }})"><img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" alt="{{ item.name }}" title="" style="width:15px; height:15px; vertical-align:middle" />&nbsp;:
           {{ item.amount }} ({{ item.delta }})&nbsp;</span>
         {% endfor %}
         <hr>
@@ -201,8 +201,15 @@
   </div>
   {% block footer %}
   <footer>
-    <p>&copy; Uga-Agga 2013 &nbsp; <span class="show-tutorial change_mouseover">Tutorial</p>
-    <div id="pageSilder"></div>
+    <span class="show-tutorial change_mouseover">Tutorial.</span>
+    <div class="row-fluid">
+      <div class="span6 text-left"><div id="servertime">Serverzeit: {{ time }}</div></div>
+      <div class="span6 text-right">
+          <a href="main.php?modus={{ statistic_link }}">Statistik</a> &amp;
+          <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
+          <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
+      </div>
+      <div class="span12 nospace"><div id="pageSilder"></div></div>
   </footer>
   {% endblock %}
 </div>
