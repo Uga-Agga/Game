@@ -626,6 +626,42 @@ struct Battle *hero_update_after_battle(db_t *database,
   return battle;
 }
 
+void processTribeCaveWonder(db_t *database, struct Cave tribeCave, struct Player attPlayer) {
+  db_result_t *result;
+  int row;
+  dstring_t *ds;
+  int caveWonderId;
+
+  caveWonderId = ((struct Terrain *)terrain_type[tribeCave.terrain])->tribeCaveWonderId;
+
+  if (caveWonderId == -1) {
+    //caveWonderId = getRandomTribeCaveWonder();
+  }
+
+  // end existing tribeCave Wonder
+  ds = dstring_new("UPDATE Event_wonderEnd SET end = '0000-00-00 00:00:00' WHERE tribeCaveWonderCaveId = %d", tribeCave.cave_id);
+
+  debug(DEBUG_TICKER, "processTribeCaveWonder: %s", dstring_str(ds));
+  db_query_dstring(database, ds);
+
+  // insert new tribeCave wonder
+  ds = dstring_new ("SELECT c.caveID "
+                      " FROM Cave c "
+                      " LEFT JOIN Player p ON c.playerID = p.playerID "
+                      "WHERE p.playerID IN (SELECT pl.playerID FROM Player pl WHERE pl.tribeID = %d)", attPlayer.tribe_id);
+  result = db_query_dstring(database, ds);
+
+  int targetID;
+  while ((row = db_result_next_row(result))) {
+    targetID = db_result_get_int(result, "caveID");
+    ds = dstring_new("INSERT INTO Event_wonder (casterID, sourceID, targetID, wonderID, impactID, start, end) "
+                       " VALUES (%d, %d, %d, %d, %d, '%s', '%s')",
+                         attPlayer.player_id, 0, targetID, caveWonderId, 0, "0000-00-00 00:00:00", "0000-00-00 00:00:00");
+    debug(DEBUG_TICKER, "processTribeCaveWonder: %s", dstring_str(ds));
+      db_query_dstring(database, ds);
+  }
+}
+
 
 /*
  * This function is responsible for all the movement.
@@ -711,7 +747,6 @@ void movement_handler (db_t *database, db_result_t *result) {
   /* TODO reduce number of queries */
   get_cave_info(database, source_caveID, &cave1);
   get_cave_info(database, target_caveID, &cave2);
-
   if (cave1.player_id) {
     get_player_info(database, cave1.player_id, &player1);
   } else {  /* System */
@@ -929,6 +964,7 @@ void movement_handler (db_t *database, db_result_t *result) {
     case ANGREIFEN:
       /* beginner protection active in target cave? */
       if (cave_is_protected(&cave2)) {
+        debug(DEBUG_TICKER, "hallo2");
         /* send remaining units back */
         ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
 
@@ -1049,11 +1085,12 @@ void movement_handler (db_t *database, db_result_t *result) {
 
       // set last attacking tribe
       if (battle->winner == FLAG_ATTACKER) {
-        db_query(database, "UPDATE " DB_TABLE_CAVE " SET lastAttackingTribe = '%s', lastAttackingTribeID = %d WHERE caveID = %d", player1.tribe, player1.tribe_id, target_caveID);
+        db_query(database, "UPDATE " DB_TABLE_CAVE " SET lastAttackingTribeID = %d WHERE caveID = %d", player1.tribe, player1.tribe_id, target_caveID);
       }
 
       // check and set take takeoverable
       int caveSetTakeoverable = 0;
+      debug(DEBUG_TICKER, "0");
       if (battle->winner == FLAG_ATTACKER
           && !cave2.takeoverable
           && !cave2.starting_position
@@ -1065,6 +1102,18 @@ void movement_handler (db_t *database, db_result_t *result) {
           db_query(database, "UPDATE " DB_TABLE_CAVE " SET takeoverable = 1 WHERE caveID = %d", cave2.cave_id);
           caveSetTakeoverable = 1;
           debug(DEBUG_TICKER, "movement_handler: Set cave with ID %d as takeoverable", cave2.cave_id);
+        }
+      }
+      debug(DEBUG_TICKER, "1");
+      // process tribeCaveWonders
+      if (((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 1 && battle->winner == FLAG_ATTACKER) {
+        debug(DEBUG_TICKER, "2");
+        if (player1.tribe_id != cave2.lastAttackingTribeId) {
+          debug(DEBUG_TICKER, "3");
+          if (((struct Terrain *)terrain_type[cave2.terrain])->tribeCaveWonderId != 0) {
+            debug(DEBUG_TICKER, "4");
+            processTribeCaveWonder(database, cave2, player1);
+          }
         }
       }
 

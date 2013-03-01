@@ -401,6 +401,7 @@ CREATE TABLE IF NOT EXISTS `Event_wonder` (
   `end` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `blocked` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `specialdurationminutes` int(6) DEFAULT '0',
+  `tribeCaveWonderCaveID` int( 11 ) unsigned NOT NULL DEFAULT '0'
   PRIMARY KEY (`event_wonderID`),
   KEY `end` (`end`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -420,6 +421,7 @@ CREATE TABLE IF NOT EXISTS `Event_wonderEnd` (
   `start` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `end` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `blocked` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `tribeCaveWonderCaveID` int( 11 ) unsigned NOT NULL DEFAULT '0'
   PRIMARY KEY (`activeWonderID`),
   KEY `end` (`end`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;

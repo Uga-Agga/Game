@@ -49,6 +49,7 @@ struct Cave
     int unit[MAX_UNIT];
     int defense_system[MAX_DEFENSESYSTEM];
     float effect[MAX_EFFECT];
+    int lastAttackingTribeId;
 };
 
 struct Player

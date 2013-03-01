@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
  config.c.xsl - game rules data types
- Copyright (c) 2004  OGP Team
+ Copyright (c) 2004-2013  OGP Team
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License as
@@ -30,7 +30,7 @@
 </xsl:when><xsl:otherwise>
   <xsl:value-of select="$text"/>  
 </xsl:otherwise>
-</xsl:choose>            
+</xsl:choose>
 </xsl:template>
 
 <!-- Config -->
@@ -724,6 +724,7 @@ static const struct Wonder wonder_type_list[] = {
     },
 
     .groupid = <xsl:apply-templates select="@groupID"/>, 
+    .isTribeCaveWonder = <xsl:value-of select="@isTribeCaveWonder"/>,
     .target = WONDER_TARGET_<xsl:value-of select="@target"/>,
     .chance = "<xsl:apply-templates select="chance"/>",
 <xsl:if test="count(impacts/impact)">
@@ -829,6 +830,13 @@ static const struct Terrain terrain_type_list[] = {
       <xsl:value-of select="concat(Color/@r,', ',Color/@g,', ',Color/@b)"/>
     },
     .tribeRegion = <xsl:value-of select="@tribeRegion"/>,
+ <xsl:choose>
+ <xsl:when test="TribeCaveWonder/@id">
+    .tribeCaveWonderId = <xsl:value-of select="TribeCaveWonder/@id"/>,
+</xsl:when><xsl:otherwise>
+    .tribeCaveWonderId = 0,
+</xsl:otherwise>
+</xsl:choose>
 <xsl:if test="count(Effect)">
     .effects = {
 <xsl:for-each select="Effect">

@@ -754,7 +754,7 @@ function init_potions() {
                           'color' =&gt; array(<xsl:apply-templates select="Color"/>),
                           'effects' =&gt; array(<xsl:apply-templates select="Effect"/>),
                           'tribeRegion' =&gt; <xsl:value-of select="@tribeRegion"/>,
-                          <xsl:if test="TribeWonder">'tribeWonder' =&gt; <xsl:apply-templates select="TribeWonder"/></xsl:if>
+                          <xsl:if test="TribeCaveWonder">'tribeCaveWonder' =&gt; <xsl:apply-templates select="TribeCaveWonder"/></xsl:if>
 );
 </xsl:template>
 
@@ -771,7 +771,7 @@ function init_potions() {
 <xsl:template match="Color">'r' =&gt; <xsl:value-of select="number(@r)"/>, 'g' =&gt; <xsl:value-of select="@g"/>, 'b' =&gt; <xsl:value-of select="@b"/>
 </xsl:template>
 
-<xsl:template match="TribeWonder"><xsl:value-of select="number(@id)"/></xsl:template>
+<xsl:template match="TribeCaveWonder"><xsl:value-of select="number(@id)"/></xsl:template>
 
 <xsl:template match="EffectTypes"></xsl:template>
 

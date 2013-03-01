@@ -203,6 +203,7 @@ struct Terrain
     int barren;
     unsigned char color[3];
     int tribeRegion;
+    int tribeCaveWonderId;
 
     double effects[MAX_EFFECT];
 };

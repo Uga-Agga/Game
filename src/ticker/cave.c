@@ -113,6 +113,7 @@ void get_cave_info (db_t *database, int cave_id, struct Cave *cave)
   cave->monster_id = db_result_get_int(result, "monsterID");
   cave->secure = db_result_get_int(result, "secureCave");
   cave->protect_end = db_result_get_time(result, "protection_end");
+  cave->lastAttackingTribeId = db_result_get_int(result, "lastAttackingTribeID");
   get_resource_list(result, cave->resource);
   get_building_list(result, cave->building);
   get_science_list(result, cave->science);

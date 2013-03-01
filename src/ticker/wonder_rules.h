@@ -85,6 +85,7 @@ struct Wonder
     int offensive;
     int target;
     int groupid;
+    int isTribeCaveWonder;
     const char *chance;
 
     const struct WonderImpact *impacts;
