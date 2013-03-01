@@ -130,7 +130,7 @@ install-game: configtest $(CONFIG)
 	$(INSTALL_DATA) www/*.php $(GAMEDIR)
   $(INSTALL_DATA) www/js/*.js $(GAMEDIR)/js
 	$(INSTALL_DATA) www/css/*.css $(GAMEDIR)/css
-	$(INSTALL_DATA) www/images/*.ico www/images/*.php www/images/round_name.png $(GAMEDIR)/images
+	$(INSTALL_DATA) www/images/*.ico www/images/*.php www/images/*.png $(GAMEDIR)/images
 	$(INSTALL_DATA) www/images/religious_distribution/*.png \
 	    www/images/religious_distribution/*.php \
 	    $(GAMEDIR)/images/religious_distribution

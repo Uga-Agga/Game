@@ -20,7 +20,7 @@ class Chat {
 
     if (is_array($playerNames)) {
       $db->beginTransaction();
-      $sql = $db->prepare("REPLACE " . CHAT_USER_TABLE . " 
+      $sql = $db->prepare("REPLACE " . CHAT_USER_TABLE . "
                            (roomID, name, deleted)
                            VALUES (:roomID, :name, 0)");
       foreach ($playerNames as $name) {
@@ -49,14 +49,14 @@ class Chat {
     if (empty($tribeID)) return false;
 
     $playerNames = array();
-    $sql = $db->prepare("SELECT playerID, jabbername
+    $sql = $db->prepare("SELECT playerID, jabberName
                          FROM " . PLAYER_TABLE . "
                          WHERE tribeID = :tribeID");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return array();
 
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $playerNames[$row['playerID']] = $row['jabbername'];
+      $playerNames[$row['playerID']] = $row['jabberName'];
     }
     $sql->closeCursor();
 
@@ -124,7 +124,7 @@ class Chat {
 
     if (empty($user)) return false;
 
-    $sql = $db->prepare("INSERT INTO " . CHAT_QUEUE_TABLE . " 
+    $sql = $db->prepare("INSERT INTO " . CHAT_QUEUE_TABLE . "
                          (type, user)
                          VALUES('userAdd', :name)");
     $sql->bindValue('name', $user, PDO::PARAM_STR);
@@ -140,7 +140,7 @@ class Chat {
 
     if (empty($user)) return false;
 
-    $sql = $db->prepare("INSERT INTO " . CHAT_QUEUE_TABLE . " 
+    $sql = $db->prepare("INSERT INTO " . CHAT_QUEUE_TABLE . "
                          (type, user)
                          VALUES('userDel', :name)");
     $sql->bindValue('name', $users, PDO::PARAM_STR);
@@ -154,11 +154,11 @@ class Chat {
 
     if (empty($tribeID) || empty($tag) || empty($name)) return false;
 
-    $sql = $db->prepare("INSERT INTO " . CHAT_ROOM_TABLE . " 
+    $sql = $db->prepare("INSERT INTO " . CHAT_ROOM_TABLE . "
                          (tribeID, tag, name, autojoin)
                          VALUES(:tribeID, :tag, :name, :autojoin)");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
-    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    $sql->bindValue('tag', strtolower ($tag), PDO::PARAM_STR);
     $sql->bindValue('name', $name, PDO::PARAM_STR);
     $sql->bindValue('autojoin', $autojoin, PDO::PARAM_INT);
     if (!$sql->execute() || $sql->rowCount() == 0) {
@@ -220,7 +220,7 @@ class Chat {
                            AND autojoin = 1");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return array();
-  
+
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
       self::authAdd($row['id'], $playerName);
     }
@@ -297,7 +297,7 @@ class Chat {
     $sql = $db->prepare("SELECT count(*) as count
                          FROM " . CHAT_ROOM_TABLE . "
                          WHERE tag = :tag");
-    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    $sql->bindValue('tag', strtolower ($tag), PDO::PARAM_STR);
     if (!$sql->execute()) return false;
 
     $row = $sql->fetch(PDO::FETCH_ASSOC);
