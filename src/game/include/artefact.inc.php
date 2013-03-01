@@ -21,8 +21,8 @@ function artefact_getArtefactsReadyForMovement($caveID) {
   global $db;
 
   $sql = $db->prepare("SELECT *
-                       FROM ". ARTEFACT_TABLE ." a 
-                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID 
+                       FROM ". ARTEFACT_TABLE ." a
+                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
                        WHERE caveID = :caveID
                          AND initiated = ". ARTEFACT_INITIATED);
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
@@ -37,7 +37,7 @@ function artefact_getArtefactsReadyForMovement($caveID) {
 function getArtefactList($playerID=-1) {
   global $db;
 
-  $sql = $db->prepare("SELECT a.artefactID, a.caveID, a.initiated, ac.name as artefactname, ac.initiationID, c.name AS cavename, c.xCoord, c.yCoord, c.terrain, p.playerID, p.name, t.tag as tribe
+  $sql = $db->prepare("SELECT a.artefactID, a.caveID, a.initiated, ac.name as artefactname, name_initiated as artefactnameinitiated, ac.initiationID, c.name AS cavename, c.xCoord, c.yCoord, c.terrain, p.playerID, p.name, t.tag as tribe
                        FROM ". ARTEFACT_TABLE ." a
                          LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
                          LEFT JOIN ". CAVE_TABLE ." c ON a.caveID = c.caveID
@@ -57,7 +57,7 @@ function getArtefactList($playerID=-1) {
 function getArtefactMovement($artefactID) {
   global $db;
 
-  $sql = $db->prepare("SELECT source_caveID, target_caveID, movementID, end 
+  $sql = $db->prepare("SELECT source_caveID, target_caveID, movementID, end
                        FROM ". EVENT_MOVEMENT_TABLE ."
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
@@ -73,18 +73,20 @@ function getArtefactMovement($artefactID) {
   $result['event_end'] = time_formatDatetime($result['end']);
 
   $sql = $db->prepare("SELECT c.name AS source_cavename, c.xCoord AS source_xCoord, c.yCoord AS source_yCoord,
-                         IF(ISNULL(p.name), '" . _('leere Höhle') . "',p.name) AS source_name, p.tribe AS source_tribe, p.playerID AS source_playerID
+                         IF(ISNULL(p.name), '" . _('leere Höhle') . "',p.name) AS source_name, t.tag AS source_tribe, p.playerID AS source_playerID
                        FROM ". CAVE_TABLE ." c
                          LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                         LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
                        WHERE c.caveID = :source_caveID");
   $sql->bindValue('source_caveID', $result['source_caveID'], PDO::PARAM_INT);
   if (!$sql->execute()) return array();
   $result += $sql->fetch(PDO::FETCH_ASSOC);
 
   $sql = $db->prepare("SELECT c.name AS destination_cavename, c.xCoord AS destination_xCoord, c.yCoord AS destination_yCoord,
-                         IF(ISNULL(p.name), '" . _('leere Höhle') . "',p.name) AS destination_name, p.tribe AS destination_tribe, p.playerID AS destination_playerID
+                         IF(ISNULL(p.name), '" . _('leere Höhle') . "',p.name) AS destination_name, t.tag AS destination_tribe, p.playerID AS destination_playerID
                        FROM ". CAVE_TABLE ." c
                          LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                         LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
                        WHERE c.caveID = :caveID");
   $sql->bindValue('caveID', $result['target_caveID'], PDO::PARAM_INT);
   if (!$sql->execute()) return array();
@@ -97,7 +99,7 @@ function artefact_getArtefactMovements() {
   global $db;
 
   // prepare query
-  $sql = $db->prepare("SELECT artefactID, source_caveID, target_caveID, movementID, end 
+  $sql = $db->prepare("SELECT artefactID, source_caveID, target_caveID, movementID, end
                        FROM ". EVENT_MOVEMENT_TABLE ."
                        WHERE artefactID != 0");
   if (!$sql->execute()) return array();
@@ -114,10 +116,11 @@ function artefact_getArtefactMovements() {
 
     // prepare query
     $sql = $db->prepare("SELECT c.name AS source_cavename, c.xCoord AS source_xCoord, c.yCoord AS source_yCoord, p.name AS source_name,
-                           p.tribe AS source_tribe, p.playerID AS source_playerID
+                           t.tag AS source_tribe, p.playerID AS source_playerID
                          FROM ". CAVE_TABLE ." c
                            LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
-                         WHERE c.caveID = :caveID"); 
+                           LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
+                         WHERE c.caveID = :caveID");
     $sql->bindValue('caveID', $row['source_caveID'], PDO::PARAM_INT);
     if ($sql->rowCountSelect() == 0) continue;
     if (!$sql->execute()) continue;
@@ -126,9 +129,10 @@ function artefact_getArtefactMovements() {
 
     // prepare query
     $sql = $db->prepare("SELECT c.name AS destination_cavename, c.xCoord AS destination_xCoord, c.yCoord AS destination_yCoord,
-                           p.name AS destination_name, p.tribe AS destination_tribe, p.playerID AS destination_playerID
+                           p.name AS destination_name, t.tag AS destination_tribe, p.playerID AS destination_playerID
                          FROM ". CAVE_TABLE ." c
                            LEFT JOIN ". PLAYER_TABLE ." p ON c.playerID = p.playerID
+                           LEFT JOIN ". TRIBE_TABLE ." t ON t.tribeID = p.tribeID
                          WHERE c.caveID = :caveID");
     $sql->bindValue('caveID', $row['target_caveID'], PDO::PARAM_INT);
     // send query
@@ -153,7 +157,7 @@ function artefact_getArtefactInitiationsForCave($caveID) {
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret;
 }
 
@@ -164,15 +168,15 @@ function artefact_getArtefactByID($artefactID) {
 
   $sql = $db->prepare("SELECT *
                        FROM ". ARTEFACT_TABLE ." a
-                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID 
-                       WHERE a.artefactID = :artefactID"); 
+                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
+                       WHERE a.artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
   if ($sql->rowCountSelect() != 1) return array();
   if(!$sql->execute()) return array();
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret;
 }
 
@@ -188,15 +192,15 @@ function artefact_getArtefactByCaveID($caveID) {
   // prepare statement
   $sql = $db->prepare("SELECT *
                        FROM ". ARTEFACT_TABLE ." a
-                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID 
-                       WHERE a.caveID = :caveID"); 
+                         LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
+                       WHERE a.caveID = :caveID");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if ($sql->rowCountSelect() == 0) return array();
   if (!$sql->execute()) return array();
 
-  $ret = $sql->fetch(PDO::FETCH_ASSOC);
+  $ret = $sql->fetchAll(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret;
 }
 
@@ -204,7 +208,7 @@ function artefact_getArtefactByCaveID($caveID) {
  */
 function artefact_getRitualByID($ritualID) {
   global $db;
-  
+
   // get ritual
   $sql = $db->prepare("SELECT * FROM ". ARTEFACT_RITUALS_TABLE ." WHERE ritualID = :ritualID");
   $sql->bindValue('ritualID', $ritualID, PDO::PARAM_INT);
@@ -213,7 +217,7 @@ function artefact_getRitualByID($ritualID) {
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret;
 }
 
@@ -305,7 +309,7 @@ function artefact_beginInitiation($artefact) {
 
   // finally set status to initiating
   $sql = $db->prepare("UPDATE ". ARTEFACT_TABLE ."
-                       SET initiated = " . ARTEFACT_INITIATING . " 
+                       SET initiated = " . ARTEFACT_INITIATING . "
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefact['artefactID'], PDO::PARAM_INT);
   if (!$sql->execute()) {
@@ -322,7 +326,7 @@ function artefact_initiateArtefact($artefactID) {
   global $db;
 
   $sql = $db->prepare("UPDATE ". ARTEFACT_TABLE ."
-                       SET initiated = " . ARTEFACT_INITIATED . " 
+                       SET initiated = " . ARTEFACT_INITIATED . "
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
   if (!$sql->execute() || $sql->rowCount() == 0) {
@@ -339,7 +343,7 @@ function artefact_applyEffectsToCave($artefactID) {
 
   $artefact = artefact_getArtefactByID($artefactID);
   if (sizeof($artefact) == 0) return false;
-  if ($artefact['caveID'] == 0) return faöse;
+  if ($artefact['caveID'] == 0) return false;
 
   $effects = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
@@ -348,7 +352,7 @@ function artefact_applyEffectsToCave($artefactID) {
 
   if (sizeof($effects)) {
     $effects = implode(", ", $effects);
-    $sql = $db->prepare("UPDATE ". CAVE_TABLE ." 
+    $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
                          SET {$effects}
                          WHERE caveID = :caveID");
     $sql->bindValue('caveID', $artefact['caveID'], PDO::PARAM_INT);
@@ -367,9 +371,9 @@ function artefact_removeEffectsFromCave($artefactID) {
   global $db;
 
   $artefact = artefact_getArtefactByID($artefactID);
-  if (sizeof($artefact) == 0) return FALSE;
-  if ($artefact['initiated'] != ARTEFACT_INITIATED) return TRUE;
-  if ($artefact['caveID'] == 0) return FALSE;
+  if (sizeof($artefact) == 0) return false;
+  if ($artefact['initiated'] != ARTEFACT_INITIATED) return true;
+  if ($artefact['caveID'] == 0) return false;
 
   $effects = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
@@ -399,7 +403,7 @@ function artefact_uninitiateArtefact($artefactID) {
   global $db;
 
   $sql = $db->prepare("UPDATE ". ARTEFACT_TABLE ."
-                       SET initiated = " . ARTEFACT_UNINITIATED . " 
+                       SET initiated = " . ARTEFACT_UNINITIATED . "
                        WHERE artefactID = :artefactID");
   $sql->bindValue('artefactID', $artefactID, PDO::PARAM_INT);
   if (!$sql->execute() || $sql->rowCount() == 0) {

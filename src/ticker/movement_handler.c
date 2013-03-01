@@ -65,7 +65,7 @@ static int isTakeoverableCave(db_t *database, int caveID) {
 }
 
 //return 0 falls nicht
-static int isMovingAllowed(db_t *database, 
+static int isMovingAllowed(db_t *database,
         struct Player *sender,
         struct Player *reciever,
         struct Relation *attToDef) {
@@ -92,19 +92,19 @@ static int isMovingAllowed(db_t *database,
   //nun noch das schwierigere
   //ist einer von beiden im krieg
   db_result_t *result;
-  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID_source = %d", RELATION_TYPE_PRE_WAR, sender->tribe_id);
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID = %d", RELATION_TYPE_PRE_WAR, sender->tribe_id);
   if(db_result_next_row(result))
     return 0;
 
-  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID_source = %d", RELATION_TYPE_PRE_WAR, reciever->tribe_id);
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID = %d", RELATION_TYPE_PRE_WAR, reciever->tribe_id);
   if(db_result_next_row(result))
     return 0;
 
-  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID_source = %d", RELATION_TYPE_WAR, sender->tribe_id);
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID = %d", RELATION_TYPE_WAR, sender->tribe_id);
   if(db_result_next_row(result))
     return 0;
 
-  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID_source = %d", RELATION_TYPE_WAR, reciever->tribe_id);
+  result = db_query(database, "SELECT * FROM Relation WHERE relationType = %d AND tribeID = %d", RELATION_TYPE_WAR, reciever->tribe_id);
   if(db_result_next_row(result))
     return 0;
 
@@ -193,7 +193,7 @@ static void army_setup (db_t *database,
     army->resourcesBefore[type] = resource[type];
 
   if (defense_system)
-    for (type = 0; type < MAX_DEFENSESYSTEM; ++type) 
+    for (type = 0; type < MAX_DEFENSESYSTEM; ++type)
       army->defenseSystems[type].amount_before = defense_system[type];
 
 
@@ -276,8 +276,8 @@ static void war_points_update(db_t *database,
         int att_count,
         int def_count) {
     debug(DEBUG_BATTLE, "warpoints: %d for [%s]%s and %d for [%s]%s", att_count, attacker->tribe, attacker->name, def_count, defender->tribe, attacker->name);
-    db_query(database, "UPDATE " DB_TABLE_RELATION " SET fame = fame + %d WHERE tribeID_source = %d AND tribeID_target = %d", att_count, attacker->tribe_id, defender->tribe_id);
-    db_query(database, "UPDATE " DB_TABLE_RELATION " SET fame = fame + %d WHERE tribeID_source = %d AND tribeID_target = %d", def_count, defender->tribe_id, attacker->tribe_id);
+    db_query(database, "UPDATE " DB_TABLE_RELATION " SET fame = fame + %d WHERE tribeID = %d AND tribeID_target = %d", att_count, attacker->tribe_id, defender->tribe_id);
+    db_query(database, "UPDATE " DB_TABLE_RELATION " SET fame = fame + %d WHERE tribeID = %d AND tribeID_target = %d", def_count, defender->tribe_id, attacker->tribe_id);
     db_query(database, "UPDATE " DB_TABLE_TRIBE " SET warpoints_pos = warpoints_pos + %d, warpoints_neg =  warpoints_neg + %d WHERE tribeID = %d", att_count, def_count, attacker->tribe_id);
     db_query(database, "UPDATE " DB_TABLE_TRIBE " SET warpoints_pos = warpoints_pos + %d, warpoints_neg =  warpoints_neg + %d WHERE tribeID = %d", def_count, att_count, defender->tribe_id);
     db_query(database, "UPDATE " DB_TABLE_PLAYER " SET warpoints_pos = warpoints_pos + %d, warpoints_neg =  warpoints_neg + %d WHERE playerID = %d", att_count, def_count, attacker->player_id);
@@ -289,7 +289,7 @@ static void war_points_update_verschieben(db_t *database,
         const struct Player* defender,
         int count){
     debug(DEBUG_BATTLE, "warpoints: %d for [%s]%s against [%s]%s", count, attacker->tribe, attacker->name, defender->tribe, attacker->name);
-    db_query(database, "UPDATE Relation SET fame = fame + %d WHERE tribeID_source = %d AND tribeID_target = %d", count, attacker->tribe_id, defender->tribe_id);
+    db_query(database, "UPDATE Relation SET fame = fame + %d WHERE tribeID = %d AND tribeID_target = %d", count, attacker->tribe_id, defender->tribe_id);
 //wegen Bugusing von cc und hoelle nehmen wir das hier erstmal raus
 //    db_query(database, "UPDATE Tribe SET warpoints_pos = warpoints_pos - %d WHERE tag like '%s'", count, defender->tribe);
 //    db_query(database, "UPDATE Tribe SET warpoints_neg = warpoints_neg - %d WHERE tag like '%s'", count, attacker->tribe);
@@ -367,7 +367,7 @@ static void prepare_battle(db_t *database,
   debug(DEBUG_BATTLE, "attacker artefact: %d", *attacker_artefact_id);
 
   /* get the relation boni */
-  battle->attackers[0].relationMultiplicator = relation_from_attacker->attackerMultiplicator;
+  battle->attackers[0].relationMultiplicator = (defender->player_id == 0) ? 1.0 : relation_from_attacker->attackerMultiplicator;
   battle->defenders[0].relationMultiplicator = relation_from_defender->defenderMultiplicator;
 
   /*hero */
@@ -693,7 +693,7 @@ void movement_handler (db_t *database, db_result_t *result) {
   int takeover_multiplier;
   int change_owner;
   int isFarming = 0;
-  
+
   Battle *battle;
   dstring_t *ds;
   double spy_result;
@@ -908,7 +908,7 @@ void movement_handler (db_t *database, db_result_t *result) {
           put_artefact_into_cave(database, artefact, target_caveID);
         }
       }
-      
+
       if (heroID > 0) {
         if (cave1.player_id != cave2.player_id) {
           kill_hero(database, heroID);
@@ -1093,6 +1093,7 @@ void movement_handler (db_t *database, db_result_t *result) {
       debug(DEBUG_TICKER, "0");
       if (battle->winner == FLAG_ATTACKER
           && !cave2.takeoverable
+          && (cave2.takeover_level > 0)
           && !cave2.starting_position
           && (cave2.player_id == 0)
           && ((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 0)

@@ -28,7 +28,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 *
 ****************************************************************************************************/
     case 'caveGiveUp':
-      if (Request::getVar('id', 0) == $details['caveID'] && Request::isPost('cancelOrderConfirm')) {
+      if (Request::getVar('giveUpCaveID', 0) == $details['caveID'] && Request::isPost('postConfirm')) {
         if (cave_giveUpCave($details['caveID'], $_SESSION['player']->playerID, $_SESSION['player']->tribe)) {
           $template->throwError(_('Sie haben sich aus dieser Höhle zurückgezogen.'));
           return;
@@ -36,13 +36,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
           $statusMsg = array('type' => 'error', 'message' => _('Diese Höhle kann nicht aufgegeben werden.'));
         }
       } else {
-        $template->addVars(array(
-          'cancelOrder_box' => true,
-          'confirm_action'  => 'caveGiveUp',
-          'confirm_id'      => $details['caveID'],
-          'confirm_mode'    => CAVE_DETAIL,
-          'confirm_msg'     => _('Möchtest du die Höhle wirklich aufgeben?'),
-        ));
+        $statusMsg = array('type' => 'error', 'message' => _('Fehler beim aufgeben der Höhle.'));
       }
     break;
 
@@ -52,7 +46,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 *
 ****************************************************************************************************/
     case 'endProtection':
-      if (Request::getVar('id', 0) == $details['caveID'] && Request::isPost('cancelOrderConfirm')) {
+      if (Request::getVar('giveUpCaveID', 0) == $details['caveID'] && Request::isPost('postConfirm')) {
         if (beginner_endProtection($details['caveID'], $_SESSION['player']->playerID)) {
           $statusMsg = array('type' => 'success', 'message' => _('Sie haben den Anfängerschutz abgeschaltet.'));
           $details['protected'] = 0;
@@ -60,13 +54,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
           $statusMsg = array('type' => 'error', 'message' => _('Sie konnten den Anfängerschutz nicht abschalten.'));
         }
       } else {
-        $template->addVars(array(
-          'cancelOrder_box' => true,
-          'confirm_action'  => 'endProtection',
-          'confirm_id'      => $details['caveID'],
-          'confirm_mode'    => CAVE_DETAIL,
-          'confirm_msg'     => _('Möchtest du den Anfängerschutz wirklich abbrechen?'),
-        ));
+        $statusMsg = array('type' => 'error', 'message' => _('Fehler beim deaktivieren des Anfängerschutzes.'));
       }
     break;
   }

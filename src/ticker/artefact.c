@@ -70,6 +70,7 @@ void get_artefact_class_by_id (db_t *database, int artefactClassID,
 
   artefact_class->artefactClassID       = artefactClassID;
   artefact_class->name                  = db_result_get_string(result, "name");
+  artefact_class->name_initiated        = db_result_get_string(result, "name_initiated");
   artefact_class->resref                = db_result_get_string(result, "resref");
   artefact_class->description           = db_result_get_string(result, "description");
   artefact_class->description_initiated = db_result_get_string(result, "description_initiated");
@@ -105,6 +106,7 @@ void get_artefact_class_by_artefact_id (db_t *database, int artefactID,
 
   artefact_class->artefactClassID       = db_result_get_int(result, "artefactClassID");
   artefact_class->name                  = db_result_get_string(result, "name");
+  artefact_class->name_initiated        = db_result_get_string(result, "name_initiated");
   artefact_class->resref                = db_result_get_string(result, "resref");
   artefact_class->description           = db_result_get_string(result, "description");
   artefact_class->description_initiated = db_result_get_string(result, "description_initiated");

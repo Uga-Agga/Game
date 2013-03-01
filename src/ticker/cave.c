@@ -107,6 +107,7 @@ void get_cave_info (db_t *database, int cave_id, struct Cave *cave)
   cave->player_id = db_result_get_int(result, "playerID");
   cave->terrain = db_result_get_int(result, "terrain");
   cave->takeoverable = db_result_get_int(result, "takeoverable");
+  cave->takeover_level = db_result_get_int(result, "takeover_level");
   cave->starting_position = db_result_get_int(result, "starting_position");
   cave->artefacts = db_result_get_int(result, "artefacts");
   cave->heroID = db_result_get_int(result, "hero");
@@ -191,7 +192,7 @@ int get_relation_info (db_t *database, int tribe_id_source,
     debug(DEBUG_BATTLE, "get relation for tribe %s and %s", tribeTag_source, tribeTag_target);
     result = db_query(database,
 	"SELECT * FROM " DB_TABLE_RELATION
-	" WHERE tribeID_source = '%d' AND tribeID_target = '%d'", tribe_id_source, tribe_id_target);
+	" WHERE tribeID = '%d' AND tribeID_target = '%d'", tribe_id_source, tribe_id_target);
   }
 
   if (!result || !db_result_next_row(result))
@@ -242,7 +243,7 @@ int get_tribe_at_war(db_t *database, int tribe_id)
     debug(DEBUG_BATTLE, "get tribe at war for %s", get_tribeTagByID(database, tribe_id));
     result = db_query(database,
         "SELECT * FROM " DB_TABLE_RELATION
-        " WHERE tribeID_source = %d AND relationType = '%i'", tribe_id, RELATION_TYPE_WAR);
+        " WHERE tribeID = %d AND relationType = '%i'", tribe_id, RELATION_TYPE_WAR);
   }
 
   return (result && db_result_next_row(result));

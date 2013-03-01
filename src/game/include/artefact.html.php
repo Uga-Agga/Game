@@ -115,14 +115,11 @@ function artefact_getDetail($caveID, &$myCaves) {
             $showRitual = -1;
         }
 
-        // "geheime" Beschreibung nur zeigen, wenn eingeweiht
-        if ($artefact['initiated'] == ARTEFACT_INITIATED) {
+        // Besitzer des Artefaktes und initalisiert? Alle Daten des Artefakts anzeigen
+        if ($artefact['initiated'] == ARTEFACT_INITIATED && isset($myCaves[$artefact['caveID']])) {
+          $artefact['name'] = $artefact['name_initiated'];
           $artefact['description_initiated'] = $description_initiated;
-
-          // Besitzer des Artefaktes und initalisiert? Richtiges Artefakt Bild anzeigen
-          if (isset($myCaves[$artefact['caveID']])) {
-            $artefact['img'] = $artefact['initiationImg'];
-          }
+          $artefact['img'] = $artefact['initiationImg'];
         }
       }
 
@@ -153,13 +150,13 @@ function artefact_getList($caveID, $ownCaves) {
   $otherArtefactsList = array();
   $movedArtefactsList = array();
 
-  foreach ($artefacts as $artefact) { 
+  foreach ($artefacts as $artefact) {
     $artefact['cave_detail_title'] = 'Dies ist der Landstrich "' . $artefact['cavename'] . '" (' . $artefact['xCoord'] . '|' . $artefact['yCoord'] . ') - ' . $GLOBALS['terrainList'][$artefact['terrain']]['name'];
 
     // eigenes Artefakt
     if (isset($ownCaves[$artefact['caveID']])) {
       switch ($artefact['initiated']) {
-        case ARTEFACT_UNINITIATED: 
+        case ARTEFACT_UNINITIATED:
           if ($artefact['caveID'] == $caveID) {
             $artefact['initiation_possible'] = array('artefactID' => $artefact['artefactID']);
           } else {
@@ -173,6 +170,7 @@ function artefact_getList($caveID, $ownCaves) {
 
         case ARTEFACT_INITIATED:
           $artefact['initiation_not_possible'] = array('status' => _('eingeweiht'));
+          $artefact['artefactname'] = $artefact['artefactnameinitiated'];
         break;
 
         default:
@@ -252,9 +250,9 @@ function artefact_getList($caveID, $ownCaves) {
       } // Gott
     } // fremdes Artefakt
   } // foreach
-  
+
   $template->addVars(array(
-    'ownArtefactsList' => $ownArtefactsList, 
+    'ownArtefactsList' => $ownArtefactsList,
     'otherArtefactsList' => $otherArtefactsList,
     'movedArtefactsList' => $movedArtefactsList
   ));

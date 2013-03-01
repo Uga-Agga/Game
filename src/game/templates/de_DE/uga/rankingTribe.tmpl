@@ -75,8 +75,10 @@
     <li class="active"><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ page }}">{{ page }}</a></li>
 
     {% if page < max_pages %}
-      {% for i in range(page+1, max_pages) if ( loop.index <= nearbyPagesLimit and i <= max_pages ) %}
-        <li><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ i }}">{{ i }}</a></li>
+      {% for i in range(page+1, max_pages)  %}
+        {% if ( loop.index <= nearbyPagesLimit and i <= max_pages ) %}
+          <li><a href="main.php?modus={{ ranking_tribe_link }}&amp;page={{ i }}">{{ i }}</a></li>
+        {% endif %}
       {% endfor %}
       
       {% if  (max_pages - extremePagesLimit) > (page + nearbyPagesLimit ) %}

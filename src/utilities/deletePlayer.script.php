@@ -1,7 +1,8 @@
-<?php 
+<?php
 /*
  * deletePlayer.script.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -123,8 +124,8 @@ else {
 }
 
 echo "DELETE PLAYER $playerID: Delete Contacts";
-$sql = $db_game->prepare("DELETE FROM ". CONTACTS_TABLE ." 
-                          WHERE playerID = :playerID 
+$sql = $db_game->prepare("DELETE FROM ". CONTACTS_TABLE ."
+                          WHERE playerID = :playerID
                           OR contactplayerID = :playerID");
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
@@ -148,7 +149,7 @@ else {
 
 echo "DELETE PLAYER $playerID: Delete caves...\n";
 echo "DLELETE PLAYER $playerID: Retrieving caves ";
-$sqlSelect = $db_game->prepare("SELECT caveID 
+$sqlSelect = $db_game->prepare("SELECT caveID
                                FROM ". CAVE_TABLE ."
                                WHERE playerID = :playerID");
 $sqlSelect->bindValue('playerID', $playerID, PDO::PARAM_INT);
@@ -161,26 +162,26 @@ echo "SUCCESS\n";
 $result = $sqlSelect->fetchAll();
 foreach ($result AS $row) {
   echo "DELETE PLAYER $playerID: Reset playerID at Cave {$row['caveID']}\n";
-  $sqlDelete = $db_game->prepare("UPDATE ". CAVE_TABLE ." 
-                                    SET playerID = 0, 
-                                    takeoverable = 2, 
-                                    protection_end = NOW()+0, 
+  $sqlDelete = $db_game->prepare("UPDATE ". CAVE_TABLE ."
+                                    SET playerID = 0,
+                                    takeoverable = 2,
+                                    protection_end = NOW()+0,
                                     secureCave = 0,
                                     hero = 0
                                   WHERE caveID = :caveID");
   $sqlDelete->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sqlDelete->execute()) {
     echo "FAILURE\n";
   }
-  else 
+  else
     echo "SUCCESS\n";
 
   echo "DELETE PLAYER $playerID: Delete unit event ";
   $sql = $db_game->prepare("DELETE FROM ". EVENT_UNIT_TABLE ."
                             WHERE caveID = :caveID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     echo "FAILURE\n";
   }
@@ -191,7 +192,7 @@ foreach ($result AS $row) {
   $sql = $db_game->prepare("DELETE FROM ". EVENT_UNIT_TABLE ."
                             WHERE caveID = :caveID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     echo "FAILURE\n";
   }
@@ -202,7 +203,7 @@ foreach ($result AS $row) {
   $sql = $db_game->prepare("DELETE FROM ". EVENT_MOVEMENT_TABLE ."
                             WHERE caveID = :caveID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     echo "FAILURE\n";
   }
@@ -213,7 +214,7 @@ foreach ($result AS $row) {
   $sql = $db_game->prepare("DELETE FROM ". EVENT_SCIENCE_TABLE ."
                             WHERE caveID = :caveID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     echo "FAILURE\n";
   }
@@ -224,35 +225,45 @@ foreach ($result AS $row) {
   $sql = $db_game->prepare("DELETE FROM ". EVENT_DEFENSE_SYSTEM_TABLE ."
                             WHERE caveID = :caveID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     echo "FAILURE\n";
   }
   else
     echo "SUCCESS\n";
-    
-  
+
   echo "DELETE PLAYER $playerID: Delete hero event ";
   $sql = $db_game->prepare("DELETE FROM ". EVENT_HERO_TABLE ."
                             WHERE caveID = :caveID");
   $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute()) {
     echo "FAILURE\n";
   }
   else
     echo "SUCCESS\n";
 
-}  
+  echo "DELETE PLAYER $playerID: Delete pet artes";
+  $artefacts = artefact_getArtefactByCaveID($row['caveID']);
+  if (!empty($artefacts)) {
+    foreach ($artefacts as $artefact) {
+      if ($artefact['pet'] == 1) {
+        artefact_removeEffectsFromCave($artefact['artefactID']);
+        artefact_removeArtefactFromCave($artefact['artefactID']);
+        artefact_uninitiateArtefact($artefact['artefactID']);
+      }
+    }
+  }
+}
 
 echo "DELETE PLAYER $playerID: Delete messages ";
 $sql1 = $db_game->prepare("UPDATE ". MESSAGE_TABLE ."
-                         SET recipientDeleted = 1 
+                         SET recipientDeleted = 1
                          WHERE recipientID = :playerID");
 $sql1->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
 $sql2 = $db_game->prepare("UPDATE ". MESSAGE_TABLE ."
-                           SET senderDeleted = 1 
+                           SET senderDeleted = 1
                            WHERE senderID = :playerID");
 $sql2->bindValue('playerID', $playerID, PDO::PARAM_INT);
 

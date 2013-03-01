@@ -23,6 +23,7 @@ typedef struct Artefact_class
 {
     int         artefactClassID;
     const char *name;
+    const char *name_initiated;
     const char *resref;
     const char *description;
     const char *description_initiated;

@@ -2,7 +2,7 @@
 /* improvementBuilder.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -62,11 +62,9 @@
                   <li>Stufe: ({{ item.currentlevel }}/{{ item.maxlevel }})</li>
                 </ul>
               </td>
-              {% if item.breakdown_link %}
               <td class="build-single">
-                <a class="action" href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}" data-reask="true" data-reask-header="Erweiterung abreißen!" data-reask-msg="Möchtest du die Erweiterung <strong>{{ item.name }}</strong> wirklich abreißen?"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" width="25" alt="Abreißen" title="Abreißen" /></a>
+                {% if item.breakdown_link %}<a class="action" href="main.php?modus={{ improvement_link }}&amp;action=demolishing&amp;id={{ item.building_id }}&amp;caveID={{ item.cave_id }}" data-reask="true" data-reask-header="Erweiterung abreißen!" data-reask-msg="Möchtest du die Erweiterung <strong>{{ item.name }}</strong> wirklich abreißen?"><img src="{{ gfx }}/de_DE/t_uga/arrow_down.png" width="25" alt="Abreißen" title="Abreißen" /></a>{% else %}&nbsp;{% endif %}
               </td>
-              {% endif %}
             </tr>
             <tr class="bg{{ bgID }} hide"><td colspan="6" id="buildable_{{ item.building_id }}_details"></td></tr>
           {% endfor %}

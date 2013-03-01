@@ -55,7 +55,7 @@ void artefact_handler (db_t *database, db_result_t *result)
   apply_effects_to_cave(database, artefactID);
   debug(DEBUG_TICKER, "applied effects");
 
-  artefact_report(database, &cave, &player, artefact_class.name);
+  artefact_report(database, &cave, &player, artefact_class.name_initiated);
 
   /* merge artefacts */
   lock_artefact.artefactID   = 0;

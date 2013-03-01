@@ -5,74 +5,50 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 <!DOCTYPE html>
 <html dir="ltr" lang="de">
 <head>
-    <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
-    <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
+  <title>Uga Agga Online Game - {% block title %}{% endblock %}</title>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8" />
 
-    <!-- mobile viewport optimisation -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- mobile viewport optimisation -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Bootstrap -->
-    <link href="http://gfx.uga-agga.com/GFX-HR13//de_DE/t_uga/css/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" media="screen">
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="css/styles.css" rel="stylesheet" media="screen">
+  <!-- Bootstrap -->
+  <link href="http://gfx.uga-agga.com/GFX-HR13//de_DE/t_uga/css/jquery-ui-1.9.2.custom.min.css" rel="stylesheet" media="screen">
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="css/styles.css" rel="stylesheet" media="screen">
 
-    <!-- javascript -->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.cookie.js"></script>
-    <script type="text/javascript" src="js/jquery.form.js"></script>
-    <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
-    <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
-    <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
-    <script type="text/javascript" src="js/jquery.url.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/ua.js"></script>
+  <!-- javascript -->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/jquery.cookie.js"></script>
+  <script type="text/javascript" src="js/jquery.form.js"></script>
+  <script type="text/javascript" src="js/jquery-ui-1.9.2.custom.min.js"></script>
+  <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+  <script type="text/javascript" src="js/jquery.url.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/jappixmini.js"></script>
+  <script type="text/javascript" src="js/ua.js"></script>
 
   <style type="text/css">
-    /* override bootstrap css */
-    body { padding-bottom: 40px; font-size: 12px; } /*width: 980px; margin: 0 auto;*/
-    a { color: #000000; }
-    dl { margin: 0; }
-    form { margin: 0 }
-    hr { margin: 10px 0; }
+    .header-middle { background-image: url("{{ gfx }}/de_DE/t_uga/menu/header/background.png"); }
 
-    .ui-widget-header { background: #c2cf90; }
-    .ui-widget-content { background: #e6efc2; }
-    .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { background: #298a08; }
+    .span-header-left { background-image: url("{{ gfx }}/de_DE/t_uga/header_left.png"); }
+    .span-header-right {  background-image: url("{{ gfx }}/de_DE/t_uga/header_right.png"); }
 
-    /* custom css */
-    ul.nav-ua { list-style-type: none !important; margin: 0; padding: 0; }
-    ul.nav-ua li { display: inline; margin: 0; padding: 0; width: 1px; }
-    ul.clean { list-style-type: none !important; margin: 0; padding: 0; }
+    .ua-box { background-image: url("{{ gfx }}/de_DE/t_uga/grass.png"); }
 
-    .header-middle { position: relative; margin: 0 auto; width: 500px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/menu/header/background.png); background-repeat: no-repeat; }
-    .header-middle-menu { position: relative;  width: 500px; height: 192px; }
-    #header-middle-menu-item { padding: 10px; }
-    #header-middle-menu-item div.jqDockWrap { margin: 0 auto; }
-    #header-middle-menu-item div.jqDock { cursor:pointer; }
-    div.jqDockLabel { bottom: -15px !important; padding: 0; white-space: nowrap; font-weight: bold; color: #000000; cursor: pointer; }
+    .abort { background-image: url("{{ gfx }}/de_DE/t_uga/abort.png"); }
+    .arrow_max { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up_max.png"); }
+    .arrow_up { background-image: url("{{ gfx }}/de_DE/t_uga/arrow_up.png"); }
+    .flash { background-image: url("{{ gfx }}/de_DE/t_uga/flash.png"); }
 
-    .span-header-left { position: relative; width: 454px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_left.png); background-repeat: no-repeat; }
-    .span-header-right { position: relative; width: 446px; height: 192px; background-image: url({{ gfx }}/de_DE/t_uga/header_right.png); background-repeat: no-repeat; }
-    .span-content-left { width: 133px; }
-    .span-content-middle { width: 634px; }
-    .span-content-right { width: 133px; }
-
-    .text-center { text-align: center !important; }
-    .text-left { text-align: left !important; }
-    .text-right { text-align: right !important; }
-
-    .ua-box { background-repeat: repeat; -webkit-border-radius: 10px; -khtml-border-radius: 10px; -moz-border-radius: 10px; border-radius: 10px; padding: 0px 5px 8px; margin-bottom: 10px !important; background-image: url({{ gfx }}/de_DE/t_uga/grass.png); }
-    .ua-box-header { color: #FFFFFF; line-height: 20px; text-align: center; font-weight: bold; }
-    .ua-box-content { margin: 0 auto; text-align: left; background: #E6EFC2; }
+    .tutorial { list-style: none; margin: 0; }
+    .tutorial li { display: inline-block; padding-right: 10px; }
   </style>
-
 </head>
 <body>
 

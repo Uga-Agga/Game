@@ -11,11 +11,13 @@
 #}
 {% spaceless %}
 
+<p>
 {% if message_xml.winner == 'attacker' %}
   Niederlage bei Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})!
 {% else %}
   Sieg bei Höhle {{ message_xml.defender.caveName }} ({{ message_xml.defender.xCoord }}/{{ message_xml.defender.yCoord }})
 {% endif %}
+</p>
 
 <p>
 {% if message_xml.winner == 'attacker' %}
@@ -48,10 +50,10 @@
 {% endif %}
 
 {% if message_xml.takeoverMultiplier %}Deine Höhlenbewohner haben mit {{ message_xml.takeoverMultiplier }}-facher Kampfstärke gekämpft!{% endif %}
-<table style="width: auto; border-top: none; border-bottom: none;">
-  <tr class="nohover">
-    <td style="padding: 0; margin: 0;">
-      <table>
+<table class="table table-condensed" style="width: 615px;">
+  <tr>
+    <td>
+      <table class="table table-condensed" style="background-color: transparent;">
         <thead>
           <tr><th colspan="2">Angreifende Armee</th></tr>
         </thead>
@@ -60,8 +62,8 @@
         </tbody>
       </table>
     </td>
-    <td style="padding: 0; margin: 0;">
-      <table>
+    <td>
+      <table class="table table-condensed" style="background-color: transparent;">
         <thead>
           <tr><th colspan="3">nach dem Kampf</th></tr>
         </thead>
@@ -70,8 +72,8 @@
         </tbody>
       </table>
     </td>
-    <td style="padding: 0; margin: 0;">
-      <table>
+    <td>
+      <table class="table table-condensed" style="background-color: transparent;">
         <thead>
           <tr><th colspan="2">Kampfwerte</th></tr>
         </thead>
@@ -86,9 +88,9 @@
       </table>
     </td>
   </tr>
-  <tr class="nohover">
-    <td style="padding: 0; margin: 0;">
-      <table>
+  <tr>
+    <td>
+      <table class="table table-condensed" style="background-color: transparent;">
         <thead>
           <tr><th colspan="2">Verteidigende Armee</th></tr>
         </thead>
@@ -98,8 +100,8 @@
         </tbody>
       </table>
     </td>
-    <td style="padding: 0; margin: 0;">
-      <table>
+    <td>
+      <table class="table table-condensed" style="background-color: transparent;">
         <thead>
           <tr><th colspan="3">nach dem Kampf</th></tr>
         </thead>
@@ -109,8 +111,8 @@
         </tbody>
       </table>
     </td>
-    <td style="padding: 0; margin: 0;">
-      <table>
+    <td>
+      <table class="table table-condensed" style="background-color: transparent;">
         <thead>
           <tr><th colspan="2">Kampfwerte</th></tr>
         </thead>

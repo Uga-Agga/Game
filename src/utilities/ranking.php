@@ -2,6 +2,7 @@
 /*
  * ranking.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -14,6 +15,7 @@ include "util.inc.php";
 include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 include INC_DIR."rules/game.rules.php";
+include INC_DIR."tribes.inc.php";
 
 $db     = DbConnect();
 
@@ -32,6 +34,12 @@ $constant_values = array (
 echo "-----------------------------------------------------------------------\n";
 echo "- RANKING LOG FILE ----------------------------------------------------\n";
 echo "  vom " . date("r") . "\n";
+
+$godTribeID = Tribe::getID(GOD_ALLY);
+if ($godTribeID == 0) $godTribeID = -1;
+
+$questTribeID = Tribe::getID(QUEST_ALLY);
+if ($questTribeID == 0) $questTribeID = -1;
 
 // Ranking nach 2-Schritte-Prozess:
 
@@ -52,13 +60,12 @@ echo "  vom " . date("r") . "\n";
 // Schritt (0.a.) alte Werte loeschen
 $sql = $db->prepare("SELECT r.playerID
                      FROM " . RANKING_TABLE . " r
-                       LEFT JOIN " . PLAYER_TABLE . " p
-                         ON p.playerID = r.playerID
+                       LEFT JOIN " . PLAYER_TABLE . " p ON p.playerID = r.playerID
                      WHERE ISNULL(p.name)
-                       OR p.tribe LIKE :god_ally
-                       OR p.tribe LIKE :quest_ally");
-$sql->bindValue('god_ally', GOD_ALLY, PDO::PARAM_STR);
-$sql->bindValue('quest_ally', QUEST_ALLY, PDO::PARAM_STR);
+                       OR p.tribeID = :god_ally
+                       OR p.tribeID = :quest_ally");
+$sql->bindValue('god_ally', $godTribeID, PDO::PARAM_STR);
+$sql->bindValue('quest_ally', $questTribeID, PDO::PARAM_STR);
 if (!$sql->execute()) {
   echo "Fehler beim Auslesen geloeschter Spieler in Schritt (0.a.i)\n";
   return -17;
@@ -92,7 +99,8 @@ $query = "INSERT IGNORE INTO " . RANKING_TABLE . " (playerID, name, religion)
               WHEN p.".DB_ENZIO_FIELDNAME." > p.".DB_UGA_FIELDNAME." THEN 'enzio'
                 ELSE 'none' END AS religion
            FROM " . PLAYER_TABLE . " p
-           WHERE p.tribe NOT LIKE '".GOD_ALLY."' AND p.tribe NOT LIKE '".QUEST_ALLY."'";
+           WHERE p.tribeID != " . $godTribeID."
+             AND p.tribeID != " . $questTribeID;
 if (!$db->query($query)) {
   echo "Fehler beim Anlegen der neuen Werte.\n";
   return -2;
@@ -103,10 +111,10 @@ if (!$db->query($query)) {
 
 $sql = $db->prepare("SELECT playerID, name
                      FROM " . PLAYER_TABLE . "
-                     WHERE tribe LIKE :god_ally
-                       OR tribe LIKE :quest_ally");
-$sql->bindValue('god_ally', GOD_ALLY, PDO::PARAM_STR);
-$sql->bindValue('quest_ally', QUEST_ALLY, PDO::PARAM_STR);
+                     WHERE tribeID = :god_ally
+                       OR tribeID = :quest_ally");
+$sql->bindValue('god_ally', $godTribeID, PDO::PARAM_STR);
+$sql->bindValue('quest_ally', $questTribeID, PDO::PARAM_STR);
 
 if (!$sql->execute()) {
   echo "Fehler beim Anlegen der banned Liste. (0.c.)\n";
@@ -130,10 +138,10 @@ $sql = $db->prepare("SELECT p.playerID,
                          WHEN p.".DB_ENZIO_FIELDNAME." > p.".DB_UGA_FIELDNAME." THEN 'enzio'
                            ELSE 'none' END AS religion
                      FROM " . PLAYER_TABLE . " p
-                     WHERE p.tribe NOT LIKE :god_ally
-                       AND p.tribe NOT LIKE :quest_ally");
-$sql->bindValue('god_ally', GOD_ALLY, PDO::PARAM_STR);
-$sql->bindValue('quest_ally', QUEST_ALLY, PDO::PARAM_STR);
+                     WHERE p.tribeID != :god_ally
+                       AND p.tribeID != :quest_ally");
+$sql->bindValue('god_ally', $godTribeID, PDO::PARAM_STR);
+$sql->bindValue('quest_ally', $questTribeID, PDO::PARAM_STR);
 if (!$sql->execute()) {
   echo "Fehler beim Auslesen der Religion. (0.d.)\n";
   return -1;
@@ -452,7 +460,7 @@ foreach ($artefacts as $playerID => $artefacts) {
 }
 
 // ----------------------------------------------------------------------------
-// Schritt (1.g.) Clanpunkte oebertragen 
+// Schritt (1.g.) Clanpunkte uebertragen 
 $sql = $db->prepare("SELECT MAX(playerAverage) AS max
                      FROM " . RANKING_TRIBE_TABLE);
 if (!$sql->execute() || !($row = $sql->fetch(PDO::FETCH_ASSOC))) {
@@ -466,8 +474,8 @@ $factor = 10000 / $max;
 
 $sql = $db->prepare("SELECT p.playerID, t.playerAverage AS tribePoints
                      FROM " . PLAYER_TABLE . " p
-                       LEFT JOIN " . RANKING_TRIBE_TABLE . " t ON t.tribe LIKE p.tribe
-                     WHERE t.tribe IS NOT NULL");
+                       LEFT JOIN " . RANKING_TRIBE_TABLE . " t ON t.tribeID LIKE p.tribeID
+                     WHERE t.tribeID != 0");
 if (!$sql->execute()) {
   echo "Fehler beim Finden der Stammespunkte in Schritt (1.g)\n" .$query . "\n";
   return -12;
@@ -584,9 +592,9 @@ if (!$db->query("DELETE FROM RankingTribe")) {
   return -17;
 }*/
 $query =
-  "REPLACE INTO " . RANKING_TRIBE_TABLE . " (tribe, rank, points_rank, warpoints, glory, members, caves, playerAverage, war_won, war_lost)
+  "REPLACE INTO " . RANKING_TRIBE_TABLE . " (tribeID, rank, points_rank, warpoints, glory, members, caves, playerAverage, war_won, war_lost)
    SELECT
-     t.tag,
+     t.tribeID,
      rt.rank,
      rt.points_rank,
      GREATEST( 0, t.`warpoints_pos` - t.`warpoints_neg` )  as warpoints,
@@ -597,11 +605,11 @@ $query =
      t.war_won,
      t.war_lost
    FROM Tribe t
-   LEFT JOIN Player p ON p.tribe LIKE t.tag
+   LEFT JOIN Player p ON p.tribeID LIKE t.tribeID
    LEFT JOIN Ranking r ON r.playerID = p.playerID
-   LEFT JOIN RankingTribe rt ON p.tribe like rt.tribe
+   LEFT JOIN RankingTribe rt ON p.tribeID like rt.tribeID
    WHERE r.playerID IS NOT NULL
-   GROUP BY t.tag";
+   GROUP BY t.tribeID";
 if (!$db->query($query)) {
   echo "Error accumulating tribe points.\n";
   return -18;

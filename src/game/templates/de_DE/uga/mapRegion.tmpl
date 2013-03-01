@@ -34,10 +34,10 @@
                   {% if (cell.mapcell.tribe or cell.mapcell.text) and not cell.mapcell.barren %}
                     <div style="position: absolute; bottom: 0px; width: 78px; line-height: 13px;">
                       {% if cell.mapcell.tribe and not cell.mapcell.barren %}
-                       <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.alt }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.tribe }}</small></a></p>
+                       <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.title }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.tribe }}</small></a></p>
                       {% endif %}
                       {% if cell.mapcell.text and not cell.mapcell.barren %}
-                        <p class="nospace"><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %}" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text }}</small></a></p>
+                        <p class="nospace"><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.title }}" class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %}" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text }}</small></a></p>
                       {% endif %}
                     </div>
                   {% endif %}

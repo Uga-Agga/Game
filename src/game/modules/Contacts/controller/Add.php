@@ -2,6 +2,7 @@
 /*
  * Add.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -30,7 +31,7 @@ class Contacts_Add_Controller extends Controller {
     $error = CONTACTS_NOERROR;
 
     // add contact
-    $contact = Request::getVar('inputName', '');
+    $contact = Request::getVar('contact', '');
     $error = $model->addContact($contact);
 
     // return Show Controller

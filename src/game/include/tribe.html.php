@@ -392,7 +392,7 @@ function tribe_getContent($caveID, &$details) {
 
       if ($messageID == 11 || $messageID == 12) {
         $success = ($messageID == 12) ? 1 : 2;
-        TribeWonder::addStatistic($wonderID, $success);
+        wonder_addStatistic($wonderID, $success);
       }
 
       $tribeData = Tribe::getByID($tribeID);

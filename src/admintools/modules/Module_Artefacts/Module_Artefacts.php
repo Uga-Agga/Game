@@ -2,6 +2,7 @@
 /*
  * Module_Artefacts.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -15,7 +16,7 @@ require_once("Module_Base.lib.php");
 require_once("Menu.lib.php");
 require_once("Menu_Item.lib.php");
 require_once("artefact.lib.php");
-require_once($cfg['cfgpath'] . "effect_list.php");
+require_once($cfg['cfgpath'] . "rules/effects.list.php");
 
 class Module_Artefacts extends Module_Base {
 
@@ -121,7 +122,7 @@ class Module_Artefacts extends Module_Base {
     if (!artefact_uninitiateArtefact($db_game, $artefactID)){
       $this->msgs[] = 'FATAL ERROR: Could not uninitiate artefact';
       return $this->getList();
-    }    
+    }
 
     // remove from cave
     if (!artefact_removeArtefactFromCave($db_game, $artefact)){

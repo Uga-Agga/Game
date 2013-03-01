@@ -33,7 +33,7 @@ CONFIG =      dbs/game_rules.sql \
 	      game/include/rules/trade.rules.php game/include/rules/hero.rules.php
 
 LANGUAGES =   de_DE
-MODULES =     CaveBookmarks Contacts Donations EventReports Messages Suggestions
+MODULES =     CaveBookmarks Contacts EventReports Messages
 TEMPLATES =   uga
 
 TICKER =      ticker/ticker
@@ -123,20 +123,13 @@ install-db: $(CONFIG)
 
 install-game: configtest $(CONFIG)
 	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/images $(GAMEDIR)/images/artefacts \
-	    $(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/ \
-	    $(GAMEDIR)/yaml/ $(GAMEDIR)/yaml/core $(GAMEDIR)/yaml/add-ons $(GAMEDIR)/yaml/add-ons/accessible-tabs $(GAMEDIR)/yaml/screen $(GAMEDIR)/yaml/forms
+	    $(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/ $(GAMEDIR)/css/
 	chown -R $(WWWRUN):$(WWWRUN) $(GAMEDIR)
 	chmod 777 $(GAMEDIR)/images
 	chmod 777 $(GAMEDIR)/images/temp
 	$(INSTALL_DATA) www/*.php $(GAMEDIR)
-	$(INSTALL_DATA) www/js/*.js $(GAMEDIR)/js
-	$(INSTALL_DATA) www/js/PIE.htc $(GAMEDIR)/js
-	$(INSTALL_DATA) www/yaml/core/base.min.css $(GAMEDIR)/yaml/core
-	$(INSTALL_DATA) www/yaml/core/iehacks.min.css $(GAMEDIR)/yaml/core
-	$(INSTALL_DATA) www/yaml/add-ons/accessible-tabs/jquery.tabs.js $(GAMEDIR)/yaml/add-ons/accessible-tabs
-	$(INSTALL_DATA) www/yaml/add-ons/accessible-tabs/tabs.css $(GAMEDIR)/yaml/add-ons/accessible-tabs
-	$(INSTALL_DATA) www/yaml/screen/typography.css $(GAMEDIR)/yaml/screen
-	$(INSTALL_DATA) www/yaml/forms/gray-theme.css $(GAMEDIR)/yaml/forms
+  $(INSTALL_DATA) www/js/*.js $(GAMEDIR)/js
+	$(INSTALL_DATA) www/css/*.css $(GAMEDIR)/css
 	$(INSTALL_DATA) www/images/*.ico www/images/*.php www/images/round_name.png $(GAMEDIR)/images
 	$(INSTALL_DATA) www/images/religious_distribution/*.png \
 	    www/images/religious_distribution/*.php \
