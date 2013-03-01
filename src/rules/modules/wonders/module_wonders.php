@@ -1,8 +1,8 @@
 <?php
 /*
- * module_wonders.php - 
+ * module_wonders.php -
  * Copyright (c) 2003  OGP-Team
- * Copyright (c) 2011  David Unger
+ * Copyright (c) 2011-2013  David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,20 +18,22 @@ function wonders_getSelector() {
 
   $wonders = array();
   foreach ($GLOBALS['wonderTypeList'] AS $key => $value) {
-    if (!$value->nodocumentation) {
-      $wonderID = request_var('wondersID', 0);
-
-      $temp = array(
-        'value'       => $value->wonderID,
-        'description' => lib_shorten_html($value->name, 20)
-      );
-
-      if (isset($_REQUEST['wondersID']) && $wonderID == $value->wonderID) {
-        $temp['selected'] = 'selected="selected"';
-      }
-
-      $wonders[] = $temp;
+    if ($value->nodocumentation || $value->isTribeCaveWonder) {
+      continue;
     }
+
+    $wonderID = request_var('wondersID', 0);
+
+    $temp = array(
+      'value'       => $value->wonderID,
+      'description' => lib_shorten_html($value->name, 20)
+    );
+
+    if (isset($_REQUEST['wondersID']) && $wonderID == $value->wonderID) {
+      $temp['selected'] = 'selected="selected"';
+    }
+
+    $wonders[] = $temp;
   }
   usort($wonders, "descriptionCompare");
 
@@ -45,7 +47,7 @@ function wonders_getContent() {
   $template->setFile('wonder.tmpl');
 
   $id = request_var('wondersID', 0);
-  if (!isset($GLOBALS['wonderTypeList'][$id]) || $GLOBALS['wonderTypeList'][$id]->nodocumentation) {
+  if (!isset($GLOBALS['wonderTypeList'][$id]) || $GLOBALS['wonderTypeList'][$id]->nodocumentation || !$GLOBALS['wonderTypeList'][$id]->isTribeCaveWonder) {
     $wonder = $GLOBALS['wonderTypeList'][0];
   } else {
     $wonder = $GLOBALS['wonderTypeList'][$id];

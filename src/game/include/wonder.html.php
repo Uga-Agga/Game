@@ -1,6 +1,6 @@
 <?php
 /*
- * wonder.html.php - 
+ * wonder.html.php -
  * Copyright (c) 2003  OGP Team
  * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
  * Copyright (c) 2012 Georg Pitterle
@@ -71,10 +71,10 @@ function wonder_getWonderContent($caveID, &$details) {
   $wonders = $wondersUnqualified = array();
   foreach ($GLOBALS['wonderTypeList'] as $id => $wonder) {
     // exclude tribeWonders
-    if ($wonder->isTribeWonder) {
+    if ($wonder->isTribeWonder || $wonder->isTribeCaveWonder) {
       continue;
     }
-    
+
     $result = rules_checkDependencies($wonder, $details);
 
 /****************************************************************************************************

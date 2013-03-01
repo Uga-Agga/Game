@@ -128,16 +128,18 @@ function getWondersStats() {
 
   $wonders = array();
   foreach ($wondersList AS $value) {
-    if (!$value->nodocumentation) {
-      $wonders[] = array(
-        'id'            => $value->wonderID,
-        'name'          => $value->name,
-        'offensiveness' => $value->offensiveness,
-        'chance'        => round(eval('return '.formula_parseBasic($value->chance).';'), 3),
-        'target'        => $uaWonderTargetText[$value->target],
-        'remark'        => $value->remark,
-      );
+    if ($value->nodocumentation || $value->isTribeCaveWonder) {
+      continue;
     }
+
+    $wonders[] = array(
+      'id'            => $value->wonderID,
+      'name'          => $value->name,
+      'offensiveness' => $value->offensiveness,
+      'chance'        => round(eval('return '.formula_parseBasic($value->chance).';'), 3),
+      'target'        => $uaWonderTargetText[$value->target],
+      'remark'        => $value->remark,
+    );
   }
 
   $template->addVar('wonders_list', $wonders);
@@ -244,24 +246,24 @@ function getUnitsEncumbrance(){
 
 function getSkillStats () {
   global $template;
-  
+
   // open template
   $template->setFile('skillStats.tmpl');
-  
+
   // get hero Type names
   $heroTypeNames = array();
   foreach ($GLOBALS['heroTypesList'] as $type) {
     $heroTypeNames[$type['id']] = $type['name'];
   }
-  
+
   $skills = array();
-  foreach ($GLOBALS['heroSkillTypeList'] as $skillID => $skill) { 
+  foreach ($GLOBALS['heroSkillTypeList'] as $skillID => $skill) {
 
     $typeList = array();
     foreach ($skill['requiredType'] as $type) {
       $typeList[] = $heroTypeNames[$type];
     }
-    
+
     $effectList = array();
     foreach ($GLOBALS['effectTypeList'] as $effect) {
       foreach ($skill['effects'] as $heroEffectName => $heroEffect) {
@@ -270,14 +272,14 @@ function getSkillStats () {
         }
       }
     }
-    
+
     $skills[] = array(
       'skillID' => $skillID,
-      'name' => $skill['name'], 
+      'name' => $skill['name'],
       'costTP' => $skill['costTP'],
-      'requiredLevel' => $skill['requiredLevel'], 
-      'skillFactor' => $skill['skillFactor'], 
-      'effectList' => $effectList, 
+      'requiredLevel' => $skill['requiredLevel'],
+      'skillFactor' => $skill['skillFactor'],
+      'effectList' => $effectList,
       'typeList' => $typeList
     );
   }
