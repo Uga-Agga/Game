@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 DEBUG = 'on';
 
@@ -283,7 +283,7 @@ DEBUG = 'on';
     function getMapSliderValue(type) {if (type === 'xCoord') {return $('#map-queryX').html();} else if (type === 'yCoord') {return $('#map-queryY').html()*-1;}}
 
     function showTutorialModal() {
-      if ($('#tutorialDataHeader').html() === '' || $('#tutorialDataBody').html() === '') {
+      if ($('#tutorialDataHeader').html() === '' || $('#tutorialDataHeader').html() === null || $('#tutorialDataBody').html() === '' || $('#tutorialDataBody').html() === null) {
         $('#modal').modal('hide');
         return;
       }
