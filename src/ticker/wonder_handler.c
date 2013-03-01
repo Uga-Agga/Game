@@ -168,7 +168,9 @@ void wonder_handler (db_t *database, db_result_t *result)
        "WHERE activeWonderID = %d", wonder_end, active_id);
 
     /* create message */
-    wonder_extend_report(database, &caster, &cave, &target, wonder, impact);
+    if (wonder->isTribeCaveWonder == 0) {
+      wonder_extend_report(database, &caster, &cave, &target, wonder, impact);
+    }
 
     debug(DEBUG_TICKER, "leaving function wonder_handler()");
     return;
@@ -271,7 +273,7 @@ void wonder_handler (db_t *database, db_result_t *result)
   }
 
   /* create messages */
-  if (wonder.isTribeCaveWonder == 0) {
+  if (wonder->isTribeCaveWonder == 0) {
     wonder_report(database, &caster, &cave, &target, impact,
       array_values(changes), array_len(changes));
   }

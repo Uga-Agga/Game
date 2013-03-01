@@ -648,15 +648,15 @@ void processTribeCaveWonder(db_t *database, struct Cave tribeCave, struct Player
   ds = dstring_new ("SELECT c.caveID "
                       " FROM Cave c "
                       " LEFT JOIN Player p ON c.playerID = p.playerID "
-                      "WHERE p.playerID IN (SELECT pl.playerID FROM Player pl WHERE pl.tribeID = %d)", attPlayer.tribe_id);
+                      "WHERE p.playerID IN (SELECT pl.playerID FROM Player pl WHERE pl.tribeID = %d AND pl.tribeID != 0)", attPlayer.tribe_id);
   result = db_query_dstring(database, ds);
 
   int targetID;
   while ((row = db_result_next_row(result))) {
     targetID = db_result_get_int(result, "caveID");
-    ds = dstring_new("INSERT INTO Event_wonder (casterID, sourceID, targetID, wonderID, impactID, start, end) "
-                       " VALUES (%d, %d, %d, %d, %d, '%s', '%s')",
-                         attPlayer.player_id, 0, targetID, caveWonderId, 0, "0000-00-00 00:00:00", "0000-00-00 00:00:00");
+    ds = dstring_new("INSERT INTO Event_wonder (casterID, sourceID, targetID, wonderID, impactID, tribeCaveWonderCaveId, start, end) "
+                       " VALUES (%d, %d, %d, %d, %d, %d, '%s', '%s')",
+                         attPlayer.player_id, 0, targetID, caveWonderId, 0, tribeCave.cave_id, "0000-00-00 00:00:00", "0000-00-00 00:00:00");
     debug(DEBUG_TICKER, "processTribeCaveWonder: %s", dstring_str(ds));
       db_query_dstring(database, ds);
   }
@@ -1108,11 +1108,8 @@ void movement_handler (db_t *database, db_result_t *result) {
       debug(DEBUG_TICKER, "1");
       // process tribeCaveWonders
       if (((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 1 && battle->winner == FLAG_ATTACKER) {
-        debug(DEBUG_TICKER, "2");
         if (player1.tribe_id != cave2.lastAttackingTribeId) {
-          debug(DEBUG_TICKER, "3");
           if (((struct Terrain *)terrain_type[cave2.terrain])->tribeCaveWonderId != 0) {
-            debug(DEBUG_TICKER, "4");
             processTribeCaveWonder(database, cave2, player1);
           }
         }
