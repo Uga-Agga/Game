@@ -52,6 +52,8 @@
 
 #define FAME_MAX_OVERPOWER_FACTOR 4
 
+#define TRIBE_CAVES_WONDER_ENABLE 0
+
 #define drand()    (rand() / (RAND_MAX+1.0))
 
 static int isTakeoverableCave(db_t *database, int caveID) {
@@ -1090,7 +1092,6 @@ void movement_handler (db_t *database, db_result_t *result) {
 
       // check and set take takeoverable
       int caveSetTakeoverable = 0;
-      debug(DEBUG_TICKER, "0");
       if (battle->winner == FLAG_ATTACKER
           && !cave2.takeoverable
           && (cave2.takeover_level > 0)
@@ -1105,9 +1106,9 @@ void movement_handler (db_t *database, db_result_t *result) {
           debug(DEBUG_TICKER, "movement_handler: Set cave with ID %d as takeoverable", cave2.cave_id);
         }
       }
-      debug(DEBUG_TICKER, "1");
+
       // process tribeCaveWonders
-      if (((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 1 && battle->winner == FLAG_ATTACKER) {
+      if (((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 1 && battle->winner == FLAG_ATTACKER && TRIBE_CAVES_WONDER_ENABLE) {
         if (player1.tribe_id != cave2.lastAttackingTribeId) {
           if (((struct Terrain *)terrain_type[cave2.terrain])->tribeCaveWonderId != 0) {
             processTribeCaveWonder(database, cave2, player1);
