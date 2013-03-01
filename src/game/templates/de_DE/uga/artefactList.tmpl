@@ -7,12 +7,14 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 {% extends "base.tmpl" %}
 {% block title %}Artefakte - Übersicht{% endblock %}
 {% block content %}
+
+{% if not ownArtefactsList and not otherArtefactsList and not movedArtefactsList %}<div class="alert alert-info">Derzeit sind keine Artefakte in der Übersicht vorhanden.</div>{% endif %}
 
 {% if ownArtefactsList %}
 <div class="ua-box">
@@ -107,10 +109,6 @@
     </table>
   </div>
 </div>
-{% endif %}
-
-{% if not ownArtefactsList and not otherArtefactsList and not movedArtefactsList %}
-<div class="notice space">Derzeit sind keine Artefakte in der Übersicht vorhanden.</div>
 {% endif %}
 
 {% endblock %}

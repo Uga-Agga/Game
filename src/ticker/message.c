@@ -949,7 +949,7 @@ static char* battle_report_xml (db_t *database,
     //battleValues
     sprintf(rel_bonus, "%.2lf", (float) result->attackers[0].relationMultiplicator);
     sprintf(god_bonus, "%.2lf", (float) result->attackers[0].religion_bonus);
-      
+
     battleValues = mxmlNewElement(attacker, "battleValues");
       range = mxmlNewElement(battleValues, "range");
         mxmlNewInteger(range, (int) result->attackers_acc_range_before);
@@ -1662,12 +1662,12 @@ void artefact_merging_report (db_t *database,
 
   template_context(tmpl_merge, "MSG");
   template_set(tmpl_merge, "cave", cave->name);
-  template_set(tmpl_merge, "artefact", key_artefact_class.name);
+  template_set(tmpl_merge, "artefact", key_artefact_class.name_initiated);
 
   if (lock_artefact->artefactID)
-    template_set(tmpl_merge, "lock_artefact", lock_artefact_class.name);
+    template_set(tmpl_merge, "lock_artefact", lock_artefact_class.name_initiated);
   if (result_artefact->artefactID)
-    template_set(tmpl_merge, "res_artefact", result_artefact_class.name);
+    template_set(tmpl_merge, "res_artefact", result_artefact_class.name_initiated);
 
   message_new(database, MSG_CLASS_ARTEFACT,
       cave->player_id, subject, template_eval(tmpl_merge), xml);
@@ -1817,15 +1817,15 @@ void wonder_report (db_t *database,
     mxml_node_t *report;
     mxml_node_t *curtime, *wonderType;
     mxml_node_t *source, *playerName, *playerTribe;
-  
+
     // prepare xml
     report = mxmlNewElement(xml, "wonderreport");
     curtime = mxmlNewElement(report, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
-  
+
     wonderType = mxmlNewElement(report, "wonderType");
       mxmlNewText(wonderType, 0, (char*) "new");
-  
+
     source = mxmlNewElement(report, "source");
       playerName = mxmlNewElement(source, "playerName");
         mxmlNewText(playerName, 0, (char*) caster->name);
@@ -1848,15 +1848,15 @@ void wonder_report (db_t *database,
     mxml_node_t *report;
     mxml_node_t *curtime, *wonderType;
     mxml_node_t *source, *playerName, *playerTribe;
-  
+
     // prepare xml
     report = mxmlNewElement(xml, "wonderreport");
     curtime = mxmlNewElement(report, "timestamp");
       mxmlNewInteger(curtime, (int) time(NULL));
-  
+
     wonderType = mxmlNewElement(report, "wonderType");
       mxmlNewText(wonderType, 0, (char*) "new");
-  
+
     source = mxmlNewElement(report, "source");
       playerName = mxmlNewElement(source, "playerName");
         mxmlNewText(playerName, 0, (char*) caster->name);

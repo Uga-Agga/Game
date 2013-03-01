@@ -15,7 +15,7 @@ require_once("Module_Base.lib.php");
 require_once("Menu.lib.php");
 require_once("Menu_Item.lib.php");
 require_once("artefact.lib.php");
-require_once($cfg['cfgpath'] . "effect_list.php");
+require_once($cfg['cfgpath'] . "rules/effects.list.php");
 
 class Module_Artefacts extends Module_Base {
 
@@ -121,7 +121,7 @@ class Module_Artefacts extends Module_Base {
     if (!artefact_uninitiateArtefact($db_game, $artefactID)){
       $this->msgs[] = 'FATAL ERROR: Could not uninitiate artefact';
       return $this->getList();
-    }    
+    }
 
     // remove from cave
     if (!artefact_removeArtefactFromCave($db_game, $artefact)){

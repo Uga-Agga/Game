@@ -203,12 +203,12 @@
   <footer>
     <span class="show-tutorial change_mouseover">Tutorial.</span>
     <div class="row-fluid">
-      <div class="span6 text-left"><div id="servertime">Serverzeit: {{ time }}</div></div>
-      <div class="span6 text-right">
+      <div class="span6 text-left">
           <a href="main.php?modus={{ statistic_link }}">Statistik</a> &amp;
           <a href="{{ help_path }}" class="new-window">Hilfe</a> &amp;
           <a href="{{ rules_path }}" class="new-window">Regeln</a>&nbsp;
       </div>
+      <div class="span6 text-right"><div id="servertime">Serverzeit: {{ time }}</div></div>
       <div class="span12 nospace"><div id="pageSilder"></div></div>
   </footer>
   {% endblock %}

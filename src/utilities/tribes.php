@@ -2,6 +2,7 @@
 /*
  * tribes.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -181,8 +182,8 @@ echo "-- Check Relations --\n";
                               WHERE tribeID = :tribeID
                                 AND tribeID_target = :tribeID_target");
       $update->bindValue('iafwr', ID_AFTER_WARALLY_RELATION, PDO::PARAM_INT);
-      $update->bindValue('tribeID', $row['tribe'], PDO::PARAM_STR);
-      $update->bindValue('tribeID_target', $row['tribeID_target'], PDO::PARAM_STR);
+      $update->bindValue('tribeID', $row['tribe'], PDO::PARAM_INT);
+      $update->bindValue('tribeID_target', $row['tribeID_target'], PDO::PARAM_INT);
 
       if ($update->execute())
         echo "Success\n";
