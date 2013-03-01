@@ -47,7 +47,7 @@ function wonders_getContent() {
   $template->setFile('wonder.tmpl');
 
   $id = request_var('wondersID', 0);
-  if (!isset($GLOBALS['wonderTypeList'][$id]) || $GLOBALS['wonderTypeList'][$id]->nodocumentation || !$GLOBALS['wonderTypeList'][$id]->isTribeCaveWonder) {
+  if (!isset($GLOBALS['wonderTypeList'][$id]) || $GLOBALS['wonderTypeList'][$id]->nodocumentation || $GLOBALS['wonderTypeList'][$id]->isTribeCaveWonder) {
     $wonder = $GLOBALS['wonderTypeList'][0];
   } else {
     $wonder = $GLOBALS['wonderTypeList'][$id];
