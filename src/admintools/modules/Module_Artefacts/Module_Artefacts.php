@@ -2,6 +2,7 @@
 /*
  * Module_Artefacts.php -
  * Copyright (c) 2004  Marcus Lunzenauer
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

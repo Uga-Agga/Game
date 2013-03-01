@@ -198,7 +198,7 @@ function artefact_getArtefactByCaveID($caveID) {
   if ($sql->rowCountSelect() == 0) return array();
   if (!$sql->execute()) return array();
 
-  $ret = $sql->fetch(PDO::FETCH_ASSOC);
+  $ret = $sql->fetchAll(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
   return $ret;
@@ -343,7 +343,7 @@ function artefact_applyEffectsToCave($artefactID) {
 
   $artefact = artefact_getArtefactByID($artefactID);
   if (sizeof($artefact) == 0) return false;
-  if ($artefact['caveID'] == 0) return faöse;
+  if ($artefact['caveID'] == 0) return false;
 
   $effects = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
@@ -371,9 +371,9 @@ function artefact_removeEffectsFromCave($artefactID) {
   global $db;
 
   $artefact = artefact_getArtefactByID($artefactID);
-  if (sizeof($artefact) == 0) return FALSE;
-  if ($artefact['initiated'] != ARTEFACT_INITIATED) return TRUE;
-  if ($artefact['caveID'] == 0) return FALSE;
+  if (sizeof($artefact) == 0) return false;
+  if ($artefact['initiated'] != ARTEFACT_INITIATED) return true;
+  if ($artefact['caveID'] == 0) return false;
 
   $effects = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {

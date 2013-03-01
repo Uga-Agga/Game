@@ -7,7 +7,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 {% extends "base.tmpl" %}
@@ -109,6 +109,11 @@
           <label class="radio change-movement" for="movementID"><input type="radio" name="movementID" value="0" id="movementID" checked><em>Auswählen</em></label>
           {% for item in selectable_movements %}<label class="radio change-movement" for="movementID{{ item.id }}"><input type="radio" name="movementID" value="{{ item.id }}" id="movementID{{ item.id }}">{{ item.description }}</label>{% endfor %}
           {% if hero %}<p class="nospace"><label class="checkbox"><input type="checkbox">Held mitnehmen?</label></p>{% endif %}
+          {% if artefact %}
+            <h5>Artefakt:</h5>
+            <label class="radio" for="myartefacts"><input type="radio" name="myartefacts" value="-1" id="myartefacts" checked><em>Auswählen</em></label>
+            {% for item in artefact %}<label class="radio" for="myartefacts{{ item.artefactID }}"><input type="radio" name="myartefacts" value="{{ item.artefactID }}" id="myartefacts{{ item.artefactID }}">{{ item.name }}</label>{% endfor %}
+          {% endif %}
         </div>
         <div class="span3" style="width: 266px; margin-left: 0;">
           <h5 class="text-center">Daten:</h5>
@@ -187,7 +192,7 @@
           <th style="width: 160px;">Zeitraum</th>
           <th>Zielhöhle</th>
           <th>Einh./Ress.</th>
-          <th style="width: 30px;">&nbsp;</th> 
+          <th style="width: 30px;">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -198,7 +203,7 @@
               <p class="nospace">
                 <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
                 <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>              
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
               </p>
             </td>
             <td style="width: 160px;">
@@ -265,7 +270,7 @@
               <p class="nospace">
                 <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=xml"><img src="{{ gfx }}/de_DE/t_uga/icon_export_xml.png" class="noborder" width="20" height="20" alt="Export als XML"  title="Export als XML"/></a>
                 <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=irc"><img src="{{ gfx }}/de_DE/t_uga/icon_export_irc.png" class="noborder" width="20" height="20" alt="Export als IRC" title="Export für IRC" /></a>
-                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>              
+                <a class="export-link" href="export.php?modus=movement&amp;movementID={{ item.event_id }}&amp;format=bb"><img src="{{ gfx }}/de_DE/t_uga/icon_export_text.png" class="noborder" width="20" height="20" alt="Export als Text" title="Export als Text" /></a>
               </p>
             </td>
             <td style="width: 160px;">
