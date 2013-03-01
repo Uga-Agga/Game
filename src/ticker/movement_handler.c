@@ -65,7 +65,7 @@ static int isTakeoverableCave(db_t *database, int caveID) {
 }
 
 //return 0 falls nicht
-static int isMovingAllowed(db_t *database, 
+static int isMovingAllowed(db_t *database,
         struct Player *sender,
         struct Player *reciever,
         struct Relation *attToDef) {
@@ -193,7 +193,7 @@ static void army_setup (db_t *database,
     army->resourcesBefore[type] = resource[type];
 
   if (defense_system)
-    for (type = 0; type < MAX_DEFENSESYSTEM; ++type) 
+    for (type = 0; type < MAX_DEFENSESYSTEM; ++type)
       army->defenseSystems[type].amount_before = defense_system[type];
 
 
@@ -657,7 +657,7 @@ void movement_handler (db_t *database, db_result_t *result) {
   int takeover_multiplier;
   int change_owner;
   int isFarming = 0;
-  
+
   Battle *battle;
   dstring_t *ds;
   double spy_result;
@@ -873,7 +873,7 @@ void movement_handler (db_t *database, db_result_t *result) {
           put_artefact_into_cave(database, artefact, target_caveID);
         }
       }
-      
+
       if (heroID > 0) {
         if (cave1.player_id != cave2.player_id) {
           kill_hero(database, heroID);
@@ -1056,6 +1056,7 @@ void movement_handler (db_t *database, db_result_t *result) {
       int caveSetTakeoverable = 0;
       if (battle->winner == FLAG_ATTACKER
           && !cave2.takeoverable
+          && (cave2.takeover_level > 0)
           && !cave2.starting_position
           && (cave2.player_id == 0)
           && ((struct Terrain *)terrain_type[cave2.terrain])->tribeRegion == 0)

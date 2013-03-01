@@ -37,6 +37,7 @@ struct Cave
     int player_id;
     int terrain;
     int takeoverable;
+    int takeover_level;
     int artefacts;
     int monster_id;
     int heroID;

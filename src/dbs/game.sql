@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS `Cave` (
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',
   `terrain` int(11) unsigned NOT NULL DEFAULT '0',
   `takeoverable` tinyint(1) NOT NULL DEFAULT '0',
+  `takeover_level` int(11) unsigned NOT NULL DEFAULT '0',
   `starting_position` tinyint(1) NOT NULL DEFAULT '0',
   `secureCave` tinyint(1) NOT NULL DEFAULT '0',
   `noStatistic` tinyint(1) NOT NULL DEFAULT '0',
