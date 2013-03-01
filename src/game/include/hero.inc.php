@@ -26,7 +26,7 @@ function getHeroByPlayer($playerID) {
 
   // set database query with playerID
   $sql = $db->prepare("SELECT *
-                       FROM ". HERO_TABLE ." 
+                       FROM ". HERO_TABLE ."
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID);
   if (!$sql->execute()) return null;
@@ -69,14 +69,14 @@ function getHeroByPlayer($playerID) {
 function hero_parseFormulas ($formula) {
   $formula = str_replace(
     array(
-      '{lvl}', 
+      '{lvl}',
       '{exp}',
       '{regHpLvl}',
-      '{healPoints}', 
+      '{healPoints}',
       '{maxHealPoints}',
-      '{tpFree}', 
+      '{tpFree}',
       '{maxHpLvl}'
-    ), 
+    ),
     array(
       '$hero[\'lvl\']',
       '$hero[\'exp\']',
@@ -95,7 +95,7 @@ function checkEventHeroExists($playerID) {
 
   // set database query with playerID
   $sql = $db->prepare("SELECT *
-                       FROM ". EVENT_HERO_TABLE ." 
+                       FROM ". EVENT_HERO_TABLE ."
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID);
 
@@ -112,21 +112,21 @@ function getHeroQueue($playerID) {
 
   // set database query with playerID
   $sql = $db->prepare("SELECT *
-                       FROM ". EVENT_HERO_TABLE ." 
+                       FROM ". EVENT_HERO_TABLE ."
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID);
   if (!$sql->execute()) return NULL;
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return (empty($ret)) ? null : $ret;
 }
 
 
 //function skillForce($playerID, $hero) {
 //  global $db;
-//  
+//
 //  $newForceLevel = $hero['forceLvl'] + 1;
 //
 //  // update effects
@@ -134,7 +134,7 @@ function getHeroQueue($playerID) {
 //  foreach ($GLOBALS['effectTypeList'] as $effect) {
 //    $effectFactorArray[$effect->dbFieldName] = 0;
 //  }
-//  
+//
 //  // merge effect factors of different skills
 //  foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
 //    if ($hero[$skill['dbFieldName']]) {
@@ -145,23 +145,23 @@ function getHeroQueue($playerID) {
 //      }
 //    }
 //  }
-//  
+//
 //  // calculate new value for each effect
 //  $effectDeltaArray = array();
 //  foreach ($effectFactorArray as $key => $value) {
 //    $effectDeltaArray[$key] = $effectFactorArray[$key]*$newForceLevel - $effectFactorArray[$key]*$hero['forceLvl'] ;
 //  }
-//  
+//
 //  // create string for sql-querry
 //  $fields = array();
 //  foreach ($effectDeltaArray as $key => $value) {
 //    $fields[] = $key . " = " . ($value + $hero[$key]);
 //  }
-//  
+//
 //  // set database query with playerID
 //  $sql = $db->prepare("UPDATE ". HERO_TABLE ."
 //                       SET forceLvl = forceLvl + 1,
-//                       tpFree = tpFree - 1, 
+//                       tpFree = tpFree - 1,
 //                       `force` = `force` + 1,
 //                       ".implode(", ", $fields)."
 //                       WHERE playerID = :playerID");
@@ -177,7 +177,7 @@ function getHeroQueue($playerID) {
 //      $fields[] = $effect->dbFieldName . " = " . $effect->dbFieldName . " + " . $effectDeltaArray[$effect->dbFieldName];
 //    }
 //  }
-//  
+//
 //  if (sizeof($fields)) {
 //    $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
 //                         SET " . implode(", ", $fields). "
@@ -193,11 +193,11 @@ function getHeroQueue($playerID) {
 
 function skillMaxHp($playerID, $hero) {
   global $db;
-  
+
   $hero['maxHpLvl'] = $hero['maxHpLvl']++;
   $maxHP = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
   // set database query with playerID
-  
+
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                      SET maxHpLvl = maxHpLvl + 1,
                        tpFree = tpFree - 1,
@@ -210,7 +210,7 @@ function skillMaxHp($playerID, $hero) {
 
 function skillRegHp($playerID, $hero) {
   global $db;
-  
+
   $hero['regHpLvl'] = ++$hero['regHpLvl'];
   $regHP = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['regHP_formula']) . ";");
   $maxHealPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
@@ -219,27 +219,27 @@ function skillRegHp($playerID, $hero) {
   $sql = $db->prepare("UPDATE ". HERO_TABLE ."
                        SET regHpLvl = regHpLvl + 1,
                          tpFree = tpFree - 1,
-                         regHP = :regHP, 
+                         regHP = :regHP,
                          maxHealPoints = :maxHealPoints
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->bindValue('regHP', $regHP, PDO::PARAM_INT);
   $sql->bindValue('maxHealPoints', $maxHealPoints, PDO::PARAM_INT);
-  
+
   return $sql->execute();
 
 }
 
 function hero_skillAbility($skillID, $hero) {
   global $db;
-  
+
   $skill = array();
   if (array_key_exists($skillID, $GLOBALS['heroSkillTypeList'])) {
     $skill = $GLOBALS['heroSkillTypeList'][$skillID];
   } else {
     return -21;
   }
-  
+
   // check for right type
   $rightType = false;
   foreach ($skill['requiredType'] as $type) {
@@ -251,38 +251,38 @@ function hero_skillAbility($skillID, $hero) {
   if (!$rightType) {
      return -22;
   }
-  
+
   // check for enough TP
   if ($skill['costTP'] > $hero['tpFree']) {
     return -11;
   }
-  
+
   // check for maximum level
   if ($skill['maxLevel'] <= $hero[$skill['dbFieldName']]) {
-    return -5; 
+    return -5;
   }
-  
+
   //process skill
-  $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET 
-                        tpFree = tpFree - :costTP, 
+  $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET
+                        tpFree = tpFree - :costTP,
                         {$skill['dbFieldName']} = {$skill['dbFieldName']} + 1
                        WHERE heroID = :heroID");
   $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
   $sql->bindValue('costTP', $skill['costTP'], PDO::PARAM_INT);
-  
+
   if (!$sql->execute())
     return -21;
-  
+
   // set skill for further processes
   $hero[$skill['dbFieldName']] = $hero[$skill['dbFieldName']] + 1 ;
-  
+
   // UPDATE EFFECTS
   // update hero effects
   $fields = array();
   foreach ($skill['effects'] as $key => $effect) {
     $fields[] = $key . " = " . $key . " + " . ($skill['skillFactor']*$hero[$skill['dbFieldName']]);
   }
-  
+
   $sql = $db->prepare("UPDATE " . HERO_TABLE . "
                        SET " . implode(", ", $fields). "
                        WHERE heroID = :heroID");
@@ -290,7 +290,7 @@ function hero_skillAbility($skillID, $hero) {
   if (!$sql->execute()) {
     return -21;
   }
-  
+
   // update cave table
   $fields = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
@@ -300,7 +300,7 @@ function hero_skillAbility($skillID, $hero) {
       }
     }
   }
-  
+
   if (sizeof($fields)) {
     $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
                          SET " . implode(", ", $fields). "
@@ -310,19 +310,19 @@ function hero_skillAbility($skillID, $hero) {
       return -21;
     }
   }
-  
+
   return 11;
 }
 
 
 function getRitual($hero) {
   global $db;
-  
+
   $ritualCost = $GLOBALS['heroTypesList'][$hero['heroTypeID']]['ritual']['ritualCost'];
   foreach ($ritualCost as $costID => $cost) {
     $ritualCost[$costID] = eval("return " . hero_parseFormulas($cost) . ";");
   }
-  
+
   $duration = array('duration' => $GLOBALS['heroTypesList'][$hero['heroTypeID']]['ritual']['duration']);
   return array_merge($ritualCost, $duration);
 }
@@ -360,7 +360,7 @@ function createRitual($caveID, $playerID, $ritual, $hero, &$ownCaves) {
   // generate SQL
   if (sizeof($set)) {
     $set     = implode(", ", $set);
-    
+
     if (!$db->exec("UPDATE ". CAVE_TABLE ." SET {$set} {$where}")) {
       return -3;
     }
@@ -373,7 +373,7 @@ function createRitual($caveID, $playerID, $ritual, $hero, &$ownCaves) {
 
   $now = time();
   $sql = $db->prepare("INSERT INTO ". EVENT_HERO_TABLE ."
-                         (caveID, playerID, heroID, start, end, blocked) 
+                         (caveID, playerID, heroID, start, end, blocked)
                        VALUES
                          (:caveID, :playerID, :heroID, :start, :end, :blocked)");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
@@ -409,16 +409,16 @@ function createNewHero($heroTypeID, $playerID, $caveID) {
   $hero = getHeroByPlayer($playerID);
 
   if($hero == null) {
-    $player = getPlayerByID($playerID);
+    $player = Player::getPlayer($playerID);
 
     $sql = $db->prepare("INSERT INTO ". HERO_TABLE ."
-                          (caveID, playerID, heroTypeID, name, exp, healPoints, maxHealPoints, isAlive) 
+                          (caveID, playerID, heroTypeID, name, exp, healPoints, maxHealPoints, isAlive)
                         VALUES
                           (:caveID, :playerID, :heroTypeID, :name, :exp,  :healPoints, :maxHealPoints, :isAlive)");
     $sql->bindValue('caveID', 0, PDO::PARAM_INT);
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     $sql->bindValue('heroTypeID', $heroTypeID, PDO::PARAM_INT);
-    $sql->bindValue('name', $player['name'], PDO::PARAM_INT);
+    $sql->bindValue('name', $player->name, PDO::PARAM_INT);
     $sql->bindValue('exp', 0, PDO::PARAM_INT);
     $sql->bindValue('healPoints', 0, PDO::PARAM_INT);
     $sql->bindValue('maxHealPoints', eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$heroTypeID]['maxHP_formula']) . ";"), PDO::PARAM_INT);
@@ -446,7 +446,7 @@ function hero_removeHeroFromCave ($heroID) {
   }
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE . "
-                       SET isMoving = 1 
+                       SET isMoving = 1
                        WHERE heroID = :heroID");
   $sql->bindValue('heroID', $heroID, PDO::PARAM_INT);
   if (!$sql->execute()) {
@@ -461,7 +461,7 @@ function hero_usePotion ($potionID, $value) {
 
   $playerID = $_SESSION['player']->playerID;
 
-  $playerData = getPlayerByID($playerID);
+  $playerData = Player::getPlayer($playerID, true);
   $hero = getHeroByPlayer($playerID);
 
   $potion = $GLOBALS['potionTypeList'][$potionID];
@@ -475,7 +475,7 @@ function hero_usePotion ($potionID, $value) {
   }
 
   if ($playerData[$potion->dbFieldName] < $value) {
-    return -9; 
+    return -9;
   }
 
   // remove potions
@@ -515,31 +515,31 @@ function hero_usePotion ($potionID, $value) {
       return -8;
     }
   } else {
-    
+
     //remove hero effects from cave
     if (!hero_removeHeroEffectsFromCave($playerID)) {
       return -8;
     }
-    
+
     //remove hero effect from hero
     if (!hero_clearHeroEffectsAndSkills($playerID)) {
       return -8;
     }
-    
+
     $tpFree = $hero['maxHpLvl'] + $hero['regHpLvl'] + $hero['tpFree'];
-    
+
     foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
       if ($hero[$skill['dbFieldName']]) {
         $tpFree += $skill['costTP']*$hero[$skill['dbFieldName']];
       }
     }
-    
+
     $healPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
-    $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET 
+    $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
                            maxHpLvl = 0, maxHealPoints = :maxHealPoints,
                            healPoints = :healpoints,
                            regHpLvl = 0, regHP = 0,
-                           tpFree = :tpFree, 
+                           tpFree = :tpFree,
                            heroTypeID = 1000
                          WHERE playerID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
@@ -550,8 +550,8 @@ function hero_usePotion ($potionID, $value) {
       $sql_setback->execute();
       return -8;
     }
-    
-    
+
+
 
     return 6;
   }
@@ -570,7 +570,7 @@ function hero_levelUp($hero) {
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE ."
                        SET lvl = lvl +1,
-                         tpFree = tpFree +1, 
+                         tpFree = tpFree +1,
                          maxHealPoints = :maxHealPoints
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
@@ -589,12 +589,12 @@ function hero_immolateResources($value_array, $caveID, &$ownCaves) {
   if (!sizeof($value_array)) {
     return array('messageID' => -13, 'value' => 0);
   }
-  
+
   // immolation allowed only in actual cave
   if (!$ownCaves[$caveID]['hero']) {
     return array('messageID' => -24, 'value' => 0);
   }
-  
+
   $points = 0;
   foreach ($value_array as $resourceID => $value) {
     if ($value) {
@@ -656,7 +656,7 @@ function hero_cancelOrder () {
                        SET isAlive = 0,
                         caveID = 0,
                         healPoints = 0,
-                        isMoving = 0 
+                        isMoving = 0
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
 
@@ -674,10 +674,10 @@ function hero_killHero ($playerID) {
 
   // reset hero
   $sql = $db->prepare("UPDATE " . HERO_TABLE. "
-                       SET  isAlive = 0, 
-                         caveID = 0, 
-                         healPoints = 0, 
-                         isMoving = 0 
+                       SET  isAlive = 0,
+                         caveID = 0,
+                         healPoints = 0,
+                         isMoving = 0
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
   $sql->execute();
@@ -685,12 +685,12 @@ function hero_killHero ($playerID) {
   // cancel all events
   $sql = $db->prepare("DELETE FROM ". EVENT_HERO_TABLE ." WHERE heroID = :heroID");
   $sql->bindValue('heroID', $hero['heroID'], PDO::PARAM_INT);
-  
+
   $return = $sql->execute();
 
   // remove effects from cave
   $return = hero_removeHeroEffectsFromCave($playerID) && $return;
-  
+
   return $return;
 }
 
@@ -727,44 +727,44 @@ function hero_removeHeroEffectsFromCave($playerID) {
 
 function hero_changeType($typeID) {
   global $db;
-  
+
   $hero = getHeroByPlayer($_SESSION['player']->playerID);
   if ($hero['heroTypeID'] != 1000) {
     return -19;
   }
-  
+
   $sql = $db->prepare("UPDATE " . HERO_TABLE . "
                        SET heroTypeID = :typeID
                        WHERE playerID = :playerID");
   $sql->bindValue('typeID', $typeID, PDO::PARAM_INT);
   $sql->bindValue('playerID', $_SESSION['player']->playerID);
-  
+
   if (!$sql->execute()) {
     return -19;
   }
-  
+
   return 10;
 }
 
 function hero_clearHeroEffectsAndSkills($playerID) {
   global $db;
-  
+
   $hero = getHeroByPlayer($playerID);
-  
+
   $fields = array();
   foreach ($GLOBALS['effectTypeList'] as $effect) {
     array_push($fields, $effect->dbFieldName . " = 0");
   }
-  
+
   foreach ($GLOBALS['heroSkillTypeList'] as $skill) {
     array_push($fields, $skill['dbFieldName'] . " = 0");
   }
-  
+
   $sql = $db->prepare("UPDATE " . HERO_TABLE . " SET " . implode(", ", $fields) . " WHERE playerID = :playerID");
   $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
-  
+
   return $sql->execute();
-  
+
 }
 
 ?>
