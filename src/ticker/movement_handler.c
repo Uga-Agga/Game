@@ -1087,7 +1087,7 @@ void movement_handler (db_t *database, db_result_t *result) {
 
       // set last attacking tribe
       if (battle->winner == FLAG_ATTACKER) {
-        db_query(database, "UPDATE " DB_TABLE_CAVE " SET lastAttackingTribeID = %d WHERE caveID = %d", player1.tribe, player1.tribe_id, target_caveID);
+        db_query(database, "UPDATE " DB_TABLE_CAVE " SET lastAttackingTribeID = %d WHERE caveID = %d", player1.tribe_id, target_caveID);
       }
 
       // check and set take takeoverable
