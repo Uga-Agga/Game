@@ -91,7 +91,7 @@ function profile_main() {
  *  that runs on a given time...
  */
 function profile_processDeleteAccount($db_login, $playerID) {
-  $sql = $db_login->prepare("UPDATE Login 
+  $sql = $db_login->prepare("UPDATE Login
                              SET deleted = 1,
                                email = CONCAT(email, '_del')
                              WHERE LoginID = :playerID");
@@ -114,7 +114,7 @@ function profile_getPlayerData($db_login){
 * Profil aus der Game Datenbank auslesen
 *
 ****************************************************************************************************/
-  $sql_game = $db->prepare("SELECT * FROM ". PLAYER_TABLE ." WHERE playerID = :playerID"); 
+  $sql_game = $db->prepare("SELECT * FROM ". PLAYER_TABLE ." WHERE playerID = :playerID");
   $sql_game->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   if (!$sql_game->execute()) {
     return NULL;
@@ -127,7 +127,7 @@ function profile_getPlayerData($db_login){
 * Profil aus der Login Datenbank auslesen
 *
 ****************************************************************************************************/
-  $sql_login = $db_login->prepare("SELECT * FROM " . LOGIN_TABLE . " WHERE LoginID = :playerID"); 
+  $sql_login = $db_login->prepare("SELECT * FROM " . LOGIN_TABLE . " WHERE LoginID = :playerID");
   $sql_login->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
   if (!$sql_login->execute()) {
     return NULL;
@@ -198,12 +198,16 @@ function profile_update($db_login) {
   }
 
   // password too short?
-  if(!preg_match('/^\w{6,}$/', unhtmlentities($data['jabberPwdNew']))) {
-    return array('type' => 'error', 'message' => _('Das Jabber Passwort muss mindestens 6 Zeichen lang sein!'));
+  if (empty($data['jabberPwdNew'])) {
+    $data['jabberPwdNew'] = null;
+  } else {
+    if(!preg_match('/^\w{6,}$/', unhtmlentities($data['jabberPwdNew']))) {
+      return array('type' => 'error', 'message' => _('Das Jabber Passwort muss mindestens 6 Zeichen lang sein!'));
+    }
   }
 
-  $sql = $db->prepare("UPDATE " . PLAYER_TABLE . " 
-                       SET origin = :origin, 
+  $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
+                       SET origin = :origin,
                          icq = :icq,
                          avatar = :avatar,
                          description = :description,
@@ -242,7 +246,7 @@ function profile_update($db_login) {
 
     // set password
     $sql = $db_login->prepare("UPDATE Login SET password = :password WHERE LoginID = :loginID");
-    $sql->bindValue('password', $data['passwordNew'], PDO::PARAM_STR); 
+    $sql->bindValue('password', $data['passwordNew'], PDO::PARAM_STR);
     $sql->bindValue('loginID', $playerID, PDO::PARAM_INT);
 
     if (!$sql->execute() || $sql->rowCount() == 0) {

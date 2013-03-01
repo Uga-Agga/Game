@@ -56,7 +56,8 @@ DEBUG = 'on';
           $('#status-msg').hide();
           $('#mainTab a[href="'+url+'"]').tab('show');
           if(url!=window.location) {
-            window.history.pushState($(this).attr('href'), '', $(this).attr('href'));
+            var urlHistory = $.url().attr('path')+"?"+$.url().attr('query')+$(this).attr('href');
+            window.history.pushState(urlHistory, '', urlHistory);
           }
         }
 /* Einfach Ignorieren ;) */
@@ -97,6 +98,21 @@ DEBUG = 'on';
           window.history.pushState($(this).attr('href'), '', $(this).attr('href'));
         }
       }
+    });
+
+    $(window).bind('popstate', function(e) {
+      var url = $.url(window.history.state);
+
+      $.ajax({
+        url: url.attr('path')+'?'+url.attr('query')+'&method=ajax#'+url.fsegment(1),
+        cache: false,
+        dataType: 'html',
+        success: function(data) {
+          var useJson = true;
+          try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+          if (useJson === true) {parseJson(json);} else {updateContent(data);}
+        }
+      });
     });
 
     $(document).on('click', "button", function(e){
