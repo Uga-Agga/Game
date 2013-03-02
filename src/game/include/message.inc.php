@@ -632,7 +632,7 @@ class Messages extends Parser {
     }
     unset($row['dummy']);
 
-    if ($row['senderID'] != 0) {
+    if ($row['senderID'] != 0 || in_array($row['nachrichtenart'], array(8))) {
       $row['nachricht'] = $this->p($row['nachricht']);
     }
 
