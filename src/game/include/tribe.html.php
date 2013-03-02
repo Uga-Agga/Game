@@ -110,7 +110,7 @@ function tribe_getContent($caveID, &$details) {
     $template->throwError('Der Stamm konnte nicht geladen werden.');
     return;
   }
-  $tribeMembers = Tribe::getPlayerList($tribeID, true, true);
+  $tribeMembers = Tribe::getPlayerList($tribeID, true, true, 'p.name');
 
   // open template
   $template->setFile('tribeMember.tmpl');

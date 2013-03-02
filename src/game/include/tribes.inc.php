@@ -38,7 +38,7 @@ class Tribe {
       $row = $sql->fetch(PDO::FETCH_ASSOC);
       $sql->closeCursor();
 
-      if($row['calculateTime'] > 30) {
+      if($res['calculateTime'] > 30) {
         $k = 15;
       } else {
         $k = 25;
@@ -65,7 +65,7 @@ class Tribe {
       $row = $sql->fetch(PDO::FETCH_ASSOC);
       $sql->closeCursor();
 
-      if($row['calculateTime'] > 30) {
+      if($res['calculateTime'] > 30) {
         $k = 15;
       } else {
         $k = 25;
@@ -726,7 +726,7 @@ class Tribe {
       return false;
     }
 
-    TribeMessage::sendIntern($tribeID, self::MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen zu dürfen.'));
+    TribeMessage::sendIntern($tribeID, self::TRIBE_MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen zu dürfen.'));
 
     return true;
   }
@@ -847,7 +847,7 @@ class Tribe {
       return false;
     }
 
-    TribeMessage::sendIntern($tribeID, self::MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nun genug Mitglieder um Beziehungen eingehen zu dürfen.'));
+    TribeMessage::sendIntern($tribeID, self::TRIBE_MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nun genug Mitglieder um Beziehungen eingehen zu dürfen.'));
   }
 
   public static function updateWonLost($tribeID, $targetTribeID, $targetwon) {
@@ -1470,8 +1470,8 @@ class TribeRelation {
     }
 
     // tribe messages for forced surrender
-    TribeMessage::sendIntern($tribeData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Zwangskapitulation über %s"), $targetData['tag']), sprintf(_("Ihr Stammesanführer hat den Stamm %s zur Aufgabe gezwungen."), $targetData['tag']));
-    TribeMessage::sendIntern($targetData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Zwangskapitulation gegen %s"), $tribeData['tag']), sprintf(_("Der Stammesanführer des Stammes %s hat ihren Stamm zur Aufgabe gezwungen."), $tribeData['tag']));
+    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Zwangskapitulation über %s"), $targetData['tag']), sprintf(_("Ihr Stammesanführer hat den Stamm %s zur Aufgabe gezwungen."), $targetData['tag']));
+    TribeMessage::sendIntern($targetData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Zwangskapitulation gegen %s"), $tribeData['tag']), sprintf(_("Der Stammesanführer des Stammes %s hat ihren Stamm zur Aufgabe gezwungen."), $tribeData['tag']));
 
     return $messageID;
   }
