@@ -361,6 +361,6 @@ DEBUG = 'on';
     return text;
   }
 
-    function ua_log(out){if(DEBUG==='on'&&typeof console.log !== "undefined"){console.log(out);}}
+    function ua_log(out){if(DEBUG==='on'&&typeof console !== "undefined"&&typeof console.log !== "undefined"){console.log(out);}}
 })
 }(window.jQuery)
