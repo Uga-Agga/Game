@@ -101,6 +101,7 @@ DEBUG = 'on';
     });
 
     $(window).bind('popstate', function(e) {
+      ua_log('please go back');
       var url = $.url(window.history.state);
 
       $.ajax({

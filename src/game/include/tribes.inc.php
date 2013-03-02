@@ -38,7 +38,7 @@ class Tribe {
       $row = $sql->fetch(PDO::FETCH_ASSOC);
       $sql->closeCursor();
 
-      if($res['calculateTime'] > 30) {
+      if($row['calculateTime'] > 30) {
         $k = 15;
       } else {
         $k = 25;
@@ -65,7 +65,7 @@ class Tribe {
       $row = $sql->fetch(PDO::FETCH_ASSOC);
       $sql->closeCursor();
 
-      if($res['calculateTime'] > 30) {
+      if($row['calculateTime'] > 30) {
         $k = 15;
       } else {
         $k = 25;
@@ -1470,8 +1470,8 @@ class TribeRelation {
     }
 
     // tribe messages for forced surrender
-    TribeMessage::sendIntern($tribeData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Zwangskapitulation über %s"), $targetData['tag']), sprintf(_("Ihr Stammesanführer hat den Stamm %s zur Aufgabe gezwungen."), $targetData['tag']));
-    TribeMessage::sendIntern($targetData['tribeID'], self::MESSAGE_RELATION, sprintf(_("Zwangskapitulation gegen %s"), $tribeData['tag']), sprintf(_("Der Stammesanführer des Stammes %s hat ihren Stamm zur Aufgabe gezwungen."), $tribeData['tag']));
+    TribeMessage::sendIntern($tribeData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Zwangskapitulation über %s"), $targetData['tag']), sprintf(_("Ihr Stammesanführer hat den Stamm %s zur Aufgabe gezwungen."), $targetData['tag']));
+    TribeMessage::sendIntern($targetData['tribeID'], Tribe::MESSAGE_RELATION, sprintf(_("Zwangskapitulation gegen %s"), $tribeData['tag']), sprintf(_("Der Stammesanführer des Stammes %s hat ihren Stamm zur Aufgabe gezwungen."), $tribeData['tag']));
 
     return $messageID;
   }

@@ -23,7 +23,7 @@ function rankingPlayer_checkOffsetBySearch($search, $numRows) {
   }
 
   $sql = $db->prepare("SELECT rank
-                       FROM ". RANKING_TABLE ." 
+                       FROM ". RANKING_TABLE ."
                        WHERE name LIKE :search");
   $sql->bindValue('search', $search, PDO::PARAM_STR);
   if (!$sql->execute()) return -1;
@@ -49,7 +49,7 @@ function rankingPlayer_checkOffsetByPage($playerID, $page, $numRows) {
   if ($page == 0) {
     // $page is not set yet, show the actual player in the middle of the list
     $sql = $db->prepare("SELECT rank
-                         FROM ". RANKING_TABLE." 
+                         FROM ". RANKING_TABLE."
                          WHERE playerID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     if (!$sql->execute()) return 0;
@@ -78,7 +78,7 @@ function rankingPlayer_getRowsByOffset($offset) {
     return array();
   }
 
-  $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, t.tag as tribe, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
+  $sql = $db->prepare("SELECT r.rank, r.playerID AS playerID, r.name, r.average AS points, r.religion, t.tag as tribe, t.tribeID, r.caves, p.awards, r.fame as kp, (IF(ISNULL(t.leaderID),0,r.playerID = t.leaderID)) AS is_leader
                        FROM ". RANKING_TABLE ." r
                          LEFT JOIN ". PLAYER_TABLE ." p ON r.playerID = p.playerID
                          LEFT JOIN ". TRIBE_TABLE ." t ON p.tribeID = t.tribeID
@@ -113,7 +113,7 @@ function rankingPlayer_getMaxRows() {
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret['num_rows'];
 }
 
@@ -126,7 +126,7 @@ function rankingTribe_checkOffsetBySearch($search, $numRows) {
   }
 
   $sql = $db->prepare("SELECT rank
-                       FROM ". RANKING_TRIBE_TABLE ." 
+                       FROM ". RANKING_TRIBE_TABLE ."
                        WHERE tribe LIKE :search");
   $sql->bindValue('search', $search, PDO::PARAM_STR);
   if (!$sql->execute()) return -1;
@@ -156,7 +156,7 @@ function rankingTribe_checkOffsetByPage($tribeID, $page, $numRows) {
 
     // $page is not set yet, show the actual player in the middle of the list
     $sql = $db->prepare("SELECT rank
-                         FROM ". RANKING_TRIBE_TABLE." 
+                         FROM ". RANKING_TRIBE_TABLE."
                          WHERE tribeID = :tribeID");
     $sql->bindValue('tribeID', $tribeID, PDO::PARAM_INT);
     if (!$sql->execute()) return 0;
@@ -216,7 +216,7 @@ function rankingTribe_getMaxRows() {
 
   $ret = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
-  
+
   return $ret['num_rows'];
 }
 

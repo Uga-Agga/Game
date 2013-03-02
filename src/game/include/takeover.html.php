@@ -151,7 +151,7 @@ function takeover_change($xCoord, $yCoord) {
   $change_check = Request::getVar('change_check', 0);
 
   // verify $check
-  if ($change_check != $_SESSION['change_check']) {
+  if (isset($_SESSION['change_check']) && $change_check != $_SESSION['change_check']) {
     return array('type' => 'error', 'message' => _('Sie können nicht für diese Höhle bieten. Wählen sie eine freie Höhle.'));
   }
 
