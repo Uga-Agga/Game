@@ -25,7 +25,7 @@ function wonder_getWonderDetailContent($wonderID, $caveData, $method) {
   else {
     $shortVersion = false;
     $template->setFile('wonderDetail.tmpl');
-    $template->setShowRresource(false);
+    $template->setShowResource(false);
   }
 
   // first check whether that wonder should be displayed...

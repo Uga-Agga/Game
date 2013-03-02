@@ -1,7 +1,7 @@
 <?php
 /*
  * questionnaire.html.php -
- * Copyright (c) 2003  OGP Team, 
+ * Copyright (c) 2003  OGP Team,
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
  * Copyright (c) 2012-2013 David Unger <unger.dave@gmail.com>
  *
@@ -74,7 +74,7 @@ function questionnaire_getQuestionnairePresents($caveID, &$ownCaves) {
 
   // open template
   $template->setFile('questionnairePresents.tmpl');
-  $template->setShowRresource(false);
+  $template->setShowResource(false);
 
   //messages
   $messageText = array(
@@ -163,7 +163,7 @@ function questionnaire_getQuestions() {
 function questionnaire_getPresents() {
   global $db;
 
-  $sql = $db->prepare("SELECT * 
+  $sql = $db->prepare("SELECT *
                        FROM ". QUESTIONNAIRE_PRESENTS_TABLE ."
                        ORDER BY presentID ASC");
   if (!$sql->execute()) return array();
@@ -235,7 +235,7 @@ function questionnaire_addCredits($credits) {
   global $db;
 
   $sql = $db->prepare("UPDATE ". PLAYER_TABLE ."
-                       SET questionCredits = questionCredits + :credits 
+                       SET questionCredits = questionCredits + :credits
                        WHERE playerID = :playerID
                          AND questionCredits + :credits >= 0");
   $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
@@ -407,7 +407,7 @@ function questionnaire_giveAnswers($answers) {
   }
 
   // get valid answers
-  $sql = $db->prepare("SELECT * 
+  $sql = $db->prepare("SELECT *
                        FROM ". QUESTIONNAIRE_CHOISES_TABLE ."
                        WHERE questionID IN (".implode(", ", array_map(array($db, 'quote'), array_keys($answers))).")");
   if ($sql->rowCountSelect() == 0) return -2;
@@ -433,12 +433,12 @@ function questionnaire_giveAnswers($answers) {
 
   // get questions
   $questions = array();
-  $sql = $db->prepare("SELECT * 
+  $sql = $db->prepare("SELECT *
                        FROM ". QUESTIONNAIRE_QUESTIONS_TABLE ."
                        WHERE questionID IN (".implode(",", array_keys($answers)).")");
   if ($sql->rowCountSelect() == 0) return -2;
   if (!$sql->execute()) return -3;
-  
+
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
     $questions[$row['questionID']] = $row;
   }
@@ -463,7 +463,7 @@ function questionnaire_giveAnswers($answers) {
     //$rewards += $questions[$questionID]['credits'];
     $rewards += $choises[$questionID][$choiceID]['credits'];
   }
-  
+
   // now update playerstats
   if (!questionnaire_addCredits($rewards)) {
     return -5;
