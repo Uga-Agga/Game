@@ -70,14 +70,12 @@ if (!($db_game = DbConnect())) {
 
 $db = $db_game;
 
-if ($tag = tribe_getTagOfPlayerID($playerID)) {
-  echo "DELETE PLAYER $playerID: Leave Player ";
-  if (tribe_processLeave($playerID, $tag, 1) != 2) {
-    echo "FAILURE\n";
-  }
-  else {
-    echo "SUCCESS\n";
-  }
+echo "DELETE PLAYER $playerID: Leave Player ";
+if (!Tribe::leaveTribe($playerID)) {
+  echo "FAILURE\n";
+}
+else {
+  echo "SUCCESS\n";
 }
 
 echo "DELETE PLAYER $playerID: Delete Player ";

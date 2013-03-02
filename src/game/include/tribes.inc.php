@@ -726,7 +726,7 @@ class Tribe {
       return false;
     }
 
-    TribeMessage::sendIntern($tribeID, self::TRIBE_MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen zu dürfen.'));
+    TribeMessage::sendIntern($tribeID, self::MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nicht mehr genug Mitglieder um Beziehungen eingehen zu dürfen.'));
 
     return true;
   }
@@ -847,7 +847,7 @@ class Tribe {
       return false;
     }
 
-    TribeMessage::sendIntern($tribeID, self::TRIBE_MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nun genug Mitglieder um Beziehungen eingehen zu dürfen.'));
+    TribeMessage::sendIntern($tribeID, self::MESSAGE_INFO, _('Mitgliederzahl'), _('Der Stamm hat nun genug Mitglieder um Beziehungen eingehen zu dürfen.'));
   }
 
   public static function updateWonLost($tribeID, $targetTribeID, $targetwon) {
