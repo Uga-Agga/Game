@@ -48,7 +48,7 @@ class Template {
     $this->vars = array();
     $this->showRresource = true;
   }
-  
+
   public function addVars($vars) {
     $this->vars = array_merge($this->vars, $vars);
   }
@@ -70,7 +70,7 @@ class Template {
     $this->file = $file;
   }
 
-  public function setShowRresource($flag) {
+  public function setShowResource($flag) {
     $this->showRresource = $flag;
   }
 

@@ -1,9 +1,9 @@
 <?php
 /*
- * improvement_building_detail.html.php - 
+ * improvement_building_detail.html.php -
  * Copyright (c) 2004  OGP Team
  * Copyright (c) 2011  Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -24,7 +24,7 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   } else {
     $shortVersion = false;
     $template->setFile('improvementDetail.tmpl');
-    $template->setShowRresource(false);
+    $template->setShowResource(false);
   }
 
   // first check whether that unit should be displayed...
