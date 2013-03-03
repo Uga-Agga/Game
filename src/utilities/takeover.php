@@ -40,6 +40,7 @@ include INC_DIR . "config.inc.php";
 include INC_DIR . "db.inc.php";
 include INC_DIR . "rules/game.rules.php";
 include INC_DIR . "basic.lib.php";
+include INC_DIR . "Player.php";
 
 // connect to DB
 $db     = DbConnect();

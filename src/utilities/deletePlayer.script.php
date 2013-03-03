@@ -22,7 +22,7 @@ include INC_DIR."db.inc.php";
 include INC_DIR."rules/game.rules.php";
 include INC_DIR."rules/hero.rules.php";
 include INC_DIR."hero.inc.php";
-
+include INC_DIR."artefact.inc.php";
 
 if ($_SERVER['argc'] != 2) {
   echo "Usage: ".$_SERVER['argv'][0]." playerID\n";
