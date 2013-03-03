@@ -100,7 +100,7 @@ else {
 }
 
 echo "DELETE PLAYER $playerID: Delete Election";
-$sql = $db_game->prepare("DELETE FROM ". ELECTION_TABLE ." WHERE voterID = :playerID");
+$sql = $db_game->prepare("DELETE FROM ". TRIBE_ELECTION_TABLE ." WHERE voterID = :playerID");
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
 if (!$sql->execute()) {

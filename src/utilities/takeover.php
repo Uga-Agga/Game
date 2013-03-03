@@ -2,7 +2,7 @@
 /*
  * takeover.php - script handling the biddings on caves
  * Copyright (c) 2004  Marcus Lunzenauer
- * Copyright (c) 2012  David Unger
+ * Copyright (c) 2012-2013 David Unger
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -101,7 +101,7 @@ foreach ($takeover_caves AS $row) {
     array_shift($bidders);
 
     // get winner's name
-    $winnerdata = getPlayerByID($winner['playerID']);
+    $winnerdata = Player::getPlayer($winner['playerID'], true);
     $winner['player_name'] = $winnerdata['name'];
 
     // process winner
@@ -290,7 +290,7 @@ function takeover_get_bidders($caveID) {
     $query_resource = implode(" + ", $query_resource);
   }
 
-  $sql = $db->prepare("SELECT ct.*, ($query_resource) AS abs_bidding, 
+  $sql = $db->prepare("SELECT ct.*, ($query_resource) AS abs_bidding,
                          COUNT(*) AS caves,
                          ($query_resource)/(COUNT(*)*COUNT(*)) AS rel_bidding
                        FROM " . CAVE_TAKEOVER_TABLE . " ct
@@ -312,7 +312,7 @@ function takeover_get_bidders($caveID) {
  */
 function takeover_process_winner($winner) {
   global $db;
-  
+
   $sql = $db->prepare("UPDATE " . CAVE_TAKEOVER_TABLE . "
                        SET status = status + 1
                        WHERE playerID = :playerID");
@@ -348,9 +348,9 @@ function takeover_other_bidders($caveID, $playerID) {
   global $db;
 
   // get winner's data
-  $winner = getPlayerByID($playerID);
+  $winner = Player::getPlayer($playerID, true);
 
-  $sql = $db->prepare("SELECT * 
+  $sql = $db->prepare("SELECT *
                        FROM Cave_takeover
                        WHERE caveID = :caveID
                          AND playerID != :playerID");
@@ -376,7 +376,7 @@ function takeover_transfer_cave_to($caveID, $playerID) {
   $playerID = (int) $playerID;
 
   // get player
-  $winner = getPlayerByID($playerID);
+  $winner = Player::getPlayer($playerID, true);
   if (!sizeof($winner)){
     echo "ERROR (takeover_transfer_cave_to): Could not transfer Cave $caveID to Player $playerID.\n";
     return FALSE;
