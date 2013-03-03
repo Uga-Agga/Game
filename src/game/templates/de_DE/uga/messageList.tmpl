@@ -7,26 +7,12 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 {% extends "base.tmpl" %}
 {% block title %}Nachrichten{% endblock %}
 {% block content %}
-
-<script type="text/javascript">
-// <![CDATA[
-function checkall(){
-  if(document.getElementById("deletemessages").all) 
-  var c = document.getElementById("deletemessages").all.checked;
-  for (var i=0;i<document.getElementById("deletemessages").elements.length;i++){
-    var e = document.getElementById("deletemessages").elements[i];
-    if(e.name != 'all') e.checked = c;
-  }
-}
-
-// ]]>
-</script>
 
 {% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
 
@@ -70,15 +56,15 @@ function checkall(){
           <th colspan="3">
             <input class="check-all" type="checkbox" style="margin-right: 5px;">
             {% if not trash %}
-              <button type="button" id="mark_delete" name="mark_delete" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten löschen"><i class="icon-trash"></i></button>
-              <button type="button" id="mark_read" name="mark_read" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten als gelesen makieren"><i class="icon-eye-open"></i></button>
-              <button type="button" id="mark_mail" name="mark_mail" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="makierte Nachrichten per E-Mail schicken"><i class="icon-print"></i></button>
+              <button type="button" id="mark_delete" name="mark_delete" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="markierte Nachrichten löschen"><i class="icon-trash"></i></button>
+              <button type="button" id="mark_read" name="mark_read" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="markierte Nachrichten als gelesen markieren"><i class="icon-eye-open"></i></button>
+              <button type="button" id="mark_mail" name="mark_mail" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="markierte Nachrichten per E-Mail schicken"><i class="icon-print"></i></button>
             {% else %}
               <button type="button" id="mark_recover" name="mark_recover" class="btn-transparent btn-icon tooltip-show" rel="tooltip" data-placement="top" data-original-title="Nachricht in den Posteingang verschieben"><i class="icon-repeat"></i></button>
             {% endif %}
           </th>
           <th colspan="3" class="text-right">
-            Nachrichten {{ message_min }} - {{ message_max }} von {{ message_count }} &nbsp; 
+            Nachrichten {{ message_min }} - {{ message_max }} von {{ message_count }} &nbsp;
             {% if message_prev %}
               <a href="main.php?offset={{ message_prev.offset }}&amp;modus={{ message_prev.modus }}&amp;box={{ message_prev.box }}&amp;messageClass={{ message_prev.message_class }}"><i class="icon-step-backward"></i></a>
             {% else %}
@@ -108,7 +94,7 @@ function checkall(){
               {% if not trash %}
                 <td class="message-icons">
                   <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_delete&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht in den Papierkorb verschieben" data-post="true"><i class="icon-trash"></i></a>
-                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_read&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht als gelesen makieren" data-post="true"><i class="icon-eye-open"></i></a>
+                  <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_read&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht als gelesen markieren" data-post="true"><i class="icon-eye-open"></i></a>
                   <a class="change_mouseover tooltip-show" href="main.php?modus={{ messages_list_link }}&amp;action=mark_mail&amp;caveID={{ cave_id }}&amp;box={{ message_box }}&amp;messageID={{ item.messageID }}" rel="tooltip" data-placement="top" data-original-title="Nachricht per E-Mail schicken" data-post="true"><i class="icon-print"></i></a>
                 </td>
               {% else %}

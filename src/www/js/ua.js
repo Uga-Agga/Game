@@ -274,6 +274,9 @@ DEBUG = 'on';
       $($('#content').html()).find('.timer').each(function(i) {
         var endTime = new Date(); endTime.setTime($(this).attr('data-endtime') * 1000);
         var serverTime = new Date($(this).attr('data-servertime'));
+        console.log('local'+Date());
+        console.log('end'+endTime);
+        console.log('server'+serverTime);
         $('#'+$(this).attr('id')).countdown({until: endTime, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
       });
 

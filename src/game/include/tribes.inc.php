@@ -1116,7 +1116,7 @@ class TribeLeader {
     if ($newLeaderID > 0) {
       $player = Player::getPlayer($newLeaderID);
 
-      TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, _('Stammesführung'), sprintf(_('Ihr Stamm hat eines Oberhaupt: %s.'), $player->name));
+      TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, _('Stammesführung'), sprintf(_('Ihr Stamm hat ein neues Oberhaupt: %s.'), $player->name));
     }
 
     return $newLeaderID;
