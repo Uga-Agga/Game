@@ -59,7 +59,7 @@ function rankingPlayer_checkOffsetByPage($playerID, $page, $numRows) {
     if (!$row) {
       return 0;
     } else {
-      return abs(floor($row['rank']/RANKING_ROWS)) * RANKING_ROWS;
+      return (abs(ceil($row['rank']/RANKING_ROWS))-1) * RANKING_ROWS;
     }
   } else {
     $maxPages = ceil($numRows/RANKING_ROWS);
