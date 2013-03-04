@@ -84,7 +84,7 @@ function unit_Movement($caveID, &$ownCave) {
     }
   }
 
-  if ($details['hero'] != 0 && Request::getVar('moveHero', false) == true) {
+  if ($details['hero'] != 0 && Request::getVar('moveHero', 0) == 1) {
     $moveHero = $details['hero'];
   }
 
@@ -165,7 +165,7 @@ function unit_Movement($caveID, &$ownCave) {
     $denymovement_nonenemy = false;
     $denymovement_targetwar = false;
     if ($movementID == 2) {  // move units/resources
-      if (!$targetPlayer != null) {
+      if ($targetPlayer != null) {
         if (strtoupper($targetPlayer->tribeID) != strtoupper($_SESSION['player']->tribeID)) {  //may tade in own tribe
           $ownTribeAtWar = TribeRelation::hasWar($_SESSION['player']->tribeID, true);
           $targetTribeAtWar = TribeRelation::hasWar($targetPlayer->tribeID, true);

@@ -1109,14 +1109,16 @@ class TribeLeader {
       }
     }
 
-    if ($newLeaderID == 0) {
-      TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, _('Stammesführung'), _('Der Stamm hat momentan kein Oberhaupt mehr.'));
-    }
+    if ($newLeaderID != $oldLeaderID) {
+      if ($newLeaderID == 0) {
+        TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, _('Stammesführung'), _('Der Stamm hat momentan kein Oberhaupt mehr.'));
+      }
 
-    if ($newLeaderID > 0) {
-      $player = Player::getPlayer($newLeaderID);
+      if ($newLeaderID > 0) {
+        $player = Player::getPlayer($newLeaderID);
 
-      TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, _('Stammesführung'), sprintf(_('Ihr Stamm hat ein neues Oberhaupt: %s.'), $player->name));
+        TribeMessage::sendIntern($tribeID, Tribe::MESSAGE_LEADER, _('Stammesführung'), sprintf(_('Ihr Stamm hat ein neues Oberhaupt: %s.'), $player->name));
+      }
     }
 
     return $newLeaderID;
