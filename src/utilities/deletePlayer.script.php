@@ -22,7 +22,7 @@ include INC_DIR."db.inc.php";
 include INC_DIR."rules/game.rules.php";
 include INC_DIR."rules/hero.rules.php";
 include INC_DIR."hero.inc.php";
-
+include INC_DIR."artefact.inc.php";
 
 if ($_SERVER['argc'] != 2) {
   echo "Usage: ".$_SERVER['argv'][0]." playerID\n";
@@ -100,7 +100,7 @@ else {
 }
 
 echo "DELETE PLAYER $playerID: Delete Election";
-$sql = $db_game->prepare("DELETE FROM ". ELECTION_TABLE ." WHERE voterID = :playerID");
+$sql = $db_game->prepare("DELETE FROM ". TRIBE_ELECTION_TABLE ." WHERE voterID = :playerID");
 $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
 
 if (!$sql->execute()) {
