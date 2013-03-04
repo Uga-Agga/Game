@@ -635,7 +635,6 @@ int getRandomTribeCaveWonder () {
   int* numbers = NULL;
   int* more_numbers = NULL;
   const struct Wonder *wonder;
-  debug(DEBUG_TICKER, "getRandomTribeCaveWonder: wonderID1:");
   for (i=0; i < MAX_WONDER; ++i) {
     wonder = (struct Wonder *) wonder_type[i];
     if (wonder->isTribeCaveWonder == 1) {
@@ -655,7 +654,6 @@ int getRandomTribeCaveWonder () {
   // get random number;
   srand (time(NULL));
   rnd = rand()%count;
-  debug(DEBUG_TICKER, "getRandomTribeCaveWonder: wonderID: %d, count: %d, rand(): %d", numbers[rnd], count, rand()%count);
   return numbers[rnd];
 }
 
