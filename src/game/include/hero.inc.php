@@ -569,7 +569,7 @@ function hero_levelUp($hero) {
   $maxHealPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE ."
-                       SET lvl = lvl +1,
+                       SET lvl = lvl + 2,
                          tpFree = tpFree +1,
                          maxHealPoints = :maxHealPoints
                        WHERE playerID = :playerID");

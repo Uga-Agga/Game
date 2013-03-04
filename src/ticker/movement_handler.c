@@ -52,7 +52,7 @@
 
 #define FAME_MAX_OVERPOWER_FACTOR 4
 
-#define TRIBE_CAVES_WONDER_ENABLE 0
+#define TRIBE_CAVES_WONDER_ENABLE 1
 
 #define drand()    (rand() / (RAND_MAX+1.0))
 
@@ -628,6 +628,37 @@ struct Battle *hero_update_after_battle(db_t *database,
   return battle;
 }
 
+int getRandomTribeCaveWonder () {
+  int i = 0;
+  int count = 0;
+  int rnd = 0;
+  int* numbers = NULL;
+  int* more_numbers = NULL;
+  const struct Wonder *wonder;
+  debug(DEBUG_TICKER, "getRandomTribeCaveWonder: wonderID1:");
+  for (i=0; i < MAX_WONDER; ++i) {
+    wonder = (struct Wonder *) wonder_type[i];
+    if (wonder->isTribeCaveWonder == 1) {
+      count++;
+      more_numbers = (int*) realloc (numbers, count * sizeof(int));
+      if (more_numbers != NULL) {
+        numbers=more_numbers;
+        numbers[count-1] = i;
+      } else {
+        free (numbers);
+        // error reallocating
+        return -1;
+      }
+    }
+  }
+
+  // get random number;
+  srand (time(NULL));
+  rnd = rand()%count;
+  debug(DEBUG_TICKER, "getRandomTribeCaveWonder: wonderID: %d, count: %d, rand(): %d", numbers[rnd], count, rand()%count);
+  return numbers[rnd];
+}
+
 void processTribeCaveWonder(db_t *database, struct Cave tribeCave, struct Player attPlayer) {
   db_result_t *result;
   int row;
@@ -635,9 +666,8 @@ void processTribeCaveWonder(db_t *database, struct Cave tribeCave, struct Player
   int caveWonderId;
 
   caveWonderId = ((struct Terrain *)terrain_type[tribeCave.terrain])->tribeCaveWonderId;
-
   if (caveWonderId == -1) {
-    //caveWonderId = getRandomTribeCaveWonder();
+    caveWonderId = getRandomTribeCaveWonder();
   }
 
   // end existing tribeCave Wonder
