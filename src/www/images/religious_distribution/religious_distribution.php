@@ -26,13 +26,8 @@ $religions =  ranking_getReligiousDistribution();
 $ugaCount = (isset($religions['uga'])) ? $religions['uga'] : 0;
 $aggaCount = (isset($religions['agga'])) ? $religions['agga'] : 0;
 
-if (($ugaCount + $aggaCount) != 0) {
-  $uga_part = round($ugaCount/($ugaCount + $aggaCount)*100);
-  $agga_part = round($aggaCount/($ugaCount + $aggaCount)*100);
-} else {
-  $uga_part = 0;
-  $agga_part = 0;
-}
+$uga_part = ($ugaCount != 0) ? round($ugaCount/($ugaCount + $aggaCount)*100) : 0;
+$agga_part = ($aggaCount != 0) ? round($aggaCount/($ugaCount + $aggaCount)*100) : 0;
 
 $filename = reldis_getFilename($uga_part, $agga_part);
 

@@ -2,6 +2,7 @@
 /*
  * createDailySpreadSheet.php -
  * Copyright (c) 2004  OGP Team
+ * Copyright (c) 2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -19,11 +20,12 @@ $db     = DbConnect();
 $sql = $db->prepare("SELECT c.caveID, c.xCoord,
                        c.yCoord, CONCAT(\"'\", c.name, \"'\"),
                        c.terrain, CONCAT(\"'\", p.name, \"'\"),
-                       CONCAT(\"'\", p.tribe, \"'\"),
+                       CONCAT(\"'\", t.tag, \"'\"),
                        r.rank
                      FROM " . CAVE_TABLE . " c
                        LEFT JOIN " . PLAYER_TABLE . " p ON p.playerID = c.playerID
-                       LEFT JOIN " . RANKING_TABLE . " r ON r.playerID = p.playerID");
+                       LEFT JOIN " . RANKING_TABLE . " r ON r.playerID = p.playerID
+                       LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = p.tribeID");
 if (!$sql->execute()) {
   die("Fehler beim Auslesen.");
 }

@@ -1420,6 +1420,9 @@ class TribeRelation {
     $result = false;
 
     foreach ($attribArray as $attrib) {
+      if (!isset($relation['own']['relationType']) || !isset($relation['other']['relationType'])) {
+        break;
+      }
       $result = ($GLOBALS['relationList'][$relation['own']['relationType']][$attrib] == 1) && ($GLOBALS['relationList'][$relation['other']['relationType']][$attrib] == 1);
       if ($result) {
         break;
