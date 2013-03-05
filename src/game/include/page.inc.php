@@ -165,7 +165,7 @@ function page_logRequest($modus, $caveID) {
 
 function page_ore() {
   //TODO
-  return; 
+  return;
 
   global $db;
   $now = time();
@@ -189,7 +189,7 @@ function page_ore() {
       $sql->bindValue('stamp', addslashes(time_toDatetime($now)), PDO::PARAM_STR);
       $sql->bindValue('sid', session_id(), PDO::PARAM_STR);
       $sql->execute();
-  
+
       $_SESSION['ore_counter'] = 0;
     }
   }
@@ -199,6 +199,8 @@ function page_ore() {
 }
 
 function page_finish($id='') {
+  global $template;
+
   $messageText = array (
     'cookie'         => array('title' => _('Cookie fehler'),    'msg'  => _('Sie müssen 3rd party cookies erlauben.<br /><br /<a href="' . LOGIN_PATH . '">Hier gehts weiter zum Portal</a>')),
     'default'        => array('title' => _('Warnmeldung'),      'msg' => _('Es ist ein Fehler aufgetreten. Bitte erneut einloggen um weiterspielen zu können.')),

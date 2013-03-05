@@ -26,7 +26,9 @@ class Template {
     }
 
     // include and register Twig auto-loader
-    include 'Twig/Autoloader.php';
+    if (!class_exists('Twig_Autoloader')) {
+      include 'Twig/Autoloader.php';
+    }
     Twig_Autoloader::register();
 
     try {
@@ -52,7 +54,7 @@ class Template {
     $this->vars = array();
     $this->showRresource = true;
   }
-  
+
   public function addVars($vars) {
     $this->vars = array_merge($this->vars, $vars);
   }
