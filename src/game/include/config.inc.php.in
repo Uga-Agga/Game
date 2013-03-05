@@ -140,6 +140,7 @@ define("MAX_AVATAR_HEIGHT", 200);
 
 /* ***** HERO ***** ******************************************************** */
 define("HERO_DB_FIELD", "heroism");
+define("HERO_MAX_UNIT_SIZE", 2000);
 
 /* ***** TRIBE_STORAGE_DONATION ***** ************************************ */
 define("TRIBE_STORAGE_DONATION_INTERVAL", 24);
@@ -167,7 +168,7 @@ class Config {
   const GAME_START_URL      = "main.php";
 
   const WWW_REQUEST_TIMEOUT = .000;
-  
+
   const JABBER_SERVER       = '';
   const JABBER_NO_CLOSE     = '';
   const JABBER_STATIC_GROUPCHATS = '';

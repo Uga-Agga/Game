@@ -79,6 +79,7 @@ function unit_Movement($caveID, &$ownCave) {
 
   if ($details['hero'] != 0) {
     $hero = getHeroByPlayer($_SESSION['player']->playerID);
+    $hero['maxUnitsSize'] = max(HERO_MAX_UNIT_SIZE, $hero['exp']);
     if ($hero['isAlive'] != 1) {
       $details['hero'] = 0;
     }
@@ -189,7 +190,7 @@ function unit_Movement($caveID, &$ownCave) {
         $armySize += $GLOBALS['unitTypeList'][$unitID]->hitPoints*$value;
       }
 
-      if ($armySize > $hero['exp']) {
+      if ($armySize > $hero['exp'] || $armySize > HERO_MAX_UNIT_SIZE) {
         $denymovement_hero = true;
       }
     }

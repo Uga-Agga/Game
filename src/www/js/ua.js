@@ -206,6 +206,14 @@ DEBUG = 'on';
         }
       }
 
+      if ($('#maxUnitsSize').html() !== null) {
+        if (sizeAll > $('#maxUnitsSize').html()) {
+          $('#labelMaxUnitsSize').css("color", "red");
+        } else {
+          $('#labelMaxUnitsSize').css("color", "#000000");
+        }
+      }
+
       for (var resourceVal in resouceData) {$('#resource_'+resourceVal+'_max').html(resouceData[resourceVal].amount);$('#resource_'+resourceVal+'_max').attr('data-max', resouceData[resourceVal].amount);$('#resource_'+resourceVal).attr('data-max', resouceData[resourceVal].amount);}
       $('#countAll').html(countAll);$('#sizeAll').html(sizeAll);$('#speedFactorAll').html(speedFactor);$('#arealAttackAll').html(arealAttackAll);$('#attackRateAll').html(attackRateAll);$('#rangeAttackAll').html(rangeAttackAll);
 

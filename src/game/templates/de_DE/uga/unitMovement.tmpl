@@ -122,8 +122,10 @@
           <p>Bewegungsgeschwindigkeit:<span style="padding-left: 5px;" id="speed">0</span></p>
 
           {% if hero %}
-            <p class="nospace">Erfahrung Held:<span style="padding-left: 5px;" id="heroExp">{{ hero.exp }}</span></p>
-            <p class="nospace">Lebenspunkte Held:<span style="padding-left: 5px;" id="heroHeal">{{ hero.healPoints }}</span></p>
+            <h5 class="text-center">Held</h5>
+            <p class="nospace">Erfahrung:<span style="padding-left: 5px;" id="heroExp">{{ hero.exp }}</span></p>
+            <p class="nospace">Lebenspunkte:<span style="padding-left: 5px;" id="heroHeal">{{ hero.healPoints }}</span></p>
+            <p class="nospace" id="labelMaxUnitsSize">Unterstütze Armeegröße:<span style="padding-left: 5px;" id="maxUnitsSize">{{ hero.maxUnitsSize }}</span></p>
           {% endif %}
         </div>
         <div class="span2 pull-right text-right" style="width: 205px; margin-left: 0; padding-right: 5px;">
@@ -152,29 +154,6 @@
         <button class="text-right" style="margin: 0 5px 5px 0" type="button" id="moveit" name="moveit" class="btn">und los geht's. UGH?</button>
       </div>
 
-<!--
-      <div class="ym-grid" style="padding-top: 5px;">
-        <div class="ym-g33 ym-gl">
-          <ul class="movement left">
-            {% if artefact %}
-              <li style="height: 10px;">&nbsp;</li>
-              <li class="bold">Artefakt:</li>
-              <li>
-                {% for item in artefact %}
-                  <div class="ym-fbox-check">
-                    <input type="radio" name="myartefacts" value="{{ item.artefactID }}" id="myartefacts{{ item.artefactID }}"  />
-                    <label for="myartefacts{{ item.artefactID }}">{{ item.name }}</label>
-                  </div>
-                {% endfor %}
-                <div class="ym-fbox-check">
-                  <input type="radio" name="myartefacts" value="-1" id="myartefactsnone" checked="checked"  />
-                  <label for="myartefactsnone">keines</label>
-                </div>
-              </li>
-            {% endif %}
-          </ul>
-        </div>
--->
       {% for item in params %}<input type="hidden" name="{{ item.name }}" value="{{ item.value }}" />{% endfor %}
     </form>
   </div>
