@@ -140,7 +140,7 @@ class Tribe {
 
     $members = self::getPlayerList($tribeID);
     foreach ($members AS $playerID => $playerData) {
-      if (!self::tribe_leaveTribe($playerID)) {
+      if (!self::leaveTribe($playerID)) {
         return false;
       }
 

@@ -20,6 +20,7 @@ include INC_DIR."config.inc.php";
 include INC_DIR."db.inc.php";
 include INC_DIR."rules/game.rules.php";
 include INC_DIR."tribes.inc.php";
+include INC_DIR."chat.inc.php";
 include INC_DIR."auth.inc.php";
 include INC_DIR."message.inc.php";
 include INC_DIR."db.functions.php";
@@ -135,7 +136,7 @@ echo "-- Checking Tribes --\n";
   echo "The following tribes have been deleted:\n";
   for ($i = 0; $i < sizeof($deleted_tribes); ++$i)
   {
-    echo $tribes[$deleted_tribes[$i]]['tag'] . "  \n";
+    echo $deleted_tribes[$i] . "  \n";
   }
 }
 

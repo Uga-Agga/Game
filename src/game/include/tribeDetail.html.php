@@ -38,6 +38,12 @@ function tribe_getContent($caveID, $tribeID) {
   $ranking = Tribe::getRanking($tribeID);
   $tribe['rank'] = $ranking;
 
+  // leader
+  if ($tribe['leaderID'] != 0) {
+    $leader = Player::getPlayer($tribe['leaderID']);
+    $tribe['leader_name'] = $leader->name;
+  }
+
   $template->addVar('tribe_details', $tribe);
 
   // history

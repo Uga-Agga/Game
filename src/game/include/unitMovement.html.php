@@ -190,7 +190,7 @@ function unit_Movement($caveID, &$ownCave) {
         $armySize += $GLOBALS['unitTypeList'][$unitID]->hitPoints*$value;
       }
 
-      if ($armySize > $hero['exp'] || $armySize > HERO_MAX_UNIT_SIZE) {
+      if ($armySize > $hero['exp'] && $armySize > HERO_MAX_UNIT_SIZE) {
         $denymovement_hero = true;
       }
     }

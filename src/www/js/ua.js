@@ -57,7 +57,7 @@ DEBUG = 'on';
           $('#mainTab a[href="'+url+'"]').tab('show');
           if(url!=window.location) {
             var urlHistory = $.url().attr('path')+"?"+$.url().attr('query')+$(this).attr('href');
-            window.history.pushState(urlHistory, '', urlHistory);
+            pushState(urlHistory);
           }
         }
 /* Einfach Ignorieren ;) */
@@ -95,7 +95,7 @@ DEBUG = 'on';
               if (useJson === true) {parseJson(json);} else {updateContent(data);}
             }
           });
-          window.history.pushState($(this).attr('href'), '', $(this).attr('href'));
+          pushState($(this).attr('href'));
         }
       }
     });
@@ -145,8 +145,8 @@ DEBUG = 'on';
           $('#mapSliderVerti2').slider('value', getMapSliderValue('yCoord'));
         }});
       } else {
-        window.history.pushState(form.attr('action'), '', form.attr('action'));
-        form.ajaxSubmit({data: data, success: updateContent});
+        pushState(form.attr('action'));
+        form.ajaxSubmit({data: data, success: updateContent, clearForm: true, resetForm:true, cache:false});
       }
     });
 
@@ -203,14 +203,6 @@ DEBUG = 'on';
           unitRations += (unitData[unit].foodCost * amount);
           if (speedFactor === 0){speedFactor = Math.max(speedFactor, unitData[unit].speedFactor);}
           for (var resource in resouceData) {resouceData[resource].amount += (unitData[unit].encumbrance[resource].load * amount);}
-        }
-      }
-
-      if ($('#maxUnitsSize').html() !== null) {
-        if (sizeAll > $('#maxUnitsSize').html()) {
-          $('#labelMaxUnitsSize').css("color", "red");
-        } else {
-          $('#labelMaxUnitsSize').css("color", "#000000");
         }
       }
 
@@ -369,6 +361,19 @@ DEBUG = 'on';
     return text;
   }
 
-    function ua_log(out){if(DEBUG==='on'&&typeof console !== "undefined"&&typeof console.log !== "undefined"){console.log(out);}}
+  function pushState(url) {
+    if ($.browser.msie && $.browser.version <= 9) {
+      return;
+    }
+    if (navigator && navigator.userAgent && navigator.userAgent != null) {
+      var strUserAgent = navigator.userAgent.toLowerCase();
+      var arrMatches = strUserAgent.match(/(iphone|ipod|ipad)/);
+      if (arrMatches) return;
+    }
+
+    window.history.pushState(null, null, url);
+  }
+
+  function ua_log(out){if(DEBUG==='on'&&typeof console !== "undefined"&&typeof console.log !== "undefined"){console.log(out);}}
 })
 }(window.jQuery)
