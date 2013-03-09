@@ -254,7 +254,7 @@ class Chat {
     $sql = $db->prepare("SELECT cr.tag, cr.autojoin
                          FROM " . CHAT_ROOM_TABLE . " cr
                            LEFT JOIN " . CHAT_USER_TABLE . " cu ON cu.roomID = cr.id
-                           LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName = cr.name
+                           LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName LIKE cu.name
                          WHERE p.playerID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     if (!$sql->execute()) return array();

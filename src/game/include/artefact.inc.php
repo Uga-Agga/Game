@@ -20,11 +20,12 @@ define("ARTEFACT_INITIATED",    1);
 function artefact_getArtefactsReadyForMovement($caveID) {
   global $db;
 
-  $sql = $db->prepare("SELECT *
+  $sql = $db->prepare("SELECT *, CASE WHEN a.initiated = " . ARTEFACT_INITIATED . " THEN ac.name_initiated ELSE ac.name END AS name
                        FROM ". ARTEFACT_TABLE ." a
                          LEFT JOIN ". ARTEFACT_CLASS_TABLE ." ac ON a.artefactClassID = ac.artefactClassID
                        WHERE caveID = :caveID
-                         AND initiated = ". ARTEFACT_INITIATED);
+                         AND initiated = " . ARTEFACT_INITIATED . "
+                         AND pet = 0");
   $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
   if (!$sql->execute()) return array();
 
