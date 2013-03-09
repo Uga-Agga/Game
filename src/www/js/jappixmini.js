@@ -6856,7 +6856,7 @@ function sendMessageMini(aForm) {
 
 // Generates the asked smiley image
 function smileyMini(image, text) {
-	return ' <img class="jm_smiley jm_smiley-' + image + ' jm_images" alt="' + encodeQuotes(text) + '" src="' + JAPPIX_STATIC + 'img/others/blank.gif' + '" /> ';
+	return ' <img class="jm_smiley jm_smiley-' + image + ' jm_images" alt="' + encodeQuotes(text) + '" src="' + JAPPIX_STATIC + 'images/jappix/others/blank.gif' + '" /> ';
 }
 
 // Notifies incoming chat messages
