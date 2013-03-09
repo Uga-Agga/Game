@@ -215,8 +215,8 @@ This is the JSJaC library for Jappix (from trunk)
 -------------------------------------------------
 
 Licenses: Mozilla Public License version 1.1, GNU GPL, AGPL
-Authors: Stefan Strigler, Vanaryon, Zash
-Last revision: 13/02/12
+Authors: Stefan Strigler, Valérian Saliou, Zash, Maranda
+Last revision: 08/10/12
 
 */
 
@@ -1869,7 +1869,10 @@ JSJaCPacket.prototype.setType = function(type) {
  */
 JSJaCPacket.prototype.setXMLLang = function(xmllang) {
   // Fix IE9+ bug with xml:lang attribute
-  if (jQuery.browser.msie && (parseInt(jQuery.browser.version) >= 9))
+
+  // Also due to issues with both BD and jQuery being used, employ a simple regexp since the detection
+  // here is very limited.
+  if (navigator.appVersion.match(/^.*MSIE (\d)/) && navigator.appVersion.match(/^.*MSIE (\d)/)[1] >= 9)
     return this;
   if (!xmllang || xmllang == '')
     this.getNode().removeAttribute('xml:lang');
@@ -1882,7 +1885,6 @@ JSJaCPacket.prototype.setXMLLang = function(xmllang) {
  * Gets the 'to' attribute of this packet
  * @type String
  */
-
 JSJaCPacket.prototype.getTo = function() {
   return this.getNode().getAttribute('to');
 };
@@ -4672,18 +4674,16 @@ jQuery(window).bind("unload", function() {
 		jQuery.timer.remove(item);
 	});
 });
-/**
+/*!
  * jQuery.ScrollTo
- * Copyright (c) 2007-2009 Ariel Flesler - aflesler(at)gmail(dot)com | http://flesler.blogspot.com
+ * Copyright (c) 2007-2012 Ariel Flesler - aflesler(at)gmail(dot)com | http://flesler.blogspot.com
  * Dual licensed under MIT and GPL.
- * Date: 5/25/2009
+ * Date: 12/14/2012
  *
  * @projectDescription Easy element scrolling using jQuery.
  * http://flesler.blogspot.com/2007/10/jqueryscrollto.html
- * Works with jQuery +1.2.6. Tested on FF 2/3, IE 6/7/8, Opera 9.5/6, Safari 3, Chrome 1 on WinXP.
- *
  * @author Ariel Flesler
- * @version 1.4.2
+ * @version 1.4.5 BETA
  *
  * @id jQuery.scrollTo
  * @id jQuery.fn.scrollTo
@@ -4694,12 +4694,12 @@ jQuery(window).bind("unload", function() {
  *		- A jQuery/DOM element ( logically, child of the element to scroll )
  *		- A string selector, that will be relative to the element to scroll ( 'li:eq(2)', etc )
  *		- A hash { top:x, left:y }, x and y can be any kind of number/string like above.
-*		- A percentage of the container's dimension/s, for example: 50% to go to the middle.
+ *		- A percentage of the container's dimension/s, for example: 50% to go to the middle.
  *		- The string 'max' for go-to-end. 
- * @param {Number} duration The OVERALL length of the animation, this argument can be the settings object instead.
+ * @param {Number, Function} duration The OVERALL length of the animation, this argument can be the settings object instead.
  * @param {Object,Function} settings Optional set of settings or the onAfter callback.
  *	 @option {String} axis Which axis must be scrolled, use 'x', 'y', 'xy' or 'yx'.
- *	 @option {Number} duration The OVERALL length of the animation.
+ *	 @option {Number, Function} duration The OVERALL length of the animation.
  *	 @option {String} easing The easing method for the animation.
  *	 @option {Boolean} margin If true, the margin of the target element will be deducted from the final position.
  *	 @option {Object, Number} offset Add/deduct from the end position. One number for both axes or { top:x, left:y }.
@@ -4715,10 +4715,10 @@ jQuery(window).bind("unload", function() {
  * @desc Scroll relatively to the actual position
  * @example $('div').scrollTo( '+=340px', { axis:'y' } );
  *
- * @dec Scroll using a selector (relative to the scrolled element)
+ * @desc Scroll using a selector (relative to the scrolled element)
  * @example $('div').scrollTo( 'p.paragraph:eq(2)', 500, { easing:'swing', queue:true, axis:'xy' } );
  *
- * @ Scroll to a DOM element (same for jQuery object)
+ * @desc Scroll to a DOM element (same for jQuery object)
  * @example var second_child = document.getElementById('container').firstChild.nextSibling;
  *			$('#container').scrollTo( second_child, { duration:500, axis:'x', onAfter:function(){
  *				alert('scrolled!!');																   
@@ -4727,6 +4727,7 @@ jQuery(window).bind("unload", function() {
  * @desc Scroll on both axes, to different values
  * @example $('div').scrollTo( { top: 300, left:'+=200' }, { axis:'xy', offset:-20 } );
  */
+
 ;(function( $ ){
 	
 	var $scrollTo = $.scrollTo = function( target, duration, settings ){
@@ -4735,7 +4736,8 @@ jQuery(window).bind("unload", function() {
 
 	$scrollTo.defaults = {
 		axis:'xy',
-		duration: parseFloat($.fn.jquery) >= 1.3 ? 0 : 1
+		duration: parseFloat($.fn.jquery) >= 1.3 ? 0 : 1,
+		limit:true
 	};
 
 	// Returns the element that needs to be animated to scroll the window.
@@ -4756,7 +4758,7 @@ jQuery(window).bind("unload", function() {
 
 			var doc = (elem.contentWindow || elem).document || elem.ownerDocument || elem;
 			
-			return $.browser.safari || doc.compatMode == 'BackCompat' ?
+			return /webkit/i.test(navigator.userAgent) || doc.compatMode == 'BackCompat' ?
 				doc.body : 
 				doc.documentElement;
 		});
@@ -4775,7 +4777,7 @@ jQuery(window).bind("unload", function() {
 			
 		settings = $.extend( {}, $scrollTo.defaults, settings );
 		// Speed is still recognized for backwards compatibility
-		duration = duration || settings.speed || settings.duration;
+		duration = duration || settings.duration;
 		// Make sure the settings are given right
 		settings.queue = settings.queue && settings.axis.length > 1;
 		
@@ -4786,6 +4788,9 @@ jQuery(window).bind("unload", function() {
 		settings.over = both( settings.over );
 
 		return this._scrollable().each(function(){
+			// Null target yields nothing, just like jQuery does
+			if (target == null) return;
+
 			var elem = this,
 				$elem = $(elem),
 				targ = target, toff, attr = {},
@@ -4795,13 +4800,14 @@ jQuery(window).bind("unload", function() {
 				// A number will pass the regex
 				case 'number':
 				case 'string':
-					if( /^([+-]=)?\d+(\.\d+)?(px|%)?$/.test(targ) ){
+					if( /^([+-]=?)?\d+(\.\d+)?(px|%)?$/.test(targ) ){
 						targ = both( targ );
 						// We are done
 						break;
 					}
 					// Relative selector, no break!
 					targ = $(targ,this);
+					if (!targ.length) return;
 				case 'object':
 					// DOMElement / jQuery
 					if( targ.is || targ.style )
@@ -4838,7 +4844,7 @@ jQuery(window).bind("unload", function() {
 				}
 
 				// Number or 'number'
-				if( /^\d+$/.test(attr[key]) )
+				if( settings.limit && /^\d+$/.test(attr[key]) )
 					// Check the limits
 					attr[key] = attr[key] <= 0 ? 0 : Math.min( attr[key], max );
 
@@ -4879,15 +4885,13 @@ jQuery(window).bind("unload", function() {
 
 		return Math.max( html[scroll], body[scroll] ) 
 			 - Math.min( html[size]  , body[size]   );
-			
 	};
 
 	function both( val ){
 		return typeof val == 'object' ? val : { top:val, left:val };
 	};
 
-})( jQuery );
-/*
+})( jQuery );/*
 
 Jappix - An open social platform
 These are the constants JS scripts for Jappix
@@ -4895,7 +4899,7 @@ These are the constants JS scripts for Jappix
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Authors: Stefan Strigler, Vanaryon, Kloadut
+Authors: Stefan Strigler, Valérian Saliou, Kloadut
 Last revision: 12/06/12
 
 */
@@ -5031,6 +5035,7 @@ var HTTPS_FORCE = null;
 var COMPRESSION = null;
 var MULTI_FILES = null;
 var DEVELOPER = null;
+var REGISTER_API = null;
 
 // Jappix hosts configuration
 var HOST_MAIN = null;
@@ -5111,8 +5116,8 @@ These are the temporary/persistent data store functions
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Author: Vanaryon
-Last revision: 21/06/12
+Authors: Valérian Saliou, Maranda
+Last revision: 20/02/13
 
 */
 
@@ -5225,43 +5230,43 @@ function hasPersistent() {
 }
 
 // Persistent: used to read a database entry
-function getPersistent(type, id) {
+function getPersistent(dbID, type, id) {
 	try {
-		return localStorage.getItem(type + '_' + id);
+		return localStorage.getItem(dbID + '_' + type + '_' + id);
 	}
 	
 	catch(e) {
-		logThis('Error while getting a persistent database entry (' + type + ' -> ' + id + '): ' + e, 1);
+		logThis('Error while getting a persistent database entry (' + dbID + ' -> ' + type + ' -> ' + id + '): ' + e, 1);
 		
 		return null;
 	}
 }
 
 // Persistent: used to update a database entry
-function setPersistent(type, id, value) {
+function setPersistent(dbID, type, id, value) {
 	try {
-		localStorage.setItem(type + '_' + id, value);
+		localStorage.setItem(dbID + '_' + type + '_' + id, value);
 		
 		return true;
 	}
 	
 	// Database might be full
 	catch(e) {
-		logThis('Retrying: could not write a persistent database entry (' + type + ' -> ' + id + '): ' + e, 2);
+		logThis('Retrying: could not write a persistent database entry (' + dbID + ' -> ' + type + ' -> ' + id + '): ' + e, 2);
 		
 		// Flush it!
 		flushPersistent();
 		
 		// Set the item again
 		try {
-			localStorage.setItem(type + '_' + id, value);
+			localStorage.setItem(dbID + ' -> ' + type + '_' + id, value);
 			
 			return true;
 		}
 		
 		// New error!
 		catch(e) {
-			logThis('Aborted: error while writing a persistent database entry (' + type + ' -> ' + id + '): ' + e, 1);
+			logThis('Aborted: error while writing a persistent database entry (' + dbID + ' -> ' + type + ' -> ' + id + '): ' + e, 1);
 			
 			return false;
 		}
@@ -5269,23 +5274,23 @@ function setPersistent(type, id, value) {
 }
 
 // Persistent: used to remove a database entry
-function removePersistent(type, id) {
+function removePersistent(dbID, type, id) {
 	try {
-		localStorage.removeItem(type + '_' + id);
+		localStorage.removeItem(dbID + '_' + type + '_' + id);
 		
 		return true;
 	}
 	
 	catch(e) {
-		logThis('Error while removing a persistent database entry (' + type + ' -> ' + id + '): ' + e, 1);
+		logThis('Error while removing a persistent database entry (' + dbID + ' -> ' + type + ' -> ' + id + '): ' + e, 1);
 		
 		return false;
 	}
 }
 
 // Persistent: used to check a database entry exists
-function existPersistent(type, id) {
-	var read = getPersistent(type, id);
+function existPersistent(dbID, type, id) {
+	var read = getPersistent(dbID, type, id);
 	
 	if(read != null)
 		return true;
@@ -5314,14 +5319,14 @@ function resetPersistent() {
 function flushPersistent() {
 	try {
 		// Get the stored session entry
-		var session = getPersistent('session', 1);
+		var session = getPersistent('global', 'session', 1);
 		
 		// Clear the persistent database
 		localStorage.clear();
 		
 		// Restaure the stored session entry
 		if(session)
-			setPersistent('session', 1, session);
+			setPersistent('global', 'session', 1, session);
 		
 		logThis('Persistent database flushed.', 3);
 		
@@ -5334,6 +5339,131 @@ function flushPersistent() {
 		return false;
 	}
 }
+
+/* BROWSER DETECT
+ * http://www.quirksmode.org/js/detect.html
+ */
+
+var BrowserDetect = {
+	init: function () {
+		this.browser = this.searchString(this.dataBrowser) || "An unknown browser";
+		this.version = this.searchVersion(navigator.userAgent)
+			|| this.searchVersion(navigator.appVersion)
+			|| "an unknown version";
+		this.OS = this.searchString(this.dataOS) || "an unknown OS";
+	},
+	
+	searchString: function (data) {
+		for (var i=0;i<data.length;i++)	{
+			var dataString = data[i].string;
+			var dataProp = data[i].prop;
+			this.versionSearchString = data[i].versionSearch || data[i].identity;
+			if (dataString) {
+				if (dataString.indexOf(data[i].subString) != -1)
+					return data[i].identity;
+			}
+			else if (dataProp)
+				return data[i].identity;
+		}
+	},
+	
+	searchVersion: function (dataString) {
+		var index = dataString.indexOf(this.versionSearchString);
+		if (index == -1) return;
+		return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+	},
+	
+	dataBrowser: [
+		{
+			string: navigator.userAgent,
+			subString: "Chrome",
+			identity: "Chrome"
+		},
+		{ 	string: navigator.userAgent,
+			subString: "OmniWeb",
+			versionSearch: "OmniWeb/",
+			identity: "OmniWeb"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Apple",
+			identity: "Safari",
+			versionSearch: "Version"
+		},
+		{
+			prop: window.opera,
+			identity: "Opera"
+		},
+		{
+			string: navigator.vendor,
+			subString: "iCab",
+			identity: "iCab"
+		},
+		{
+			string: navigator.vendor,
+			subString: "KDE",
+			identity: "Konqueror"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Firefox",
+			identity: "Firefox"
+		},
+		{
+			string: navigator.vendor,
+			subString: "Camino",
+			identity: "Camino"
+		},
+		{		// for newer Netscapes (6+)
+			string: navigator.userAgent,
+			subString: "Netscape",
+			identity: "Netscape"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "MSIE",
+			identity: "Explorer",
+			versionSearch: "MSIE"
+		},
+		{
+			string: navigator.userAgent,
+			subString: "Gecko",
+			identity: "Mozilla",
+			versionSearch: "rv"
+		},
+		{ 		// for older Netscapes (4-)
+			string: navigator.userAgent,
+			subString: "Mozilla",
+			identity: "Netscape",
+			versionSearch: "Mozilla"
+		}
+	],
+	
+	dataOS : [
+		{
+			string: navigator.platform,
+			subString: "Win",
+			identity: "Windows"
+		},
+		{
+			string: navigator.platform,
+			subString: "Mac",
+			identity: "Mac"
+		},
+		{
+			   string: navigator.userAgent,
+			   subString: "iPhone",
+			   identity: "iPhone/iPod"
+	    },
+		{
+			string: navigator.platform,
+			subString: "Linux",
+			identity: "Linux"
+		}
+	]
+};
+
+BrowserDetect.init();
 /*
 
 Jappix - An open social platform
@@ -5342,8 +5472,8 @@ These are the common JS script for Jappix
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Authors: Vanaryon, olivierm, regilero
-Last revision: 08/08/12
+Authors: Valérian Saliou, olivierm, regilero, Maranda
+Last revision: 24/09/12
 
 */
 
@@ -5379,10 +5509,11 @@ function isFocused() {
 
 // Generates the good XID
 function generateXID(xid, type) {
-	// XID needs to be transformed	
-	
-	if(xid && (xid.indexOf('@') == -1)) {	  
-	  
+	// XID needs to be transformed
+	// .. and made lowercase (uncertain though this is the right place...)
+	xid = xid.toLowerCase();
+
+	if(xid && (xid.indexOf('@') == -1)) {
 		// Groupchat
 		if(type == 'groupchat')
 			return xid + '@' + HOST_MUC;
@@ -5425,7 +5556,6 @@ function strAfterLast(given_char, str) {
 
 // Properly explodes a string with a given character
 function explodeThis(toEx, toStr, i) {
-
 	// Get the index of our char to explode
 	var index = toStr.indexOf(toEx);
 	
@@ -5685,7 +5815,7 @@ These are the date related JS scripts for Jappix
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Author: Vanaryon
+Author: Valérian Saliou
 Last revision: 17/08/11
 
 */
@@ -5872,7 +6002,7 @@ function readMessageDelay(node) {
 	var delay, d_delay;
 	
 	// Read the delay
-	d_delay = jQuery(node).find('delay[xmlns=' + NS_URN_DELAY + ']:first').attr('stamp');
+	d_delay = jQuery(node).find('delay[xmlns="' + NS_URN_DELAY + '"]:first').attr('stamp');
 	
 	// New delay (valid XEP)
 	if(d_delay)
@@ -5881,7 +6011,7 @@ function readMessageDelay(node) {
 	// Old delay (obsolete XEP!)
 	else {
 		// Try to read the old-school delay
-		var x_delay = jQuery(node).find('x[xmlns=' + NS_DELAY + ']:first').attr('stamp');
+		var x_delay = jQuery(node).find('x[xmlns="' + NS_DELAY + '"]:first').attr('stamp');
 		
 		if(x_delay)
 			delay = x_delay.replace(/^(\w{4})(\w{2})(\w{2})T(\w{2}):(\w{2}):(\w{2})Z?(\S+)?/, '$1-$2-$3T$4:$5:$6Z$7');
@@ -5897,7 +6027,7 @@ These are the links JS script for Jappix
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Authors: Vanaryon, Maranda
+Authors: Valérian Saliou, Maranda
 Last revision: 26/08/11
 
 */
@@ -5935,8 +6065,8 @@ These are the Jappix Mini JS scripts for Jappix
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Authors: Vanaryon, hunterjm, Camaran, regilero, Kloadut
-Last revision: 22/08/12
+Authors: Valérian Saliou, hunterjm, Camaran, regilero, Kloadut
+Last revision: 23/01/13
 
 */
 
@@ -5951,16 +6081,17 @@ var MINI_RANDNICK				= false;
 var MINI_NICKNAME				= '';
 var MINI_TITLE					= null;
 var MINI_DOMAIN					= null;
-var MINI_USER					  = null;
+var MINI_USER					= null;
 var MINI_PASSWORD				= null;
-var MINI_RECONNECT			= 0;
+var MINI_ACTIVE					= null;
+var MINI_RECONNECT				= 0;
 var MINI_CHATS					= [];
 var MINI_GROUPCHATS				= [];
 var MINI_SUGGEST_CHATS			= [];
 var MINI_SUGGEST_GROUPCHATS		= [];
 var MINI_SUGGEST_PASSWORDS		= [];
 var MINI_PASSWORDS				= [];
-var MINI_RESOURCE				  = JAPPIX_RESOURCE + ' Mini';
+var MINI_RESOURCE				= JAPPIX_RESOURCE + ' Mini';
 var MINI_ERROR_LINK				= 'https://mini.jappix.com/issues';
 
 // 5D MODS
@@ -6241,7 +6372,7 @@ function handleMessageMini(msg) {
 				var stamp = extractStamp(d_stamp);
 				
 				// Is this a groupchat private message?
-				if(exists('#jappix_mini #chat-' + hash + '[data-type=groupchat]')) {
+				if(exists('#jappix_mini #chat-' + hash + '[data-type="groupchat"]')) {
 					// Regenerate some stuffs
 					if((type == 'chat') || (type == 'normal') || !type) {
 						xid = from;
@@ -6309,14 +6440,20 @@ function handleMessageMini(msg) {
 				displayMessageMini(type, body, use_xid, nick, hash, time, stamp, message_type);
 				
 				// Notify the user if not focused & the message is not a groupchat old one
-				if((!jQuery(target + ' a.jm_chat-tab').hasClass('jm_clicked') || !isFocused()) && (message_type == 'user-message'))
+				if((!jQuery(target + ' a.jm_chat-tab').hasClass('jm_clicked') || !isFocused() || (MINI_ACTIVE != hash)) && (message_type == 'user-message')) {
+					// Play a sound
+					if(type != 'groupchat')
+						soundPlayMini();
+					
+					// Show a notification bubble
 					notifyMessageMini(hash);
+				}
 				
 				logThis('Message received from: ' + from);
 			}
 			
 			// Chatstate groupchat filter
-			if(exists('#jappix_mini #chat-' + hash + '[data-type=groupchat]')) {
+			if(exists('#jappix_mini #chat-' + hash + '[data-type="groupchat"]')) {
 				xid = from;
 				hash = hex_md5(xid);
 			}
@@ -6427,7 +6564,7 @@ function handleIQMini(iq) {
 		}
 		
 		// Ping
-		else if($(iqNode).find('ping').size() && (iqType == 'get')) {
+		else if(jQuery(iqNode).find('ping').size() && (iqType == 'get')) {
 			/* REF: http://xmpp.org/extensions/xep-0199.html */
 			
 			con.send(iqResponse);
@@ -6436,7 +6573,7 @@ function handleIQMini(iq) {
 		}
 		
 		// Not implemented
-		else if(!$(iqNode).find('error').size() && ((iqType == 'get') || (iqType == 'set'))) {
+		else if(!jQuery(iqNode).find('error').size() && ((iqType == 'get') || (iqType == 'set'))) {
 			// Append stanza content
 			for(var i = 0; i < iqNode.childNodes.length; i++)
 				iqResponse.getNode().appendChild(iqNode.childNodes.item(i).cloneNode(true));
@@ -6486,7 +6623,7 @@ function handlePresenceMini(pr) {
 		}
 		
 		// Is this a groupchat presence?
-		var groupchat_path = '#jappix_mini #chat-' + hash + '[data-type=groupchat]';
+		var groupchat_path = '#jappix_mini #chat-' + hash + '[data-type="groupchat"]';
 		var is_groupchat = false;
 		
 		if(exists(groupchat_path)) {
@@ -6572,11 +6709,11 @@ function handleMUCMini(pr) {
 	// Is it a valid server presence?
 	var valid = false;
 	
-	if(!resource || (resource == unescape(jQuery('#jappix_mini #chat-' + hash + '[data-type=groupchat]').attr('data-nick'))))
+	if(!resource || (resource == unescape(jQuery('#jappix_mini #chat-' + hash + '[data-type="groupchat"]').attr('data-nick'))))
 		valid = true;
 	
 	// Password required?
-	if(valid && jQuery(xml).find('error[type=auth] not-authorized').size()) {
+	if(valid && jQuery(xml).find('error[type="auth"] not-authorized').size()) {
 		// Create a new prompt
 		openPromptMini(printf(_e("This room (%s) is protected with a password."), room));
 		
@@ -6607,7 +6744,7 @@ function handleMUCMini(pr) {
 	}
 	
 	// Nickname conflict?
-	else if(valid && jQuery(xml).find('error[type=cancel] conflict').size()) {
+	else if(valid && jQuery(xml).find('error[type="cancel"] conflict').size()) {
 		// New nickname
 		var nickname = resource + '_';
 		
@@ -7088,7 +7225,7 @@ function createMini(domain, user, password) {
 			// Generate an array of presence change XIDs
 			var pr_xid = [''];
 			
-			jQuery('#jappix_mini div.jm_conversation[data-type=groupchat]').each(function() {
+			jQuery('#jappix_mini div.jm_conversation[data-type="groupchat"]').each(function() {
 				pr_xid.push(jQuery(this).attr('data-xid'));
 			});
 			
@@ -7509,7 +7646,7 @@ function createMini(domain, user, password) {
 			);
 			
 			// IE6 makes the image blink when animated...
-			if(jQuery.browser.msie && ( parseInt(jQuery.browser.version) < 7 ) )
+			if((BrowserDetect.browser == 'Explorer') && (BrowserDetect.version < 7))
 				return;
 			
 			// Add timers
@@ -7676,7 +7813,7 @@ function openPromptMini(text, value) {
 	// Initialize
 	var prompt = '#jappix_popup div.jm_prompt';
 	var input = prompt + ' form input';
-	var value_input = input + '[type=text]';
+	var value_input = input + '[type="text"]';
 	
 	// Remove the existing prompt
 	closePromptMini();
@@ -7710,7 +7847,7 @@ function openPromptMini(text, value) {
 	});
 	
 	// Cancel event
-	jQuery(input + '[type=reset]').click(function() {
+	jQuery(input + '[type="reset"]').click(function() {
 		try {
 			closePromptMini();
 		}
@@ -7772,7 +7909,6 @@ function chatMini(type, xid, nick, hash, pwd, show_pane) {
 		// Groupchat nickname
 		if(type == 'groupchat') {
 			// Random nickname?
-			
 			if(!MINI_NICKNAME && MINI_RANDNICK)
 				MINI_NICKNAME = randomNickMini();
 			
@@ -7813,7 +7949,6 @@ function chatMini(type, xid, nick, hash, pwd, show_pane) {
 				'<div class="jm_chat-content">' + 
 					'<div class="jm_actions">' + 
 						'<span class="jm_nick">' + nick + '</span>';
-
 		
 		// Check if the chat/groupchat exists
 		var groupchat_non_closeable = false;  // 5D MOD: explicitly specify non-closeable group chats
@@ -7838,7 +7973,7 @@ function chatMini(type, xid, nick, hash, pwd, show_pane) {
 				}
 			}
 		}
-
+		
 		// Any close button to display?
 		if(((type == 'groupchat') && !groupchat_non_closeable) || ((type == 'chat') && !chat_exists) || ((type != 'groupchat') && (type != 'chat'))) // 5D MOD: non-closeable
 			html += '<a class="jm_one-action jm_close jm_images" title="' + _e("Close") + '" href="#"></a>';
@@ -8022,6 +8157,18 @@ function chatEventsMini(type, xid, hash) {
 		}
 	});
 	
+	// Focus/Blur events
+	jQuery('#jappix_mini #chat-' + hash + ' input.jm_send-messages').focus(function() {
+		// Store active chat
+		MINI_ACTIVE = hash;
+	})
+	
+	.blur(function() {
+		// Reset active chat
+		if(MINI_ACTIVE == hash)
+			MINI_ACTIVE = null;
+	});
+	
 	// Chatstate events
 	eventsChatstateMini(xid, hash, type);
 }
@@ -8163,9 +8310,7 @@ function addBuddyMini(xid, hash, nick, groupchat, subscription) {
 	// Groupchat buddy
 	if(groupchat) {
 		// Generate the groupchat group path
-		path = '#jappix_mini div.jm_roster div.jm_grouped[data-xid="' + escape(groupchat) + '"]';  // 5D BUGFIX 1: must be quoted 
-		
-		// console.log("GROUP CHAT PATH", path, exists(path), groupchat, escape(groupchat));
+		path = '#jappix_mini div.jm_roster div.jm_grouped[data-xid="' + escape(groupchat) + '"]';
 		
 		// Must add a groupchat group?
 		if(!exists(path)) {
@@ -8182,7 +8327,6 @@ function addBuddyMini(xid, hash, nick, groupchat, subscription) {
 	} else {
 	  substr = '';
 	}
-	
 	// Append this buddy content
 	var code = '<a class="jm_friend jm_offline" id="friend-' + hash
 	           + '" data-xid="' + escape(xid)
@@ -8298,25 +8442,28 @@ function handleRosterMini(iq) {
 		i++;
 	});
 	
-    // Sort array and loop reverse
-    var buddies = buddies.sort();
-    var x = buddies.length;
-    var nick, hash, xid, subscription;
-    
-    for (var i=0;i<x; i++) {
-	if (!buddies[i]) continue;
-
-        nick = buddies[i][0];
-        hash = buddies[i][1];
-        xid = buddies[i][2];
-        subscription = buddies[i][3];
-    	
-    	if(subscription == 'remove')
+	// Sort array and loop reverse
+	var buddies = buddies.sort();
+	var x = buddies.length;
+	var nick, hash, xid, subscription;
+	
+	for(var i = 0; i < x; i++) {
+		if(!buddies[i])
+			continue;
+		
+		// Current buddy information
+		nick = buddies[i][0];
+		hash = buddies[i][1];
+		xid = buddies[i][2];
+		subscription = buddies[i][3];
+		
+		// Apply current buddy action
+		if(subscription == 'remove')
 			removeBuddyMini(hash);
-    	else
+		else
 			addBuddyMini(xid, hash, nick, null, subscription);
-    }
-    
+	}
+	
 	// Not yet initialized
 	if(!MINI_INITIALIZED)
 		initializeMini();
@@ -8501,8 +8648,6 @@ function eventsChatstateMini(xid, hash, type) {
 		// Nothing in the input, user is active
 		if(!jQuery(this).val())
 			sendChatstateMini('active', xid, hash);
-		
-		// Something was written, user started writing again
 		else
 			sendChatstateMini('composing', xid, hash);
 	})
@@ -8515,11 +8660,46 @@ function eventsChatstateMini(xid, hash, type) {
 		// Nothing in the input, user is inactive
 		if(!jQuery(this).val())
 			sendChatstateMini('inactive', xid, hash);
-		
-		// Something was written, user paused
 		else
 			sendChatstateMini('paused', xid, hash);
 	});
+}
+
+// Plays a sound
+function soundPlayMini() {
+	try {
+		// Not supported!
+		if((BrowserDetect.browser == 'Explorer') && (BrowserDetect.version < 9))
+			return false;
+		
+		// Append the sound container
+		if(!exists('#jappix_mini #jm_audio')) {
+			jQuery('#jappix_mini').append(
+				'<div id="jm_audio">' + 
+					'<audio preload="auto">' + 
+						'<source src="' + JAPPIX_STATIC + 'snd/receive-message.mp3" />' + 
+						'<source src="' + JAPPIX_STATIC + 'snd/receive-message.oga" />' + 
+					'</audio>' + 
+				'</div>'
+			);
+		}
+		
+		// Play the sound
+		var audio_select = document.getElementById('jm_audio').getElementsByTagName('audio')[0];
+		
+		// Avoids Safari bug (2011 and less versions)
+		try {
+			audio_select.load();
+		} finally {
+			audio_select.play();
+		}
+	}
+	
+	catch(e) {}
+	
+	finally {
+		return false;
+	}
 }
 
 // TypeWatch to set a timeout to input value reading
@@ -8571,9 +8751,9 @@ function launchMini(autoconnect, show_pane, domain, user, password) {
 	jQuery('head').append('<link rel="stylesheet" href="' + JAPPIX_STATIC + 'css/jappix-mini.css' + '" type="text/css" media="all" />');
 	
 	// Legacy IE stylesheet
-	if(jQuery.browser.msie && ( parseInt(jQuery.browser.version) < 7 ) )
+	if((BrowserDetect.browser == 'Explorer') && (BrowserDetect.version < 7))
 		jQuery('head').append('<link rel="stylesheet" href="' + JAPPIX_STATIC + 'css/jappix-mini-ie.css' + '" type="text/css" media="all" />');
-
+	
 	// Disables the browser HTTP-requests stopper
 	jQuery(document).keydown(function(e) {
 		if((e.keyCode == 27) && !isDeveloper())
@@ -8590,7 +8770,7 @@ function launchMini(autoconnect, show_pane, domain, user, password) {
 	});
 	
 	// Logouts when Jappix is closed
-	if(jQuery.browser.opera) {
+	if(BrowserDetect.browser == 'Opera') {
 		// Emulates onbeforeunload on Opera (link clicked)
 		jQuery('a[href]:not([onclick])').click(function() {
 			// Link attributes
@@ -8613,7 +8793,6 @@ function launchMini(autoconnect, show_pane, domain, user, password) {
 	
 	logThis('Welcome to Jappix Mini! Happy coding in developer mode!');
 }
-
 // Configuration
 XML_LANG = 'en';
-JAPPIX_VERSION = jQuery.trim('Nemesis Alpha 2 [0.9.2~dev]');
+JAPPIX_VERSION = jQuery.trim('Nemesis Alpha 4 [0.9.4~dev]');

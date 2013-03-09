@@ -17,14 +17,14 @@ This is the Jappix Mini legacy IE CSS stylesheet
 -------------------------------------------------
 
 License: dual-licensed under AGPL and MPLv2
-Author: Vanaryon
+Author: Valérian Saliou
 Last revision: 22/08/12
 
 */
 
 #jappix_mini {
-  width: expression(document.documentElement.clientWidth - 150 + 'px') !important;
-  position: absolute !important;
+	width: expression(document.documentElement.clientWidth - 150 + 'px') !important;
+	position: absolute !important;
 	bottom: auto !important;
 	right: auto !important;
 	top: expression(((document.documentElement.clientHeight - this.offsetHeight) + (ignoreMiniTop = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop)) + 'px') !important;
@@ -32,11 +32,11 @@ Last revision: 22/08/12
 }
 
 #jappix_mini .jm_images {
-	background-image: url(../images/sprites/mini.gif) !important;
+	background-image: url(../images/jappix/sprites/mini.gif) !important;
 }
 
 #jappix_mini .jm_images_animate {
-	background-image: url(../images/sprites/animate.gif) !important;
+	background-image: url(../images/jappix/sprites/animate.gif) !important;
 }
 
 #jappix_mini a.jm_button {
