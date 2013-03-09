@@ -21,6 +21,7 @@ require_once("include/db.functions.php");
 require_once("include/time.inc.php");
 require_once("include/basic.lib.php");
 require_once("include/vote.html.php");
+require_once("include/chat.inc.php");
 require_once("modules/Messages/Messages.php");
 require_once("include/formula_parser.inc.php");
 
@@ -479,7 +480,7 @@ $region = $regions[$ownCaves[$caveID]['regionID']];
 vote_main();
 
 // init date for countdown
-$now = new DateTime(); 
+$now = new DateTime();
 
 $terrainEffects = array();
 foreach ($terrainList[$ownCaves[$caveID]['terrain']]['effects'] as $id => $value) {
@@ -488,6 +489,19 @@ foreach ($terrainList[$ownCaves[$caveID]['terrain']]['effects'] as $id => $value
 
 // get queryString
 $requestString = createRequestString($requestKeys);
+
+$chatRooms = Chat::getRoomsByPlayerID($_SESSION['player']->playerID);
+$groupchats = $groupchatsSuggest = array();
+foreach ($chatRooms as $room) {
+  if ($room['autojoin']) {
+    $groupchats[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC_SERVER . '"';
+  }
+  $groupchatsSuggest[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC_SERVER . '"';
+}
+
+foreach (Config::$jabberStaticGroupchats as $room) {
+  $groupchatsSuggest[] = '"' . $room . '@' . Config::JABBER_MUC_SERVER . '"';
+}
 
 // fill it
 $template->addVars(array(
@@ -511,7 +525,7 @@ $template->addVars(array(
   'countdown_time'    => $now->format("M j, Y H:i:s O"),
   'query_string'      => $requestString,
   'war_points'        => getWarpointsByCaveData($ownCaves[$caveID]),
-  'jabber'            => array('server' => Config::JABBER_SERVER, 'noClose' => Config::JABBER_NO_CLOSE, 'groupchats' => Config::JABBER_STATIC_GROUPCHATS, 'user' => $_SESSION['player']->jabberName, 'passwd' => $_SESSION['session']['loginchecksum']),
+  'jabber'            => array('server' => Config::JABBER_SERVER, 'noClose' => Config::JABBER_NO_CLOSE, 'groupchats' => implode(', ', $groupchats), 'groupchats_suggest' => implode(', ', $groupchatsSuggest), 'user' => $_SESSION['player']->jabberName, 'passwd' => $_SESSION['session']['loginchecksum']),
   'map_size'          => array('min_x' => MAP_MIN_X, 'max_x' => MAP_MAX_X, 'min_y' => MAP_MIN_Y, 'max_y' => MAP_MAX_Y),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],

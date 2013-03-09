@@ -170,8 +170,9 @@ class Config {
   const WWW_REQUEST_TIMEOUT = .000;
 
   const JABBER_SERVER       = '';
+  const JABBER_MUC_SERVER   = '';
   const JABBER_NO_CLOSE     = '';
-  const JABBER_STATIC_GROUPCHATS = '';
+  public static $jabberStaticGroupchats = array();
 
   public static $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,
     UNIT_BUILDER, DEFENSE_BUILDER, IMPROVEMENT_DETAIL, SCIENCE_BUILDER, WONDER);

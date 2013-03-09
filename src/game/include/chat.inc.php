@@ -176,9 +176,7 @@ class Chat {
     $rooms = self::getRoomsByTribeID($tribeID);
 
     $db->beginTransaction();
-    $sql = $db->prepare("UPDATE " . CHAT_USER_TABLE . "
-                         SET deleted = 1, success = 0
-                         WHERE roomID = :roomID");
+    $sql = $db->prepare("DELETE FROM " . CHAT_USER_TABLE . " WHERE roomID = :roomID");
     foreach ($rooms as $room) {
       $sql->bindValue('roomID', $room['id'], PDO::PARAM_INT);
       $sql->execute();
@@ -245,6 +243,29 @@ class Chat {
       $sql->execute();
     }
     if (!$db->commit()) return false;
+  }
+
+  public static function getRoomsByPlayerID($playerID) {
+    global $db;
+
+    if (empty($playerID)) return array();
+
+    $rooms = array();
+    $sql = $db->prepare("SELECT cr.tag, cr.autojoin
+                         FROM " . CHAT_ROOM_TABLE . " cr
+                           LEFT JOIN " . CHAT_USER_TABLE . " cu ON cu.roomID = cr.id
+                           LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName = cr.name
+                         WHERE p.playerID = :playerID");
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) return array();
+
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+
+      $rooms[$row['id']] = $row;
+    }
+    $sql->closeCursor();
+
+    return $rooms;
   }
 
   public static function getRoomsByTribeID($tribeID) {

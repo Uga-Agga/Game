@@ -50,7 +50,7 @@
       MAP_MIN_Y = {{ map_size.min_y }};
       MAP_MAX_Y = -{{ map_size.max_y }};
 
-      {% if jabber.server2 and jabber.user and jabber.passwd %}
+      {% if jabber.server and jabber.user and jabber.passwd %}
         jQuery(document).ready(function() {
           DEVELOPER = 'on';
 
@@ -65,6 +65,7 @@
 
           // Define groupchats here
           MINI_GROUPCHATS = [{{ jabber.groupchats|raw }}];
+          MINI_SUGGEST_GROUPCHATS = [{{ jabber.groupchats_suggest|raw }}];
           MINI_PASSWORDS = [];
           MINI_5D_NON_CLOSEABLE_GROUPCHATS = [{{ jabber.noClose|raw }}];
 
