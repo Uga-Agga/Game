@@ -123,7 +123,8 @@ install-db: $(CONFIG)
 
 install-game: configtest $(CONFIG)
 	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/images $(GAMEDIR)/images/artefacts \
-	    $(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/ $(GAMEDIR)/css/
+	    $(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/ $(GAMEDIR)/css/ \
+	    $(GAMEDIR)/images/jappix $(GAMEDIR)/images/jappix/others $(GAMEDIR)/images/jappix/sprites $(GAMEDIR)/images/jappix/wait
 	chown -R $(WWWRUN):$(WWWRUN) $(GAMEDIR)
 	chmod 777 $(GAMEDIR)/images
 	chmod 777 $(GAMEDIR)/images/temp
@@ -134,6 +135,9 @@ install-game: configtest $(CONFIG)
 	$(INSTALL_DATA) www/images/religious_distribution/*.png \
 	    www/images/religious_distribution/*.php \
 	    $(GAMEDIR)/images/religious_distribution
+	$(INSTALL_DATA) www/images/jappix/others/*.* $(GAMEDIR)/images/jappix/others/
+	$(INSTALL_DATA) www/images/jappix/sprites/*.* $(GAMEDIR)/images/jappix/sprites/
+	$(INSTALL_DATA) www/images/jappix/wait/*.* $(GAMEDIR)/images/jappix/wait/
 	$(INSTALL) -d $(UA_WEBAPP_DIR) $(UA_WEBAPP_DIR)/cache \
 	    $(UA_WEBAPP_DIR)/include $(UA_WEBAPP_DIR)/include/languages $(UA_WEBAPP_DIR)/include/rules \
 	    $(UA_WEBAPP_DIR)/lib $(UA_WEBAPP_DIR)/modules
