@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `ChatRoom` (
 CREATE TABLE IF NOT EXISTS `ChatUser` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `roomID` int(11) unsigned NOT NULL,
-  `name` varchar(32) CHARACTER SET utf16 COLLATE utf16_unicode_ci NOT NULL,
+  `name` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `success` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `blocked` tinyint(1) unsigned NOT NULL DEFAULT '0',

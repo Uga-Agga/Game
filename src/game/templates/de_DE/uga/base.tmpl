@@ -87,7 +87,7 @@
           // Connect the user (autoconnect, show_pane, domain, username, password)
           // Notice: put true/false to autoconnect and show_pane
           // Notice: exclude "user" and "password" if using anonymous login
-          launchMini(true, true, "{{ jabber.server }}", "{{ jabber.user|lower }}", "{{ jabber.passwd }}");
+          launchMini(true, true, "{{ jabber.server }}", "{{ jabber.jabber_name }}", "{{ jabber.passwd }}");
         });
       {% endif %}
     </script>
