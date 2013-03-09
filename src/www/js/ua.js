@@ -181,6 +181,8 @@ DEBUG = 'on';
 
     $(document).on('click', '.show-tutorial', function(){showTutorialModal();});
 
+    $(document).on('dblclick', '.jm_actions', function(e) {$(this).parent().css('top', '');$(this).parent().css('left', '');});
+
     $('#modal').on('hidden', function () {ua_log('close modal');});
     $('#modal').on('show', function () {ua_log('show modal');});
 
@@ -249,6 +251,8 @@ DEBUG = 'on';
       $('.tooltip-show').tooltip();
       $('.popover').popover();
       $('#modal').modal({show: false, keyboard: true, backdrop: true});
+
+      $('.jm_chat-content').draggable({handle: '.jm_actions'});
 
       reParseContent();
     });

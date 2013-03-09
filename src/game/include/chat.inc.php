@@ -25,7 +25,7 @@ class Chat {
                            VALUES (:roomID, :name, 0)");
       foreach ($playerNames as $name) {
         $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-        $sql->bindValue('name', $name, PDO::PARAM_STR);
+        $sql->bindValue('name', strlower($name), PDO::PARAM_STR);
         $sql->execute();
       }
       if (!$db->commit()) return false;
@@ -34,7 +34,7 @@ class Chat {
                            (roomID, name, deleted)
                            VALUES (:roomID, :name, 0)");
       $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-      $sql->bindValue('name', $playerNames, PDO::PARAM_STR);
+      $sql->bindValue('name', strlower($playerNames), PDO::PARAM_STR);
       if (!$sql->execute() || $sql->rowCount() == 0) {
         return false;
       }
@@ -255,13 +255,14 @@ class Chat {
                          FROM " . CHAT_ROOM_TABLE . " cr
                            LEFT JOIN " . CHAT_USER_TABLE . " cu ON cu.roomID = cr.id
                            LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName LIKE cu.name
-                         WHERE p.playerID = :playerID");
+                         WHERE cr.success = 1
+                           AND cu.success = 1
+                           AND p.playerID = :playerID");
     $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
     if (!$sql->execute()) return array();
 
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-
-      $rooms[$row['id']] = $row;
+      $rooms[] = $row;
     }
     $sql->closeCursor();
 
