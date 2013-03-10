@@ -25,7 +25,7 @@ class Chat {
                            VALUES (:roomID, :name, 0)");
       foreach ($playerNames as $name) {
         $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-        $sql->bindValue('name', strlower($name), PDO::PARAM_STR);
+        $sql->bindValue('name', strtolower($name), PDO::PARAM_STR);
         $sql->execute();
       }
       if (!$db->commit()) return false;
@@ -34,7 +34,7 @@ class Chat {
                            (roomID, name, deleted)
                            VALUES (:roomID, :name, 0)");
       $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
-      $sql->bindValue('name', strlower($playerNames), PDO::PARAM_STR);
+      $sql->bindValue('name', strtolower($playerNames), PDO::PARAM_STR);
       if (!$sql->execute() || $sql->rowCount() == 0) {
         return false;
       }

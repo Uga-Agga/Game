@@ -7349,7 +7349,8 @@ function createMini(domain, user, password) {
 						chans_html += '<div class="jm_space"></div>';
 					
 					// Append selector code
-					jQuery('#jappix_mini div.jm_actions').append(
+					//jQuery('#jappix_mini div.jm_actions').append(
+					jQuery(this).parent().append( // Uga-Agga MOD: append only parent div!
 						'<div class="jm_chan_suggest">' + 
 							chans_html + 
 							
@@ -7759,8 +7760,13 @@ function switchPaneMini(element, hash) {
 	// Hide every item
 	hideRosterMini();
 	jQuery('#jappix_mini a.jm_pane').removeClass('jm_clicked');
-	jQuery('#jappix_mini div.jm_chat-content').hide();
-	
+	//jQuery('#jappix_mini div.jm_chat-content').hide() // Uga-Agga MOD: permanent open
+	jQuery('#jappix_mini div.jm_chat-content').each(function() { // Uga-Agga MOD: permanent open
+    if (jQuery(this).attr('data-locked') !== 'locked') { // Uga-Agga MOD: permanent open
+      jQuery(this).hide(); // Uga-Agga MOD: permanent open
+    } // Uga-Agga MOD: permanent open
+  }); // Uga-Agga MOD: permanent open
+
 	// Show the asked element
 	if(element && (element != 'roster')) {
 		var current = '#jappix_mini #' + element;
@@ -7978,6 +7984,7 @@ function chatMini(type, xid, nick, hash, pwd, show_pane) {
 		if(((type == 'groupchat') && !groupchat_non_closeable) || ((type == 'chat') && !chat_exists) || ((type != 'groupchat') && (type != 'chat'))) // 5D MOD: non-closeable
 			html += '<a class="jm_one-action jm_close jm_images" title="' + _e("Close") + '" href="#"></a>';
 		
+    html += '<a class="jm_one-action jm_pin icon-eye-close icon-white" title="immer sichtbar" href="#"></a>';
 		html += '</div>' + 
 				
 				'<div class="jm_received-messages" id="received-' + hash + '">' + 
@@ -7997,7 +8004,8 @@ function chatMini(type, xid, nick, hash, pwd, show_pane) {
 		'</div>';
 		
 		jQuery('#jappix_mini div.jm_conversations').prepend(html);
-		
+		$('.jm_chat-content').draggable({handle: '.jm_actions'}); // Uga-Agga MOD: draggable window
+
 		// Get the presence of this friend
 		if(type != 'groupchat') {
 			var selector = jQuery('#jappix_mini a#friend-' + hash + ' span.jm_presence');
@@ -8109,7 +8117,35 @@ function chatEventsMini(type, xid, hash) {
 			return false;
 		}
 	});
-	
+
+// START - Uga-Agga MOD: draggable window
+	// Click on the pin button
+	jQuery(current + ' a.jm_pin').click(function() {
+		// Using a try/catch override IE issues 
+		try {
+      if (jQuery(this).hasClass('icon-eye-close')) {
+        jQuery(this).parent().parent().attr('data-locked', 'locked');
+        jQuery(this).removeClass('icon-eye-close');
+        jQuery(this).addClass('icon-eye-open');
+			} else {
+        jQuery(this).parent().parent().removeAttr('data-locked');
+        jQuery(this).parent().parent().css('top', '');
+        jQuery(this).parent().parent().css('left', '');
+        jQuery(this).removeClass('icon-eye-open');
+        jQuery(this).addClass('icon-eye-close');
+
+        switchPaneMini();
+			}
+		}
+
+		catch(e) {}
+		
+		finally {
+			return false;
+		}
+	});
+// END - Uga-Agga MOD: draggable window
+
 	// Click on the chat content
 	jQuery(current + ' div.jm_received-messages').click(function() {
 		try {
