@@ -197,13 +197,13 @@ class Chat {
 
     if (empty($tribeID) || empty($tag)) return false;
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}", "[{$tag}] Haupthöhle", true);
+    $rommID = self::tribeAdd($tribeID, "{$tag}", "[{$tag}] Haupthoehle", true);
     self::authAdd($rommID, $playerName);
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}1", "[{$tag}] Nebenhöhle 1");
+    $rommID = self::tribeAdd($tribeID, "{$tag}1", "[{$tag}] Nebenhoehle 1");
     self::authAdd($rommID, $playerName);
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}2", "[{$tag}] Nebenhöhle 2");
+    $rommID = self::tribeAdd($tribeID, "{$tag}2", "[{$tag}] Nebenhoehle 2");
     self::authAdd($rommID, $playerName);
   }
 

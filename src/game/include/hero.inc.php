@@ -570,7 +570,7 @@ function hero_levelUp($hero) {
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE ."
                        SET lvl = lvl + 1,
-                         tpFree = tpFree +1,
+                         tpFree = tpFree + 2,
                          maxHealPoints = :maxHealPoints
                        WHERE playerID = :playerID");
   $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
