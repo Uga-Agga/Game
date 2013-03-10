@@ -8,12 +8,12 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
-{% extends "base.tmpl" %} 
-{% block title %}Helden{% endblock %} 
-{% block content %} 
+{% extends "base.tmpl" %}
+{% block title %}Helden{% endblock %}
+{% block content %}
 
 {% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }} fade in"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
@@ -160,7 +160,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for skill in skills %} 
+              {% for skill in skills %}
               <tr>
                <td style="text-align: left;"><a href="{{ rules_path }}?modus=skill&amp;skillID={{ skill.dbFieldName }}" class="bold new-window">{{ skill.name }}</a>
                <div class="text-small">{{ skill.description|raw }}</div>
@@ -172,14 +172,14 @@
                <td>
                {% for item in skill.effect_values %}
                  {{ item }} <br />
-               {% endfor %} 
+               {% endfor %}
                </td>
                <td>
                  {{ skill.level }} <br />
-                 <form action="main.php?modus={{ hero_link }}" id="{{ skill.dbFieldName }}" method="post">
+                 <form id="formHeroSkill{{ skill.dbFieldName }}" action="main.php?modus={{ hero_link }}#hero_skills" method="post">
                    <input type="hidden" name="action" value="skill_ability"/>
                    <input type="hidden" name="skillID" value="{{ skill.id }}"/>
-                   <input name="value" value="Erhöhen" type="submit" {% if skill.disableButton %} disabled='disabled'{% endif %}/>
+                   <button class="btn" type="button" id="formHeroSkill{{ skill.dbFieldName }}Submit" name="formHeroSkill{{ skill.dbFieldName }}Submit"{% if skill.disableButton %} disabled{% endif %}>Ugh!</button>
                  </form>
                </td>
               </tr>
@@ -201,7 +201,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for potion in potions %} 
+            {% for potion in potions %}
             <tr>
               <td><img src="{{ gfx }}/potions/{{ potion.dbFieldName }}.gif" class="td-mini-icon" alt="{{ potion.name }}" /></td>
               <td>
@@ -227,7 +227,7 @@
               <tr class="bg0"><td class="last text-center" colspan="6">Zur Zeit befinden sich keine Tränke in deinem Besitz.</td></tr>
             {% endfor %}
           </tbody>
-        </table>      
+        </table>
       </div>
 
       {% if ritual %}
@@ -239,14 +239,14 @@
               <table>
                 <tr>
                   <td>
-                  {% for item in resource %} 
-                    {% if item.value %} <img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15px" height="15px" alt="{{ item.name }}" title="{{ item.name }}" /> 
-                      {% if item.enough %} 
-                        <span class="enough">{{ item.value }}</span> 
-                      {% else %} 
+                  {% for item in resource %}
+                    {% if item.value %} <img src="{{ gfx }}/resources/{{ item.dbFieldName }}_icon.gif" class="noborder" width="15px" height="15px" alt="{{ item.name }}" title="{{ item.name }}" />
+                      {% if item.enough %}
+                        <span class="enough">{{ item.value }}</span>
+                      {% else %}
                         <span class="less change_mouseover tooltip-show" rel="tooltip" data-placement="top" data-original-title="Es fehlen noch: {{ item.missing }} {{ item.name }}">{{ item.value }}</span>
-                      {% endif %} &nbsp; 
-                    {% endif %} 
+                      {% endif %} &nbsp;
+                    {% endif %}
                   {% endfor %}
                   </td>
                   <td><img src="{{ gfx }}/de_DE/t_uga/clock.gif" style="width: 16px; height: 16px; vertical-align: bottom" />{{ delay }}</td>
@@ -274,7 +274,7 @@
   <div class="ua-box-header">Neue Art des Helden wählen:</div>
   <div class="ua-box-content">
     <table class="table table-striped table-condensed">
-      {% for item in heroTypesList %} 
+      {% for item in heroTypesList %}
       <tr>
           <td>
             <h5 style="margin-top: 0">{{ item.name }}</h5><p style="margin-bottom: 0;">{{ item.description|raw }}</p>
@@ -287,13 +287,13 @@
     </table>
   </div>
 </div>
-{% endif %} 
+{% endif %}
 {% if newhero %}
 <div class="ua-box">
   <div class="ua-box-header">Art des Helden wählen:</div>
   <div class="ua-box-content">
     <table class="table table-striped table-condensed">
-      {% for item in heroTypesList %} 
+      {% for item in heroTypesList %}
       <tr>
           <td>
             <h5 style="margin-top: 0">{{ item.name }}</h5><p style="margin-bottom: 0;">{{ item.description|raw }}</p>
@@ -306,5 +306,5 @@
     </table>
   </div>
 </div>
-{% endif %} 
+{% endif %}
 {% endblock %}
