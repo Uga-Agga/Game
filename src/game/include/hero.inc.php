@@ -767,4 +767,40 @@ function hero_clearHeroEffectsAndSkills($playerID) {
 
 }
 
+function hero_resetHeroesBugFix() {
+  global $db; 
+  
+  $sql = $db->prepare("SELECT * FROM " . HERO_TABLE);
+  $sql->execute(); 
+  
+  while ($hero = $sql->fetch(PDO::FETCH_ASSOC)) {
+    // reset effects
+    hero_removeHeroEffectsFromCave($hero['playerID']);
+    
+    // reset hero data
+    hero_clearHeroEffectsAndSkills($hero['playerID']);
+    
+    //reset hero
+    $healPoints = eval("return " . hero_parseFormulas($GLOBALS['heroTypesList'][$hero['heroTypeID']]['maxHP_formula']) . ";");
+    $sql = $db->prepare("UPDATE " . HERO_TABLE ." SET
+                           maxHpLvl = 0, maxHealPoints = :maxHealPoints,
+                           healPoints = :healpoints,
+                           regHpLvl = 0, regHP = 0,
+                           tpFree = 0, lvl = 0
+                         WHERE playerID = :playerID");
+    $sql->bindValue('playerID', $hero['playerID'], PDO::PARAM_INT);
+    $sql->bindValue('maxHealPoints', $healPoints, PDO::PARAM_INT);
+    $sql->bindValue('healpoints', floor($healPoints / 2), PDO::PARAM_INT);
+    $sql->execute();
+    $sql->closeCursor();
+  }
+  
+}
+
+
+
+
+
+
+
 ?>
