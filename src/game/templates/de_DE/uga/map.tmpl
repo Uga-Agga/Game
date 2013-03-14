@@ -2,7 +2,7 @@
 /* map.tmpl -
  * Copyright (c) 2003  OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -48,7 +48,22 @@
 <div class="ua-box ua-box-fix">
   <div class="ua-box-header"><a style="color: #FFFFFF;" href="main.php?modus={{ map_link }}">Karte</a><a style="right: 10px; float: right; color: #FFFFFF;" href="main.php?modus={{ map_link }}&amp;type=minimap">Minimap</a></div>
   <div class="ua-box-content">
-    {% include "mapRegion.tmpl" %}
+    {% if miniMap %}
+      <div id="minimap" class="text-center">
+        <img id="minimapImg" src="/images/minimap.php" alt="" />
+        <div id="minimapData" style="display: none;">{{ mapregion|raw }}</div>
+        <div id="minimapInfo" class="text-left" style="display: none; position: absolute; border: 1px solid; background-color: #FFFFFF; padding: 5px;"></div>
+      </div>
+    {% else %}
+      <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori"></div></div>
+        <div class="clearfix">
+          <div class="pull-left" style="width: 12px;"><div style="height: 545px; margin-top: 30px;"id="mapSliderVerti"></div></div>
+          <div class="pull-left" style="width: 584px;" id="map-view">{% include "mapRegion.tmpl" %}</div>
+          <div class="pull-right" style="width: 12px;"><div style="height: 545px; margin-top: 30px;" id="mapSliderVerti2"></div></div>
+        </div>
+        <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori2"></div>
+      </div>
+    {% endif %}
   </div>
 </div>
 
