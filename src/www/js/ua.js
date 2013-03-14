@@ -26,7 +26,7 @@ DEBUG = 'on';
         window.open(url);
 /* Nachladen der Erweiterungen/Froschungen... Infos */
       } else if ($(this).is('.object-detail-link')) {
-        var rowDetails = $('#'+$(this).attr('data-id')+'_details');
+        var rowDetails = $('#'+$(this).data('id')+'_details');
         rowDetails.parent().toggle();
         if (rowDetails.html().length === 0) {
           rowDetails.html('<div class="text-center">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>');
@@ -44,7 +44,7 @@ DEBUG = 'on';
 /* Öffnen des Detail Fenster */
       } else if ($(this).is('.popup-detail')) {
         ua_log('Open export Window: '+url);
-        if ($(this).attr('data-title')) {$('#modalLabel').html($(this).attr('data-title'));} else {$('#modalLabel').html('Details');}
+        if ($(this).data('title')) {$('#modalLabel').html($(this).data('title'));} else {$('#modalLabel').html('Details');}
         $('#modalLabelClose').show();
         $('#modalFooter').hide();
         $('#modal').modal({keyboard: true, backdrop: true});
@@ -65,18 +65,18 @@ DEBUG = 'on';
         return;
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
-        if ($(this).attr('data-reask') == 'true') {
-          $('#modalLabel').html($(this).attr('data-reask-header'));
+        if ($(this).data('reask') == 'true') {
+          $('#modalLabel').html($(this).data('reask-header'));
           $('#modalLabelClose').show();
           $('#modalFooterHref').attr('href', url);
           $('#modalFooter').show();
           $('#modal').modal({keyboard: true, backdrop: false});
-          $('#modal').children('div.modal-body').html($(this).attr('data-reask-msg'));
+          $('#modal').children('div.modal-body').html($(this).data('reask-msg'));
           return;
         }
 
         $('#loader').show(); $('#content').hide();
-        if ($(this).attr('data-post') == 'true') {
+        if ($(this).data('post') == 'true') {
           ua_log('Load Ajax post Content: '+url);
           $.post(url+'&method=ajax', { postConfirm: "true" }, function(data) {
             var useJson = true;
@@ -100,20 +100,24 @@ DEBUG = 'on';
       }
     });
 
-    $(window).bind('popstate', function(e) {
-      ua_log('please go back');
-      var url = $.url(window.history.state);
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        window.addEventListener('popstate', function() {
+          ua_log('please go back');
+          var url = $.url(window.history.state);
 
-      $.ajax({
-        url: url.attr('path')+'?'+url.attr('query')+'&method=ajax#'+url.fsegment(1),
-        cache: false,
-        dataType: 'html',
-        success: function(data) {
-          var useJson = true;
-          try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
-          if (useJson === true) {parseJson(json);} else {updateContent(data);}
-        }
-      });
+          $.ajax({
+            url: url.attr('path')+'?'+url.attr('query')+'&method=ajax#'+url.fsegment(1),
+            cache: false,
+            dataType: 'html',
+            success: function(data) {
+              var useJson = true;
+              try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+              if (useJson === true) {parseJson(json);} else {updateContent(data);}
+            }
+          });
+        });
+      }, 0);
     });
 
     $(document).on('click', "button", function(e){
@@ -123,13 +127,13 @@ DEBUG = 'on';
       e.preventDefault();
       var form = $(this).parents('form');
 
-      if (form.attr('data-reask') == 'true') {
-        $('#modalLabel').html(form.attr('data-reask-header'));
+      if (form.data('reask') == 'true') {
+        $('#modalLabel').html(form.data('reask-header'));
         $('#modalLabelClose').show();
         $('#modalFooterHref').attr('href', form.attr('action')+'&'+form.serialize());
         $('#modalFooter').show();
         $('#modal').modal({keyboard: true, backdrop: true});
-        $('#modal').children('div.modal-body').html(form.attr('data-reask-msg'));
+        $('#modal').children('div.modal-body').html(form.data('reask-msg'));
         return;
       }
 
@@ -171,13 +175,13 @@ DEBUG = 'on';
 
     $(document).on('click', '.load_max', function(){if ($('#'+$(this).attr('id')+'_input').val() === ''){$('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);} else {$('#'+$(this).attr('id')+'_input').val('');}});
 
-    $(document).on('click', '.clickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
-    $(document).on('dblclick', '.dblclickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
+    $(document).on('click', '.clickmax', function(e) {if ($(this).data('max') === '' || $(this).data('max-id') === '') {return;}if ($('#'+$(this).data('max-id')).val() == $(this).data('max')) {$('#'+$(this).data('max-id')).val('');} else {$('#'+$(this).data('max-id')).val($(this).data('max'));}});
+    $(document).on('dblclick', '.dblclickmax', function(e) {if ($(this).data('max') === '' || $(this).data('max-id') === '') {return;}if ($('#'+$(this).data('max-id')).val() == $(this).data('max')) {$('#'+$(this).data('max-id')).val('');} else {$('#'+$(this).data('max-id')).val($(this).data('max'));}});
 
     $(document).on('change input', '.change-movement', function(e) {updateMovement();});
     $(document).on('click', '.update-movement', function(e) {updateMovement();});
     $(document).on('click', '#selctAllUnits', function(e) {var unitData;try {unitData = jQuery.parseJSON($('#unitData').html());}catch(e) {ua_log('Fehler beim einlesen der Einheiten');return false;}for (var unit in unitData) {if($(this).attr('checked')) {$('#unit_'+unitData[unit].unit_id).val(unitData[unit].maxUnitCount);} else {$('#unit_'+unitData[unit].unit_id).val('');}}updateMovement();});
-    $(document).on('change', '.move-select-bookmark', function(e) {if ($(this).val() !== '-1') {$('#targetXCoord').enable(false);$('#targetYCoord').enable(false);$('#targetCaveName').enable(false);$('#targetXCoord').val($(this).find(":selected").attr('data-xCoord'));$('#targetYCoord').val($(this).find(":selected").attr('data-yCoord'));$('#targetCaveName').val($(this).find(":selected").attr('data-caveName'));} else {$('#targetXCoord').enable(true);$('#targetYCoord').enable(true);$('#targetCaveName').enable(true);$('#targetXCoord').val('');$('#targetYCoord').val('');$('#targetCaveName').val('');}updateMovement();});
+    $(document).on('change', '.move-select-bookmark', function(e) {if ($(this).val() !== '-1') {$('#targetXCoord').enable(false);$('#targetYCoord').enable(false);$('#targetCaveName').enable(false);$('#targetXCoord').val($(this).find(":selected").data('xCoord'));$('#targetYCoord').val($(this).find(":selected").data('yCoord'));$('#targetCaveName').val($(this).find(":selected").data('caveName'));} else {$('#targetXCoord').enable(true);$('#targetYCoord').enable(true);$('#targetCaveName').enable(true);$('#targetXCoord').val('');$('#targetYCoord').val('');$('#targetCaveName').val('');}updateMovement();});
 
     $(document).on('click', '.show-tutorial', function(){showTutorialModal();});
 
@@ -185,6 +189,37 @@ DEBUG = 'on';
 
     $('#modal').on('hidden', function () {ua_log('close modal');});
     $('#modal').on('show', function () {ua_log('show modal');});
+
+    $(document).on('mousemove', '#minimapImg', function(e){
+      var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
+
+      var data = $('#minimapData').html();
+      try {var mapData = jQuery.parseJSON(data);} catch(e) {return;}
+      $('#minimapInfo').html(mapData[xCoord][yCoord].title);
+
+      $('#minimapInfo').css({'top': e.pageY+20,'left': e.pageX+20});
+    });
+    $(document).on({mouseover: function() {$('#minimapInfo').show();},mouseleave: function() {$('#minimapInfo').hide();}}, "#minimapImg");
+
+    $(document).on('click', '#minimapImg', function(e) {
+      var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
+
+      var url="main.php?modus=map&xCoord="+xCoord+"&yCoord="+yCoord
+      ua_log('Load Ajax get Content: '+url);
+      $.ajax({
+        url: url+'&method=ajax',
+        cache: false,
+        dataType: 'html',
+        success: function(data) {
+          var useJson = true;
+          try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+          if (useJson === true) {parseJson(json);} else {updateContent(data);}
+        }
+      });
+      pushState($(this).attr('href'));
+    });
 
     function updateMovement() {
       var movementData;var unitData;var resouceData;
@@ -216,7 +251,7 @@ DEBUG = 'on';
         }
       }
 
-      for (var resourceVal in resouceData) {$('#resource_'+resourceVal+'_max').html(resouceData[resourceVal].amount);$('#resource_'+resourceVal+'_max').attr('data-max', resouceData[resourceVal].amount);$('#resource_'+resourceVal).attr('data-max', resouceData[resourceVal].amount);}
+      for (var resourceVal in resouceData) {$('#resource_'+resourceVal+'_max').html(resouceData[resourceVal].amount);$('#resource_'+resourceVal+'_max').data('max', resouceData[resourceVal].amount);$('#resource_'+resourceVal).data('max', resouceData[resourceVal].amount);}
       $('#countAll').html(countAll);$('#sizeAll').html(sizeAll);$('#speedFactorAll').html(speedFactor);$('#arealAttackAll').html(arealAttackAll);$('#attackRateAll').html(attackRateAll);$('#rangeAttackAll').html(rangeAttackAll);
 
       var movementID = $('input[name=movementID]:checked').val();
@@ -279,13 +314,13 @@ DEBUG = 'on';
 
     function reParseContent() {
       $($('#content').html()).find('.autocomplete').each(function(i) {
-        $('#'+$(this).attr('id')).autocomplete({source: 'json.php?modus='+$(this).attr('data-source'), minLength: 1});
+        $('#'+$(this).attr('id')).autocomplete({source: 'json.php?modus='+$(this).data('source'), minLength: 1});
       });
 
       /* parse countdown */
       $($('#content').html()).find('.timer').each(function(i) {
-        var endTime = new Date(); endTime.setTime($(this).attr('data-endtime') * 1000);
-        var serverTime = new Date($(this).attr('data-servertime'));
+        var endTime = new Date(); endTime.setTime($(this).data('endtime') * 1000);
+        var serverTime = new Date($(this).data('servertime'));
         $('#'+$(this).attr('id')).countdown({until: endTime, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
       });
 

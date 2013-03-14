@@ -6,47 +6,63 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 
-<div class="hide" id="map-centerX">{{ centerXCoord }}</div>
-<div class="hide" id="map-centerY">{{ centerYCoord }}</div>
-<div class="hide" id="map-queryX">{{ queryXCoord }}</div>
-<div class="hide" id="map-queryY">{{ queryYCoord }}</div>
-{% if message %}<div class="hide" id="messageAjax">{{ message|raw }}</div>{% endif %}
+{% if miniMap %}
+  <div id="minimap" class="text-center">
+    <img id="minimapImg" src="/images/minimap.php" alt="" />
+    <div id="minimapData" style="display: none;">{{ mapregion|raw }}</div>
+    <div id="minimapInfo" class="text-left" style="display: none; position: absolute; border: 1px solid; background-color: #FFFFFF; padding: 5px;"></div>
+  </div>
+{% else %}
+  <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori"></div></div>
+  <div class="clearfix">
+    <div class="pull-left" style="width: 12px;"><div style="height: 545px; margin-top: 30px;"id="mapSliderVerti"></div></div>
+    <div class="pull-left" style="width: 584px;" id="map-view">
+      <div class="hide" id="map-centerX">{{ centerXCoord }}</div>
+      <div class="hide" id="map-centerY">{{ centerYCoord }}</div>
+      <div class="hide" id="map-queryX">{{ queryXCoord }}</div>
+      <div class="hide" id="map-queryY">{{ queryYCoord }}</div>
+      {% if message %}<div class="hide" id="messageAjax">{{ message|raw }}</div>{% endif %}
 
-<table class="table table-condensed" style="width: 100%;" id="map">
-  <tbody>
-    {% for row in mapregion.rows %}
-      <tr>
-        {% for cell in row %}
-          {% if cell.header %}<td class="text-center" style="vertical-align: middle; border: none; min-width: 18px; max-width: 18px;">{{ cell.header.text|raw }}</td>{% endif %}
-          {% if cell.empty %}<td>&nbsp;</td>{% endif %}
-          {% if cell.corner %}<td>&nbsp;</td>{% endif %}
-          {% if cell.mapcell %}
-            <td style="height: 80px;  width: 80px; padding: 0; border: none; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }}">
-              <div class="text-center {{ cell.mapcell.css_self }} {{ cell.mapcell.css_own }} {{ cell.mapcell.css_other }}" style="height: 78px; width: 78px; position: relative;  border: 1px solid #E6EFC2;">
-                {% if cell.mapcell.terrain_tribe %}
-                  <a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" class="info-modal popup-detail" data-title="{{ cell.mapcell.title }}"><small>Stammeshöhle</small></a>
-                {% else %}
-                  <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="78px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
-                  {% if (cell.mapcell.tribe or cell.mapcell.text) and not cell.mapcell.barren %}
-                    <div style="position: absolute; bottom: 0px; width: 78px; line-height: 13px;">
-                      {% if cell.mapcell.tribe and not cell.mapcell.barren %}
-                       <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.title }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.tribe }}</small></a></p>
-                      {% endif %}
-                      {% if cell.mapcell.text and not cell.mapcell.barren %}
-                        <p class="nospace"><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.title }}" class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %}" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text }}</small></a></p>
+      <table class="table table-condensed" style="width: 100%;" id="map">
+        <tbody>
+          {% for row in mapregion.rows %}
+            <tr>
+              {% for cell in row %}
+                {% if cell.header %}<td class="text-center" style="vertical-align: middle; border: none; min-width: 18px; max-width: 18px;">{{ cell.header.text|raw }}</td>{% endif %}
+                {% if cell.empty %}<td>&nbsp;</td>{% endif %}
+                {% if cell.corner %}<td>&nbsp;</td>{% endif %}
+                {% if cell.mapcell %}
+                  <td style="height: 80px;  width: 80px; padding: 0; border: none; background: url({{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.imgMap }}) no-repeat;" class="terrain {{ cell.mapcell.terrain }}">
+                    <div class="text-center {{ cell.mapcell.css_self }} {{ cell.mapcell.css_own }} {{ cell.mapcell.css_other }}" style="height: 78px; width: 78px; position: relative;  border: 1px solid #E6EFC2;">
+                      {% if cell.mapcell.terrain_tribe %}
+                        <a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.alt }}" class="info-modal popup-detail" data-title="{{ cell.mapcell.title }}"><small>Stammeshöhle</small></a>
+                      {% else %}
+                        <img src="{{ gfx }}/de_DE/t_uga/map/{{ cell.mapcell.file }}.gif" width="78px" height="20px" alt="" title="{{ cell.mapcell.title }}" />
+                        {% if (cell.mapcell.tribe or cell.mapcell.text) and not cell.mapcell.barren %}
+                          <div style="position: absolute; bottom: 0px; width: 78px; line-height: 13px;">
+                            {% if cell.mapcell.tribe and not cell.mapcell.barren %}
+                             <p class="nospace"><a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ cell.mapcell.tribeID }}" title="{{ cell.mapcell.title }}" class="t_{{ cell.mapcell.text_tribe }}"><small>{{ cell.mapcell.tribe }}</small></a></p>
+                            {% endif %}
+                            {% if cell.mapcell.text and not cell.mapcell.barren %}
+                              <p class="nospace"><a href="main.php?modus={{ map_detail_link }}&amp;targetCaveID={{ cell.mapcell.caveID }}" title="{{ cell.mapcell.title }}" class="info-modal popup-detail{% if cell.mapcell.unsecure %} unsecure{% endif %}" data-title="{{ cell.mapcell.title }}"><small>{{ cell.mapcell.text }}</small></a></p>
+                            {% endif %}
+                          </div>
+                        {% endif %}
                       {% endif %}
                     </div>
-                  {% endif %}
+                  </td>
                 {% endif %}
-              </div>
-            </td>
-          {% endif %}
-       {% endfor %} 
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+             {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="pull-right" style="width: 12px;"><div style="height: 545px; margin-top: 30px;" id="mapSliderVerti2"></div></div>
+  </div>
+  <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori2"></div></div>
+{% endif %}

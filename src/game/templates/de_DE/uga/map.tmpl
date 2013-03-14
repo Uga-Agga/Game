@@ -7,7 +7,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 
@@ -16,6 +16,8 @@
 {% block content %}
 
 <div class="alert alert-block alert-{{ status_msg.type }} ua-box-fix{% if not message %} hide{% endif %}" id="messageDisplay"><p>{{ message|raw }}</p></div>
+
+<div class="alert alert-info">Über den Link "Minimap" kommt ihr nun zu einer Übersicht des Tals. Da die Seite von der Datenmenge etwas größer ist, gebt bitte Rückmeldung im <a class="new-window" href="http://forum.uga-agga.de/verbesserungsvorschlage-f45/verbesserungsvorschlage-und-feedback-t38021.html">Forum</a> ob die Karte auch unterwegs mit dem Handy gut aufrufbar ist.</a></div>
 
 <div class="ua-box ua-box-fix">
   <div class="ua-box-header">Karte</div>
@@ -44,16 +46,10 @@
 </div>
 
 <div class="ua-box ua-box-fix">
-  <div class="ua-box-header">Karte</div>
+  <div class="ua-box-header"><a style="color: #FFFFFF;" href="main.php?modus={{ map_link }}">Karte</a><a style="right: 10px; float: right; color: #FFFFFF;" href="main.php?modus={{ map_link }}&amp;type=minimap">Minimap</a></div>
   <div class="ua-box-content">
-    <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori"></div></div>
-    <div class="clearfix">
-      <div class="pull-left" style="width: 12px;"><div style="height: 545px; margin-top: 30px;"id="mapSliderVerti"></div></div>
-      <div class="pull-left" style="width: 584px;" id="map-view">{% include "mapRegion.tmpl" %}</div>
-      <div class="pull-right" style="width: 12px;"><div style="height: 545px; margin-top: 30px;" id="mapSliderVerti2"></div></div>
-    </div>
-    <div class="text-center" style="width: 584px; margin: 0 auto;"><div id="mapSliderHori2"></div></div>
-  </div> 
+    {% include "mapRegion.tmpl" %}
+  </div>
 </div>
 
 {% endblock %}
