@@ -221,7 +221,7 @@ DEBUG = 'on';
           if (useJson === true) {parseJson(json);} else {updateContent(data);}
         }
       });
-      pushState($(this).attr('href'));
+      pushState(url);
     });
 
     function updateMovement() {
@@ -343,7 +343,7 @@ DEBUG = 'on';
       }
 
       var xCoord = getMapSliderValue('xCoord');
-      var yCoord = getMapSliderValue('<Coord');
+      var yCoord = getMapSliderValue('yCoord');
       $(function(){$('#mapSliderHori').slider({range: "min", value: xCoord, min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ){$('#mapSliderHori2').slider({value: ui.value});getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
       $(function(){$('#mapSliderHori2').slider({range: "min", value: xCoord, min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ) {$('#mapSliderHori').slider({value: ui.value});getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
       $(function(){$('#mapSliderVerti').slider({orientation: "vertical", range: "max", value: yCoord, min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti2').slider({value: ui.value});getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
