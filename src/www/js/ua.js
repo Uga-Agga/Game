@@ -194,11 +194,17 @@ DEBUG = 'on';
     $('#modal').on('show', function () {ua_log('show modal');});
 
     $(document).on('mousemove', '#minimapImg', function(e){
+      // Fix Firefox "bug"
+      if(typeof e.offsetX === "undefined" || typeof e.offsetY === "undefined") {
+         var targetOffset = $(e.target).offset();
+         e.offsetX = e.pageX - targetOffset.left;
+         e.offsetY = e.pageY - targetOffset.top;
+      }
       var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
       var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
 
       var data = $('#minimapData').html();
-      try {var mapData = jQuery.parseJSON(data);} catch(e) {return;}
+      try {var mapData = jQuery.parseJSON(data);} catch(e) {ua_log('Fehler beim parsen der minimap daten');return;}
       $('#minimapInfo').html(mapData[xCoord][yCoord].title);
 
       $('#minimapInfo').css({'top': e.pageY+20,'left': e.pageX+20});
@@ -206,6 +212,11 @@ DEBUG = 'on';
     $(document).on({mouseover: function() {$('#minimapInfo').show();},mouseleave: function() {$('#minimapInfo').hide();}}, "#minimapImg");
 
     $(document).on('click', '#minimapImg', function(e) {
+      if(typeof e.offsetX === "undefined" || typeof e.offsetY === "undefined") {
+         var targetOffset = $(e.target).offset();
+         e.offsetX = e.pageX - targetOffset.left;
+         e.offsetY = e.pageY - targetOffset.top;
+      }
       var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
       var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
 
