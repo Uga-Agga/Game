@@ -7,7 +7,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 
@@ -116,11 +116,11 @@
         {% for item in improvement_relict %}
         {% set bgID = (bgID+1)%2 %}
           <tr class="bg{{ bgID }}">
-            <td class="switch"><a class="object-detail-link" data-id="relict_{{ item.building_id }}" href="main.php?modus={{ defense_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
+            <td class="switch"><a class="object-detail-link" data-id="relict_{{ item.building_id }}" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ cave_id }}"><img src="{{ gfx }}/de_DE/t_uga/icon_open.png"  class="noborder" width="16" height="16" alt="Plus" title="Plus" /></a></td>
             <td class="mini-img"><img src="{{ gfx }}/buildings/{{ item.dbFieldName }}_small.gif" alt="" title="{{ item.name }}" /></td>
             <td>
               <dl>
-                <dt><a class="object-detail-link" data-id="relict_{{ item.building_id }}" href="main.php?modus={{ defense_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
+                <dt><a class="object-detail-link" data-id="relict_{{ item.building_id }}" href="main.php?modus={{ improvement_detail_link }}&amp;buildingID={{ item.building_id }}&amp;caveID={{ cave_id }}"><span class="bold">{{ item.name }}</span></a></dt>
                 <dd>{{ item.dependencies }}</dd>
               </dl>
             </td>

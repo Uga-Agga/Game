@@ -220,7 +220,7 @@ DEBUG = 'on';
       var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
       var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
 
-      var url="main.php?modus=map&xCoord="+xCoord+"&yCoord="+yCoord
+      var url="main.php?modus=map&xCoord="+xCoord+"&yCoord="+yCoord;
       ua_log('Load Ajax get Content: '+url);
       $.ajax({
         url: url+'&method=ajax',
@@ -430,7 +430,7 @@ DEBUG = 'on';
     if ($.browser.msie && $.browser.version <= 9) {
       return;
     }
-    if (navigator && navigator.userAgent && navigator.userAgent != null) {
+    if (navigator && navigator.userAgent && navigator.userAgent !== null) {
       var strUserAgent = navigator.userAgent.toLowerCase();
       var arrMatches = strUserAgent.match(/(iphone|ipod|ipad)/);
       if (arrMatches) return;

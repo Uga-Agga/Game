@@ -37,7 +37,7 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
   $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
   $maxReadable = formula_parseToReadable($building->maxLevel);
 
-  if ($building->nodocumentation && !$caveData[$building->dbFieldName] && rules_checkDependencies($building, $caveData) !== TRUE) {
+  if ($building->nodocumentation && !$caveData[$building->dbFieldName] && rules_checkDependencies($building, $caveData) !== true) {
     $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Erweiterung wurde nicht gefunden oder ist derzeit nicht baubar.')));
     return;
   }
@@ -99,14 +99,16 @@ function improvement_getBuildingDetails($buildingID, $caveData, $method) {
       }
     }
 
-    $levels[$count] = array(
-      'level'         => $level + 1,
-      'time'          => $duration,
-      'resource_cost' => $resourceCost,
-      'unit_cost'     => $unitCost,
-      'building_cost' => $buildingCost,
-      'defense_cost'  => $defenseCost
-    );
+    if (rules_checkDependencies($building, $caveData) === true) {
+      $levels[$count] = array(
+        'level'         => $level + 1,
+        'time'          => $duration,
+        'resource_cost' => $resourceCost,
+        'unit_cost'     => $unitCost,
+        'building_cost' => $buildingCost,
+        'defense_cost'  => $defenseCost
+      );
+    }
   }
 
   if (sizeof($levels)) {
