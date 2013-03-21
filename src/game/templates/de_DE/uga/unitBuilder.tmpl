@@ -7,25 +7,12 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version. 
+ * the License, or (at your option) any later version.
  */
 #}
 {% extends "base.tmpl" %}
 {% block title %}Einheiten{% endblock %}
 {% block content %}
-
-<script type="text/javascript">
-  function build_max_units(unitID){
-   var amount;
-   amount = document.getElementById("unit_" + unitID + "");
-   if (amount.value == ""){
-   amount.value = {{ max_build_units }};
-   }
-   else{
-   amount.value = "";
-   }
-  }
-</script>
 
 {% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div>{% endif %}
 
@@ -73,7 +60,7 @@
                       </td>
                       {% if item.build_link %}
                         <td class="build-single">
-                          <form id="formUnitBuilderMaxUnits" method="post" action="main.php?modus={{ unit_link }}&amp;caveID={{ cave_id }}">
+                          <form id="formUnitBuilderMaxUnits" method="post" action="main.php?modus={{ unit_link }}&amp;caveID={{ cave_id }}#buildable_{{ category.id }}">
                             <input type="hidden" name="action" value="build" />
                             <input type="hidden" name="unitID" value="{{ item.unit_id }}" />
                             <input type="hidden" name="quantity" value="-1" />
@@ -83,7 +70,7 @@
                       {% endif %}
                       {% if item.build_link %}
                         <td class="build-unit">
-                          <form id="formUnitBuilder{{ item.unit_id }}" method="post" style="margin: 0;" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}">
+                          <form id="formUnitBuilder{{ item.unit_id }}" method="post" style="margin: 0;" action="main.php?modus={{unit_link }}&amp;caveID={{ cave_id }}#buildable_{{ category.id }}">
                             <div class="input-append">
                               <input class="input-unit" type="number" pattern="\d*" name="quantity" id="unit_{{ item.unit_id }}" maxlength="2" min="1" max="{{ max_build_units }}" step="1">
                               <button class="arrow_up" style="margin-left: 10px;" type="button" id="formUnitBuilder{{ item.unit_id }}Submit" name="formUnitBuilder{{ item.unit_id }}Submit" title="Ausbilden"></button>
@@ -95,7 +82,7 @@
                         <td class="build-no-build">
                           {{ item.no_build_msg }}
                         </td>
-                      {% endif %}    
+                      {% endif %}
                     </tr>
                     <tr class="bg{{ bgID }} hide"><td colspan="{% if item.build_link %}6{% else %}5{% endif %}" id="buildable_{{ item.unit_id }}_details"></td></tr>
                   {% endfor %}
