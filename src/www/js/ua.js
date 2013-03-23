@@ -179,7 +179,7 @@ DEBUG = 'on';
     $(document).on('click', '.load_max', function(){if ($('#'+$(this).attr('id')+'_input').val() === ''){$('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);} else {$('#'+$(this).attr('id')+'_input').val('');}});
 
     $(document).on('click', '.clickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
-    $(document).on('dblclick', '.dblclickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
+    $(document).on('dblclick', '.dblclickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}updateMovement();});
 
     $(document).on('change input', '.change-movement', function(e) {updateMovement();});
     $(document).on('click', '.update-movement', function(e) {updateMovement();});
