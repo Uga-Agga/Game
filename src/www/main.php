@@ -407,6 +407,10 @@ switch ($modus) {
     merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
     break;
 
+  case BUG_TRACKER:
+    bugtracker_getDetail();
+    break;
+
   case LOGOUT:
     page_finish('logout');
     exit;

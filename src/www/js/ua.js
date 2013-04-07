@@ -252,7 +252,7 @@ DEBUG = 'on';
           attackRateAll += (unitData[unit].attackRate * amount);
           rangeAttackAll += (unitData[unit].rangeAttack * amount);
           unitRations += (unitData[unit].foodCost * amount);
-          if (speedFactor === 0){speedFactor = Math.max(speedFactor, unitData[unit].speedFactor);}
+          speedFactor = Math.max(speedFactor, unitData[unit].speedFactor);
           for (var resource in resouceData) {resouceData[resource].amount += (unitData[unit].encumbrance[resource].load * amount);}
         }
       }

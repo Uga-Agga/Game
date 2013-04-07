@@ -78,6 +78,8 @@ define("LOGIN_PATH", "@LOGIN_URL@");
 define("RSS_PATH", "@RSS_URL@");
 define("TOOLS_PATH", "@TOOLS_URL@");
 
+define("BUGS_PER_PAGE", 30);
+
 /* ***** MAP ***** ********************************************************* */
 define("MAP_MIN_X",       "1");
 define("MAP_MAX_X",       "50");
