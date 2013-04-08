@@ -7146,7 +7146,14 @@ function createMini(domain, user, password) {
 	jQuery('#jappix_mini').find('div.jm_chat-content').css('top', '');
 	jQuery('#jappix_mini').find('div.jm_chat-content').css('left', '');
 	jQuery('#jappix_mini').find('div.jm_chat-content').css('position', 'absolute');
+	jQuery('.jm_chat-content').draggable({handle: '.jm_actions'});
 	// END - Uga-Agga MOD: draggable window
+
+	// START - Uga-Agga MOD: Resizable window - Reset Window Position!
+	
+	
+	jQuery('.jm_chat-content').resizable({ghost: true});
+	// END - Uga-Agga MOD: Resizable window
 
 	// Hide the roster picker panels
 	jQuery('#jappix_mini a.jm_status.active, #jappix_mini a.jm_join.active').removeClass('active');
@@ -8142,6 +8149,21 @@ function chatEventsMini(type, xid, hash) {
 
         switchPaneMini();
 			}
+		}
+
+		catch(e) {}
+
+		finally {
+			return false;
+		}
+	});
+
+	// click windows reset
+	jQuery(current + ' .jm_actions').dblclick(function(e) {
+		// Using a try/catch override IE issues
+		try {
+			jQuery(this).parent().css('top', '');
+			jQuery(this).parent().css('left', '');
 		}
 
 		catch(e) {}

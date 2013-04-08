@@ -90,7 +90,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
   if ($details['protected']) {
     $template->addVar('unprotected', true);
   }
-  
+
   $template->addVar('cave_data', $details);
 
   // RESOURCES AUSFUELLEN
@@ -292,9 +292,9 @@ function getAllCavesDetailsContent($ownCaves) {
   }
 }
 
-function cave_giveUpCave($caveID, $playerID, $tribe) {
+function cave_giveUpCave($caveID, $playerID, $tribeID) {
   global $db;
-  
+
   $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
                       SET playerID = 0,
                         takeoverable = 2,
@@ -327,8 +327,8 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
   $db->query("DELETE FROM ". EVENT_UNIT_TABLE ." WHERE caveID = '$caveID'");
   $db->query("DELETE FROM ". EVENT_HERO_TABLE ." WHERE caveID = '$caveID'");
 
-  if ($tribe!='') {
-    $ownRelations = relation_getRelationsForTribe($tribe);
+  if ($tribeID != 0) {
+    $ownRelations = TribeRelation::getRelations($tribeID);
 
     foreach ($ownRelations['own'] as $actRelation) {
       $ownType = $actRelation['relationType'];
@@ -338,19 +338,22 @@ function cave_giveUpCave($caveID, $playerID, $tribe) {
 
         $sql = $db->prepare("UPDATE ". RELATION_TABLE ."
                              SET fame = :newfame
-                             WHERE tribe = :actTribeRelation
-                               AND tribe_target  = :actTargetRelation");
+                             WHERE tribeID = :actTribeRelation
+                               AND tribeID_target  = :actTargetRelation");
         $sql->bindValue('newfame', $newfame, PDO::PARAM_INT);
-        $sql->bindValue('actTribeRelation', $actRelation['tribe'], PDO::PARAM_INT);
-        $sql->bindValue('actTargetRelation', $actRelation['tribe_target'], PDO::PARAM_INT);
+        $sql->bindValue('actTribeRelation', $actRelation['tribeID'], PDO::PARAM_INT);
+        $sql->bindValue('actTargetRelation', $actRelation['tribeID_target'], PDO::PARAM_INT);
 
         $sql->execute();
       }
     }
   }
-  
+
   // delete hero
-  hero_killHero($playerID);
+  $caveData = getCaveByID($caveID);
+  if($caveData['hero'] != 0) {
+    hero_killHero($playerID);
+  }
 
   return 1;
 }
