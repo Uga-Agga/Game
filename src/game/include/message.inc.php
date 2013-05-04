@@ -40,7 +40,7 @@ class MessageClass {
                       29 => _('Missionierung'),
                       99 => _('Uga-Agga Team'),
                       // special message class: can't be deleted, everybody can see
-                      1001 => _('<b>ANKÜNDIGUNG</b>'));
+                      1001 => _('ANKÜNDIGUNG'));
     }
 
     return $result;

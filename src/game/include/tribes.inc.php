@@ -734,7 +734,7 @@ class Tribe {
   public static function setHistory($tribeID, $message) {
     global $db;
 
-    if (empty($playerID) || empty($message)) return false;
+    if (empty($tribeID) || empty($message)) return false;
 
     $time = getUgaAggaTime(time());
     $month = getMonthName($time['month']);

@@ -20,7 +20,7 @@
   {% else %}
     <p><a href="main.php?modus={{ cave_bookmarks_link }}&amp;task=Add&amp;xCoord={{ cave_details.xCoord }}&amp;yCoord={{ cave_details.yCoord }}">zur Höhlenliste hinzufügen!</a></p>
     {% if cave_details.playerID %}
-      <p style="margin: 0;">Diese Höhle gehört dem Häuptling <a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ player_details.playerID }}"><span class="bold">{{ player_details.name }}</span></a>{% if player_details.tribe %} vom Stamme <a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribe|url_encode }}"><span class="bold">{{ player_details.tribe }}</span></a>{% endif %}.</p>
+      <p style="margin: 0;">Diese Höhle gehört dem Häuptling <a href="main.php?modus={{ player_detail_link }}&amp;detailID={{ player_details.playerID }}"><span class="bold">{{ player_details.name }}</span></a>{% if player_details.tribe %} vom Stamme <a href="main.php?modus={{ tribe_detail_link }}&amp;tribe={{ player_details.tribeID }}"><span class="bold">{{ player_details.tribe }}</span></a>{% endif %}.</p>
       {% if cave_details.protected %}<p style="margin: 0;"><em>Anfängerschutz aktiv!</em></p>{% endif %}
       <p style="margin: 0;"><a href="main.php?modus=Contacts&amp;task=Add&amp;contact={{ player_details.name|url_encode }}">Spieler zum Adressbuch hinzufügen</a></p>
       {% if cave_details.hasArtefact %}<p style="margin: 0;"><strong>In dieser Höhle wird <a href="main.php?modus={{ artefact_list_link }}">ein seltenes Artefakt</a> aufbewahrt.</strong></p>{% endif %}

@@ -100,20 +100,24 @@ DEBUG = 'on';
       }
     });
 
-    $(window).bind('popstate', function(e) {
-      ua_log('please go back');
-      var url = $.url(window.history.state);
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        window.addEventListener('popstate', function() {
+          ua_log('please go back');
+          var url = $.url(window.history.state);
 
-      $.ajax({
-        url: url.attr('path')+'?'+url.attr('query')+'&method=ajax#'+url.fsegment(1),
-        cache: false,
-        dataType: 'html',
-        success: function(data) {
-          var useJson = true;
-          try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
-          if (useJson === true) {parseJson(json);} else {updateContent(data);}
-        }
-      });
+          $.ajax({
+            url: url.attr('path')+'?'+url.attr('query')+'&method=ajax#'+url.fsegment(1),
+            cache: false,
+            dataType: 'html',
+            success: function(data) {
+              var useJson = true;
+              try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+              if (useJson === true) {parseJson(json);} else {updateContent(data);}
+            }
+          });
+        });
+      }, 0);
     });
 
     $(document).on('click', "button", function(e){
@@ -139,10 +143,13 @@ DEBUG = 'on';
           $('#map-view').html(data);
           if($('#messageAjax').html() !== null) {$('#messageDisplay').html($('#messageAjax').html());$('#messageDisplay').show();}
           $('#caveName').val('');$('#xCoord').val('');$('#yCoord').val('');$("#targetCaveID option[value='-1']").attr('selected',true);
-          $('#mapSliderHori').slider('value', getMapSliderValue('xCoord'));
-          $('#mapSliderHori2').slider('value', getMapSliderValue('xCoord'));
-          $('#mapSliderVerti').slider('value', getMapSliderValue('yCoord'));
-          $('#mapSliderVerti2').slider('value', getMapSliderValue('yCoord'));
+
+          var xCoord = getMapSliderValue('xCoord');
+          var yCoord = getMapSliderValue('yCoord');
+          $('#mapSliderHori').slider({value: xCoord});
+          $('#mapSliderHori2').slider({value: xCoord});
+          $('#mapSliderVerti').slider({value: yCoord});
+          $('#mapSliderVerti2').slider({value: yCoord});
         }});
       } else {
         pushState(form.attr('action'));
@@ -172,7 +179,7 @@ DEBUG = 'on';
     $(document).on('click', '.load_max', function(){if ($('#'+$(this).attr('id')+'_input').val() === ''){$('#'+$(this).attr('id')+'_input').val($(this).context.innerHTML);} else {$('#'+$(this).attr('id')+'_input').val('');}});
 
     $(document).on('click', '.clickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
-    $(document).on('dblclick', '.dblclickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}});
+    $(document).on('dblclick', '.dblclickmax', function(e) {if ($(this).attr('data-max') === '' || $(this).attr('data-max-id') === '') {return;}if ($('#'+$(this).attr('data-max-id')).val() == $(this).attr('data-max')) {$('#'+$(this).attr('data-max-id')).val('');} else {$('#'+$(this).attr('data-max-id')).val($(this).attr('data-max'));}updateMovement();});
 
     $(document).on('change input', '.change-movement', function(e) {updateMovement();});
     $(document).on('click', '.update-movement', function(e) {updateMovement();});
@@ -181,10 +188,50 @@ DEBUG = 'on';
 
     $(document).on('click', '.show-tutorial', function(){showTutorialModal();});
 
-    $(document).on('dblclick', '.jm_actions', function(e) {$(this).parent().css('top', '');$(this).parent().css('left', '');});
-
     $('#modal').on('hidden', function () {ua_log('close modal');});
     $('#modal').on('show', function () {ua_log('show modal');});
+
+    $(document).on('mousemove', '#minimapImg', function(e){
+      // Fix Firefox "bug"
+      if(typeof e.offsetX === "undefined" || typeof e.offsetY === "undefined") {
+         var targetOffset = $(e.target).offset();
+         e.offsetX = e.pageX - targetOffset.left;
+         e.offsetY = e.pageY - targetOffset.top;
+      }
+      var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
+
+      var data = $('#minimapData').html();
+      try {var mapData = jQuery.parseJSON(data);} catch(e) {ua_log('Fehler beim parsen der minimap daten');return;}
+      $('#minimapInfo').html(mapData[xCoord][yCoord].title);
+
+      $('#minimapInfo').css({'top': e.pageY+20,'left': e.pageX+20});
+    });
+    $(document).on({mouseover: function() {$('#minimapInfo').show();},mouseleave: function() {$('#minimapInfo').hide();}}, "#minimapImg");
+
+    $(document).on('click', '#minimapImg', function(e) {
+      if(typeof e.offsetX === "undefined" || typeof e.offsetY === "undefined") {
+         var targetOffset = $(e.target).offset();
+         e.offsetX = e.pageX - targetOffset.left;
+         e.offsetY = e.pageY - targetOffset.top;
+      }
+      var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
+
+      var url="main.php?modus=map&xCoord="+xCoord+"&yCoord="+yCoord;
+      ua_log('Load Ajax get Content: '+url);
+      $.ajax({
+        url: url+'&method=ajax',
+        cache: false,
+        dataType: 'html',
+        success: function(data) {
+          var useJson = true;
+          try {var json = jQuery.parseJSON(data);} catch(e) {useJson = false;}
+          if (useJson === true) {parseJson(json);} else {updateContent(data);}
+        }
+      });
+      pushState(url);
+    });
 
     function updateMovement() {
       var movementData;var unitData;var resouceData;
@@ -203,7 +250,7 @@ DEBUG = 'on';
           attackRateAll += (unitData[unit].attackRate * amount);
           rangeAttackAll += (unitData[unit].rangeAttack * amount);
           unitRations += (unitData[unit].foodCost * amount);
-          if (speedFactor === 0){speedFactor = Math.max(speedFactor, unitData[unit].speedFactor);}
+          speedFactor = Math.max(speedFactor, unitData[unit].speedFactor);
           for (var resource in resouceData) {resouceData[resource].amount += (unitData[unit].encumbrance[resource].load * amount);}
         }
       }
@@ -251,8 +298,6 @@ DEBUG = 'on';
       $('.tooltip-show').tooltip();
       $('.popover').popover();
       $('#modal').modal({show: false, keyboard: true, backdrop: true});
-
-      $('.jm_chat-content').draggable({handle: '.jm_actions'});
 
       reParseContent();
     });
@@ -304,10 +349,12 @@ DEBUG = 'on';
         $('#modal').modal('hide');
       }
 
-      $(function(){$('#mapSliderHori').slider({range: "min", value: getMapSliderValue('xCoord'), min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ){$('#mapSliderHori2').slider('value', ui.value);getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
-      $(function(){$('#mapSliderHori2').slider({range: "min", value: getMapSliderValue('xCoord'), min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ) {$('#mapSliderHori').slider('value', ui.value);getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
-      $(function(){$('#mapSliderVerti').slider({orientation: "vertical", range: "max", value: getMapSliderValue('yCoord'), min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti2').slider('value', ui.value);getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
-      $(function(){$('#mapSliderVerti2').slider({orientation: "vertical", range: "max", value: getMapSliderValue('yCoord'), min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti').slider('value', ui.value);getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
+      var xCoord = getMapSliderValue('xCoord');
+      var yCoord = getMapSliderValue('yCoord');
+      $(function(){$('#mapSliderHori').slider({range: "min", value: xCoord, min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ){$('#mapSliderHori2').slider({value: ui.value});getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
+      $(function(){$('#mapSliderHori2').slider({range: "min", value: xCoord, min: MAP_MIN_X, max: MAP_MAX_X, slide: function( event, ui ) {$('#mapSliderHori').slider({value: ui.value});getMap(ui.value, Math.abs($('#mapSliderVerti').slider('value')));}});});
+      $(function(){$('#mapSliderVerti').slider({orientation: "vertical", range: "max", value: yCoord, min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti2').slider({value: ui.value});getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
+      $(function(){$('#mapSliderVerti2').slider({orientation: "vertical", range: "max", value: yCoord, min: MAP_MAX_Y, max: MAP_MIN_Y, slide: function( event, ui ) {$('#mapSliderVerti').slider({value: ui.value});getMap($('#mapSliderHori').slider('value'), Math.abs(ui.value));}});});
     }
     function getMapSliderValue(type) {if (type === 'xCoord') {return $('#map-queryX').html();} else if (type === 'yCoord') {return $('#map-queryY').html()*-1;}}
 
@@ -331,6 +378,8 @@ DEBUG = 'on';
     }
 
     function getMap(xCoord, yCoord) {
+      if (xCoord < 1) xCoord = 1;
+      if (yCoord < 1) yCoord = 1;
       ua_log('Load map Content: main.php?modus=map&method=ajax&xCoord='+xCoord+'&yCoord='+yCoord);
 
       $.ajax({
@@ -377,7 +426,7 @@ DEBUG = 'on';
     if ($.browser.msie && $.browser.version <= 9) {
       return;
     }
-    if (navigator && navigator.userAgent && navigator.userAgent != null) {
+    if (navigator && navigator.userAgent && navigator.userAgent !== null) {
       var strUserAgent = navigator.userAgent.toLowerCase();
       var arrMatches = strUserAgent.match(/(iphone|ipod|ipad)/);
       if (arrMatches) return;

@@ -62,13 +62,13 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     1 => array('type' => 'success', 'message' => _('Euer Held hat eine neue Fähigkeit erlernt.')),
     2 => array('type' => 'notice', 'message' => _('Die Wiederbelebung eures Helden hat begonnen.')),
     3 => array('type' => 'success', 'message' => _('Euer Held wurde erstellt.')),
-    4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.')), 
-    5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')), 
+    4 => array('type' => 'notice', 'message' => _('Wählt mit Bedacht, dies lässt sich womöglich nicht mehr rückgängig machen.')),
+    5 => array('type' => 'success', 'message' => _('Der Trank hat seine Wirkung entfaltet. Die Lebenspunkte wurden erhöht.')),
     6 => array('type' => 'success', 'message' => _('Der Trank des Vergessens hat Wirkung gezeigt. Der Held ist nun wieder unerfahren.')),
     7 => array('type' => 'success', 'message' => _('Euer Held hat das nächste Level erreicht!')),
     8 => array('type' => 'success', 'message' => _('Eurem Helden wurden expValue Erfahrungspunkte gutgeschrieben.')),
-    9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.')), 
-    10 => array('type' => 'success', 'message' => _('Heldentyp erfolgreich gewechselt!')), 
+    9 => array('type' => 'success', 'message' => _('Die Wiederbelebung wurde erfolgreich abgebrochen.')),
+    10 => array('type' => 'success', 'message' => _('Heldentyp erfolgreich gewechselt!')),
     11 => array('type' => 'success', 'message' => _('Dein Held hat eine neue Fähigkeit erlernt!')),
     );
 
@@ -82,7 +82,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   }
 
   $hero = getHeroByPlayer($playerID);
-  
+
   $showTypesList = false;
   $changeType = false;
   if ($hero['heroTypeID'] == 1000) {
@@ -90,7 +90,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     $changeType = true;
     $showTypesList = true;
   }
-  
+
   if ($hero != null) {
     $showLevelUp = false;
 
@@ -200,8 +200,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
           if ($skillID = Request::getVar('skillID', '')) {
             $messageID = hero_skillAbility($skillID, $hero);
           }
-          
-          
+
+
         }
       break;
 
@@ -236,12 +236,12 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
         $value = Request::getVar('value', 0);
 
         if ($potionID == -1) {
-          $messageID = -8; 
+          $messageID = -8;
           break;
         }
 
-        if ($value != 1 || $value != 5) {
-          $messageID = -8; 
+        if ($value != 1 && $value != 5) {
+          $messageID = -8;
           break;
         }
 
@@ -346,7 +346,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
   if ($GLOBALS['heroSkillTypeList']) {
     $skills = array();
     foreach ($GLOBALS['heroSkillTypeList'] as $skillID => $skill) {
-      
+
       // calculate skill effect
       foreach ($skill['effects'] as $effect_dbFieldName => $effect) {
         foreach($GLOBALS['effectTypeList'] as $eff) {
@@ -358,8 +358,8 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
         $skill['effect_values'][] = $name . ": " . ($skill['skillFactor']*$hero[$skill['dbFieldName']]);
       }
-      
-      
+
+
       // get level of skill
       $skill['level'] = $hero[$skill['dbFieldName']];
 
@@ -373,7 +373,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
     // check if send button is disabled
     foreach ($skills as $skillID => $skill) {
-      if ($skill['costTP'] > $hero['tpFree'] || 
+      if ($skill['costTP'] > $hero['tpFree'] ||
           $skill['requiredLevel'] > $hero['lvl'] ||
           $skill['maxLevel'] <= $skill['level']) {
         $skills[$skillID]['disableButton'] = true;

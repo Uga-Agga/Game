@@ -52,6 +52,8 @@
 
 #define FAME_MAX_OVERPOWER_FACTOR 4
 
+#define HERO_MAX_UNIT_SIZE 2000
+
 #define drand()    (rand() / (RAND_MAX+1.0))
 
 static int isTakeoverableCave(db_t *database, int caveID) {
@@ -201,7 +203,7 @@ static void army_setup (db_t *database,
   * - hero is alive
   * - armySize >= hero experience
   */
-  army->heroFights = heroID > 0 && hero.exp >= armySize && hero.isAlive == 1;
+  army->heroFights = heroID > 0 && (hero.exp >= armySize || HERO_MAX_UNIT_SIZE >= armySize) && hero.isAlive == 1;
 
   /* fill effects */
   /* XXX should this be effect_factor(... + takeover_multiplier)? */

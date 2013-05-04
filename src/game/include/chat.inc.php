@@ -197,13 +197,13 @@ class Chat {
 
     if (empty($tribeID) || empty($tag)) return false;
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}", "[{$tag}] Haupthöhle", true);
+    $rommID = self::tribeAdd($tribeID, "{$tag}", "[{$tag}] Haupthoehle", true);
     self::authAdd($rommID, $playerName);
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}1", "[{$tag}] Nebenhöhle 1");
+    $rommID = self::tribeAdd($tribeID, "{$tag}1", "[{$tag}] Nebenhoehle 1");
     self::authAdd($rommID, $playerName);
 
-    $rommID = self::tribeAdd($tribeID, "{$tag}2", "[{$tag}] Nebenhöhle 2");
+    $rommID = self::tribeAdd($tribeID, "{$tag}2", "[{$tag}] Nebenhoehle 2");
     self::authAdd($rommID, $playerName);
   }
 
@@ -251,7 +251,7 @@ class Chat {
     if (empty($playerID)) return array();
 
     $rooms = array();
-    $sql = $db->prepare("SELECT cr.tag, cr.autojoin
+    $sql = $db->prepare("SELECT cr.id, cr.tag, cr.autojoin
                          FROM " . CHAT_ROOM_TABLE . " cr
                            LEFT JOIN " . CHAT_USER_TABLE . " cu ON cu.roomID = cr.id
                            LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName LIKE cu.name
@@ -262,7 +262,7 @@ class Chat {
     if (!$sql->execute()) return array();
 
     while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
-      $rooms[] = $row;
+      $rooms[$row['id']] = $row;
     }
     $sql->closeCursor();
 

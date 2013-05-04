@@ -38,12 +38,13 @@ class CaveBookmarks_Model extends Model {
     $names = array();
     // prepare query
     $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord, ".
-                   "p.playerID, p.name as playerName, p.tribeID, ".
+                   "p.playerID, p.name as playerName, p.tribeID, t.tag as tribe, ".
                    "r.name as region ".
                    "FROM ". CAVE_BOOKMARKS_TABLE ." cb ".
-                   "LEFT JOIN ". CAVE_TABLE ." c ON cb.caveID = c.caveID ".
-                   "LEFT JOIN ".PLAYER_TABLE ." p ON c.playerID = p.playerID ".
-                   "LEFT JOIN ". REGIONS_TABLE ." r ON c.regionID = r.regionID ".
+                   "LEFT JOIN " . CAVE_TABLE . " c ON cb.caveID = c.caveID ".
+                   "LEFT JOIN " . PLAYER_TABLE . " p ON c.playerID = p.playerID ".
+                   "LEFT JOIN " . REGIONS_TABLE . " r ON c.regionID = r.regionID ".
+                  " LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = p.tribeID ".
                    "WHERE cb.playerID = :playerID ".
                    "ORDER BY c.name");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
@@ -74,7 +75,7 @@ class CaveBookmarks_Model extends Model {
           if (!in_array($row['name'], $names)) {
             $row['raw_name'] = unhtmlentities($row['name']);
             $result[] = $row;
-          }  
+          }
         }
       }
     }
@@ -89,7 +90,7 @@ class CaveBookmarks_Model extends Model {
     $sql = $db->prepare("SELECT cb.*, c.name, c.xCoord, c.yCoord ".
                    "FROM ". CAVE_BOOKMARKS_TABLE ." cb ".
                    "LEFT JOIN ". CAVE_TABLE ." c ON cb.caveID = c.playerID ".
-                   "WHERE cb.playerID = :playerID AND cb.bookmarkID = :bookmarkID 
+                   "WHERE cb.playerID = :playerID AND cb.bookmarkID = :bookmarkID
                    LIMIT 1");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('bookmarkID', $bookmarkID, PDO::PARAM_INT);
@@ -112,7 +113,7 @@ class CaveBookmarks_Model extends Model {
                    "VALUES (:playerID, :caveID)");
     $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
     $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-    
+
     if (!$sql->execute())
       return CAVEBOOKMARKS_ERROR_INSERTFAILED;
 

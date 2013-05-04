@@ -36,7 +36,7 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
   $maxLevel = ($maxLevel < 0) ? 0 : $maxLevel;
   $maxReadable = formula_parseToReadable($science->maxLevel);
 
-  if ($science->nodocumentation && !$caveData[$science->dbFieldName] && rules_checkDependencies($science, $caveData) !== TRUE) {
+  if ($science->nodocumentation && !$caveData[$science->dbFieldName] && rules_checkDependencies($science, $caveData) !== true) {
     $template->addVar('status_msg', array('type' => 'error', 'message' => _('Die Forschung wurde nicht gefunden oder ist derzeit nicht baubar.')));
     return;
   }
@@ -96,14 +96,16 @@ function science_getScienceDetails($scienceID, $caveData, $method) {
       }
     }
 
-    $levels[$count] = array(
-      'level' => $level + 1,
-      'time'  => $duration,
-      'resource_cost' => $resourceCost,
-      'unit_cost'     => $unitCost,
-      'building_cost' => $buildingCost,
-      'defense_cost'  => $defenseCost
-    );
+    if (rules_checkDependencies($science, $caveData) === true) {
+      $levels[$count] = array(
+        'level' => $level + 1,
+        'time'  => $duration,
+        'resource_cost' => $resourceCost,
+        'unit_cost'     => $unitCost,
+        'building_cost' => $buildingCost,
+        'defense_cost'  => $defenseCost
+      );
+    }
   }
   if (sizeof($levels)) {
     $costTimeLvl = array(
