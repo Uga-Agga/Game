@@ -2014,10 +2014,10 @@ class TribeWonder {
     return true;
   }
 
-  public static function processTribeWonder($wonderID, $casterTribeData, $targetTribeName) {
+  public static function processWonder($wonderID, $casterTribeData, $targetTribeName) {
     global $db;
 
-    if (empty($wonderID) || empty($casterTribeData) || empty($targetTribeName)) return -30;
+    if ($wonderID < 0 || empty($casterTribeData) || empty($targetTribeName)) return -30;
 
     // check if wonder exists and is TribeWonder
     if (isset($GLOBALS['wonderTypeList'][$wonderID]) || !$wonder->isTribeWonder) {
@@ -2028,7 +2028,7 @@ class TribeWonder {
 
     // check if tribes exist
     $targetTribeData = Tribe::getID($targetTribeName, true);
-    if ($targetTribeID == 0) {
+    if (empty($targetTribeData )) {
       return -15;
     }
 
@@ -2073,7 +2073,7 @@ class TribeWonder {
     }
 
     // take wonder Costs from TribeStorage
-    $memberNumber = Tribe::getMemberCount($casterTribe);
+    $memberNumber = Tribe::getMemberCount($casterTribeID);
     if (!processProductionCost($wonder, 0, NULL, $memberNumber, true)) {
       return -33;
     }
@@ -2091,7 +2091,7 @@ class TribeWonder {
     $delayDelta = $wonder->impactList[0]['delay'] * $delayRandFactor;
 
     // get targets
-    $targets = self::getPlayerList($targetTribeID, false, true);
+    $targets = Tribe::getPlayerList($targetTribeID, false, true);
 
     if (sizeof($targets) == 0) {
       return -33;
@@ -2124,7 +2124,7 @@ class TribeWonder {
 
     // send caster messages
     $messageClass = new Messages;
-    $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, sprintf(_("Stammeswunder erwirkt auf %s", $targetTribe)), sprintf(_("Sie haben auf den Stamm %s ein Stammeswunder %s erwirkt.'", $targetTribe, $wonder->name)));
+    $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, sprintf(_("Stammeswunder erwirkt auf %s"), $targetTribeData['tag']), sprintf(_("Sie haben auf den Stamm %s ein Stammeswunder %s erwirkt."), $targetTribe, $wonder->name));
 
     // send target messages
     $targetPlayersArray = array();
@@ -2135,7 +2135,7 @@ class TribeWonder {
     }
 
     foreach($targetPlayersArray as $target) {
-      $messageClass->sendSystemMessage($target['playerID'], 9, 'Stammeswunder!', sprintf(_("Der Stamm %s hat ein Stammeswunder auf deine Höhlen gewirkt.'", $casterTribe)));
+      $messageClass->sendSystemMessage($target['playerID'], 9, 'Stammeswunder!', sprintf(_("Der Stamm %s hat ein Stammeswunder auf deine Höhlen gewirkt."), $targetTribeData['tag']));
     }
 
     return 12;

@@ -626,20 +626,13 @@
                   </td>
                   <td class="text-right" style="width: 150px;">
                     {% if item.build_link %}
-                      <form id="tribeWonderForm" action="main.php?modus={{ tribe_link }}" method="post">
+                      <form id="tribeWonderForm" action="main.php?modus={{ tribe_link }}#tribe_wonder" method="post">
                         <div class="pull-right">
-                          <div class="pull-left" style="width: 105px;">
-                            <ul class="clean">
-                              <li class="text-center">Zielstamm:</li>
-                              <li><input class="autocomplete input-small" type="text" name="CaveName" id="CaveName_{{ item.wonder_id }}" size="10" maxlength="32"  data-source="tribe"></li>
-                            </ul>
-                          </div>
-                          <div class="pull-left" style="width: 25px;">
-                            <input type="hidden" name="action" value="{{ tribe_action_wonder }}" />
-                            <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
-                            <input type="hidden" name="caveID" value="{{ cave_id }}" />
-                            <input type="image" src="{{ gfx }}/de_DE/t_uga/flash.png" width="25" value="Beten" alt="Beten" title="Beten" />
-                          </div>
+                          <input class="autocomplete input-small" type="text" name="tribeName" id="tribeName_{{ item.wonder_id }}"  placeholder="Zielstamm" size="10" maxlength="32"  data-source="tribe">
+                          <input type="hidden" name="action" value="{{ tribe_action_wonder }}" />
+                          <input type="hidden" name="wonderID" value="{{ item.wonder_id }}" />
+                          <input type="hidden" name="caveID" value="{{ cave_id }}" />
+                          <button class="flash"style="margin-left: 10px;" type="button" id="tribeWonderFormSubmit" name="tribeWonderFormSubmit" title="Beten"></button>
                         </div>
                       </form>
                     {% else %}

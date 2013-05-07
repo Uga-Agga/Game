@@ -385,7 +385,7 @@ function tribe_getContent($caveID, &$details) {
         break;
       }
 
-      $messageID = TribeWonder::processWonder($wonderID, $tribeData, $targetName);
+      $messageID = TribeWonder::processWonder($wonderID, $tribeData, $tribeName);
       if ($messageID > 0) {
         TribeWonder::setBlockedTime($tribeID, $wonderID, $tribeData['wonderLocked']);
       }
