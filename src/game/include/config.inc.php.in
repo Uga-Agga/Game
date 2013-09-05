@@ -171,6 +171,7 @@ class Config {
 
   const WWW_REQUEST_TIMEOUT = .000;
 
+  const JABBER_BOSH         = '';
   const JABBER_SERVER       = '';
   const JABBER_MUC_SERVER   = '';
   const JABBER_NO_CLOSE     = '';

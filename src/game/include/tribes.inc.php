@@ -1416,20 +1416,27 @@ class TribeRelation {
   public static function checkForRelationAttrib($tribeID1, $tribeID2, $attribArray) {
     if (empty($tribeID1) || empty($tribeID2) || empty($attribArray)) return false;
 
-    $relation = self::getRelations($tribeID1, $tribeID2);
-    $result = false;
+    $tribeRelations = self::getRelations($tribeID1);
+
+    if (!isset($tribeRelations['own'][$tribeID2]) || !isset($tribeRelations['other'][$tribeID2])) {
+      return false;
+    }
 
     foreach ($attribArray as $attrib) {
-      if (!isset($relation['own']['relationType']) || !isset($relation['other']['relationType'])) {
-        break;
+      // relationID raussuchen
+      foreach ($GLOBALS['relationList'] as $relation) {
+        if ($relation[$attrib] == 1) {
+          $relationID = $relation['relationID'];
+          break;
+        }
       }
-      $result = ($GLOBALS['relationList'][$relation['own']['relationType']][$attrib] == 1) && ($GLOBALS['relationList'][$relation['other']['relationType']][$attrib] == 1);
-      if ($result) {
-        break;
+
+      if ($tribeRelations['own'][$tribeID2]['relationType'] == $relationID && $tribeRelations['other'][$tribeID2]['relationType'] == $relationID) {
+        return true;
       }
     }
 
-    return $result;
+    return false;
   }
 
   public static function deleteRelations($tribeID) {
@@ -1673,7 +1680,7 @@ class TribeRelation {
 
     foreach ($ownRelations['own'] as $actRelation) {
       foreach ($targetRelations['own'] as $actTargetRelation) {
-        if (strcasecmp($actRelation['tribe_target'], $actTargetRelation['tribe_target']) == 0) {
+        if ($actRelation['tribeID_target'] === $actTargetRelation['tribeID_target']) {
           $ownType = $actRelation['relationType'];
           $targetType = $actTargetRelation['relationType'];
 
@@ -1717,8 +1724,8 @@ class TribeRelation {
     return self::checkForRelationAttrib($tribeID1, $tribeID2, $attribs);
   }
 
-  public static function isEnemy($tag_tribe1, $tag_tribe2) {
-    if (empty($tribeID1) || empty($tribeID2)) return false;
+  public static function isEnemy($tribeID1, $tribeID2) {
+    if (empty($tribeID1) || empty($tribeID2)) return true;
 
     $attribs = array();
     $attribs[] = 'isWar';
@@ -1938,15 +1945,12 @@ class TribeRelation {
 }
 
 class TribeWonder {
-  public static function checkRelations($relations, $targetTribe, $casterTribe, $casterTribeRelations, $targetTribeRelations) {
-    $targetTribe = strtoupper($targetTribe);
-    $casterTribe = strtoupper($casterTribe);
-
+  public static function checkRelations($relations, $targetTribeID, $casterTribeID, $casterTribeRelations, $targetTribeRelations) {
     foreach ($relations as $relation) {
       $valid = false;
       switch ($relation['type']) {
         case 'own2other':
-          $check = (isset($casterTribeRelations['own'][$targetTribe]) && $casterTribeRelations['own'][$targetTribe]['relationType'] == $relation['relationID']) ? true : false;
+          $check = (isset($casterTribeRelations['own'][$targetTribeID]) && $casterTribeRelations['own'][$targetTribeID]['relationType'] == $relation['relationID']) ? true : false;
 
           if (!$relation['negate'] && $check) {
             $valid = true;
@@ -1966,7 +1970,7 @@ class TribeWonder {
         break;
 
         case 'other2own':
-          $check = (isset($casterTribeRelations['other'][$targetTribe]) && $casterTribeRelations['other'][$targetTribe]['relationType'] == $relation['relationID']) ? true : false;
+          $check = (isset($casterTribeRelations['other'][$targetTribeID]) && $casterTribeRelations['other'][$targetTribeID]['relationType'] == $relation['relationID']) ? true : false;
 
           if (!$relation['negate'] && $check) {
             $valid = true;
@@ -2051,11 +2055,11 @@ class TribeWonder {
     $wonderPossible = false;
     foreach ($wonder->targetsPossible as $targetsPossible) {
       // check target
-      if ($targetsPossible['target'] == 'own' && strtoupper($casterTribe) != strtoupper($targetTribe)) {
+      if ($targetsPossible['target'] == 'own' && $casterTribeID !== $targetTribeID) {
         continue;
       }
 
-      if ($targetsPossible['target'] == 'other' && strtoupper($casterTribe) == strtoupper($targetTribe)) {
+      if ($targetsPossible['target'] == 'other' && $casterTribeID === $targetTribeID) {
         continue;
       }
 
@@ -2110,8 +2114,8 @@ class TribeWonder {
                                VALUES
                                  (:playerID, :caveID, :targetID, :wonderID, :impactID, :start, :end)");
           $sql->bindValue('playerID', 0, PDO::PARAM_INT); // playerID 0, for not receiving lots of wonder-end-messages
-          $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
-          $sql->bindValue('targetID', $target['caveID'], PDO::PARAM_INT);
+          $sql->bindValue('caveID', $casterTribeID, PDO::PARAM_INT);
+          $sql->bindValue('targetID', $caveID, PDO::PARAM_INT);
           $sql->bindValue('wonderID', $wonderID, PDO::PARAM_INT);
           $sql->bindValue('impactID', $impactID, PDO::PARAM_INT);
           $sql->bindValue('start', time_toDatetime($now), PDO::PARAM_STR);
@@ -2124,7 +2128,7 @@ class TribeWonder {
 
     // send caster messages
     $messageClass = new Messages;
-    $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, sprintf(_("Stammeswunder erwirkt auf %s"), $targetTribeData['tag']), sprintf(_("Sie haben auf den Stamm %s ein Stammeswunder %s erwirkt."), $targetTribe, $wonder->name));
+    $messageClass->sendSystemMessage($_SESSION['player']->playerID, 9, sprintf(_("Stammeswunder erwirkt auf %s"), $targetTribeData['tag']), sprintf(_("Sie haben auf den Stamm %s ein Stammeswunder %s erwirkt."), $targetTribeData['tag'], $wonder->name));
 
     // send target messages
     $targetPlayersArray = array();
@@ -2135,7 +2139,7 @@ class TribeWonder {
     }
 
     foreach($targetPlayersArray as $target) {
-      $messageClass->sendSystemMessage($target['playerID'], 9, 'Stammeswunder!', sprintf(_("Der Stamm %s hat ein Stammeswunder auf deine Höhlen gewirkt."), $targetTribeData['tag']));
+      $messageClass->sendSystemMessage($target['playerID'], 9, 'Stammeswunder!', sprintf(_("Der Stamm %s hat ein Stammeswunder auf deine Höhlen gewirkt."), $casterTribeData['tag']));
     }
 
     return 12;

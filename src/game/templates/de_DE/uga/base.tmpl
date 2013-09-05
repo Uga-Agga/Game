@@ -21,7 +21,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Bootstrap -->
-    <link href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.10.1.custom.min.css" rel="stylesheet" media="screen">
+    <link href="{{ gfx }}/de_DE/t_uga/css/jquery.ui.min.css" rel="stylesheet" media="screen">
     <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="{{ gfx }}/de_DE/t_uga/css/styles.css" rel="stylesheet" media="screen">
 
@@ -59,7 +59,7 @@
           HOST_PUBSUB    = "pubsub.{{ jabber.server }}";
           HOST_VJUD      = "vjud.{{ jabber.server }}";
           HOST_ANONYMOUS = "anonymous.{{ jabber.server }}";
-          HOST_BOSH      = "http://{{ jabber.server }}/http-bind/";
+          HOST_BOSH      = "{{ jabber.bosh }}";
 
           JAPPIX_STATIC = ''
 

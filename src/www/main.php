@@ -529,7 +529,7 @@ $template->addVars(array(
   'countdown_time'    => $now->format("M j, Y H:i:s O"),
   'query_string'      => $requestString,
   'war_points'        => getWarpointsByCaveData($ownCaves[$caveID]),
-  'jabber'            => array('server' => Config::JABBER_SERVER, 'noClose' => Config::JABBER_NO_CLOSE, 'groupchats' => implode(', ', $groupchats), 'groupchats_suggest' => implode(', ', $groupchatsSuggest), 'user' => $_SESSION['player']->name, 'jabber_name' => $_SESSION['player']->jabberName, 'passwd' => $_SESSION['session']['loginchecksum']),
+  'jabber'            => array('bosh' => Config::JABBER_BOSH, 'server' => Config::JABBER_SERVER, 'noClose' => Config::JABBER_NO_CLOSE, 'groupchats' => implode(', ', $groupchats), 'groupchats_suggest' => implode(', ', $groupchatsSuggest), 'user' => $_SESSION['player']->name, 'jabber_name' => $_SESSION['player']->jabberName, 'passwd' => $_SESSION['session']['loginchecksum']),
   'map_size'          => array('min_x' => MAP_MIN_X, 'max_x' => MAP_MAX_X, 'min_y' => MAP_MIN_Y, 'max_y' => MAP_MAX_Y),
 
   'ua_time_hour'            => $UgaAggaTime['hour'],

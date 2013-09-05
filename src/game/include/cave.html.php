@@ -29,7 +29,7 @@ function getCaveDetailsContent(&$details, $showGiveUp = TRUE) {
 ****************************************************************************************************/
     case 'caveGiveUp':
       if (Request::getVar('giveUpCaveID', 0) == $details['caveID'] && Request::isPost('postConfirm')) {
-        if (cave_giveUpCave($details['caveID'], $_SESSION['player']->playerID, $_SESSION['player']->tribe)) {
+        if (cave_giveUpCave($details['caveID'], $_SESSION['player']->playerID, $_SESSION['player']->tribeID)) {
           $template->throwError(_('Sie haben sich aus dieser Höhle zurückgezogen.'));
           return;
         } else {
@@ -297,7 +297,7 @@ function cave_giveUpCave($caveID, $playerID, $tribeID) {
 
   $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
                       SET playerID = 0,
-                        takeoverable = 2,
+                        takeoverable = 0,
                         protection_end = NOW()+0,
                         secureCave = 0
                       WHERE playerID = :playerID

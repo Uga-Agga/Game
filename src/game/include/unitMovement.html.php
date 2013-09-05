@@ -167,7 +167,7 @@ function unit_Movement($caveID, &$ownCave) {
     $denymovement_targetwar = false;
     if ($movementID == 2) {  // move units/resources
       if ($targetPlayer != null) {
-        if (strtoupper($targetPlayer->tribeID) != strtoupper($_SESSION['player']->tribeID)) {  //may tade in own tribe
+        if ($targetPlayer->tribeID != $_SESSION['player']->tribeID) {  //may tade in own tribe
           $ownTribeAtWar = TribeRelation::hasWar($_SESSION['player']->tribeID, true);
           $targetTribeAtWar = TribeRelation::hasWar($targetPlayer->tribeID, true);
           $TribesMayTrade = TribeRelation::isAlly($_SESSION['player']->tribeID, $targetPlayer->tribeID) || TribeRelation::isEnemy($_SESSION['player']->tribeID, $targetPlayer->tribeID);
@@ -175,9 +175,6 @@ function unit_Movement($caveID, &$ownCave) {
           $denymovement_nonenemy = $ownTribeAtWar && !$TribesMayTrade;
           $denymovement_targetwar =  $targetTribeAtWar && !$TribesMayTrade;
         }
-      } else {
-        $denymovement_nonenemy = false;
-        $denymovement_targetwar = false;
       }
     }
 

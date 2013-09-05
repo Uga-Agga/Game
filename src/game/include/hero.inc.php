@@ -34,7 +34,7 @@ function getHeroByPlayer($playerID) {
   $hero = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
-  if (empty($hero)) {
+  if (empty($hero) || (!isset($GLOBALS['heroTypesList'][$hero['heroTypeID']]['id']) && $hero['heroTypeID'] != 1000)) {
     return null;
   }
 
