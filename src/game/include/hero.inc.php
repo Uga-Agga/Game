@@ -731,7 +731,7 @@ function hero_removeHeroEffectsFromCave($playerID) {
 
 function hero_changeType($typeID) {
   global $db;
-echo $typeID;
+
   $hero = getHeroByPlayer($_SESSION['player']->playerID);
   if ($hero['heroTypeID'] != 1000 || !isset($GLOBALS['heroTypesList'][$typeID]['id'])) {
     return -19;
