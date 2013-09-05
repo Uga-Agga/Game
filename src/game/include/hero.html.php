@@ -3,7 +3,7 @@
  * hero.html.php - basic hero system
  * Copyright (c) 2003  OGP Team
  * Copyright (c) 2011-2012  Georg Pitterle
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -265,9 +265,13 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
     }
   } elseif ($changeType) {
     if (Request::getVar('action', '') == 'changeType') {
-      $messageID = hero_changeType(Request::getVar('typeID', -1));
-      $showTypesList = false;
-      $hero = getHeroByPlayer($playerID);
+      $messageID = hero_changeType(Request::getVar('id', -1));
+      if ($messageID < 0) {
+        $showTypesList = true;
+      } else {
+        $showTypesList = false;
+        $hero = getHeroByPlayer($playerID);
+      }
     }
 
   } else {
@@ -298,6 +302,7 @@ function hero_getHeroDetail($caveID, &$ownCaves) {
 
   if ($hero != null) {
     $hero = getHeroByPlayer($playerID);
+    $ritual = getRitual($hero);
 
     if ($hero['expLeft'] <= 0) {
       $showLevelUp = true;
