@@ -284,7 +284,7 @@ function hero_skillAbility($skillID, $hero) {
   // update hero effects
   $fields = array();
   foreach ($skill['effects'] as $key => $effect) {
-    $fields[] = $key . " = " . $key . " + " . ($skill['skillFactor']*$hero[$skill['dbFieldName']]);
+    $fields[] = $key . " = " . $key . " + " . ($skill['skillFactor']*$hero[$skill['dbFieldName']] - $skill['skillFactor']*($hero[$skill['dbFieldName']]-1));
   }
 
   $sql = $db->prepare("UPDATE " . HERO_TABLE . "
@@ -300,7 +300,7 @@ function hero_skillAbility($skillID, $hero) {
   foreach ($GLOBALS['effectTypeList'] as $effect) {
     if ($effect->isResourceEffect) {
       if (array_key_exists($effect->dbFieldName, $skill['effects'])) {
-        $fields[] = $effect->dbFieldName . " = " . $effect->dbFieldName . " + " . ($skill['skillFactor']*$hero[$skill['dbFieldName']]);
+        $fields[] = $effect->dbFieldName . " = " . $effect->dbFieldName . " + " . ($skill['skillFactor']*$hero[$skill['dbFieldName']] - $skill['skillFactor']*($hero[$skill['dbFieldName']]-1));
       }
     }
   }
