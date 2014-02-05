@@ -1096,11 +1096,11 @@ class TribeGovernment {
 
 class TribeLeader {
   public static function changeLeader($tribeID, $newLeaderID, $oldLeaderID) {
-    if (empty($tribeID) || $newLeaderID[0] == $oldLeaderID) {
+    if (empty($tribeID) || $newLeaderID == $oldLeaderID) {
       return false;  //nothing changed
     }
 
-    if ($newLeaderID[0] != $oldLeaderID) {
+    if ($newLeaderID != $oldLeaderID) {
       if ($oldLeaderID && !self::removeLeader($tribeID)) {
         return -2;
       }

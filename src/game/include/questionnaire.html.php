@@ -3,7 +3,7 @@
  * questionnaire.html.php -
  * Copyright (c) 2003  OGP Team,
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2012-2013 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2012-2014 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -234,6 +234,10 @@ function questionnaire_getCredits($credits) {
 function questionnaire_addCredits($credits) {
   global $db;
 
+  if ($credits == 0) {
+    return true;
+  }
+
   $sql = $db->prepare("UPDATE ". PLAYER_TABLE ."
                        SET questionCredits = questionCredits + :credits
                        WHERE playerID = :playerID
@@ -340,7 +344,7 @@ function questionnaire_getPresent($caveID, &$ownCaves, $presentID) {
     return -4;
 
   // Preis abziehen
-  if (!questionnaire_addCredits(-$row['credits']))
+  if (!questionnaire_addCredits($row['credits']))
     return -5;
 
   // Geschenk überreichen

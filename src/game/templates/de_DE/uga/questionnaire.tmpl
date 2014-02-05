@@ -2,7 +2,7 @@
 /* questionaire.tmpl -
  * Copyright (c) 2003 OGP Team
  * Copyright (c) 2011 Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ * Copyright (c) 2011-2014 David Unger <unger.dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -33,21 +33,21 @@
 </div>
 {% endif %}
 
-{% if status_msg %}<div class="{{ status_msg.type }} small">{{ status_msg.message|raw }}</div>{% endif %}
+{% if status_msg %}<div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr>{% endif %}
 
 <div class="ua-box small">
   <div class="ua-box-header">Fragebogen</div>
   <div class="ua-box-content">
     {% if questions %}
-    <form class="ym-form" id="unitMoving" method="post" action="main.php?modus={{ questionaire_link }}">
-      <table>
+    <form id="questionaireAnswer" class="form-horizontal" action="main.php?modus={{ questionaire_link }}" method="post">
+      <table class="table table-condensed">
         <thead>
           <tr><th>Frage</th><th>Antwort</th></tr>
         </thead>
         <tbody>
           {% for question in questions %}
           {% set bgID = (bgID+1)%2 %}
-            <tr class="bg{{ bgID }}">
+            <tr>
               <td>Nr. {{ question.questionID }}:&nbsp;{{ question.questionText }}</td>
               <td>
                 <select name="question[{{question.questionID}}]">
@@ -60,11 +60,9 @@
         </tbody>
       </table>
 
-      <div class="ym-fbox-button">
-        <input type="hidden" name="action" value="answers" />
-        <input type="hidden" name="caveID" value="{{ cave_id }}" />
-        <input type="submit" class="ym-button" value="UGH?" id="submit" name="submit"/>
-      </div>
+      <input type="hidden" name="action" value="answers" />
+      <input type="hidden" name="caveID" value="{{ cave_id }}" />
+      <button class="btn" type="button" id="submit" name="submit">Ugh!</button>
     </form>
     {% else %}
       <div class="space text-center">Derzeit liegen keine neuen Fragen vor.</div>

@@ -170,7 +170,7 @@ function unit_Movement($caveID, &$ownCave) {
         if ($targetPlayer->tribeID != $_SESSION['player']->tribeID) {  //may tade in own tribe
           $ownTribeAtWar = TribeRelation::hasWar($_SESSION['player']->tribeID, true);
           $targetTribeAtWar = TribeRelation::hasWar($targetPlayer->tribeID, true);
-          $TribesMayTrade = TribeRelation::isAlly($_SESSION['player']->tribeID, $targetPlayer->tribeID) || TribeRelation::isEnemy($_SESSION['player']->tribeID, $targetPlayer->tribeID);
+          $TribesMayTrade = (TribeRelation::isAlly($_SESSION['player']->tribeID, $targetPlayer->tribeID) && TribeRelation::hasSameEnemy($_SESSION['player']->tribeID, $targetPlayer->tribeID, true, true)) || TribeRelation::isEnemy($_SESSION['player']->tribeID, $targetPlayer->tribeID);
 
           $denymovement_nonenemy = $ownTribeAtWar && !$TribesMayTrade;
           $denymovement_targetwar =  $targetTribeAtWar && !$TribesMayTrade;
