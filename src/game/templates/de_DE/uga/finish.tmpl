@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Bootstrap -->
-  <link href="{{ gfx }}/de_DE/t_uga/css/jquery-ui-1.10.1.custom.min.css" rel="stylesheet" media="screen">
+  <link href="{{ gfx }}/de_DE/t_uga/css/jquery.ui.min.css"" rel="stylesheet" media="screen">
   <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
   <link href="{{ gfx }}/de_DE/t_uga/css/styles.css" rel="stylesheet" media="screen">
 
@@ -29,11 +29,20 @@
   <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
   <script type="text/javascript" src="js/jquery.ui.min.js"></script>
   <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+  <script type="text/javascript" src="js/jquery.plugin.min.js"></script>
   <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
   <script type="text/javascript" src="js/jquery.url.js"></script>
+  <script type="text/javascript" src="js/jquery.notification.min.js"></script>
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/jappixmini.js"></script>
   <script type="text/javascript" src="js/ua.js"></script>
+
+  <script type="text/javascript">
+    MAP_MIN_X = 0;
+    MAP_MAX_X = 0;
+    MAP_MIN_Y = 0;
+    MAP_MAX_Y = 0;
+  </script>
 
   <style type="text/css">
     .header-middle { background-image: url("{{ gfx }}/de_DE/t_uga/menu/header/background.png"); }
@@ -58,7 +67,7 @@
   <div class="row">
     <div class="span-header-left">&nbsp;</div>
     <div class="span-header-right pull-right text-right">
-      <img class="right" style="width: 35px; height: 30px;" src="http://gfx.uga-agga.com/GFX-HR13//de_DE/t_uga/menu/icon_logout.png" alt="logout" />
+      <img class="right" style="width: 35px; height: 30px;" src="{{ gfx }}/de_DE/t_uga/menu/icon_logout.png" alt="logout" />
     </div>
     <div class="header-middle text-center">
       <div class="header-middle-menu">
@@ -88,7 +97,7 @@
       <ul class="nav-ua">
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_easy_digest.jpg" alt="Terminkalender" /></li>
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_unit_movement.jpg" alt="Bewegungen" /></li>
-        <li><img id="message_icon" style="display: block;" src="http://gfx.uga-agga.com/GFX-HR13//de_DE/t_uga/menu/menu_messages.jpg" alt="Nachrichten" /></li>
+        <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_messages.jpg" alt="Nachrichten" /></li>
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_all_cave_detail.jpg" alt="Alle Höhlen" /></li>
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_ranking.jpg" alt="Ranking" /></li>
         <li><img style="display: block;" src="{{ gfx }}/de_DE/t_uga/menu/menu_map.jpg" alt="Karte" /></li>
