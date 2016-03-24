@@ -7744,7 +7744,7 @@ function displayMessageMini(type, body, xid, nick, hash, time, stamp, message_ty
 	           .replace(/(:-?D)(\s|$)/gi, smileyMini('grin', '$1'));
 
 	// Format the text
-	body = body.replace(/(^|\s|>|\()((\*)([^<>'"\*]+)(\*))($|\s|<|\))/gi, '$1<b>$2</b>$6')
+	body = body.replace(/(^|\s|>|\()((\*\*)([^<>'"\*\*]+)(\*\*))($|\s|<|\))/gi, '$1<b>$2</b>$6')
 	           .replace(/(^|\s|>|\()((\/)([^<>'"\/]+)(\/))($|\s|<|\))/gi, '$1<em>$2</em>$6')
 	           .replace(/(^|\s|>|\()((_)([^<>'"_]+)(_))($|\s|<|\))/gi, '$1<span style="text-decoration: underline;">$2</span>$6');
 

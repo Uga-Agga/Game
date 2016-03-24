@@ -32,8 +32,10 @@
     <script type="text/javascript" src="js/jquery.jqdock.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.min.js"></script>
     <script type="text/javascript" src="js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="js/jquery.plugin.min.js"></script>
     <script type="text/javascript" src="js/jquery.countdown.min.js"></script>
     <script type="text/javascript" src="js/jquery.url.js"></script>
+    <script type="text/javascript" src="js/jquery.notification.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/jappixmini.js"></script>
     <script type="text/javascript" src="js/ua.js"></script>
@@ -132,7 +134,7 @@
           <a href="main.php?modus={{ cave_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave.png' width="30" height="30" title='Diese Höhle' alt='' /></a>
           <a href="main.php?modus={{ cave_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_cave_bookmarks.png' width="30" height="30" title='Höhlenliste' alt='' /></a>
           <a href="main.php?modus={{ questionaire_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_questionnaire.png' width="30" height="30" title='Fragebogen' alt='' /></a>
-          <a href="main.php?modus={{ donations_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>
+          <!--<a href="main.php?modus={{ donations_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_donations.png' width="30" height="30" title='Spenden' alt='' /></a>-->
           <a href="main.php?modus={{ tribe_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_tribe.png' width="30" height="30" title='Mein Stamm' alt='' /></a>
           <a href="main.php?modus={{ contact_bookmarks_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_contacts.png' width="30" height="30" title='Adressbuch' alt='' /></a>
           <a href="main.php?modus={{ effectwonder_detail_link }}"><img src='{{ gfx }}/de_DE/t_uga/menu/header/icon_effectwonder_detail.png' width="30" height="30" title='Aktive Effekte und Wunder' alt='' /></a>
@@ -166,7 +168,7 @@
     </div>
     <div class="span-content-middle text-center">
       <div id="loader" class="notice hide">Bitte warten. Seite wird geladen...<br /><img src="images/ajax-loader.gif" title="" alt="" /></div>
-      <div id="dialog" class="hide"> </div>
+      <div id="dialog" class="hide"></div>
 
       <div id="content">
         {% for item in resources %}
@@ -174,6 +176,7 @@
           {{ item.amount }} ({{ item.delta }})&nbsp;</span>
         {% endfor %}
         <hr>
+        <!--<div class="alert alert-block alert-success"><a style="text-decoration: underline;" href="/main.php?modus=news">Neue News</a></div>-->
         <div id="caves">
           |&nbsp;{% for item in navigateCave %}
             <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;

@@ -65,6 +65,11 @@ DEBUG = 'on';
         return;
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
+        /* Destroy countdown */
+        $($('#content').html()).find('.timer').each(function(i) {
+          $('#'+$(this).attr('id')).countdown('destroy');
+        });
+
         if ($(this).attr('data-reask') == 'true') {
           $('#modalLabel').html($(this).attr('data-reask-header'));
           $('#modalLabelClose').show();
@@ -331,7 +336,26 @@ DEBUG = 'on';
       $($('#content').html()).find('.timer').each(function(i) {
         var endTime = new Date(); endTime.setTime($(this).attr('data-endtime') * 1000);
         var serverTime = new Date($(this).attr('data-servertime'));
-        $('#'+$(this).attr('id')).countdown({until: endTime, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
+        if ($(this).attr('data-alert') == 1) {
+          onExpiryFunction = function() {
+            ua_log('notification event fire');
+
+            var options = {
+                iconUrl: 'http://gfx.uga-agga.com/GFX-HR14//sciences/enzio_large.gif',
+                title:   'Uga-Agga Nachricht',
+                body:    'Es wurde soeben eine Erweiterung, Forschung, Einheit oder Verteidigung fertiggestellt.',
+                timeout: 10000, // close notification in 1 sec
+                onclick: function () {
+                    ua_log('dismiss notification');
+                }
+            };
+            $.notification(options);
+          }
+        } else {
+          onExpiryFunction = null;
+        }
+
+        $('#'+$(this).attr('id')).countdown({until: endTime, format: 'dHMS', onExpiry: onExpiryFunction, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
       });
 
       $('.tooltip-show').tooltip();

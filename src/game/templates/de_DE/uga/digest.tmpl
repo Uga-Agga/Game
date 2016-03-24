@@ -162,7 +162,7 @@
             <td>{{ item.event_name }}</td>
             <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
             <td class="date">{{ item.event_end_date }}</td>
-            <td class="countdown"><div id="timer_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
+            <td class="countdown"><div id="timer_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}" data-alert="1"></div></td>
           </tr>
         {% endfor %}
         </tbody>

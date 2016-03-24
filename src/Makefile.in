@@ -1,94 +1,94 @@
 # makefile for ugaagga/src
 
 # programs
-CC =	      @CC@
-CFLAGS =      @CFLAGS@ @MYSQL_CFLAGS@
-CPPFLAGS =    -Iticker @CPPFLAGS@
-INSTALL =     @INSTALL@
-INSTALL_DATA= @INSTALL_DATA@
-LDFLAGS =     @LDFLAGS@
-LIBS =	      @LIBS@
-MYSQL_LIBS =  @MYSQL_LIBS@
-PHP_CFLAGS =  @PHP_CFLAGS@
-PHP_LIBS   =  @PHP_LIBS@
+CC =					@CC@
+CFLAGS =			@CFLAGS@ @MYSQL_CFLAGS@
+CPPFLAGS =		-Iticker @CPPFLAGS@
+INSTALL =			@INSTALL@
+INSTALL_DATA=	@INSTALL_DATA@
+LDFLAGS =			@LDFLAGS@
+LIBS =					@LIBS@
+MYSQL_LIBS =	@MYSQL_LIBS@
+PHP_CFLAGS =	@PHP_CFLAGS@
+PHP_LIBS   = 	 @PHP_LIBS@
 
-TICKER_INSTALL = @INSTALL@ @TICKER_INSTALL_FLAGS@
-TICKER_INSTALL_DATA = @INSTALL_DATA@ @TICKER_INSTALL_FLAGS@
+TICKER_INSTALL =			@INSTALL@ @TICKER_INSTALL_FLAGS@
+TICKER_INSTALL_DATA =	@INSTALL_DATA@ @TICKER_INSTALL_FLAGS@
 
-XMLLINT =     xmllint --noout --valid
-XSLTPROC =    @XSLTPROC@
+XMLLINT =				xmllint --noout --valid
+XSLTPROC =		@XSLTPROC@
 
-GAMEDIR =     @GAMEDIR@
+GAMEDIR =		@GAMEDIR@
 UA_WEBAPP_DIR = @prefix@/ugaagga
-LOGDIR =      @LOGDIR@
-PHP_EXT_DIR = @PHP_EXT_DIR@
-TICKER_HOME = @TICKER_HOME@
-WWWRUN =      @WWWRUN@
+LOGDIR =			@LOGDIR@
+PHP_EXT_DIR =	@PHP_EXT_DIR@
+TICKER_HOME =	@TICKER_HOME@
+WWWRUN =			@WWWRUN@
 
 # file names
-CONFIG =      dbs/game_rules.sql \
-	      game/include/rules/effects.list.php game/include/rules/game.rules.php \
-	      game/include/rules/government.rules.php game/include/rules/relation.list.php \
-	      game/include/rules/startvalues.php game/include/rules/wonder.rules.php \
-	      game/include/rules/trade.rules.php game/include/rules/hero.rules.php
+CONFIG =	dbs/game_rules.sql \
+					game/include/rules/effects.list.php game/include/rules/game.rules.php \
+					game/include/rules/government.rules.php game/include/rules/relation.list.php \
+					game/include/rules/startvalues.php game/include/rules/wonder.rules.php \
+					game/include/rules/trade.rules.php game/include/rules/hero.rules.php
 
-LANGUAGES =   de_DE
-MODULES =     CaveBookmarks Contacts EventReports Messages
-TEMPLATES =   uga
+LANGUAGES =	de_DE
+MODULES =		CaveBookmarks Contacts EventReports Messages
+TEMPLATES =	uga
 
-TICKER =      ticker/ticker
-TICKER_SRC =  ticker/artefact.c ticker/artefact_handler.c \
-	      ticker/building_handler.c ticker/calc_battle.c ticker/cave.c \
-	      ticker/config.c ticker/database.c ticker/defense_handler.c \
-	      ticker/event_handler.c ticker/except.c ticker/expression.c \
-	      ticker/function.c ticker/game_rules.c ticker/hashtable.c \
-	      ticker/logging.c ticker/memory.c ticker/message.c \
-	      ticker/movement_handler.c ticker/object.c \
-	      ticker/resource_ticker.c ticker/scanner.c \
-	      ticker/science_handler.c ticker/template.c \
-	      ticker/ticker.c ticker/ugatime.c ticker/unit_handler.c \
-	      ticker/wonderEnd_handler.c ticker/wonder_handler.c \
-	      ticker/trade_handler.c \
-	      ticker/weatherEnd_handler.c ticker/weather_handler.c \
-              ticker/hero.c ticker/hero_handler.c
-TICKER_OBJ =  $(TICKER_SRC:.c=.o)
+TICKER =	ticker/ticker
+TICKER_SRC =	ticker/artefact.c ticker/artefact_handler.c \
+							ticker/building_handler.c ticker/calc_battle.c ticker/cave.c \
+							ticker/config.c ticker/database.c ticker/defense_handler.c \
+							ticker/event_handler.c ticker/except.c ticker/expression.c \
+							ticker/function.c ticker/game_rules.c ticker/hashtable.c \
+							ticker/logging.c ticker/memory.c ticker/message.c \
+							ticker/movement_handler.c ticker/object.c \
+							ticker/resource_ticker.c ticker/scanner.c \
+							ticker/science_handler.c ticker/template.c \
+							ticker/ticker.c ticker/ugatime.c ticker/unit_handler.c \
+							ticker/wonderEnd_handler.c ticker/wonder_handler.c \
+							ticker/trade_handler.c \
+							ticker/weatherEnd_handler.c ticker/weather_handler.c \
+							ticker/hero.c ticker/hero_handler.c
+TICKER_OBJ =	$(TICKER_SRC:.c=.o)
 
-CALC_SRC =    ticker/calc_battle.c ticker/expression.c ticker/function.c \
-	      ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
-	      ticker/memory.c ticker/object.c ticker/scanner.c \
-	      ticker/test_calc.c
-CALC_OBJ =    $(CALC_SRC:.c=.o)
+CALC_SRC =		ticker/calc_battle.c ticker/expression.c ticker/function.c \
+							ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
+							ticker/memory.c ticker/object.c ticker/scanner.c \
+							ticker/test_calc.c
+CALC_OBJ =		$(CALC_SRC:.c=.o)
 
-CHECK =	      ticker/tests/check
-CHECK_SRC =   ticker/tests/check.c ticker/tests/config.c \
-	      ticker/tests/except.c ticker/tests/hashtable.c \
-	      ticker/tests/memory.c ticker/tests/scanner.c \
-	      ticker/tests/template.c \
-	      ticker/config.c ticker/except.c ticker/expression.c \
-	      ticker/hashtable.c ticker/logging.c ticker/memory.c \
-	      ticker/object.c ticker/scanner.c ticker/template.c
-CHECK_OBJ =   $(CHECK_SRC:.c=.o)
+CHECK =				ticker/tests/check
+CHECK_SRC =		ticker/tests/check.c ticker/tests/config.c \
+							ticker/tests/except.c ticker/tests/hashtable.c \
+							ticker/tests/memory.c ticker/tests/scanner.c \
+							ticker/tests/template.c \
+							ticker/config.c ticker/except.c ticker/expression.c \
+							ticker/hashtable.c ticker/logging.c ticker/memory.c \
+							ticker/object.c ticker/scanner.c ticker/template.c
+CHECK_OBJ =		$(CHECK_SRC:.c=.o)
 
-PHPEXT =      phpext/uaconfig.so
-PHPEXT_SRC =  phpext/game_rules.c phpext/uaconfig.c
-PHPEXT_OBJ =  $(PHPEXT_SRC:.c=.o)
+PHPEXT =			phpext/uaconfig.so
+PHPEXT_SRC =	phpext/game_rules.c phpext/uaconfig.c
+PHPEXT_OBJ =	$(PHPEXT_SRC:.c=.o)
 
-TERRAIN =     utilities/terrain
-TERRAIN_SRC = utilities/terrain.c
-TERRAIN_OBJ = $(TERRAIN_SRC:.c=.o)
+TERRAIN =			utilities/terrain
+TERRAIN_SRC =	utilities/terrain.c
+TERRAIN_OBJ =	$(TERRAIN_SRC:.c=.o)
 
-TEST =	      ticker/check_config
-TEST_SRC =    ticker/check_config.c ticker/expression.c ticker/function.c \
-	      ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
-	      ticker/memory.c ticker/object.c ticker/scanner.c
-TEST_OBJ =    $(TEST_SRC:.c=.o)
+TEST =				ticker/check_config
+TEST_SRC =		ticker/check_config.c ticker/expression.c ticker/function.c \
+							ticker/game_rules.c ticker/hashtable.c ticker/logging.c \
+							ticker/memory.c ticker/object.c ticker/scanner.c
+TEST_OBJ =		$(TEST_SRC:.c=.o)
 
-CLEAN =	      $(CONFIG) $(TICKER_OBJ) $(TICKER) $(CALC_OBJ) $(CALC) \
-	      $(CHECK_OBJ) $(CHECK) $(PHPEXT_OBJ) $(PHPEXT) \
-	      $(TERRAIN_OBJ) $(TERRAIN) $(TEST_OBJ) $(TEST)
-CLEAN_TMP =   config/*.tmp ticker/game_rules.[ch]
+CLEAN =				$(CONFIG) $(TICKER_OBJ) $(TICKER) $(CALC_OBJ) $(CALC) \
+							$(CHECK_OBJ) $(CHECK) $(PHPEXT_OBJ) $(PHPEXT) \
+							$(TERRAIN_OBJ) $(TERRAIN) $(TEST_OBJ) $(TEST)
+CLEAN_TMP =		config/*.tmp ticker/game_rules.[ch]
 
-SHELL =	      /bin/sh
+SHELL =				/bin/sh
 
 # wildcard rules
 phpext/%.o: phpext/%.c
@@ -123,8 +123,8 @@ install-db: $(CONFIG)
 
 install-game: configtest $(CONFIG)
 	$(INSTALL) -d $(GAMEDIR) $(GAMEDIR)/images $(GAMEDIR)/images/artefacts \
-	    $(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/ $(GAMEDIR)/css/ \
-	    $(GAMEDIR)/images/jappix $(GAMEDIR)/images/jappix/others $(GAMEDIR)/images/jappix/sprites $(GAMEDIR)/images/jappix/wait
+			$(GAMEDIR)/images/religious_distribution $(GAMEDIR)/images/temp $(GAMEDIR)/js/ $(GAMEDIR)/css/ \
+			$(GAMEDIR)/images/jappix $(GAMEDIR)/images/jappix/others $(GAMEDIR)/images/jappix/sprites $(GAMEDIR)/images/jappix/wait
 	chown -R $(WWWRUN):$(WWWRUN) $(GAMEDIR)
 	chmod 777 $(GAMEDIR)/images
 	chmod 777 $(GAMEDIR)/images/temp
@@ -133,36 +133,36 @@ install-game: configtest $(CONFIG)
 	$(INSTALL_DATA) www/css/*.css $(GAMEDIR)/css
 	$(INSTALL_DATA) www/images/*.ico www/images/*.php www/images/*.png  www/images/*.gif $(GAMEDIR)/images
 	$(INSTALL_DATA) www/images/religious_distribution/*.png \
-	    www/images/religious_distribution/*.php \
-	    $(GAMEDIR)/images/religious_distribution
+			www/images/religious_distribution/*.php \
+			$(GAMEDIR)/images/religious_distribution
 	$(INSTALL_DATA) www/images/jappix/others/*.* $(GAMEDIR)/images/jappix/others/
 	$(INSTALL_DATA) www/images/jappix/sprites/*.* $(GAMEDIR)/images/jappix/sprites/
 	$(INSTALL_DATA) www/images/jappix/wait/*.* $(GAMEDIR)/images/jappix/wait/
 	$(INSTALL) -d $(UA_WEBAPP_DIR) $(UA_WEBAPP_DIR)/cache \
-	    $(UA_WEBAPP_DIR)/include $(UA_WEBAPP_DIR)/include/languages $(UA_WEBAPP_DIR)/include/rules \
-	    $(UA_WEBAPP_DIR)/lib $(UA_WEBAPP_DIR)/modules
+			$(UA_WEBAPP_DIR)/include $(UA_WEBAPP_DIR)/include/languages $(UA_WEBAPP_DIR)/include/rules \
+			$(UA_WEBAPP_DIR)/lib $(UA_WEBAPP_DIR)/modules
 	chown $(WWWRUN) $(UA_WEBAPP_DIR)/cache
 	$(INSTALL_DATA) game/include/*.php $(UA_WEBAPP_DIR)/include
 	$(INSTALL_DATA) game/include/rules/*.php $(UA_WEBAPP_DIR)/include/rules
 	$(INSTALL_DATA) game/include/languages/*.php \
-	    $(UA_WEBAPP_DIR)/include/languages
+			$(UA_WEBAPP_DIR)/include/languages
 	$(INSTALL_DATA) game/lib/*.php $(UA_WEBAPP_DIR)/lib
 	for module in $(MODULES); do \
-	    $(INSTALL) -d $(UA_WEBAPP_DIR)/modules/$$module; \
-	    $(INSTALL_DATA) game/modules/$$module/*.php \
+			$(INSTALL) -d $(UA_WEBAPP_DIR)/modules/$$module; \
+			$(INSTALL_DATA) game/modules/$$module/*.php \
 		$(UA_WEBAPP_DIR)/modules/$$module; \
-	    for dir in controller model view; do \
+			for dir in controller model view; do \
 		$(INSTALL) -d $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
 		$(INSTALL_DATA) game/modules/$$module/$$dir/*.php \
 		    $(UA_WEBAPP_DIR)/modules/$$module/$$dir; \
 	    done; \
 	done
 	for lang in $(LANGUAGES); do \
-    for tmpl in $(TEMPLATES); do \
-      $(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl/xml; \
-      $(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
-      $(INSTALL_DATA) game/templates/$$lang/$$tmpl/xml/*.tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl/xml; \
-        done; \
+		for tmpl in $(TEMPLATES); do \
+			$(INSTALL) -d $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl/xml; \
+			$(INSTALL_DATA) game/templates/$$lang/$$tmpl/*.tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl; \
+			$(INSTALL_DATA) game/templates/$$lang/$$tmpl/xml/*.tmpl $(UA_WEBAPP_DIR)/templates/$$lang/$$tmpl/xml; \
+				done; \
 	done
 	chown -R $(WWWRUN):$(WWWRUN) $(UA_WEBAPP_DIR)
 
@@ -177,10 +177,10 @@ install-ticker: configtest $(TICKER) $(TERRAIN)
 	$(TICKER_INSTALL_DATA) utilities/namen.txt $(TICKER_HOME)
 	$(TICKER_INSTALL_DATA) utilities/crontab $(TICKER_HOME)
 	test -f $(TICKER_HOME)/ticker.conf || \
-	    $(TICKER_INSTALL_DATA) ticker/ticker.conf $(TICKER_HOME)
+		$(TICKER_INSTALL_DATA) ticker/ticker.conf $(TICKER_HOME)
 	for lang in $(LANGUAGES); do \
-	    $(TICKER_INSTALL) -d $(TICKER_HOME)/reports/$$lang; \
-	    $(TICKER_INSTALL_DATA) ticker/reports/$$lang/*.ihtml \
+		$(TICKER_INSTALL) -d $(TICKER_HOME)/reports/$$lang; \
+		$(TICKER_INSTALL_DATA) ticker/reports/$$lang/*.ihtml \
 		$(TICKER_HOME)/reports/$$lang; \
 	done
 
@@ -199,7 +199,7 @@ uninstall-ticker:
 	for file in $(TICKER) $(TERRAIN) ticker/*.php ticker/*.conf \
 		utilities/ticker.cron utilities/*.php utilities/namen.txt \
 		utilities/crontab; do \
-	    rm -f $(TICKER_HOME)/`basename $$file`; \
+			rm -f $(TICKER_HOME)/`basename $$file`; \
 	done
 
 # clean up
@@ -210,7 +210,7 @@ clean:
 depend: $(TICKER_SRC) ticker/game_rules.h
 	sed -n '1,/^# include/wMakefile.in~' Makefile.in
 	mfg -I ticker -o - all ticker/* phpext/* | \
-	    sed 1,/^Force_Update/d | sed 1d >>Makefile.in~
+		sed 1,/^Force_Update/d | sed 1d >>Makefile.in~
 	mv Makefile.in~ Makefile.in
 
 # file targets
