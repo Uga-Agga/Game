@@ -155,6 +155,11 @@ function wonder_processOrder($playerID, $wonderID, $caveID, $coordX, $coordY, $c
     $resistance = 0.0;
   }
 
+  // Höhlen die vllt Übernehmbar sind dürfen nicht "bewundert" werden
+  if ($targetData['playerID'] == 0 && $targetData['starting_position'] == 0 && $targetData['takeoverable'] == 0 && $targetData['takeover_level'] > 0) {
+    return 2;
+  }
+
   // does the wonder fail?
   if (((double)rand() / (double)getRandMax()) > ($chance - $resistance)) {
     return 2;          // wonder did fail

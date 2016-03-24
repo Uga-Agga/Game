@@ -2,7 +2,7 @@
 /*
  * tribeDetail.html.php -
  * Copyright (c) 2003  OGP Team
- * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2014 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -41,7 +41,7 @@ function tribe_getContent($caveID, $tribeID) {
   // leader
   if ($tribe['leaderID'] != 0) {
     $leader = Player::getPlayer($tribe['leaderID']);
-    $tribe['leader_name'] = $leader->name;
+    $tribe['leader_name'] = (!is_null($leader)) ? $leader->name : '';
   }
 
   $template->addVar('tribe_details', $tribe);

@@ -3,7 +3,7 @@
  * map.html.php -
  * Copyright (c) 2004  OGP Team
  * Copyright (c) 2011  Sascha Lange <salange@uos.de>
- * Copyright (c) 2011-2013 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2014 David Unger <unger-dave@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -301,7 +301,7 @@ function getCaveReport($caveID, $ownCaves, $targetCaveID, $method) {
   $cave['terrain_name'] = $GLOBALS['terrainList'][$cave['terrain']]['name'];
   $cave['terrain_img'] = $GLOBALS['terrainList'][$cave['terrain']]['img'];
 
-  if ($GLOBALS['terrainList'][$cave['terrain']]['tribeRegion']) {
+  if (isset($GLOBALS['terrainList'][$cave['terrain']]['tribeRegion']) && $GLOBALS['terrainList'][$cave['terrain']]['tribeRegion']) {
     $cave['terrain_description'] = $GLOBALS['terrainList'][$cave['terrain']]['description'];
     $cave['terrain_tribe_cave'] = $GLOBALS['terrainList'][$cave['terrain']]['tribeRegion'];
 

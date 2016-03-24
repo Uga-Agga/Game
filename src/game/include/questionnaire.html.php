@@ -123,13 +123,8 @@ function questionnaire_getQuestions() {
 
   // get possible questions
   $questions = array();
-  $sql = $db->prepare("SELECT q.*
-                       FROM " . QUESTIONNAIRE_QUESTIONS_TABLE . " q
-                         LEFT JOIN ". QUESTIONNAIRE_ANSWERS_TABLE ." qa
-                            on qa.questionID = q.questionID
-                       WHERE expiresOn > NOW() + 0
-                        AND qa.choiceID IS NULL
-                       ORDER BY questionID ASC");
+  
+  $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_QUESTIONS_TABLE ." WHERE expiresOn > NOW() + 0 ORDER BY questionID ASC");
   if (!$sql->execute()) return array();
 
   while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
@@ -141,8 +136,20 @@ function questionnaire_getQuestions() {
     return array();
   }
 
+  $sql = $db->prepare("SELECT *
+                       FROM ". QUESTIONNAIRE_ANSWERS_TABLE ."
+                       WHERE playerID = :playerID
+                         AND questionID IN (".implode(", ", array_keys($questions)) . ")
+                        ORDER BY questionID ASC");
+  $sql->bindValue('playerID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  if (!$sql->execute()) return array();
+
+  while ($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+    unset($questions[$row['questionID']]);
+  }
+
   $sql = $db->prepare("SELECT * FROM ". QUESTIONNAIRE_CHOISES_TABLE ."
-                       WHERE questionID IN (". implode(", ", array_map(array($db, 'quote'), array_keys($questions))) . ")
+                       WHERE questionID IN (". implode(", ", array_keys($questions)) . ")
                        ORDER BY choiceID ASC");
 
   if ($sql->rowCountSelect() == 0) return array();

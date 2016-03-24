@@ -994,7 +994,6 @@ void movement_handler (db_t *database, db_result_t *result) {
     case ANGREIFEN:
       /* beginner protection active in target cave? */
       if (cave_is_protected(&cave2)) {
-        debug(DEBUG_TICKER, "hallo2");
         /* send remaining units back */
         ds = dstring_new("INSERT INTO Event_movement (caveID, target_caveID, source_caveID, movementID, speedFactor, start, end, artefactID, heroID");
 

@@ -165,7 +165,7 @@ foreach ($result AS $row) {
   echo "DELETE PLAYER $playerID: Reset playerID at Cave {$row['caveID']}\n";
   $sqlDelete = $db_game->prepare("UPDATE ". CAVE_TABLE ."
                                     SET playerID = 0,
-                                    takeoverable = 2,
+                                    takeoverable = 0,
                                     protection_end = NOW()+0,
                                     secureCave = 0,
                                     hero = 0

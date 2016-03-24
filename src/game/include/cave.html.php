@@ -295,11 +295,14 @@ function getAllCavesDetailsContent($ownCaves) {
 function cave_giveUpCave($caveID, $playerID, $tribeID) {
   global $db;
 
+  $caveData = getCaveByID($caveID);
+
   $sql = $db->prepare("UPDATE ". CAVE_TABLE ."
                       SET playerID = 0,
                         takeoverable = 0,
                         protection_end = NOW()+0,
-                        secureCave = 0
+                        secureCave = 0,
+                        hero = 0
                       WHERE playerID = :playerID
                         AND caveID = :caveID
                         AND starting_position = 0");
@@ -350,7 +353,6 @@ function cave_giveUpCave($caveID, $playerID, $tribeID) {
   }
 
   // delete hero
-  $caveData = getCaveByID($caveID);
   if($caveData['hero'] != 0) {
     hero_killHero($playerID);
   }

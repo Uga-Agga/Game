@@ -1425,7 +1425,7 @@ class TribeRelation {
     foreach ($attribArray as $attrib) {
       // relationID raussuchen
       foreach ($GLOBALS['relationList'] as $relation) {
-        if ($relation[$attrib] == 1) {
+        if (isset($relation[$attrib]) && $relation[$attrib] == 1) {
           $relationID = $relation['relationID'];
           break;
         }

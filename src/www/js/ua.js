@@ -198,8 +198,8 @@ DEBUG = 'on';
          e.offsetX = e.pageX - targetOffset.left;
          e.offsetY = e.pageY - targetOffset.top;
       }
-      var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
-      var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
+      var xCoord = Math.abs(parseInt(e.offsetX/15, 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/15, 10))+1;
 
       var data = $('#minimapData').html();
       try {var mapData = jQuery.parseJSON(data);} catch(e) {ua_log('Fehler beim parsen der minimap daten');return;}

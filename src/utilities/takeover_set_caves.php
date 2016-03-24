@@ -46,6 +46,7 @@ foreach ($cavesData AS $caveData) {
                         AND takeover_level = 0
                         AND starting_position = 0
                         AND terrain BETWEEN 0 AND 4
+                        AND wonder_resistance = 1
                       ORDER BY RAND()
                       LIMIT :limit");
   $sql->bindValue('takeover_level', $caveData['lvl'], PDO::PARAM_INT);
