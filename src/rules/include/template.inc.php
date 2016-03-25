@@ -70,14 +70,6 @@ class Template {
     $this->file = $file;
   }
 
-  public function setShowResource($flag) {
-    $this->showRresource = $flag;
-  }
-
-  public function getShowRresource() {
-    return $this->showRresource;
-  }
-
   public function render() {
     try {
       if (empty($this->file)) {

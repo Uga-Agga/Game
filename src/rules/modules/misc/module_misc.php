@@ -11,35 +11,47 @@
  */
 
 function misc_getMenu() {
-  $result[] = array('link' => "?modus=misc&amp;miscID=6", 'content' => "Rohstoffe");
-  $result[] = array('link' => "?modus=misc&amp;miscID=1", 'content' => "Einheiten");
-  $result[] = array('link' => "?modus=misc&amp;miscID=2", 'content' => "Verteidigungsanlagen");
-  $result[] = array('link' => "?modus=misc&amp;miscID=5", 'content' => "Erweiterungen");
-  $result[] = array('link' => "?modus=misc&amp;miscID=4", 'content' => "Wunder");
-  $result[] = array('link' => "?modus=misc&amp;miscID=3", 'content' => "Traglasten");
-  $result[] = array('link' => "?modus=misc&amp;miscID=7", 'content' => "Held Fähigkeiten");
+  $result[] = array('link' => "?modus=misc&amp;miscID=1", 'content' => "Rohstoffe");
+  $result[] = array('link' => "?modus=misc&amp;miscID=2", 'content' => "Erweiterungen");
+  $result[] = array('link' => "?modus=misc&amp;miscID=3", 'content' => "Forschungen");
+  $result[] = array('link' => "?modus=misc&amp;miscID=4", 'content' => "Verteidigungsanlagen");
+  $result[] = array('link' => "?modus=misc&amp;miscID=5", 'content' => "Einheiten");
+  $result[] = array('link' => "?modus=misc&amp;miscID=6", 'content' => "Traglasten");
+  $result[] = array('link' => "?modus=misc&amp;miscID=7", 'content' => "Wunder");
+  $result[] = array('link' => "?modus=misc&amp;miscID=8", 'content' => "Held Fähigkeiten");
 
   return $result;
 }
 
 function misc_getContent(){
 
-  $miscID = request_var('miscID', 1);
+  $miscID = request_var('miscID', 5);
   switch ($miscID) {
     case 1:
-    default: $result = getUnitStats();
-             break;
-    case 2:  $result = getDefenseStats();
-             break;
-    case 3:  $result = getUnitsEncumbrance();
-             break;
-    case 4:  $result = getWondersStats();
-             break;
-    case 5:  $result = getBuildingsStats();
-             break;
-    case 6:  $result = getResourcesStats();
-             break;
-    case 7: $result = getSkillStats();
+      $result = getResourcesStats();
+      break;
+    case 2:
+      $result = getBuildingsStats();
+      break;
+    case 3:
+      $result = getSciencesStats();
+      break;
+    case 4:
+      $result = getDefenseStats();
+      break;
+    case 5:
+    default:
+      $result = getUnitStats();
+      break;
+    case 6:
+      $result = getUnitsEncumbrance();
+      break;
+    case 7:
+      $result = getWondersStats();
+      break;
+    case 8:
+      $result = getSkillStats();
+      break;
   }
   return $result;
 }
@@ -198,6 +210,167 @@ function getResourcesStats(){
 
   $template->addVar('resources_list', $resources);
 }
+
+function getSciencesStats(){
+  global $template;
+
+  // open template
+  $template->setFile('sciencesStats.tmpl');
+
+  // get a copy of the $resourceTypeList
+  $sciencesList = $GLOBALS['scienceTypeList'];
+
+  // sort that copy by names
+  usort($sciencesList, "nameCompare");
+
+  $sciences = array();
+  foreach ($sciencesList AS $value) {
+    if (!$value->nodocumentation){
+      $dependencies     = array();
+      $buildingdep      = array();
+      $defensesystemdep = array();
+      $resourcedep      = array();
+      $sciencedep       = array();
+      $unitdep          = array();
+
+      foreach ($value->buildingDepList as $key => $level) {
+        if ($level) {
+          array_push($buildingdep, array(
+            'name'  => $GLOBALS['buildingTypeList'][$key]->name,
+            'level' => "&gt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->defenseSystemDepList as $key => $level) {
+        if ($level) {
+          array_push($defensesystemdep, array(
+            'name'  => $GLOBALS['defenseSystemTypeList'][$key]->name,
+            'level' => "&gt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->resourceDepList as $key => $level) {
+        if ($level) {
+          array_push($resourcedep, array(
+            'name'  => $GLOBALS['resourceTypeList'][$key]->name,
+            'level' => "&gt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->scienceDepList as $key => $level) {
+        if ($level) {
+          array_push($sciencedep, array(
+            'name'  => $GLOBALS['scienceTypeList'][$key]->name,
+            'level' => "&gt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->unitDepList as $key => $level) {
+        if ($level) {
+          array_push($unitdep, array(
+            'name'  => $GLOBALS['unitTypeList'][$key]->name,
+            'level' => "&gt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->maxBuildingDepList as $key => $level) {
+        if ($level != -1) {
+          array_push($buildingdep, array(
+            'name'  => $GLOBALS['buildingTypeList'][$key]->name,
+            'level' => "&lt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->maxDefenseSystemDepList as $key => $level) {
+        if ($level != -1) {
+          array_push($defensesystemdep, array(
+            'name'  => $GLOBALS['defenseSystemTypeList'][$key]->name,
+            'level' => "&lt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->maxResourceDepList as $key => $level) {
+        if ($level != -1) {
+          array_push($resourcedep, array(
+            'name'  => $GLOBALS['resourceTypeList'][$key]->name,
+            'level' => "&lt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->maxScienceDepList as $key => $level) {
+        if ($level != -1) {
+          array_push($sciencedep, array(
+            'name'  => $GLOBALS['scienceTypeList'][$key]->name,
+            'level' => "&lt;= " . $level
+          ));
+        }
+      }
+
+      foreach ($value->maxUnitDepList as $key => $level) {
+        if ($level != -1) {
+          array_push($unitdep, array(
+            'name'  => $GLOBALS['unitTypeList'][$key]->name,
+            'level' => "&lt;= " . $level
+          ));
+        }
+      }
+
+      if (sizeof($buildingdep)) {
+        array_push($dependencies, array(
+          'name' => _('Erweiterungen'),
+          'dep'  => $buildingdep
+        ));
+      }
+
+      if (sizeof($defensesystemdep)) {
+        array_push($dependencies, array(
+          'name' => _('Verteidigungsanlagen'),
+          'dep'  => $defensesystemdep
+        ));
+      }
+
+      if (sizeof($resourcedep)) {
+        array_push($dependencies, array(
+          'name' => _('Rohstoffe'),
+          'dep'  => $resourcedep
+        ));
+      }
+
+      if (sizeof($sciencedep)) {
+        array_push($dependencies, array(
+          'name' => _('Forschungen'),
+          'dep'  => $sciencedep
+        ));
+      }
+
+      if (sizeof($unitdep)) {
+        array_push($dependencies, array(
+          'name' => _('Einheiten'),
+          'dep'  => $unitdep
+        ));
+      }
+
+      $sciences[] = array(
+        'id'           => $value->scienceID,
+        'name'         => $value->name,
+        'dbFieldName'  => $value->dbFieldName,
+        'description'  => $value->description,
+        'dependencies' => $dependencies
+      );
+    }
+  }
+
+  $template->addVar('sciences_list', $sciences);
+}
+
 
 
 function getUnitsEncumbrance(){

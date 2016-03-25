@@ -32,10 +32,10 @@ session_timeout		3600
 building_time_base	60
 defsystem_time_base	60
 movement_time_base	60
-science_time_base	60
-unit_time_base		60
-wonder_time_base	60
-weather_time_base	60
+science_time_base		60
+unit_time_base			60
+wonder_time_base		60
+weather_time_base		60
 
 # value in hours, default: 24h
 government_change	24

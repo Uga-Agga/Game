@@ -3,17 +3,21 @@ PATH=/usr/local/bin:/bin:/usr/ucb:/usr/bin
 PHP=@PHP@
 LOGDIR=@LOGDIR@
 
-15 9,21      * * * $PHP deleteNotActivated.script.php >>$LOGDIR/activated.log
-20 9,21      * * * $PHP deleteInactives.script.php >>$LOGDIR/inactives.log
-35 9,21      * * * $PHP ranking.php >>$LOGDIR/ranking.log
-55 23        * * * $PHP moral.script.php >>$LOGDIR/moral.log
-25 9,21      * * * $PHP takeover.php >>$LOGDIR/takeover.log
-30 9,21      * * * $PHP takeover_cave_supply.php >>$LOGDIR/takeover.log
-15 2,14      * * * $PHP tribes.php >>$LOGDIR/tribes.log
- 5 7         * * * $PHP deleteOutdatedMessages.php >>$LOGDIR/messages.log
- 0 *         * * * $PHP generategamestats.script.php
- 0 *         * * * $PHP generateunitstats.script.php hour
- 1 0         * * * $PHP generateunitstats.script.php day
- 5 0         * * * $PHP weather.script.php >>$LOGDIR/weather.log
- 
-* * * * * ./ticker.cron
+55       9,21     * * * ticker php deleteNotActivated.script.php >>$LOGDIR/activated.log
+56       9,21     * * * ticker php deleteInactives.script.php >>$LOGDIR/inactives.log
+ 0      10,22     * * * ticker php ranking.php >>$LOGDIR/ranking.log
+55      23        * * * ticker php moral.script.php >>$LOGDIR/moral.log
+25       9,21     * * * ticker php takeover.php >>$LOGDIR/takeover.log
+ 5       0,12     * * * ticker php tribes.php >>$LOGDIR/tribes.log
+ 0       6        * * * ticker php deleteOutdatedMessages.php >>$LOGDIR/messages.log
+ 0       *        * * * ticker php generategamestats.script.php >/dev/null 2>&1
+ 0       *        * * * ticker php generateunitstats.script.php hour  >/dev/null 2>&1
+ 1       0        * * * ticker php generateunitstats.script.php day >/dev/null 2>&1
+ 5       0        * * * ticker php weather.script.php >>$LOGDIR/weather.log
+ 5      10,22     * * * root php /home/ticker/createDailyPlayerSheet.php | gzip > /var/www/web2/game/htdocs/upload/player.gz
+ 5      10,22     * * * root php /home/ticker/createDailyRelationSheet.php | gzip > //var/www/web2/game/htdocs/upload/relations.gz
+ 5      10,22     * * * root php /home/ticker/createDailySpreadSheet.php | gzip > /var/www/web2/game/htdocs/upload/cave.gz
+ 0       0,12     * * * root rm -R  /var/www/web2/game/htdocs/images/temp/*.png
+0,20,40  *        * * * ticker php spreadVoid.php >>$LOGDIR/spreadVoid.log
+
+* * * * * ticker ./ticker.cron
