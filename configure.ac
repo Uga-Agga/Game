@@ -122,6 +122,10 @@ AC_SUBST(CAVE_SIZE_DB_FIELD, $cfg_cave_size_db_field)
 AC_SUBST(TRIBE_LEAVE_COST, $cfg_tribe_leave_cost)
 AC_SUBST(FAME_DECREASE, $cfg_fame_decrease)
 AC_SUBST(FAME_MIN_POINTS, $cfg_fame_min_points)
+AC_SUBST(JABBER_BOSH, $cfg_jabber_bosh)
+AC_SUBST(JABBER_SERVER, $cfg_jabber_server)
+AC_SUBST(JABBER_MUC, $cfg_jabber_muc)
+AC_SUBST(JABBER_NO_CLOSE, $cfg_jabber_no_close)
 
 AC_CONFIG_FILES(src/Makefile src/dbs/db-util src/ticker/ticker.conf
   src/utilities/crontab src/utilities/db_backup.cron src/utilities/util.inc.php

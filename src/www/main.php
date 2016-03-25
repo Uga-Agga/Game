@@ -498,13 +498,13 @@ $chatRooms = Chat::getRoomsByPlayerID($_SESSION['player']->playerID);
 $groupchats = $groupchatsSuggest = array();
 foreach ($chatRooms as $room) {
   if ($room['autojoin']) {
-    $groupchats[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC_SERVER . '"';
+    $groupchats[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC . '"';
   }
-  $groupchatsSuggest[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC_SERVER . '"';
+  $groupchatsSuggest[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC . '"';
 }
 
 foreach (Config::$jabberStaticGroupchats as $room) {
-  $groupchatsSuggest[] = '"' . $room . '@' . Config::JABBER_MUC_SERVER . '"';
+  $groupchatsSuggest[] = '"' . $room . '@' . Config::JABBER_MUC . '"';
 }
 
 // fill it

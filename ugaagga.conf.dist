@@ -54,3 +54,8 @@ cave_size_db_field	soybean
 tribe_leave_cost	0
 fame_decrease		1
 fame_min_points         500
+
+jabber_bosh			http://game.uga-agga.de/http-bind/
+jabber_server		uga-agga.de
+jabber_muc			hoehle.uga-agga.de
+jabber_no_close	

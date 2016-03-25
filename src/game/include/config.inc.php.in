@@ -171,10 +171,11 @@ class Config {
 
   const WWW_REQUEST_TIMEOUT = .000;
 
-  const JABBER_BOSH         = '';
-  const JABBER_SERVER       = '';
-  const JABBER_MUC_SERVER   = '';
-  const JABBER_NO_CLOSE     = '';
+  const JABBER_BOSH         = '@JABBER_BOSH@';
+  const JABBER_SERVER       = '@JABBER_SERVER@';
+  const JABBER_MUC          = '@JABBER_MUC@';
+  const JABBER_NO_CLOSE     = '@JABBER_NO_CLOSE@';
+
   public static $jabberStaticGroupchats = array();
 
   public static $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,
