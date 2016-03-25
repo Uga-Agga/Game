@@ -59,3 +59,4 @@ jabber_bosh			http://game.uga-agga.de/http-bind/
 jabber_server		uga-agga.de
 jabber_muc			hoehle.uga-agga.de
 jabber_no_close	
+jabber_muc_static	'ugaagga', 'handel'

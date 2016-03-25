@@ -126,6 +126,7 @@ AC_SUBST(JABBER_BOSH, $cfg_jabber_bosh)
 AC_SUBST(JABBER_SERVER, $cfg_jabber_server)
 AC_SUBST(JABBER_MUC, $cfg_jabber_muc)
 AC_SUBST(JABBER_NO_CLOSE, $cfg_jabber_no_close)
+AC_SUBST(JABBER_MUC_STATIC, $cfg_jabber_muc_static)
 
 AC_CONFIG_FILES(src/Makefile src/dbs/db-util src/ticker/ticker.conf
   src/utilities/crontab src/utilities/db_backup.cron src/utilities/util.inc.php

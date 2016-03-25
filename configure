@@ -593,6 +593,7 @@ JABBER_BOSH
 JABBER_SERVER
 JABBER_MUC
 JABBER_NO_CLOSE
+JABBER_MUC_STATIC
 LOGIN_DB_PASSWD
 LOGIN_DB_USER
 LOGIN_DB_NAME
@@ -3326,6 +3327,8 @@ JABBER_SERVER=$cfg_jabber_server
 JABBER_MUC=$cfg_jabber_muc
 
 JABBER_NO_CLOSE=$cfg_jabber_no_close
+
+JABBER_MUC_STATIC=$cfg_jabber_muc_static
 
 ac_config_files="$ac_config_files src/Makefile src/dbs/db-util src/ticker/ticker.conf src/utilities/crontab src/utilities/db_backup.cron src/utilities/util.inc.php src/game/include/config.inc.php src/www/config.inc.php"
 
