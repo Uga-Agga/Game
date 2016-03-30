@@ -1872,7 +1872,7 @@ JSJaCPacket.prototype.setXMLLang = function(xmllang) {
 
   // Also due to issues with both BD and jQuery being used, employ a simple regexp since the detection
   // here is very limited.
-  if (navigator.appVersion.match(/^.*MSIE (\d)/) && navigator.appVersion.match(/^.*MSIE (\d)/)[1] >= 9)
+  if (navigator.appVersion.match(/^.*MSIE (\d)/) || navigator.userAgent.match(/Trident\/(\d+)((\.)(\d+))?/))
     return this;
   if (!xmllang || xmllang == '')
     this.getNode().removeAttribute('xml:lang');
