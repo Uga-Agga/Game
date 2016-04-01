@@ -46,7 +46,7 @@ tear_down_timeout	120
 # value in seconds, default: 24h
 tribe_block_period	86400
 
-unit_build_batch	10
+unit_build_batch	20
 
 god_tribe		Walhalla
 cave_size_db_field	soybean

@@ -34,6 +34,7 @@ function tribe_getContent($caveID, &$details) {
 
   // messages
   $messageText = array (
+    -48 => array('type' => 'error', 'message' => _('Der Zielstamm hat noch nicht genug Mitglieder um Beziehungen eingehen zu dürfen')),
     -47 => array('type' => 'error', 'message' => _('Fehler beim entfernen der Spielerrechte.')),
     -46 => array('type' => 'error', 'message' => _('Der Stamm wurde nicht gefunden.')),
     -45 => array('type' => 'error', 'message' => _('Der Spieler wurde nicht gefunden.')),

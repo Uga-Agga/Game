@@ -1752,6 +1752,10 @@ class TribeRelation {
         return -16;
       }
 
+      if (!$targetData['valid']) {
+        return -48;
+      }
+
       $relationInfo = $GLOBALS['relationList'][$relationID];
 
       $relation = self::getRelationBetween($tribeData['tribeID'], $targetData['tribeID']);

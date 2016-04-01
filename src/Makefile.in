@@ -50,7 +50,7 @@ TICKER_SRC =	ticker/artefact.c ticker/artefact_handler.c \
 							ticker/wonderEnd_handler.c ticker/wonder_handler.c \
 							ticker/trade_handler.c \
 							ticker/weatherEnd_handler.c ticker/weather_handler.c \
-							ticker/hero.c ticker/hero_handler.c
+							ticker/hero.c ticker/hero_handler.c ticker/chat_handler.c
 TICKER_OBJ =	$(TICKER_SRC:.c=.o)
 
 CALC_SRC =		ticker/calc_battle.c ticker/expression.c ticker/function.c \

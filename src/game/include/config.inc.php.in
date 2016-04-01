@@ -32,7 +32,7 @@ define("DB_LIFE_FIELDNAME", "life");
 
 /* ***** TEMPLATE  ***** *************************************************** */
 define("TEMPLATE_CACHE", true);
-define("TEMPLATE_RELOAD", false);
+define("TEMPLATE_RELOAD", true);
 
 /* ***** TIME CONSTANTS ***** ********************************************** */
 define("BUILDING_TIME_BASE_FACTOR",      @BUILDING_TIME_BASE@);
@@ -87,7 +87,7 @@ define("MAP_MIN_Y",       "1");
 define("MAP_MAX_Y",       "50");
 
 define("MAP_WIDTH",       7);
-define("MAP_HEIGHT",      9);
+define("MAP_HEIGHT",      7);
 define("MINIMAP_SCALING", 200);
 
 /* ***** GOVERNOR ***** **************************************************** */
