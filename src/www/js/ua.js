@@ -65,9 +65,8 @@ DEBUG = 'on';
         return;
 /* Alles Andere als Ajax anfrage behandeln! */
       } else  {
-        /* Destroy countdown */
-        $($('#content').html()).find('.timer').each(function(i) {
-          $('#'+$(this).attr('id')).countdown('destroy');
+        $('[data-countdown]').each(function() {
+          $(this).countdown('remove');
         });
 
         if ($(this).attr('data-reask') == 'true') {
@@ -80,7 +79,6 @@ DEBUG = 'on';
           return;
         }
 
-        $('#loader').show(); $('#content').hide();
         if ($(this).attr('data-post') == 'true') {
           ua_log('Load Ajax post Content: '+url);
           $.post(url+'&method=ajax', { postConfirm: "true" }, function(data) {
@@ -92,7 +90,7 @@ DEBUG = 'on';
           ua_log('Load Ajax get Content: '+url);
           $.ajax({
             url: url+'&method=ajax',
-            cache: false,
+            cache: true,
             dataType: 'html',
             success: function(data) {
               var useJson = true;
@@ -188,7 +186,7 @@ DEBUG = 'on';
 
     $(document).on('change input', '.change-movement', function(e) {updateMovement();});
     $(document).on('click', '.update-movement', function(e) {updateMovement();});
-    $(document).on('click', '#selctAllUnits', function(e) {var unitData;try {unitData = jQuery.parseJSON($('#unitData').html());}catch(e) {ua_log('Fehler beim einlesen der Einheiten');return false;}for (var unit in unitData) {if($(this).attr('checked')) {$('#unit_'+unitData[unit].unit_id).val(unitData[unit].maxUnitCount);} else {$('#unit_'+unitData[unit].unit_id).val('');}}updateMovement();});
+    $(document).on('click', '#selctAllUnits', function(e) {var unitData;try {unitData = jQuery.parseJSON($('#unitData').html());}catch(e) {ua_log('Fehler beim einlesen der Einheiten');return false;}for (var unit in unitData) {if($(this).is(':checked')) {$('#unit_'+unitData[unit].unit_id).val(unitData[unit].maxUnitCount);} else {$('#unit_'+unitData[unit].unit_id).val('');}}updateMovement();});
     $(document).on('change', '.move-select-bookmark', function(e) {if ($(this).val() !== '-1') {$('#targetXCoord').enable(false);$('#targetYCoord').enable(false);$('#targetCaveName').enable(false);$('#targetXCoord').val($(this).find(":selected").attr('data-xCoord'));$('#targetYCoord').val($(this).find(":selected").attr('data-yCoord'));$('#targetCaveName').val($(this).find(":selected").attr('data-caveName'));} else {$('#targetXCoord').enable(true);$('#targetYCoord').enable(true);$('#targetCaveName').enable(true);$('#targetXCoord').val('');$('#targetYCoord').val('');$('#targetCaveName').val('');}updateMovement();});
 
     $(document).on('click', '.show-tutorial', function(){showTutorialModal();});
@@ -272,17 +270,16 @@ DEBUG = 'on';
       $('#countAll').html(countAll);$('#sizeAll').html(sizeAll);$('#speedFactorAll').html(speedFactor);$('#arealAttackAll').html(arealAttackAll);$('#attackRateAll').html(attackRateAll);$('#rangeAttackAll').html(rangeAttackAll);
 
       var movementID = $('input[name=movementID]:checked').val();
-      if (movementData.movements[movementID] !== undefined && speedFactor !== 0 && $('#targetYCoord').val() && $('#targetXCoord').val()) {
-        var xCoord = movementData.dim_x - Math.abs(Math.abs(parseInt($('#targetXCoord').val(), 10) - movementData.currentX) - movementData.dim_x);
-        var yCoord = movementData.dim_y - Math.abs(Math.abs(parseInt($('#targetYCoord').val(), 10) - movementData.currentY) - movementData.dim_y);
-        var distance = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord));
 
-        var duration = Math.ceil(Math.sqrt(xCoord*xCoord + yCoord*yCoord) * movementData.minutesPerCave * speedFactor * movementData.movements[movementID].speedfactor);
+      if (movementData.movements[movementID] !== undefined && speedFactor !== 0 && $('#targetYCoord').val() && $('#targetXCoord').val() && parseInt($('#targetXCoord').val(), 10) >= movementData.min_x && parseInt($('#targetXCoord').val(), 10) <= movementData.max_X && parseInt($('#targetYCoord').val(), 10) >= movementData.min_Y && parseInt($('#targetYCoord').val(), 10) <= movementData.max_Y) {
+        var xmin = movementData.dim_x - Math.abs(Math.abs(movementData.currentX - parseInt($('#targetXCoord').val(), 10)) - movementData.dim_x);
+        var ymin = movementData.dim_y - Math.abs(Math.abs(movementData.currentY - parseInt($('#targetYCoord').val(), 10)) - movementData.dim_y);
+        var distance = Math.ceil(Math.sqrt(xmin * xmin + ymin * ymin));
+        var duration = Math.ceil(Math.sqrt(xmin * xmin + ymin * ymin) * movementData.minutesPerCave * speedFactor * movementData.movements[movementID].speedfactor);
 
         var tmpdist = 0;var i = 0;
         if(distance > 15){distance = distance - 15;tmpdist = 15;if(Math.floor(distance/5)<11)tmpdist += (distance % 5) * (1-0.1*Math.floor(distance/5));for(i = 1; i <= Math.floor( distance / 5) && i < 11; i++) {tmpdist += 5*(1-0.1*(i-1));}}else{tmpdist = distance;}
         var food = Math.ceil(movementData.minutesPerCave * speedFactor * movementData.movements[movementID].speedfactor * tmpdist * unitRations * movementData.foodfactor * movementData.movements[movementID].foodfactor);
-
         var speed = (movementData.movements[movementID].speedfactor * speedFactor);
 
         $('#duration').html(TimeString(duration));$('#food').html(food+' '+resouceData[movementData.foodID].name);$('#speed').html(speed);
@@ -304,6 +301,14 @@ DEBUG = 'on';
       $('.popover').popover();
       $('#modal').modal({show: false, keyboard: true, backdrop: true});
 
+      $.loading({
+        width:   '70px',
+        height:  '50px',
+        imgPath: '/images/ajax-loading.gif',
+        tip:     ''
+      });
+      $.loading().ajax(true);
+   
       reParseContent();
     });
 
@@ -324,7 +329,6 @@ DEBUG = 'on';
 
       document.title = $(data).filter('title').text();
       reParseContent();
-      $('#loader').hide();$('#content').show();
     }
 
     function reParseContent() {
@@ -333,11 +337,15 @@ DEBUG = 'on';
       });
 
       /* parse countdown */
-      $($('#content').html()).find('.timer').each(function(i) {
-        var endTime = new Date(); endTime.setTime($(this).attr('data-endtime') * 1000);
-        var serverTime = new Date($(this).attr('data-servertime'));
-        if ($(this).attr('data-alert') == 1) {
-          onExpiryFunction = function() {
+      $('[data-countdown]').each(function() {
+        var $this = $(this), endTime = new Date().getTime() + ($(this).data('countdown') * 1000);
+
+        $this.countdown(endTime, function(event) {
+          $this.html(event.strftime('%H:%M:%S'));
+        }).on('finish.countdown', function(event) {
+          $(this).html('<span class="bold" style="color: red;">Fertig!</span>');
+
+          if ($(this).attr('data-alert') == 1) {
             ua_log('notification event fire');
 
             var options = {
@@ -351,11 +359,7 @@ DEBUG = 'on';
             };
             $.notification(options);
           }
-        } else {
-          onExpiryFunction = null;
-        }
-
-        $('#'+$(this).attr('id')).countdown({until: endTime, format: 'dHMS', onExpiry: onExpiryFunction, expiryText: '<span class="bold" style="color: red;">Fertig!</span>', compact: true, description: '', serverSync: serverTime});
+        });
       });
 
       $('.tooltip-show').tooltip();
@@ -437,6 +441,7 @@ DEBUG = 'on';
 
   function TimeString(duration) {
     var time = duration * 60;
+
     var hours = Math.floor(time/3600);
     var minutes = Math.floor((time%3600)/60);
     if(!hours) return minutes+" Min";
@@ -447,9 +452,10 @@ DEBUG = 'on';
   }
 
   function pushState(url) {
-    if ($.browser.msie && $.browser.version <= 9) {
-      return;
+    if((BrowserDetect.browser == 'Explorer') && (BrowserDetect.version <= 9)) {
+      return false;
     }
+
     if (navigator && navigator.userAgent && navigator.userAgent !== null) {
       var strUserAgent = navigator.userAgent.toLowerCase();
       var arrMatches = strUserAgent.match(/(iphone|ipod|ipad)/);

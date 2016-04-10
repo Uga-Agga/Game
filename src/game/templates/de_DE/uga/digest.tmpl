@@ -30,7 +30,7 @@
             <td><span class="text-center">&gt; {{ item.movement_id_description }} &gt;</span></td>
             <td>{{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br /><span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span></td>
             <td class="date">{{ item.event_end_date }}</td>
-            <td class="countdown"><div id="timer_movement_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
+          <td class="countdown"><div data-countdown="{{ item.seconds_before_end }}"></div></td>
           </tr>
           <tr id="digest_mov_{{ item.event_id }}_content" class="hide">
             <td colspan="5">
@@ -86,7 +86,7 @@
             <td><span class="text-center">&gt; {{ item.movement_id_description }} &gt;</span></td>
             <td>{{ item.target_player_name }} <small>{{ item.target_player_tribe }}</small><br /><span class="nobr"><a href="main.php?modus=map&amp;targetXCoord={{ item.target_xCoord }}&amp;targetYCoord={{ item.target_yCoord }}&amp;targetCaveName={{ item.target_cave_name|url_encode }}">{{ item.target_cave_name }} ({{ item.target_xCoord }}|{{ item.target_yCoord }})</a></span></td>
             <td class="date">{{ item.event_end_date }}</td>
-            <td class="countdown"><div id="timer_movement_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
+          <td class="countdown"><div data-countdown="{{ item.seconds_before_end }}"></div></td>
           </tr>
           <tr id="digest_mov_{{ item.event_id }}_content" class="hide">
             <td colspan="5">
@@ -142,7 +142,7 @@
           <td>{{ item.artefactName }}</td>
           <td>{{ item.name }}</td>
           <td class="date">{{ item.event_end_date }}</td>
-          <td class="countdown"><div id="timer_artefact_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}"></div></td>
+          <td class="countdown"><div data-countdown="{{ item.seconds_before_end }}"></div></td>
         </tr>
       {% endfor %}
       </tbody>
@@ -162,7 +162,7 @@
             <td>{{ item.event_name }}</td>
             <td><a href="main.php?modus={{ item.modus }}&amp;caveID={{ item.cave_id }}">{{ item.cave_name }}</a></td>
             <td class="date">{{ item.event_end_date }}</td>
-            <td class="countdown"><div id="timer_{{ item.category }}_appointment_{{ item.event_id }}" class="timer" data-endtime="{{ item.event_end }}" data-servertime="{{ countdown_time }}" data-alert="1"></div></td>
+            <td class="countdown"><div data-countdown="{{ item.seconds_before_end }}" data-alert="1"></div></td>
           </tr>
         {% endfor %}
         </tbody>

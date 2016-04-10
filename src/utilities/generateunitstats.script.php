@@ -79,7 +79,7 @@ foreach (array_keys($UnitFieldsName) as $name) {
 
 $where = '';
 if ($SecretCave) {
-  $where = "WHERE caveID NOT IN (" . implode(', ', array_keys($SecretCave)) . ")";
+  $where = "AND caveID NOT IN (" . implode(', ', array_keys($SecretCave)) . ")";
 }
 
 /*
@@ -88,6 +88,7 @@ if ($SecretCave) {
 echo "GAME UNIT DAY STATS: Count Cave Units.\n";
 $sql = $db->prepare("SELECT " . implode(', ', $fields) .  " ".
                      "FROM ". CAVE_TABLE ." ".
+                     "WHERE playerID != 0 ".
                      "{$where}");
 
 $CaveUnit = array();

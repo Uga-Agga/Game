@@ -163,6 +163,31 @@ echo "SUCCESS\n";
 $result = $sqlSelect->fetchAll();
 foreach ($result AS $row) {
   echo "DELETE PLAYER $playerID: Reset playerID at Cave {$row['caveID']}\n";
+
+  // Delete defense with warpoints
+  $sqlSet = array();
+  foreach ($GLOBALS['defenseSystemTypeList'] AS $defense) {
+    if ($row[$defense->dbFieldName] == 0) {
+      continue;
+    }
+
+    if ($defense->warPoints != 0) {
+      $sqlSet[] = $defense->dbFieldName . ' = 0';
+    }
+  }
+
+  if (sizeof($sqlSet)) {
+    $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
+                         SET " . implode(', ', $sqlSet) . "
+                         WHERE caveID = :caveID");
+    $sql->bindValue('caveID', $row['caveID'], PDO::PARAM_INT);
+    if (!$sqlDelete->execute()) {
+      echo "FAILURE\n";
+    }
+    else
+      echo "SUCCESS\n";
+  }
+
   $sqlDelete = $db_game->prepare("UPDATE ". CAVE_TABLE ."
                                     SET playerID = 0,
                                     takeoverable = 0,

@@ -38,6 +38,7 @@
     <script type="text/javascript" src="js/jquery.notification.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/jappixmini.js"></script>
+    <script type="text/javascript" src="js/ajax-loading.js"></script>
     <script type="text/javascript" src="js/ua.js"></script>
 
     <script type="text/javascript">
@@ -53,43 +54,45 @@
       MAP_MAX_Y = -{{ map_size.max_y }};
 
       {% if jabber.server and jabber.user and jabber.passwd %}
-        jQuery(document).ready(function() {
+        $(document).ready(function() {
           DEVELOPER = 'on';
+          HOST_BOSH = "{{ jabber.bosh }}";
+          HOST_MUC  = "hoehle.{{ jabber.server }}";
 
-          HOST_MAIN      = '{{ jabber.server }}';
-          HOST_MUC       = "conference.{{ jabber.server }}";
-          HOST_PUBSUB    = "pubsub.{{ jabber.server }}";
-          HOST_VJUD      = "vjud.{{ jabber.server }}";
-          HOST_ANONYMOUS = "anonymous.{{ jabber.server }}";
-          HOST_BOSH      = "{{ jabber.bosh }}";
+          JappixMini.launch({
+            connection: {
+              user: '{{ jabber.user }}',
+              password: '{{ jabber.passwd }}',
+              domain: '{{ jabber.server }}',
+              resource: "UA-Game"+ Math.floor(Math.random()*100000)
+            },
 
-          JAPPIX_STATIC = ''
+            application: {
+                network: {
+                  autoconnect: true
+                },
 
-          // Define groupchats here
-          MINI_GROUPCHATS = [{{ jabber.groupchats|raw }}];
-          MINI_SUGGEST_GROUPCHATS = [{{ jabber.groupchats_suggest|raw }}];
-          MINI_PASSWORDS = [];
-          MINI_5D_NON_CLOSEABLE_GROUPCHATS = [{{ jabber.noClose|raw }}];
+                interface: {
+                  showpane: true,
+                  animate: false
+                },
 
-          // Define chats here
-          MINI_CHATS = [];
+                user: {
+                  random_nickname: false
+                },
 
-          // Add an animation
-          MINI_ANIMATE = false;
+                chat: {
+                  open: []
+                },
 
-          // Define the user nickname
-          MINI_NICKNAME = "{{ jabber.user }}";
-
-          // Random user nickname (if no nickname)
-          MINI_RANDNICK = false;
-
-          // Override the default session resource
-          MINI_RESOURCE = "UA-Game"+ Math.floor(Math.random()*100000);
-
-          // Connect the user (autoconnect, show_pane, domain, username, password)
-          // Notice: put true/false to autoconnect and show_pane
-          // Notice: exclude "user" and "password" if using anonymous login
-          launchMini(true, true, "{{ jabber.server }}", "{{ jabber.jabber_name }}", "{{ jabber.passwd }}");
+                groupchat: {
+                  open: ["ugaagga@hoehle.uga-agga.de", {{ jabber.groupchats|raw }}],
+                  open_passwords: [],
+                  suggest: [{{ jabber.groupchats_suggest|raw }}],
+                  disable_notify: ["ugaagga@hoehle.uga-agga.de"]
+                }
+            }
+          });
         });
       {% endif %}
     </script>
@@ -176,7 +179,6 @@
           {{ item.amount }} ({{ item.delta }})&nbsp;</span>
         {% endfor %}
         <hr>
-        <!--<div class="alert alert-block alert-success"><a style="text-decoration: underline;" href="/main.php?modus=news">Neue News</a></div>-->
         <div id="caves">
           |&nbsp;{% for item in navigateCave %}
             <a href="main.php?{{ query_string|raw }}&amp;caveID={{ item.caveID }}" class="{{ item.secure_cave }}-{{ item.class }}{{ item.starting_position }}{% if item.active %} menu_active_cave_size{% endif %}" onmouseover="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.name }} in ({{ item.x_coord }}|{{ item.y_coord }}).'" onmouseout="document.getElementById('cave-details-cave').innerHTML='Höhle {{ item.active_name }} in ({{ item.active_x_coord }}|{{ item.active_y_coord }}).'">({{ item.x_coord }}/{{ item.y_coord }})</a>&nbsp;|&nbsp;

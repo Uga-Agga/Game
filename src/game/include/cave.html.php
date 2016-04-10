@@ -352,6 +352,26 @@ function cave_giveUpCave($caveID, $playerID, $tribeID) {
     }
   }
 
+  // Delete defense with warpoints
+  $sqlSet = array();
+  foreach ($GLOBALS['defenseSystemTypeList'] AS $defense) {
+    if ($caveData[$defense->dbFieldName] == 0) {
+      continue;
+    }
+
+    if ($defense->warPoints != 0) {
+      $sqlSet[] = $defense->dbFieldName . ' = 0';
+    }
+  }
+
+  if (sizeof($sqlSet)) {
+    $sql = $db->prepare("UPDATE " . CAVE_TABLE . "
+                         SET " . implode(', ', $sqlSet) . "
+                         WHERE caveID = :caveID");
+    $sql->bindValue('caveID', $caveID, PDO::PARAM_INT);
+    $sql->execute();
+  }
+
   // delete hero
   if($caveData['hero'] != 0) {
     hero_killHero($playerID);

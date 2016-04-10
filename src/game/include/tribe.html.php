@@ -733,7 +733,38 @@ function tribe_getContent($caveID, &$details) {
     if (!isset($userRooms[$id]) || empty($userRooms[$id])) continue;
     $chatRooms[$id]['auth'] = $userRooms[$id];
   }
+/*
+  $playerRooms = Chat::getRoomsByPlayerID($_SESSION['player']->playerID);
+  $chatRoomLogs = array();
+  foreach ($playerRooms as $room) {
+    $dir = '/opt/ejabberd/var/log/roomlogs/' . $room['tag'] . '@' . Config::JABBER_MUC;
+    $iterator = new RecursiveIteratorIterator(
+      new RecursiveDirectoryIterator($dir)
+    );
+    $php_files = new RegexIterator($iterator, '/\.txt$/'); // Dateiendung ".php"
 
+    $logPath = array();
+    foreach ($php_files as $file) {
+      if (!$file->isFile()) {
+        continue;
+      }
+      $logPath[filemtime($file->getPathname())] = array(
+        'time' => filemtime($file->getPathname()),
+        'path' => $file->getPathname()
+      );
+    }
+    arsort($logPath);
+    $logPath = array_slice($logPath, 0, 2);
+
+    foreach ($logPath as $log) {
+      $chatRoomLogs[$room['tag']][] = array(
+        'tag'  => $room['tag'],
+        'time' => gmdate("d-m-Y", $log['time']),
+        'log'  => base64_encode(gzcompress(file_get_contents($log['path'])))
+      );
+    }
+  }
+*/
   /****************************************************************************************************
   *
   * Übergabe ans Template
@@ -762,6 +793,8 @@ function tribe_getContent($caveID, &$details) {
     'wonders'             => $wonders,
 
     'chat_rooms'          => $chatRooms,
+    //'chat_room_logs'      => $chatRoomLogs,
+    //'chat_room_player'    => $playerRooms,
 
     'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
 
