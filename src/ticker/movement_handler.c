@@ -1039,6 +1039,12 @@ void movement_handler (db_t *database, db_result_t *result) {
         battle->isWar = 1;
       }
 
+      /* is defender a player? */
+      /* possibility to destroy the va */
+      if (player2.player_id > 0) {
+        battle->defenderIsPlayer = 1;
+      }
+
       /* calculate battle result */
       calcBattleResult(battle, &cave2, 0);
 

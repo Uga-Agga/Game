@@ -146,6 +146,7 @@ typedef struct Battle
   int defenders_hero_died;
 
   int isWar;
+  int defenderIsPlayer;
 } Battle;
 
 extern Battle *battle_create (int num_defenders, int num_attackers);

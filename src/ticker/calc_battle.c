@@ -374,7 +374,7 @@ static void army_propagateRangeDamage (Army *army, double damage)
   }
 }
 
-static void army_propagateArealDamage (Army *army, double damage, int isWar)
+static void army_propagateArealDamage (Army *army, double damage, int isWar, int defenderIsPlayer)
 {
   int i;
   Army_unit *unit;
@@ -394,7 +394,7 @@ static void army_propagateArealDamage (Army *army, double damage, int isWar)
 
   for (i = 0; i < MAX_DEFENSESYSTEM; ++i) {
     unit = &army->defenseSystems[i];
-    if(unit->warpoints > 0 && isWar == 0)
+    if(unit->warpoints > 0 && isWar == 0 && defenderIsPlayer != 0)
       continue;
 
     army_unit_inflictDamage(unit,
@@ -690,7 +690,7 @@ static void battle_propagateArealDamage (Battle *battle, int array_flag,
   for (i = 0; i < size; ++i)
     army_propagateArealDamage(&armies[i],
 			      damage_per_hitpoint *
-			      (armies[i].acc_hitpoints_defenseSystems) , battle->isWar);
+			      (armies[i].acc_hitpoints_defenseSystems), battle->isWar, battle->defenderIsPlayer);
 
 }
 
