@@ -1043,6 +1043,8 @@ void movement_handler (db_t *database, db_result_t *result) {
       /* possibility to destroy the va */
       if (player2.player_id > 0) {
         battle->defenderIsPlayer = 1;
+      } else {
+        battle->defenderIsPlayer = 0;
       }
 
       /* calculate battle result */
