@@ -226,7 +226,7 @@ function unit_getUnitDetails($unitID, $caveData, $method) {
     'description'   => $unit->description,
     'resouce_cost'  => $resourceCost,
     'unit_cost'     => $unitCost,
-    'buiding_cost'  => $buildingCost,
+    'building_cost' => $buildingCost,
     'defense_cost'  => $defenseCost,
     'rangeAttack'   => $unit->attackRange,
     'arealAttack'   => $unit->attackAreal,
