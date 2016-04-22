@@ -180,7 +180,7 @@ function unit_Movement($caveID, &$ownCave) {
 
     // check if army is small enough for hero
     $denymovement_hero = false;
-    if ($moveHero && (Request::getVar('movementID', 0) == 3 || Request::getVar('movementID', 0) == 6)) {
+    if ($moveHero && ($movementID == 3 || $movementID == 6)) {
       //calculate size of army
       $armySize = 0;
       foreach ($unit as $unitID => $value) {
@@ -192,7 +192,7 @@ function unit_Movement($caveID, &$ownCave) {
       }
     }
 
-    if (Request::getVar('movementID', 0) == 0) {
+    if (!isset($ua_movements[$movementID])) {
       $msg = array('type' => 'error', 'message' => _('Bitte Bewegungsart auswählen!'));
       $moveHero = 0;
     }
