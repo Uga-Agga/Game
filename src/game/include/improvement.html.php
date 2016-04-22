@@ -44,7 +44,7 @@ function improvement_getImprovementDetail($caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $buildingID = Request::getVar('buildingID', -1);
-      if ($buildingID == -1) {
+      if ($buildingID == -1 || !isset($GLOBALS['buildingTypeList'][$buildingID])) {
         $messageID = 2;
         break;
       }

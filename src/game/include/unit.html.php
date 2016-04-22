@@ -43,7 +43,7 @@ function unit_getUnitDetail($caveID, &$details) {
     case 'build':
       $unitID = Request::getVar('unitID', -1);
       $quantity = Request::getVar('quantity', 0);
-      if ($unitID == -1) {
+      if ($unitID == -1 || !isset($GLOBALS['unitTypeList'][$unitID])) {
         $messageID = 2;
         break;
       }

@@ -41,7 +41,7 @@ function science_getScienceDetail($caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $scienceID = Request::getVar('scienceID', -1);
-      if ($scienceID == -1) {
+      if ($scienceID == -1 || !isset($GLOBALS['scienceTypeList'][$scienceID])) {
         $messageID = 2;
         break;
       }
