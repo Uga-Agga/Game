@@ -48,6 +48,11 @@ function unit_getUnitDetail($caveID, &$details) {
         break;
       }
 
+      if (!rules_checkDependencies($GLOBALS['unitTypeList'][$unitID], $details))  {
+        $messageID = 2;
+        break;
+      }
+
       // check queue exist
       if (sizeof($queue)) {
         $messageID = 5;

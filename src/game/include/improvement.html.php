@@ -49,6 +49,11 @@ function improvement_getImprovementDetail($caveID, &$details) {
         break;
       }
 
+      if (!rules_checkDependencies($GLOBALS['buildingTypeList'][$buildingID], $details))  {
+        $messageID = 2;
+        break;
+      }
+
       // check queue exist
       if (sizeof($queue)) {
         $messageID = 9;

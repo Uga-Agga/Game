@@ -56,6 +56,11 @@ function defense_builder($caveID, &$details) {
         break;
       }
 
+      if (!rules_checkDependencies($GLOBALS['defenseSystemTypeList'][$defenseID], $details))  {
+        $messageID = 6;
+        break;
+      }
+
       // check queue exist
       if (sizeof($queue)) {
         $messageID = 8;

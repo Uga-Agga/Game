@@ -46,6 +46,11 @@ function science_getScienceDetail($caveID, &$details) {
         break;
       }
 
+      if (!rules_checkDependencies($GLOBALS['scienceTypeList'][$scienceID], $details))  {
+        $messageID = 2;
+        break;
+      }
+
       // check queue exist
       if (sizeof($queue)) {
         $messageID = 2;
