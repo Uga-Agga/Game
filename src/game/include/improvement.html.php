@@ -44,13 +44,13 @@ function improvement_getImprovementDetail($caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $buildingID = Request::getVar('buildingID', -1);
-      if ($buildingID == -1 || !isset($GLOBALS['buildingTypeList'][$buildingID])) {
+      if ($buildingID == -1) {
         $messageID = 2;
         break;
       }
 
-      if (!rules_checkDependencies($GLOBALS['buildingTypeList'][$buildingID], $details))  {
-        $messageID = 2;
+      if (!isset($GLOBALS['buildingTypeList'][$buildingID]) || !rules_checkDependencies($GLOBALS['buildingTypeList'][$buildingID], $details)) {
+        report_player();
         break;
       }
 

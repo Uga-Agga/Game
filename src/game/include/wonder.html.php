@@ -45,6 +45,11 @@ function wonder_getWonderContent($caveID, &$details) {
       $yCoord = Request::getVar('yCoord', 0);
 
       if ($wonderID != -1) {
+        if (!isset($GLOBALS['wonderTypeList'][$wonderID]) || !rules_checkDependencies($GLOBALS['wonderTypeList'][$wonderID], $details)) {
+          report_player();
+          break;
+        }
+
         if (!empty($caveName)) {
           $caveData = getCaveByName($caveName);
           $xCoord = $caveData['xCoord'];

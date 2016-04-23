@@ -871,4 +871,17 @@ class mySimpleXML extends SimpleXMLElement {
   }
 }
 
+function report_player($id=2) {
+  $db_login = DbConnect(Config::DB_LOGIN_HOST, Config::DB_LOGIN_USER, Config::DB_LOGIN_PWD, Config::DB_LOGIN_NAME);
+
+  $sql = $db_login->prepare("UPDATE Login
+                       SET multi = :multi
+                       WHERE LoginID = :LoginID");
+  $sql->bindValue('multi', $id, PDO::PARAM_INT);
+  $sql->bindValue('LoginID', $_SESSION['player']->playerID, PDO::PARAM_INT);
+  $sql->execute();
+
+  page_finish('wrongSessionID');
+}
+
 ?>

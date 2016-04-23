@@ -51,13 +51,13 @@ function defense_builder($caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $defenseID = Request::getVar('defenseID', -1);
-      if ($defenseID == -1 || !isset($GLOBALS['defenseSystemTypeList'][$defenseID])) {
+      if ($defenseID == -1) {
         $messageID = 6;
         break;
       }
 
-      if (!rules_checkDependencies($GLOBALS['defenseSystemTypeList'][$defenseID], $details))  {
-        $messageID = 6;
+      if (!isset($GLOBALS['defenseSystemTypeList'][$defenseID]) || !rules_checkDependencies($GLOBALS['defenseSystemTypeList'][$defenseID], $details)) {
+        report_player();
         break;
       }
 

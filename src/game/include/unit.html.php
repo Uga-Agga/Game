@@ -43,13 +43,13 @@ function unit_getUnitDetail($caveID, &$details) {
     case 'build':
       $unitID = Request::getVar('unitID', -1);
       $quantity = Request::getVar('quantity', 0);
-      if ($unitID == -1 || !isset($GLOBALS['unitTypeList'][$unitID])) {
+      if ($unitID == -1) {
         $messageID = 2;
         break;
       }
 
-      if (!rules_checkDependencies($GLOBALS['unitTypeList'][$unitID], $details))  {
-        $messageID = 2;
+      if (!isset($GLOBALS['unitTypeList'][$unitID]) || !rules_checkDependencies($GLOBALS['unitTypeList'][$unitID], $details)) {
+        report_player();
         break;
       }
 

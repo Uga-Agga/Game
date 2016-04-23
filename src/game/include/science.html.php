@@ -41,13 +41,13 @@ function science_getScienceDetail($caveID, &$details) {
 ****************************************************************************************************/
     case 'build':
       $scienceID = Request::getVar('scienceID', -1);
-      if ($scienceID == -1 || !isset($GLOBALS['scienceTypeList'][$scienceID])) {
+      if ($scienceID == -1) {
         $messageID = 2;
         break;
       }
 
-      if (!rules_checkDependencies($GLOBALS['scienceTypeList'][$scienceID], $details))  {
-        $messageID = 2;
+      if (!isset($GLOBALS['scienceTypeList'][$scienceID]) || !rules_checkDependencies($GLOBALS['scienceTypeList'][$scienceID], $details)) {
+        report_player();
         break;
       }
 

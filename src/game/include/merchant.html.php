@@ -39,9 +39,13 @@ function merchant_getMechantDetail($playerID, $caveID, &$details) {
 ****************************************************************************************************/
     case 'order':
       $tradeID = Request::getVar('tradeID', -1);
+      if ($tradeID == -1) {
+        $messageID = -3;
+        break;
+      }
 
       if (!isset($GLOBALS['tradeTypeList'][$tradeID])) {
-        $messageID = -3;
+        report_player();
         break;
       }
 

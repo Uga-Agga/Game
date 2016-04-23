@@ -147,6 +147,20 @@ function unit_Movement($caveID, &$ownCave) {
     $unit     = array_map("checkFormValues", $unit);
     $resource = array_map("checkFormValues", Request::getVar('resource', array('' => '')));
 
+    // check non valid units
+    foreach ($unit as $unitID => $value) {
+      if (!isset($GLOBALS['unitTypeList'][$unitID]) || $value < 0) {
+        report_player();
+      }
+    }
+
+    // check non valid resource
+    foreach ($resource as $resourceID => $value) {
+      if (!isset($GLOBALS['resourceTypeList'][$resourceID]) || $value < 0) {
+        report_player();
+      }
+    }
+
     // Test, ob Einheitentragekapazität ausgelastet
     $overloaded = 0;
     foreach ($resource as $resKey => $aRes) {
@@ -193,6 +207,10 @@ function unit_Movement($caveID, &$ownCave) {
     }
 
     if (!isset($ua_movements[$movementID])) {
+      if ($movementID != 0) {
+        report_player();
+      }
+
       $msg = array('type' => 'error', 'message' => _('Bitte Bewegungsart auswählen!'));
       $moveHero = 0;
     }
