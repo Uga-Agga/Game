@@ -742,6 +742,7 @@ CREATE TABLE IF NOT EXISTS `Player` (
   `icq` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
   `avatar` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `template` int(2) unsigned NOT NULL DEFAULT '0',
+  `caveOrderbyCoords` tinyint(1) NOT NULL DEFAULT '0',
   `secureCaveCredits` int(2) unsigned NOT NULL DEFAULT '0',
   `questionCredits` int(10) unsigned NOT NULL DEFAULT '0',
   `takeover_max_caves` int(11) unsigned NOT NULL DEFAULT '0',

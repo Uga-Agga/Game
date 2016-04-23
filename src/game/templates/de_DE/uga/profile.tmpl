@@ -23,7 +23,7 @@
       <ul class="nav nav-tabs" id="mainTab">
         <li class="active"><a class="tab-switch" href="#profile_info" data-toggle="tab">Benutzerdaten</a></li>
         <li><a class="tab-switch" href="#profile_locale" data-toggle="tab">Lokalisierung</a></li>
-        <li><a class="tab-switch" href="#profile_template" data-toggle="tab">Template auswählen</a></li>
+        <li><a class="tab-switch" href="#profile_template" data-toggle="tab">Template</a></li>
         <li><a class="tab-switch" href="#profile_gfx" data-toggle="tab">Grafikpack</a></li>
         <li><a class="tab-switch" href="#profile_passwd" data-toggle="tab">Passwort-Änderung</a></li>
       </ul>
@@ -95,6 +95,15 @@
             <div class="controls profile">
               <select name="inputPlayerTemplate" style="width: 165px; height: 20px; padding: 0;">
                 {% for key, temp in template %}<option value="{{ key }}"{% if player.template == key %} selected="selected"{% endif %}>{{ temp }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label profile-label" for="inputPlayerCaveOrder">Höhlensortierung</label>
+            <div class="controls profile">
+              <select name="inputPlayerCaveOrder" style="width: 165px; height: 20px; padding: 0;">
+                <option value="0"{% if player.caveOrderbyCoords == 0 %} selected="selected"{% endif %}>Alphabet</option>
+                <option value="1"{% if player.caveOrderbyCoords == 1 %} selected="selected"{% endif %}>Koordinaten</option>
               </select>
             </div>
           </div>

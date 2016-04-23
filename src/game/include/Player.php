@@ -39,6 +39,7 @@ class Player {
   var $sex;
   var $takeover_max_caves;
   var $template;
+  var $caveOrderbyCoords;
   var $timeCorrection;
   var $tribe;
   var $tribeID; 
@@ -68,6 +69,7 @@ class Player {
     $this->sex                = $record['sex'];
     $this->takeover_max_caves = $record['takeover_max_caves'];
     $this->template           = $record['template'];
+    $this->caveOrderbyCoords  = $record['caveOrderbyCoords'];
     $this->timeCorrection     = $record['timeCorrection'];
     $this->tribe              = $record['tribe'];
     $this->tribeID            = $record['tribeID'];

@@ -143,7 +143,15 @@
             <div class="control-group">
               <select class="input-move-select move-select-bookmark" name="targetCaveID" id="targetCaveID" size="1">
                 <option value="-1" selected="selected">Bitte wählen</option>
-                {% for item in bookmarks_cave %}<option value="{{ item.caveID }}" data-xCoord="{{ item.xCoord }}" data-yCoord="{{ item.yCoord }}" data-caveName="{{ item.name }}">{{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}</option>{% endfor %}
+                {% for item in bookmarks_cave %}
+                  <option value="{{ item.caveID }}" data-xCoord="{{ item.xCoord }}" data-yCoord="{{ item.yCoord }}" data-caveName="{{ item.name }}">
+                    {% if bookmarks_cave_order == 0 %}
+                      {{ item.name }} ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.playerName }}
+                    {% else %}
+                      ({{ item.xCoord }}|{{ item.yCoord }}) {{ item.name }} | {{ item.playerName }}
+                    {% endif %}
+                  </option>
+                {% endfor %}
               </select>
             </div>
           {% endif %}

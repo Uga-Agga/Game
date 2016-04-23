@@ -165,6 +165,7 @@ function profile_update($db_login) {
     'language'     => Request::getVar('inputPlayerLang', ''),
     'origin'       => Request::getVar('inputPlayerOrigin', ''),
     'template'     => Request::getVar('inputPlayerTemplate', ''),
+    'caveOrder'    => Request::getVar('inputPlayerCaveOrder', 0),
     'passwordNew'  => Request::getVar('inputPlayerPasswordNew', ''),
     'passwordRe'   => Request::getVar('inputPlayerPasswordRe', ''),
     'jabberPwdNew' => Request::getVar('inputJabberPasswordNew', ''),
@@ -206,12 +207,17 @@ function profile_update($db_login) {
     }
   }
 
+  if ($data['caveOrder'] != 0 && $data['caveOrder'] != 1) {
+    return array('type' => 'error', 'message' => _('Falsche Höhlensortierung ausgewählt.'));
+  }
+
   $sql = $db->prepare("UPDATE " . PLAYER_TABLE . "
                        SET origin = :origin,
                          icq = :icq,
                          avatar = :avatar,
                          description = :description,
                          template = :template,
+                         caveOrderbyCoords = :caveOrder,
                          language = :language,
                          gfxpath = :gfxpath,
                          email2 = :email2,
@@ -222,6 +228,7 @@ function profile_update($db_login) {
   $sql->bindValue('icq', $data['icq'], PDO::PARAM_INT);
   $sql->bindValue('description', $data['description'], PDO::PARAM_STR);
   $sql->bindValue('template', $data['template'], PDO::PARAM_INT);
+  $sql->bindValue('caveOrder', $data['caveOrder'], PDO::PARAM_INT);
   $sql->bindValue('language', $data['language'], PDO::PARAM_STR);
   $sql->bindValue('gfxpath', $data['gfxpath'], PDO::PARAM_STR);
   $sql->bindValue('email2', $data['email2'], PDO::PARAM_STR);

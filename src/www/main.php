@@ -601,6 +601,10 @@ if (sizeof($ownCaves)) {
     );
   }
 
+  if ($_SESSION['player']->caveOrderbyCoords == true) {
+    $caves['navigateCave'] = array_orderby($caves['navigateCave'], 'x_coord', SORT_ASC, 'y_coord', SORT_ASC);
+  }
+
   $template->addVars($caves);
 }
 

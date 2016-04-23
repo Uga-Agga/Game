@@ -516,9 +516,14 @@ function unit_Movement($caveID, &$ownCave) {
     // get bookmarks
     $bookmarks = $cb_model->getCaveBookmarks(true);
 
+    if ($_SESSION['player']->caveOrderbyCoords == true) {
+      $bookmarks = array_orderby($bookmarks, 'x_coord', SORT_ASC, 'y_coord', SORT_ASC);
+    }
+
     // set bookmarks
     if (sizeof($bookmarks)){
       $template->addVar('bookmarks_cave', $bookmarks);
+      $template->addVar('bookmarks_cave_order', $_SESSION['player']->caveOrderbyCoords);
     }
   }
 }
