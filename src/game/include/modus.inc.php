@@ -57,6 +57,7 @@ DEFINE('LOG_5_TABLE',                   'Log_5');
 DEFINE('LOG_6_TABLE',                   'Log_6');
 DEFINE('MESSAGE_TABLE',                 'Message');
 DEFINE('MONSTER_TABLE',                 'Monster');
+DEFINE('NEWS_TABLE',                    'News');
 DEFINE('OLD_TRIBES_TABLE',              'OldTribes');
 DEFINE('PLAYER_TABLE',                  'Player');
 DEFINE('PLAYER_HISTORY_TABLE',          'player_history');
@@ -183,7 +184,7 @@ $require_files[WEATHER_REPORT]              = array('weather.html.php', 'rules/w
 $require_files[WONDER]                      = array('rules/wonder.rules.php', 'wonder.html.php', 'wonder.inc.php', 'message.inc.php', 'basic.lib.php');
 $require_files[WONDER_DETAIL]               = array('rules/wonder.rules.php', 'wonderDetail.html.php', 'wonder.inc.php', 'rules/relation.list.php');
 $require_files[MERCHANT]                    = array('formula_parser.inc.php', 'merchant.html.php', 'rules/trade.rules.php');
-$require_files[NEWS]                        = array('rssFeedNews.html.php');
+$require_files[NEWS]                        = array('news.html.php');
 $require_files[STATISTIC]                   = array('statistic.html.php', 'rules/wonder.rules.php');
 
 ?>

@@ -559,7 +559,7 @@ CREATE TABLE IF NOT EXISTS `Log_0` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -577,7 +577,7 @@ CREATE TABLE IF NOT EXISTS `Log_1` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -595,7 +595,7 @@ CREATE TABLE IF NOT EXISTS `Log_2` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -613,7 +613,7 @@ CREATE TABLE IF NOT EXISTS `Log_3` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -631,7 +631,7 @@ CREATE TABLE IF NOT EXISTS `Log_4` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -649,7 +649,7 @@ CREATE TABLE IF NOT EXISTS `Log_5` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -667,7 +667,7 @@ CREATE TABLE IF NOT EXISTS `Log_6` (
   `logID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playerID` int(11) unsigned DEFAULT NULL,
   `caveID` int(11) unsigned DEFAULT NULL,
-  `ip` varchar(15) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `ip` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL,
   `request` mediumtext COLLATE utf8_unicode_ci,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `sessionID` varchar(55) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -702,7 +702,21 @@ CREATE TABLE IF NOT EXISTS `Message` (
   KEY `read` (`read`),
   KEY `messageClass` (`messageClass`),
   KEY `messageTime` (`messageTime`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `News`
+--
+
+CREATE TABLE `News` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `subject` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `message` mediumtext CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `author` varchar(25) NOT NULL,
+  `time` varchar(14) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
 
 -- --------------------------------------------------------
 
@@ -964,7 +978,7 @@ CREATE TABLE IF NOT EXISTS `Session` (
   `playerID` int(11) unsigned NOT NULL DEFAULT '0',
   `ident` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
   `microtime` decimal(20,4) NOT NULL DEFAULT '0.0000',
-  `loginip` varchar(15) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `loginip` varchar(40) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `loginchecksum` varchar(32) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `loginnoscript` int(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`sessionID`),

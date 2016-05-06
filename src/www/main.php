@@ -366,7 +366,7 @@ switch ($modus) {
   /////////////////////////////////////////////////////////////////////////////
 
   case NEWS:
-    rssFeedNews_getContent();
+    news_getContent();
     break;
 
   case STATISTIC:

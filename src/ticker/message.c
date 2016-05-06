@@ -161,7 +161,7 @@ static char* transform_spy_values (int num, int type) {
 
   }
 
-  //spy defense
+  //spy defense & death spio units
   if (type == 5) {
     if     (num <     5) value = "ein kümmerlicher Haufen";
     else if (num <     9) value = "eine Handvoll";

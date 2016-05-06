@@ -1,7 +1,6 @@
 {#
-/* rssFeedNews.tmpl -
- * Copyright (c) 2003 OGP Team
- * Copyright (c) 2011 David Unger <unger.dave@gmail.com>, Sascha Lange <salange@uos.de>
+/* news.tmpl -
+ * Copyright (c) 2016 David Unger <david@edv-unger.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -13,10 +12,13 @@
 {% block title %}News{% endblock %}
 {% block content %}
 
-{% for item in rssFeeds %}
+
+{% for item in news %}
   <div class="alert alert-info text-left" style="padding: 5px;">
-    <h4><a href="{{ item.link }}">{{ item.title }}</a></h4>
-    {{ item.description|raw }}
+    <h4>{{ item.subject }}</h4>
+    <span class="text-left">{{ item.time }}</span>
+    <hr>
+    {{ item.message|raw }}
   </div>
 {% else %}
   <div class="alert-error">Zur Zeit gibt es leider keine News.</div>
