@@ -20,7 +20,7 @@ function news_getContent() {
   
   $sql = $db->prepare("SELECT *, DATE_FORMAT(time, '%d.%m.%y %H:%i') as time
                        FROM " . NEWS_TABLE . "
-                       ORDER BY time ASC");
+                       ORDER BY time DESC");
   if (!$sql->execute()) return;
   
   $news = array();
