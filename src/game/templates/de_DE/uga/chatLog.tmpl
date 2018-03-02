@@ -1,0 +1,51 @@
+{#
+/* chatLog.tmpl -
+ * Copyright (c) 2003 OGP Team
+ * Copyright (c) 2011 Sascha Lange <salange@uos.de>, Georg Pitterle
+ * Copyright (c) 2011-2012 David Unger <unger.dave@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version. 
+ */
+#}
+{% extends "base.tmpl" %}
+{% block title %}Chat Log - Übersicht{% endblock %}
+{% block content %}
+<div class="ua-box">
+  <div class="ua-box-header">Chat Logs</div>
+  <div class="ua-box-content ua-box-space">
+    <ul class="nav nav-tabs" id="mainTab">
+      {% for name,rooms in logs %}
+        <li class="dropdown">
+          <a class="nolink" href="#" class="dropdown-toggle" data-toggle="dropdown">
+            {{ name }}
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            {% for year,years in rooms %}
+              <li class="dropdown-submenu">
+                <a class="nolink" tabindex="-1" href="#">{{ year }}</a>
+                <ul class="dropdown-menu">
+                  {% for month,months in years %}
+                    <li class="dropdown-submenu">
+                      <a class="nolink" tabindex="-1" href="#">{{ monthName[month] }}</a>
+                      <ul class="dropdown-menu dropdown-scroll">
+                        {% for day,days in months %}
+                          <li><a class="getChatLogs" data-room="{{ name }}" data-year="{{ year }}" data-month="{{ month }}" data-day="{{ day }}" href="#">{{ day }}</a></li>
+                        {% endfor %}
+                      </ul>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+    <div id="chatLogs"><p class="text-center">Bitte Logfile auswählen.</p></div>
+  </div>
+</div>
+{% endblock %}

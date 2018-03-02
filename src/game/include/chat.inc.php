@@ -331,6 +331,98 @@ class Chat {
 
     return false;
   }
+
+  public static function tribeLogEnable($roomID, $enable) {
+    global $db;
+
+    if (empty($roomID)) return false;
+
+    $db->beginTransaction();
+    $sql = $db->prepare("UPDATE " . CHAT_ROOM_TABLE . "
+                         SET log = :log
+                         WHERE roomID = :roomID");
+    $sql->bindValue('roomID', $roomID, PDO::PARAM_INT);
+    $sql->bindValue('log', $enable, PDO::PARAM_BOOL);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return false;
+    }
+
+    return true;
+  }
+  
+  public static function checkAccessLog($tag, $playerID) {
+    global $db;
+
+    if (empty($tag) || !$playerID) return false;
+
+    $sql = $db->prepare("SELECT cr.id, cr.tribeID, cr.tag, cr.log, p.tribeID as playerTribeID, t.leaderID as leaderPlayerID
+                     FROM " . CHAT_ROOM_TABLE . " cr
+                       LEFT JOIN " . CHAT_USER_TABLE . " cu ON cu.roomID = cr.id
+                       LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName LIKE cu.name
+                       LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = cr.tribeID
+                     WHERE cr.success = 1
+                       AND cu.success = 1
+                       AND cr.tag = :tag
+                       AND p.playerID = :playerID");
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) return false;
+
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    if (empty($row)) {
+      return false;
+    }
+
+    if (($row['log'] == 1 && $row['leaderPlayerID'] == $row['playerTribeID']) || ($row['log'] == 2 && $row['tribeID'] == $row['playerTribeID']) || ($row['log'] == 3)) {
+      return true;
+    }
+
+    return false;
+  }
+  
+  public static function getPossibleAccessLog($playerID) {
+    global $db;
+
+    if (!$playerID) return array();
+
+    $room = array();
+    $sql = $db->prepare("SELECT cr.id, cr.tribeID, cr.tag, cr.log, p.tribeID as playerTribeID, t.leaderID as leaderPlayerID
+                     FROM " . CHAT_ROOM_TABLE . " cr
+                       LEFT JOIN " . CHAT_USER_TABLE . " cu ON cu.roomID = cr.id
+                       LEFT JOIN " . PLAYER_TABLE . " p ON p.jabberName LIKE cu.name
+                       LEFT JOIN " . TRIBE_TABLE . " t ON t.tribeID = cr.tribeID
+                     WHERE cr.success = 1
+                       AND cu.success = 1
+                       AND p.playerID = :playerID");
+    $sql->bindValue('playerID', $playerID, PDO::PARAM_INT);
+    if (!$sql->execute()) return array();
+
+    while($row = $sql->fetch(PDO::FETCH_ASSOC)) {
+      if (($row['log'] == 1 && $row['leaderPlayerID'] == $row['playerTribeID']) || ($row['log'] == 2 && $row['tribeID'] == $row['playerTribeID']) || ($row['log'] == 3)) {
+        $room[$row['tag']] = true;
+      }
+    }
+    $sql->closeCursor();
+
+    return $room;
+  }
+
+  public static function setLogType($roomID, $type) {
+    global $db;
+
+    if (empty($roomID)) return false;
+
+    $sql = $db->prepare("UPDATE " . CHAT_ROOM_TABLE . "
+                         SET log = :log
+                         WHERE id = :id");
+    $sql->bindValue('id', $roomID, PDO::PARAM_INT);
+    $sql->bindValue('log', $type, PDO::PARAM_INT);
+    if (!$sql->execute()) return false;
+
+    return true;
+  }
 }
 
 ?>

@@ -194,17 +194,17 @@ function profile_update($db_login) {
     return array('type' => 'error', 'message' => ('Ungültiges E-Mail Adresse. Bitte nimm deine Eingaben erneut vor!'));
   }
 
-  if (strcmp($data['jabberPwdNew'], $data['jabberPwdRe']) != 0) {
-    return array('type' => 'error', 'message' => _('Das Jabber Passwort stimmt nicht mit der Wiederholung überein.'));
-  }
-
-  // password too short?
-  if (empty($data['jabberPwdNew'])) {
-    $data['jabberPwdNew'] = null;
-  } else {
-    if(!preg_match('/^\w{6,}$/', unhtmlentities($data['jabberPwdNew']))) {
-      return array('type' => 'error', 'message' => _('Das Jabber Passwort muss mindestens 6 Zeichen lang sein!'));
+  if (strlen($data['jabberPwdNew'])) {
+    if (strcmp($data['jabberPwdNew'], $data['jabberPwdRe']) != 0) {
+      return array('type' => 'error', 'message' => _('Das Jabber Passwort stimmt nicht mit der Wiederholung überein.'));
     }
+
+    // password too short?
+    if(!preg_match('/^\w{6,}$/', unhtmlentities($data['jabberPwdNew']))) {
+        return array('type' => 'error', 'message' => _('Das Jabber Passwort muss mindestens 6 Zeichen lang sein!'));
+    }
+  } else {
+    $data['jabberPwdNew'] = $_SESSION['player']->jabberPassword;
   }
 
   if ($data['caveOrder'] != 0 && $data['caveOrder'] != 1) {

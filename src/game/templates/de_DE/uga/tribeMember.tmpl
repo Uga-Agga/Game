@@ -11,7 +11,7 @@
  */
 #}
 {% extends "base.tmpl" %}
-{% block title %}Nachrichten{% endblock %}
+{% block title %}Stammesübersicht{% endblock %}
 {% block content %}
 
 {% if status_msg %}<div id="status-msg"><div class="alert alert-block alert-{{ status_msg.type }}"><p>{{ status_msg.message|raw }}</p></div><hr></div>{% endif %}
@@ -336,6 +336,19 @@
                   <input type="hidden" name="roomID" value="{{ item.id }}" />
                   <input type="hidden" name="action" value="{{ tribe_action_chat_add }}" />
                   <button class="btn" type="button" id="formTribChatAddTribe{{ item.id }}Submit" name="formTribChatAddTribe{{ item.id }}Submit">Ugh!</button>
+                </div>
+              </form>
+              <h5>Log Rechte</h5>
+              <form id="formTribChatLog{{ item.id }}" class="form-horizontal" action="main.php?modus={{ tribe_link }}#tribe_chat_{{ item.tag }}" method="post">
+                <div class="input-append">
+                  <input type="hidden" name="roomID" value="{{ item.id }}" />
+                  <input type="hidden" name="action" value="{{ tribe_action_chat_log }}" />
+                  <select name="chatLogType">
+                    <option value="1"{% if item.log == 1 %} selected="selected"{% endif %}>Nur Anführer</option>
+                    <option value="2"{% if item.log == 2 %} selected="selected"{% endif %}>Stammesmitglieder mit Zugangsberechtigung</option>
+                    <option value="3"{% if item.log == 3 %} selected="selected"{% endif %}>Alle mit Zugangsberechtigung</option>
+                  </select>
+                  <button class="btn" type="button" id="formTribChatLog{{ item.id }}Submit" name="formTribChatLog{{ item.id }}Submit">Ugh!</button>
                 </div>
               </form>
             </div>

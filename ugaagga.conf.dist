@@ -58,5 +58,6 @@ fame_min_points         500
 jabber_bosh			http://game.uga-agga.de/http-bind/
 jabber_server		uga-agga.de
 jabber_muc			hoehle.uga-agga.de
+jabber_muc_log_path	
 jabber_no_close	
 jabber_muc_static	'ugaagga', 'handel'

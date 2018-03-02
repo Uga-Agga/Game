@@ -200,6 +200,7 @@ class Tribe {
     }
 
     Chat::tribeDel($tribeID);
+    self::setTribeBlocked($tribeData['tag']);
 
     if ($tribeData['leaderID'] != 0) {
       Player::addHistoryEntry($tribeData['leaderID'], sprintf(_("löst den Stamm '%s' auf"), $tribeData['tag']));
@@ -516,6 +517,10 @@ class Tribe {
     }
 
     if (!self::changeTribeAllowed($leaderData->playerID)) {
+      return -3;
+    }
+
+    if (self::tribeIsBlocked($tag)) {
       return -10;
     }
 
@@ -936,6 +941,43 @@ class Tribe {
 
   public static function validateTag($tag) {
     return preg_match('/^[a-zA-Z][a-zA-Z0-9\-]{0,7}$/', $tag);
+  }
+
+  public static function tribeIsBlocked($tag) {
+    global $db;
+
+    if (empty($tag)) return false;
+
+    $sql = $db->prepare("SELECT count(*) as count
+                         FROM " . TRIBE_BLOCK_TABLE . "
+                         WHERE tag LIKE :tag");
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    if (!$sql->execute()) return false;
+
+    $row = $sql->fetch(PDO::FETCH_ASSOC);
+    $sql->closeCursor();
+
+    if ($row['count'] == 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static function setTribeBlocked($tag) {
+    global $db;
+
+    if (empty($tag)) return false;
+
+    $sql = $db->prepare("INSERT INTO " . TRIBE_BLOCK_TABLE . "
+                         (tag, date)
+                         VALUES(:tag, NOW())");
+    $sql->bindValue('tag', $tag, PDO::PARAM_STR);
+    if (!$sql->execute() || $sql->rowCount() == 0) {
+      return false;
+    }
+
+    return true;
   }
 }
 

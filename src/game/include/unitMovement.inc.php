@@ -80,7 +80,7 @@ function filterZeros($val) {
 
 // hilfsfkt
 function checkFormValues($val) {
-  return (int) $val;
+  return ((int) $val > 0) ? (int) $val : 0;
 }
 
 function setMovementEvent($caveID, $caveData,  $targetX, $targetY, $unit, $resource, $movementID, $reqFood, $absDuration, $artefactID, $heroID, $caveSpeedFactor) {

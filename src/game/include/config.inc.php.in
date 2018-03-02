@@ -2,7 +2,7 @@
 /*
  * config.inc.php.in -
  * Copyright (c) 2004  OGP Team
- * Copyright (c) 2011-2012 David Unger <unger-dave@gmail.com>
+ * Copyright (c) 2011-2016 David Unger <david@edv-unger.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -174,7 +174,9 @@ class Config {
   const JABBER_BOSH         = '@JABBER_BOSH@';
   const JABBER_SERVER       = '@JABBER_SERVER@';
   const JABBER_MUC          = '@JABBER_MUC@';
+  const JABBER_MUC_LOG_PATH = '@JABBER_MUC_LOG_PATH@';
   const JABBER_NO_CLOSE     = '@JABBER_NO_CLOSE@';
+
   public static $jabberStaticGroupchats = array(@JABBER_MUC_STATIC@);
 
   public static $rememberModusInclude = array(CAVE_DETAIL, ALL_CAVE_DETAIL, MAP, UNIT_MOVEMENT,

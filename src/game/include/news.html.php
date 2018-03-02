@@ -18,7 +18,7 @@ function news_getContent() {
   $template->setFile('news.tmpl');
   $template->setShowResource(false);
   
-  $sql = $db->prepare("SELECT *, DATE_FORMAT(time, '%d.%m.%y %H:%i') as time
+  $sql = $db->prepare("SELECT *, DATE_FORMAT(time, '%d.%m.%y %H:%i') as time_parsed
                        FROM " . NEWS_TABLE . "
                        ORDER BY time DESC");
   if (!$sql->execute()) return;

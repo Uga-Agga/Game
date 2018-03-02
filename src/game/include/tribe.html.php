@@ -28,12 +28,15 @@ define('TRIBE_ACTION_WONDER',       11);
 define('TRIBE_ACTION_KICK',         12);
 define('TRIBE_ACTION_CHAT_ADD',     13);
 define('TRIBE_ACTION_CHAT_REMOVE',  14);
+define('TRIBE_ACTION_CHAT_LOG',     15);
 
 function tribe_getContent($caveID, &$details) {
   global $template;
 
   // messages
   $messageText = array (
+    -50 => array('type' => 'error', 'message' => _('Der Stammesname ist blockiert und darf nicht benutzt werden.')),
+    -49 => array('type' => 'error', 'message' => _('Fehler beim setzen der Log Einstellungen.')),
     -48 => array('type' => 'error', 'message' => _('Der Zielstamm hat noch nicht genug Mitglieder um Beziehungen eingehen zu dürfen')),
     -47 => array('type' => 'error', 'message' => _('Fehler beim entfernen der Spielerrechte.')),
     -46 => array('type' => 'error', 'message' => _('Der Stamm wurde nicht gefunden.')),
@@ -98,6 +101,7 @@ function tribe_getContent($caveID, &$details) {
      14 => array('type' => 'success', 'message' => _('Spielerrechte erfolgreich hinzugefügt. In kürze kann der Spieler den Raum betreten.')),
      15 => array('type' => 'success', 'message' => _('Spielerrechte erfolgreich hinzugefügt. In kürze können die Spieler den Raum betreten.')),
      16 => array('type' => 'success', 'message' => _('Spielerrechte erfolgreich entfernt. In kürze können der/die Spieler den Raum nicht mehr betreten.')),
+     17 => array('type' => 'success', 'message' => _('Log Berechtigungen erfolgreich geändert.')),
   );
 
   if (!$_SESSION['player']->tribeID) {
@@ -412,6 +416,10 @@ function tribe_getContent($caveID, &$details) {
 
       $roomID = Request::getVar('roomID', 0);
       if (empty($roomID) || (!isset($chatRooms[$roomID]))) {
+        if (!isset($chatRooms[$roomID])) {
+          report_player();
+        }
+
         $messageID = -30;
         break;
       }
@@ -437,6 +445,7 @@ function tribe_getContent($caveID, &$details) {
 
         if ($tribe !== false) {
           if (Chat::authAddTribe($roomID, $chatTribeID)) {
+            $chatRooms = Chat::getRoomsByTribeID($tribeID);
             $messageID = 15;
             break;
           } else {
@@ -466,6 +475,10 @@ function tribe_getContent($caveID, &$details) {
 
       $roomID = Request::getVar('roomID', 0);
       if (empty($roomID) || (!isset($chatRooms[$roomID]))) {
+        if (!isset($chatRooms[$roomID])) {
+          report_player();
+        }
+
         $messageID = -30;
         break;
       }
@@ -474,6 +487,7 @@ function tribe_getContent($caveID, &$details) {
 
       if (!empty($removeIDs)) {
         if (Chat::authDel($roomID, $removeIDs)) {
+          $chatRooms = Chat::getRoomsByTribeID($tribeID);
           $messageID = 16;
           break;
         } else {
@@ -483,6 +497,46 @@ function tribe_getContent($caveID, &$details) {
       } else {
         $messageID = -30;
         break;
+      }
+    break;
+
+/****************************************************************************************************
+*
+* Stammeslog?
+*
+****************************************************************************************************/
+    case TRIBE_ACTION_CHAT_LOG:
+      if (!$userAuth['manage_chat'] && !$userAuth['isLeader']) {
+        $messageID = -1;
+        break;
+      }
+
+      $roomID = Request::getVar('roomID', 0);
+      $chatLogType = Request::getVar('chatLogType', 0);
+
+      if (empty($roomID) || (!isset($chatRooms[$roomID]))) {
+        if (!isset($chatRooms[$roomID])) {
+          report_player();
+        }
+
+        $messageID = -30;
+        break;
+      }
+
+      if (!filter_var($chatLogType, FILTER_VALIDATE_INT, array('options' => array('min_range' => 1, 'max_range' => 3)))) {
+        $messageID = -30;
+        break;
+      }
+      
+      if (!in_array($chatLogType, [1, 2, 3])) {
+		$messageID = -48;
+      } else {
+		if (Chat::setLogType($roomID, $chatLogType)) {
+			$chatRooms = Chat::getRoomsByTribeID($tribeID);
+			$messageID = 17;
+		} else {
+			$messageID = -48;
+		}
       }
     break;
   }
@@ -733,38 +787,7 @@ function tribe_getContent($caveID, &$details) {
     if (!isset($userRooms[$id]) || empty($userRooms[$id])) continue;
     $chatRooms[$id]['auth'] = $userRooms[$id];
   }
-/*
-  $playerRooms = Chat::getRoomsByPlayerID($_SESSION['player']->playerID);
-  $chatRoomLogs = array();
-  foreach ($playerRooms as $room) {
-    $dir = '/opt/ejabberd/var/log/roomlogs/' . $room['tag'] . '@' . Config::JABBER_MUC;
-    $iterator = new RecursiveIteratorIterator(
-      new RecursiveDirectoryIterator($dir)
-    );
-    $php_files = new RegexIterator($iterator, '/\.txt$/'); // Dateiendung ".php"
 
-    $logPath = array();
-    foreach ($php_files as $file) {
-      if (!$file->isFile()) {
-        continue;
-      }
-      $logPath[filemtime($file->getPathname())] = array(
-        'time' => filemtime($file->getPathname()),
-        'path' => $file->getPathname()
-      );
-    }
-    arsort($logPath);
-    $logPath = array_slice($logPath, 0, 2);
-
-    foreach ($logPath as $log) {
-      $chatRoomLogs[$room['tag']][] = array(
-        'tag'  => $room['tag'],
-        'time' => gmdate("d-m-Y", $log['time']),
-        'log'  => base64_encode(gzcompress(file_get_contents($log['path'])))
-      );
-    }
-  }
-*/
   /****************************************************************************************************
   *
   * Übergabe ans Template
@@ -793,8 +816,6 @@ function tribe_getContent($caveID, &$details) {
     'wonders'             => $wonders,
 
     'chat_rooms'          => $chatRooms,
-    //'chat_room_logs'      => $chatRoomLogs,
-    //'chat_room_player'    => $playerRooms,
 
     'status_msg'          => (isset($messageID)) ? $messageText[$messageID] : '',
 
@@ -810,6 +831,7 @@ function tribe_getContent($caveID, &$details) {
     'tribe_action_update'        => TRIBE_ACTION_UPDATE,
     'tribe_action_wonder'        => TRIBE_ACTION_WONDER,
     'tribe_action_kick'          => TRIBE_ACTION_KICK,
+    'tribe_action_chat_log'      => TRIBE_ACTION_CHAT_LOG
   ));
 }
 

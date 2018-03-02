@@ -16,7 +16,7 @@
 {% for item in news %}
   <div class="alert alert-info text-left" style="padding: 5px;">
     <h4>{{ item.subject }}</h4>
-    <span class="text-left">{{ item.time }}</span>
+    <span class="text-left">{{ item.time_parsed }}</span>
     <hr>
     {{ item.message|raw }}
   </div>

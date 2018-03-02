@@ -149,14 +149,14 @@ function unit_Movement($caveID, &$ownCave) {
 
     // check non valid units
     foreach ($unit as $unitID => $value) {
-      if (!isset($GLOBALS['unitTypeList'][$unitID]) || $value < 0) {
+      if (!isset($GLOBALS['unitTypeList'][$unitID])) {
         report_player();
       }
     }
 
     // check non valid resource
     foreach ($resource as $resourceID => $value) {
-      if (!isset($GLOBALS['resourceTypeList'][$resourceID]) || $value < 0) {
+      if (!isset($GLOBALS['resourceTypeList'][$resourceID])) {
         report_player();
       }
     }

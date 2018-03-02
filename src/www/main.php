@@ -407,8 +407,8 @@ switch ($modus) {
     merchant_getMechantDetail($_SESSION['player']->playerID, $caveID, $ownCaves[$caveID]);
     break;
 
-  case BUG_TRACKER:
-    bugtracker_getDetail();
+  case CHAT_LOG:
+    chatlog_getDetail();
     break;
 
   case LOGOUT:
@@ -496,8 +496,10 @@ $requestString = createRequestString($requestKeys);
 
 $chatRooms = Chat::getRoomsByPlayerID($_SESSION['player']->playerID);
 $groupchats = $groupchatsSuggest = array();
+
+$playerTribe = strtolower($_SESSION['player']->tribe);
 foreach ($chatRooms as $room) {
-  if ($room['autojoin']) {
+  if ($room['autojoin'] && in_array($room['tag'], [$playerTribe, $playerTribe.'2', $playerTribe.'3'])) {
     $groupchats[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC . '"';
   }
   $groupchatsSuggest[] = '"' . $room['tag'] . '@' . Config::JABBER_MUC . '"';
@@ -543,6 +545,7 @@ $template->addVars(array(
   'award_detail_link'       => AWARD_DETAIL,
   'cave_bookmarks_link'     => CAVE_BOOKMARKS,
   'cave_detail_link'        => CAVE_DETAIL,
+  'chat_link'               => CHAT_LOG,
   'contact_bookmarks_link'  => CONTACTS_BOOKMARKS,
   'defense_link'            => DEFENSE_BUILDER,
   'defense_detail_link'     => DEFENSE_DETAIL,

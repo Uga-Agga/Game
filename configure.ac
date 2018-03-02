@@ -125,6 +125,7 @@ AC_SUBST(FAME_MIN_POINTS, $cfg_fame_min_points)
 AC_SUBST(JABBER_BOSH, $cfg_jabber_bosh)
 AC_SUBST(JABBER_SERVER, $cfg_jabber_server)
 AC_SUBST(JABBER_MUC, $cfg_jabber_muc)
+AC_SUBST(JABBER_MUC_LOG_PATH, $cfg_jabber_muc_log_path)
 AC_SUBST(JABBER_NO_CLOSE, $cfg_jabber_no_close)
 AC_SUBST(JABBER_MUC_STATIC, $cfg_jabber_muc_static)
 

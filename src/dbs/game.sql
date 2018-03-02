@@ -210,6 +210,7 @@ CREATE TABLE IF NOT EXISTS `ChatRoom` (
   `tag` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(32) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `autojoin` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `log` tinyint(1) unsigned NOT NULL DEFAULT '2',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `success` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `blocked` tinyint(1) unsigned NOT NULL DEFAULT '0',

@@ -60,6 +60,17 @@ DEBUG = 'on';
             pushState(urlHistory);
           }
         }
+/* Chat Logs */
+      } else if ($(this).is('.getChatLogs')) {
+          $.ajax({
+            url: 'json.php?modus=log&room='+$(this).data('room')+'&year='+$(this).data('year')+'&month='+$(this).data('month')+'&day='+$(this).data('day'),
+            cache: true,
+            dataType: 'html',
+            success: function(data) {
+              $('#chatLogs').html(data);
+            }
+          });
+        return;
 /* Einfach Ignorieren ;) */
       } else if ($(this).is('.nolink')) {
         return;
@@ -201,8 +212,9 @@ DEBUG = 'on';
          e.offsetX = e.pageX - targetOffset.left;
          e.offsetY = e.pageY - targetOffset.top;
       }
-      var xCoord = Math.abs(parseInt(e.offsetX/15, 10))+1;
-      var yCoord = Math.abs(parseInt(e.offsetY/15, 10))+1;
+
+      var xCoord = Math.abs(parseInt(e.offsetX/(600/27), 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/(600/27), 10))+1;
 
       var data = $('#minimapData').html();
       try {var mapData = jQuery.parseJSON(data);} catch(e) {ua_log('Fehler beim parsen der minimap daten');return;}
@@ -218,8 +230,9 @@ DEBUG = 'on';
          e.offsetX = e.pageX - targetOffset.left;
          e.offsetY = e.pageY - targetOffset.top;
       }
-      var xCoord = Math.abs(parseInt(e.offsetX/12, 10))+1;
-      var yCoord = Math.abs(parseInt(e.offsetY/12, 10))+1;
+
+      var xCoord = Math.abs(parseInt(e.offsetX/(600/35), 10))+1;
+      var yCoord = Math.abs(parseInt(e.offsetY/(600/35), 10))+1;
 
       var url="main.php?modus=map&xCoord="+xCoord+"&yCoord="+yCoord;
       ua_log('Load Ajax get Content: '+url);
@@ -339,9 +352,14 @@ DEBUG = 'on';
       /* parse countdown */
       $('[data-countdown]').each(function() {
         var $this = $(this), endTime = new Date().getTime() + ($(this).data('countdown') * 1000);
+        if (($(this).data('countdown')) > 86400) {
+          var format = '%d %!d:Tag,Tage; %H:%M:%S';
+        } else {
+          var format = '%H:%M:%S';
+        }
 
         $this.countdown(endTime, function(event) {
-          $this.html(event.strftime('%H:%M:%S'));
+          $this.html(event.strftime(format));
         }).on('finish.countdown', function(event) {
           $(this).html('<span class="bold" style="color: red;">Fertig!</span>');
 

@@ -67,10 +67,16 @@ function statistic_getContent() {
   $accounts = $sql->fetch(PDO::FETCH_ASSOC);
   $sql->closeCursor();
 
+  // freie Accounts
+  $sql = $db->prepare("SELECT count(*) as count FROM " . CAVE_TABLE . " WHERE starting_position = 1");
+  if (!$sql->execute()) return;
+  $accounts_max = $sql->fetch(PDO::FETCH_ASSOC);
+  $sql->closeCursor();
+  
   $template->addVars(array(
     'user_online'   => $userOnline['count'],
     'accounts_all'  => $accounts['count'],
-    'accounts_free' => MAX_ACCOUNTS - $accounts['count']
+    'accounts_free' => $accounts_max['count'] - $accounts['count']
   ));
 
   /*
