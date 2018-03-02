@@ -59,10 +59,6 @@ const struct EventTable eventTableList[] = {
   .table    = "Event_hero",
   .id_field = "event_heroID",
   .handler  = hero_handler
-  }, {
-  .table    = "Event_chat",
-  .id_field = "event_chatID",
-  .handler  = chat_handler
   }
 };
 
